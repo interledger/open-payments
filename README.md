@@ -49,6 +49,12 @@ A canonical binary encoding is still valuable for high volume nodes and related
 gateway protocols such as CCP but for interaction at the edges of the network
 OER is an unnecessary additional new technology required to use ILP.
 
+## Credits
+
+A lot of this has been explored, at least in some part, by Evan Schwartz in his ILPv3 experiment and Michiel de Jong when we collaborated on the Loopback Transport.
+
+This stack takes learnings from both of those and combines what I think are the best bits with some experience and some better considerations of how to do authorization.
+
 ## HTTP
 
 As we have discovered over time, using HTTP as a transport for ILP is a natural
