@@ -565,7 +565,7 @@ intent to send money to `$wallet.example/alice`.
 ```http
 200 Success
 Content-Type: application/json
-Location: https://wallet.example/intent/0f09dc92-84ad-401b-a7c9-441bc6173f4e
+Location: https://wallet.example/intents/0f09dc92-84ad-401b-a7c9-441bc6173f4e
 
 
 {
@@ -633,7 +633,7 @@ Content-Type: application/json
 }
 ```
 
-A successful response will return the unique URL identifier of the intent in a
+A successful response will return the unique URL identifier of the mandate in a
 `Location` header.
 
 Below is a non-normative example of a successful response to the creation of a
@@ -642,7 +642,7 @@ mandate to pull money from `$wallet.example/alice`.
 ```http
 200 Success
 Content-Type: application/json
-Location: https://wallet.example/intent/0f09dc92-84ad-401b-a7c9-441bc6173f4e
+Location: https://wallet.example/mandates/0f09dc92-84ad-401b-a7c9-441bc6173f4e
 
 
 {
