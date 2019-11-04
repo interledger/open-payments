@@ -311,8 +311,8 @@ Content-Type: application/json
   "response_types_supported": ["code", "code token"],
   "service_documentation": "http://server.example.com/service_documentation.html",
   "ui_locales_supported": ["en-US", "en-GB", "en-CA", "fr-FR", "fr-CA"],
-  "payment_invoices_endpoint": "https://server.example.com/invoices"
-  "payment_mandates_endpoint": "https://server.example.com/mandates"
+  "payment_invoices_endpoint": "https://server.example.com/invoices",
+  "payment_mandates_endpoint": "https://server.example.com/mandates",
   "payment_assets_supported": [
     {"code": "USD", "scale": 2},
     {"code": "EUR", "scale", 2}
@@ -393,7 +393,7 @@ Location: https://wallet.example/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e
     "code": "USD",
     "scale": 6
   },
-  "balance": 0
+  "balance": 0,
   "expire_time": "2019-12-12T00:56:00.123Z"
 }
 ```
@@ -449,7 +449,7 @@ Location: https://wallet.example/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e
     "code": "USD",
     "scale": 6
   },
-  "balance": 0
+  "balance": 0,
   "expire_time": "2019-12-12T00:56:00.123Z"
 }
 ```
