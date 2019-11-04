@@ -314,8 +314,8 @@ Content-Type: application/json
   "payment_invoices_endpoint": "https://server.example.com/invoices",
   "payment_mandates_endpoint": "https://server.example.com/mandates",
   "payment_assets_supported": [
-    {"code": "USD", "scale": 2},
-    {"code": "EUR", "scale", 2}
+    {"code": "USD", "scale": 6},
+    {"code": "EUR", "scale": 8}
   ]
 }
 ```
