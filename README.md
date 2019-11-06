@@ -388,7 +388,7 @@ Location: https://wallet.example/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e
   "name": "https://wallet.example/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
   "subject": "$wallet.example/alice",
   "destination": "g.example.42e0f0c9284ad401b7c941bc6173f4e",
-  "secret": "AvLaEGc+ojGHVezQF9DC4/7F5YIvrNPx/VM+4hJkCbs=",
+  "shared_secret": "AvLaEGc+ojGHVezQF9DC4/7F5YIvrNPx/VM+4hJkCbs=",
   "asset": {
     "code": "USD",
     "scale": 6
@@ -444,7 +444,7 @@ Location: https://wallet.example/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e
   "name": "https://wallet.example/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
   "subject": "$wallet.example/alice",
   "destination": "g.example.42e0f0c9284ad401b7c941bc6173f4e",
-  "secret": "AvLaEGc+ojGHVezQF9DC4/7F5YIvrNPx/VM+4hJkCbs=",
+  "shared_secret": "AvLaEGc+ojGHVezQF9DC4/7F5YIvrNPx/VM+4hJkCbs=",
   "asset": {
     "code": "USD",
     "scale": 6
