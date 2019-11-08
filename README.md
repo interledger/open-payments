@@ -70,30 +70,36 @@ using OAuth 2.0 for the use of financial APIs.
 These are being widely adopted by the financial services industry, especially by
 groups developing Open Banking APIs suggesting this is a safe technology bet.
 
-## Invoices and Mandates (Agreements)
+## Sessions, Invoices and Mandates (Agreements)
 
 Building on the excellent work by Sabine Bertram on Pull Payments using SPSP we
 have split the concept of **Agreements** into **Invoices** and **Mandates** and
 made them an integral part of all OPay interactions.
 
+To support the streaming nature of Interledger payments and especially the Web
+Monetization use case, we define **Sessions** which are ephemeral sub-accounts
+that are created to track incoming payments that are not linked to an issued
+**Invoice**.
+
 Payments are a highly regulated ecosystem. While ILP provides for incredible new
 levels of interoperability and scalability participants in the ecosystem are
 still subject to regulations that vary depending on what they do.
 
-**Invoices** codify a proposed payment from a sender to a receiver. **Mandates**
-codify the agreement by a sender to allow one or more future payments to a
-receiver (initiated by the receiver). With OPay, payments are only made
-following the creation of an **Agreement**.
+**Invoices** and **Sessions** codify a proposed payment from a sender to a
+receiver. **Mandates** codify the agreement by a sender to allow one or more
+future payments to a receiver (initiated by the receiver). With OPay, payments
+are only made following the creation of an **Agreement**.
 
-**Invoices** are distinct from authorizations because in some cases an
-**Invoice** doesn't require explicit authorization, such as when a sender is
+**Invoices** and **Sessions** are distinct from authorizations because in some
+cases they don't require explicit authorization, such as when a sender is
 sending micro-payments to a receiver for Web Monetization. (In this case the
-creation of the **Invoice** is somewhat analogous to using SPSP to setup a
+creation of the **Session** is somewhat analogous to using SPSP to setup a
 payment).
 
-In all cases, the initiator of a payment will create either an **Invoice** or
-**Mandate** at the wallet of the other party and then, if necessary, request
-authorization to execute the payment described by the **Agreement**.
+In all cases, the initiator of a payment will create either a **Session**,
+**Invoice** or **Mandate** at the wallet of the other party and then, if
+necessary, request authorization to execute the payment described by the
+**Agreement**.
 
 **Agreements** are resources on the Web under the same origin as the user's
 account provider (wallet). They are serialized as JSON and can be managed
@@ -102,17 +108,18 @@ through standard HTTP.
 The endpoints at which **Agreements** are managed are discovered through the
 _Payment Pointer_ of the counter-party. See [Discovery](#discovery).
 
-An **Invoice** is created for all **push payments** (crediting the
-counter-party) and a **Mandate** is created for all **pull payments** (debiting
-the counter-party). **Mandates** may permit multiple payments over an extended
-period of time (e.g. for subscriptions).
+An **Invoice** or **Sessions** is created for all **push payments** (crediting
+the counter-party) and a **Mandate** is created for all **pull payments**
+(debiting the counter-party). **Mandates** may permit multiple payments over an
+extended period of time (e.g. for subscriptions).
 
 Authorization to execute a payment is granted through the provision of an
 _access token_ where the _scope_ of the access token is the **Agreement**
 (identified by its unique URL).
 
-**Invoices** have one or more unique ILP addresses. Payments sent to any of
-these addresses are considered to be linked to that **Invoices**.
+**Invoices** and **Sessions** can have one or more unique ILP addresses.
+Payments sent to any of these addresses are considered to be linked to that
+**Invoice** or **Session**.
 
 At the application layer **Agreements** can correspond to a user session,
 invoice, discreet payment or any other commercial construct that it is useful to
@@ -135,16 +142,16 @@ protocol.
 Participants MAY support dynamic client registration however this will be at
 their discretion on the basis of their regulatory obligations.
 
-Participants may also choose to not allow the anonymous creation of either
-invoices or mandates or both. For example, a user may choose to disallow
-unsolicited payments into its account. In this case, a client may require
-authorization to create an invoice.
+Participants may also choose to not allow the anonymous creation of agreements.
+For example, a user may choose to disallow unsolicited payments into its
+account. In this case, a client may require authorization to create an invoice
+or session.
 
 Or, in another case different data may be returned when getting the state of an
-invoice. For example, an authorized party may be able to create invoices and
-another party will be able to get the STREAM connection credentials required to
-send money to that invoice but only the authorized party can get the status
-(amount paid etc) of the invoice.
+invoice or session. For example, an authorized party may be able to create
+invoices and another party will be able to get the STREAM connection credentials
+required to send money to that invoice but only the authorized party can get the
+status (amount paid etc) of the invoice.
 
 # How it works
 
@@ -178,6 +185,8 @@ created against accounts, which are identified by
 In theory an agreement can be treated like a sub-account (if supported by the
 wallet) and new agreements can be created that are associated with the parent
 agreement rather than the account.
+
+Sessions ARE ephemeral sub-accounts.
 
 More experimentation is required to determine if this is a feature worth
 supporting for wallets.
@@ -280,6 +289,10 @@ OPay defines the following additional claims:
   URL of the server's mandates endpoint where the client is able to create new
   mandates with the `subject`.
 
+- `payment_sessions_endpoint`  
+  URL of the server's sessions endpoint where the client is able to create new
+  sessions with the `subject`.
+
 - `payment_assets_supported`  
   A list of asset definitions for assets that can be used to create agreements
   on this server. The schema of an asset definition is defined in
@@ -299,20 +312,21 @@ HTTP/1.1 200 OK
 Content-Type: application/json
 
 {
-  "issuer": "https://server.example.com",
-  "authorization_endpoint": "https://server.example.com/authorize",
-  "token_endpoint": "https://server.example.com/token",
+  "issuer": "https://wallet.example",
+  "authorization_endpoint": "https://wallet.example/authorize",
+  "token_endpoint": "https://wallet.example/token",
   "token_endpoint_auth_methods_supported": ["client_secret_basic","private_key_jwt"],
   "token_endpoint_auth_signing_alg_values_supported": ["RS256", "ES256"],
-  "userinfo_endpoint": "https://server.example.com/userinfo",
-  "jwks_uri": "https://server.example.com/jwks.json",
-  "registration_endpoint": "https://server.example.com/register",
+  "userinfo_endpoint": "https://wallet.example/userinfo",
+  "jwks_uri": "https://wallet.example/jwks.json",
+  "registration_endpoint": "https://wallet.example/register",
   "scopes_supported": ["openid","profile","email","address","phone","offline_access"],
   "response_types_supported": ["code", "code token"],
-  "service_documentation": "http://server.example.com/service_documentation.html",
+  "service_documentation": "http://wallet.example/service_documentation.html",
   "ui_locales_supported": ["en-US", "en-GB", "en-CA", "fr-FR", "fr-CA"],
-  "payment_invoices_endpoint": "https://server.example.com/invoices",
-  "payment_mandates_endpoint": "https://server.example.com/mandates",
+  "payment_invoices_endpoint": "https://wallet.example/invoices",
+  "payment_mandates_endpoint": "https://wallet.example/mandates",
+  "payment_sessions_endpoint": "https://wallet.example/sessions",
   "payment_assets_supported": [
     {"code": "USD", "scale": 6},
     {"code": "EUR", "scale": 8}
@@ -322,8 +336,8 @@ Content-Type: application/json
 
 ## Creating Agreements
 
-The client then creates an agreement by making a POST to either the invoices or
-mandates endpoint. The `subject` of the agreement is the Payment Pointer.
+The client then creates an agreement by making a POST to either the appropriate
+endpoint. The `subject` of the agreement is the Payment Pointer.
 
 Upon creation of the agreement the server responds with a `201 Created` response
 and a `Location` header containing the URL of the newly created agreement.
@@ -344,48 +358,48 @@ permission to send to it.
 
 ### Use Case: Web Monetization
 
-Below is a non-normative example of the creation of an invoice to send money to
+Below is a non-normative example of the creation of a session to send money to
 `$wallet.example/alice`. We assume that the client has previously performed a
 `GET` request to `https://wallet.example/.well-known/opay-server` and the
 response included the following snippet:
 
 ```json
-"payment_invoices_endpoint": "https://wallet.example/invoices"
+"payment_sessions_endpoint": "https://wallet.example/sessions"
 ```
 
-The client MAY specify the invoice id, however this MUST be a UUID. If the
+The client MAY specify the session id, however this MUST be a UUID. If the
 client doesn't provide an id then the issuer should generate one.
 
 ```http
-POST https://wallet.example/invoices HTTP/1.1
+POST https://wallet.example/sessions HTTP/1.1
 Accept: application/json
 Content-Type: application/json
 
 {
-  "invoice_id": "4309dc23-12ad-401c-3ec9-551bc61765ab7",
+  "session_id": "4309dc23-12ad-401c-3ec9-551bc61765ab7",
   "subject": "$wallet.example/alice"
 }
 ```
 
 A successful `201` response will return a unique set of STREAM credentials to
 use to connect to the wallet and begin sending payments. It will also return the
-unique URL identifier of the invoice in a `Location` header.
+unique URL identifier of the session in a `Location` header.
 
 The STREAM credentials generated MUST never be returned again. The server SHOULD
-use a random nonce and the invoice identifier or reference to generate the
+use a random nonce and the session identifier or reference to generate the
 STREAM credentials in such a way that it is possible for it to correlate any
-incoming connections to the invoice.
+incoming connections to the session.
 
-Below is a non-normative example of a successful response to the creation of an
-invoice to send money to `$wallet.example/alice`.
+Below is a non-normative example of a successful response to the creation of a
+session to send money to `$wallet.example/alice`.
 
 ```http
-201 Created
+HTTP/1.1 201 Created
 Content-Type: application/json
-Location: https://wallet.example/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e
+Location: https://wallet.example/sessions/0f09dc92-84ad-401b-a7c9-441bc6173f4e
 
 {
-  "name": "https://wallet.example/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
+  "name": "//wallet.example/sessions/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
   "subject": "$wallet.example/alice",
   "destination": "g.example.42e0f0c9284ad401b7c941bc6173f4e",
   "shared_secret": "AvLaEGc+ojGHVezQF9DC4/7F5YIvrNPx/VM+4hJkCbs=",
@@ -399,31 +413,82 @@ Location: https://wallet.example/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e
 ```
 
 The sender can now begin sending packets to the address and secret provided by
-the wallet for the invoice.
+the wallet for the session.
 
-As payments are fulfilled, the balance on the invoice increases.
+As payments are fulfilled, the balance on the session account increases.
 
-GET requests to the unique resource URL of the invoice will return the current
+GET requests to the unique resource URL of the session will return the current
 state (including the current cleared balance).
 
-Wallets MAY require authorization to access the invoice resource that has been
+Wallets MAY require authorization to access the session resource that has been
 created.
 
 The `expire-time` field indicates the time that the issuer will persist the
-invoice if no payment is made toward it. Issuers MAY expire and delete invoice
+session if no payment is made toward it. Issuers MAY expire and delete sessions
 that have had no payments. The amount of time to allow is an issuer choice.
+
+#### Tracking Spending
+
+As a convenience for third-parties that are delivering services on behalf of the
+subject the wallet SHOULD allow authorized third-parties to track spending of
+the funds collected during the session.
+
+This is done by the third-party posting a spend against the session which will
+reduce the balance in the session account.
+
+**Note:** The money is moved out of the session account but is still held by the
+subject (i.e. it moves into the parent account or another sub-account).
+
+A spend is submitted as a `POST` to the `/spend` sub-resource of the session.
+
+```http
+POST https://wallet.example/sessions/0f09dc92-84ad-401b-a7c9-441bc6173f4e/spend HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "amount": "200"
+}
+```
+
+The response is the latest state of the session:
+
+```http
+HTTP/1.1 200 Success
+Content-Type: application/json
+Location: https://wallet.example/sessions/0f09dc92-84ad-401b-a7c9-441bc6173f4e
+
+{
+  "name": "//wallet.example/sessions/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
+  "subject": "$wallet.example/alice",
+  "asset": {
+    "code": "USD",
+    "scale": 6
+  },
+  "balance": "2312",
+  "expire_time": "2019-12-12T00:59:00.145Z"
+}
+```
+
+Wallet's SHOULD extend the `expire_time` on a session whenever a payment is
+received or a spend is created.
 
 #### Compatibility with SPSP
 
 As a transition from SPSP to OPay, OPay servers MAY treat an SPSP request to the
-Payment Pointer URL as a shortcut to an invoice creation.
+Payment Pointer URL as a shortcut to session creation.
 
-Example: If a user presents the Payment Pointer `$wallet.example/alice` then a
+The request MUST use the header `Accept: application/spsp4+json` to identify
+them as a legacy SPSP request. In this case the response will also use the
+`Content-Type: application/spsp4+json` header to ensure compatibility with
+legacy clients.
+
+**Example:** If a user presents the Payment Pointer `$wallet.example/alice` then a
 GET request to `https://wallet.example/alice` MAY be handled like a POST to the
-issuer's invoice endpoint.
+issuer's session endpoint.
 
-The presence of a `web-monetization-id` header maps to the presentment of an
-`invoice_id` field in the request body.
+The presence of a `web-monetization-id` header maps to the presentment of a
+`session_id` field in the request body.
 
 The following example is equivalent to the POST request example above:
 
@@ -436,12 +501,12 @@ Web-Monetization-Id: 0f09dc92-84ad-401b-a7c9-441bc6173f4e
 This MUST return either an error response or a response such as:
 
 ```http
-200 Success
+HTTP/1.1 200 Success
 Content-Type: application/spsp4+json
-Location: https://wallet.example/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e
+Location: https://wallet.example/sessions/0f09dc92-84ad-401b-a7c9-441bc6173f4e
 
 {
-  "name": "https://wallet.example/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
+  "name": "//wallet.example/sessions/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
   "subject": "$wallet.example/alice",
   "destination": "g.example.42e0f0c9284ad401b7c941bc6173f4e",
   "shared_secret": "AvLaEGc+ojGHVezQF9DC4/7F5YIvrNPx/VM+4hJkCbs=",
@@ -454,18 +519,18 @@ Location: https://wallet.example/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e
 }
 ```
 
-
 # TODO
 
 Describe other use cases:
 
 - [ ] Invoice Payment
-- [ ] Online Checkout
+- [ ] Online Checkout (Push and Pull)
 - [ ] Subscriptions
 
 Provide schema definitions for:
 
 - [ ] Invoice
+- [ ] Session
 - [ ] Mandate
 - [ ] Asset
 
