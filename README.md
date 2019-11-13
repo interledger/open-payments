@@ -367,17 +367,32 @@ response included the following snippet:
 "payment_sessions_endpoint": "https://wallet.example/sessions"
 ```
 
-The client MAY specify the session id, however this MUST be a UUID. If the
-client doesn't provide an id then the issuer should generate one.
+The client MAY specify the session id, however this MUST be a UUID and is
+provided as a query string parameter in the URL using the key `session_id`. If
+the client doesn't provide an id then the issuer should generate one.
+
+The clienT MUST specify the subject of the session using the Payment Pointer
+that identifies the subject.
+
+The client MAY also specify the asset of the session. This SHOULD be an asset
+from the supported list in the server's meta-data.
+
+The asset of the session is necessarily the same as the asset of the receiver's
+account. If the receiver's account is denominated in a different asset then the
+wallet MUST apply a conversion to any payments received at the time they are
+received and account for the payment in the asset of the session.
 
 ```http
-POST https://wallet.example/sessions HTTP/1.1
+POST https://wallet.example/sessions?session_id=4309dc23-12ad-401c-3ec9-551bc61765ab7 HTTP/1.1
 Accept: application/json
 Content-Type: application/json
 
 {
-  "session_id": "4309dc23-12ad-401c-3ec9-551bc61765ab7",
-  "subject": "$wallet.example/alice"
+  "subject": "$wallet.example/alice",
+  "asset": {
+    "code": "USD",
+    "scale": 6
+  }
 }
 ```
 
@@ -407,10 +422,26 @@ Location: https://wallet.example/sessions/0f09dc92-84ad-401b-a7c9-441bc6173f4e
     "code": "USD",
     "scale": 6
   },
-  "balance": 0,
+  "received": 0,
+  "spent": 0,
   "expire_time": "2019-12-12T00:56:00.123Z"
 }
 ```
+
+#### Errors
+
+If the server is unable to create the session it MUST return an HTTP error
+indicating the cause.
+
+In the case of a duplicate `session_id` being provided the error MUST be
+`409 Conflict`.
+
+In the case of an invalid asset being specified the error MUST be
+`422 Unprocessable Entity`.
+
+If the subject of the request is unknown the response must be `404 Not Found`.
+
+#### Payments
 
 The sender can now begin sending packets to the address and secret provided by
 the wallet for the session.
@@ -465,13 +496,18 @@ Location: https://wallet.example/sessions/0f09dc92-84ad-401b-a7c9-441bc6173f4e
     "code": "USD",
     "scale": 6
   },
-  "balance": "2312",
+  "received": "2312",
+  "spent": "312",
   "expire_time": "2019-12-12T00:59:00.145Z"
 }
 ```
 
 Wallet's SHOULD extend the `expire_time` on a session whenever a payment is
 received or a spend is created.
+
+If a `spend` fails because the amount spent exceeds the amount received the
+server MUST return a `402 Payment Required` response code and MUST NOT add to
+the spent amount.
 
 #### Compatibility with SPSP
 
@@ -483,12 +519,12 @@ them as a legacy SPSP request. In this case the response will also use the
 `Content-Type: application/spsp4+json` header to ensure compatibility with
 legacy clients.
 
-**Example:** If a user presents the Payment Pointer `$wallet.example/alice` then a
-GET request to `https://wallet.example/alice` MAY be handled like a POST to the
-issuer's session endpoint.
+**Example:** If a user presents the Payment Pointer `$wallet.example/alice` then
+a GET request to `https://wallet.example/alice` MAY be handled like a POST to
+the issuer's session endpoint.
 
 The presence of a `web-monetization-id` header maps to the presentment of a
-`session_id` field in the request body.
+`session_id` query parameter.
 
 The following example is equivalent to the POST request example above:
 
