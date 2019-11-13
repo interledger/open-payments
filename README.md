@@ -383,7 +383,8 @@ wallet MUST apply a conversion to any payments received at the time they are
 received and account for the payment in the asset of the session.
 
 ```http
-POST https://wallet.example/sessions?session_id=4309dc23-12ad-401c-3ec9-551bc61765ab7 HTTP/1.1
+POST /sessions?session_id=4309dc23-12ad-401c-3ec9-551bc61765ab7 HTTP/1.1
+Host: wallet.example
 Accept: application/json
 Content-Type: application/json
 
@@ -473,7 +474,8 @@ subject (i.e. it moves into the parent account or another sub-account).
 A spend is submitted as a `POST` to the `/spend` sub-resource of the session.
 
 ```http
-POST https://wallet.example/sessions/0f09dc92-84ad-401b-a7c9-441bc6173f4e/spend HTTP/1.1
+POST /sessions/0f09dc92-84ad-401b-a7c9-441bc6173f4e/spend HTTP/1.1
+Host: wallet.example
 Accept: application/json
 Content-Type: application/json
 
@@ -529,7 +531,8 @@ The presence of a `web-monetization-id` header maps to the presentment of a
 The following example is equivalent to the POST request example above:
 
 ```http
-GET https://wallet.example/alice HTTP/1.1
+GET /alice HTTP/1.1
+Host: wallet.example
 Accept: application/spsp4+json
 Web-Monetization-Id: 0f09dc92-84ad-401b-a7c9-441bc6173f4e
 ```
