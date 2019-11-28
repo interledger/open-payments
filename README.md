@@ -1,35 +1,38 @@
-# Open Payments (OPay)
+# Open Payments
 
-Open Payments (OPay) builds on the OAuth and Open ID Connect frameworks to
-define standard authorization flows for payments using the Interledger protocol
-for a variety of payment use cases.
+Open Payments builds on the OAuth and Open ID Connect frameworks to define
+standard authorization flows for payments using the Interledger protocol for a
+variety of payment use cases.
 
 ## Background
 
-OPay is an evolution of the Simple Payment Setup Protocol (SPSP), providing
-support for new use cases and integrating into OAuth 2.0 so that existing
-identity infrastructure can be leveraged to handle payments authorization.
+Open Payments is an evolution of the Simple Payment Setup Protocol (SPSP),
+providing support for new use cases and integrating into OAuth 2.0 so that
+existing identity infrastructure can be leveraged to handle payments
+authorization.
 
-In the sections that follow, functions and features of OPay are compared with
-analogous functions and features of SPSP to help implementors that are upgrading
-to OPay from SPSP understand the differences (and similarities).
+In the sections that follow, functions and features of Open Payments are
+compared with analogous functions and features of SPSP to help implementors that
+are upgrading to Open Payments from SPSP understand the differences (and
+similarities).
 
-OPay is backwards-compatible with SPSP but certain features of SPSP are proposed
-to be deprecated in order to clean up the protocol and remove ambiguity.
+Open Payments is backwards-compatible with SPSP but certain features of SPSP are
+proposed to be deprecated in order to clean up the protocol and remove
+ambiguity.
 
 ## OAuth 2.0 and Open ID Connect
 
-OPay embraces the tight relationship between identity, security, and payments
-and the need for payments systems to offer a way for access to be secure and
-authenticated with complex authorization logic being the critical feature that
-unlocks different use cases.
+Open Payments embraces the tight relationship between identity, security, and
+payments and the need for payments systems to offer a way for access to be
+secure and authenticated with complex authorization logic being the critical
+feature that unlocks different use cases.
 
-For that reason the OPay builds directly on OAuth 2.0 and Open ID Connect to
-handle use cases where authorization and identity are required.
+For that reason the Open Payments builds directly on OAuth 2.0 and Open ID
+Connect to handle use cases where authorization and identity are required.
 
 OAuth 2.0 and OpenID Connect have become the defacto standard for
 authentication, authorization and user information exchange on the Internet.
-OPay is designed to integrate easily into existing online systems.
+Open Payments is designed to integrate easily into existing online systems.
 
 ### Payment Pointers
 
@@ -52,8 +55,9 @@ In contrast to this, we consider Payment Pointers an excellent tool for user
 account discovery. Payment Pointers have a single purpose, to point a client at
 the payment services of the subject of the Payment Pointer.
 
-OPay defines a complete account discovery protocol based on Payment Pointers and
-leveraging the existing server meta-data standards defined for OAuth 2.
+Open Payments defines a complete account discovery protocol based on Payment
+Pointers and leveraging the existing server meta-data standards defined for
+OAuth 2.
 
 Using this protocol, the end user can provide their Payment Pointer to a
 counter-party or app which is then able to discover the necessary endpoints to
@@ -74,7 +78,7 @@ groups developing Open Banking APIs suggesting this is a safe technology bet.
 
 Building on the excellent work by Sabine Bertram on Pull Payments using SPSP we
 have split the concept of **Agreements** into **Invoices** and **Mandates** and
-made them an integral part of all OPay interactions.
+made them an integral part of all Open Payments interactions.
 
 To support the streaming nature of Interledger payments and especially the Web
 Monetization use case, we define **Sessions** which are ephemeral sub-accounts
@@ -87,8 +91,8 @@ still subject to regulations that vary depending on what they do.
 
 **Invoices** and **Sessions** codify a proposed payment from a sender to a
 receiver. **Mandates** codify the agreement by a sender to allow one or more
-future payments to a receiver (initiated by the receiver). With OPay, payments
-are only made following the creation of an **Agreement**.
+future payments to a receiver (initiated by the receiver). With Open Payments,
+payments are only made following the creation of an **Agreement**.
 
 **Invoices** and **Sessions** are distinct from authorizations because in some
 cases they don't require explicit authorization, such as when a sender is
@@ -155,9 +159,9 @@ status (amount paid etc) of the invoice.
 
 # How it works
 
-OPay uses standard web technologies, combined with Interledger, to allow a
-**client** (initiating the transaction) to push money to, or pull money from, a
-**counter-party** (accepting the transaction).
+Open Payments uses standard web technologies, combined with Interledger, to
+allow a **client** (initiating the transaction) to push money to, or pull money
+from, a **counter-party** (accepting the transaction).
 
 The key technologies in use are:
 
@@ -178,8 +182,8 @@ At a very high level, the client makes payments by:
 
 ## Payment Pointers
 
-With OPay, payments are sent to invoices or received from mandates, which are
-created against accounts, which are identified by
+With Open Payments, payments are sent to invoices or received from mandates,
+which are created against accounts, which are identified by
 [Payment Pointers](https://paymentpointers.org).
 
 In theory an agreement can be treated like a sub-account (if supported by the
@@ -195,9 +199,9 @@ supporting for wallets.
 
 All Payment Pointers have a `subject`, the entity that owns or controls the
 resource that is accessed via the URL resolved from the pointer. This concept is
-borrowed from standard identity ontologies and in the OPay ecosystem it is
-assumed that the `subject` of a Payment Pointer is also the entity that owns any
-funds pushed to that pointer or pulled from it.
+borrowed from standard identity ontologies and in the Open Payments ecosystem it
+is assumed that the `subject` of a Payment Pointer is also the entity that owns
+any funds pushed to that pointer or pulled from it.
 
 Payment Pointers also have an `issuer` who controls the domain/origin at which
 the pointer is hosted on the Internet.
@@ -253,20 +257,21 @@ It also states the following:
 > suffixes used to publish authorization server metadata as used by those
 > applications.
 
-OPay defines the well-known URL `/.well-known/opay` but, as specified in
-[RFC8414](https://tools.ietf.org/html/rfc8414), allows for the same document to
-be served at multiple URLs such as `/.well-known/oauth-authorization-server` or
-`./well-known/openid-configuration` which are already in wide use.
+Open Payments defines the well-known URL `/.well-known/open-payments` but, as
+specified in [RFC8414](https://tools.ietf.org/html/rfc8414), allows for the same
+document to be served at multiple URLs such as
+`/.well-known/oauth-authorization-server` or `./well-known/openid-configuration`
+which are already in wide use.
 
 The meta-data document MUST be queried using an HTTP "GET" request at the
 previously specified path.
 
 The client would make the following request when the issuer identifier is
-`https://wallet.example` and the well-known URI suffix is `opay` to obtain the
-metadata, since the issuer identifier contains no path component:
+`https://wallet.example` and the well-known URI suffix is `open-payments` to
+obtain the metadata, since the issuer identifier contains no path component:
 
 ```http
-GET /.well-known/opay HTTP/1.1
+GET /.well-known/open-payments HTTP/1.1
 Host: wallet.example
 ```
 
@@ -279,7 +284,7 @@ From [RFC8414](https://tools.ietf.org/html/rfc8414):
 > members that are a subset of the metadata values defined in
 > [RFC8414 Section 2](https://tools.ietf.org/html/rfc8414#section-2)
 
-OPay defines the following additional claims:
+Open Payments defines the following additional claims:
 
 - `payment_invoices_endpoint`  
   URL of the server's invoices endpoint where the client is able to create new
@@ -360,7 +365,7 @@ permission to send to it.
 
 Below is a non-normative example of the creation of a session to send money to
 `$wallet.example/alice`. We assume that the client has previously performed a
-`GET` request to `https://wallet.example/.well-known/opay-server` and the
+`GET` request to `https://wallet.example/.well-known/open-payments` and the
 response included the following snippet:
 
 ```json
@@ -371,7 +376,7 @@ The client MAY specify the session id, however this MUST be a UUID and is
 provided as a query string parameter in the URL using the key `session_id`. If
 the client doesn't provide an id then the issuer should generate one.
 
-The clienT MUST specify the subject of the session using the Payment Pointer
+The client MUST specify the subject of the session using the Payment Pointer
 that identifies the subject.
 
 The client MAY also specify the asset of the session. This SHOULD be an asset
@@ -382,9 +387,21 @@ account. If the receiver's account is denominated in a different asset then the
 wallet MUST apply a conversion to any payments received at the time they are
 received and account for the payment in the asset of the session.
 
+The client MAY provide a JWT bearer token in the `Authorization` header which
+identifies the client. This uses the `Bearer` authorization scheme.
+
+If provided, this JWT only has one required claim, `iss` which is the issuer
+identifier of the sending system (Web Monetization Provider). i.e. The sender
+(subject) is not identifying themselves to the receiving system but they are
+asserting that they hold their account with the issuer.
+
+To bind the JWT to the current session the `jti` claim MUST be equal to the
+session id.
+
 ```http
 POST /sessions?session_id=4309dc23-12ad-401c-3ec9-551bc61765ab7 HTTP/1.1
 Host: wallet.example
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi...
 Accept: application/json
 Content-Type: application/json
 
@@ -442,6 +459,9 @@ In the case of an invalid asset being specified the error MUST be
 
 If the subject of the request is unknown the response must be `404 Not Found`.
 
+If the client sends a JWT to identify the sending system and this is invalid or
+rejected by the receiver then the response MUST be `401 Unauthorized`
+
 #### Payments
 
 The sender can now begin sending packets to the address and secret provided by
@@ -472,6 +492,11 @@ reduce the balance in the session account.
 subject (i.e. it moves into the parent account or another sub-account).
 
 A spend is submitted as a `POST` to the `/spend` sub-resource of the session.
+
+If the sending system/web monetization provider was identified during session
+creation (provided a JWT to authorize the request) the wallet MAY track spending
+against the sending system/web monetization provider instead of against the
+session. This is done at the discretion of the wallet.
 
 ```http
 POST /sessions/0f09dc92-84ad-401b-a7c9-441bc6173f4e/spend HTTP/1.1
@@ -511,10 +536,50 @@ If a `spend` fails because the amount spent exceeds the amount received the
 server MUST return a `402 Payment Required` response code and MUST NOT add to
 the spent amount.
 
+#### Authentication of the Sending System
+
+If the sending system/web monetization provider was identified during session
+creation, by providing a JWT as a Bearer token on the request, then the
+signature of the JWT MUST be validated AND the `jti` claim in the token MUST be
+equal to the session id.
+
+To validate the JWT the wallet MUST fetch the issuer's public keys using the
+published meta-data as described in [meta data](#meta-data) and
+[RFC8414](https://tools.ietf.org/html/rfc8414).
+
+For example, given the following JWT headers:
+
+```json
+{
+  "alg": "RS256",
+  "typ": "JWT",
+  "kid": "NjVBRjY5MDlCMUIwNzU4RTA2QzZFMDQ4QzQ2MDAyQjVDNjk1RTM2Qg"
+}
+```
+
+and payload:
+
+```json
+{
+  "iss": "http://sender.example",
+  "jti": "0f09dc92-84ad-401b-a7c9-441bc6173f4e"
+}
+```
+
+The wallet identifies the sending system as `http://sender.example`. The meta
+data for this system is at `http://sender.example/.well-known/open-payments`.
+
+The wallet should expect to find a key set URI in the meta data, with the claim
+name `jwks_uri`. If this claim is not present then the wallet should respond to
+the session creation request with a `401 Unauthorized` response.
+
+The wallet MUST get the signing keys used by the sending system from this URL
+and use these to validate the signature on the JWT provided in the request.
+
 #### Compatibility with SPSP
 
-As a transition from SPSP to OPay, OPay servers MAY treat an SPSP request to the
-Payment Pointer URL as a shortcut to session creation.
+As a transition from SPSP to Open Payments, Open Payments servers MAY treat an
+SPSP request to the Payment Pointer URL as a shortcut to session creation.
 
 The request MUST use the header `Accept: application/spsp4+json` to identify
 them as a legacy SPSP request. In this case the response will also use the
@@ -535,6 +600,7 @@ GET /alice HTTP/1.1
 Host: wallet.example
 Accept: application/spsp4+json
 Web-Monetization-Id: 0f09dc92-84ad-401b-a7c9-441bc6173f4e
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi...
 ```
 
 This MUST return either an error response or a response such as:
