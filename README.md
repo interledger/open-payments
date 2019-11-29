@@ -538,14 +538,21 @@ the spent amount.
 
 #### Authentication of the Sending System
 
-If the sending system/web monetization provider was identified during session
-creation, by providing a JWT as a Bearer token on the request, then the
-signature of the JWT MUST be validated AND the `jti` claim in the token MUST be
-equal to the session id.
+If the sending system/web monetization provider attempts to authenticate itself
+during session creation, by providing a JWT as a Bearer token on the request,
+then the signature of the JWT MUST be validated AND the `jti` claim in the token
+MUST be equal to the session id for a successful authentication.
+
+If the `jti` claim doesn't match the session id the token should be considered
+invalid as it's likely this token is being replayed from another session or has
+been generated for another user.
+
+If the wallet is not performing any alternative processing based on the identity
+of the sending system then there is no need to authenticate the sending system.
 
 To validate the JWT the wallet MUST fetch the issuer's public keys using the
-published meta-data as described in [meta data](#meta-data) and
-[RFC8414](https://tools.ietf.org/html/rfc8414).
+published meta-data as described in [meta data](#meta-data) and validate the JWT
+signature [RFC8414](https://tools.ietf.org/html/rfc8414).
 
 For example, given the following JWT headers:
 
