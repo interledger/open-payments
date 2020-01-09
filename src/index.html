@@ -1,0 +1,19 @@
+<script>
+
+const reply = await fetch('https://testnet.example/', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer 54ABCpj8HBSax1TImW+5JCeuQeRkm5NMpJWZG3hRuBG=',
+    'ILP-Destination': 'test.alice',
+    'ILP-Amount': '10',
+    'ILP-Condition': '47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=',
+    'ILP-Expiry': '20190902235959999'
+  }
+})
+if(reply.headers['ILP-Fulfilment']) {
+  console.log("Payment sent!")
+} else {
+  console.log("Error: " + reply.headers['ILP-Error-Message'])
+}
+
+</script>

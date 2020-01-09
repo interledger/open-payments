@@ -1,0 +1,34 @@
+# Create Monetization Intent
+POST https://example.com/alice
+Accept: application/json
+Content-Type: application/json
+
+
+{
+  "scope": "$example.com/alice",
+  "shared_secret": "k5nubgM6zpb88NPGVnI/tVjRdgpUh+JvMueRFEMvPcY=",
+  "asset": {
+    "code": "USD",
+    "scale": 2
+  }
+}
+
+###
+
+200 Success
+Content-Type: application/json
+Location: https://example.com/intents/0f09dc92-84ad-401b-a7c9-441bc6173f4e
+
+
+{
+  "id": "0f09dc92-84ad-401b-a7c9-441bc6173f4e",
+  "scope": "$example.com/alice",
+  "authorized" : true,
+  "destination_account": "g.example.0f09dc92-84ad-401b-a7c9-441bc6173f4e",
+  "shared_secret": "k5nubgM6zpb88NPGVnI/tVjRdgpUh+JvMueRFEMvPcY=",
+  "asset": {
+    "code": "USD",
+    "scale": 2
+  },
+  "balance": 0
+}

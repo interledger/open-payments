@@ -1,0 +1,71 @@
+# Create Send Intent
+POST https://example.com/alice
+Accept: application/json
+Content-Type: application/json
+
+
+{
+  "scope": "$example.com/alice",
+  "interledger_endpoint": "https://otherwallet.com/ilp/",
+  "asset": {
+    "code": "USD",
+    "scale": 2
+  }
+  ""
+}
+
+
+###
+200 Success
+Content-Type: application/json
+Location: https://example.com/intents/0f09dc92-84ad-401b-a7c9-441bc6173f4e
+
+
+{
+  "id": "0f09dc92-84ad-401b-a7c9-441bc6173f4e",
+  "scope": "$example.com/alice",
+  "authorized" : false,
+  "destination_account": "g.example.0f09dc92-84ad-401b-a7c9-441bc6173f4e",
+  "interledger_endpoint": "https://otherwallet.com/ilp/",
+  "asset": {
+    "code": "USD",
+    "scale": 2
+  },
+  "balance": 0,
+}
+
+###
+
+{
+  "scope": "$example.com/alice",
+  "asset": {
+    "code": "USD",
+    "scale": 2
+  }
+},
+
+
+{
+  "destination_account": "alice.ilpdemo.red.0f09dc92-84ad-401b-a7c9-441bc6173f4e",
+  "shared_secret": "k5nubgM6zpb88NPGVnI/tVjRdgpUh+JvMueRFEMvPcY=",
+  "pull": {
+    "balance": {
+      "total": "5000",
+      "interval": "1000",
+      "available": "1000"
+    },
+    "cycle": 3,
+    "agreement": {
+      "amount": "2000",
+      "start": "2019-01-01T08:00Z",
+      "expiry": "2021-01-02T00:00Z", 
+      "interval": "P0Y1M0DT0H0M0S",
+      "cycles": 12,
+      "cap": false,
+      "asset": {
+        "code": "USD",
+        "scale": 2
+      }
+    }
+  }
+}]

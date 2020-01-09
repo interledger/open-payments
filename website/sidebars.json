@@ -1,0 +1,7 @@
+{
+  "docs": {
+    "Overview": ["overview", "oauth"],
+    "Specification": ["resources", "protocol"],
+    "Use Cases": ["web-monetization"]
+  }
+}
