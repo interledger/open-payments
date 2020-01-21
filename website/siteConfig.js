@@ -33,8 +33,8 @@ const siteConfig = {
     // {page: 'help', label: 'Help'}
   ],
 
-  // If you have users set above, you add it here:
-  // users,
+  //Set the CNAME
+  cname: 'openpayments.dev',
 
   /* path to images for header/footer */
   headerIcon: 'img/favicon.ico',
