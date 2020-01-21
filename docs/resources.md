@@ -64,6 +64,40 @@ At the application layer **Agreements** can correspond to a user session,
 invoice, discreet payment or any other commercial construct that it is useful to
 correlate a group of payments to.
 
+### Mandates
+Mandates define a model for which an user/entity can delegate permission to a merchant to 
+pull money directly from their account. The DP can issues spends against the mandate by submitting invoices for it to pay.
+
+Mandate Structure
+
+| Property    | Type           | Required |
+|-------------|----------------|----------|
+| id          | UUID           | Yes      |
+| amount      | int64          | Yes      |
+| asset.code  | string         | Yes      |
+| asset.scale | int32          | Yes      |
+| scope       | PaymentPointer | Yes      |
+| startAt     | DateTime       | No       |
+| expiresAt   | DateTime       | No       |
+| interval    | ISO Duration   | No       |
+
+
+### Invoice
+An invoice represents an amount payable that can be presented to a third party to pay. An example would be a checkout
+flow.
+
+| Property    | Type        | Required |
+|-------------|-------------|----------|
+| id          | UUID        | Yes      |
+| amount      | int64       | Yes      |
+| asset.code  | string      | Yes      |
+| asset.scale | int32       | Yes      |
+| balance     | int64       | Yes      |
+| expiresAt   | DateTime    | No       |
+| ilpAddress  | ILP Address | Yes      |
+| ilpSecret   | ILP Secret  | Yes      |
+
+
 ### Sessions
 
 To support the streaming nature of Interledger payments and especially the Web

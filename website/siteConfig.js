@@ -21,9 +21,9 @@
 // ];
 
 const siteConfig = {
-  title: 'Open Payments', 
+  title: 'Open Payments',
   tagline: 'A protocol for setting up payments between wallets',
-  url: 'https://openpayments.dev', 
+  url: 'https://openpayments.dev',
   baseUrl: '/',
   projectName: 'open-payments',
   organizationName: 'adrianhopebailie',
@@ -70,7 +70,16 @@ const siteConfig = {
   },
 
   // Add custom scripts here that would be placed in <script> tags.
-  scripts: ['https://buttons.github.io/buttons.js'],
+  scripts: [
+    'https://buttons.github.io/buttons.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.4.4/mermaid.min.js',
+    'scripts/init.js',
+  ],
+  markdownPlugins: [ (md) => {
+    md.renderer.rules.fence_custom.mermaid = (tokens, idx, options, env, instance) => {
+      return `<div class="mermaid">${tokens[idx].content}</div>`;
+    };
+  }],
 
   // On page navigation for the current documentation page.
   onPageNav: 'separate',

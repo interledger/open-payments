@@ -8,6 +8,9 @@
       "archived": {
         "title": "archived"
       },
+      "checkout_push": {
+        "title": "Checkout (Push)"
+      },
       "oauth": {
         "title": "OAuth 2.0 and Open ID Connect"
       },
