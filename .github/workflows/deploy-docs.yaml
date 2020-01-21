@@ -18,8 +18,8 @@ jobs:
         uses: actions/checkout@master
 
       - name: Configure Git
-          run: |
-            git remote add origin https://:${{ secrets.GITHUB_TOKEN }}@github.com/adrianhopebailie/open-payments.git
+        run: |
+          git remote add origin https://:${{ secrets.GITHUB_TOKEN }}@github.com/adrianhopebailie/open-payments.git
 
       - name: Set Node.js 12.x
         uses: actions/setup-node@master
