@@ -23,8 +23,8 @@
 const siteConfig = {
   title: 'Open Payments',
   tagline: 'A protocol for setting up payments between wallets',
-  url: 'https://adrian.hopebailie.com/',
-  baseUrl: '/open-payments/',
+  url: 'https://openpayments.dev/',
+  baseUrl: '/',
   projectName: 'open-payments',
   organizationName: 'adrianhopebailie',
   // For no header links in the top nav bar -> headerLinks: [],
