@@ -9,6 +9,11 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Setup
+          run: |
+            git config --global user.name ${GITHUB_ACTOR}
+            git config --global user.email ${GITHUB_ACTOR}@openpayments.dev
+
       - name: Checkout
         uses: actions/checkout@master
 
@@ -25,4 +30,4 @@ jobs:
       - name: Deploy
         working-directory: ./website
         run: |
-          GIT_USER=${{ secrets.GITHUB_TOKEN }} USE_SSH=true yarn run publish-gh-pages
+          GIT_USER=${{ secrets.GITHUB_TOKEN }} yarn run publish-gh-pages
