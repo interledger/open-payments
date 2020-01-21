@@ -11,15 +11,15 @@ jobs:
     steps:
       - name: Setup
         run: |
-          git config --global user.name ${GITHUB_ACTOR}
-          git config --global user.email ${GITHUB_ACTOR}@openpayments.dev
+          git config --global user.name $GITHUB_ACTOR
+          git config --global user.email $GITHUB_ACTOR@openpayments.dev
 
       - name: Checkout
         uses: actions/checkout@master
 
       - name: Configure Git
         run: |
-          git remote set-url origin https://${GITHUB_ACTOR}:${{ secrets.GITHUB_TOKEN }}@github.com/adrianhopebailie/open-payments.git
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
 
       - name: Set Node.js 12.x
         uses: actions/setup-node@master
