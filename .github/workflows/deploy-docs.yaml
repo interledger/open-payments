@@ -25,4 +25,4 @@ jobs:
       - name: Deploy
         working-directory: ./website
         run: |
-          GIT_USER=$GITHUB_TOKEN yarn run publish-gh-pages
+          GIT_USER=${{ secrets.GITHUB_TOKEN }} yarn run publish-gh-pages
