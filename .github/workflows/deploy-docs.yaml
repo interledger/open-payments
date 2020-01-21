@@ -10,9 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup
-          run: |
-            git config --global user.name ${GITHUB_ACTOR}
-            git config --global user.email ${GITHUB_ACTOR}@openpayments.dev
+        run: |
+          git config --global user.name ${GITHUB_ACTOR}
+          git config --global user.email ${GITHUB_ACTOR}@openpayments.dev
 
       - name: Checkout
         uses: actions/checkout@master
