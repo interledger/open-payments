@@ -1,0 +1,28 @@
+name: Deploy Docs
+# This workflow is triggered on pushes to the repository.
+on:
+  push:
+    branches:
+      - master         # Push events on master branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: Set Node.js 12.x
+        uses: actions/setup-node@master
+        with:
+          version: 12.x
+
+      - name: Install dependencies
+        working-directory: ./website
+        run: |
+          yarn install
+
+      - name: Deploy
+        working-directory: ./website
+        run: |
+          GIT_USER=$GITHUB_TOKEN yarn run publish-gh-pages
