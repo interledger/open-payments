@@ -23,7 +23,7 @@
 const siteConfig = {
   title: 'Open Payments',
   tagline: 'A protocol for setting up payments between wallets',
-  url: 'https://https://adrian.hopebailie.com/',
+  url: 'https://adrian.hopebailie.com/',
   baseUrl: '/open-payments',
   projectName: 'open-payments',
   organizationName: 'adrianhopebailie',
