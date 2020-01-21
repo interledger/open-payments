@@ -19,7 +19,7 @@ jobs:
 
       - name: Configure Git
         run: |
-          git remote set-url origin https://${{ secrets.GITHUB_TOKEN }}@github.com/adrianhopebailie/open-payments.git
+          git remote set-url origin https://${GITHUB_ACTOR}:${{ secrets.GITHUB_TOKEN }}@github.com/adrianhopebailie/open-payments.git
 
       - name: Set Node.js 12.x
         uses: actions/setup-node@master
