@@ -13,3 +13,4 @@
  pay the network fees and who determines maximum slippage allowable.
  * Authorization
  * Pay invoice support via QR code or URL or both.
+* Consider PaymentRequest name
