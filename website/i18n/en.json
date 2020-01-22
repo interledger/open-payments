@@ -20,6 +20,9 @@
       "protocol": {
         "title": "Protocol"
       },
+      "recurring": {
+        "title": "Recurring Payments"
+      },
       "resources": {
         "title": "Resources"
       },
