@@ -5,6 +5,9 @@
     "previous": "Previous",
     "tagline": "A protocol for setting up payments between wallets",
     "docs": {
+      "3ppi": {
+        "title": "3rd Party Payment Initiation"
+      },
       "archived": {
         "title": "archived"
       },
