@@ -91,9 +91,10 @@ permission to send to it.
 ### Use Cases
 
 - [Web Monetization](./web-monetization)
-- [Tipping/Donations/Other Small Discreet Payments](#) _TODO_
-- [Invoice Payment](#) _TODO_
+- [P2P Payments](#) _TODO_
+- [Invoice Payment](#) _TODO_ 
 - [Online Checkout (Push)](#) _TODO_
+- [3PPI](#) _TODO_ ()
 
 ## Receiving Money
 

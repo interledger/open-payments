@@ -14,3 +14,9 @@
  * Authorization
  * Pay invoice support via QR code or URL or both.
 * Consider PaymentRequest name
+
+* Add various stakeholder pages
+    * Wallets
+    * Applications
+    * 3PPI
+    * Users

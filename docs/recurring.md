@@ -279,7 +279,7 @@ The Issuer uses the payment details to perform the payment over Interledger usin
 
 As payments are fulfilled, the `received` amount on the invoice would increase to reflect the payments.
 
-## 4. Check payment
+## 6. Check payment
 
 The merchant would validate the payment of the invoice with the Acquirer. This could be achieved through polling against the invoice
 or the Acquirer could provide convenience webhooks for the merchant to get notified of successful payments. This is left up to Wallets to

@@ -17,6 +17,9 @@
       "overview": {
         "title": "Open Payments"
       },
+      "p2p": {
+        "title": "Peer-to-Peer"
+      },
       "protocol": {
         "title": "Protocol"
       },
