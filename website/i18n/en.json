@@ -14,11 +14,23 @@
       "checkout_push": {
         "title": "Checkout (Push)"
       },
-      "oauth": {
-        "title": "OAuth 2.0 and Open ID Connect"
+      "discovery": {
+        "title": "Discovery"
+      },
+      "identity": {
+        "title": "Identity"
+      },
+      "invoices": {
+        "title": "Invoices"
+      },
+      "mandates": {
+        "title": "Mandates"
+      },
+      "auth": {
+        "title": "Authentication"
       },
       "overview": {
-        "title": "Open Payments"
+        "title": "Overview"
       },
       "p2p": {
         "title": "Peer-to-Peer"
@@ -35,6 +47,12 @@
       "todo": {
         "title": "todo"
       },
+      "wallet-app": {
+        "title": "Wallet-Application Interoperability"
+      },
+      "wallet-wallet": {
+        "title": "Wallet-Wallet Interoperability"
+      },
       "web-monetization": {
         "title": "Web Monetization"
       }
@@ -43,7 +61,6 @@
       "Specification": "Specification"
     },
     "categories": {
-      "Overview": "Overview",
       "Specification": "Specification",
       "Use Cases": "Use Cases"
     }

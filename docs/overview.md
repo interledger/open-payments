@@ -1,6 +1,6 @@
 ---
 id: overview
-title: Open Payments
+title: Overview
 ---
 
 Open Payments is a standard for interactions between digital payments systems
@@ -35,6 +35,8 @@ proposed to be deprecated in order to clean up the protocol and remove
 ambiguity.
 
 ## Ecosystem
+
+<img src="/img/four_corner.svg">
 
 Often referred to as the four-corner model, the primary roles in any payment are
 the customer (sender), merchant (receiver), acquirer (holds the account of the

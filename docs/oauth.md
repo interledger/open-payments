@@ -1,7 +1,14 @@
 ---
-id: oauth
-title: OAuth 2.0 and Open ID Connect
+id: auth
+title: Authentication
 ---
+
+
+Think about these things.
+* AuthN: Is this the account 
+* AuthZ: 
+* Consent: RO provides
+
 
 Open Payments embraces the tight relationship between identity, security, and
 payments and the need for payments systems to offer a way for access to be

@@ -1,7 +1,9 @@
 {
   "docs": {
-    "Overview": ["overview", "oauth"],
-    "Specification": ["resources", "protocol"],
-    "Use Cases": ["checkout_push", "recurring", "p2p", "3ppi", "web-monetization"]
+    "Specification":
+        ["overview", "discovery" ,"wallet-wallet", "wallet-app",
+          "invoices", "mandates", "auth", "identity"
+        ],
+    "Use Cases": ["checkout_push", "recurring", "p2p", "3ppi"]
   }
 }
