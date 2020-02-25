@@ -5,7 +5,7 @@ title: Invoices
 
 ## Invoices
 
-Invoice represents an amount payable that can be presented to a third party and/or a mandate to pay. 
+Invoices represent an amount payable that can be presented to a third party and/or a Mandate to pay. 
 
 | Property    | Type                |
 |-------------|---------------------| 

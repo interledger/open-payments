@@ -34,9 +34,6 @@ stream.end()
 The Issuing Wallet would debit the senders account within the wallet before performing the payment. Should the payment
 fail or only a partial amount sent, the wallet must credit the unsent balance back to the senders account.
 
-** Potentially add example full flow **
-
-
 ## Receiving Money
 
 In order to receive money over Open Payments, an Invoice would be created at the Acquiring Wallet and presented to the Sender.
@@ -70,7 +67,7 @@ allows the Acquiring Wallet to encode data into the address that can then be dec
 
 The following shows an example of encoding data into the credentials provided.
 ```javascript
-  //Dummy import - replace with own encoding
+  // Dummy import - replace with own encoding
   const { encodeData } = require('encoder') 
   
   const connectionTag = encodeData(invoiceId)
@@ -83,7 +80,7 @@ which Invoice at allocate the money received
 
 ### 2. Accounting for an incoming Payment
 
-As shown above, the Acquiring Wallet could use the invoice data encoded to determine which Invoice to credit for incoming
+As shown above, the Acquiring Wallet can use the invoice data encoded to determine which Invoice to credit for incoming
 STREAM payments.
 
 The following shows example code of what the Acquiring Wallet would do

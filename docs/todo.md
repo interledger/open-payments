@@ -2,7 +2,6 @@
 
 * Provide schema definitions for:
     - [ ] Invoice
-    - [ ] Session
     - [ ] Mandate
     - [ ] Asset
 
@@ -14,6 +13,8 @@
  * Authorization
  * Pay invoice support via QR code or URL or both.
 * Consider PaymentRequest name
+
+* Tutorial Section
 
 * Add various stakeholder pages
     * Wallets
