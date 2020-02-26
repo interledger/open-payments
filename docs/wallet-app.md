@@ -117,15 +117,13 @@ https://stripe.com/docs/api/charges/object. Nice properties of this is:
 
 Now that an application has a Mandate it needs the ability to initiate transactions against it. This is achieved 
 through `/charges` against the Mandate, where the information presented to the endpoint is an Invoice. This will 
-instruct the Issuing wallet to fulfill the Invoice within the scope of the Mandate. The Issuing wallet will
-use the invoice it has received to determine the details of where to pay.
+instruct the Issuing wallet to fulfill the Invoice within the scope of the Mandate.
 
 ### Application usage
 
 In order for an application to perform Charges, it first needs an Invoice. This Invoice can either be one created by the 
-Application or be given to the application by another party. 
-
-The wallet would submit this Invoice to the invoices `/charges` endpoint.
+Application or be given to the application by another party.  The Application would submit this Invoice to the invoices 
+`/charges` endpoint along with the `access_tokne` it received from the authorization flow.
 
 An example of the application doing this is
 
@@ -137,7 +135,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "invoice": "//aquirer.wallet/invoices/invoice_id"
+  "invoice": "//aquirer.wallet/invoices/15fdd9ce-5535-42a3-8042-848073ace4b7"
 }
 ```
 
@@ -148,24 +146,26 @@ HTTP/1.1 201 Created
 Content-Type: application/json
 
 {
-  "name": "//issuer.wallet/charges/charge_id",
-  "invoice": "//aquirer.wallet/invoices/invoice_id",
+  "name": "//issuer.wallet/charges/a395a5c0-f9cd-48bd-9c1a-19fb4d312d53",
+  "invoice": "//aquirer.wallet/invoices/15fdd9ce-5535-42a3-8042-848073ace4b7",
   "mandate": "//issuer.wallet/mandates/2fad69d0-7997-4543-8346-69b418c479a6"
   "status": "created"
 }
 ```
 
-This will instruct the Wallet to perform a payment of the Invoice under the terms of the Mandate. It is expected the Wallet
-perform this Payment immediately. The Application can query the charge to determine the status of the payment. 
+This will instruct the Wallet to perform a payment of the Invoice under the terms of the Mandate. The Wallet MUST
+perform this Payment immediately, given that funds are available. The Application can query the charge to determine the 
+status of the payment. 
 
 ### Wallet accounting
 
 When Applications create Chargers against the Mandate, the Wallet needs to account for the usage accordingly. The Wallet
-needs to account the usage against the Mandate as well as the ensure it debits the Users account.
+needs to account for the usage against the Mandate as well as the ensure it debits the Users account.
 
 An example of receiving a Charge.
 
 ```javascript
 
+// TODO add example
 
 ```

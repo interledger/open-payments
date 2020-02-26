@@ -3,8 +3,6 @@ id: invoices
 title: Invoices
 ---
 
-## Invoices
-
 Invoices represent an amount payable that can be presented to a third party and/or a Mandate to pay. 
 
 | Property    | Type                |
@@ -18,13 +16,9 @@ Invoices represent an amount payable that can be presented to a third party and/
 | subject     | Payment Pointer     |
 | description | string              |
 
-### STREAM Credentials
+## APIs
 
-### Tracking Money Received
-
-### APIs
-
-#### Create
+### Create
 
 A Client creates an Invoice by doing an HTTP POST of JSON document to the Invoices URL of the Invoices URI as defined in
 the OP Metadata.
@@ -76,7 +70,7 @@ Location: https://acquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e
 }
 ```
 
-#### Get
+### Get
 
 The Client reads the invoice by doing a HTTP GET of the corresponding Invoice name as URI. The Open Payments Server
 MUST respond with either an Invoice Response or an Error (TBD)
@@ -96,12 +90,12 @@ Content-Type: application/json
   "amount": 200,
   "assetCode": "USD",
   "assetScale": 2,
-  "description": "Paying for goods"
+  "description": "Paying for goods",
   "received": 158
 }
 ```
 
-#### Payment Details
+### Payment Details
 
 The Client gets the payment details of an Invoice by doing a HTTP OPTIONS of the corresponding Invoice name as URI. The Open 
 Payments Server MUST respond with either an Payment Details Response or an Error (TBD)
@@ -127,3 +121,8 @@ Location: https://acquirer.wallet/invocies/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0
 }
 ```
 
+## STREAM Credentials
+Describe the spec for generating STREAM credentials
+
+## Tracking Money Received
+Describe the requirement for tracking received amounts

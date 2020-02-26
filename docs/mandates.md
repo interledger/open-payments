@@ -3,11 +3,13 @@ id: mandates
 title: Mandates
 ---
 
+<!--
 Note to self: check this out https://stripe.com/docs/api/mandates/object
 * Nice properties to have: 
     * Acceptance
     * status
     * Multiuse? Not sure if this is needed but could be nice
+-->
 
 Mandates represents delegated access resource to a users account.
 
@@ -23,7 +25,6 @@ Mandates represents delegated access resource to a users account.
 | interval    | ISO Duration   | No       |
 | callbackUrl | URL            | No       |
 
-## Tracking Usage
 
 ## APIs
 
@@ -63,4 +64,7 @@ Content-Type: application/json
 
 ### Get
 
-### Spend
+### Charges
+
+## Tracking Usage
+

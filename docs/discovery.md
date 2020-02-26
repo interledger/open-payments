@@ -3,20 +3,19 @@ id: discovery
 title: Discovery
 ---
 
-
-When an entity wishes to push/pull money to/from a Payment Pointer they will
-resolve the Payment Pointer URL and fetch the metadata for the server described
+When an entity wishes to interact with a User in Open Payments, the first require the Payment Pointer for that User.
+A Payment Pointer they will resolve to a Payment Pointer URL. This allows the entity to fetch the metadata for the server described
 by that URL as defined in [RFC8414](https://tools.ietf.org/html/rfc8414).
 
 ## Issuer and Subject
 
 Given a URL that has been resolved from a Payment Pointer a client can derive
-both the issuer identifier and subject identifier.
+both the issuer identifier and subject identifier. 
 
 Payment Pointers resolve to HTTPS URLs which are the unique subject identifiers
 for the subject of the Payment Pointer.
 
-The issuer identifier is the same URL with the `path`, `query string` and
+The Issuer identifier is the same URL with the `path`, `query string` and
 `fragment` trimmed away.
 
 E.g. Given the Payment Pointer `$wallet.example/alice` the subject identifier is
@@ -26,7 +25,7 @@ E.g. Given the Payment Pointer `$wallet.example/alice` the subject identifier is
 Once the client has determined the issuer identifier it can retrieve the server
 metadata for the issuer.
 
-## Meta-Data
+## Metadata
 
 The metadata is a JSON document resource that describes the various service
 endpoints that are available to:
@@ -49,13 +48,7 @@ It also states the following:
 > suffixes used to publish authorization server metadata as used by those
 > applications.
 
-Open Payments defines the well-known URL `/.well-known/open-payments` but, as
-specified in [RFC8414](https://tools.ietf.org/html/rfc8414), allows for the same
-document to be served at multiple URLs such as
-`/.well-known/oauth-authorization-server` or `./well-known/openid-configuration`
-which are already in wide use.
-
-The meta-data document MUST be queried using an HTTP "GET" request at the
+Open Payments defines the well-known URL `/.well-known/open-payments`. The meta-data document MUST be queried using an HTTP "GET" request at the
 previously specified path.
 
 The client would make the following request when the issuer identifier is
@@ -78,19 +71,31 @@ From [RFC8414](https://tools.ietf.org/html/rfc8414):
 
 Open Payments defines the following additional claims:
 
-- `payment_invoices_endpoint`  
+- `issuer`  
+  URL of the server's sessions endpoint where the client is able to create new
+  sessions with the `subject`.
+  
+- `authorization_issuer`  
+    URL of the server's sessions endpoint where the client is able to create new
+    sessions with the `subject`.
+
+- `authorization_endpoint`  
+    URL of the server's sessions endpoint where the client is able to create new
+    sessions with the `subject`.
+
+- `token_endpoint`  
+    URL of the server's sessions endpoint where the client is able to create new
+    sessions with the `subject`.
+
+- `invoices_endpoint`  
   URL of the server's invoices endpoint where the client is able to create new
   invoices with the `subject`.
 
-- `payment_mandates_endpoint`  
+- `mandates_endpoint`  
   URL of the server's mandates endpoint where the client is able to create new
   mandates with the `subject`.
 
-- `payment_sessions_endpoint`  
-  URL of the server's sessions endpoint where the client is able to create new
-  sessions with the `subject`.
-
-- `payment_assets_supported`  
+- `assets_supported`
   A list of asset definitions for assets that can be used to create agreements
   on this server. The schema of an asset definition is defined in
   [Assets](#assets).
@@ -110,7 +115,8 @@ Content-Type: application/json
 
 {
   "issuer": "https://wallet.example",
-  "authorization_issuer": "https://auth.wallet.example/authorize",
+  "authorization_issuer": "https://auth.wallet.example",
+  "authorization_endpoint": "https://auth.wallet.example/authorize",
   "payment_invoices_endpoint": "https://wallet.example/invoices",
   "payment_mandates_endpoint": "https://wallet.example/mandates",
   "payment_assets_supported": [

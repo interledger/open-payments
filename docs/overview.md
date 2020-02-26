@@ -3,58 +3,53 @@ id: overview
 title: Overview
 ---
 
-Open Payments is a standard for interactions between digital payments systems
-(wallets) to setup and authorize payments for a variety of common use cases.
+Open Payments is a standard for interactions between digital payments systems (wallets) to setup and authorize payments 
+for a variety of common use cases. While most payment networks have well defined protocols for executing a payment,
+no standards exist for discovery and setup of the payment between different parties using different wallets or account 
+providers.
 
-While most payment networks have well defined protocols for executing a payment,
-no standards exist for discovery and setup of the payment between different
-parties using different wallets or account providers.
+Open Payments builds on web technologies to define standard flows for the discovery of counter-party systems and setup 
+of the payment for a variety of payment use cases. Open Payments is designed as an application level protocol built on 
+top of Interledger.
 
-Open Payments builds on the OAuth and Open ID Connect frameworks to define
-standard flows for the discovery of counter-party systems and setup of the
-payment for a variety of payment use cases.
+The Interledger protocol (ILP) is a minimal payments clearing protocol. It was developed to mimic many of the 
+characteristics of the Internet Protocol stack in order to “internetwork” clearing participants. The effect of using 
+this model is a highly scalable and simple global clearing network on which rapid innovation is possible. Using ILP, 
+participants “peer” with other network participants and exchange clearing instructions (ILP packets) directly or 
+indirectly with other participants on the network.
 
-While Open Payments is designed to setup payments executed over the Interledger
-protocol it could be easily extended to support any underlying clearing network.
+The advantage of using ILP over other clearing protocols is that it has been explicitly designed to facilitate high
+interoperability between participants irrespective of the use case. Senders and receivers establish the terms of
+the payment before starting to exchange ILP packets to clear the funds. As a result, technologies built on ILP are not
+siloed by the payment networks they choose to support.
 
 ## Background
 
 Open Payments is an evolution of the
-[Simple Payment Setup Protocol (SPSP)](https://interledger.org/rfcs/0009-simple-payment-setup-protocol/),
-providing support for new use cases and integrating into OAuth 2.0 so that
-existing identity infrastructure can be leveraged to handle payments
-authorization.
+[Simple Payment Setup Protocol (SPSP)](https://interledger.org/rfcs/0009-simple-payment-setup-protocol/), providing
+support for new use cases and integrating into OAuth 2.0 so that existing identity infrastructure can be leveraged to
+handle payments authorization.
 
+<!-- 
 In the sections that follow, functions and features of Open Payments are
 compared with analogous functions and features of SPSP to help implementors that
 are upgrading to Open Payments from SPSP understand the differences (and
 similarities).
-
-Open Payments is backwards-compatible with SPSP but certain features of SPSP are
-proposed to be deprecated in order to clean up the protocol and remove
-ambiguity.
-
-## Ecosystem
+-->
 
 <img src="/img/four_corner.svg">
 
-Often referred to as the four-corner model, the primary roles in any payment are
-the customer (sender), merchant (receiver), acquirer (holds the account of the
-merchant) and the issuer (holds the account of the customer).
+Often referred to as the four-corner model, the primary roles in any payment are the Customer (Sender), Merchant
+ (Receiver), Acquirer (holds the account of the merchant) and the Issuer (holds the account of the customer). The
+  four-corner model is very card-centric but still provides a good model on which to base any retail payments protocol.
 
-The four-corner model is very card-centric but still provides a good model on
-which to base any retail payments protocol.
+In the Open Payments ecosystem an issuer doesn't issue its users payment cards. Instead it issues them one or more
+[Payment Pointers](./pointers) which serve a similar purpose to the PAN (card number) on a payment card with
+the critical difference that a payment pointer is not sensitive and can't be used to pull money from the user's
+ account without explicit consent. This solves one of the major challenges faced by cards online.
 
-In the Open Payments ecosystem an issuer doesn't issue its users payment cards.
-Instead it issues them one or more [payment pointers](./pointers) which serve a
-similar purpose to the PAN (card number) on a payment card with the critical
-difference that a payment pointer is not sensitive and can't be used to pull
-money from the user's account without explicit consent. This solves one of the
-major challenges faced by cards online.
-
-Open Payments also leverages [OAuth 2.0](./oauth) for authorization of payments
-therefor it is useful to map the roles defined by [OAuth 2.0](./oauth) to the
-four-corner model.
+Open Payments also leverages [OAuth 2.0](./oauth) for authorization of payments therefor it is useful to map the
+ roles defined by [OAuth 2.0](./oauth) to the four-corner model.
 
 | Open Payments     | OAuth 2.0                                   |
 | ----------------- | ------------------------------------------- |
@@ -80,28 +75,4 @@ four-corner model.
   a generic label for the entity that hosts either the sender's or receiver's
   account (i.e. the issuer or acquirer).
 
-<<-- TODO : Four Corner Image -->>
-
-[How does it work...](./protocol)
-
-## Sending Money
-
-Sending money is the simplest case as it doesn't require interaction from the
-receiver unless the receiver or receiver's account provider requires explicit
-permission to send to it.
-
-### Use Cases
-
-- [Web Monetization](./web-monetization)
-- [P2P Payments](#) _TODO_
-- [Invoice Payment](#) _TODO_ 
-- [Online Checkout (Push)](#) _TODO_
-- [3PPI](#) _TODO_ ()
-
-## Receiving Money
-
-Initiating the Open Payments flow as a payee is more complicated than sending
-but is the most common use case on the Web today.
-
-- [Online Checkout (Pull)](#) _TODO_
-- [Subscriptions](#) _TODO_
+## Terminology

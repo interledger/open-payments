@@ -11,6 +11,9 @@
       "archived": {
         "title": "archived"
       },
+      "charges": {
+        "title": "Charges"
+      },
       "checkout_push": {
         "title": "Checkout (Push)"
       },
@@ -34,6 +37,9 @@
       },
       "p2p": {
         "title": "Peer-to-Peer"
+      },
+      "payment-request": {
+        "title": "Payment Request"
       },
       "protocol": {
         "title": "Protocol"
