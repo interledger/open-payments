@@ -19,16 +19,32 @@ Mandates represents delegated access resource to a users account.
 | amount      | int64          | Yes      |
 | assetCode   | string         | Yes      |
 | assetScale  | int32          | Yes      |
-| scope       | PaymentPointer | Yes      |
+| subject     | PaymentPointer | Yes      |
 | startAt     | DateTime       | No       |
 | expiresAt   | DateTime       | No       |
 | interval    | ISO Duration   | No       |
-| callbackUrl | URL            | No       |
-
 
 ## APIs
 
 ### Create
+
+A Client creates a Mandate by doing an HTTP POST of JSON document to the Mandates endpoint as defined in the Open
+Payments Metadata.
+
+The JSON document MUST include the following:
+* amount
+* assetCode
+* assetScale
+* subject
+
+and MAY include the following:
+* startAt
+* expiresAt
+* interval
+
+The Open Payments Server MUST respond with a Mandate Response or an error (TDB).
+
+The following is a non-normative example where the Client creates a mandate at the Issuing Wallet
 
 ```http
 POST /mandates HTTP/1.1
@@ -45,6 +61,8 @@ Content-Type: application/json
 }
 ```
 
+with a non-normative response from the Open Payments Server
+
 ```http
 HTTP/1.1 201 Created
 Content-Type: application/json
@@ -56,15 +74,46 @@ Content-Type: application/json
   "assetScale": 2,
   "interval": "P1M",
   "startAt": "2020-01-22T00:00:00Z",
-  "startAt": "2020-01-22T00:00:00Z",
-  "scope": "issuer.wallet/user",
+  "subject": "issuer.wallet/user",
   "balance": 200
 }
 ```
 
 ### Get
 
+The Client reads the mandate by doing a HTTP GET of the corresponding Mandate name as URI. The Open Payments Server
+MUST respond with either an Mandate Response or an Error (TBD)
+
+The following is a non-normative example where the Client reads an mandate
+
+```http
+GET /mandates/2fad69d0-7997-4543-8346-69b418c479a6 HTTP/1.1
+Host: issuer.wallet
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi...
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "//issuer.wallet/mandates/2fad69d0-7997-4543-8346-69b418c479a6",
+  "amount": 200,
+  "assetCode" : "USD",
+  "assetScale": 2,
+  "interval": "P1M",
+  "startAt": "2020-01-22T00:00:00Z",
+  "subject": "issuer.wallet/user",
+  "balance": 200
+}
+```
+
 ### Charges
 
+Wallet MUST implement the Charges API for Mandates. This is defined in the [Charges section](charges.md)
+
 ## Tracking Usage
+
+Wallets must enforce the 
+
+## User Management
+
+It is recommended Wallets provide Users with the ability to manage their mandates.
 

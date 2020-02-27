@@ -117,9 +117,9 @@ Content-Type: application/json
   "issuer": "https://wallet.example",
   "authorization_issuer": "https://auth.wallet.example",
   "authorization_endpoint": "https://auth.wallet.example/authorize",
-  "payment_invoices_endpoint": "https://wallet.example/invoices",
-  "payment_mandates_endpoint": "https://wallet.example/mandates",
-  "payment_assets_supported": [
+  "invoices_endpoint": "https://wallet.example/invoices",
+  "mandates_endpoint": "https://wallet.example/mandates",
+  "assets_supported": [
     {"code": "USD", "scale": 2},
     {"code": "EUR", "scale": 2}
   ]

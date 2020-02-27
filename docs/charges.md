@@ -3,4 +3,76 @@ id: charges
 title: Charges
 ---
 
-Charges represent objects with which the 
+Charges represent objects with which Clients can instruct Wallets to perform a Payment to an Invoice within the scope
+of a Mandate. Wallets MUST implement the Charges API on conjunction with Mandates.
+
+| Property    | Type           |
+|-------------|----------------|
+| id          | UUID           |
+| invoice     | int64          |
+| mandate     | int64          |
+| status      | enum           |
+
+## APIs
+
+### Create
+
+A Client creates a Charge by doing an HTTP POST of JSON document to an endpoint constructed by appending `/charges` on
+the Mandate URI for which they wish to perform the Charge against.
+
+The JSON document MUST include the following:
+* invoice
+
+The Open Payments Server MUST respond with a Charge Response or an error (TDB).
+
+The following is a non-normative example of a Client creating a Charge against a Mandate.
+
+```http
+POST /mandates/2fad69d0-7997-4543-8346-69b418c479a6/charges HTTP/1.1
+Host: issuer.wallet
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi...
+Content-Type: application/json
+
+{
+  "invoice": "//acquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
+}
+```
+
+with a non-normative response from the Open Payments Server
+
+```http
+HTTP/1.1 201 Created
+Content-Type: application/json
+
+{
+  "name": "//issuer.wallet/charges/a395a5c0-f9cd-48bd-9c1a-19fb4d312d53",
+  "invoice": "//aquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
+  "mandate": "//issuer.wallet/mandates/2fad69d0-7997-4543-8346-69b418c479a6",
+  "status": "created"
+}
+```
+
+### Get
+
+The Client reads the Charge by doing a HTTP GET of the corresponding Charge name as URI. The Open Payments Server
+MUST respond with either a Charge Response or an Error (TBD)
+
+The following is a non-normative example where the Client reads an Charge
+
+```http
+GET /charges/a395a5c0-f9cd-48bd-9c1a-19fb4d312d53 HTTP/1.1
+Host: issuer.wallet
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi...
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "//issuer.wallet/charges/a395a5c0-f9cd-48bd-9c1a-19fb4d312d53",
+  "invoice": "//aquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
+  "mandate": "//issuer.wallet/mandates/2fad69d0-7997-4543-8346-69b418c479a6",
+  "status": "succesful"
+}
+```
+
+

@@ -11,6 +11,9 @@
       "archived": {
         "title": "archived"
       },
+      "auth": {
+        "title": "Authentication"
+      },
       "charges": {
         "title": "Charges"
       },
@@ -28,9 +31,6 @@
       },
       "mandates": {
         "title": "Mandates"
-      },
-      "auth": {
-        "title": "Authentication"
       },
       "overview": {
         "title": "Overview"
