@@ -155,7 +155,7 @@ Content-Type: application/json
 
 This will instruct the Wallet to perform a payment of the Invoice under the terms of the Mandate. The Wallet MUST
 perform this Payment immediately, given that funds are available. The Application can query the charge to determine the 
-status of the payment. 
+status of the payment.
 
 ### Wallet accounting
 

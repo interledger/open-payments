@@ -21,3 +21,5 @@
     * Applications
     * 3PPI
     * Users
+
+* Guide to building a client library https://developers.google.com/discovery/v1/building-a-client-library
