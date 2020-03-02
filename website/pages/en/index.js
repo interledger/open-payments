@@ -21,7 +21,7 @@ class HomeSplash extends React.Component {
     const langPart = `${language ? `${language}/` : ''}`
     const docUrl = doc => `${baseUrl}${docsPart}${langPart}${doc}`
     const pageUrl = page => `${baseUrl}${langPart}${page}`
-  
+
     const SplashContainer = props => (
       <div className="homeContainer">
         <div className="homeSplashFade">
@@ -89,7 +89,7 @@ class HomeSplash extends React.Component {
           </div>
           <PromoSection>
             <Button href={pageUrl('rafiki')}>Try It Out</Button>
-            <Button href={docUrl('protocol')}>Docs</Button>
+            <Button href={docUrl('overview')}>Docs</Button>
           </PromoSection>
         </div>
       </SplashContainer>
