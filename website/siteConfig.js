@@ -73,7 +73,7 @@ const siteConfig = {
   scripts: [
     'https://buttons.github.io/buttons.js',
     'https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.4.4/mermaid.min.js',
-    'scripts/init.js',
+    '/scripts/init.js',
   ],
   markdownPlugins: [ (md) => {
     md.renderer.rules.fence_custom.mermaid = (tokens, idx, options, env, instance) => {
