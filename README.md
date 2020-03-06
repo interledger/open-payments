@@ -1,4 +1,8 @@
-## Open Payments
+<p align="center">
+  <img src="website/static/img/Open Payments Logo with text.svg" width="700" alt="Interledger.rs">
+</p>
+
+---
 
 Open Payments is a protocol that can be implemented by digital wallets to
 facilitate interoperability in the setup of payments for different use cases.

@@ -1,0 +1,25 @@
+{
+  "name": "open-payments",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@zeit/next-css": "^1.0.1",
+    "next": "9.2.2",
+    "react": "16.13.0",
+    "react-dom": "16.13.0"
+  },
+  "devDependencies": {
+    "@types/node": "^13.7.7",
+    "@types/react": "^16.9.23",
+    "autoprefixer": "^9.7.2",
+    "postcss-loader": "^3.0.0",
+    "tailwindcss": "^1.2.0",
+    "tailwindcss-elevation": "^0.3.3",
+    "typescript": "^3.8.3"
+  }
+}

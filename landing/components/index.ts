@@ -1,0 +1,8 @@
+export { default as Button } from './button'
+export { default as Card } from './card'
+export { default as Content } from './content'
+export { default as Logo } from './logo'
+export { default as Decor } from './decor'
+export { default as Phone } from './phone'
+export { default as Browser } from './browser'
+export { default as Footer } from './footer'
