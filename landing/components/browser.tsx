@@ -1,14 +1,13 @@
 import * as React from 'react'
 
 type props = {
-  height?: number
   className?: string
 }
 
 const Browser: React.FC<props> = (props) => {
   return (
     <div className={props.className}>
-      <svg  width={ props.height || 'auto' } height="auto" viewBox="0 0 523 387" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg viewBox="0 0 523 387" fill="none" xmlns="http://www.w3.org/2000/svg">
         <rect width="522.667" height="386.133" rx="7.82222" fill="#8FD1C1"/>
         <rect x="110.222" y="142.933" width="98.8444" height="100.267" rx="3.55556" fill="#F59297"/>
         <rect x="244.622" y="142.934" width="123.022" height="17.0667" rx="3.55556" fill="#F59297"/>

@@ -1,14 +1,13 @@
 import * as React from 'react'
 
 type props = {
-  height: number
-  text?: boolean
+  className?: string
 }
 
 const Logo: React.FC<props> = (props) => {
   return (
-    <div>
-      <svg width={props.height} height={props.height} viewBox="0 0 589 589" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <div className={props.className}>
+      <svg viewBox="0 0 589 589" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path fillRule="evenodd" clipRule="evenodd" d="M587.335 263C576.17 158 509.824 69.4817 417.852 27H332V97.3168C414.339 113.232 478.686 179.619 491.565 263H587.335Z" fill="#F59297"/>
         <path fillRule="evenodd" clipRule="evenodd" d="M159 556.045V441.714C150.068 433.57 141.877 424.628 134.539 415H64V477.821C89.7139 510.11 122.07 536.874 159 556.045Z" fill="#8FD1C1"/>
         <path fillRule="evenodd" clipRule="evenodd" d="M587.541 265H491.864C493.219 274.404 493.921 284.019 493.921 293.798C493.921 323.364 487.509 351.433 476 376.69V415H563.299C579.813 378.218 589 337.432 589 294.5C589 284.544 588.506 274.702 587.541 265Z" fill="#FABD84"/>

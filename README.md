@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="website/static/img/Open Payments Logo with text.svg" width="700" alt="Interledger.rs">
+  <img src="website/static/img/Open Payments Logo with text.svg" width="700" alt="Open Payments">
 </p>
 
 ---
