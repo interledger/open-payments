@@ -14,7 +14,7 @@ attempts to formalise/simplify the concept of grouping payments received through
 
 ## Overview
 The term Monetization is used to encompass use-cases where payments are made piecemeal. These use-cases don't have
-defined amounts to be paid and therefore need another mechanism for applications to be developed. The mechanism
+defined amounts to be paid and therefore need a mechanism to account for them. The mechanism
 proposed is in the form of a Monetization Endpoint. This is an endpoint that when queried for STREAM
 credentials will provide the details for a currently "open" Invoice. Where "open" means an Invoice that is still
 able to receive incoming Payments. At any time the Invoice can be "closed", at which point it will stop
