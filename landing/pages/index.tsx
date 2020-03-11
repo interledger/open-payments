@@ -52,7 +52,7 @@ const Home: NextPage = () => {
         </div>
       </div>
       {/* SCREEN 3 */}
-      <div className="flex flex-col sm:flex-row w-full sm:h-screen wrap">
+      <div className="flex flex-col-reverse sm:flex-row w-full sm:h-screen wrap">
         <div className="flex flex-col w-full sm:w-1/2 text-right h-full justify-center items-end self-end px-12 sm:pl-12">
           <div className="text-3xl md:text-4xl text-primary my-6">
             For wallets
@@ -75,31 +75,24 @@ const Home: NextPage = () => {
       </div>
       <Footer bg="red">
         <div className="flex flex-col items-center justify-center text-white wrap">
-          <div className="flex flex-row items-center justify-center w-full">
+          <div className="flex flex-row items-start justify-center w-full">
             <div className="flex flex-col w-card">
               <div className="text-lg font-medium mb-4">Protocol</div>
-              <a className="text-base md:opacity-75 md:hover:opacity-100 mb-1" href="https://interledger.slack.com/archives/CPL2HTF54">
-                {/* <img className="h-12"  height="30" src="social/Slack_RGB_White.svg"/> */}
+              <a className="text-base md:opacity-60 md:hover:opacity-100 mb-1" href="https://docs.openpayments.dev">
                 Specification
-              </a>
-              <a className="text-base md:opacity-75 md:hover:opacity-100 mb-4" href="https://github.com/adrianhopebailie/open-payments">
-                {/* <img className="h-6" height="30" src="social/GitHub_Logo_White.png"/> */}
-                Github
               </a>
             </div>
             <div className="flex flex-col w-card">
               <div className="text-lg font-medium mb-4">Community</div>
-              <a className="text-base md:opacity-75 md:hover:opacity-100 mb-1" href="https://interledger.slack.com/archives/CPL2HTF54">
-                {/* <img className="h-12"  height="30" src="social/Slack_RGB_White.svg"/> */}
+              <a className="text-base md:opacity-60 md:hover:opacity-100 mb-1" href="https://interledger.slack.com/archives/CPL2HTF54">
                 Slack
               </a>
-              <a className="text-base md:opacity-75 md:hover:opacity-100 mb-4" href="https://github.com/adrianhopebailie/open-payments">
-                {/* <img className="h-6" height="30" src="social/GitHub_Logo_White.png"/> */}
+              <a className="text-base md:opacity-60 md:hover:opacity-100 mb-4" href="https://github.com/adrianhopebailie/open-payments">
                 Github
               </a>
             </div>
           </div>
-          <div className="w-full text-right text-xs">
+          <div className="w-full text-center sm:text-right text-xs">
             Copyright &copy; 2019 - {new Date().getFullYear()} Interledger Foundation
           </div>
         </div>
