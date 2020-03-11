@@ -16,5 +16,6 @@ RUN npm install
 COPY . .
 
 RUN npm run build
+RUN npm install http-server -g
 
-CMD [ "npm", "start" ]
+CMD [ "http-server", "./build/open-payments", "-i", "false" ]
