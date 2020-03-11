@@ -14,7 +14,7 @@ steps:
    - '--image'
    - 'gcr.io/$PROJECT_ID/open-payments-landing:$COMMIT_SHA'
    - '--region'
-   - '[REGION]'
+   - 'us-central1'
    - '--platform'
    - 'managed'
 images:
