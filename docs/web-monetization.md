@@ -15,31 +15,32 @@ attempts to formalise/simplify the concept of grouping payments received through
 ## Overview
 The term Monetization is used to encompass use-cases where payments are made piecemeal. These use-cases don't have
 defined amounts to be paid and therefore need a mechanism to account for them. The mechanism
-proposed is in the form of a Monetization Endpoint. This is an endpoint that when queried for STREAM
-credentials will provide the details for a currently "open" Invoice. Where "open" means an Invoice that is still
-able to receive incoming Payments. At any time the Invoice can be "closed", at which point it will stop
-accepting incoming payments. Once the Invoice is closed, the Wallet can sum the payments recieved for that Invoice of
-Invoice and allocate the funds to the Users balance on its own internal ledger system. Any new requests for STREAM
-credentials will require a new "open" Invoice to be generated. The mechanism for closing out Invoices can be determined 
-by the Wallet but will generally be time based. Wallets supporting Monetization will provider their Users with a
-Monetization Endpoint/s. Further it will ensure there is always an "open" Invoice when credentials are requested from
-a Client. This can be created lazily.
+proposed is that a Payment Pointer converted into its URL format is a Monetization Endpoint. The term Monetization
+Endpoint was chosen as this proposal allows for use cases that include but are not limited to Web Monetization, such
+as Codius Hosts and yet to be defined future use-cases. For example, given the Payment Pointer `$issuer.wallet/alice
+`, the Monetization Endpoint would be `https://issuer.wallet/alice` .
 
-The term Monetization Endpoint was chosen as this proposal allows for use cases that include but are not limited
-to Web Monetization, such as Codius Hosts and yet to be defined future use-cases.
+A Monetization Endpoint is an endpoint that when queried for STREAM credentials will provide the details for a
+currently "open" Invoice. Where "open" means an Invoice that is still able to receive incoming Payments. At any time
+the Invoice can be "closed", at which point it will stop accepting incoming payments. Once the Invoice is closed, the
+ Wallet can sum the payments received for that Invoice and allocate the funds to the Users balance on its
+own internal ledger system. Any new requests for STREAM credentials will require a new "open" Invoice to be generated
+. The mechanism for closing out Invoices can be determined by the Wallet but will generally be time based. Wallets
+supporting Monetization will provide their Users with a Payment Pointer that is Monetization Enabled. Further it will
+ensure there is always an "open" Invoice when credentials are requested from a Client. This can be created lazily.
 
 ## Client Interaction
 
-Given a Monetization Endpoint, an entity wishing to get STREAM credentials can make an HTTP `GET`/`OPTIONS` request
-against the endpoint. A non-normative example is
+Given a Payment Pointer that supports Monetization, `$issuer.wallet/alice`, an entity wishing to get STREAM credentials
+can make an HTTP `GET` request against the Payment Pointer into is URL form. A non-normative example is
 
 ```http request
-GET /monetization/4c885b94-7bf0-4222-8224-6d27c6ac9198 HTTP/1.1
+GET /alice HTTP/1.1
 Host: issuer.wallet
 ```
 
 with the response returning the STREAM credentials for the current "open" Invoice for monetization. An example
-response would be. (This could potentially be a 302 to the Invoices OPTIONS endpoint)
+response would be.
 
 ```http request
 HTTP/1.1 200 OK
@@ -63,10 +64,10 @@ as header values in the request. The following are values that must be supported
 Whilst the above shows how a client would interact with the system, Wallets still need to know how to handle it
 within their own codebase.
 
-Given a request to the monetization URL
+Given a request to the Payment Pointer, `$issuer.wallet/alice`
 
 ```http request
-GET /monetization/4c885b94-7bf0-4222-8224-6d27c6ac9198 HTTP/1.1
+GET /alice HTTP/1.1
 Host: issuer.wallet
 ```
 
@@ -172,18 +173,10 @@ the associated Monetization Endpoint for a User.
 In order for Wallets to support this, it may be easier for wallets in the background to map the default payment
 pointer given to the user to a Monetization Endpoint they generate.
 
-<!--
-## Proxying Monetization Requests
-
-For certain use-cases, the User may want the ability for a third-party to verify payments etc. An example is Cinnamon
-where a user would provide Cinnamon with a Monetization Endpoint.
--->
-
 ## Notes
-Talk about the relation between Open Payments and Web Monetization
-* Link rel is a place where doing a GET gets the current Invoice Open for session
-* Resolving a Payment Pointer to the actual WM_URL that will be provided in the REL
-* Work out how this works with Codius/Paid API requests
+Changes:
+* For Monetization it is proposed changing the destination_account to ilpAddress to be remove confusion on the
+ account aspect.
 
 Ideas:
 * Just call it a Monetization Endpoint instead of WM. As people can build interesting use-cases with this and
@@ -193,5 +186,4 @@ Issues:
 * Given a payment pointer, can I resolve a users monetization URL? Should this even be possible?
 * How to resolve expiry of credentials/when an Invoice has been deemed closed? STREAM layer fails and then you would
  propagate it to the Application layer potentially.
-* Should there be a deprecation plan for SPSP & Payment Pointers being used in the canonical form ($payment.poinert
-.com) for use cases other than for discovery.
+* Should there be a deprecation plan for SPSP?
