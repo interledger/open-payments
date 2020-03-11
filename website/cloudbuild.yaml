@@ -17,5 +17,7 @@ steps:
    - 'us-central1'
    - '--platform'
    - 'managed'
+   - '--port'
+   - '5000'
 images:
  - 'gcr.io/$PROJECT_ID/open-payments-docs:$COMMIT_SHA'
