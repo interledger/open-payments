@@ -28,22 +28,18 @@ const siteConfig = {
   projectName: 'open-payments',
   organizationName: 'adrianhopebailie',
   // For no header links in the top nav bar -> headerLinks: [],
-  headerLinks: [
-    {doc: 'overview', label: 'Specification'},
-    // {page: 'help', label: 'Help'}
-  ],
-
+  headerLinks: [],
   //Set the CNAME
   cname: 'openpayments.dev',
 
   /* path to images for header/footer */
-  headerIcon: 'img/favicon.ico',
-  footerIcon: 'img/favicon.ico',
-  favicon: 'img/favicon.ico',
+  headerIcon: 'img/Open Payments Logo.svg',
+  footerIcon: 'img/Open Payments Logo.svg',
+  favicon: 'img/Open Payments Logo.svg',
 
   /* Colors for website */
   colors: {
-    primaryColor: '#542344',
+    primaryColor: '#1E3250',
     secondaryColor: '#bfd1e5',
   },
 
@@ -62,7 +58,7 @@ const siteConfig = {
   */
 
   // This copyright info is used in /core/Footer.js and blog RSS/Atom feeds.
-  copyright: `Copyright © ${new Date().getFullYear()} Coil Technologies`,
+  copyright: `Copyright © 2019 - ${new Date().getFullYear()} Interledger Foundation`,
 
   highlight: {
     // Highlight.js theme to use for syntax highlighting in code blocks.
