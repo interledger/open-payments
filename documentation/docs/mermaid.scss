@@ -1,0 +1,230 @@
+:root {
+  --mainBkg: #ECECFF;
+  --secondBkg: #ffffde;
+  --lineColor: #333333;
+  --border1: #CCCCFF;
+  --border2: #aaaa33;
+  --arrowheadColor: #333333;
+
+  /* Flowchart variables */
+
+  --nodeBkg: --mainBkg;
+  --nodeBorder: #9370DB;
+  --clusterBkg: --secondBkg;
+  --clusterBorder: --border2;
+  --defaultLinkColor: --lineColor;
+  --titleColor: #333;
+  --edgeLabelBackground: #e8e8e8;
+
+  /* Sequence Diagram variables */
+
+  --actorBorder: --border1;
+  --actorBkg: --mainBkg;
+  --actorTextColor: black;
+  --actorLineColor: grey;
+  --signalColor: #333;
+  --signalTextColor: #333;
+  --labelBoxBkgColor: --actorBkg;
+  --labelBoxBorderColor: --actorBorder;
+  --labelTextColor: --actorTextColor;
+  --loopTextColor: --actorTextColor;
+  --noteBorderColor: --border2;
+  --noteBkgColor: #fff5ad;
+  --activationBorderColor: #666;
+  --activationBkgColor: #f4f4f4;
+  --sequenceNumberColor: white;
+
+  /* Gantt chart variables */
+
+  --sectionBkgColor: rgba(102, 102, 255, 0.49);
+  --altSectionBkgColor: white;
+  --sectionBkgColor2: #fff400;
+  --taskBorderColor: #534fbc;
+  --taskBkgColor: #8a90dd;
+  --taskTextLightColor: white;
+  --taskTextColor: --taskTextLightColor;
+  --taskTextDarkColor: black;
+  --taskTextOutsideColor: --taskTextDarkColor;
+  --taskTextClickableColor: #003163;
+  --activeTaskBorderColor: #534fbc;
+  --activeTaskBkgColor: #bfc7ff;
+  --gridColor: lightgrey;
+  --doneTaskBkgColor: lightgrey;
+  --doneTaskBorderColor: grey;
+  --critBorderColor: #ff8888;
+  --critBkgColor: red;
+  --todayLineColor: red;
+
+  /* state colors */
+  --labelColor: black;
+
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --mainBkg: #BDD5EA;
+    --secondBkg: #6D6D65;
+    --mainContrastColor: lightgrey;
+    --darkTextColor: #323D47;
+    --lineColor: --mainContrastColor;
+    --border1: #81B1DB;
+    --border2: rgba(255, 255, 255, 0.25);
+    --arrowheadColor: --mainContrastColor;
+
+    /* Flowchart variables */
+
+    --nodeBkg: --mainBkg;
+    --nodeBorder: purple;
+    --clusterBkg: --secondBkg;
+    --clusterBorder: --border2;
+    --defaultLinkColor: --lineColor;
+    --titleColor: #F9FFFE;
+    --edgeLabelBackground: #e8e8e8;
+
+    /* Sequence Diagram variables */
+
+    --actorBorder: --border1;
+    --actorBkg: --mainBkg;
+    --actorTextColor: black;
+    --actorLineColor: --mainContrastColor;
+    --signalColor: --mainContrastColor;
+    --signalTextColor: --mainContrastColor;
+    --labelBoxBkgColor: --actorBkg;
+    --labelBoxBorderColor: --actorBorder;
+    --labelTextColor: --darkTextColor;
+    --loopTextColor: --mainContrastColor;
+    --noteBorderColor: --border2;
+    --noteBkgColor: #fff5ad;
+    --activationBorderColor: #666;
+    --activationBkgColor: #f4f4f4;
+    --sequenceNumberColor: white;
+
+    /* Gantt chart variables */
+
+    --sectionBkgColor: rgba(255, 255, 255, 0.3);
+    --altSectionBkgColor: white;
+    --sectionBkgColor2: #EAE8B9;
+    --taskBorderColor: rgba(255, 255, 255, 0.5);
+    --taskBkgColor: --mainBkg;
+    --taskTextColor: --darkTextColor;
+    --taskTextLightColor: --mainContrastColor;
+    --taskTextOutsideColor: --taskTextLightColor;
+    --taskTextClickableColor: #003163;
+    --activeTaskBorderColor: rgba(255, 255, 255, 0.5);
+    --activeTaskBkgColor: #81B1DB;
+    --gridColor: --mainContrastColor;
+    --doneTaskBkgColor: --mainContrastColor;
+    --doneTaskBorderColor: grey;
+    --critBorderColor: #E83737;
+    --critBkgColor: #E83737;
+    --taskTextDarkColor: --darkTextColor;
+    --todayLineColor: #DB5757;
+
+    /* state colors */
+    --labelColor: black;
+  }
+}
+
+.actor {
+  stroke: --actorBorder;
+  fill: --actorBkg;
+}
+
+text.actor {
+  fill: --actorTextColor;
+  stroke: none;
+}
+
+.actor-line {
+  stroke: --actorLineColor;
+}
+
+.messageLine0 {
+  stroke-width: 1.5;
+  stroke-dasharray: '2 2';
+  stroke: --signalColor;
+}
+
+.messageLine1 {
+  stroke-width: 1.5;
+  stroke-dasharray: '2 2';
+  stroke: --signalColor;
+}
+
+#arrowhead {
+  fill: --signalColor;
+}
+
+.sequenceNumber {
+  fill: --sequenceNumberColor;
+}
+
+#sequencenumber {
+  fill: --signalColor;
+}
+
+#crosshead path {
+  fill: --signalColor !important;
+  stroke: --signalColor !important;
+}
+
+.messageText {
+  fill: --signalTextColor;
+  stroke: none;
+}
+
+.labelBox {
+  stroke: --labelBoxBorderColor;
+  fill: --labelBoxBkgColor;
+}
+
+.labelText {
+  fill: --labelTextColor;
+  stroke: none;
+}
+
+.loopText {
+  fill: --loopTextColor;
+  stroke: none;
+}
+
+.loopLine {
+  stroke-width: 2;
+  stroke-dasharray: '2 2';
+  stroke: --labelBoxBorderColor;
+}
+
+.note {
+  //stroke: #decc93;
+  stroke: --noteBorderColor;
+  fill: --noteBkgColor;
+}
+
+.noteText {
+  fill: black;
+  stroke: none;
+  font-family: 'trebuchet ms', verdana, arial;
+  font-family: var(--mermaid-font-family);
+  font-size: 14px;
+}
+
+.activation0 {
+  fill: --activationBkgColor;
+  stroke: --activationBorderColor;
+}
+
+.activation1 {
+  fill: --activationBkgColor;
+  stroke: --activationBorderColor;
+}
+
+.activation2 {
+  fill: --activationBkgColor;
+  stroke: --activationBorderColor;
+}
+
+:root {
+  --mermaid-font-family: '"trebuchet ms", verdana, arial';
+  --mermaid-font-family: "Comic Sans MS", "Comic Sans", cursive;
+}
+
