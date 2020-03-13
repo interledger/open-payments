@@ -44,11 +44,11 @@ const Home: NextPage = () => {
             <br/>
             Facilitating the discovery, setup and authorization of payments between different wallet providers; so you don't have to.
           </div>
-          <div className="my-6">
+          {/* <div className="my-6">
             <Button onClick={() => router.push('/applications')}>
               Learn more
             </Button>
-          </div>
+          </div> */}
         </div>
       </div>
       {/* SCREEN 3 */}
@@ -58,16 +58,16 @@ const Home: NextPage = () => {
             For wallets
           </div>
           <div className="text-lg md:w-1/2 my-6 leading-relaxed">
-            Open Payments allows easy integration into new or existing applications that require the use of a digital wallet.
+            Open Payments allows for seamless, secure, easy inter-wallet payments. 
             <br/>
             <br/>
-            Facilitating the discovery, setup and authorization of payments between different wallet providers; so you don't have to.
+            Facilitating the discovery, setup and authorization of payments with other wallet providers; so you don't have to.
           </div>
-          <div className="my-6">
+          {/* <div className="my-6">
             <Button onClick={() => router.push('/wallets')}>
               Learn more
             </Button>
-          </div>
+          </div> */}
         </div>
         <div className="flex flex-col w-full sm:w-1/2 h-full justify-center items-center self-center sm:items-start sm:self-start sm:pl-12">
           <Browser className="sm:ml-24 my-16 sm:my-0 w-browser-mobile sm:w-browser"/>
