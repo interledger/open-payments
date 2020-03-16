@@ -27,6 +27,7 @@ to define the terms of the delegated access. This includes:
 
 
 The typical flow for an application to request delegated access to a users account would be:
+
 1. Get Users Payment Pointer to discovery Mandates Endpoint
 2. Create a Mandate at the Users Wallet
 3. Initiate Authorization of the Mandate
@@ -35,7 +36,7 @@ A user would provide their Payment Pointer to the Application, an example is `$i
 would use the Discovery phase to determine what the Mandate endpoint for the Issuer. Once the application knows the
 endpoint it can create a Mandate.
 
-An example of an Application creating a Mandate for $2.00 every month is 
+An example of an Application creating a Mandate for $2.00 every month is:
 
 ```http
 POST /mandates HTTP/1.1
@@ -52,7 +53,7 @@ Content-Type: application/json
 }
 ```
 
-where the response would be
+where the response would be:
 
 ```http
 HTTP/1.1 201 Created
@@ -75,7 +76,7 @@ will use the authorization URL from the Discovery on the Payment Pointer.
 
 Open Payments uses the Rich Authorization Requests extension for oAuth 2 as defined in /Authorization section. 
 
-An example of the authorization_details object for the Mandate above is
+An example of the authorization_details object for the Mandate above is:
 
 ```
 {
@@ -90,7 +91,7 @@ An example of the authorization_details object for the Mandate above is
 The Application will use the `authorization_details` in conjunction with the Issuers authorization endpoint to initiate
 the authorization flow for the Mandate.
 
-An example of the Application sending to Users wallet for authorization is
+An example of the Application sending to Users wallet for authorization is:
 
 ```http request
 
@@ -125,7 +126,7 @@ In order for an application to perform Charges, it first needs an Invoice. This 
 Application or be given to the application by another party.  The Application would submit this Invoice to the invoices 
 `/charges` endpoint along with the `access_tokne` it received from the authorization flow.
 
-An example of the application doing this is
+An example of the application doing this is:
 
 ```http
 POST /mandates/2fad69d0-7997-4543-8346-69b418c479a6/charges HTTP/1.1
@@ -139,7 +140,7 @@ Content-Type: application/json
 }
 ```
 
-with a successful response of
+with a successful response of:
 
 ```http
 HTTP/1.1 201 Created

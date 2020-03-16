@@ -21,6 +21,7 @@ A Client creates a Charge by doing an HTTP POST of JSON document to an endpoint 
 the Mandate URI for which they wish to perform the Charge against.
 
 The JSON document MUST include the following:
+
 * invoice
 
 The Open Payments Server MUST respond with a Charge Response or an error (TDB).
@@ -39,7 +40,7 @@ Content-Type: application/json
 }
 ```
 
-with a non-normative response from the Open Payments Server
+with a non-normative response from the Open Payments Server:
 
 ```http
 HTTP/1.1 201 Created
@@ -56,9 +57,9 @@ Content-Type: application/json
 ### Get
 
 The Client reads the Charge by doing a HTTP GET of the corresponding Charge name as URI. The Open Payments Server
-MUST respond with either a Charge Response or an Error (TBD)
+MUST respond with either a Charge Response or an Error (TBD).
 
-The following is a non-normative example where the Client reads an Charge
+The following is a non-normative example where the Client reads an Charge:
 
 ```http
 GET /charges/a395a5c0-f9cd-48bd-9c1a-19fb4d312d53 HTTP/1.1
