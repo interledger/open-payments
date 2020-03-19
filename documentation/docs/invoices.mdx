@@ -24,6 +24,7 @@ A Client creates an Invoice by doing an HTTP POST of JSON document to the Invoic
 the OP Metadata.
 
 The JSON document MUST include the following:
+
 * amount
 * assetCode
 * assetScale
@@ -34,7 +35,7 @@ and MAY include the following:
 
 The Open Payments Server MUST respond with a Invoice Response or an error (TDB).
 
-The following is a non-normative example where the Client created an invoice at the Acquirer Wallet
+The following is a non-normative example where the Client created an invoice at the Acquirer Wallet:
 
 ```http
 POST /invoices HTTP/1.1
@@ -52,7 +53,7 @@ Content-Type: application/json
 }
 ```
 
-with a non-normative response from the Open Payments Server
+with a non-normative response from the Open Payments Server:
 
 ```http
 HTTP/1.1 201 Created
@@ -73,9 +74,9 @@ Location: https://acquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e
 ### Get
 
 The Client reads the invoice by doing a HTTP GET of the corresponding Invoice name as URI. The Open Payments Server
-MUST respond with either an Invoice Response or an Error (TBD)
+MUST respond with either an Invoice Response or an Error (TBD).
 
-The following is a non-normative example where the Client reads an invoice
+The following is a non-normative example where the Client reads an invoice:
 
 ```http
 GET /invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e HTTP/1.1
@@ -98,9 +99,9 @@ Content-Type: application/json
 ### Payment Details
 
 The Client gets the payment details of an Invoice by doing a HTTP OPTIONS of the corresponding Invoice name as URI. The Open 
-Payments Server MUST respond with either an Payment Details Response or an Error (TBD)
+Payments Server MUST respond with either an Payment Details Response or an Error (TBD).
 
-The following is a non-normative example of a Client getting the payment details for an invoice
+The following is a non-normative example of a Client getting the payment details for an invoice:
 
 ```http
 OPTIONS invocies/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0 HTTP/1.1
@@ -108,7 +109,7 @@ Host: acquirer.wallet
 Accept: application/json
 ```
 
-with a non-normative response from the Open Payments Server as
+with a non-normative response from the Open Payments Server as:
 
 ```http
 HTTP/1.1 200 Ok
