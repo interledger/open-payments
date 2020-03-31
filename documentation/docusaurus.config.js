@@ -23,6 +23,11 @@ module.exports = {
       },
       links: [
         {
+          label: 'Slack',
+          position: 'right',
+          href: 'https://communityinviter.com/apps/interledger/interledger-working-groups-slack',
+        },
+        {
           href: 'https://github.com/interledger/open-payments',
           label: 'GitHub',
           position: 'right',
@@ -48,6 +53,10 @@ module.exports = {
         {
           title: 'Community',
           items: [
+            {
+              label: 'Slack',
+              href: 'https://communityinviter.com/apps/interledger/interledger-working-groups-slack',
+            },
             {
               label: 'GitHub',
               href: 'https://github.com/interledger/open-payments',

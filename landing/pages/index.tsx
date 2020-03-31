@@ -84,7 +84,7 @@ const Home: NextPage = () => {
             </div>
             <div className="flex flex-col w-card">
               <div className="text-lg font-medium mb-4">Community</div>
-              <a className="text-base md:opacity-60 md:hover:opacity-100 mb-1" href="https://interledger.slack.com/archives/CPL2HTF54">
+              <a className="text-base md:opacity-60 md:hover:opacity-100 mb-1" href="https://communityinviter.com/apps/interledger/interledger-working-groups-slack">
                 Slack
               </a>
               <a className="text-base md:opacity-60 md:hover:opacity-100 mb-4" href="https://github.com/adrianhopebailie/open-payments">
