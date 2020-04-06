@@ -8,9 +8,8 @@ module.exports = {
   projectName: 'open-payments',
   themeConfig: {
     algolia: {
-      apiKey: 'api-key',
-      indexName: 'index-name',
-      algoliaOptions: {}, // Optional, if provided by Algolia
+      apiKey: 'ca31c14c1bb6dd332787e02b5d03abfc',
+      indexName: 'openpayments',
     },
     navbar: {
       title: 'Open Payments',
