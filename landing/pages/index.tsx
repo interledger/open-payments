@@ -101,4 +101,11 @@ const Home: NextPage = () => {
   )
 }
 
+Home.getInitialProps = async ({ req, res }) => {
+  if (req.method === 'HEAD') {
+    res.setHeader('Link', '<https://openpayments.dev/payment-manifest.json>;; rel="payment-method-manifest"')
+  }
+  return {}
+}
+
 export default Home

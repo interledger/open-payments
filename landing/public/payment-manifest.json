@@ -1,0 +1,6 @@
+{
+  "default_applications": ["https://rafiki.money/payment-manifest.json"],
+  "supported_origins": [
+    "*"
+  ]
+}
