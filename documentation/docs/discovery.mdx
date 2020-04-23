@@ -3,102 +3,104 @@ id: discovery
 title: Discovery
 ---
 
-When an entity wishes to interact with a User in Open Payments, they first require the Payment Pointer for that User.
-A Payment Pointer they will resolve to a Payment Pointer URL. This allows the entity to fetch the metadata for the server described
-by that URL as defined in [RFC8414](https://tools.ietf.org/html/rfc8414).
+At the heart of all interactions in Open Payments is an account that is either
+the sending or receiving side of the transaction. As this account is the
+starting point for any interactions we call this the **initiation account**.
 
-## Issuer and Subject
+If the **Open Payments Client** is the **payer** then the **initiation account**
+is the **payee account**.
 
-Given a URL that has been resolved from a Payment Pointer a client can derive
-both the issuer identifier and subject identifier. 
+If the **Open Payments Client** is the **payee** then the **initiation account**
+is the **payer account**.
 
-Payment Pointers resolve to HTTPS URLs which are the unique subject identifiers
-for the subject of the Payment Pointer.
+## Payment Pointers
 
-The Issuer identifier is the same URL with the `path`, `query string` and
-`fragment` trimmed away.
+All entities in Open Payments are identified by, and can be addressed via, URLs
+and we call the URLs identifying accounts **Payment Pointer URL**s.
 
-E.g. Given the Payment Pointer `$wallet.example/alice` the subject identifier is
-`https://wallet.example/alice` and the issuer identifier is
-`https://wallet.example`.
+> Example Payment Pointer URL:  
+> `https://wallet.example/accounts/dee69df8-be40-478f-9828-6267f4d42b01`
 
-Once the client has determined the issuer identifier it can retrieve the server
-metadata for the issuer.
+To make Payment Pointer URLs shorter and easier to transcribe they can be
+encoded as a **[Payment Pointer](https://paymentpointers.org)**. In this form
+they also have the advantage of being easily and unambiguously recognizable as
+Payment Pointers.
+
+> Example Payment Pointer:  
+> `$wallet.example/accounts/dee69df8-be40-478f-9828-6267f4d42b01`
+
+Account Servicing entities that support Open Payments will define one or more
+unique Payment Pointer URLs for each account they service on behalf of the
+owner.
+
+The rules for encoding and decoding Payment Pointers are defined at
+[paymentpointers.org](https://paymentpointers.org).
+
+### Personal Payment Pointers
+
+In many cases a user will have multiple accounts and will register a single
+short and easy to transcribe **Personal Payment Pointer** which they link to
+their default account. This Personal Payment Pointer can then be easily
+exchanged with counter-parties when initiating a payment (either as sender or
+receiver).
+
+> Example Personal Payment Pointer:  
+> `$wallet.example/alice`
+
+Personal Payment Pointers are analogous to an email address or payment card
+number. Email addresses are given to counter-parties so that they can begin
+sending emails to the target inbox. Similarly, a payment card number can be
+given to a counter-party so that they can request payment from the target
+account.
+
+Users can share their Personal Payment Pointers to both get paid and make
+payments using Open Payments.
+
+Importantly, a Payment Pointer is not sensitive in the same way that a payment
+card number is. It can be shared freely with no risk that funds will be pulled
+from the target account without the account owner's consent
 
 ## Metadata
 
-The metadata is a JSON document resource that describes the various service
-endpoints that are available to:
+Account metadata is provided by an Open Payments Server as a JSON document that
+describes the various service endpoints that are available to:
 
-- connect to the `subject`'s account via Interledger
-- get authorization to perform actions on the `subject`'s account (using OAuth
-  2.0)
-- get more information about the `subject` (using OpenID Connect)
-- create agreements with the `subject`
+- connect to the account via Interledger
+- get authorization to perform actions on the account (using OAuth 2.0)
+- get more information about the owner of the account (using OpenID Connect)
+- create invoices and mandates that are linked to the account
 
-The document is hosted at a `.well-known` URL relative to the issuer identifier.
+The document is hosted at the Payment Pointer URL.
 
-[RFC8414](https://tools.ietf.org/html/rfc8414) defines the default well-known
-URI string to be `/.well-known/oauth-authorization-server`.
+To access the document client MUST make an HTTP GET request to the Payment
+Pointer URL specifying an accepted media type of `application/json`.
 
-It also states the following:
-
-> Different applications utilizing OAuth authorization servers in
-> application-specific ways may define and register different well- known URI
-> suffixes used to publish authorization server metadata as used by those
-> applications.
-
-Open Payments defines the well-known URL `/.well-known/open-payments`. The meta-data document MUST be queried using an HTTP "GET" request at the
-previously specified path.
-
-The client would make the following request when the issuer identifier is
-`https://wallet.example` and the well-known URI suffix is `open-payments` to
-obtain the metadata, since the issuer identifier contains no path component:
+The following request is a non-normative example of a request for the meta-data
+for the account identified by the Payment Pointer: `$wallet.example/alice`
 
 ```http
-GET /.well-known/open-payments HTTP/1.1
+GET /alice HTTP/1.1
 Host: wallet.example
+Accept: application/json
 ```
 
-From [RFC8414](https://tools.ietf.org/html/rfc8414):
-
-> The document is a set of claims about the `subject`'s configuration, including
-> all necessary endpoints and public key location information. A successful
-> response MUST use the 200 OK HTTP status code and return a JSON object using
-> the `application/json` content type that contains a set of claims as its
-> members that are a subset of the metadata values defined in
-> [RFC8414 Section 2](https://tools.ietf.org/html/rfc8414#section-2)
+The returned JSON document MUST contain one or more of the following claims:
 
 Open Payments defines the following additional claims:
 
-- `issuer`  
-  URL of the server's sessions endpoint where the client is able to create new
-  sessions with the `subject`.
-  
-- `authorization_issuer`  
-    URL of the server's sessions endpoint where the client is able to create new
-    sessions with the `subject`.
+- `account_servicer` URL identifying the entity servicing the account (e.g.
+  bank, digital wallet, mobile money provider).
 
-- `authorization_endpoint`  
-    URL of the server's sessions endpoint where the client is able to create new
-    sessions with the `subject`.
+- `assets_supported` A list of asset definitions for assets that can be used to
+  create agreements on this server. The schema of an asset definition is defined
+  in [Assets](#assets).
 
-- `token_endpoint`  
-    URL of the server's sessions endpoint where the client is able to create new
-    sessions with the `subject`.
+If the Open Payments server supports authorization of clients via OAuth2 this
+document MAY contain claims as defined in
+[RFC8414 Section 2](https://tools.ietf.org/html/rfc8414#section-2).
 
-- `invoices_endpoint`  
-  URL of the server's invoices endpoint where the client is able to create new
-  invoices with the `subject`.
-
-- `mandates_endpoint`  
-  URL of the server's mandates endpoint where the client is able to create new
-  mandates with the `subject`.
-
-- `assets_supported`
-  A list of asset definitions for assets that can be used to create agreements
-  on this server. The schema of an asset definition is defined in
-  [Assets](#assets).
+> TODO: Should the OAuth Server meta-data be returned under a root element like
+> `authorization`
 
 Other claims MAY also be returned.
 
@@ -114,14 +116,32 @@ HTTP/1.1 200 OK
 Content-Type: application/json
 
 {
-  "issuer": "https://wallet.example",
-  "authorization_issuer": "https://auth.wallet.example",
+  "account_servicer": "https://wallet.example",
   "authorization_endpoint": "https://auth.wallet.example/authorize",
-  "invoices_endpoint": "https://wallet.example/invoices",
-  "mandates_endpoint": "https://wallet.example/mandates",
+  "token_endpoint": "https://auth.wallet.example/token",
   "assets_supported": [
     {"code": "USD", "scale": 2},
     {"code": "EUR", "scale": 2}
   ]
 }
 ```
+
+## Simple Payment Setup Protocol Fallback
+
+Open Payments discovery is designed to be backwards compatible with the previous
+Interledger setup protocol
+[SPSP](https://interledger.org/rfcs/0009-simple-payment-setup-protocol/).
+
+SPSP defines behaviour of an SPSP Server when receiving an HTTP `GET` at the
+Payment Pointer URL, however it mandates that the request must use an accepted
+media-type of `application/spsp4+json`.
+
+If an Open Payments client makes a meta-data request (using the
+`application/json` media-type) and receives and error this suggests that the
+server does not support Open Payments.
+
+If a raw Interledger connection is sufficient to accomplish the transaction it
+is attempting. The client MAY fall back to using SPSP and retry the request in
+the form of a backwards-compatible
+[Open Payments Connection Request](web-monetization.mdx) which supports both
+SPSP and Open Payments.
