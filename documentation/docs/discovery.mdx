@@ -29,8 +29,8 @@ Payment Pointers.
 > Example Payment Pointer:  
 > `$wallet.example/accounts/dee69df8-be40-478f-9828-6267f4d42b01`
 
-Account Servicing entities that support Open Payments will define one or more
-unique Payment Pointer URLs for each account they service on behalf of the
+[Wallets](./terminology#wallet) that support Open Payments will define one or
+more unique Payment Pointer URLs for each account they service on behalf of the
 owner.
 
 The rules for encoding and decoding Payment Pointers are defined at
@@ -137,7 +137,7 @@ Payment Pointer URL, however it mandates that the request must use an accepted
 media-type of `application/spsp4+json`.
 
 If an Open Payments client makes a meta-data request (using the
-`application/json` media-type) and receives and error this suggests that the
+`application/json` media-type) and receives an error this suggests that the
 server does not support Open Payments.
 
 If a raw Interledger connection is sufficient to accomplish the transaction it
