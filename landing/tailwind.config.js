@@ -4,10 +4,10 @@ module.exports = {
   separator: ':',
   theme: {
     screens: {
-      sm: '600px',
-      md: '1024px',
-      lg: '1440px',
-      xl: '1920px',
+      sm: '640px',
+      md: '768px',
+      lg: '1024px',
+      xl: '1280px',
     },
     fontFamily: {
       display: 'Rubik, sans-serif',
@@ -83,6 +83,10 @@ module.exports = {
       },
       colors: {
         primary: '#1E3250',
+        gray: {
+          default: '#424242',
+          'light': '#757575'
+        },
         red: {
           default: '#CE6564',
           'light': '#F59297'

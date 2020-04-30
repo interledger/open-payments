@@ -5,7 +5,7 @@ type props = {
 }
 
 const Card: React.FC<props> = (props) => {
-  let className = 'p-4 bg-surface-elevation-1 elevation-1 rounded text-on-surface sm:max-w-full md:'
+  let className = 'h-screen p-16 bg-white elevation-1 rounded md:'
   className += props.width || 'w-card'
   return (
     <div className={className}>
