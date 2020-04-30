@@ -81,6 +81,9 @@ const Home: NextPage = () => {
               <a className="text-base md:opacity-60 md:hover:opacity-100 mb-1" href="https://docs.openpayments.dev">
                 Specification
               </a>
+              <a className="text-base md:opacity-60 md:hover:opacity-100 mb-1" href="https://openpayments.dev/brand-guidelines">
+                Brand guidelines
+              </a>
             </div>
             <div className="flex flex-col w-card">
               <div className="text-lg font-medium mb-4">Community</div>
