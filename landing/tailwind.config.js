@@ -51,6 +51,9 @@ module.exports = {
         '-90': '-90vw',
         '-10': '-10vw'
       },
+      minWidth: {
+        'button': '90px',
+      },
       width: {
         card: '344px',
         '90': '90px',

@@ -56,7 +56,7 @@ type Props = {
 
 const OpenPaymentsButton: React.FC<Props>=  ({className}) => {
   return (
-    <button className={`flex my-auto w-full content-center items-center mx-auto justify-center px-4 h-12 cursor-pointer max-w-sm sm:w-card ${className}`}>
+    <button className={`flex my-auto content-center items-center mx-auto justify-center px-4 h-12 cursor-pointer max-w-sm min-w-button focus:outline-none ${className}`}>
       {
             <div className="my-auto flex items-center">
             <OpenPaymentsLogo size={6}/>

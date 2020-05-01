@@ -26,7 +26,7 @@ const Divider: React.FC = () => {
 }
 
 const Card: React.FC = (props) => {
-  let className = 'p-16 md:px-32 bg-white elevation-2 rounded lg:w-full mx-4'
+  let className = 'p-8 sm:p-16 md:px-32 bg-white elevation-2 rounded lg:w-full mx-4'
   return (
     <div className={className}>
       {props.children}
@@ -53,16 +53,16 @@ const Home: NextPage = () => {
       <div className="container mx-auto flex flex-col text-left justify-center py-12">
         <Card>
           <Section header="Logo">
-            <div className="text-sm text-gray-light">
+            <div className="text-sm text-gray-light mb-16">
               Do not use the Open Payments mark or any variant of the Open Payments mark in conjunction with the overall name of your application, product, service, or website. 
               Do not alter or use the Open Payments mark in a way that may be confusing or misleading, and never use Open Payments branding as the most prominent element on your page. 
             </div>
             <div className="flex flex-col lg:flex-row">
               <div className="w-full lg:w-1/2 flex flex-col pr-0 lg:pr-8">
-                <div className="flex content-center h-64">
-                  <img className="mx-auto self-center" src="/Standard lockup.png"/>
+                <div className="flex content-center h-48 sm:h-56 mb-4 border border-gray border-opacity-12 rounded-md">
+                  <img className="mx-auto self-center w-3/4" src="/Standard lockup.png"/>
                 </div>
-                <div className="text-lg sm:text-xl text-gray">
+                <div className="text-lg sm:text-xl text-gray mb-16 lg:mb-0">
                   Standard lockup<br/>
                   <p className="text-sm text-gray-light mt-4">
                     The standard lockup can be used in slide decks and blog posts.
@@ -72,7 +72,7 @@ const Home: NextPage = () => {
                 </div>
               </div>
               <div className="w-full lg:w-1/2 flex flex-col pl-0 lg:pl-8">
-                <div className="flex content-center h-64">
+                <div className="flex content-center h-48 sm:h-56 mb-4 border border-gray border-opacity-12 rounded-md">
                   <Logo className="w-1/2 sm:w-1/4 mx-auto self-center"/>
                 </div>
                 <div className="text-lg sm:text-xl text-gray">
@@ -92,42 +92,72 @@ const Home: NextPage = () => {
               <br/><br/>
               All Open Payments payment buttons within your app or website must adhere to our brand guidelines, which include, but are not limited to, the following requirements:
               <br/><br/>
-              <ol className="list-disc list-inside">
+              <ol className="list-disc list-inside mb-16">
                 <li>The size and shape of the button must be relative to other buttons or similar elements on the page.</li>
                 <li>The button colour must contrast with the background colour of the area surrounding it.</li>
                 <li>Always maintain the minimum clear space of 8&nbsp;dp on all sides of the payment button.</li>
                 <li>The button should have a minimum width of 90&nbsp;dp.</li>
                 <li>The size and font of "Pay" on the button must remain constant. Rubik font family, with 400 weight and a minimum font size of 20.</li>
               </ol>
-              <br/>
-              Although Open Payments payment buttons must adhere to the above brand guidelines, specific implementations may vary to fit into the branding or style of your app or website, which can include:
-              <br/><br/>
-              <ol className="list-disc list-inside mb-8">
-                <li>Variations in the button's corner radius and shape.</li>
-                <li>Variations in the elevation or shadow of the button.</li>
-                <li>Variations specific states of the button, such as disabled, hover, focussed, or pressed.</li>
-              </ol>
+              <div className="flex flex-col lg:flex-row mb-16">
+                <div className="w-full lg:w-1/2 flex flex-col pr-0 lg:pr-8">
+                  <div className="flex content-center h-48 sm:h-56 mb-4 border border-gray border-opacity-12 rounded-md">
+                    <OpenPaymentsButton className="mx-auto self-center rounded-md text-white bg-black elevation-3"/>
+                  </div>
+                  <div className="text-lg sm:text-xl text-gray mb-16 lg:mb-0">
+                    Black<br/>
+                    <p className="text-sm text-gray-light mt-4">
+                      Use black buttons on white or light backgrounds to provide contrast.
+                    </p>
+                  </div>
+                </div>
+                <div className="w-full lg:w-1/2 flex flex-col pl-0 lg:pl-8">
+                  <div className="flex content-center h-48 sm:h-56 bg-cyan-light rounded-md mb-4">
+                    <OpenPaymentsButton className="mx-auto self-center rounded-md bg-white elevation-3"/>
+                  </div>
+                  <div className="text-lg sm:text-xl text-gray">
+                    White<br/>
+                    <p className="text-sm text-gray-light mt-4">
+                      Use white buttons on dark or colorful backgrounds.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="mb-16">
+                Although Open Payments payment buttons must adhere to the above brand guidelines, specific implementations may vary to fit into the branding or style of your app or website, which can include:
+              </div>
             </div>
             <div className="flex flex-col lg:flex-row">
-              <div className="w-full lg:w-1/2 flex flex-col pr-0 lg:pr-8">
-                <div className="flex content-center h-64 mb-8">
-                  <OpenPaymentsButton className="w-1/2 sm:w-1/4 mx-auto self-center text-white bg-black elevation-2 hover:elevation-6"/>
+              <div className="w-full lg:w-1/3 flex flex-col pr-0 lg:pr-8">
+                <div className="flex content-center h-48 sm:h-56 bg-cyan-light rounded-full mb-4">
+                  <OpenPaymentsButton className="w-8/12 mx-auto self-center rounded-full bg-white elevation-3"/>
                 </div>
-                <div className="text-lg sm:text-xl text-gray">
-                  Black<br/>
+                <div className="text-lg sm:text-xl text-gray mb-16 lg:mb-0">
+                  Shape<br/>
                   <p className="text-sm text-gray-light mt-4">
-                    Use black buttons on white or light backgrounds to provide contrast.
+                    Variations in the button's corner radius and shape, to match other elements on the page. Note the larger width and corner radius.
                   </p>
                 </div>
               </div>
-              <div className="w-full lg:w-1/2 flex flex-col pl-0 lg:pl-8">
-                <div className="flex content-center h-64 bg-cyan-light rounded-full mb-8">
-                  <OpenPaymentsButton className="w-1/2 sm:w-1/4 mx-auto self-center rounded-full bg-white elevation-6 hover:elevation-2"/>
+              <div className="w-full lg:w-1/3 flex flex-col px-0 lg:px-8">
+                <div className="flex content-center h-48 sm:h-56 mb-4 border border-gray border-opacity-12 rounded-md">
+                  <OpenPaymentsButton className="mx-auto self-center rounded-md text-white bg-black elevation-8"/>
+                </div>
+                <div className="text-lg sm:text-xl text-gray mb-16 lg:mb-0">
+                  Elevation<br/>
+                  <p className="text-sm text-gray-light mt-4">
+                    Variations in the elevation or shadow of the button. Note the higher elevation.
+                  </p>
+                </div>
+              </div>
+              <div className="w-full lg:w-1/3 flex flex-col pl-0 lg:pl-8">
+                <div className="flex content-center h-48 sm:h-56 bg-cyan-light rounded-md mb-4">
+                  <OpenPaymentsButton className="mx-auto self-center rounded-md bg-white elevation-1 hover:elevation-6 focus:elevation-24"/>
                 </div>
                 <div className="text-lg sm:text-xl text-gray">
-                  White<br/>
+                  State<br/>
                   <p className="text-sm text-gray-light mt-4">
-                    Use white buttons on dark or colorful backgrounds.
+                    Variations specific states of the button, such as active, hover, or focus. Note the change in elevation with the various states.
                   </p>
                 </div>
               </div>
@@ -141,7 +171,7 @@ const Home: NextPage = () => {
             </div>
             <div className="flex flex-col lg:flex-row">
               <div className="w-full lg:w-1/2 flex flex-col pr-0 lg:pr-8">
-                <div className="flex content-center h-64">
+                <div className="flex content-center h-48 sm:h-56">
                   <img className="mx-auto self-center" src="/Standard lockup.png"/>
                 </div>
                 <div className="text-lg sm:text-xl text-gray">
@@ -154,7 +184,7 @@ const Home: NextPage = () => {
                 </div>
               </div>
               <div className="w-full lg:w-1/2 flex flex-col pl-0 lg:pl-8">
-                <div className="flex content-center h-64">
+                <div className="flex content-center h-48 sm:h-56">
                   <Logo className="w-1/2 sm:w-1/4 mx-auto self-center"/>
                 </div>
                 <div className="text-lg sm:text-xl text-gray">
@@ -174,7 +204,7 @@ const Home: NextPage = () => {
             </div>
             <div className="flex flex-col lg:flex-row">
               <div className="w-full lg:w-1/2 flex flex-col pr-0 lg:pr-8">
-                <div className="flex content-center h-64">
+                <div className="flex content-center h-48 sm:h-56">
                   <img className="mx-auto self-center" src="/Standard lockup.png"/>
                 </div>
                 <div className="text-lg sm:text-xl text-gray">
@@ -187,7 +217,7 @@ const Home: NextPage = () => {
                 </div>
               </div>
               <div className="w-full lg:w-1/2 flex flex-col pl-0 lg:pl-8">
-                <div className="flex content-center h-64">
+                <div className="flex content-center h-48 sm:h-56">
                   <Logo className="w-1/2 sm:w-1/4 mx-auto self-center"/>
                 </div>
                 <div className="text-lg sm:text-xl text-gray">
