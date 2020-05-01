@@ -64,8 +64,8 @@ const Home: NextPage = () => {
           Representing the <br className="sm:hidden"/> Open Payments brand
         </div>
         <div className="text-base flex mt-6">
-          <a className="focus:outline-none align-middle flex flex-row" href="/Open_Payments_Brand_Assets.zip" download>
-            <div>Download all assets </div><i className={`material-icons text-primary ml-2`}>get_app</i>
+          <a className="focus:outline-none hover:text-orange-other text-primary align-middle flex flex-row" href="/Open_Payments_Brand_Assets.zip" download>
+            <div>Download all assets </div><i className={`material-icons ml-2`}>get_app</i>
           </a>
         </div>
       </div>
@@ -207,40 +207,65 @@ const Home: NextPage = () => {
               </div>
             </div>
           </Section>
-          {/* <Divider/>
+          <Divider/>
           <Section header="Pay mark">
-            <div className="text-sm text-gray-light">
-              Do not use the Open Payments mark or any variant of the Open Payments mark in conjunction with the overall name of your application, product, service, or website. 
-              Do not alter or use the Open Payments mark in a way that may be confusing or misleading, and never use Open Payments branding as the most prominent element on your page. 
-            </div>
-            <div className="flex flex-col lg:flex-row">
-              <div className="w-full lg:w-1/2 flex flex-col pr-0 lg:pr-8">
-                <div className="flex content-center h-48 sm:h-56">
-                  <img className="mx-auto self-center" src="/Standard lockup.png"/>
+          <div className="text-sm text-gray-light">
+              The Open Payments pay mark should be used when displaying Open Payments as a payment option in a payment flow.
+              <div className="flex flex-col lg:flex-row my-16">
+                <div className="w-full lg:w-1/2 flex flex-col pr-0 lg:pr-8">
+                  <div className="flex content-center h-48 sm:h-56 mb-4 border border-gray border-opacity-12 rounded-md">
+                    <img className="mx-auto self-center w-1/2 sm:w-1/4 " src="/Open_Payments_mark.svg"/>
+                  </div>
+                  <div className="text-lg sm:text-xl text-gray mb-16 lg:mb-0">
+                    Mark<br/>
+                    <p className="text-sm text-gray-light mt-4">
+                      Do not change the color or weight of the mark's outline or alter the mark in any way. Use only the mark provided by Open Payments.
+                    </p>
+                  </div>
                 </div>
-                <div className="text-lg sm:text-xl text-gray">
-                  Standard lockup<br/>
-                  <p className="text-sm text-gray-light mt-4">
-                    The standard lockup can be used in slide decks and blog posts.
-                    <br/>
-                    Whenever possible, the logo should be represented as a horizontal lockup with a full color logomark and #1E3250 or solid white logotype.
-                  </p>
-                </div>
-              </div>
-              <div className="w-full lg:w-1/2 flex flex-col pl-0 lg:pl-8">
-                <div className="flex content-center h-48 sm:h-56">
-                  <Logo className="w-1/2 sm:w-1/4 mx-auto self-center"/>
-                </div>
-                <div className="text-lg sm:text-xl text-gray">
-                  Logomark<br/>
-                  <p className="text-sm text-gray-light mt-4">
-                    When there is limited vertical and horizontal space, the logomark can be used by itself without the logotype. 
-                  </p>
+                <div className="w-full lg:w-1/2 flex flex-col pl-0 lg:pl-8">
+                  <div className="flex flex-col p-4 justify-center h-48 sm:h-56 mb-4 border border-gray border-opacity-12 rounded-md">
+                    <div className="flex">
+                      <div className="text-primary align-middle h-12 flex flex-row justify-between" >
+                        <div className="flex flex-row">
+                          <img className="m-2 w-2/12 sm:1/12" src="/Open_Payments_mark.svg"/>
+                          <div className="text-xs my-auto">Open Payments</div>
+                        </div>
+                        <i className={`self-center material-icons`}>navigate_next</i>
+                      </div>
+                    </div>
+                    <div className="border-b border-gray border-opacity-12"/>
+                    <div className="flex">
+                      <div className="text-primary align-middle h-12 flex flex-row justify-between" >
+                        <div className="flex flex-row">
+                          <img className="m-2 w-2/12 sm:1/12" src="/Rafiki Mark.svg"/>
+                          <div className="text-xs my-auto">Generic Pay</div>
+                        </div>
+                        <i className={`self-center material-icons`}>navigate_next</i>
+                      </div>
+                    </div>
+                    <div className="border-b border-gray border-opacity-12"/>
+                    <div className="flex">
+                      <div className="text-primary align-middle h-12 flex flex-row justify-between" >
+                        <div className="flex flex-row">
+                          <img className="m-2 w-2/12 sm:1/12" src="/CARD Mark.svg"/>
+                          <div className="text-xs my-auto">*4242</div>
+                        </div>
+                        <i className={`self-center material-icons`}>navigate_next</i>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-lg sm:text-xl text-gray">
+                    Size<br/>
+                    <p className="text-sm text-gray-light mt-4">
+                      If needed, adjust the height of the mark to match other brand identities displayed in your payment flow. Always maintain the minimum clear space of 8&nbsp;dp on all sides of the mark.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </Section>
-          <Divider/>
+          {/* <Divider/>
           <Section header="In text">
             <div className="text-sm text-gray-light">
               Do not use the Open Payments mark or any variant of the Open Payments mark in conjunction with the overall name of your application, product, service, or website. 
