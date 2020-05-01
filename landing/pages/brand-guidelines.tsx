@@ -34,6 +34,23 @@ const Card: React.FC = (props) => {
   )
 }
 
+type colourBoxProps = {
+  colour: string
+  name: string
+  padding?: string
+}
+
+const ColourBox: React.FC<colourBoxProps> = (props) => {
+  return (
+    <div className={`w-1/2 sm:w-1/3 lg:w-2/12 flex flex-col ${props.padding}`}>
+      <div className={`bg-${props.colour} flex content-center h-24 sm:h-32 mb-2 rounded-md`}/>
+      <div className="text-lg sm:text-xl text-gray mb-4">
+        {props.name}
+      </div>
+    </div>
+  )
+}
+
 const Home: NextPage = () => {
   const router = useRouter()
   return (
@@ -46,9 +63,11 @@ const Home: NextPage = () => {
         <div className="md:font-light text-3xl md:text-5xl text-primary">
           Representing the <br className="sm:hidden"/> Open Payments brand
         </div>
-        {/* <div className="text-sm flex mt-6">
-          Download all assets <i className={`material-icons ml-2`}>cloud_download</i>
-        </div> */}
+        <div className="text-base flex mt-6">
+          <a className="focus:outline-none align-middle flex flex-row" href="/Open_Payments_Brand_Assets.zip" download>
+            <div>Download all assets </div><i className={`material-icons text-primary ml-2`}>get_app</i>
+          </a>
+        </div>
       </div>
       <div className="container mx-auto flex flex-col text-left justify-center py-12">
         <Card>
@@ -60,7 +79,7 @@ const Home: NextPage = () => {
             <div className="flex flex-col lg:flex-row">
               <div className="w-full lg:w-1/2 flex flex-col pr-0 lg:pr-8">
                 <div className="flex content-center h-48 sm:h-56 mb-4 border border-gray border-opacity-12 rounded-md">
-                  <img className="mx-auto self-center w-3/4" src="/Standard lockup.png"/>
+                  <img className="mx-auto self-center w-3/4" src="/Open_Payments_standard_logo.svg"/>
                 </div>
                 <div className="text-lg sm:text-xl text-gray mb-16 lg:mb-0">
                   Standard lockup<br/>
@@ -73,7 +92,7 @@ const Home: NextPage = () => {
               </div>
               <div className="w-full lg:w-1/2 flex flex-col pl-0 lg:pl-8">
                 <div className="flex content-center h-48 sm:h-56 mb-4 border border-gray border-opacity-12 rounded-md">
-                  <Logo className="w-1/2 sm:w-1/4 mx-auto self-center"/>
+                  <img className="mx-auto self-center w-1/2 sm:w-1/4 " src="/Open_Payments_logomark.svg"/>
                 </div>
                 <div className="text-lg sm:text-xl text-gray">
                   Logomark<br/>
@@ -82,6 +101,31 @@ const Home: NextPage = () => {
                   </p>
                 </div>
               </div>
+            </div>
+          </Section>
+          <Divider/>
+          <Section header="Colours">
+            <div className="text-sm text-gray-light mb-16">
+              The Open Payments logo consists of 12 colours, 6 base colours with a light variant each.
+              There are two auxilary colours which are used for emphasis or text.
+            </div>
+            <div className="flex flex-row flex-wrap">
+              <ColourBox colour="red" name="#CE6564" padding="pl-4 pr-4"/>
+              <ColourBox colour="orange" name="#F47F5F" padding="pl-4 pr-4"/>
+              <ColourBox colour="green" name="#6D995C" padding="pl-4 pr-4"/>
+              <ColourBox colour="cyan" name="#459789" padding="pl-4 pr-4"/>
+              <ColourBox colour="teal" name="#51797D" padding="pl-4 pr-4"/>
+              <ColourBox colour="purple" name="#845578" padding="pl-4 pr-4"/>
+
+              <ColourBox colour="red-light" name="#F59297" padding="pl-4 pr-4"/>
+              <ColourBox colour="orange-light" name="#FCC9B3" padding="pl-4 pr-4"/>
+              <ColourBox colour="green-light" name="#7FC78C" padding="pl-4 pr-4"/>
+              <ColourBox colour="cyan-light" name="#8FD1C1" padding="pl-4 pr-4"/>
+              <ColourBox colour="teal-light" name="#9EC7D0" padding="pl-4 pr-4"/>
+              <ColourBox colour="purple-light" name="#978AA4" padding="pl-4 pr-4"/>
+
+              <ColourBox colour="primary" name="#1E3250" padding="pl-4 pr-4"/>
+              <ColourBox colour="orange-other" name="#FABD84" padding="pl-4 pr-4"/>
             </div>
           </Section>
           <Divider/>
@@ -113,7 +157,7 @@ const Home: NextPage = () => {
                 </div>
                 <div className="w-full lg:w-1/2 flex flex-col pl-0 lg:pl-8">
                   <div className="flex content-center h-48 sm:h-56 bg-cyan-light rounded-md mb-4">
-                    <OpenPaymentsButton className="mx-auto self-center rounded-md bg-white elevation-3"/>
+                    <OpenPaymentsButton className="mx-auto self-center rounded-md text-black bg-white elevation-3"/>
                   </div>
                   <div className="text-lg sm:text-xl text-gray">
                     White<br/>
@@ -130,7 +174,7 @@ const Home: NextPage = () => {
             <div className="flex flex-col lg:flex-row">
               <div className="w-full lg:w-1/3 flex flex-col pr-0 lg:pr-8">
                 <div className="flex content-center h-48 sm:h-56 bg-cyan-light rounded-full mb-4">
-                  <OpenPaymentsButton className="w-8/12 mx-auto self-center rounded-full bg-white elevation-3"/>
+                  <OpenPaymentsButton className="w-8/12 mx-auto self-center rounded-full text-black bg-white elevation-3"/>
                 </div>
                 <div className="text-lg sm:text-xl text-gray mb-16 lg:mb-0">
                   Shape<br/>
@@ -152,7 +196,7 @@ const Home: NextPage = () => {
               </div>
               <div className="w-full lg:w-1/3 flex flex-col pl-0 lg:pl-8">
                 <div className="flex content-center h-48 sm:h-56 bg-cyan-light rounded-md mb-4">
-                  <OpenPaymentsButton className="mx-auto self-center rounded-md bg-white elevation-1 hover:elevation-6 focus:elevation-24"/>
+                  <OpenPaymentsButton className="mx-auto self-center rounded-md text-black bg-white elevation-1 hover:elevation-6 focus:elevation-24"/>
                 </div>
                 <div className="text-lg sm:text-xl text-gray">
                   State<br/>
