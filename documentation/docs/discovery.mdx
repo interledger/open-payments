@@ -3,6 +3,9 @@ id: discovery
 title: Discovery
 ---
 
+import { PersonToPerson } from './personToPerson'
+import { RequestToPay } from './requestToPay'
+
 At the heart of all interactions in Open Payments is an account that is either
 the sending or receiving side of the transaction. As this account is the
 starting point for any interactions we call this the **initiation account**.
@@ -12,6 +15,18 @@ is the **payee account**.
 
 If the **Open Payments Client** is the **payee** then the **initiation account**
 is the **payer account**.
+
+In the following example of a person-to-person payment from Alice to Bob,
+Alice's wallet is the client and therefor Bob's account is the **initiation
+account**.
+
+![Person to Person Payment](../static/img/personToPerson.png)
+
+However, in the second example Alice is the payee and uses Bob's Payment Pointer
+to discover his account (the initiation account) and create and authorize a
+mandate to pull funds from it.
+
+![Request to Pay](../static/img/requestToPay.png)
 
 ## Payment Pointers
 
@@ -72,7 +87,7 @@ describes the various service endpoints that are available to:
 
 The document is hosted at the Payment Pointer URL.
 
-To access the document client MUST make an HTTP GET request to the Payment
+To access the document a client MUST make an HTTP GET request to the Payment
 Pointer URL specifying an accepted media type of `application/json`.
 
 The following request is a non-normative example of a request for the meta-data
@@ -85,8 +100,6 @@ Accept: application/json
 ```
 
 The returned JSON document MUST contain one or more of the following claims:
-
-Open Payments defines the following additional claims:
 
 - `account_servicer` URL identifying the entity servicing the account (e.g.
   bank, digital wallet, mobile money provider).
@@ -141,7 +154,7 @@ If an Open Payments client makes a meta-data request (using the
 server does not support Open Payments.
 
 If a raw Interledger connection is sufficient to accomplish the transaction it
-is attempting. The client MAY fall back to using SPSP and retry the request in
+is attempting, the client MAY fall back to using SPSP and retry the request in
 the form of a backwards-compatible
 [Open Payments Connection Request](web-monetization.mdx) which supports both
 SPSP and Open Payments.
