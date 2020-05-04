@@ -17,8 +17,8 @@ of a Mandate. Wallets MUST implement the Charges API on conjunction with Mandate
 
 ### Create
 
-A Client creates a Charge by doing an HTTP POST of JSON document to an endpoint constructed by appending `/charges` on
-the Mandate URI for which they wish to perform the Charge against.
+A Client creates a Charge by doing an HTTP POST of a JSON document with a `Content-Type` header of `application/invoice+json`
+on the Mandate URI for which they wish to perform the Charge against.
 
 The JSON document MUST include the following:
 
@@ -26,14 +26,14 @@ The JSON document MUST include the following:
 
 The Open Payments Server MUST respond with a Charge Response or an error (TDB).
 
-The following is a non-normative example of a Client creating a Charge against a Mandate.
+The following is a non-normative example of a Client creating a Charge against a Mandate identified by `//issuer.wallet/mandates/2fad69d0-7997-4543-8346-69b418c479a6`.
 
 ```http
-POST /mandates/2fad69d0-7997-4543-8346-69b418c479a6/charges HTTP/1.1
+POST /mandates/2fad69d0-7997-4543-8346-69b418c479a6 HTTP/1.1
 Host: issuer.wallet
 Accept: application/json
 Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi...
-Content-Type: application/json
+Content-Type: application/invoice+json
 
 {
   "invoice": "//acquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
@@ -45,7 +45,7 @@ with a non-normative response from the Open Payments Server:
 ```http
 HTTP/1.1 201 Created
 Content-Type: application/json
-
+Location: https://issuer.wallet/charges/a395a5c0-f9cd-48bd-9c1a-19fb4d312d53
 {
   "name": "//issuer.wallet/charges/a395a5c0-f9cd-48bd-9c1a-19fb4d312d53",
   "invoice": "//aquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
