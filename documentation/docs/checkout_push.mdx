@@ -23,14 +23,14 @@ activate Acquirer
 Acquirer->>Acquirer: createInvoice(invoice)
 Acquirer-->>Receiver: 201 paid=false
 deactivate Acquirer
-Receiver-xSender: [ send invoice_url out of band (PaymentRequest, QR Code) ]
+Receiver-xSender: [ send invoice_url out of band (PaymentRequest, QR Code, Redirect) ]
 deactivate Receiver
 activate Sender
 Sender->>Issuer: pay(invoice_url)
 activate Issuer
 Issuer->>Acquirer: GET invoice_url
 activate Acquirer
-Acquirer-->>Issuer: 200 destination_address, shared_secret
+Acquirer-->>Issuer: 200 paymentDetails
 deactivate Acquirer
 rect rgb(0, 255, 0)
     Issuer->>Acquirer: [ push payment ]
@@ -60,41 +60,37 @@ Based on the diagram above the flow is as follows:
 
 ## 1. Creating Invoice at Acquirer
 
-Below is a non-normative example of a merchant creating an invoice at its Acquirer.
+Below is a non-normative example of a merchant with a Payment Pointer of `$aquirer.wallet/merchant` creating an invoice at its Acquirer.
+The merchant creates the invoice by making a POST request to the `/merchant` path with the `Content-Type` header set to `application/invoice+json`.
 
 ```http
-POST /invoices HTTP/1.1
+POST /merchant HTTP/1.1
 Host: acquirer.wallet
-Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi...
 Accept: application/json
-Content-Type: application/json
+Content-Type: application/invoice+json
 
 {
   "subject": "$acquirer.wallet/merchant",
-  "asset": {
-    "code": "USD",
-    "scale": 2
-  }
+  "assetCode": "USD",
+  "assetScale": 2,
   "amount": 200
 }
 ```
 
 A successful `201` response will return an invoice object. Below is a non-normative example of a successful response to 
-the creation of an invoice for `$wallet.example/merchant`.
+the creation of an invoice for `$aquirer.wallet/merchant`.
 
 ```http
 HTTP/1.1 201 Created
 Content-Type: application/json
-Location: https://acquirer.wallet/sessions/0f09dc92-84ad-401b-a7c9-441bc6173f4e
+Location: https://acquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e
 
 {
   "name": "//acquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
   "subject": "$acquirer.wallet/merchant",
   "amount": 200
-  "asset": {
-    "code": "USD",
-    "scale": 2
-  },
+  "assetCode": "USD",
+  "assetScale": 2,
   "received": 0
 }
 ```
@@ -102,32 +98,30 @@ Location: https://acquirer.wallet/sessions/0f09dc92-84ad-401b-a7c9-441bc6173f4e
 ## 2. Present invoice to customer
 
 Once the merchant has the invoice, it would present the invoice to the customer. This could be in the form of a URL or
-QRCode.
+QRCode, or the merchant application could redirect the sender to the sender's wallet to pay the invoice. 
+This flow should be left to individual merchants to implement.
 
 ## 3. Customer submits invoice to Issuer
 
 The customer can now submit the invoice to its Issuer. If its a URL it could paste it into some dialog or if its a QRCode,
-they could scan with their native app. It is expected that the Issuer would ask confirmation before 
+they could scan with their native app. It is expected that the Issuer would ask confirmation before executing an Invoice payment.
 
 ### Payment
 
-In order for the Issuer to complete the payment it would need to get payment details from the invoice. By doing a GET against
-the invoice it can get the required `destination_address` and `shared_secret`
+To complete the payment the Issuer would need to get payment details from the invoice. By doing a GET against
+the invoice with the `Accept` header set to `application/connection+json`, the sender can get the 
+payment details necessary to pay the invoice. In this example, the sender and receiver wish to transact over Interledger, 
+so the Acquirer would respond with a `destination_address` and `shared_secret`.
+
+The following is a non-normative example of an Issuer getting ILP payment details for an Invoice from the Acquirer.
 
 ```http
-GET /invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e HTTP/1.1
+GET /invoices/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0 HTTP/1.1
 Host: acquirer.wallet
-Accept: application/json
+Accept: application/connection+json
 Content-Type: application/json
 
 {
-  "subject": "$acquirer.wallet/merchant",
-  "asset": {
-    "code": "USD",
-    "scale": 2
-  },
-  "amount": 200,
-  "received": 0,
   "destination_address": "g.aquirer.42e0f0c9284ad401b7c941bc6173f4e",
   "shared_secret": "AvLaEGc+ojGHVezQF9DC4/7F5YIvrNPx/VM+4hJkCbs=",
 }
