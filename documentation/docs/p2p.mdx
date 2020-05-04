@@ -15,7 +15,7 @@ participant Receiver
 Receiver->>Sender: Provide Payment Pointer
 Sender->>Issuer: Initate payment (payment identifier, amount)
 activate Issuer
-Issuer->>Acquirer: POST /invoices
+Issuer->>Acquirer: POST /receiver
 activate Issuer
 activate Acquirer
 Acquirer->>Acquirer: createInvoice(invoice)
