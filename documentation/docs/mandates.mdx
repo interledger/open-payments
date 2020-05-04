@@ -27,9 +27,8 @@ Mandates represents delegated access resource to a users account.
 ## APIs
 
 ### Create
-
-A Client creates a Mandate by doing an HTTP POST of JSON document to the Mandates endpoint as defined in the Open
-Payments Metadata.
+Given a sender's Payment Pointer, a Client creates a Mandate by doing an HTTP POST of JSON document to the 
+HTTP URL resolved from the Payment Pointer, with the `Content-Type` header equal to `application/mandate+json`.
 
 The JSON document MUST include the following:
 * amount
@@ -45,19 +44,20 @@ and MAY include the following:
 The Open Payments Server MUST respond with a Mandate Response or an error (TDB).
 
 The following is a non-normative example where the Client creates a mandate at the Issuing Wallet
+for subject `$issuer.wallet/bob`
 
 ```http
-POST /mandates HTTP/1.1
+POST /bob HTTP/1.1
 Host: issuer.wallet
 Accept: application/json
-Content-Type: application/json
+Content-Type: application/mandate+json
 
 {
   "amount": 200,
   "assetCode" : "USD",
   "assetScale": 2,
   "interval": "P1M",
-  "scope": "issuer.wallet/user"
+  "subject": "$issuer.wallet/bob"
 }
 ```
 
@@ -66,7 +66,7 @@ with a non-normative response from the Open Payments Server
 ```http
 HTTP/1.1 201 Created
 Content-Type: application/json
-
+Location: https://issuer.wallet/mandates/2fad69d0-7997-4543-8346-69b418c479a6
 {
   "name": "//issuer.wallet/mandates/2fad69d0-7997-4543-8346-69b418c479a6",
   "amount": 200,
@@ -74,7 +74,7 @@ Content-Type: application/json
   "assetScale": 2,
   "interval": "P1M",
   "startAt": "2020-01-22T00:00:00Z",
-  "subject": "issuer.wallet/user",
+  "subject": "issuer.wallet/bob",
   "balance": 200
 }
 ```
@@ -82,9 +82,9 @@ Content-Type: application/json
 ### Get
 
 The Client reads the mandate by doing a HTTP GET of the corresponding Mandate name as URI. The Open Payments Server
-MUST respond with either an Mandate Response or an Error (TBD)
+MUST respond with either a Mandate Response or an Error (TBD)
 
-The following is a non-normative example where the Client reads an mandate
+The following is a non-normative example where the Client reads a mandate
 
 ```http
 GET /mandates/2fad69d0-7997-4543-8346-69b418c479a6 HTTP/1.1
@@ -100,7 +100,7 @@ Content-Type: application/json
   "assetScale": 2,
   "interval": "P1M",
   "startAt": "2020-01-22T00:00:00Z",
-  "subject": "issuer.wallet/user",
+  "subject": "$issuer.wallet/bob",
   "balance": 200
 }
 ```
