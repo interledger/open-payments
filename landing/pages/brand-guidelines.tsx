@@ -26,7 +26,7 @@ const Divider: React.FC = () => {
 }
 
 const Card: React.FC = (props) => {
-  let className = 'p-8 sm:p-16 md:px-32 bg-white elevation-2 rounded lg:w-full mx-4'
+  let className = 'p-8 sm:p-16 bg-white elevation-2 rounded w-full'
   return (
     <div className={className}>
       {props.children}
@@ -69,7 +69,7 @@ const Home: NextPage = () => {
           </a>
         </div>
       </div>
-      <div className="container mx-auto flex flex-col text-left justify-center py-12">
+      <div className="container mx-auto flex flex-col text-left justify-center py-12 px-4 sm:px-12">
         <Card>
           <Section header="Logo">
             <div className="text-sm text-gray-light mb-16">
@@ -78,8 +78,8 @@ const Home: NextPage = () => {
             </div>
             <div className="flex flex-col lg:flex-row">
               <div className="w-full lg:w-1/2 flex flex-col pr-0 lg:pr-8">
-                <div className="flex content-center h-48 sm:h-56 mb-4 border border-gray border-opacity-12 rounded-md">
-                  <img className="mx-auto self-center w-3/4" src="/Open_Payments_standard_logo.svg"/>
+                <div className="flex content-center h-48 sm:h-56 mb-4 p-8 border border-gray border-opacity-12 rounded-md">
+                  <img className="mx-auto self-center max-w-full" src="/Open_Payments_standard_logo.svg"/>
                 </div>
                 <div className="text-lg sm:text-xl text-gray mb-16 lg:mb-0">
                   Standard lockup<br/>
@@ -91,8 +91,8 @@ const Home: NextPage = () => {
                 </div>
               </div>
               <div className="w-full lg:w-1/2 flex flex-col pl-0 lg:pl-8">
-                <div className="flex content-center h-48 sm:h-56 mb-4 border border-gray border-opacity-12 rounded-md">
-                  <img className="mx-auto self-center w-1/2 sm:w-1/4 " src="/Open_Payments_logomark.svg"/>
+                <div className="flex content-center h-48 sm:h-56 mb-4 p-8 border border-gray border-opacity-12 rounded-md">
+                  <img className="mx-auto self-center max-h-full" src="/Open_Payments_logomark.svg"/>
                 </div>
                 <div className="text-lg sm:text-xl text-gray">
                   Logomark<br/>
