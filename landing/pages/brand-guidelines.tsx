@@ -153,38 +153,64 @@ const Home: NextPage = () => {
           <Divider/>
           <Section header="Payment button">
             <div className="text-sm text-gray-light">
-              These guidelines are to be used as a reference point when implementing an Open Payment payment button within your app or website.
+              These guidelines are to be used as a reference point when implementing an Open Payments payment button within your app or website.
               The Open Payments payment button must always use the Open Payments specification when making payments.
               <br/><br/>
-              All Open Payments payment buttons within your app or website must adhere to our brand guidelines, which include, but are not limited to, the following requirements:
-              <br/><br/>
-              <ol className="list-disc list-inside mb-16">
-                <li>The size and shape of the button must be relative to other buttons or similar elements on the page.</li>
-                <li>The button colour must contrast with the background colour of the area surrounding it.</li>
-                <li>Always maintain the minimum clear space of 8&nbsp;dp on all sides of the payment button.</li>
-                <li>The button should have a minimum width of 90&nbsp;dp.</li>
-                <li>The size and font of "Pay" on the button must remain constant. Rubik font family, with 400 weight and a minimum font size of 20.</li>
-              </ol>
+              <div className="mb-16">
+                All Open Payments payment buttons within your app or website must adhere to our brand guidelines, which include, but are not limited to, the following requirements:
+              </div>
               <div className="flex flex-col lg:flex-row mb-16">
-                <div className="w-full lg:w-1/2 flex flex-col pr-0 lg:pr-8">
-                  <div className="flex content-center h-48 sm:h-56 mb-4 border border-gray border-opacity-12 rounded-md">
-                    <OpenPaymentsButton className="mx-auto self-center rounded-md text-white bg-black elevation-3"/>
+                <div className="w-full lg:w-1/3 flex flex-col pr-0 lg:pr-8">
+                  <div className="flex content-center h-48 sm:h-56 mb-4 p-8 border border-gray border-opacity-12 rounded-md">
+                    <img className="mx-auto self-center max-w-full" src="/Specification.svg"/>
                   </div>
                   <div className="text-lg sm:text-xl text-gray mb-16 lg:mb-0">
-                    Black<br/>
+                    Specification<br/>
                     <p className="text-sm text-gray-light mt-4">
-                      Use black buttons on white or light backgrounds to provide contrast.
+                      Open Payments logo size 24&nbsp;dp.<br/>
+                      Minimum width 90&nbsp;dp, and minimum height 48&nbsp;dp.<br/>
+                      Minimum <span className="text-teal-light font-bold">8&nbsp;dp margin</span> on all sides of the button.<br/>
+                      Minimum <span className="text-orange-light font-bold">8&nbsp;dp padding</span> between elements inside the button.<br/>
+                      Content must be vertically centered.
                     </p>
                   </div>
                 </div>
-                <div className="w-full lg:w-1/2 flex flex-col pl-0 lg:pl-8">
-                  <div className="flex content-center h-48 sm:h-56 bg-cyan-light rounded-md mb-4">
-                    <OpenPaymentsButton className="mx-auto self-center rounded-md text-black bg-white elevation-3"/>
+                <div className="w-full lg:w-1/3 flex flex-col px-0 lg:px-8">
+                  <div className="flex content-center h-48 sm:h-56 mb-4 border border-gray border-opacity-12 rounded-md">
+                    <div className="flex content-center w-full h-full rounded-l-md text-white bg-cyan-light">
+                      <OpenPaymentsButton verb="Pay" className="mx-auto self-center rounded-md text-black bg-white elevation-3"/>
+                    </div>
+                    <div className="flex content-center w-full h-full rounded-md text-white">
+                      <OpenPaymentsButton verb="Pay" className="mx-auto self-center rounded-md text-white bg-black elevation-3"/>
+                    </div>
+                  </div>
+                  <div className="text-lg sm:text-xl text-gray mb-16 lg:mb-0">
+                    Contrast<br/>
+                    <p className="text-sm text-gray-light mt-4">
+                      The button colour must contrast with the background colour of the surrounding area.<br/>
+                      Use white buttons on dark or colourful backgrounds.<br/>
+                      Use black buttons on white or light background.
+                    </p>
+                  </div>
+                </div>
+                <div className="w-full lg:w-1/3 flex flex-col pl-0 lg:pl-8">
+                  <div className="flex content-center h-48 sm:h-56 mb-4 border border-gray border-opacity-12 rounded-md">
+                    <div className="flex content-center w-full h-full text-black border-r border-gray border-opacity-12">
+                      <span className="w-full text-right mr-2 self-center text-md">
+                      Rubik<br/>
+                      Regular<br/>
+                      20
+                      </span>
+                    </div>
+                    <div className="flex content-center w-full h-full text-black">
+                      <span className=" ml-2 self-center text-xl">Button</span>
+                    </div>
                   </div>
                   <div className="text-lg sm:text-xl text-gray">
-                    White<br/>
+                    Text<br/>
                     <p className="text-sm text-gray-light mt-4">
-                      Use white buttons on dark or colorful backgrounds.
+                      The text on the button must be a single, title case, verb. For example, Pay, Tip, Donate, Subscribe, Buy, etc.<br/>
+                      The text should always be to the right of the logo.
                     </p>
                   </div>
                 </div>
@@ -196,7 +222,7 @@ const Home: NextPage = () => {
             <div className="flex flex-col lg:flex-row">
               <div className="w-full lg:w-1/3 flex flex-col pr-0 lg:pr-8">
                 <div className="flex content-center h-48 sm:h-56 bg-cyan-light rounded-full mb-4">
-                  <OpenPaymentsButton className="w-8/12 mx-auto self-center rounded-full text-black bg-white elevation-3"/>
+                  <OpenPaymentsButton verb="Donate" className="w-8/12 mx-auto self-center rounded-full text-black bg-white elevation-3"/>
                 </div>
                 <div className="text-lg sm:text-xl text-gray mb-16 lg:mb-0">
                   Shape<br/>
@@ -207,7 +233,7 @@ const Home: NextPage = () => {
               </div>
               <div className="w-full lg:w-1/3 flex flex-col px-0 lg:px-8">
                 <div className="flex content-center h-48 sm:h-56 mb-4 border border-gray border-opacity-12 rounded-md">
-                  <OpenPaymentsButton className="mx-auto self-center rounded-md text-white bg-black elevation-8"/>
+                  <OpenPaymentsButton verb="Tip" className="mx-auto self-center rounded-md text-white bg-black elevation-8"/>
                 </div>
                 <div className="text-lg sm:text-xl text-gray mb-16 lg:mb-0">
                   Elevation<br/>
@@ -218,7 +244,7 @@ const Home: NextPage = () => {
               </div>
               <div className="w-full lg:w-1/3 flex flex-col pl-0 lg:pl-8">
                 <div className="flex content-center h-48 sm:h-56 bg-cyan-light rounded-md mb-4">
-                  <OpenPaymentsButton className="mx-auto self-center rounded-md text-black bg-white elevation-1 hover:elevation-6 focus:elevation-24"/>
+                  <OpenPaymentsButton verb="Subscribe" className="mx-auto self-center rounded-md text-black bg-white elevation-1 hover:elevation-6 focus:elevation-24"/>
                 </div>
                 <div className="text-lg sm:text-xl text-gray">
                   State<br/>
@@ -271,7 +297,7 @@ const Home: NextPage = () => {
                       <div className="text-primary align-middle h-12 flex flex-row justify-between" >
                         <div className="flex flex-row">
                           <img className="m-2 w-2/12 sm:1/12" src="/CARD Mark.svg"/>
-                          <div className="text-xs my-auto">*4242</div>
+                          <div className="text-xs my-auto">**** 4242</div>
                         </div>
                         <i className={`self-center material-icons`}>navigate_next</i>
                       </div>
