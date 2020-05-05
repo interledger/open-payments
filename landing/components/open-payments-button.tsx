@@ -52,15 +52,16 @@ export const OpenPaymentsLogo = ({size}: LogoProps) => {
 
 type Props = {
   className?: string
+  verb: string
 }
 
-const OpenPaymentsButton: React.FC<Props>=  ({className}) => {
+const OpenPaymentsButton: React.FC<Props>=  ({className, verb}) => {
   return (
-    <button className={`flex my-auto content-center items-center mx-auto justify-center px-2 h-12 cursor-pointer max-w-sm min-w-button focus:outline-none ${className}`}>
+    <button className={`flex capitalize my-auto content-center items-center mx-auto justify-center px-4 h-12 cursor-pointer max-w-sm min-w-button focus:outline-none ${className}`}>
       {
             <div className="my-auto flex items-center">
             <OpenPaymentsLogo size={6}/>
-            <div className="flex my-auto ml-2 text-xl">Pay</div>
+            <div className="flex my-auto ml-2 text-xl">{verb}</div>
             </div>
       }
     </button>
