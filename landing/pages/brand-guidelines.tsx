@@ -42,9 +42,9 @@ type colourBoxProps = {
 
 const ColourBox: React.FC<colourBoxProps> = (props) => {
   return (
-    <div className={`w-1/2 sm:w-1/3 lg:w-2/12 flex flex-col ${props.padding}`}>
-      <div className={`bg-${props.colour} flex content-center h-24 sm:h-32 mb-2 rounded-md`}/>
-      <div className="text-lg sm:text-xl text-gray mb-4">
+    <div className={`w-full lg:w-2/12 flex flex-col ${props.padding}`}>
+      <div className={`bg-${props.colour} flex content-center h-12 sm:h-16 mb-2 rounded-md`}/>
+      <div className="text-base text-gray mb-4">
         {props.name}
       </div>
     </div>
@@ -105,27 +105,49 @@ const Home: NextPage = () => {
           </Section>
           <Divider/>
           <Section header="Colours">
-            <div className="text-sm text-gray-light mb-16">
-              The Open Payments logo consists of 12 colours, 6 base colours with a light variant each.
-              There are two auxilary colours which are used for emphasis or text.
+            <div className="flex flex-row lg:flex-col">
+              <div className="flex flex-col lg:flex-row w-full">
+                <ColourBox colour="red" name="#CE6564" padding="px-2 sm:px-4"/>
+                <ColourBox colour="orange" name="#F47F5F" padding="px-2 sm:px-4"/>
+                <ColourBox colour="green" name="#6D995C" padding="px-2 sm:px-4"/>
+                <ColourBox colour="cyan" name="#459789" padding="px-2 sm:px-4"/>
+                <ColourBox colour="teal" name="#51797D" padding="px-2 sm:px-4"/>
+                <ColourBox colour="purple" name="#845578" padding="px-2 sm:px-4"/>
+              </div>
+              <div className="flex flex-col lg:flex-row w-full">
+                <ColourBox colour="red-light" name="#F59297" padding="px-2 sm:px-4"/>
+                <ColourBox colour="orange-light" name="#FCC9B3" padding="px-2 sm:px-4"/>
+                <ColourBox colour="green-light" name="#7FC78C" padding="px-2 sm:px-4"/>
+                <ColourBox colour="cyan-light" name="#8FD1C1" padding="px-2 sm:px-4"/>
+                <ColourBox colour="teal-light" name="#9EC7D0" padding="px-2 sm:px-4"/>
+                <ColourBox colour="purple-light" name="#978AA4" padding="px-2 sm:px-4"/>
+              </div>
             </div>
-            <div className="flex flex-row flex-wrap">
-              <ColourBox colour="red" name="#CE6564" padding="pl-4 pr-4"/>
-              <ColourBox colour="orange" name="#F47F5F" padding="pl-4 pr-4"/>
-              <ColourBox colour="green" name="#6D995C" padding="pl-4 pr-4"/>
-              <ColourBox colour="cyan" name="#459789" padding="pl-4 pr-4"/>
-              <ColourBox colour="teal" name="#51797D" padding="pl-4 pr-4"/>
-              <ColourBox colour="purple" name="#845578" padding="pl-4 pr-4"/>
-
-              <ColourBox colour="red-light" name="#F59297" padding="pl-4 pr-4"/>
-              <ColourBox colour="orange-light" name="#FCC9B3" padding="pl-4 pr-4"/>
-              <ColourBox colour="green-light" name="#7FC78C" padding="pl-4 pr-4"/>
-              <ColourBox colour="cyan-light" name="#8FD1C1" padding="pl-4 pr-4"/>
-              <ColourBox colour="teal-light" name="#9EC7D0" padding="pl-4 pr-4"/>
-              <ColourBox colour="purple-light" name="#978AA4" padding="pl-4 pr-4"/>
-
-              <ColourBox colour="primary" name="#1E3250" padding="pl-4 pr-4"/>
-              <ColourBox colour="orange-other" name="#FABD84" padding="pl-4 pr-4"/>
+            <div className="text-lg sm:text-xl text-gray mb-16">
+              Logo<br/>
+              <p className="text-sm text-gray-light mt-4">
+              The Open Payments logo consists of 6 base colours, each with a light secondary variant.
+              </p>
+            </div>
+            <div className="flex flex-row lg:hidden">
+              <div className="flex flex-col lg:flex-row w-full">
+                <ColourBox colour="primary" name="#1E3250" padding="px-2 sm:px-4"/>
+              </div>
+              <div className="flex flex-col lg:flex-row w-full">
+                <ColourBox colour="orange-other" name="#FABD84" padding="px-2 sm:px-4"/>
+              </div>
+            </div>
+            <div className="hidden flex-row lg:flex">
+              <div className="flex flex-col lg:flex-row w-full">
+                <ColourBox colour="primary" name="#1E3250" padding="px-2 sm:px-4"/>
+                <ColourBox colour="orange-other" name="#FABD84" padding="px-2 sm:px-4"/>
+              </div>
+            </div>
+            <div className="text-lg sm:text-xl text-gray">
+              Emphasis<br/>
+              <p className="text-sm text-gray-light mt-4">
+              There are two auxilary colours which are used for emphasis or text.
+              </p>
             </div>
           </Section>
           <Divider/>
