@@ -36,7 +36,7 @@ Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi...
 Content-Type: application/json
 
 {
-  "invoice": "//acquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
+  "invoice": "https://acquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
 }
 ```
 
@@ -47,9 +47,9 @@ HTTP/1.1 201 Created
 Content-Type: application/json
 Location: https://issuer.wallet/charges/a395a5c0-f9cd-48bd-9c1a-19fb4d312d53
 {
-  "name": "//issuer.wallet/charges/a395a5c0-f9cd-48bd-9c1a-19fb4d312d53",
-  "invoice": "//aquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
-  "mandate": "//issuer.wallet/mandates/2fad69d0-7997-4543-8346-69b418c479a6",
+  "name": "https://issuer.wallet/charges/a395a5c0-f9cd-48bd-9c1a-19fb4d312d53",
+  "invoice": "https://aquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
+  "mandate": "https://issuer.wallet/mandates/2fad69d0-7997-4543-8346-69b418c479a6",
   "status": "created"
 }
 ```
@@ -69,9 +69,9 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "name": "//issuer.wallet/charges/a395a5c0-f9cd-48bd-9c1a-19fb4d312d53",
-  "invoice": "//aquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
-  "mandate": "//issuer.wallet/mandates/2fad69d0-7997-4543-8346-69b418c479a6",
+  "name": "https://issuer.wallet/charges/a395a5c0-f9cd-48bd-9c1a-19fb4d312d53",
+  "invoice": "https://aquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
+  "mandate": "https://issuer.wallet/mandates/2fad69d0-7997-4543-8346-69b418c479a6",
   "status": "succesful"
 }
 ```
