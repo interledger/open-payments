@@ -13,10 +13,9 @@ participant Issuer as Issuer<br/>(sending wallet)
 participant Acquirer as Acquirer<br/>(receiving wallet)
 participant Receiver
 Receiver->>Sender: Provide Payment Pointer
-Sender->>Issuer: Initate payment (payment pointer, amount)
+Sender->>Issuer: Initate payment (payment identifier, amount)
 activate Issuer
-Issuer->>Acquirer: Get Open Payments Metadata
-Issuer->>Acquirer: POST /invoices
+Issuer->>Acquirer: POST /receiver
 activate Issuer
 activate Acquirer
 Acquirer->>Acquirer: createInvoice(invoice)
@@ -25,7 +24,7 @@ deactivate Acquirer
 deactivate Issuer
 Issuer->>Acquirer: GET invoice_url
 activate Acquirer
-Acquirer-->>Issuer: 200 destination_address, shared_secret
+Acquirer-->>Issuer: 200 paymentDetails
 deactivate Acquirer
 rect rgb(0, 255, 0)
     Issuer->>Acquirer: [ push payment ]
@@ -42,71 +41,30 @@ deactivate Issuer
 
 Based on the diagram above the flow is as follows:
 1. Sender submits payment to its own wallet
-2. Issuer wallet gets Open Payment metadata
-3. Issuer wallet creates invoice on receivers wallet
+2. Issuer wallet creates invoice on receivers wallet
 3. Issuer pays invoice
 
 ## 1. Sender submits payment
 
-The sender presents the Payment Pointer of the Receiver to its Issuer to instruct it to make a Peer-to-Peer payment
+The sender presents its Issuer with the payment identifier (eg. Payment Pointer) of the Receiver and the amount they want to send. 
+This will instruct the Issuer to make a Peer-to-Peer payment.
 
-## 2. Discover Open Payments metadata
+## 2. Issuer creates invoice 
 
-Using the Payment Pointer provided, the Merchant will perform a GET against the correct url.
-
-```http
-GET /.well-known/open-payments-server HTTP/1.1
-Host: aquirer.wallet
-```
-
-A successful `200` response will return the Open Payments metadata
+Given the sender provided the Issuer wallet with the receiver's Payment Pointer of `$acquirer.wallet/bob`,
+the Issuer would create an invoice on the Acquirer by making a POST request with the 
+`Content-Type` header set to `application/invoice+json` and a JSON payload such as the following:
 
 ```http
-HTTP/1.1 200 OK
-Content-Type: application/json
-
-{
-  "issuer": "https://aquirer.wallet",
-  "authorization_endpoint": "https://aquirer.wallet/authorize",
-  "token_endpoint": "https://aquirer.wallet/token",
-  "token_endpoint_auth_methods_supported": ["client_secret_basic","private_key_jwt"],
-  "token_endpoint_auth_signing_alg_values_supported": ["RS256", "ES256"],
-  "userinfo_endpoint": "https://aquirer.wallet/userinfo",
-  "jwks_uri": "https://aquirer.wallet/jwks.json",
-  "registration_endpoint": "https://aquirer.wallet/register",
-  "scopes_supported": ["openid","profile","email","address","phone","offline_access"],
-  "response_types_supported": ["code", "token"],
-  "service_documentation": "https://aquirer.wallet/service_documentation.html",
-  "ui_locales_supported": ["en-US", "en-GB", "en-CA", "fr-FR", "fr-CA"],
-  "payment_invoices_endpoint": "https://aquirer.wallet/invoices",
-  "payment_mandates_endpoint": "https://aquirer.wallet/mandates",
-  "payment_sessions_endpoint": "https://aquirer.wallet/sessions",
-  "payment_assets_supported": [
-    {"code": "USD", "scale": 2},
-    {"code": "EUR", "scale": 2}
-  ]
-}
-```
-
-The Merchant can now find `payment_mandates_endpoint` with which to create the necessary mandate
-
-## 3. Issuer creates invoice 
-
-The Issuer would create an invoice on the Acquirer for the amount the sender wanted to send to the receiver.
-
-```http
-POST /invoices HTTP/1.1
+POST /bob HTTP/1.1
 Host: acquirer.wallet
-Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi...
 Accept: application/json
-Content-Type: application/json
+Content-Type: application/invoice+json
 
 {
   "subject": "$acquirer.wallet/receiver",
-  "asset": {
-    "code": "USD",
-    "scale": 2
-  },
+  "assetCode": "USD",
+  "assetScale": 2,
   "amount": 100
 }
 ```
@@ -114,44 +72,38 @@ Content-Type: application/json
 ```http
 HTTP/1.1 201 Created
 Content-Type: application/json
-Location: https://acquirer.wallet/sessions/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0
+Location: https://acquirer.wallet/invoices/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0
 
 {
   "name": "//acquirer.wallet/invoices/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0",
-  "subject": "$acquirer.wallet/receiver",
-  "amount": 200,
-  "asset": {
-    "code": "USD",
-    "scale": 2
-  },
+  "subject": "$acquirer.wallet/bob",
+  "amount": 100,
+  "assetCode": "USD",
+  "assetScale": 2,
   "received": 0
 }
 ```
 
-## 4. Issuer Pays
+## 3. Issuer Pays
 
-### Payment
+### Get Payment Details
 
 To complete the payment the Issuer would need to get payment details from the invoice. By doing a GET against
-the invoice it can get the required `destination_address` and `shared_secret`.
+the invoice with the `Accept` header set to `application/connection+json`, the sender can get the 
+payment details necessary to pay the invoice (eg. `destination_address` and `shared_secret`).
 
 ```http
 GET /invoices/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0 HTTP/1.1
 Host: acquirer.wallet
-Accept: application/json
+Accept: application/connection+json
 Content-Type: application/json
 
 {
-  "subject": "$acquirer.wallet/receiver",
-  "asset": {
-    "code": "USD",
-    "scale": 2
-  },
-  "amount": 100,
-  "received": 0,
   "destination_address": "g.aquirer.42e0f0c9284ad401b7c941bc6173f4e",
   "shared_secret": "AvLaEGc+ojGHVezQF9DC4/7F5YIvrNPx/VM+4hJkCbs=",
 }
 ```
 
-The Issuer would the STREAM the money to the details given.
+### Pay the Invoice
+Once the Issuer has received payment details for the invoice, it can send the payment
+to the receiver. For example, the Issuer could STREAM money to the given `destination_address`.

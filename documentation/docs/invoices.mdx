@@ -20,8 +20,8 @@ Invoices represent an amount payable that can be presented to a third party and/
 
 ### Create
 
-A Client creates an Invoice by doing an HTTP POST of JSON document to the Invoices URL of the Invoices URI as defined in
-the OP Metadata.
+Given a receiver's Payment Pointer, a Client creates an Invoice by doing an HTTP POST of a JSON document to the 
+HTTP URL resolved from the Payment Pointer, with the `Content-Type` header equal to `application/invoice+json`.
 
 The JSON document MUST include the following:
 
@@ -33,19 +33,19 @@ The JSON document MUST include the following:
 and MAY include the following:
 * description
 
-The Open Payments Server MUST respond with a Invoice Response or an error (TDB).
+The Open Payments Server MUST respond with an Invoice Response or an error (TDB).
 
-The following is a non-normative example where the Client created an invoice at the Acquirer Wallet:
+The following is a non-normative example where the Client created an invoice for the subject `$acquirer.wallet/alice` at the Acquirer Wallet:
 
 ```http
-POST /invoices HTTP/1.1
+POST /alice HTTP/1.1
 Host: acquirer.wallet
 Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi...
 Accept: application/json
-Content-Type: application/json
+Content-Type: application/invoice+json
 
 {
-  "subject": "$acquirer.wallet/receiver",
+  "subject": "$acquirer.wallet/alice",
   "assetCode": "USD",
   "assetScale": 2,
   "amount": 200,
@@ -62,7 +62,7 @@ Location: https://acquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e
 
 {
   "name": "//acquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
-  "subject": "$acquirer.wallet/merchant",
+  "subject": "$acquirer.wallet/alice",
   "amount": 200,
   "assetCode": "USD",
   "assetScale": 2,
@@ -87,7 +87,7 @@ Content-Type: application/json
 
 {
   "name": "//acquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
-  "subject": "$acquirer.wallet/merchant",
+  "subject": "$acquirer.wallet/alice",
   "amount": 200,
   "assetCode": "USD",
   "assetScale": 2,
@@ -98,26 +98,27 @@ Content-Type: application/json
 
 ### Payment Details
 
-The Client gets the payment details of an Invoice by doing a HTTP OPTIONS of the corresponding Invoice name as URI. The Open 
-Payments Server MUST respond with either an Payment Details Response or an Error (TBD).
+The Client gets the payment details of an Invoice by doing an HTTP GET of the corresponding Invoice name as a URI, with an
+`Accept` HTTP header of `application/connection+json`. The Open Payments Server MUST respond with either an Payment Details 
+Response or an Error (TBD).
 
 The following is a non-normative example of a Client getting the payment details for an invoice:
 
 ```http
-OPTIONS invocies/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0 HTTP/1.1
+GET invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e HTTP/1.1
 Host: acquirer.wallet
-Accept: application/json
+Accept: application/connection+json
 ```
 
-with a non-normative response from the Open Payments Server as:
+with a non-normative response from the Open Payments Server of:
 
 ```http
 HTTP/1.1 200 Ok
 Content-Type: application/json
-Location: https://acquirer.wallet/invocies/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0
+Location: https://acquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e
 
 {
-  "ilpAddress": "example.ilpdemo.red.bob",
+  "ilpAddress": "example.alice.YB5X9FhSOUPCL~NjZjZTYwZDgtZjRiYS00YzYwLWJhNmUtZmM1ZTBhYTk5OTIz",
   "sharedSecret": "6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs="
 }
 ```

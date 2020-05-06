@@ -15,9 +15,8 @@ participant Sender
 participant Issuer as Issuer<br/>(sending wallet)
 participant Acquirer as Acquirer<br/>(receiving wallet)
 participant Receiver
-Sender->>Receiver: Produce $PaymentPointer
-Receiver->>Issuer: Get Open Payments Metadata
-Receiver->>Issuer: POST /mandates
+Sender->>Receiver: Produce payment identifier
+Receiver->>Issuer: POST /sender <br/>application/mandate+json
 activate Receiver
 activate Issuer
 Issuer->>Issuer: Create Mandate
@@ -35,19 +34,19 @@ Issuer-->>Receiver: Respond Auth Tokens
 deactivate Receiver
 deactivate Issuer
 loop Interval of Payment
-Receiver->>Acquirer: POST /invoices
+Receiver->>Acquirer: POST /receiver<br/>application/invoice+json
 activate Receiver
 activate Acquirer
 Acquirer->>Acquirer: createInvoice(invoice)
 Acquirer-->>Receiver: 201 paid=false
 deactivate Acquirer
 deactivate Receiver
-Receiver->>Issuer: POST /mandates/{id}/spend (invoice, auth_token)
+Receiver->>Issuer: POST /mandates/{id}<br/>application/invoice+json
 activate Receiver
 activate Issuer
 Issuer->>Acquirer: GET invoice_url
 activate Acquirer
-Acquirer-->>Issuer: 200 destination_address, shared_secret
+Acquirer-->>Issuer: 200 paymentDetails
 deactivate Acquirer
 rect rgb(0, 255, 0)
     Issuer->>Acquirer: [ push payment ]
@@ -71,75 +70,34 @@ end
 # Flow
 
 Based on the diagram above the flow is as follows:
-1. Customer would provide their Payment Pointer to the Merchant
-2. Merchant uses the Payment Pointer to discover the Open Payments metadata
-3. Merchant creates a mandate on the Issuer wallet
-4. Merchant requests authorization for the mandate from the Issuer. Issuer goes through a consent flow 
-5. Merchant can now submit invoices against the mandate for payments it wants to execute.
+1. Customer would provide their payment identifier (eg. Payment Pointer) to the Merchant
+2. Merchant creates a mandate on the Issuer wallet
+3. Merchant requests authorization for the mandate from the Issuer. Issuer goes through a consent flow 
+4. Merchant can now submit invoices against the mandate for payments it wants to execute.
 
-## 1. Providing Payment Pointer to Merchant
+## 1. Providing Payment Identifier to Merchant
 
-Wallets following the Open Payments spec will issue Payment Pointers to their customers. When a Merchant wishes to initiate
-an Open Payments interaction
+To initiate a recurring payment, the sender must give their payment identifier, such as a Payment Pointer, to
+the merchant. The merchant can then use the payment identifier to create a Mandate on the Issuer.
 
-## 2. Discover Open Payments metadata
+## 2. Create mandate on the Issuer wallet
 
-Using the Payment Pointer provided, the Merchant will perform a GET against the correct url.
-
-```http
-GET /.well-known/open-payments-server HTTP/1.1
-Host: issuer.wallet
-```
-
-A successful `200` response will return the Open Payments metadata
+In this example, the sender provided the Payment Pointer `$issuer.wallet/alice` to the Merchant in the previous step.
+The Merchant then creates a mandate on the Issuer wallet by making a POST request with the `Content-Type` header
+set to `application/mandate+json` like so:
 
 ```http
-HTTP/1.1 200 OK
-Content-Type: application/json
-
-{
-  "issuer": "https://issuer.wallet",
-  "authorization_endpoint": "https://issuer.wallet/authorize",
-  "token_endpoint": "https://issuer.wallet/token",
-  "token_endpoint_auth_methods_supported": ["client_secret_basic","private_key_jwt"],
-  "token_endpoint_auth_signing_alg_values_supported": ["RS256", "ES256"],
-  "userinfo_endpoint": "https://issuer.wallet/userinfo",
-  "jwks_uri": "https://issuer.wallet/jwks.json",
-  "registration_endpoint": "https://issuer.wallet/register",
-  "scopes_supported": ["openid","profile","email","address","phone","offline_access"],
-  "response_types_supported": ["code", "token"],
-  "service_documentation": "https://issuer.wallet/service_documentation.html",
-  "ui_locales_supported": ["en-US", "en-GB", "en-CA", "fr-FR", "fr-CA"],
-  "payment_invoices_endpoint": "https://issuer.wallet/invoices",
-  "payment_mandates_endpoint": "https://issuer.wallet/mandates",
-  "payment_sessions_endpoint": "https://issuer.wallet/sessions",
-  "payment_assets_supported": [
-    {"code": "USD", "scale": 2},
-    {"code": "EUR", "scale": 2}
-  ]
-}
-```
-
-The Merchant can now find `payment_mandates_endpoint` with which to create the necessary mandate
-
-## 3. Create mandate on the Issuer wallet
-
-The Merchant creates a mandate on the customers Issuers wallet using the endpoint above
-
-```http
-POST /mandates HTTP/1.1
+POST /alice HTTP/1.1
 Host: issuer.wallet
 Accept: application/json
-Content-Type: application/json
+Content-Type: application/mandate+json
 
 {
   "amount": 200,
-  "asset" : {
-    "code": "USD",
-    "scale": 2
-  },
+  "assetCode": "USD",
+  "assetScale": 2,
   "interval": "P1M",
-  "scope": "issuer.wallet/alice"
+  "subject": "$issuer.wallet/alice"
 }
 ```
 
@@ -150,18 +108,16 @@ Content-Type: application/json
 {
   "name": "//issuer.wallet/mandates/2fad69d0-7997-4543-8346-69b418c479a6",
   "amount": 200,
-  "asset" : {
-    "code": "USD",
-    "scale": 2
-  },
+  "assetCode": "USD",
+  "assetScale": 2,
   "interval": "P1M",
   "start_at": "2020-01-22T00:00:00Z",
-  "scope": "issuer.wallet/alice",
+  "subject": "$issuer.wallet/alice",
   "balance": 200 
 }
 ```
 
-## 4. Merchant requests authorization for mandate
+## 3. Merchant requests authorization for mandate
 
 The merchant submits the mandate to the AS of the Issuer in order get authorization from the user.
 
@@ -170,28 +126,25 @@ The merchant submits the mandate to the AS of the Issuer in order get authorizat
 
 This results in the Merchant getting an access_token with which to use against the mandate.
 
-## 5. Merchant spends against mandate
+## 4. Merchant spends against mandate
 
-The merchant can now submit spends against the mandate for goods/services rendered. The merchant can do this as often
+The merchant can now submit charges against the mandate for goods/services rendered. The merchant can do this as often
 as necessary, as long as the overall spends don't exceed the limit of the current mandate interval. 
  
 ### Create invoice
 
-When the Merchant wants to PUSH money to itself from the mandate, it will first create an invoice on its Acquirer.
+When the Merchant wants to PUSH money to itself from the mandate, it will first create an Invoice on its Acquirer.
 
 ```http
-POST /invoices HTTP/1.1
+POST /merchant HTTP/1.1
 Host: acquirer.wallet
-Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi...
 Accept: application/json
-Content-Type: application/json
+Content-Type: application/invoice+json
 
 {
   "subject": "$acquirer.wallet/merchant",
-  "asset": {
-    "code": "USD",
-    "scale": 2
-  },
+  "assetCode": "USD",
+  "assetScale": 2,
   "amount": 100
 }
 ```
@@ -200,30 +153,28 @@ Content-Type: application/json
 ```http
 HTTP/1.1 201 Created
 Content-Type: application/json
-Location: https://acquirer.wallet/sessions/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0
+Location: https://acquirer.wallet/invoices/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0
 
 {
   "name": "//acquirer.wallet/invoices/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0",
   "subject": "$acquirer.wallet/merchant",
   "amount": 200,
-  "asset": {
-    "code": "USD",
-    "scale": 2
-  },
+  "assetCode": "USD",
+  "assetScale": 2,
   "received": 0
 }
 ```
 
 ### Submit invoice to mandate
 
-Using the created invoice it will submit a SPEND against the mandate using the invoice name
+Using the created invoice it will submit a charge against the mandate using the invoice name
 
 ```http
-POST /mandates/2fad69d0-7997-4543-8346-69b418c479a6/spend HTTP/1.1
+POST /mandates/2fad69d0-7997-4543-8346-69b418c479a6 HTTP/1.1
 Host: issuer.wallet
 Authorization: Bearer random_auth_token
 Accept: application/json
-Content-Type: application/json
+Content-Type: application/invoice+json
 
 {
   "invoice": "//acquirer.wallet/invoices/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0"
@@ -239,29 +190,26 @@ This will instruct the Issuer to perform a payment of the invoice within the sco
 
 ### Payment
 
-In order for the Issuer to complete the payment it would need to get payment details from the invoice. By doing a GET against
-the invoice it can get the required `destination_address` and `shared_secret`
+To complete the payment the Issuer would need to get payment details from the invoice. By doing a GET against
+the invoice with the `Accept` header set to `application/connection+json`, the sender can get the 
+payment details necessary to pay the invoice. In this example, the sender and receiver wish to transact over Interledger, 
+so the Acquirer would respond with a `destination_address` and `shared_secret`.
+
+The following is a non-normative example of an Issuer getting ILP payment details for an Invoice from the Acquirer.
 
 ```http
 GET /invoices/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0 HTTP/1.1
 Host: acquirer.wallet
-Accept: application/json
+Accept: application/connection+json
 Content-Type: application/json
 
 {
-  "subject": "$acquirer.wallet/merchant",
-  "asset": {
-    "code": "USD",
-    "scale": 2
-  },
-  "amount": 100,
-  "received": 0,
   "destination_address": "g.aquirer.42e0f0c9284ad401b7c941bc6173f4e",
   "shared_secret": "AvLaEGc+ojGHVezQF9DC4/7F5YIvrNPx/VM+4hJkCbs=",
 }
 ```
 
-The Issuer uses the payment details to perform the payment over Interledger using STREAM. 
+The Issuer would now use the payment details to perform the payment over Interledger using STREAM. 
 
 As payments are fulfilled, the `received` amount on the invoice would increase to reflect the payments.
 
