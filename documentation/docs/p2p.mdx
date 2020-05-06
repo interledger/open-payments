@@ -12,17 +12,17 @@ participant Sender
 participant Issuer as Issuer<br/>(sending wallet)
 participant Acquirer as Acquirer<br/>(receiving wallet)
 participant Receiver
-Receiver->>Sender: Provide Payment Pointer
+Receiver->>Sender: Provide payment identifier
 Sender->>Issuer: Initate payment (payment identifier, amount)
 activate Issuer
-Issuer->>Acquirer: POST /receiver
+Issuer->>Acquirer: POST /receiver/invoices
 activate Issuer
 activate Acquirer
 Acquirer->>Acquirer: createInvoice(invoice)
 Acquirer-->>Issuer: 201
 deactivate Acquirer
 deactivate Issuer
-Issuer->>Acquirer: GET invoice_url
+Issuer->>Acquirer: GET invoice_url<br/>application/connection+json
 activate Acquirer
 Acquirer-->>Issuer: 200 paymentDetails
 deactivate Acquirer
@@ -52,14 +52,14 @@ This will instruct the Issuer to make a Peer-to-Peer payment.
 ## 2. Issuer creates invoice 
 
 Given the sender provided the Issuer wallet with the receiver's Payment Pointer of `$acquirer.wallet/bob`,
-the Issuer would create an invoice on the Acquirer by making a POST request with the 
-`Content-Type` header set to `application/invoice+json` and a JSON payload such as the following:
+the Issuer would create an invoice on the Acquirer by making a POST request with a JSON payload 
+to `https://acquirer.wallet/bob/invoices`:
 
 ```http
-POST /bob HTTP/1.1
+POST /bob/invoices HTTP/1.1
 Host: acquirer.wallet
 Accept: application/json
-Content-Type: application/invoice+json
+Content-Type: application/json
 
 {
   "subject": "$acquirer.wallet/receiver",
@@ -68,6 +68,9 @@ Content-Type: application/invoice+json
   "amount": 100
 }
 ```
+
+The Acquirer would respond with a JSON payload containing the created Invoice,
+including the URL of the Invoice:
 
 ```http
 HTTP/1.1 201 Created

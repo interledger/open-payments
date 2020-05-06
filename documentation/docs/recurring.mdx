@@ -16,7 +16,7 @@ participant Issuer as Issuer<br/>(sending wallet)
 participant Acquirer as Acquirer<br/>(receiving wallet)
 participant Receiver
 Sender->>Receiver: Produce payment identifier
-Receiver->>Issuer: POST /sender <br/>application/mandate+json
+Receiver->>Issuer: POST /sender/mandates
 activate Receiver
 activate Issuer
 Issuer->>Issuer: Create Mandate
@@ -34,17 +34,17 @@ Issuer-->>Receiver: Respond Auth Tokens
 deactivate Receiver
 deactivate Issuer
 loop Interval of Payment
-Receiver->>Acquirer: POST /receiver<br/>application/invoice+json
+Receiver->>Acquirer: POST /receiver/invoices
 activate Receiver
 activate Acquirer
 Acquirer->>Acquirer: createInvoice(invoice)
 Acquirer-->>Receiver: 201 paid=false
 deactivate Acquirer
 deactivate Receiver
-Receiver->>Issuer: POST /mandates/{id}<br/>application/invoice+json
+Receiver->>Issuer: POST mandate_url/charges
 activate Receiver
 activate Issuer
-Issuer->>Acquirer: GET invoice_url
+Issuer->>Acquirer: GET invoice_url<br/>application/connection+json
 activate Acquirer
 Acquirer-->>Issuer: 200 paymentDetails
 deactivate Acquirer
@@ -57,7 +57,7 @@ deactivate Acquirer
 Issuer-->>Receiver: Response
 deactivate Receiver
 deactivate Issuer
-Receiver->>Acquirer: GET /invoices/{id}
+Receiver->>Acquirer: GET invoice_url
 activate Receiver
 activate Acquirer
 Acquirer->>Receiver: 200 invoice
@@ -83,14 +83,14 @@ the merchant. The merchant can then use the payment identifier to create a Manda
 ## 2. Create mandate on the Issuer wallet
 
 In this example, the sender provided the Payment Pointer `$issuer.wallet/alice` to the Merchant in the previous step.
-The Merchant then creates a mandate on the Issuer wallet by making a POST request with the `Content-Type` header
-set to `application/mandate+json` like so:
+The Merchant then creates a mandate on the Issuer wallet by making a POST request to the HTTP URL resolved from the
+Payment Pointer, appending `/mandates` to the path.
 
 ```http
-POST /alice HTTP/1.1
+POST /alice/mandates HTTP/1.1
 Host: issuer.wallet
 Accept: application/json
-Content-Type: application/mandate+json
+Content-Type: application/json
 
 {
   "amount": 200,
@@ -136,10 +136,10 @@ as necessary, as long as the overall spends don't exceed the limit of the curren
 When the Merchant wants to PUSH money to itself from the mandate, it will first create an Invoice on its Acquirer.
 
 ```http
-POST /merchant HTTP/1.1
+POST /merchant/invoices HTTP/1.1
 Host: acquirer.wallet
 Accept: application/json
-Content-Type: application/invoice+json
+Content-Type: application/json
 
 {
   "subject": "$acquirer.wallet/merchant",
@@ -170,11 +170,11 @@ Location: https://acquirer.wallet/invoices/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0
 Using the created invoice it will submit a charge against the mandate using the invoice name
 
 ```http
-POST /mandates/2fad69d0-7997-4543-8346-69b418c479a6 HTTP/1.1
+POST /mandates/2fad69d0-7997-4543-8346-69b418c479a6/charges HTTP/1.1
 Host: issuer.wallet
 Authorization: Bearer random_auth_token
 Accept: application/json
-Content-Type: application/invoice+json
+Content-Type: application/json
 
 {
   "invoice": "//acquirer.wallet/invoices/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0"

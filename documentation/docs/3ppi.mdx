@@ -16,7 +16,7 @@ participant Issuer as Issuer<br/>(Users wallet)
 participant Acquirer as Acquirer<br/>(receiving wallet)
 participant Receiver
 User->>PISP: Produce payment identifier
-PISP->>Issuer: POST /sender<br/>application/mandate+json
+PISP->>Issuer: POST /sender/mandates
 activate PISP
 activate Issuer
 Issuer->>Issuer: Create Mandate
@@ -34,7 +34,7 @@ deactivate PISP
 deactivate Issuer
 alt Send Payment
     User->>PISP: Pay Receiver
-    PISP->>Acquirer: POST /receiver<br/>application/invoice+json
+    PISP->>Acquirer: POST /receiver/invoices
     activate Acquirer
     activate PISP
     Acquirer->>Acquirer: createInvoice(invoice)
@@ -44,7 +44,7 @@ alt Send Payment
 else Pay Invoice
     Receiver->>PISP: Provide Invoice
 end
-PISP->>Issuer: POST /mandates/{id}<br/>application/invoice+json
+PISP->>Issuer: POST mandate_url/charges
 activate PISP
 activate Issuer
 Issuer->>Acquirer: GET invoice_url<br/>application/connection+json
@@ -59,7 +59,7 @@ Acquirer->>Acquirer: updateInvoiceBalance(amount)
 deactivate Acquirer
 Issuer-->>PISP: Response
 deactivate Issuer
-Receiver->>Acquirer: GET /invoices/{id}
+Receiver->>Acquirer: GET invoice_url
 activate Receiver
 activate Acquirer
 Acquirer->>Receiver: 200 invoice
@@ -85,10 +85,10 @@ The PISP creates a mandate on the Users Issuer's wallet by sending a POST reques
 with which the PISP can operate on the Users behalf.
 
 ```http
-POST /sender HTTP/1.1
+POST /sender/mandate HTTP/1.1
 Host: issuer.wallet
 Accept: application/json
-Content-Type: application/mandate+json
+Content-Type: application/json
 
 {
   "amount": 200,
@@ -122,11 +122,11 @@ authorized the mandate, the PISP will receive an access_token with which to use 
 Using the created invoice it will submit a charge against the mandate using the invoice name
 
 ```http
-POST /mandates/2fad69d0-7997-4543-8346-69b418c479a6 HTTP/1.1
+POST /mandates/2fad69d0-7997-4543-8346-69b418c479a6/charges HTTP/1.1
 Host: issuer.wallet
 Authorization: Bearer random_auth_token
 Accept: application/json
-Content-Type: application/invoice+json
+Content-Type: application/json
 
 {
   "invoice": "//acquirer.wallet/invoices/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0"
@@ -141,11 +141,11 @@ Whenever the PISP wants to initiate a payment on the User behalf, it will submit
 mandate using the invoice name. This will instruct the Issuer to complete the payment.
 
 ```http
-POST /mandates/2fad69d0-7997-4543-8346-69b418c479a6 HTTP/1.1
+POST /mandates/2fad69d0-7997-4543-8346-69b418c479a6/charges HTTP/1.1
 Host: issuer.wallet
 Authorization: Bearer random_auth_token
 Accept: application/json
-Content-Type: application/invoice+json
+Content-Type: application/json
 
 {
   "invoice": "//acquirer.wallet/invoices/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0"

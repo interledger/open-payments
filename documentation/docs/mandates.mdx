@@ -28,7 +28,7 @@ Mandates represents delegated access resource to a users account.
 
 ### Create
 Given a sender's Payment Pointer, a Client creates a Mandate by doing an HTTP POST of JSON document to the 
-HTTP URL resolved from the Payment Pointer, with the `Content-Type` header equal to `application/mandate+json`.
+HTTP URL resolved from the Payment Pointer, with `/mandates` appended to the URL path.
 
 The JSON document MUST include the following:
 * amount
@@ -47,10 +47,10 @@ The following is a non-normative example where the Client creates a mandate at t
 for subject `$issuer.wallet/bob`
 
 ```http
-POST /bob HTTP/1.1
+POST /bob/mandates HTTP/1.1
 Host: issuer.wallet
 Accept: application/json
-Content-Type: application/mandate+json
+Content-Type: application/json
 
 {
   "amount": 200,
