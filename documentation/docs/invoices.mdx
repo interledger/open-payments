@@ -20,7 +20,7 @@ Invoices represent an amount payable that can be presented to a third party and/
 
 ### Create
 
-Given a receiver's Payment Pointer, a Client creates an Invoice by doing an HTTP POST of a JSON document to the 
+Given a receiver's payment identifier (e.g., a Payment Pointer) a Client creates an Invoice by doing an HTTP POST of a JSON document to the 
 HTTP URL resolved from the Payment Pointer, with `/invoices` appended to the URL path.
 
 The JSON document MUST include the following:
