@@ -27,7 +27,7 @@ Mandates represents delegated access resource to a users account.
 ## APIs
 
 ### Create
-Given a sender's Payment Pointer, a Client creates a Mandate by doing an HTTP POST of JSON document to the 
+Given a sender's payment identifier (e.g., a Payment Pointer), a Client creates a Mandate by doing an HTTP POST of JSON document to the 
 HTTP URL resolved from the Payment Pointer, with `/mandates` appended to the URL path.
 
 The JSON document MUST include the following:
@@ -116,4 +116,3 @@ Wallets must enforce the
 ## User Management
 
 It is recommended Wallets provide Users with the ability to manage their mandates.
-
