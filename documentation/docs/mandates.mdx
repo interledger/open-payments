@@ -27,8 +27,8 @@ Mandates represents delegated access resource to a users account.
 ## APIs
 
 ### Create
-Given a sender's Payment Pointer, a Client creates a Mandate by doing an HTTP POST of JSON document to the 
-HTTP URL resolved from the Payment Pointer, with the `Content-Type` header equal to `application/mandate+json`.
+Given a sender's payment identifier (e.g., a Payment Pointer), a Client creates a Mandate by doing an HTTP POST of JSON document to the 
+HTTP URL resolved from the Payment Pointer, with `/mandates` appended to the URL path.
 
 The JSON document MUST include the following:
 * amount
@@ -47,10 +47,10 @@ The following is a non-normative example where the Client creates a mandate at t
 for subject `$issuer.wallet/bob`
 
 ```http
-POST /bob HTTP/1.1
+POST /bob/mandates HTTP/1.1
 Host: issuer.wallet
 Accept: application/json
-Content-Type: application/mandate+json
+Content-Type: application/json
 
 {
   "amount": 200,
@@ -68,7 +68,7 @@ HTTP/1.1 201 Created
 Content-Type: application/json
 Location: https://issuer.wallet/mandates/2fad69d0-7997-4543-8346-69b418c479a6
 {
-  "name": "//issuer.wallet/mandates/2fad69d0-7997-4543-8346-69b418c479a6",
+  "name": "https://issuer.wallet/mandates/2fad69d0-7997-4543-8346-69b418c479a6",
   "amount": 200,
   "assetCode" : "USD",
   "assetScale": 2,
@@ -94,7 +94,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "name": "//issuer.wallet/mandates/2fad69d0-7997-4543-8346-69b418c479a6",
+  "name": "https://issuer.wallet/mandates/2fad69d0-7997-4543-8346-69b418c479a6",
   "amount": 200,
   "assetCode" : "USD",
   "assetScale": 2,
@@ -116,4 +116,3 @@ Wallets must enforce the
 ## User Management
 
 It is recommended Wallets provide Users with the ability to manage their mandates.
-

@@ -13,7 +13,7 @@ participant Sender
 participant Issuer as Issuer<br/>(sending wallet)
 participant Acquirer as Acquirer<br/>(receiving wallet)
 participant Receiver
-Receiver->>Acquirer: POST /receiver
+Receiver->>Acquirer: POST /receiver/invoices
 activate Receiver
 activate Receiver
 activate Receiver
@@ -28,7 +28,7 @@ deactivate Receiver
 activate Sender
 Sender->>Issuer: pay(invoice_url)
 activate Issuer
-Issuer->>Acquirer: GET invoice_url
+Issuer->>Acquirer: GET invoice_url<br/>application/connection+json
 activate Acquirer
 Acquirer-->>Issuer: 200 paymentDetails
 deactivate Acquirer
@@ -41,7 +41,7 @@ deactivate Acquirer
 Issuer-->>Sender: response
 deactivate Sender
 deactivate Issuer
-Receiver->>Acquirer: GET /invoices/{id}
+Receiver->>Acquirer: GET invoice_url
 activate Receiver
 activate Acquirer
 Acquirer->>Receiver: 200 invoice
@@ -61,13 +61,14 @@ Based on the diagram above the flow is as follows:
 ## 1. Creating Invoice at Acquirer
 
 Below is a non-normative example of a merchant with a Payment Pointer of `$aquirer.wallet/merchant` creating an invoice at its Acquirer.
-The merchant creates the invoice by making a POST request to the `/merchant` path with the `Content-Type` header set to `application/invoice+json`.
+The merchant creates the invoice by making a POST request to the `/merchant/invoices` path
+with an Invoice included as a JSON payload:
 
 ```http
-POST /merchant HTTP/1.1
+POST /merchant/invoices HTTP/1.1
 Host: acquirer.wallet
 Accept: application/json
-Content-Type: application/invoice+json
+Content-Type: application/json
 
 {
   "subject": "$acquirer.wallet/merchant",
@@ -86,7 +87,7 @@ Content-Type: application/json
 Location: https://acquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e
 
 {
-  "name": "//acquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
+  "name": "https://acquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
   "subject": "$acquirer.wallet/merchant",
   "amount": 200
   "assetCode": "USD",

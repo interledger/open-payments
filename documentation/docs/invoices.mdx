@@ -20,8 +20,8 @@ Invoices represent an amount payable that can be presented to a third party and/
 
 ### Create
 
-Given a receiver's Payment Pointer, a Client creates an Invoice by doing an HTTP POST of a JSON document to the 
-HTTP URL resolved from the Payment Pointer, with the `Content-Type` header equal to `application/invoice+json`.
+Given a receiver's payment identifier (e.g., a Payment Pointer) a Client creates an Invoice by doing an HTTP POST of a JSON document to the 
+HTTP URL resolved from the Payment Pointer, with `/invoices` appended to the URL path.
 
 The JSON document MUST include the following:
 
@@ -38,11 +38,11 @@ The Open Payments Server MUST respond with an Invoice Response or an error (TDB)
 The following is a non-normative example where the Client created an invoice for the subject `$acquirer.wallet/alice` at the Acquirer Wallet:
 
 ```http
-POST /alice HTTP/1.1
+POST /alice/invoices HTTP/1.1
 Host: acquirer.wallet
 Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi...
 Accept: application/json
-Content-Type: application/invoice+json
+Content-Type: application/json
 
 {
   "subject": "$acquirer.wallet/alice",
@@ -61,7 +61,7 @@ Content-Type: application/json
 Location: https://acquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e
 
 {
-  "name": "//acquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
+  "name": "https://acquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
   "subject": "$acquirer.wallet/alice",
   "amount": 200,
   "assetCode": "USD",
@@ -86,7 +86,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "name": "//acquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
+  "name": "https://acquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
   "subject": "$acquirer.wallet/alice",
   "amount": 200,
   "assetCode": "USD",
