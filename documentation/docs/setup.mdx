@@ -1,0 +1,138 @@
+---
+id: setup
+title: Setup
+---
+
+import { PersonToPerson } from './personToPerson'
+import { RequestToPay } from './requestToPay'
+
+Once two wallets have established a channel of communication through following
+the Discovery phase they begin to setup the payment that is desired by the
+initiator.
+
+## Invoices or Accounts
+
+Interledger payments are always sent using the
+[STREAM protocol](./terminology#stream) which requires that the sender has
+connection credentials to begin sending the payment. The purpose of the setup is
+to exchange the details required to finalise the terms of the payment and
+ultimately for the sender to get the connection credentials it requires to make
+the payment.
+
+The majority of payments are made toward an invoice and the outcome of the setup
+is creation of an [invoice resource](./invoices) at the receiver, following
+which, the sender will get [connection credentials](./connections) to pay the
+invoice, open a STREAM connection, and start paying.
+
+The exception to this are use cases that have no discreet payment amount such as
+[web monetization](./web-monetization). In this case the connection credentials
+will be for the receiver's account and not a specific invoice.
+
+Irrespective of whether the sender is paying an invoice or paying into an
+account, they will have a URL representing the resource and will get the
+connection credentials at that URL using the [connections API](./connections).
+
+## Sending Money
+
+To send money the Open Payments client at the sender creates an invoice via the
+[invoice API](./invoices) at the receiver.
+
+Receivers may also create an invoice and then share the URL of the invoice with
+a sender to be paid.
+
+The sender then uses the URL of the invoice to get the connection credentials as
+defined in the [connections API](./connections).
+
+> **NOTE:** For use cases such as Web Monetization, no invoice is created and
+> the URL of the receiving account is used instead.
+
+The sender would then perform a STREAM payment using the credentials. An example
+using the
+[javascript STREAM client](https://github.com/interledgerjs/ilp-protocol-stream)
+is:
+
+```javascript
+const connection = await createConnection({
+  plugin: getPlugin(),
+  destinationAccount,
+  sharedSecret,
+})
+
+const stream = connection.createStream()
+await stream.sendTotal(200)
+stream.end()
+```
+
+The sending wallet should debit the senders account before performing the
+payment. Should the payment fail or only a partial amount is sent, the wallet
+must credit the unsent balance back to the senders account.
+
+## Receiving Money
+
+In order to receive money over Open Payments, an invoice resource is created at
+the receiving wallet and the URL presented to the sender.
+
+If the payment has been pre-authorized then the invoice is submitted as part of
+a [charge](./charges) against an authorized mandate.
+
+Receiving wallets must:
+
+1. Ensure the STREAM connection credentials they provide to clients can be
+   mapped to the invoice
+2. Credit the paid balance of an invoice for incoming payments on connections
+   that are mapped to that invoice
+
+### 1. Mapping the connection to the invoice
+
+STREAM provides a mechanism for encoding data into an ILP Address
+(`destinationAccount`) using a `Connection Tag`. This allows the receiving
+wallet to encode data into the address that can then be decoded when an incoming
+connection is received.
+
+The following shows an example of encoding data into the credentials provided.
+
+```javascript
+const { encodeData } = require('encoder')
+const connectionTag = encodeData(invoiceId)
+const { destinationAccount, sharedSecret } = server.generateAddressAndSecret(
+  connectionTag
+)
+```
+
+The receiving wallet now has the ability to decode the data when it receives an
+incoming STREAM and determine which invoice to allocate any payments received.
+
+### 2. Accounting for an incoming Payment
+
+As shown above, the receiving wallet can use the invoice data encoded to
+determine which invoice to credit for incoming STREAM payments.
+
+The following shows example code of what the wallet would do:
+
+```javascript
+const { createServer } = require('ilp-protocol-stream')
+const { decodeData } = require('encoder')
+const { creditInvoice } = require('invoice')
+
+const streamServer = await createServer({
+  plugin: getPlugin(),
+})
+
+streamServer.on('connection', (connection) => {
+  // Determine who this connection belongs to by correlating with connectionTag
+  const connectionTag = connection.connectionTag
+
+  // Get the invoiceId from the connectionTag
+  const invoiceId = decodeData(connectionTag)
+
+  connection.on('stream', (stream) => {
+    //Set how much you want to allow for this STREAM.
+    stream.setReceiveMax(10000000000000)
+
+    stream.on('money', (amount) => {
+      // Credit the invoice for the amount received
+      creditInvoice(invoiceId, amount)
+    })
+  })
+})
+```

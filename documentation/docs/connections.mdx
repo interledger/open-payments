@@ -1,0 +1,50 @@
+---
+id: connections
+title: Connections
+---
+
+Connections represent a connection to an account via
+[STREAM](./terminology#STREAM).
+
+| Property     | Type        |
+| ------------ | ----------- |
+| ilpAddress   | ILP Address |
+| sharedSecret | string      |
+
+## APIs
+
+### Create
+
+Create is not supported for connections.
+
+### Get
+
+The client gets unique connection credentials by doing an HTTP GET against an
+account or invoice resource using the sub-resource path `connection`.
+
+The Open Payments server SHOULD return a unique address and shared secret on
+every request.
+
+The following is a non-normative example where the client gets a connection:
+
+```http
+GET invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e/connection HTTP/1.1
+Host: acquirer.wallet
+Accept: application/connection+json
+```
+
+with a non-normative response from the Open Payments Server of:
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/connection+json
+
+{
+  "ilpAddress": "example.alice.YB5X9FhSOUPCL~NjZjZTYwZDgtZjRiYS00YzYwLWJhNmUtZmM1ZTBhYTk5OTIz",
+  "sharedSecret": "6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs="
+}
+```
+
+## TODO
+ - Backwards Compatibility with SPSP
+ - Support for STREAM Receipts

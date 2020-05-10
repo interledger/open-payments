@@ -1,0 +1,36 @@
+---
+id: api
+title: API
+---
+
+Open Payments is a REST API with 4 resource definitions:
+[connections](./connections), [invoices](./invoices), [mandates](./mandates),
+and [charges](./charges).
+
+## APIs
+
+### Create
+
+All resources are created using an HTTP `POST` request to the API endpoint,
+however [connections](./connections) don't support the create operation.
+
+A successful response to a create request has an HTTP `201 Created` response
+code and a `Location` header containing the URL of the newly created resource.
+
+The resource is also returned in the body of the response.
+
+### Get
+
+Resources can be accessed using an HTTP `GET` request.
+
+## Authorization
+
+All APIs MAY be protected by the Open Payments server. The default mechanism for
+accessing protected resources is to provide a bearer token in the authorization
+header of the request.
+
+If a client is unable to access a resource it can attempt to get an access token
+using OAuth2 via the Open Payments server's authorization endpoint.
+
+The URL of the resource that the client wishes to access MUST be used as the
+requested scope in the OAuth2 authorization request.

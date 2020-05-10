@@ -40,8 +40,12 @@ module.exports = {
           title: 'Docs',
           items: [
             {
+              label: 'Overview',
+              to: 'introduction',
+            },
+            {
               label: 'Specification',
-              to: 'overview',
+              to: 'api',
             },
             {
               label: 'Use Cases',
@@ -63,7 +67,7 @@ module.exports = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Interledger Community`,
     },
   },
   presets: [

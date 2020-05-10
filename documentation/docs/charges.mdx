@@ -3,30 +3,34 @@ id: charges
 title: Charges
 ---
 
-Charges represent objects with which Clients can instruct Wallets to perform a Payment to an Invoice within the scope
-of a Mandate. Wallets MUST implement the Charges API on conjunction with Mandates.
+Charges represent objects with which Clients can instruct Wallets to perform a
+Payment to an Invoice within the scope of a Mandate. Wallets MUST implement the
+Charges API on conjunction with Mandates.
 
-| Property    | Type           |
-|-------------|----------------|
-| id          | UUID           |
-| invoice     | int64          |
-| mandate     | int64          |
-| status      | enum           |
+| Property | Type  |
+| -------- | ----- |
+| id       | UUID  |
+| invoice  | int64 |
+| mandate  | int64 |
+| status   | enum  |
 
 ## APIs
 
 ### Create
 
-A Client creates a Charge by doing an HTTP POST of a JSON document
-on the Mandate URI for which they wish to perform the Charge against, appending `/charges` to the Mandate URI path.
+A Client creates a Charge by doing an HTTP POST of a JSON document on the
+Mandate URI for which they wish to perform the Charge against, appending
+`/charges` to the Mandate URI path.
 
 The JSON document MUST include the following:
 
-* invoice
+- invoice
 
 The Open Payments Server MUST respond with a Charge Response or an error (TDB).
 
-The following is a non-normative example of a Client creating a Charge against a Mandate identified by `//issuer.wallet/mandates/2fad69d0-7997-4543-8346-69b418c479a6`.
+The following is a non-normative example of a Client creating a Charge against a
+Mandate identified by
+`//issuer.wallet/mandates/2fad69d0-7997-4543-8346-69b418c479a6`.
 
 ```http
 POST /mandates/2fad69d0-7997-4543-8346-69b418c479a6/charges HTTP/1.1
@@ -56,8 +60,9 @@ Location: https://issuer.wallet/charges/a395a5c0-f9cd-48bd-9c1a-19fb4d312d53
 
 ### Get
 
-The Client reads the Charge by doing a HTTP GET of the corresponding Charge name as URI. The Open Payments Server
-MUST respond with either a Charge Response or an Error (TBD).
+The Client reads the Charge by doing a HTTP GET of the corresponding Charge name
+as URI. The Open Payments Server MUST respond with either a Charge Response or
+an Error (TBD).
 
 The following is a non-normative example where the Client reads an Charge:
 
@@ -75,5 +80,3 @@ Content-Type: application/json
   "status": "succesful"
 }
 ```
-
-

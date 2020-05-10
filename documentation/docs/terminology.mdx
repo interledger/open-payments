@@ -63,6 +63,22 @@ Lorum Ipsum
 
 Lorum Ipsum
 
+### STREAM
+
+STREAM is a connection-oriented protocol used between senders and receivers over
+the Interledger network. A STREAM client uses an ILP Address and a Shared Secret
+to establish a connection to a STREAM server.
+
+STREAM supports bilateral data and payment streams however no implementations
+are known either to send data over the data stream or send payments if they are
+in the role of STREAM server.
+
+Open Payments is designed on the assumption that STREAM clients will be senders
+which fetch the credentials they require to establish a connection as an
+`application/connection+json` resource.
+
+STREAM is defined in [IL-RFC 29](https://interledger.org/rfcs/0029-stream/).
+
 ### Wallet
 
 For brevity we refer to [account servicers](#account-servicers) as wallets.

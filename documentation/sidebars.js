@@ -1,18 +1,27 @@
 module.exports = {
   docs: {
-    Specification: [
-      'overview',
-      'terminology',
+    Overview: [
+      'introduction',
       'discovery',
-      'wallet-wallet',
+      'setup',
       'wallet-app',
-      'invoices',
-      'mandates',
-      'charges',
       'auth',
       'identity',
       'web-monetization',
+      'terminology',
     ],
-    'Use Cases': ['checkout_push', 'recurring', 'p2p', '3ppi'],
+    Specification: [
+      'api',
+      'connections',
+      'invoices',
+      'mandates',
+      'charges',
+    ],
+    'Use Cases': [
+      'checkout-push', 
+      'recurring', 
+      'p2p', 
+      '3ppi'
+    ],
   },
 }
