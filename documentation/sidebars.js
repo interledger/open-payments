@@ -7,20 +7,21 @@ module.exports = {
       'wallet-app',
       'auth',
       'identity',
-      'web-monetization',
       'terminology',
     ],
     Specification: [
       'api',
+      'accounts',
       'connections',
       'invoices',
       'mandates',
       'charges',
     ],
     'Use Cases': [
+      'p2p', 
+      'web-monetization',
       'checkout-push', 
       'recurring', 
-      'p2p', 
       '3ppi'
     ],
   },

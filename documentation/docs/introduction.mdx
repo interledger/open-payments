@@ -5,24 +5,28 @@ title: Introduction
 
 import { FourCorner } from './fourCorner'
 
-Open Payments is a standard for interactions between account servicing digital
-payments systems (wallets, banks, etc) to setup and authorize payments for a
-variety of common use cases.
+Open Payments is a standard for interactions between
+[account servicers](./terminology#account-servicer) (wallets, banks, etc) to
+setup and authorize payments for a variety of common [use cases](./p2p).
 
-Open Payments builds on web technologies to define standard flows for the
-discovery of counter-party systems and setup of the payment for a variety of
-payment use cases. This includes all interactions required, from the moment two
-parties initiate a new commercial interaction, up to the point the payment is
-completed. This may include discovery of accounts and account meta-data,
-exchanging of identity and other regulatory information, agreement on the terms
-of the transaction and authorization of any of these actions (including the
-payment itself) by the account owners.
+Open Payments builds on web technologies to define standard flows for:
+
+- the discovery of counter-party systems, and
+- setup of the payment for a variety of payment use cases.
+
+This includes all interactions required, from the moment two parties initiate a
+new commercial interaction, up to the point the payment is completed. This may
+include discovery of accounts and account meta-data, exchanging of identity, and
+other regulatory information, agreement on the terms of the transaction and
+authorization of any of these actions (including the payment itself) by the
+[account owners](./terminology#account-owner).
 
 ## Interledger
 
 Open Payments is designed as an application level protocol built on top of
-Interledger however the protocol could be used over other payment clearing
-systems (See [discovery](./discovery)).
+Interledger. The protocol could be used over other payment clearing systems but
+the assumption is that accounts discovered via Open payments support Interledger
+for making the payment itself.
 
 The [Interledger protocol (ILP)](https://interledger.org) is a minimal payments
 clearing protocol. It was developed to mimic many of the characteristics of the

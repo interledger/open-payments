@@ -4,7 +4,16 @@ title: Connections
 ---
 
 Connections represent a connection to an account via
-[STREAM](./terminology#STREAM).
+[STREAM](./terminology#STREAM). A connection is a sub-resource of either an
+account or an invoice.
+
+Payments made over a connection that is a sub-resource of an invoice are
+accounted for as payments toward the invoice whereas payments made over a
+connection that is a sub-resource of an account are simply payments directly
+into the account.
+
+Receiving systems may provide ways for direct account payments to be aggregated
+to make it easier for the account owner to make sense of the payments.
 
 | Property     | Type        |
 | ------------ | ----------- |
@@ -28,16 +37,16 @@ every request.
 The following is a non-normative example where the client gets a connection:
 
 ```http
-GET invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e/connection HTTP/1.1
-Host: acquirer.wallet
-Accept: application/connection+json
+GET invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e/connections HTTP/1.1
+Host: wallet.example
+Accept: application/json
 ```
 
 with a non-normative response from the Open Payments Server of:
 
 ```http
 HTTP/1.1 200 OK
-Content-Type: application/connection+json
+Content-Type: application/json
 
 {
   "ilpAddress": "example.alice.YB5X9FhSOUPCL~NjZjZTYwZDgtZjRiYS00YzYwLWJhNmUtZmM1ZTBhYTk5OTIz",
@@ -45,6 +54,32 @@ Content-Type: application/connection+json
 }
 ```
 
+### Simple Payment Setup Protocol
+
+In order to maintain backwards compatibility with
+[SPSP](https://interledger.org/rfcs/0009-simple-payment-setup-protocol/) clients
+may also request a connection as an **alternative representation** of the
+account resource (as opposed to a sub-resource).
+
+The media-type used for this is `application/spsp4+json`.
+
+For example, given the account `https://wallet.example/accounts/alice` the
+following two requests are equivalent:
+
+```http
+GET /accounts/alice/connections HTTP/1.1
+Host: wallet.example
+Accept: application/json
+```
+
+and
+
+```http
+GET /accounts/alice HTTP/1.1
+Host: wallet.example
+Accept: application/spsp4+json
+```
+
 ## TODO
- - Backwards Compatibility with SPSP
- - Support for STREAM Receipts
+
+- Support for STREAM Receipts
