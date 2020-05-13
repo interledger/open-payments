@@ -9,8 +9,8 @@ Payment Pointer of the Receiver to its own Wallet (Issuer) and instruct it to ma
 
 <Mermaid chart={`sequenceDiagram
 participant Sender
-participant Issuer as Issuer<br/>(sending wallet)
-participant Acquirer as Acquirer<br/>(receiving wallet)
+participant Issuer as Sending Wallet
+participant Acquirer as Receiving Wallet
 participant Receiver
 Receiver->>Sender: Provide payment identifier
 Sender->>Issuer: Initate payment (payment identifier, amount)
@@ -49,7 +49,7 @@ Based on the diagram above the flow is as follows:
 The sender presents its Issuer with the payment identifier (eg. Payment Pointer) of the Receiver and the amount they want to send. 
 This will instruct the Issuer to make a Peer-to-Peer payment.
 
-## 2. Issuer creates invoice 
+## 2. Sending wallet creates invoice 
 
 Given the sender provided the Issuer wallet with the receiver's Payment Pointer of `$acquirer.wallet/bob`,
 the Issuer would create an invoice on the Acquirer by making a POST request with a JSON payload 

@@ -3,8 +3,8 @@ module.exports = {
     Overview: [
       'introduction',
       'discovery',
-      'setup',
-      'wallet-app',
+      'flow',
+      'delegated',
       'auth',
       'identity',
       'terminology',

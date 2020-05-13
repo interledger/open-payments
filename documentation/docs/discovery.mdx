@@ -1,20 +1,21 @@
 ---
 id: discovery
-title: Discovery
+title: Account Discovery
 ---
 
 import { Mermaid } from './Mermaid'
 import { PersonToPerson } from './personToPerson'
 import { RequestToPay } from './requestToPay'
 
-At the heart of all interactions in Open Payments is an account. The account
-could be either the sending or the receiving side of the transaction. The entity
-initiating the transaction is the Open Payments client and discovers the account
-at the Open Payments server.
+At the heart of all interactions in Open Payments is an [account](./accounts).
+The account could be either the sending or the receiving side of the
+transaction. The entity initiating the transaction is the Open Payments
+[client](./terminology#client) and discovers the account at the Open Payments
+[server](./terminology#server).
 
-In the following example of a person-to-person payment from Alice to Bob,
-Alice's wallet is the client and therefor her wallet discovers Bob's account at
-his wallet to begin the transaction.
+In the following example of a [person-to-person payment](./p2p) from Alice to
+Bob, Alice's wallet is the client and therefor her wallet discovers Bob's
+account at his wallet to begin the transaction.
 
 <PersonToPerson />
 
@@ -32,8 +33,9 @@ identifier called a **Payment Pointer**.
 All entities in Open Payments are **resources** identified by, and addressable
 via, URLs in keeping with the
 [REST](https://tools.ietf.org/html/rfc7231#section-2) pattern. This includes
-accounts which are at the root of the resource interaction that make up an Open
-Payments transaction.
+[accounts](./accounts) which are the root resource in Open Payments. Discovery
+involves finding the URL of the account resource because all other resource URLs
+are relative to the account.
 
 > Example account URL:  
 > `https://wallet.example/accounts/dee69df8-be40-478f-9828-6267f4d42b01`

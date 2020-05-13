@@ -9,17 +9,17 @@ Open Payments is a standard for interactions between
 [account servicers](./terminology#account-servicer) (wallets, banks, etc) to
 setup and authorize payments for a variety of common [use cases](./p2p).
 
-Open Payments builds on web technologies to define standard flows for:
+Open Payments builds on web technologies to define ways for a wallet to:
 
-- the discovery of counter-party systems, and
-- setup of the payment for a variety of payment use cases.
-
-This includes all interactions required, from the moment two parties initiate a
-new commercial interaction, up to the point the payment is completed. This may
-include discovery of accounts and account meta-data, exchanging of identity, and
-other regulatory information, agreement on the terms of the transaction and
-authorization of any of these actions (including the payment itself) by the
-[account owners](./terminology#account-owner).
+- [discover](./discovery) the API endpoints at another wallet, using an
+  identifier for an account at that wallet
+- use the [APIs](./api) to setup a payment between the two wallets
+- exchange information with the other wallet that is required to complete the
+  payment
+- get [authorization](./auth) from the
+  [account owners](./terminology#account-owner) (as required) to complete the
+  payment
+- setup and authorize [future payments](./mandates)
 
 ## Interledger
 
