@@ -19,7 +19,7 @@ the root resource is an **account**.
 
 Accounts have 3 sub-resources, **invoices**, **mandates** and **connections**
 and APIs are defined to both create and get invoices and mandates under the
-account. 
+account.
 
 Invoices also have a **connections** sub-resource.
 
@@ -69,10 +69,37 @@ Sub-resources are accessed at URLs relative to the parent resource URL.
 
 All APIs MAY be protected by the Open Payments server. The default mechanism for
 accessing protected resources is to provide a bearer token in the authorization
-header of the request.
+header of the request as described in
+[RFC 6750](https://tools.ietf.org/html/rfc6750).
 
-If a client is unable to access a resource it can attempt to get an access token
-using OAuth2 via the Open Payments server's authorization endpoint.
+The example below shows a request to get connection credentials using an access
+token:
 
-The URL of the resource that the client wishes to access MUST be used as the
-requested scope in the OAuth2 authorization request.
+```http
+     GET /alice/connections HTTP/1.1
+     Host: wallet.example
+     Authorization: Bearer mF_9.B5f-4.1JqM
+```
+
+If a client is unable to access a resource anonymously and receives a `401`
+response code it may attempt to get an access token using OAuth 2 via the
+authorization endpoint defined in the account meta-data.
+
+Servers that receive anonymous requests for a protected resource must respond
+with a `401` response code and the `WWW-Authenticate` header per
+[RFC 6750](https://tools.ietf.org/html/rfc6750).
+
+An example of such a response is shown below:
+
+```http
+    HTTP/1.1 401 Unauthorized
+     WWW-Authenticate: Bearer
+```
+
+### Getting an access token
+
+> **TODO:** This section needs to be fleshed out but will follow the OAuth 2
+> framework with the RAR extension to describe how a client uses the
+> authorization endpoint they get from the account meta-data to request a grant
+> from the account owner (or the account servicer if the use case permits) and
+> exchange this for an access token.

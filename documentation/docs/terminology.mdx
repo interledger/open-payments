@@ -19,7 +19,7 @@ From ISO 20022 -
 
 ### Account Owner
 
-Lorum Ipsum
+The legal owner of the assets recorded in the account.
 
 ### Account Servicer
 
@@ -33,36 +33,48 @@ From ISO 20022 -
 > the registration and booking of entries on the account, calculates balances on
 > the account and provides information about the account.
 
-In Open Payments, the account servicers are host an Open Payments
-[Server](#server) and also use an Open Payments [Client](#client) to interact
-with other account servicers via their Open Payments Servers.
+In Open Payments, the account servicers host an Open Payments [Server](#server)
+and also use an Open Payments [Client](#client) to interact with other account
+servicers.
 
 For brevity, account servicers are simply referred to as [wallets](#wallet) in
 the Open payments documentation.
 
 ### Client
 
-Lorum Ipsum
+The component that connect to an Open Payments Server.
 
 ### Connection
 
-Lorum Ipsum
+Unless otherwise specified, a connection is a STREAM connection. A connection
+between a sender and receiver on the Interledger network using the STREAM
+protocol to send payments.
+
+The [connection](./connections) resource represents the credentials used by a
+STREAM client to establish a connection to a STREAM server.
+
+Although STREAM technically supports bilateral payments on a single connection,
+Open Payments assumes that a STREAM client will only send payments.
 
 ### Invoice
 
-Lorum Ipsum
+An Open Payments invoice represents an discreet amount of money that is paid to
+the owner of the invoice.
 
 ### Mandate
 
-Lorum Ipsum
+A mandate defines the terms under which a party, that is not the account owner,
+can create charges against the account. A charge will result in the wallet
+servicing the account making payments out of the account.
 
 ### Payment Pointer
 
-Lorum Ipsum
+A special encoding of a URL that represents an account resource on an Open
+Payments server.
 
 ### Server
 
-Lorum Ipsum
+An Open Payments server hosts the APIs defined by the Open Payments protocol.
 
 ### STREAM
 
