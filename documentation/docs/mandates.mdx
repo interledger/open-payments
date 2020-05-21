@@ -3,52 +3,117 @@ id: mandates
 title: Mandates
 ---
 
+Mandates represent an authorization to initiate payments from an account. The
+mandate describes the amount that can be paid, the regularity of the payments
+and and expiry for the mandate.
+
+The mandate DOES NOT describe who is able to initiate the payments this is
+managed by an authorization server.
+
+In order to initiate a payment out of an account a client must create a
+[charge](./charges) sub-resource under the mandate and MUST have the necessary
+authorization to do so.
+
+The Open Payments server MUST only create the charge if the requested payment
+fits within the bounds of the mandate and the requesting client is authorized to
+create charges.
+
 <!--
 Note to self: check this out https://stripe.com/docs/api/mandates/object
-* Nice properties to have: 
+* Nice properties to have:
     * Acceptance
     * status
     * Multiuse? Not sure if this is needed but could be nice
 -->
 
-Mandates represents delegated access resource to a users account.
+### Payments
 
-| Property    | Type           | Required |
-|-------------|----------------|----------|
-| id          | UUID           | Yes      |
-| amount      | int64          | Yes      |
-| assetCode   | string         | Yes      |
-| assetScale  | int32          | Yes      |
-| subject     | PaymentPointer | Yes      |
-| startAt     | DateTime       | No       |
-| expiresAt   | DateTime       | No       |
-| interval    | ISO Duration   | No       |
+A mandate defines the total value of all payments that can be made in a single
+interval, the duration of an interval, and the start and end time for the
+mandate.
+
+If a mandate has no interval duration defined then the start and end times
+define the duration of the interval.
+
+If an interval duration is defined then intervals start from the start time of
+the mandate and repeat as defined by the interval until the end time of the
+mandate.
+
+For example the following mandate allows a charge of USD 5 every month for a
+year, starting on 1 January 2020:
+
+- amount: 500
+- asset code: USD
+- asset scale: 2
+- start at: 1 January 2020 00:00:00.000
+- expires at: 31 December 2020 23:59:59.999
+- interval: P1M
+
+Interval durations are defined using
+[ISO 8601 durations](https://en.wikipedia.org/wiki/ISO_8601#Durations).
+
+If the interval duration exceeds the interval defined by the start and end date
+and times then the interval is the time between the start and end date times.
+
+## Resource Representation
+
+The `application/json` representation of a mandate resource provides the details
+of the mandate as a JSON document.
+
+| Property   | Type         | Description                                                                                    |
+| ---------- | ------------ | ---------------------------------------------------------------------------------------------- |
+| id         | URL          | The URL identifying the **mandate**                                                            |
+| account    | URL          | The URL identifying the **account** from which the mandate allows payments                     |
+| amount     | int64        | The total value of all **charges** that can be made under this mandate in a single interval    |
+| assetCode  | string       | The asset code of the mandate                                                                  |
+| assetScale | int32        | The asset scale of the mandate                                                                 |
+| startAt    | DateTime     | The date and time after which intervals begin being calculated                                 |
+| expiresAt  | DateTime     | The date and time after which charges can longer be created against the mandate                |
+| interval   | ISO Duration | The duration of an interval                                                                    |
+| balance    | int64        | The total value of all **charges** that can be made under this mandate in the current interval |
 
 ## APIs
 
+The mandates API endpoint is relative to the account that is being paid from
+using the sub-resource URL: **`./mandates`**
+
+Specifically, the URL of the mandates API endpoint is the result of performing
+the URL parsing algorithm in
+[WHATWG URL](https://url.spec.whatwg.org/#url-parsing) where:
+
+- _input_ is `./mandates`, and
+- _base_ is the account URL
+
+For example, for the account URL `https://wallet.example/alice` the mandates API
+endpoint for that account is `https://wallet.example/alice/mandates`
+
 ### Create
-Given a sender's payment identifier (e.g., a Payment Pointer), a Client creates a Mandate by doing an HTTP POST of JSON document to the 
-HTTP URL resolved from the Payment Pointer, with `/mandates` appended to the URL path.
+
+A client creates a mandate by doing an HTTP POST of a JSON document to the
+mandates API endpoint.
 
 The JSON document MUST include the following:
-* amount
-* assetCode
-* assetScale
-* subject
+
+- amount
+- assetCode
+- assetScale
 
 and MAY include the following:
-* startAt
-* expiresAt
-* interval
 
-The Open Payments Server MUST respond with a Mandate Response or an error (TDB).
+- startAt
+- expiresAt
+- interval
 
-The following is a non-normative example where the Client creates a mandate at the Issuing Wallet
-for subject `$issuer.wallet/bob`
+The Open Payments server MUST respond with a `201 Created` response or an error
+(TDB). The response MUST contain the newly created mandate and a `Location`
+response header with the URL of the newly created invoice.
+
+The following is a non-normative example where the client creates a mandate at
+the account identified by `$wallet.example/bob`
 
 ```http
 POST /bob/mandates HTTP/1.1
-Host: issuer.wallet
+Host: wallet.example
 Accept: application/json
 Content-Type: application/json
 
@@ -57,7 +122,6 @@ Content-Type: application/json
   "assetCode" : "USD",
   "assetScale": 2,
   "interval": "P1M",
-  "subject": "$issuer.wallet/bob"
 }
 ```
 
@@ -66,53 +130,64 @@ with a non-normative response from the Open Payments Server
 ```http
 HTTP/1.1 201 Created
 Content-Type: application/json
-Location: https://issuer.wallet/mandates/2fad69d0-7997-4543-8346-69b418c479a6
+Location: https://wallet.example/mandates/2fad69d0-7997-4543-8346-69b418c479a6
 {
-  "name": "https://issuer.wallet/mandates/2fad69d0-7997-4543-8346-69b418c479a6",
+  "id": "https://wallet.example/mandates/2fad69d0-7997-4543-8346-69b418c479a6",
+  "account": "https://wallet.example/bob",
   "amount": 200,
   "assetCode" : "USD",
   "assetScale": 2,
   "interval": "P1M",
   "startAt": "2020-01-22T00:00:00Z",
-  "subject": "issuer.wallet/bob",
   "balance": 200
 }
 ```
 
 ### Get
 
-The Client reads the mandate by doing a HTTP GET of the corresponding Mandate name as URI. The Open Payments Server
-MUST respond with either a Mandate Response or an Error (TBD)
+The client reads the mandate by doing an HTTP GET of the corresponding mandate
+URL. The Open Payments server MUST respond with either a mandate or an error
+(TBD)
 
-The following is a non-normative example where the Client reads a mandate
+The following is a non-normative example where the client reads a mandate that
+allows charges amounting to USD 2 per month and USD 1.34 is still available to
+be charged in the current month.
 
 ```http
 GET /mandates/2fad69d0-7997-4543-8346-69b418c479a6 HTTP/1.1
-Host: issuer.wallet
+Host: wallet.example
 Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi...
 Accept: application/json
 Content-Type: application/json
 
 {
-  "name": "https://issuer.wallet/mandates/2fad69d0-7997-4543-8346-69b418c479a6",
+  "id": "https://wallet.example/mandates/2fad69d0-7997-4543-8346-69b418c479a6",
+  "account": "https://wallet.example/bob",
   "amount": 200,
   "assetCode" : "USD",
   "assetScale": 2,
   "interval": "P1M",
   "startAt": "2020-01-22T00:00:00Z",
-  "subject": "$issuer.wallet/bob",
-  "balance": 200
+  "balance": 134
 }
 ```
 
 ### Charges
 
-Wallet MUST implement the Charges API for Mandates. This is defined in the [Charges section](charges)
+Wallets MUST implement the charges API for mandates. This is defined in the
+[Charges section](charges)
 
-## Tracking Usage
+## Management of Mandates
 
-Wallets must enforce the 
+It is recommended wallets provide users with the ability to manage their
+mandates. Users should be able to view the state of mandates created against
+their accounts and the authorizations that have been created to make charges
+against them.
 
-## User Management
+Users should be able to revoke a mandate at any time.
 
-It is recommended Wallets provide Users with the ability to manage their mandates.
+## Lifecyle
+
+> **TODO**: Clients that create mandates should have the ability to register a
+> callback to be notified of changes to the state of the mandate such as
+> cancellation by the user.

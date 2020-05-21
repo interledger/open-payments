@@ -13,15 +13,15 @@ from an account owner to initiate payments from their account (once-off, on a
 recurring basis, now, or at future date).
 
 The mandate gives the account owner granular control over the amount and
-frequency of the payments, and the discovery protocol provides seamless way for
-account owners to share their account details with the 3rd party.
+frequency of the payments, and the discovery protocol provides a seamless way
+for account owners to share their account details with the 3rd party.
 
 Using mandates puts control back in the account owner's hands. Wallets should
 allow account owners to manage and cancel mandates via the wallet application.
 This differs from current systems based on credit cards where the account owner
 is unable to withdraw access to their account without cancelling the card.
 
-Its important to note that a mandate does not provide any guarantees of funds
+It's important to note that a mandate does not provide any guarantees of funds
 within the account. It merely specifies the terms under which the 3rd party is
 authorized to initiate transactions on behalf of the account owner.
 
@@ -94,14 +94,23 @@ defined in [Authorization](./auth).
 
 An example of the `authorization_details` object for the mandate above is:
 
-```
-{
-  "open_payments":{
-     "mandate":{
-        "name": "https://wallet.example/alice/mandates/2fad69d0-7997-4543-8346-69b418c479a6"
-     }
+```json
+[
+  {
+    "type": "https://openpayments.dev/charges",
+    "locations": [
+      "https://wallet.example/alice/mandates/2fad69d0-7997-4543-8346-69b418c479a6"
+    ],
+    "scopes": ["read"]
+  },
+  {
+    "type": "https://openpayments.dev/charges",
+    "locations": [
+      "https://wallet.example/alice/mandates/2fad69d0-7997-4543-8346-69b418c479a6/charges"
+    ],
+    "scopes": ["create", "read_own"]
   }
-}
+]
 ```
 
 The application will use the `authorization_details` in conjunction with the
@@ -118,7 +127,7 @@ GET /authorize?response_type=code&client_id=s6BhdRkqt3&state=af0ifjsldkj
 Host: wallet.example
 ```
 
-This will initiate an OAuth consent flow for the account owner with its wallet.
+This will initiate an OAuth2 consent flow for the account owner with its wallet.
 Once the account owner has consented to the mandate the application will get a
 callback at the specified `redirect_uri`.
 
@@ -186,5 +195,6 @@ This will instruct the wallet to perform a payment against the invoice under the
 terms of the mandate.
 
 The wallet must perform this payment immediately, if the funds are available.
+
 The application can query the charge or the invoice to determine the status of
 the payment.

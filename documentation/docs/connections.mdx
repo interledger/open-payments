@@ -15,12 +15,30 @@ into the account.
 Receiving systems may provide ways for direct account payments to be aggregated
 to make it easier for the account owner to make sense of the payments.
 
-| Property     | Type        |
-| ------------ | ----------- |
-| ilpAddress   | ILP Address |
-| sharedSecret | string      |
+## Resource Representation
+
+The `application/json` representation of a connection resource provides
+connection credentials for establishing a STREAM connection.
+
+| Property     | Type        | Description                                                    |
+| ------------ | ----------- | -------------------------------------------------------------- |
+| ilpAddress   | ILP Address | The ILP address to use when establishing a STREAM connection   |
+| sharedSecret | string      | The shared secret to use when establishing a STREAM connection |
 
 ## APIs
+
+The connections API endpoints are relative to the account or invoice URL that is
+being paid using the sub-resource URL: **`./connections`**
+
+Specifically, the URL of the connections API endpoint is the result of
+performing the URL parsing algorithm in
+[WHATWG URL](https://url.spec.whatwg.org/#url-parsing) where:
+
+- _input_ is `./connections`, and
+- _base_ is the account or invoice URL
+
+For example, for the account URL `https://wallet.example/alice` the connections
+API endpoint for that account is `https://wallet.example/alice/connections`
 
 ### Create
 
@@ -29,7 +47,7 @@ Create is not supported for connections.
 ### Get
 
 The client gets unique connection credentials by doing an HTTP GET against an
-account or invoice resource using the sub-resource path `connection`.
+account or invoice resource using the sub-resource path `/connections`.
 
 The Open Payments server SHOULD return a unique address and shared secret on
 every request.

@@ -3,49 +3,72 @@ id: invoices
 title: Invoices
 ---
 
-Invoices represent an amount payable that can be presented to a third party and/or a Mandate to pay. 
+Invoices represent an amount payable that can be presented to a third party
+and/or a Mandate to pay.
 
-| Property    | Type                |
-|-------------|---------------------| 
-| id          | UUID                |
-| amount      | int64               |
-| assetCode   | string              |
-| assetScale  | int32               |
-| received    | int64               |
-| expiresAt   | DateTime            |
-| subject     | Payment Pointer     |
-| description | string              |
+## Resource Representation
+
+The `application/json` representation of an invoice resource provides the
+details of the invoice as a JSON document.
+
+| Property    | Type     | Description                                                                   |
+| ----------- | -------- | ----------------------------------------------------------------------------- |
+| id          | URL      | The URL identifying the invoice                                               |
+| account     | URL      | The account into which payments toward the invoice will be credited           |
+| amount      | int64    | The amount that must be paid at the time the invoice is created               |
+| assetCode   | string   | The asset code of the amount                                                  |
+| assetScale  | int32    | The scale of the amount                                                       |
+| received    | int64    | The amount that has been paid toward the invoice since it was created         |
+| expiresAt   | DateTime | The date and time when payments toward the invoice will no longer be accepted |
+| description | string   | Human readable description of the invoice                                     |
 
 ## APIs
 
+The invoices API endpoint is relative to the account that is being paid using
+the sub-resource URL: **`./invoices`**
+
+Specifically, the URL of the invoices API endpoint is the result of performing
+the URL parsing algorithm in
+[WHATWG URL](https://url.spec.whatwg.org/#url-parsing) where:
+
+- _input_ is `./invoices`, and
+- _base_ is the account URL
+
+For example, for the account URL `https://wallet.example/alice` the invoices API
+endpoint for that account is `https://wallet.example/alice/invoices`
+
 ### Create
 
-Given a receiver's payment identifier (e.g., a Payment Pointer) a Client creates an Invoice by doing an HTTP POST of a JSON document to the 
-HTTP URL resolved from the Payment Pointer, with `/invoices` appended to the URL path.
+A client creates an invoice by doing an HTTP POST of a JSON document to the
+invoices API endpoint.
 
 The JSON document MUST include the following:
 
-* amount
-* assetCode
-* assetScale
-* subject
+- amount
+- assetCode
+- assetScale
+- expiresAt
 
 and MAY include the following:
-* description
 
-The Open Payments Server MUST respond with an Invoice Response or an error (TDB).
+- description
 
-The following is a non-normative example where the Client created an invoice for the subject `$acquirer.wallet/alice` at the Acquirer Wallet:
+The Open Payments server MUST respond with a `201 Created` response or an error
+(TDB). The response MUST contain the newly created invoice and a `Location`
+response header with the URL of the newly created invoice.
+
+The following is a non-normative example where the client creates an invoice for
+the Payment Pointer `$wallet.example/alice`:
 
 ```http
 POST /alice/invoices HTTP/1.1
-Host: acquirer.wallet
+Host: wallet.example
 Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi...
 Accept: application/json
 Content-Type: application/json
 
 {
-  "subject": "$acquirer.wallet/alice",
+  "subject": "$wallet.example/alice",
   "assetCode": "USD",
   "assetScale": 2,
   "amount": 200,
@@ -53,16 +76,16 @@ Content-Type: application/json
 }
 ```
 
-with a non-normative response from the Open Payments Server:
+with a non-normative response from the Open Payments server:
 
 ```http
 HTTP/1.1 201 Created
 Content-Type: application/json
-Location: https://acquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e
+Location: https://wallet.example/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e
 
 {
-  "name": "https://acquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
-  "subject": "$acquirer.wallet/alice",
+  "name": "https://wallet.example/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
+  "subject": "$wallet.example/alice",
   "amount": 200,
   "assetCode": "USD",
   "assetScale": 2,
@@ -73,21 +96,22 @@ Location: https://acquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e
 
 ### Get
 
-The Client reads the invoice by doing a HTTP GET of the corresponding Invoice name as URI. The Open Payments Server
-MUST respond with either an Invoice Response or an Error (TBD).
+The client reads the invoice by doing an HTTP GET of the corresponding invoice
+URL. The Open Payments server MUST respond with either an invoice or an error
+(TBD).
 
-The following is a non-normative example where the Client reads an invoice:
+The following is a non-normative example where the client reads an invoice:
 
 ```http
 GET /invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e HTTP/1.1
-Host: acquirer.wallet
+Host: wallet.example
 Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi...
 Accept: application/json
 Content-Type: application/json
 
 {
-  "name": "https://acquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
-  "subject": "$acquirer.wallet/alice",
+  "name": "https://wallet.example/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
+  "subject": "$wallet.example/alice",
   "amount": 200,
   "assetCode": "USD",
   "assetScale": 2,
@@ -98,33 +122,26 @@ Content-Type: application/json
 
 ### Payment Details
 
-The Client gets the payment details of an Invoice by doing an HTTP GET of the corresponding Invoice name as a URI, with an
-`Accept` HTTP header of `application/connection+json`. The Open Payments Server MUST respond with either an Payment Details 
-Response or an Error (TBD).
+The client gets the payment details of an invoice by doing an HTTP GET of the
+connections sub-resource URL as defined in the [connections API](./connections).
 
-The following is a non-normative example of a Client getting the payment details for an invoice:
+The following is a non-normative example of a client getting the payment details
+for an invoice:
 
 ```http
-GET invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e HTTP/1.1
+GET invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e/connections HTTP/1.1
 Host: acquirer.wallet
-Accept: application/connection+json
+Accept: application/json
 ```
 
 with a non-normative response from the Open Payments Server of:
 
 ```http
-HTTP/1.1 200 Ok
+HTTP/1.1 200 OK
 Content-Type: application/json
-Location: https://acquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e
 
 {
   "ilpAddress": "example.alice.YB5X9FhSOUPCL~NjZjZTYwZDgtZjRiYS00YzYwLWJhNmUtZmM1ZTBhYTk5OTIz",
   "sharedSecret": "6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs="
 }
 ```
-
-## STREAM Credentials
-Describe the spec for generating STREAM credentials
-
-## Tracking Money Received
-Describe the requirement for tracking received amounts

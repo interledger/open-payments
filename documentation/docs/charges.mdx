@@ -3,44 +3,65 @@ id: charges
 title: Charges
 ---
 
-Charges represent objects with which Clients can instruct Wallets to perform a
-Payment to an Invoice within the scope of a Mandate. Wallets MUST implement the
-Charges API on conjunction with Mandates.
+Charges represent instructions by a client to perform a payment from the account
+against which the mandate was created. The existence of the mandate does not
+imply that the client has authorization to initiate payments, the client MUST
+have authorization to create charges against the mandate.
 
-| Property | Type  |
-| -------- | ----- |
-| id       | UUID  |
-| invoice  | int64 |
-| mandate  | int64 |
-| status   | enum  |
+## Resource Representation
+
+The `application/json` representation of an invoice resource provides the
+details of the invoice as a JSON document.
+
+| Property | Type | Description                                        |
+| -------- | ---- | -------------------------------------------------- |
+| id       | URL  | The URL identifying the invoice                    |
+| mandate  | URL  | The mandate against which the charge is being made |
+| invoice  | URL  | The invoice which is being paid via this charge    |
+| status   | enum | TBD                                                |
 
 ## APIs
 
+The charges API endpoint is relative to the mandate that is being charged using
+the sub-resource URL: **`./charges`**
+
+Specifically, the URL of the charges API endpoint is the result of performing
+the URL parsing algorithm in
+[WHATWG URL](https://url.spec.whatwg.org/#url-parsing) where:
+
+- _input_ is `./charges`, and
+- _base_ is the mandate URL
+
+For example, for the mandate URL `https://wallet.example/mandates/7236rf76` the
+charges API endpoint for that mandate is
+`https://wallet.example/mandates/7236rf76/charges`
+
 ### Create
 
-A Client creates a Charge by doing an HTTP POST of a JSON document on the
-Mandate URI for which they wish to perform the Charge against, appending
-`/charges` to the Mandate URI path.
+A client creates an invoice by doing an HTTP POST of a JSON document to the
+charges API endpoint.
 
 The JSON document MUST include the following:
 
 - invoice
 
-The Open Payments Server MUST respond with a Charge Response or an error (TDB).
+The Open Payments server MUST respond with a `201 Created` response or an error
+(TDB). The response MUST contain the newly created charge and a `Location`
+response header with the URL of the newly created charge.
 
-The following is a non-normative example of a Client creating a Charge against a
-Mandate identified by
-`//issuer.wallet/mandates/2fad69d0-7997-4543-8346-69b418c479a6`.
+The following is a non-normative example of a client creating a charge against a
+mandate identified by
+`https://wallet.example/mandates/2fad69d0-7997-4543-8346-69b418c479a6`.
 
 ```http
 POST /mandates/2fad69d0-7997-4543-8346-69b418c479a6/charges HTTP/1.1
-Host: issuer.wallet
+Host: wallet.example
 Accept: application/json
 Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi...
 Content-Type: application/json
 
 {
-  "invoice": "https://acquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
+  "invoice": "https://otherwallet.example/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
 }
 ```
 
@@ -49,34 +70,40 @@ with a non-normative response from the Open Payments Server:
 ```http
 HTTP/1.1 201 Created
 Content-Type: application/json
-Location: https://issuer.wallet/charges/a395a5c0-f9cd-48bd-9c1a-19fb4d312d53
+Location: https://wallet.example/charges/a395a5c0-f9cd-48bd-9c1a-19fb4d312d53
 {
-  "name": "https://issuer.wallet/charges/a395a5c0-f9cd-48bd-9c1a-19fb4d312d53",
-  "invoice": "https://aquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
-  "mandate": "https://issuer.wallet/mandates/2fad69d0-7997-4543-8346-69b418c479a6",
+  "id": "https://wallet.example/charges/a395a5c0-f9cd-48bd-9c1a-19fb4d312d53",
+  "invoice": "https://otherwallet.example/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
+  "mandate": "https://wallet.example/mandates/2fad69d0-7997-4543-8346-69b418c479a6",
   "status": "created"
 }
 ```
 
 ### Get
 
-The Client reads the Charge by doing a HTTP GET of the corresponding Charge name
-as URI. The Open Payments Server MUST respond with either a Charge Response or
-an Error (TBD).
+The client reads the charge by doing an HTTP GET of the corresponding charge
+URL. The Open Payments server MUST respond with either a charge or an error
+(TBD).
 
-The following is a non-normative example where the Client reads an Charge:
+The following is a non-normative example where the client reads a charge:
 
 ```http
 GET /charges/a395a5c0-f9cd-48bd-9c1a-19fb4d312d53 HTTP/1.1
-Host: issuer.wallet
+Host: wallet.example
 Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi...
 Accept: application/json
+```
+
+```http
+HTTP/1.1 200 Success
 Content-Type: application/json
 
 {
-  "name": "https://issuer.wallet/charges/a395a5c0-f9cd-48bd-9c1a-19fb4d312d53",
-  "invoice": "https://aquirer.wallet/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
-  "mandate": "https://issuer.wallet/mandates/2fad69d0-7997-4543-8346-69b418c479a6",
+  "name": "https://wallet.example/charges/a395a5c0-f9cd-48bd-9c1a-19fb4d312d53",
+  "invoice": "https://otherwallet.example/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
+  "mandate": "https://wallet.example/mandates/2fad69d0-7997-4543-8346-69b418c479a6",
   "status": "succesful"
 }
 ```
+
+

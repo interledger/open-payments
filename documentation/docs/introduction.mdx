@@ -6,16 +6,18 @@ title: Introduction
 import { FourCorner } from './fourCorner'
 
 Open Payments is a standard for interactions between
-[account servicers](./terminology#account-servicer) (wallets, banks, etc) to
-setup and authorize payments for a variety of common [use cases](./p2p).
+[account servicers](./terminology#account-servicer) (we just say **wallets** but
+it could be banks, PSPs, or anyone sending or receiving payments for their
+users) to setup and authorize payments for a variety of common
+[use cases](./p2p).
 
 Open Payments builds on web technologies to define ways for a wallet to:
 
 - [discover](./discovery) the API endpoints at another wallet, using an
-  identifier for an account at that wallet
+  identifier for an account or account owner at that wallet
 - use the [APIs](./api) to setup a payment between the two wallets
 - exchange information with the other wallet that is required to complete the
-  payment
+  payment (business terms, regulatory info etc.)
 - get [authorization](./auth) from the
   [account owners](./terminology#account-owner) (as required) to complete the
   payment
@@ -25,16 +27,17 @@ Open Payments builds on web technologies to define ways for a wallet to:
 
 Open Payments is designed as an application level protocol built on top of
 Interledger. The protocol could be used over other payment clearing systems but
-the assumption is that accounts discovered via Open payments support Interledger
-for making the payment itself.
+the assumption is that accounts [discovered](./discovery) via Open payments
+support Interledger for making the payment itself.
 
-The [Interledger protocol (ILP)](https://interledger.org) is a minimal payments
-clearing protocol. It was developed to mimic many of the characteristics of the
-Internet Protocol stack in order to “internetwork” clearing participants. The
-effect of using this model is a highly scalable and simple global clearing
-network on which rapid innovation is possible. Using ILP, participants “peer”
-with other network participants and exchange clearing instructions (ILP packets)
-directly or indirectly with other participants on the network.
+The [Interledger protocol (ILP)](https://interledger.org) is a minimalistic
+payments clearing protocol. It was developed to mimic many of the
+characteristics of the Internet Protocol stack in order to “internetwork”
+clearing participants. The effect of using this model is a highly scalable and
+simple global clearing network on which rapid innovation is possible. Using ILP,
+participants “peer” with other network participants and exchange clearing
+instructions (ILP packets) directly or indirectly with other participants on the
+network.
 
 The advantage of using ILP over other clearing protocols is that it has been
 explicitly designed to facilitate high interoperability between participants

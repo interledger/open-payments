@@ -44,6 +44,20 @@ that is being requested.
 
 ## APIs
 
+All API endpoints are relative to the URL of the account that is the root of the
+interaction.
+
+Specifically, the URL of any sub-resource API endpoint is the result of
+performing the URL parsing algorithm in
+[WHATWG URL](https://url.spec.whatwg.org/#url-parsing) where:
+
+- _input_ is the sub-resource relative URL, and
+- _base_ is the resource URL
+
+For example, for the account resource URL `https://wallet.example/alice` the
+connections API endpoint/sub-resource URL for that account is
+`https://wallet.example/alice/connections`
+
 ### Create
 
 All resources are created using an HTTP `POST` request to the API endpoint,

@@ -2,32 +2,41 @@
 id: p2p
 title: Peer-to-Peer
 ---
+
 import { Mermaid } from './Mermaid'
 
-The following use case demonstrates an individual performing a peer-to-peer payment. The user would present the 
-Payment Pointer of the Receiver to its own Wallet (Issuer) and instruct it to make a payment. 
+The following use case demonstrates an individual performing a peer-to-peer
+payment. The sender would present the Payment Pointer of the receiver to its own
+wallet and instruct it to make a payment.
 
-<Mermaid chart={`sequenceDiagram
+## Flow
+
+<Mermaid
+  chart={`sequenceDiagram
 participant Sender
 participant Issuer as Sending Wallet
 participant Acquirer as Receiving Wallet
 participant Receiver
-Receiver->>Sender: Provide payment identifier
-Sender->>Issuer: Initate payment (payment identifier, amount)
+Receiver->>Sender: Provide Payment Pointer
+Sender->>Issuer: Initiate Payment (payment pointer)
 activate Issuer
-Issuer->>Acquirer: POST /receiver/invoices
+Issuer->>Acquirer: GET /{receiver}
+Acquirer-->>Issuer: 200 account meta data
+Issuer->>Sender: Prompt for amount (receiving asset)
+Sender-->>Issuer: Confirm (amount)
+Issuer->>Acquirer: POST /{receiver}/invoices
 activate Issuer
 activate Acquirer
 Acquirer->>Acquirer: createInvoice(invoice)
-Acquirer-->>Issuer: 201
+Acquirer-->>Issuer: 201 Created<br/> Location: /invoices/{invoiceId}
 deactivate Acquirer
 deactivate Issuer
-Issuer->>Acquirer: GET invoice_url<br/>application/connection+json
+Issuer->>Acquirer: GET /invoices/{invoiceId}/connections
 activate Acquirer
-Acquirer-->>Issuer: 200 paymentDetails
+Acquirer-->>Issuer: 200 connection credentials
 deactivate Acquirer
 rect rgb(0, 255, 0)
-    Issuer->>Acquirer: [ push payment ]
+    Issuer->>Acquirer: [ complete payment ]
     activate Acquirer
 end
 Acquirer->>Acquirer: updateInvoiceBalance(amount)
@@ -37,49 +46,62 @@ deactivate Issuer
 `}
 />
 
-# Flow
-
 Based on the diagram above the flow is as follows:
+
 1. Sender submits payment to its own wallet
-2. Issuer wallet creates invoice on receivers wallet
-3. Issuer pays invoice
+2. Sending wallet creates invoice on receivers wallet
+3. Sending wallet pays invoice
 
-## 1. Sender submits payment
+### 1. Sender submits payment
 
-The sender presents its Issuer with the payment identifier (eg. Payment Pointer) of the Receiver and the amount they want to send. 
-This will instruct the Issuer to make a Peer-to-Peer payment.
+The sender presents its wallet with the Payment Pointer of the receiver. The
+wallet dereferences this to the account meta-data document for the receiver's
+account which includes the asset code and scale of the account.
 
-## 2. Sending wallet creates invoice 
+The sending wallet prompts the sender to provide the amount they want to send,
+denominated in either the sender or the receiver's asset.
 
-Given the sender provided the Issuer wallet with the receiver's Payment Pointer of `$acquirer.wallet/bob`,
-the Issuer would create an invoice on the Acquirer by making a POST request with a JSON payload 
-to `https://acquirer.wallet/bob/invoices`:
+If the amount is denominated in the receiver's asset the sending wallet MUST
+estimate the cost to the sender and allow them to set a maximum send amount
+denominated in their asset.
+
+The sending wallet MAY allow the sender to provide a description for the
+payment.
+
+### 2. Sending wallet creates invoice
+
+Using the invoices API at the receiving wallet the sending wallet creates an
+invoice. If the sender specified a receive amount for the payment then this will
+be specified in the invoice, likewise with an invoice description.
+
+Below is an example of a sending client creating an invoice for a fixed receive
+amount of 1 USD.
 
 ```http
 POST /bob/invoices HTTP/1.1
-Host: acquirer.wallet
+Host: wallet.example
 Accept: application/json
 Content-Type: application/json
 
 {
-  "subject": "$acquirer.wallet/receiver",
+  "account": "https://wallet.example/bob",
   "assetCode": "USD",
   "assetScale": 2,
   "amount": 100
 }
 ```
 
-The Acquirer would respond with a JSON payload containing the created Invoice,
+The server would respond with a JSON payload containing the created Invoice,
 including the URL of the Invoice:
 
 ```http
 HTTP/1.1 201 Created
 Content-Type: application/json
-Location: https://acquirer.wallet/invoices/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0
+Location: https://wallet.example/invoices/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0
 
 {
-  "name": "https://acquirer.wallet/invoices/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0",
-  "subject": "$acquirer.wallet/bob",
+  "name": "https://wallet.example/invoices/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0",
+  "account": "https://wallet.example/bob",
   "amount": 100,
   "assetCode": "USD",
   "assetScale": 2,
@@ -87,26 +109,33 @@ Location: https://acquirer.wallet/invoices/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0
 }
 ```
 
-## 3. Issuer Pays
+### 3. Issuer Pays
 
-### Get Payment Details
+#### Get Payment Details
 
-To complete the payment the Issuer would need to get payment details from the invoice. By doing a GET against
-the invoice with the `Accept` header set to `application/connection+json`, the sender can get the 
-payment details necessary to pay the invoice (eg. `destination_address` and `shared_secret`).
+To complete the payment the Issuer would need to get payment details from the
+invoice. By doing a GET against the invoice with the `Accept` header set to
+`application/ilp-stream+json`, the sender can get the payment details necessary
+to pay the invoice (eg. `ilpAddress` and `sharedSecret`).
 
 ```http
 GET /invoices/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0 HTTP/1.1
-Host: acquirer.wallet
-Accept: application/connection+json
-Content-Type: application/json
+Host: wallet.example
+Accept: application/ilp-stream+json
+```
+returns
+
+```http
+HTTP/1.1 200 Success
+Content-Type: application/ilp-stream+json
 
 {
-  "destination_address": "g.aquirer.42e0f0c9284ad401b7c941bc6173f4e",
-  "shared_secret": "AvLaEGc+ojGHVezQF9DC4/7F5YIvrNPx/VM+4hJkCbs=",
+  "ilpAddress": "g.example.42e0f0c9284ad401b7c941bc6173f4e",
+  "sharedSecret": "AvLaEGc+ojGHVezQF9DC4/7F5YIvrNPx/VM+4hJkCbs=",
 }
 ```
 
-### Pay the Invoice
-Once the Issuer has received payment details for the invoice, it can send the payment
-to the receiver. For example, the Issuer could STREAM money to the given `destination_address`.
+#### Pay the Invoice
+
+Once the sender has received payment details for the invoice, it can send the
+payment to the receiver using the STREAM protocol.

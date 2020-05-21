@@ -8,7 +8,7 @@ import { RequestToPay } from './requestToPay'
 
 Once the client has discovered the URL of the account at the server, they use
 the APIs on the server to setup and complete the payment. The specific APIs that
-are used and the order they are accessed will be specific to the
+are used and the order they are accessed will differ based on the
 [use case](./p2p) however the general flow is described here.
 
 ## Creating Invoices vs Paying into Accounts
@@ -43,8 +43,8 @@ The sender then uses the URL of the invoice to get the connection credentials as
 defined in the [connections API](./connections).
 
 For use cases such as Web Monetization, with no fixed amount, no invoice is
-created and the URL of the receiving account is used to get a
-[connections](./connections) instead.
+created and the URL of the **receiving account** is used to get a
+[connection](./connections) instead.
 
 Using the credentials it receives, the sender opens a STREAM connection and
 starts sending payments until the invoice is paid, the amount sent exceeds a
@@ -74,10 +74,10 @@ credit the unsent balance back to the senders account.
 ## Receiving Money
 
 In order to receive money over Open Payments, an invoice resource is created at
-the receiving wallet and the URL presented to the sender.
+the receiving wallet and the URL of the invoice is presented to the sender.
 
 If the payment has been pre-authorized then the invoice is submitted as part of
-a [charge](./charges) against an authorized mandate.
+a [charge](./charges) against an authorized [mandate](./mandates).
 
 Receiving wallets must:
 
@@ -86,7 +86,7 @@ Receiving wallets must:
 2. Credit the **paid** balance of the invoice for any incoming payments on any
    connections that are mapped to that invoice
 
-### 1. Mapping the connection to the invoice
+### 1. Mapping the connection to the invoice with ILP and STREAM
 
 [STREAM](./terminology#stream) provides a mechanism for encoding data into an
 ILP address (shown as `destinationAccount` below) using a **Connection Tag**.

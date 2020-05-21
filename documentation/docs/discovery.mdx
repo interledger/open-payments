@@ -55,8 +55,8 @@ owner.
 <Mermaid
   chart={`erDiagram
   OWNER ||--|{ ACCOUNT : has
-  URL }|--|| ACCOUNT : identifies
-  URL ||--|| PAYMENT-POINTER : "encoded as"
+  ACCOUNT-URL }|--|| ACCOUNT : "identified by"
+  ACCOUNT-URL ||--|| PAYMENT-POINTER : "encoded as"
 `}
 />
 
@@ -80,8 +80,8 @@ sending emails to the target inbox. Similarly, a payment card number can be
 given to a counter-party so that they can request payment from the target
 account.
 
-Users can share their Personal Payment Pointers to both get paid and make
-payments using Open Payments.
+Users can share their Personal Payment Pointers to both **get paid** and **make
+payments** using Open Payments.
 
 Importantly, a Payment Pointer is not sensitive in the same way that a payment
 card number is. It can be shared freely with no risk that funds will be pulled
