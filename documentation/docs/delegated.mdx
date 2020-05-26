@@ -3,11 +3,6 @@ id: delegated
 title: Delegated Access
 ---
 
-One of the advantages of a standard protocol for interaction between wallets is
-that it can be leveraged by 3rd parties to provide sending and receiving
-services to account owners who delegate access to their account to the 3rd
-party.
-
 By using the [mandates API](./mandates), 3rd parties can request authorization
 from an account owner to initiate payments from their account (once-off, on a
 recurring basis, now, or at future date).
@@ -16,7 +11,7 @@ The mandate gives the account owner granular control over the amount and
 frequency of the payments, and the discovery protocol provides a seamless way
 for account owners to share their account details with the 3rd party.
 
-Using mandates puts control back in the account owner's hands. Wallets should
+Using mandates puts control back in the account owner's hands. Wallets SHOULD
 allow account owners to manage and cancel mandates via the wallet application.
 This differs from current systems based on credit cards where the account owner
 is unable to withdraw access to their account without cancelling the card.
@@ -49,7 +44,7 @@ example is `$wallet.example/alice`. The application would use Open Payments
 [discovery](./discovery) to determine the mandate API endpoint for the account.
 Once the application knows the endpoint it can create a mandate.
 
-An example of an application creating a mandate for $2.00 every month is:
+An example of an application creating a mandate for \$2.00 every month is:
 
 ```http
 POST /alice/mandates HTTP/1.1

@@ -31,7 +31,6 @@ Acquirer->>Acquirer: createInvoice(invoice)
 Acquirer-->>Issuer: 201 Created<br/> Location: /invoices/{invoiceId}
 deactivate Acquirer
 deactivate Issuer
-deactivate Acquirer
 rect rgb(0, 255, 0)
     Issuer->>Acquirer: [ complete payment ]
     activate Acquirer
@@ -110,7 +109,7 @@ Location: https://wallet.example/invoices/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0
 
 #### Get Payment Details
 
-To complete the payment the Issuer would need to get payment details from the
+To complete the payment the sender would need to get payment details from the
 invoice. By doing a GET against the invoice with the `Accept` header set to
 `application/ilp-stream+json`, the sender can get the payment details necessary
 to pay the invoice (eg. `ilpAddress` and `sharedSecret`).

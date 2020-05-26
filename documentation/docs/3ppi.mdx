@@ -2,21 +2,26 @@
 id: 3ppi
 title: 3rd Party Payment Initiation
 ---
+
 import { Mermaid } from './Mermaid'
 
-The following use case demonstrates a 3rd Party Payment Initiation (3PPI) flow. This flow allows a user to authenticate 
-a Payment Initiation Service Provider (PISP) to make payments on the users behalf without having to hold or be in the flow of money. Example use cases include:
-* Authenticating an app for in-app payments
-* Authentication existing 3PPI's like Google/Apple Pay.
+The following use case demonstrates a 3rd Party Payment Initiation (3PPI) flow.
+This flow allows a user to authenticate a Payment Initiation Service Provider
+(PISP) to make payments on the users behalf without having to hold or be in the
+flow of money. Example use cases include:
 
-<Mermaid chart={`sequenceDiagram
+- Authenticating an app for in-app payments
+- Authentication existing 3PPI's like Google Wallet/Apple Pay.
+
+<Mermaid
+  chart={`sequenceDiagram
 participant User
 participant PISP
-participant Issuer as Issuer<br/>(Users wallet)
-participant Acquirer as Acquirer<br/>(receiving wallet)
+participant Issuer as Users wallet
+participant Acquirer as Receiving Wallet
 participant Receiver
 User->>PISP: Produce payment identifier
-PISP->>Issuer: POST /sender/mandates
+PISP->>Issuer: POST /{user}/mandates
 activate PISP
 activate Issuer
 Issuer->>Issuer: Create Mandate
@@ -34,7 +39,7 @@ deactivate PISP
 deactivate Issuer
 alt Send Payment
     User->>PISP: Pay Receiver
-    PISP->>Acquirer: POST /receiver/invoices
+    PISP->>Acquirer: POST /{receiver}/invoices
     activate Acquirer
     activate PISP
     Acquirer->>Acquirer: createInvoice(invoice)
@@ -44,10 +49,10 @@ alt Send Payment
 else Pay Invoice
     Receiver->>PISP: Provide Invoice
 end
-PISP->>Issuer: POST mandate_url/charges
+PISP->>Issuer: POST /{mandate}/charges
 activate PISP
 activate Issuer
-Issuer->>Acquirer: GET invoice_url<br/>application/connection+json
+Issuer->>Acquirer: GET /{invoice}<br/>Accept: application/ilp-stream+json
 activate Acquirer
 Acquirer-->>Issuer: 200 paymentDetails
 deactivate Acquirer
@@ -59,7 +64,7 @@ Acquirer->>Acquirer: updateInvoiceBalance(amount)
 deactivate Acquirer
 Issuer-->>PISP: Response
 deactivate Issuer
-Receiver->>Acquirer: GET invoice_url
+Receiver->>Acquirer: GET /{invoice}
 activate Receiver
 activate Acquirer
 Acquirer->>Receiver: 200 invoice
@@ -71,22 +76,25 @@ deactivate Acquirer
 # Flow
 
 Based on the diagram above the flow is as follows:
-1. User provides payment identifier (eg. Payment Pointer)
+
+1. User provides Payment Pointer
 2. Create Mandate and Authenticate PISP
 3. Initiate payments
 
-## 1.  User provides Payment Identifier
+## 1. User provides Payment Identifier
 
-When a user would like to authenticate a new PISP it will provide them with their payment identifier such as a Payment Pointer.
+When a user would like to authenticate a new PISP it will provide them with
+their Payment Pointer.
 
 ## 2. Authenticate PISP
 
-The PISP creates a mandate on the Users Issuer's wallet by sending a POST request to the wallet. This mandate will contain the permissions
-with which the PISP can operate on the Users behalf.
+The PISP creates a mandate at the user's wallet by sending a POST request to the
+wallet. This mandate will contain the permissions with which the PISP can
+operate on the Users behalf.
 
 ```http
-POST /sender/mandate HTTP/1.1
-Host: issuer.wallet
+POST /alice/mandates HTTP/1.1
+Host: wallet.example
 Accept: application/json
 Content-Type: application/json
 
@@ -95,64 +103,44 @@ Content-Type: application/json
   "assetCode": "USD",
   "assetScale": 2,
   "interval": "P1M",
-  "subject": "$issuer.wallet/alice"
 }
 ```
 
 ```http
 HTTP/1.1 201 Created
 Content-Type: application/json
-
+Location: https://wallet.example/mandates/2fad69d0-7997-4543-8346-69b418c479a6
 {
-  "name": "https://issuer.wallet/mandates/2fad69d0-7997-4543-8346-69b418c479a6",
+  "id": "https://wallet.example/mandates/2fad69d0-7997-4543-8346-69b418c479a6",
+  "account": "https://wallet.example/alice",
   "amount": 200,
   "assetCode": "USD",
   "assetScale": 2,
   "interval": "P1M",
-  "start_at": "2020-01-22T00:00:00Z",
-  "account": "https://issuer.wallet/alice",
-  "balance": 200 
+  "startAt": "2020-01-22T00:00:00Z",
+  "balance": 200
 }
 ```
 
-The PISP submits the mandate to the AS of the Issuer in order get authorization from the User. Once the User has 
-authorized the mandate, the PISP will receive an access_token with which to use against the mandate.
+The PISP gets authorization to create charges against the mandate following the
+[authorization](./auth) flow. Once the user has authorized the mandate, the PISP
+will receive an `access_token` which it will use to create charges against the
+mandate.
 
 ## 3. Initiate payments
-Using the created invoice it will submit a charge against the mandate using the invoice name
+
+Using a reference to an invoice on the receiving system, the PISP it will submit
+a charge against the mandate:
 
 ```http
 POST /mandates/2fad69d0-7997-4543-8346-69b418c479a6/charges HTTP/1.1
-Host: issuer.wallet
-Authorization: Bearer random_auth_token
+Host: wallet.example
+Authorization: Bearer <access_token>
 Accept: application/json
 Content-Type: application/json
 
 {
-  "invoice": "https://acquirer.wallet/invoices/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0"
+  "invoice": "https://otherwallet.example/invoices/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0"
 }
 
-```
-
-```http
-HTTP/1.1 201 Created
-```
-Whenever the PISP wants to initiate a payment on the User behalf, it will submit a charge against the 
-mandate using the invoice name. This will instruct the Issuer to complete the payment.
-
-```http
-POST /mandates/2fad69d0-7997-4543-8346-69b418c479a6/charges HTTP/1.1
-Host: issuer.wallet
-Authorization: Bearer random_auth_token
-Accept: application/json
-Content-Type: application/json
-
-{
-  "invoice": "https://acquirer.wallet/invoices/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0"
-}
-
-```
-
-```http
-HTTP/1.1 201 Created
 ```
