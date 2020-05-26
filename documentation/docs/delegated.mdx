@@ -131,6 +131,12 @@ This will initiate an OAuth2 consent flow for the account owner with its wallet.
 Once the account owner has consented to the mandate the application will get a
 callback at the specified `redirect_uri`.
 
+> **NOTE:** The wallet MUST provide the user with an easy to understand
+> description of the terms of the mandate and allow the user to set upper and
+> lower bounds for the payment in the currency of the sending account.
+>
+> Learn more about [currencies](./currency) in Open Payments.
+
 Finally, the application will be able to convert the grant code from the
 redirect into an `access_token`. This `access_token` is used for any subsequent
 interactions with the mandate, including the ability to initiate a charge
@@ -156,10 +162,10 @@ Alternative formats may be developed in the future.
 
 ### Application usage
 
-In order for an application to perform Charges, it first needs an Invoice. This
-Invoice can either be one created by the Application or be given to the
-application by another party. The Application would submit this Invoice to the
-invoices `/charges` endpoint along with the `access_token` it received from the
+In order for an application to perform charges, it first needs an invoice. This
+invoice can either be one created by the application or be given to the
+application by another party. The application would submit this invoice to the
+`/charges` endpoint along with the `access_token` it received from the
 authorization flow.
 
 An example of the application doing this is:

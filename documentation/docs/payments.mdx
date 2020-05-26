@@ -1,0 +1,68 @@
+---
+id: payments
+title: Payment Details
+---
+
+Payment Details are a unique element of the Open Payment APIs. They represent
+the payment details used to make payments to a receiver. This can either be
+directly into an account, or toward an invoice linked to an account.
+
+The payment details to make the payment are provided as part of either an
+account or invoice resource but only when these are requested using alternative
+media-types.
+
+By default, a client requesting an account or invoice resource will use the
+`application/json` media-type in the `Accept` header and the response should be
+of that type and MUST NOT contain payment details.
+
+However, clients using the [accounts](./accounts) or [invoices](./invoices) APIs
+MAY specify alternative media-types in the `Accept` header and the server MUST
+provide the appropriate payment details for that account or invoice embedded in
+the account or invoice resource.
+
+## Interledger STREAM
+
+The `application/ilp-stream+json` representation of an invoice or account
+resource includes the following **additional** properties for establishing a
+STREAM connection and paying the receiver:
+
+| Property     | Type        | Description                                                    |
+| ------------ | ----------- | -------------------------------------------------------------- |
+| ilpAddress   | ILP Address | The ILP address to use when establishing a STREAM connection   |
+| sharedSecret | string      | The shared secret to use when establishing a STREAM connection |
+
+## Simple Payment Setup Protocol
+
+The `application/spsp4+json` representation of an invoice or account resource
+contains ONLY the following properties for establishing a STREAM connection and
+paying the receiver:
+
+| Property            | Type        | Description                                                    |
+| ------------------- | ----------- | -------------------------------------------------------------- |
+| destination_account | ILP Address | The ILP address to use when establishing a STREAM connection   |
+| shared_secret       | string      | The shared secret to use when establishing a STREAM connection |
+
+This ensures backwards compatibility with
+[SPSP](https://interledger.org/rfcs/0009-simple-payment-setup-protocol/)
+clients.
+
+The following is a non-normative example where the client gets the details to
+pay an account:
+
+```http
+GET alice HTTP/1.1
+Host: wallet.example
+Accept: application/spsp4+json
+```
+
+with a non-normative response from the Open Payments Server of:
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/spsp4+json
+
+{
+  "destination_account": "example.alice.YB5X9FhSOUPCL~NjZjZTYwZDgtZjRiYS00YzYwLWJhNmUtZmM1ZTBhYTk5OTIz",
+  "shared_secret": "6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs="
+}
+```

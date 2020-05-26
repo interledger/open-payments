@@ -73,6 +73,7 @@ HTTP/1.1 200 OK
 Content-Type: application/json
 
 {
+  "id": "https://wallet.example/alice",
   "accountServicer": "https://wallet.example",
   "assetCode": "USD",
   "assetScale" 2,
@@ -80,6 +81,40 @@ Content-Type: application/json
     "authorization_endpoint": "https://auth.wallet.example/authorize",
     "token_endpoint": "https://auth.wallet.example/token",
   }
+}
+```
+
+### Payment Details
+
+The client can also get the payment details of an account by doing an HTTP GET
+of the account URL as defined in the [payment details API](./payments).
+
+The following is a non-normative example of a client getting the payment details
+for an account:
+
+```http
+GET /alice HTTP/1.1
+Host: wallet.example
+Accept: application/ilp-stream+json
+```
+
+with a non-normative response from the Open Payments Server of:
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/ilp-stream+json
+
+{
+  "id": "https://wallet.example/alice",
+  "accountServicer": "https://wallet.example",
+  "assetCode": "USD",
+  "assetScale" 2,
+  "auth" : {
+    "authorization_endpoint": "https://auth.wallet.example/authorize",
+    "token_endpoint": "https://auth.wallet.example/token",
+  }
+  "ilpAddress": "example.alice.YB5X9FhSOUPCL~NjZjZTYwZDgtZjRiYS00YzYwLWJhNmUtZmM1ZTBhYTk5OTIz",
+  "sharedSecret": "6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs="
 }
 ```
 
@@ -105,7 +140,7 @@ server and does not support Open Payments.
 
 If a raw Interledger connection is sufficient to accomplish the transaction it
 is attempting, the client MAY fall back to using SPSP and retry the request in
-the form of a backwards-compatible [connections](./connections) API call which
+the form of a backwards-compatible [payment details](./payments) API call which
 supports both SPSP and Open Payments.
 
 ## TODO

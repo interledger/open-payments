@@ -112,12 +112,12 @@ before executing an invoice payment.
 
 #### Payment
 
-To complete the payment the Issuer would need to get payment details from the
-invoice. By doing a GET against the invoice with the `Accept` header set to
-`application/ilp-stream+json`, the sender can get the payment details necessary
-to pay the invoice. In this example, the sender and receiver wish to transact
-over Interledger, so the receiver would respond with a `ilpAddress` and
-`sharedSecret`.
+To complete the payment the sending wallet would need to get payment details
+from the invoice. By doing a GET against the invoice with the `Accept` header
+set to `application/ilp-stream+json`, the sender can get the payment details
+necessary to pay the invoice. In this example, the sender and receiver wish to
+transact over Interledger, so the receiver would respond with an `ilpAddress`
+and `sharedSecret`.
 
 The following is a non-normative example of a wallet getting ILP payment details
 for an invoice from the receiving wallet.

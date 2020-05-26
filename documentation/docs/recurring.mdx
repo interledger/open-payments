@@ -2,51 +2,56 @@
 id: recurring
 title: Recurring Payments
 ---
+
 import { Mermaid } from './Mermaid'
 
-The following use case demonstrates a merchant being able to charge customers at a regular interval. A merchant creates
-and authorizes a mandate for its customer at the customers respective Issuer. The mandate is a form of delegated access
-authorized by the customer which contains details about the interval, 
-frequency, amount and start and end dates. The merchant can then submit invoices against the mandate to instruct
-the Issuer to perform payments.
+The following use case demonstrates a merchant being able to charge customers at
+a regular interval.
 
-<Mermaid chart={`sequenceDiagram
-participant Sender
-participant Issuer as Issuer<br/>(sending wallet)
-participant Acquirer as Acquirer<br/>(receiving wallet)
-participant Receiver
-Sender->>Receiver: Produce payment identifier
-Receiver->>Issuer: POST /sender/mandates
-activate Receiver
+A merchant creates and authorizes a mandate for its customer at the customer's
+wallet. The mandate is a form of delegated access authorized by the customer
+which contains details about the interval, frequency, amount and start and end
+dates. The merchant can then submit charges against the mandate to instruct the
+customer's to perform payments.
+
+<Mermaid
+  chart={`sequenceDiagram
+participant Customer
+participant Issuer as Sending Wallet
+participant Acquirer as Receiving Wallet
+participant Merchant
+Customer->>Merchant: Produce payment identifier
+Merchant->>Issuer: POST /{customer}/mandates
+activate Merchant
 activate Issuer
 Issuer->>Issuer: Create Mandate
-Issuer-->>Receiver: 201 Response
+Issuer-->>Merchant: 201 Created
 deactivate Issuer
-deactivate Receiver
-Receiver->>Issuer: Authorise Mandate
-activate Receiver
+deactivate Merchant
+Merchant->>Issuer: Authorise Mandate
+activate Merchant
 activate Issuer
-    Issuer->>Sender: Mandate Consent
-    activate Sender
-    Sender-->>Issuer: Accept Mandate
-    deactivate Sender
-Issuer-->>Receiver: Respond Auth Tokens
-deactivate Receiver
+    Issuer->>Customer: Mandate Consent
+    activate Customer
+    Customer-->>Issuer: Accept Mandate
+    deactivate Customer
+Issuer-->>Merchant: Access & Refresh Tokens
+deactivate Merchant
 deactivate Issuer
 loop Interval of Payment
-Receiver->>Acquirer: POST /receiver/invoices
-activate Receiver
+Merchant->>Acquirer: POST /{merchant}/invoices<br/>{ amount: 200}
+activate Merchant
 activate Acquirer
 Acquirer->>Acquirer: createInvoice(invoice)
-Acquirer-->>Receiver: 201 paid=false
+Acquirer-->>Merchant: 201 Created<br/>{ received: 0}
 deactivate Acquirer
-deactivate Receiver
-Receiver->>Issuer: POST mandate_url/charges
-activate Receiver
+deactivate Merchant
+Merchant->>Issuer: POST {mandate}/charges<br/>{ invoice: <invoiceUrl>}
+activate Merchant
 activate Issuer
-Issuer->>Acquirer: GET invoice_url<br/>application/connection+json
+Issuer->>Acquirer: GET /{invoice}<br/>Accept: application/ilp-stream+json
 activate Acquirer
-Acquirer-->>Issuer: 200 paymentDetails
+Acquirer-->>Issuer: 200 Success
 deactivate Acquirer
 rect rgb(0, 255, 0)
     Issuer->>Acquirer: [ push payment ]
@@ -54,14 +59,14 @@ rect rgb(0, 255, 0)
 end
 Acquirer->>Acquirer: updateInvoiceBalance(amount)
 deactivate Acquirer
-Issuer-->>Receiver: Response
-deactivate Receiver
+Issuer-->>Merchant: Response
+deactivate Merchant
 deactivate Issuer
-Receiver->>Acquirer: GET invoice_url
-activate Receiver
+Merchant->>Acquirer: GET /{invoice}
+activate Merchant
 activate Acquirer
-Acquirer->>Receiver: 200 invoice
-deactivate Receiver
+Acquirer->>Merchant: 200 Success<br/>{ received: 200}
+deactivate Merchant
 deactivate Acquirer
 end
 `}
@@ -70,25 +75,30 @@ end
 # Flow
 
 Based on the diagram above the flow is as follows:
-1. Customer would provide their payment identifier (eg. Payment Pointer) to the Merchant
-2. Merchant creates a mandate on the Issuer wallet
-3. Merchant requests authorization for the mandate from the Issuer. Issuer goes through a consent flow 
-4. Merchant can now submit invoices against the mandate for payments it wants to execute.
+
+1. Customer would provide their payment identifier (eg. Payment Pointer) to the
+   Merchant
+2. Merchant creates a mandate at the customer's wallet
+3. Merchant requests authorization for the mandate from the wallet. The wallet
+   takes the customer through a consent flow
+4. The merchant can now submit invoices against the mandate for payments it
+   wants to execute.
 
 ## 1. Providing Payment Identifier to Merchant
 
-To initiate a recurring payment, the sender must give their payment identifier, such as a Payment Pointer, to
-the merchant. The merchant can then use the payment identifier to create a Mandate on the Issuer.
+To initiate a recurring payment, the sender must give their Payment Pointer to
+the merchant. The merchant can then use Open Payments discovery to resolve the
+[mandates API](./mandates) at the customer's wallet.
 
-## 2. Create mandate on the Issuer wallet
+## 2. Create mandate at the customer's wallet
 
-In this example, the sender provided the Payment Pointer `$issuer.wallet/alice` to the Merchant in the previous step.
-The Merchant then creates a mandate on the Issuer wallet by making a POST request to the HTTP URL resolved from the
-Payment Pointer, appending `/mandates` to the path.
+In this example, the sender provided the Payment Pointer `$wallet.example/alice`
+to the Merchant in the previous step. The Merchant then creates a mandate at the
+customer's wallet by making a POST request to the [mandates API](./mandates).
 
 ```http
 POST /alice/mandates HTTP/1.1
-Host: issuer.wallet
+Host: wallet.example
 Accept: application/json
 Content-Type: application/json
 
@@ -96,8 +106,7 @@ Content-Type: application/json
   "amount": 200,
   "assetCode": "USD",
   "assetScale": 2,
-  "interval": "P1M",
-  "subject": "$issuer.wallet/alice"
+  "interval": "P1M"
 }
 ```
 
@@ -106,78 +115,77 @@ HTTP/1.1 201 Created
 Content-Type: application/json
 
 {
-  "name": "https://issuer.wallet/mandates/2fad69d0-7997-4543-8346-69b418c479a6",
+  "name": "https://wallet.example/mandates/2fad69d0-7997-4543-8346-69b418c479a6",
+  "account": "https://wallet.example/alice",
   "amount": 200,
   "assetCode": "USD",
   "assetScale": 2,
   "interval": "P1M",
-  "start_at": "2020-01-22T00:00:00Z",
+  "startAt": "2020-01-22T00:00:00Z",
   "subject": "$issuer.wallet/alice",
-  "balance": 200 
+  "balance": 200
 }
 ```
 
 ## 3. Merchant requests authorization for mandate
 
-The merchant submits the mandate to the AS of the Issuer in order get authorization from the user.
+The merchant requests authorization to create charges against the newly created
+mandate per the [authorization](./auth) flow.
 
-**TODO** Flesh out the authorization flow and then show an example
-
-
-This results in the Merchant getting an access_token with which to use against the mandate.
+This results in the merchant getting an `access_token` with which to use against
+the mandate.
 
 ## 4. Merchant spends against mandate
 
-The merchant can now submit charges against the mandate for goods/services rendered. The merchant can do this as often
-as necessary, as long as the overall spends don't exceed the limit of the current mandate interval. 
- 
+The merchant can now submit charges against the mandate for goods/services
+rendered. The merchant can do this as often as necessary, as long as the overall
+spends don't exceed the limit of the current mandate interval.
+
 ### Create invoice
 
-When the Merchant wants to PUSH money to itself from the mandate, it will first create an Invoice on its Acquirer.
+When the Merchant wants to PUSH money to itself from the mandate, it will first
+create an invoice at its own wallet.
 
 ```http
 POST /merchant/invoices HTTP/1.1
-Host: acquirer.wallet
+Host: otherwallet.example
 Accept: application/json
 Content-Type: application/json
 
 {
-  "subject": "$acquirer.wallet/merchant",
-  "assetCode": "USD",
-  "assetScale": 2,
   "amount": 100
 }
 ```
 
-
 ```http
 HTTP/1.1 201 Created
 Content-Type: application/json
-Location: https://acquirer.wallet/invoices/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0
+Location: https://otherwallet.example/invoices/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0
 
 {
-  "name": "https://acquirer.wallet/invoices/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0",
-  "subject": "$acquirer.wallet/merchant",
-  "amount": 200,
+  "id": "https://otherwallet.example/invoices/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0",
+  "account" : "https://otherwallet.example/merchant"
+  "amount": 100,
   "assetCode": "USD",
   "assetScale": 2,
   "received": 0
 }
 ```
 
-### Submit invoice to mandate
+### Submit invoice as a charge against the mandate
 
-Using the created invoice it will submit a charge against the mandate using the invoice name
+Using the created invoice it will submit a charge against the mandate using the
+invoice URL
 
 ```http
 POST /mandates/2fad69d0-7997-4543-8346-69b418c479a6/charges HTTP/1.1
 Host: issuer.wallet
-Authorization: Bearer random_auth_token
+Authorization: Bearer <access_token>
 Accept: application/json
 Content-Type: application/json
 
 {
-  "invoice": "https://acquirer.wallet/invoices/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0"
+  "invoice": "https://otherwallet.example/invoices/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0"
 }
 
 ```
@@ -186,35 +194,42 @@ Content-Type: application/json
 HTTP/1.1 201 Created
 ```
 
-This will instruct the Issuer to perform a payment of the invoice within the scope of the given mandate.
+This will instruct the customer's wallet to perform a payment of the invoice
+within the scope of the given mandate.
 
 ### Payment
 
-To complete the payment the Issuer would need to get payment details from the invoice. By doing a GET against
-the invoice with the `Accept` header set to `application/connection+json`, the sender can get the 
-payment details necessary to pay the invoice. In this example, the sender and receiver wish to transact over Interledger, 
-so the Acquirer would respond with a `destination_address` and `shared_secret`.
+To complete the payment the customer's wallet would need to get payment details
+from the invoice. By doing a GET against the invoice with the `Accept` header
+set to `application/ilp-stream+json`, the sender can get the payment details
+necessary to pay the invoice. In this example, the sender and receiver wish to
+transact over Interledger, so the Acquirer would respond with a `ilpAddress` and
+`sharedSecret`.
 
-The following is a non-normative example of an Issuer getting ILP payment details for an Invoice from the Acquirer.
+The following is a non-normative example of the wallet getting ILP payment
+details for an invoice from the other wallet.
 
 ```http
 GET /invoices/2d24bd87-1afc-465e-a4ec-07cb4f70f7b0 HTTP/1.1
-Host: acquirer.wallet
-Accept: application/connection+json
+Host: wallet.example
+Accept: application/ilp-stream+json
 Content-Type: application/json
 
 {
-  "destination_address": "g.aquirer.42e0f0c9284ad401b7c941bc6173f4e",
-  "shared_secret": "AvLaEGc+ojGHVezQF9DC4/7F5YIvrNPx/VM+4hJkCbs=",
+  "ilpAddress": "g.aquirer.42e0f0c9284ad401b7c941bc6173f4e",
+  "sharedSecret": "AvLaEGc+ojGHVezQF9DC4/7F5YIvrNPx/VM+4hJkCbs=",
 }
 ```
 
-The Issuer would now use the payment details to perform the payment over Interledger using STREAM. 
+The customer wallet uses the payment details to perform the payment over
+Interledger using STREAM.
 
-As payments are fulfilled, the `received` amount on the invoice would increase to reflect the payments.
+As payments are fulfilled, the `received` amount on the invoice would increase
+to reflect the payments.
 
 ## 6. Check payment
 
-The merchant would validate the payment of the invoice with the Acquirer. This could be achieved through polling against the invoice
-or the Acquirer could provide convenience webhooks for the merchant to get notified of successful payments. This is left up to Wallets to
-decide to implement.
+The merchant would validate the payment of the invoice with its wallet. This
+could be achieved through polling against the invoice or the wallet could
+provide convenience web hooks for the merchant to get notified of successful
+payments. This is left up to wallets to decide to implement.

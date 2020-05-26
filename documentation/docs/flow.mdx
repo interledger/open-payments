@@ -13,45 +13,51 @@ are used and the order they are accessed will differ based on the
 
 ## Creating Invoices vs Paying into Accounts
 
-Interledger payments are always sent using the
+All Open Payments interactions conclude with a payment, sent either directly
+into an account or sent as payment of an invoice linked to an account.
+
+The purpose of the setup is to exchange the details required to finalise the
+terms of the payment and ultimately for the sender to get the payment details it
+requires to connect to the receiver and make the payment.
+
+As an example, Interledger payments are always sent using the
 [STREAM protocol](./terminology#stream) which requires that the sender has
-connection credentials to begin sending the payment. The purpose of the setup is
-to exchange the details required to finalise the terms of the payment and
-ultimately for the sender to get the connection credentials it requires to make
-the payment.
+connection credentials to begin sending the payment. These credentials are the
+payment details required by teh sender to make the payment.
 
 The majority of payments are made toward an invoice and the outcome of the setup
 is creation of an [invoice](./invoices) at the receiver, following which, the
-sender will get [connection credentials](./connections) linked to that invoice.
+sender will get [payment details](./payments) linked to that invoice.
 
 The exception to this are use cases that have no discreet payment amount such as
-[web monetization](./web-monetization). In this case the connection credentials
-will be linked to the receiver's [account](./accounts) and not a specific
-invoice.
+[web monetization](./web-monetization). In this case the payment details will be
+linked to the receiver's [account](./accounts) and not a specific invoice.
 
 Irrespective of whether the sender is paying an invoice or paying into an
-account, they will have a URL representing the resource and will get the
-connection credentials relative to that URL using the same
-[connections API](./connections).
+account, they will have a URL representing the resource and will get the payment
+details by making a request **to that URL** using the appropriate media-type and
+parsing the payment details from the returned document as defined in the
+[payment details API](./payments).
 
 ## Sending Money
 
 To send a specific amount of money the sender creates an invoice via the
-[invoice API](./invoices) at the receiver.
-
-The sender then uses the URL of the invoice to get the connection credentials as
-defined in the [connections API](./connections).
+[invoice API](./invoices) at the receiver and gets the payment details for that
+invoice as defined in the [payment details API](./payments).
 
 For use cases such as Web Monetization, with no fixed amount, no invoice is
-created and the URL of the **receiving account** is used to get a
-[connection](./connections) instead.
+created and the URL of the **receiving account** is used to get the
+[payment details](./payments) instead.
 
-Using the credentials it receives, the sender opens a STREAM connection and
-starts sending payments until the invoice is paid, the amount sent exceeds a
-maximum set by the sender, or the sender chooses to stop sending (e.g. moves
-away from a Web page it was paying via Web Monetization).
+Using the details it receives, the sender makes the payment.
 
-An example using the
+For example, if the payment details are for payment via Interledger, the sender
+opens a STREAM connection and starts sending payments until either the invoice
+is paid, the amount sent exceeds a maximum set by the sender, or the sender
+chooses to stop sending (e.g. moves away from a Web page it was paying via Web
+Monetization).
+
+A code example using the
 [javascript STREAM client](https://github.com/interledgerjs/ilp-protocol-stream)
 is shown below.
 
@@ -67,7 +73,7 @@ await stream.sendTotal(200)
 stream.end()
 ```
 
-The sending wallet should debit the senders account before performing the
+The sending wallet SHOULD debit the senders account before performing the
 payment and should the payment fail or only partially succeed, the wallet must
 credit the unsent balance back to the senders account.
 
@@ -81,10 +87,10 @@ a [charge](./charges) against an authorized [mandate](./mandates).
 
 Receiving wallets must:
 
-1. Ensure the STREAM connection credentials they provide to clients can be
-   mapped back to the invoice when the incoming connection is established
-2. Credit the **paid** balance of the invoice for any incoming payments on any
-   connections that are mapped to that invoice
+1. Ensure the payment details they provide to clients can be mapped back to the
+   invoice when the incoming payments are received
+2. Credit the **paid** balance of the invoice for any incoming payments using
+   payment details that are mapped to that invoice
 
 ### 1. Mapping the connection to the invoice with ILP and STREAM
 

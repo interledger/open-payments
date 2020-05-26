@@ -16,8 +16,8 @@ details of the invoice as a JSON document.
 | id          | URL      | The URL identifying the invoice                                               |
 | account     | URL      | The account into which payments toward the invoice will be credited           |
 | amount      | int64    | The amount that must be paid at the time the invoice is created               |
-| assetCode   | string   | The asset code of the amount                                                  |
-| assetScale  | int32    | The scale of the amount                                                       |
+| assetCode   | string   | The asset code of the amount (inherited from the underlying account)          |
+| assetScale  | int32    | The scale of the amount (inherited from the underlying account)               |
 | received    | int64    | The amount that has been paid toward the invoice since it was created         |
 | expiresAt   | DateTime | The date and time when payments toward the invoice will no longer be accepted |
 | description | string   | Human readable description of the invoice                                     |
@@ -45,8 +45,6 @@ invoices API endpoint.
 The JSON document MUST include the following:
 
 - amount
-- assetCode
-- assetScale
 - expiresAt
 
 and MAY include the following:
@@ -56,6 +54,10 @@ and MAY include the following:
 The Open Payments server MUST respond with a `201 Created` response or an error
 (TDB). The response MUST contain the newly created invoice and a `Location`
 response header with the URL of the newly created invoice.
+
+If the client specifies an alternative media-type in the `Accept` header, as
+defined in the [payment details API](./payments), then the payment details
+should be returned as part of the response.
 
 The following is a non-normative example where the client creates an invoice for
 the Payment Pointer `$wallet.example/alice`:
@@ -68,9 +70,6 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "subject": "$wallet.example/alice",
-  "assetCode": "USD",
-  "assetScale": 2,
   "amount": 200,
   "description": "Paying for goods"
 }
@@ -84,8 +83,8 @@ Content-Type: application/json
 Location: https://wallet.example/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e
 
 {
-  "name": "https://wallet.example/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
-  "subject": "$wallet.example/alice",
+  "id": "https://wallet.example/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
+  "account": "https://wallet.example/alice",
   "amount": 200,
   "assetCode": "USD",
   "assetScale": 2,
@@ -110,8 +109,8 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "name": "https://wallet.example/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
-  "subject": "$wallet.example/alice",
+  "id": "https://wallet.example/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
+  "account": "https://wallet.example/alice",
   "amount": 200,
   "assetCode": "USD",
   "assetScale": 2,
@@ -123,24 +122,30 @@ Content-Type: application/json
 ### Payment Details
 
 The client gets the payment details of an invoice by doing an HTTP GET of the
-connections sub-resource URL as defined in the [connections API](./connections).
+invoice URL as defined in the [payment details API](./payments).
 
 The following is a non-normative example of a client getting the payment details
 for an invoice:
 
 ```http
-GET invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e/connections HTTP/1.1
-Host: acquirer.wallet
-Accept: application/json
+GET invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e HTTP/1.1
+Host: wallet.example
+Accept: application/ilp-stream+json
 ```
 
 with a non-normative response from the Open Payments Server of:
 
 ```http
 HTTP/1.1 200 OK
-Content-Type: application/json
+Content-Type: application/ilp-stream+json
 
 {
+  "id": "https://wallet.example/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e",
+  "account": "https://wallet.example/alice",
+  "amount": 200,
+  "assetCode": "USD",
+  "assetScale": 2,
+  "description": "Paying for goods",
   "ilpAddress": "example.alice.YB5X9FhSOUPCL~NjZjZTYwZDgtZjRiYS00YzYwLWJhNmUtZmM1ZTBhYTk5OTIz",
   "sharedSecret": "6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs="
 }

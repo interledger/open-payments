@@ -1,0 +1,28 @@
+---
+id: interledger
+title: Interledger
+---
+
+The [Interledger protocol (ILP)](https://interledger.org) is a minimalistic
+payments clearing protocol. It was developed to mimic many of the
+characteristics of the Internet Protocol stack in order to “internetwork”
+clearing participants. The effect of using this model is a highly scalable and
+simple global clearing network on which rapid innovation is possible. Using ILP,
+participants “peer” with other network participants and exchange clearing
+instructions (ILP packets) directly or indirectly with other participants on the
+network.
+
+The advantage of using ILP over other clearing protocols is that it has been
+explicitly designed to facilitate high interoperability between participants
+irrespective of the use case. Senders and receivers establish the terms of the
+payment before starting to exchange ILP packets to clear the funds. As a result,
+technologies built on ILP are not siloed by the payment networks they choose to
+support.
+
+Open Payments is the successor to the
+[Simple Payment Setup Protocol (SPSP)](https://interledger.org/rfcs/0009-simple-payment-setup-protocol/),
+an application layer protocol with limited support for use cases beyond 
+[Web Monetization](./web-monetization).
+
+Open Payments is backwards compatible with SPSP but supports an increased set of
+use cases.

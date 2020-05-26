@@ -24,16 +24,13 @@ Issuer->>Acquirer: GET /{receiver}
 Acquirer-->>Issuer: 200 account meta data
 Issuer->>Sender: Prompt for amount (receiving asset)
 Sender-->>Issuer: Confirm (amount)
-Issuer->>Acquirer: POST /{receiver}/invoices
+Issuer->>Acquirer: POST /{receiver}/invoices<br/>Accept: application/ilp-stream+json
 activate Issuer
 activate Acquirer
 Acquirer->>Acquirer: createInvoice(invoice)
 Acquirer-->>Issuer: 201 Created<br/> Location: /invoices/{invoiceId}
 deactivate Acquirer
 deactivate Issuer
-Issuer->>Acquirer: GET /invoices/{invoiceId}/connections
-activate Acquirer
-Acquirer-->>Issuer: 200 connection credentials
 deactivate Acquirer
 rect rgb(0, 255, 0)
     Issuer->>Acquirer: [ complete payment ]
