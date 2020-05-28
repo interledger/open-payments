@@ -1,0 +1,111 @@
+---
+id: api
+title: API
+---
+
+import { Mermaid } from './Mermaid'
+
+Open Payments is a REST API with 4 resource definitions:
+
+- [accounts](./accounts)
+- [invoices](./invoices)
+- [mandates](./mandates)
+- [charges](./charges)
+
+The API also defines **alternative resource representations** for invoices and
+accounts that contain [payment details](./payments) for making payments against
+those invoices or into those accounts.
+
+The URL of the **accounts** resource is [discovered](./discovery) by the client
+and all other endpoints are then relative to that URL. As shown in the ERD below
+the root resource is an **account**.
+
+Accounts have 2 sub-resources, **invoices** and **mandates** and APIs are
+defined to both create and get invoices and mandates under the account.
+
+Mandates have a **charges** sub-resource which has a create API allowing clients
+to create a new charge against the mandate. In most cases the charge will
+reference an invoice on the **client's** system describing the details of the
+charge that is being requested.
+
+<Mermaid
+  chart={`erDiagram
+  INVOICE }o--|| ACCOUNT: "aggregates payments into"
+  MANDATE }o--|| ACCOUNT: "authorizes payments from"
+  CHARGE }o--|| MANDATE: "charged against"
+`}
+/>
+
+## APIs
+
+All API endpoints are relative to the URL of the account that is the root of the
+interaction.
+
+Specifically, the URL of any sub-resource API endpoint is the result of
+performing the URL parsing algorithm in
+[WHATWG URL](https://url.spec.whatwg.org/#url-parsing) where:
+
+- _input_ is the sub-resource relative URL, and
+- _base_ is the resource URL
+
+For example, for the account resource URL `https://wallet.example/alice` the
+invoice API endpoint/sub-resource URL for that account is
+`https://wallet.example/alice/invoices`
+
+### Create
+
+All resources are created using an HTTP `POST` request to the API endpoint.
+
+A successful response to a create request has an HTTP `201 Created` response
+code and a `Location` header containing the URL of the newly created resource.
+
+The resource is also returned in the body of the response.
+
+Clients that wish to have payment details returned for a newly created invoice
+resource MUST specify an alternative media-type in the `Accept` header of the
+create request as defined in the [payment details API](./payments)
+
+### Get
+
+Resources can be accessed using an HTTP `GET` request.
+
+Sub-resources are accessed at URLs relative to the parent resource URL.
+
+## Authorization
+
+All APIs MAY be protected by the Open Payments server. The default mechanism for
+accessing protected resources is to provide a bearer token in the authorization
+header of the request as described in
+[RFC 6750](https://tools.ietf.org/html/rfc6750).
+
+The example below shows a request to get payment details using an access token:
+
+```http
+     GET /alice HTTP/1.1
+     Host: wallet.example
+     Accept: application/ilp-stream+json
+     Authorization: Bearer mF_9.B5f-4.1JqM
+```
+
+If a client is unable to access a resource anonymously and receives a `401`
+response code it may attempt to get an access token using OAuth 2 via the
+authorization endpoint defined in the account meta-data.
+
+Servers that receive anonymous requests for a protected resource must respond
+with a `401` response code and the `WWW-Authenticate` header per
+[RFC 6750](https://tools.ietf.org/html/rfc6750).
+
+An example of such a response is shown below:
+
+```http
+    HTTP/1.1 401 Unauthorized
+     WWW-Authenticate: Bearer
+```
+
+### Getting an access token
+
+> **TODO:** This section needs to be fleshed out but will follow the OAuth 2
+> framework with the RAR extension to describe how a client uses the
+> authorization endpoint they get from the account meta-data to request a grant
+> from the account owner (or the account servicer if the use case permits) and
+> exchange this for an access token.
