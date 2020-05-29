@@ -30,12 +30,11 @@ identifier called a **Payment Pointer**.
 
 ## Payment Pointers
 
-All entities in Open Payments are **resources** identified by, and addressable
-via, URLs in keeping with the
-[REST](https://tools.ietf.org/html/rfc7231#section-2) pattern. This includes
-[accounts](./accounts) which are the root resource in Open Payments. Discovery
-involves finding the URL of the account resource because all other resource URLs
-are relative to the account.
+In keeping with the [REST](https://tools.ietf.org/html/rfc7231#section-2)
+pattern, all entities in Open Payments are **resources** identified by, and
+addressable via, URLs. This includes [accounts](./accounts) which are the root
+resource in Open Payments. Discovery involves finding the URL of the account
+resource because all other resource URLs are relative to the account.
 
 > Example account URL:  
 > `https://wallet.example/accounts/dee69df8-be40-478f-9828-6267f4d42b01`
@@ -74,20 +73,47 @@ receiver).
 > Example Personal Payment Pointer:  
 > `$wallet.example/alice`
 
-Personal Payment Pointers are analogous to an email address or payment card
-number. Email addresses are given to counter-parties so that they can begin
-sending emails to the target inbox. Similarly, a payment card number can be
-given to a counter-party so that they can request payment from the target
+## PayID
+
+Another form of identifier that can be used by account owners is a PayID. A
+PayID identifies the account owner and not an individual account so it is
+possible for a client, given a PayID to discover multiple accounts they can
+transact with.
+
+These accounts may have different currencies and may have additional options
+making incoming payments.
+
+Discovery of accounts on an Open Payments server using a PayID is described in
+the [Open Payments PayID discovery protocol](./payid).
+
+### PayID vs Personal Payment Pointer
+
+While at first glance these may appear to be the same, they are intentionally
+different.
+
+A **Personal Payment Pointer** MUST point to an account that supports
+Interledger. A client that begins an Open Payments discovery algorithm with a
+Payment Pointer is guaranteed to discover an account that supports incoming
+payments via ILP.
+
+In contrast a PayID requires a more indirect discovery flow (via the account
+owner resource) it MAY be used to discover accounts connected to other payment
+networks or accounts denominated in different currencies.
+
+Both PayIDs and Personal Payment Pointers are analogous to an email address or
+payment card number. Email addresses are given to counter-parties so that they
+can begin sending emails to the target inbox. Similarly, a payment card number
+can be given to a counter-party so that they can request payment from the target
 account.
 
-Users can share their Personal Payment Pointers to both **get paid** and **make
+Users can share their PayID or Payment Pointers to both **get paid** and **make
 payments** using Open Payments.
 
-Importantly, a Payment Pointer is not sensitive in the same way that a payment
-card number is. It can be shared freely with no risk that funds will be pulled
-from the target account without the account owner's consent
+Importantly, neither a PayID nor a Payment Pointer is sensitive in the same way
+that a payment card number is. It can be shared freely with no risk that funds
+will be pulled from the a discovered account without the account owner's consent
 
-## Metadata
+## Account Metadata
 
 Account metadata is provided by an Open Payments Server as a JSON document that
 describes the various service endpoints that are available to:

@@ -1,0 +1,74 @@
+---
+id: payid
+title: PayID
+---
+
+import { Mermaid } from './Mermaid'
+
+By default, Open Payments interactions centre around an [account](./accounts)
+resource and all APIs are relative to the account URL.
+
+The account URL is [discovered](./discovery) through a
+[Payment Pointer](./terminology#payment-pointer) which is an account identifer
+for Interledger-enabled accounts.
+
+Said differently, any account identified by a Payment Pointer can be paid into
+using the [STREAM](terminology#STREAM) protocol.
+
+This feature allows clients setup payments, for uses cases such
+[web monetization](./web-monetization), with a single API call, to get the
+payment details, and be guaranteed that the receiving account supports ILP as
+payment method.
+
+A **PayID** is an alternative identifier which, unlike Payment Pointers that
+identify accounts, identifies [account owners](./terminology#account-owner).
+
+The
+[PayID URI specification](https://github.com/xpring-eng/rfcs/blob/master/payid/dist/spec/payid-uri.txt)
+defines the format of a PayID to be `acctpart "$" host`.
+
+With respect to Open Payments the `acctpart` is the account owner identifier and
+`host` is the origin of the Open Payments server.
+
+The following PayID identifies an account for the owner `alice` at the wallet
+`wallet.example`:
+
+> `alice$wallet.example`
+
+## Open Payments PayID Discovery
+
+As with all APIs in Open Payments the [owner](./owner.mdx) is a resource and is
+identified by a URL.
+
+The
+[PayID URI specification](https://github.com/xpring-eng/rfcs/blob/master/payid/dist/spec/payid-uri.txt)
+allows for any protocol to define a discovery protocol on top of the identifier.
+For Open Payments the discovery protocol is as follows:
+
+1. Given a PayID conforming to the prescribed format, `acctpart "$" host`,
+   extract the values **acctpart** and **host**.
+2. Let **path** be the string `/$/` concatenated with **acctpart**
+3. Let **account owner URL** be a new URL as defined in
+   [WHATWG URL](https://url.spec.whatwg.org/#concept-url) where:
+   1. The URL's scheme is `https`
+   2. The URL's host is **host**
+   3. The URL's path is **path**
+
+For example, the PayID `alice$wallet.example` resolves to the URL
+`https://wallet.example/$/alice`.
+
+The `/$/` path prefix minimizes the chance that Web servers will have path
+conflicts with their existing services.
+
+## Privacy
+
+Open Payments servers that support PayIDs SHOULD put mitigations in place to
+prevent clients "farming" data about the account owners that have accounts on
+the server.
+
+## API
+
+Having resolved the owner API endpoint URL a client can use the owner API to
+discover the accounts available to it and setup a new transaction.
+
+See the [owners API](./owners) for more details.

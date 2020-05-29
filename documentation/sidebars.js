@@ -3,6 +3,7 @@ module.exports = {
     Overview: [
       'introduction',
       'discovery',
+      'payid',
       'flow',
       'delegated',
       'auth',
@@ -18,6 +19,7 @@ module.exports = {
       'payments',
       'mandates',
       'charges',
+      'owners'
     ],
     'Use Cases': [
       'p2p', 

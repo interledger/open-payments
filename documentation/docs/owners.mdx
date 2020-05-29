@@ -1,0 +1,114 @@
+---
+id: owners
+title: Owners
+---
+
+Owners represent the entity that owns an account. The owner resource can be used
+to discover the accounts owned by the entity, in order to setup a payment to or
+from the account.
+
+## Resource Representation
+
+The `application/json` representation of an owner resource provides the details
+of the owner as a JSON document.
+
+| Property | Type  | Description                      |
+| -------- | ----- | -------------------------------- |
+| id       | URL   | The URL identifying the owner    |
+| accounts | array | The accounts owned by the entity |
+
+The `accounts` property holds an array of account objects as described below:
+
+| Property   | Type   | Description                                                                       |
+| ---------- | ------ | --------------------------------------------------------------------------------- |
+| id         | URL    | The URL of the account resource                                                   |
+| assetCode  | string | The asset code of the amount (inherited from the underlying account)              |
+| assetScale | int32  | The scale of the amount (inherited from the underlying account)                   |
+| mediaTypes | array  | An array of media-types that can be requested when accessing the account resource |
+
+## APIs
+
+The owners API endpoint/resource URL is the URL discovered by the client through
+the [Open Payments PayID discovery](./payid) process.
+
+### Create
+
+Create is not supported for owners.
+
+### Get
+
+The following request is a non-normative example of a request for the meta-data
+for the account identified by the PayID: `alice$wallet.example`
+
+```http
+GET /$/alice HTTP/1.1
+Host: wallet.example
+Accept: application/json
+```
+
+The returned JSON document MUST contain the following claims:
+
+- `id` URL identifying the account owner.
+- `accounts` an array of account object as defined below.
+
+#### Accounts
+
+Each account object returned in the `accounts` array MUST contain the following
+claims:
+
+- `id` URL identifying the account. This is the account resource URL and can be
+  used as the basis for further Open Payments interaction on the account.
+- `assetCode` the currency of the account.
+- `assetScale` the natural scale of the account relative to the natural scale of
+  the asset. This is expressed as an integer which is the power of 10 that the
+  account balance must be divided by to get to the natural scale of the asset.
+  For example, if the asset is USD then a scale of 2 implies that the balance is
+  tracked in USD cents. (Must be divided by 100 to be show USD)
+- `mediaTypes` an array of strings that are valid media types for this account.
+
+#### Media Types
+
+By default, [account](./accounts) and [invoice](./invoices) resources are
+represented using the `application/json` media type.
+
+However, clients may request alternative representations which include
+additional payment details for payments into the account or against the invoice
+as described in the [payment details API](./payments).
+
+An example of such a media type is `application/ilp-stream+json` which will
+supplement the default representation with two additional properties the
+`ilpAddress` and `sharedSecret` which are used by the client to make payments to
+the account or against the invoice.
+
+The `mediaTypes` property of `account` objects returned in a response provide
+the set of media types that MAY be requested for the account.
+
+The list MUST include `application/json`.
+
+If the account is discoverable via a
+[Payment Pointer](./terminology#payment-pointer) the list MUST include
+`application/ilp-stream+json`.
+
+An error response uses the applicable HTTP status code value.
+
+The following is a non-normative example response:
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "id": "https://wallet.example/$/alice",
+  "accounts" : [
+    {
+      "id": "",
+      "assetCode": "USD",
+      "assetScale" 2,
+      "mediaTypes": [
+        "application/json", 
+        "application/ilp-stream+json" 
+      ]
+    }
+  ]
+}
+```

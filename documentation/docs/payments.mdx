@@ -66,3 +66,43 @@ Content-Type: application/spsp4+json
   "shared_secret": "6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs="
 }
 ```
+
+## XRP Ledger
+
+The `application/xrpl+json` representation of an invoice or account resource
+includes the following **additional** properties for paying the receiver via the
+XRP Ledger:
+
+| Property       | Type               | Description                                                                              |
+| -------------- | ------------------ | ---------------------------------------------------------------------------------------- |
+| xrplAddress    | XRP Ledger Address | The XRP Ledger address to use when making payments to the account or against the invoice |
+| destinationTag | string             | The destination tag to use when making payments to the account or against the invoice    |
+
+The following is a non-normative example where the client gets the details to
+pay an account via the XRP Ledger:
+
+```http
+GET alice HTTP/1.1
+Host: wallet.example
+Accept: application/xrpl+json
+```
+
+with a non-normative response from the Open Payments Server of:
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/spsp4+json
+
+{
+  "id": "https://wallet.example/alice",
+  "accountServicer": "https://wallet.example",
+  "assetCode": "USD",
+  "assetScale" 2,
+  "auth" : {
+    "authorization_endpoint": "https://auth.wallet.example/authorize",
+    "token_endpoint": "https://auth.wallet.example/token",
+  }
+  "xrplAddress": "XTVQWr6BhgBLW2jbFyqqufgq8T9eN7KresB684ZSHKQ3oDth",
+  "destinationTag": "543237"
+}
+```
