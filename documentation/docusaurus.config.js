@@ -49,7 +49,7 @@ module.exports = {
             },
             {
               label: 'Use Cases',
-              to: 'checkout_push',
+              to: 'p2p',
             },
           ],
         },
