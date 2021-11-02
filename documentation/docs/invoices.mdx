@@ -11,16 +11,16 @@ and/or a Mandate to pay.
 The `application/json` representation of an invoice resource provides the
 details of the invoice as a JSON document.
 
-| Property    | Type     | Description                                                                   |
-| ----------- | -------- | ----------------------------------------------------------------------------- |
-| id          | URL      | The URL identifying the invoice                                               |
-| account     | URL      | The account into which payments toward the invoice will be credited           |
-| amount      | int64    | The amount that must be paid at the time the invoice is created               |
-| assetCode   | string   | The asset code of the amount (inherited from the underlying account)          |
-| assetScale  | int32    | The scale of the amount (inherited from the underlying account)               |
-| received    | int64    | The amount that has been paid toward the invoice since it was created         |
-| expiresAt   | DateTime | The date and time when payments toward the invoice will no longer be accepted |
-| description | string   | Human readable description of the invoice                                     |
+| Property    | Type     | Description                                                                              |
+| ----------- | -------- | ---------------------------------------------------------------------------------------- |
+| id          | URL      | The URL identifying the invoice                                                          |
+| account     | URL      | The account into which payments toward the invoice will be credited                      |
+| amount      | int64    | The amount that must be paid at the time the invoice is created                          |
+| assetCode   | string   | The asset code of the amount (inherited from the underlying account)                     |
+| assetScale  | int32    | The scale of the amount (inherited from the underlying account)                          |
+| received    | int64    | The amount that has been paid toward the invoice since it was created                    |
+| expiresAt   | DateTime | The date and time when payments toward the invoice will no longer be accepted (ISO 8601) |
+| description | string   | Human readable description of the invoice                                                |
 
 ## APIs
 
@@ -71,6 +71,7 @@ Content-Type: application/json
 
 {
   "amount": 200,
+  "expiresAt": "2021-11-02T18:00:42.436Z"
   "description": "Paying for goods"
 }
 ```
@@ -88,7 +89,8 @@ Location: https://wallet.example/invoices/0f09dc92-84ad-401b-a7c9-441bc6173f4e
   "amount": 200,
   "assetCode": "USD",
   "assetScale": 2,
-  "description": "Paying for goods"
+  "expiresAt": "2021-11-02T18:00:42.436Z",
+  "description": "Paying for goods",
   "received": 0
 }
 ```
@@ -114,6 +116,7 @@ Content-Type: application/json
   "amount": 200,
   "assetCode": "USD",
   "assetScale": 2,
+  "expiresAt": "2021-11-02T18:00:42.436Z",
   "description": "Paying for goods",
   "received": 158
 }
@@ -145,6 +148,7 @@ Content-Type: application/ilp-stream+json
   "amount": 200,
   "assetCode": "USD",
   "assetScale": 2,
+  "expiresAt": "2021-11-02T18:00:42.436Z",
   "description": "Paying for goods",
   "ilpAddress": "example.alice.YB5X9FhSOUPCL~NjZjZTYwZDgtZjRiYS00YzYwLWJhNmUtZmM1ZTBhYTk5OTIz",
   "sharedSecret": "6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs="
