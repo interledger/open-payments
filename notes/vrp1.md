@@ -22,15 +22,30 @@ Alice wishes to give Coil the ability to send tips on her behalf from her Fynbos
 
 Alice provides Coil with her Payment Pointer: `https://fynbos.me/alice`
 
-> **TODO** : Grant Endpoint discovery could use some refinement...
+Coil queries the Payment Pointer to get the grant request endpoint URL.
 
-Coil does a `POST` request to the `https://fynbos.me/alice` URL with an empty request body and a `Content-Type` header of `application/op-outgoing-payment-v1+json`.
+```http
+GET /alice HTTP/1.1
+Host: fynbos.me
+Accept: application/op-account-v1+json
+```
 
-Fynbos responds with the following header indicating where the grant request endpoint is:
+Fynbos responds:
 
-`WWW-Authenticate: GNAP as_uri=https://fynbos.dev/auth`
+```
+HTTP/1.1 200 Success
+Content-Type: application/op-alice-v1+json
 
-Coil makes a Grant Request to Fynbos at that URL:
+{
+    "id": "https://fynbos.me/alice",
+    "publicName": "Alice"
+    "assetCode": "USD",
+    "assetScale": 2
+    "authServer": "https://fynbos.dev/auth"
+}
+```
+
+Coil makes a Grant Request to Fynbos at `https://fynbos.dev/auth`:
 
 ```json
 {
@@ -43,7 +58,7 @@ Coil makes a Grant Request to Fynbos at that URL:
                     "authorize"
                 ],
                 "locations": [
-                    "https://wallet.com/alice"
+                    "https://fynbos.me/alice"
                 ]
             }
         ]
@@ -125,6 +140,7 @@ Fynbos responds to Coil with the following:
     "access_token": {
         "value": "OS9M2PMHKUR64TB8N6BW7OZB8CDFONP219RP1LT0",
         "manage": "https://fynbos.dev/auth/token/PRY5NM33OM4TB8N6BW7",
+        "expires_in": 762534,
         "access": [
         {
             "type": "outgoing-payment",
@@ -234,6 +250,26 @@ In this case, Fynbos has no record of any transactions using this grant in the c
 
 The balance of `PRY5NM33OM4TB8N6BW7_FEB_22` is $0 and will go up to $2 if this payment completes.
 
+Fynbos has checked that Coil is authorised to create the payment. It returns a response:
+
+```
+HTTP/1.1 201 Created
+Content-Type: application/op-outgoing-payment-v1+json
+
+{
+    "id": "https://fynbos.me/alice/fi7td6dito8yf6t"
+    "accountId": "https://fynbos.me/alice/",
+    "state": "authorized",
+    "sendAmount": {
+        "amount": 200,
+        "assetCode": "USD",
+        "assetScale": 2
+    },
+    "description": "Great blog bob!"
+    "receipts: []
+}
+```
+
 Fynbos attempts to create an incoming payment at Bob's payment pointer to accept the payment.
 
 > **TODO** This request should be authorised...
@@ -262,28 +298,6 @@ Content-Type: application/ilp-stream-v1+json
     "ilpAddress": "g.uphold.Cty6C+YB5X9FhSOUPCL",
     "sharedSecret": "6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=",
     "receiptsEnabled": true
-}
-```
-
-Fynbos has verified the receiver and checked that Coil is authorised to create the payment. It returns a response:
-
-
-```
-HTTP/1.1 201 Created
-Content-Type: application/op-outgoing-payment-v1+json
-
-{
-    "id": "https://fynbos.me/alice/fi7td6dito8yf6t"
-    "accountId": "https://fynbos.me/alice/",
-    "state": "authorized",
-    "receiver": "https://uphold.com/bob/87tfi7td6dito8yf",
-    "sendAmount": {
-        "amount": 200,
-        "assetCode": "USD",
-        "assetScale": 2
-    },
-    "description": "Great blog bob!"
-    "receipts: []
 }
 ```
 
@@ -330,7 +344,7 @@ Content-Type: application/op-incoming-payment-v1+json
 }
 ```
 
-Coil polls the outgoing-payment for the latest state:
+At any time Coil polls the outgoing-payment for the latest state:
 
 ```http
 GET /alice/fi7td6dito8yf6t HTTP/1.1
@@ -338,11 +352,43 @@ Host: fynbos.me
 Accept: application/outgoing-payment-v1+json
 ```
 
-The response includes the STREAM receipts that have been received by Fynbos:
+The response includes the STREAM receipts that have been received by Fynbos.
+
+A response that is received while the payment is in progress:
 
 ```
 HTTP/1.1 200 Success
 Content-Type: application/op-outgoing-payment-v1+json
+Cache-Control: no-cache
+
+{
+    "id": "https://fynbos.me/alice/fi7td6dito8yf6t"
+    "accountId": "https://fynbos.me/alice/",
+    "state": "authorized",
+    "receiver": "https://uphold.com/bob/87tfi7td6dito8yf",
+    "sendAmount": {
+        "amount": 200,
+        "assetCode": "USD",
+        "assetScale": 2
+    },
+    "description": "Great blog bob!"
+    "receipts": [
+      {
+        "nonce": "VR66CYB5X9FhSOUPCL",
+        "stream": 0,
+        "total": 73,
+        "hmac": "9B025X9FhSO3UPCCty6C+YB5X9FhSOUP5CL"
+      }
+    ]
+}
+```
+
+A response after the payment is completed:
+
+```
+HTTP/1.1 200 Success
+Content-Type: application/op-outgoing-payment-v1+json
+Cache-Control: max-age=348756
 
 {
     "id": "https://fynbos.me/alice/fi7td6dito8yf6t"
