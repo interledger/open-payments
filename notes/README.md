@@ -34,7 +34,7 @@ Given a URL that represents an account, Open Payments defines a standard HTTP-ba
 
 ## Grant Negotiation and Authorization Protocol
 
-The [Grant Negotiation and Authorization Protocol (GNAP)](https://https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol) is a new protocol being developed at the IETF to succeed OAuth 2.0 for delegated access to resources. 
+The [Grant Negotiation and Authorization Protocol (GNAP)](https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol) is a new protocol being developed at the IETF to succeed OAuth 2.0 for delegated access to resources. 
 
 Open Payments v2 is leveraging GNAP to define a standard mechanism for delegating access to an account. Grants provide fine-grained control over the operations and limits/amounts that a client is permitted to transact on the account.
 
@@ -42,7 +42,7 @@ GNAP clearly separates the roles of the **resource server** (where the operation
 
 In Open Payments, the ASPSP is the resource server (and the account is the resource), meaning that the authorization of access to the account can be separated from the account provider if desired. The authorization service can even be fulfilled by multiple federated providers such as the Interledger Foundation, a service nominated by the account holder themselves and the ASPSP.
 
-An open source implementation of an Open Payments resource server, [Rafiki](https://https://github.com/interledger/rafiki), is being developed. As Rafiki is simply the resource server, the implementation can be quite opinionated.
+An open source implementation of an Open Payments resource server, [Rafiki](https://github.com/interledger/rafiki), is being developed. As Rafiki is simply the resource server, the implementation can be quite opinionated.
 
 In contrast, an ASPSP that deploys Rafiki is free to implement proprietary logic for account holder authentication and gathering consent as this is the role of the authorization server and often a function that is already quite mature at an ASPSP.
 
