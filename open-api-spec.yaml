@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Open Payments
-  version: '1.0'
+  version: "1.0"
   license:
     name: Apache 2.0
     identifier: Apache-2.0
@@ -34,9 +34,9 @@ info:
     token used in API requests.
   summary: An API for open access to financial accounts to send and receive payments.
 servers:
-  - url: 'https://openpayments.guide/alice'
+  - url: "https://openpayments.guide/alice"
     description: alice
-  - url: 'https://openpayments.guide/bob'
+  - url: "https://openpayments.guide/bob"
     description: bob
 paths:
   /:
@@ -44,17 +44,17 @@ paths:
       summary: Get a Payment Pointer
       tags: []
       responses:
-        '200':
+        "200":
           description: Account Found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/account'
+                $ref: "#/components/schemas/account"
               examples:
                 Get account for $openpayments.example:
                   value:
-                    id: 'https://openpayments.example'
-        '404':
+                    id: "https://openpayments.example"
+        "404":
           description: Account Not Found
       operationId: get-public-account
       description: >-
@@ -76,17 +76,17 @@ paths:
       tags: []
       operationId: create-incoming-payment
       responses:
-        '201':
+        "201":
           description: Incoming Payment Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/incoming-payment'
+                $ref: "#/components/schemas/incoming-payment"
               examples:
                 New Incoming Payment for $25:
                   value:
-                    id: 'http://openpayments.example/incoming-payments/87562464512'
-                    accountId: 'http://openpayments.example'
+                    id: "http://openpayments.example/incoming-payments/87562464512"
+                    accountId: "http://openpayments.example"
                     state: completed
                     incomingAmount:
                       amount: 2500
@@ -96,13 +96,13 @@ paths:
                       amount: 0
                       assetCode: USD
                       assetScale: 2
-                    expiresAt: '2022-02-03T23:20:50.52Z'
+                    expiresAt: "2022-02-03T23:20:50.52Z"
                     externalRef: INV2022-02-0137
                     receiptsEnabled: true
-        '401':
-          $ref: '#/components/responses/401'
-        '403':
-          $ref: '#/components/responses/403'
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
       requestBody:
         content:
           application/json:
@@ -110,7 +110,7 @@ paths:
               type: object
               properties:
                 incomingAmount:
-                  $ref: '#/components/schemas/amount'
+                  $ref: "#/components/schemas/amount"
                 expiresAt:
                   type: string
                   description: >-
@@ -159,18 +159,18 @@ paths:
       summary: List Incoming Payments
       operationId: list-incoming-payments
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/incoming-payment'
-        '401':
-          $ref: '#/components/responses/401'
-        '403':
-          $ref: '#/components/responses/403'
+                  $ref: "#/components/schemas/incoming-payment"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
       description: List all incoming payments on the account
       parameters: []
   /outgoing-payments:
@@ -179,34 +179,34 @@ paths:
       tags: []
       operationId: create-outgoing-payment
       responses:
-        '201':
+        "201":
           description: Outgoing Payment Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/outgoing-payment'
+                $ref: "#/components/schemas/outgoing-payment"
               examples:
                 New Fixed Send Outgoing Payment for $25:
                   value:
                     id: >-
                       https://openpayments.example/outgoing-payments/gwe867t2frof
-        '401':
-          $ref: '#/components/responses/401'
-        '403':
-          $ref: '#/components/responses/403'
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
       requestBody:
         content:
           application/json:
             examples:
-              Create fixed-send-amount outgoing payment for $25 to pay invoice INV2022-02-0137:
-                value:
-                  receivingAccount: 'https://openpayments.example'
+              ? Create fixed-send-amount outgoing payment for $25 to pay invoice INV2022-02-0137
+              : value:
+                  receivingAccount: "https://openpayments.example"
                   sendAmount:
                     amount: 2500
                   externalRef: INV2022-02-0137
-              Create fixed-receive-amount outgoing payment for $25 to pay invoice INV2022-02-0137:
-                value:
-                  receivingAccount: 'https://openpayments.example'
+              ? Create fixed-receive-amount outgoing payment for $25 to pay invoice INV2022-02-0137
+              : value:
+                  receivingAccount: "https://openpayments.example"
                   receiveAmount:
                     amount: 2500
                   externalRef: INV2022-02-0137
@@ -226,9 +226,9 @@ paths:
                   format: uri
                   description: The URL of the incoming payment that is being paid.
                 receiveAmount:
-                  $ref: '#/components/schemas/amount'
+                  $ref: "#/components/schemas/amount"
                 sendAmount:
-                  $ref: '#/components/schemas/amount'
+                  $ref: "#/components/schemas/amount"
                 fundsAvailable:
                   type: boolean
                   description: >-
@@ -274,38 +274,38 @@ paths:
       summary: List Outgoing Payments
       operationId: list-outgoing-payments
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/outgoing-payment'
-        '401':
-          $ref: '#/components/responses/401'
-        '403':
-          $ref: '#/components/responses/403'
+                  $ref: "#/components/schemas/outgoing-payment"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
       description: List all outgoing payments on the account
       parameters: []
-  '/incoming-payments/{id}':
+  "/incoming-payments/{id}":
     get:
       summary: Get an Incoming Payment
       tags: []
       operationId: get-incoming-payment
       responses:
-        '200':
+        "200":
           description: Incoming Payment Found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/incoming-payment'
+                $ref: "#/components/schemas/incoming-payment"
               examples:
                 Incoming Payment for $25 with $12.34 received so far:
                   value:
                     id: >-
                       https://openpayments.example/incoming-payments/gwe867t2frof
-                    accountId: 'http://openpayments.example'
+                    accountId: "http://openpayments.example"
                     state: processing
                     incomingAmount:
                       amount: 2500
@@ -315,17 +315,17 @@ paths:
                       amount: 1234
                       assetCode: USD
                       assetScale: 2
-                    expiresAt: '2022-04-12T23:20:50.52Z'
+                    expiresAt: "2022-04-12T23:20:50.52Z"
                     description: Thanks for the flowers!
                     externalRef: INV-12876
-                    ilpApddress: g.ilp.iwuyge987y.98y08y
+                    ilpAddress: g.ilp.iwuyge987y.98y08y
                     sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
                     receiptsEnabled: true
-        '401':
-          $ref: '#/components/responses/401'
-        '403':
-          $ref: '#/components/responses/403'
-        '404':
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
           description: Incoming Payment Not Found
       description: >-
         A client can fetch the latest state of an incoming payment to determine
@@ -341,20 +341,20 @@ paths:
       summary: Update an Incoming Payment
       operationId: update-incoming-payment
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/incoming-payment'
-        '401':
-          $ref: '#/components/responses/401'
-        '403':
-          $ref: '#/components/responses/403'
-        '404':
+                $ref: "#/components/schemas/incoming-payment"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
           description: Incoming Payment Not Found
       description: >-
-        A client with the approriate permissions MAY update the state of an
+        A client with the appropriate permissions MAY update the state of an
         **incoming payment** to `completed` if it is in a state of `pending` or
         `processing`.
 
@@ -378,27 +378,27 @@ paths:
                 value:
                   state: completed
         description: Update the state of the incoming payment to `completed`.
-  '/outgoing-payments/{id}':
+  "/outgoing-payments/{id}":
     get:
       summary: Get an Outgoing Payment
       tags: []
       operationId: get-outgoing-payment
       responses:
-        '200':
+        "200":
           description: Outgoing Payment Found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/outgoing-payment'
+                $ref: "#/components/schemas/outgoing-payment"
               examples:
                 Outgoing Payment with a fixed send amount of $25:
                   value:
                     id: >-
                       https://openpayments.example/outgoing-payments/gwe867t2frof
-                    accountId: 'http://openpayments.example'
+                    accountId: "http://openpayments.example"
                     state: processing
                     authorized: true
-                    receivingPayment: 'http://openpayments.example/incoming-payments/68gq6t97qwf'
+                    receivingPayment: "http://openpayments.example/incoming-payments/68gq6t97qwf"
                     sendAmount:
                       amount: 2500
                       assetCode: USD
@@ -408,15 +408,15 @@ paths:
                       assetCode: EUR
                       assetScale: 2
                     fundsAvailable: true
-                    expiresAt: '2022-04-12T23:20:50.52Z'
+                    expiresAt: "2022-04-12T23:20:50.52Z"
                     description: Thanks for the flowers!
                     externalRef: INV-12876
                     receiptsEnabled: true
-        '401':
-          $ref: '#/components/responses/401'
-        '403':
-          $ref: '#/components/responses/403'
-        '404':
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
           description: Incoming Payment Not Found
       description: A client can fetch the latest state of an outgoing payment.
     parameters:
@@ -430,20 +430,20 @@ paths:
       summary: Update an Outgoing Payment
       operationId: update-outgoing-payment
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/outgoing-payment'
-        '401':
-          $ref: '#/components/responses/401'
-        '403':
-          $ref: '#/components/responses/403'
-        '404':
+                $ref: "#/components/schemas/outgoing-payment"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
           description: Outgoing Payment Not Found
       description: >-
-        A client with the approriate permissions MAY update an **outgoing
+        A client with the appropriate permissions MAY update an **outgoing
         payment** to either change the amount that was originally requested or
         authorize the payment.
 
@@ -545,9 +545,9 @@ components:
           example: completed
           default: pending
         incomingAmount:
-          $ref: '#/components/schemas/amount'
+          $ref: "#/components/schemas/amount"
         receivedAmount:
-          $ref: '#/components/schemas/amount'
+          $ref: "#/components/schemas/amount"
         expiresAt:
           type: string
           description: >-
@@ -575,8 +575,8 @@ components:
           type: boolean
           description: True if the underlying STREAM has receipts enabled.
       examples:
-        - id: 'http://openpayments.example/incoming-payments/87562464512'
-          accountId: 'http://openpayments.example'
+        - id: "http://openpayments.example/incoming-payments/87562464512"
+          accountId: "http://openpayments.example"
           state: completed
           incomingAmount:
             amount: 2500
@@ -586,7 +586,7 @@ components:
             amount: 2500
             assetCode: USD
             assetScale: 2
-          expiresAt: '2022-02-03T23:20:50.52Z'
+          expiresAt: "2022-02-03T23:20:50.52Z"
           description: Thanks for the coffee. Mo
           receiptsEnabled: true
     outgoing-payment:
@@ -630,9 +630,9 @@ components:
           format: uri
           description: The URL of the incoming payment that is being paid.
         receiveAmount:
-          $ref: '#/components/schemas/amount'
+          $ref: "#/components/schemas/amount"
         sendAmount:
-          $ref: '#/components/schemas/amount'
+          $ref: "#/components/schemas/amount"
         fundsAvailable:
           type: boolean
           description: >-
@@ -717,7 +717,7 @@ components:
         All requests must also be signed using a client key over some select
         headers and a digest of the request body.
   responses:
-    '401':
+    "401":
       description: Authorization required
       headers:
         WWW-Authenticate:
@@ -726,7 +726,7 @@ components:
           description: >-
             The address of the authorization server for grant requests in the
             format `GNAP as_uri=<URI>`
-    '403':
+    "403":
       description: Forbidden
 security:
   - GNAP: []
