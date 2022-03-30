@@ -481,7 +481,7 @@ paths:
                   value:
                     id: 'https://openpayments.guide/bob/outgoing-payments/3859b39e-4666-4ce5-8745-72f1864c5371'
                     accountId: 'https://openpayments.guide/bob/'
-                    state: processing
+                    state: sending
                     authorized: true
                     receivingPayment: 'http://openpayments.guide/alice/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
                     sendAmount:
@@ -720,10 +720,12 @@ components:
           description: The state of the payment as described above.
           enum:
             - pending
-            - processing
             - completed
             - expired
             - failed
+            - prepared
+            - funding
+            - sending
           example: completed
           default: pending
         authorized:
