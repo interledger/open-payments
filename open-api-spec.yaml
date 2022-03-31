@@ -158,6 +158,17 @@ paths:
                         externalRef: Coffee w/ Mo on 10 March 22
                         ilpApddress: g.ilp.iwuyge987y.98y08y
                         sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
+                      - id: 'https://openpayments.guide/alice/incoming-payments/32abc219-3dc3-44ec-a225-790cacfca8fa'
+                        accountId: 'https://openpayments.guide/alice/'
+                        state: completed
+                        receivedAmount:
+                          amount: 100
+                          assetCode: USD
+                          assetScale: 2
+                        expiresAt: '2022-04-13T10:23:52.50Z'
+                        description: 'I love your website, Alice! Thanks for the great content'
+                        ilpApddress: g.ilp.98y08yiwuy.ge987y
+                        sharedSecret: IVRvqeasJeCty66jR5iNC+YB5X9FhSOUPCL/5nha5Vs=
                 backward pagination:
                   value:
                     pagination:
@@ -166,6 +177,17 @@ paths:
                       hasPreviousPage: true
                       last: 10
                     result:
+                      - id: 'https://openpayments.guide/alice/incoming-payments/32abc219-3dc3-44ec-a225-790cacfca8fa'
+                        accountId: 'https://openpayments.guide/alice/'
+                        state: completed
+                        receivedAmount:
+                          amount: 100
+                          assetCode: USD
+                          assetScale: 2
+                        expiresAt: '2022-04-13T10:23:52.50Z'
+                        description: 'I love your website, Alice! Thanks for the great content'
+                        ilpApddress: g.ilp.98y08yiwuy.ge987y
+                        sharedSecret: IVRvqeasJeCty66jR5iNC+YB5X9FhSOUPCL/5nha5Vs=
                       - id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
                         accountId: 'https://openpayments.guide/alice/'
                         state: completed
@@ -337,6 +359,19 @@ paths:
                           expiresAt: '2022-04-12T23:20:50.52Z'
                           description: APlusVideo subscription
                           externalRef: 'customer: 847458475'
+                        - id: 'https://openpayments.guide/alice/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
+                          accountId: 'https://openpayments.guide/alice/'
+                          state: completed
+                          authorized: true
+                          receivingPayment: 'https://openpayments.guide/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
+                          sendAmount:
+                            amount: 7026
+                            assetCode: USD
+                            assetScale: 2
+                          fundsAvailable: true
+                          expiresAt: '2022-04-30T14:20:32.49Z'
+                          description: Thank you for your purchase at ShoeShop!
+                          externalRef: INV2022-8943756
                 backward pagination:
                   value:
                     - pagination:
@@ -345,6 +380,19 @@ paths:
                         hasPreviousPage: true
                         last: 10
                       result:
+                        - id: 'https://openpayments.guide/alice/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
+                          accountId: 'https://openpayments.guide/alice/'
+                          state: completed
+                          authorized: true
+                          receivingPayment: 'https://openpayments.guide/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
+                          sendAmount:
+                            amount: 7026
+                            assetCode: USD
+                            assetScale: 2
+                          fundsAvailable: true
+                          expiresAt: '2022-04-30T14:20:32.49Z'
+                          description: Thank you for your purchase at ShoeShop!
+                          externalRef: INV2022-8943756
                         - id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
                           accountId: 'https://openpayments.guide/alice/'
                           state: completed
@@ -481,7 +529,7 @@ paths:
                   value:
                     id: 'https://openpayments.guide/bob/outgoing-payments/3859b39e-4666-4ce5-8745-72f1864c5371'
                     accountId: 'https://openpayments.guide/bob/'
-                    state: sending
+                    state: processing
                     authorized: true
                     receivingPayment: 'http://openpayments.guide/alice/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
                     sendAmount:
@@ -724,8 +772,7 @@ components:
             - expired
             - failed
             - prepared
-            - funding
-            - sending
+            - processing
           example: completed
           default: pending
         authorized:
