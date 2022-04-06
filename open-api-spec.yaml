@@ -12,10 +12,11 @@ info:
 
     All resource and collection resource representations use JSON and the media-type `application/json`.  
 
-    The `account` resource has two collections of sub-resources and a single **account holder** sub-resource:   
+    The `account` resource has three collections of sub-resources and a single **account holder** sub-resource:   
     1. `/incoming-payments` contains the **incoming payment** sub-resources  
     2. `/outgoing-payments` contains the **outgoing payment** sub-resources  
-    3. `/holder` contains the **outgoing payment** sub-resources  
+    3. `/quotes` contains the **quote** sub-resources  
+    4. `/holder` contains the **outgoing payment** sub-resources  
 
     Access to resources and permission to execute the methods exposed by the API is determined by the grants given to the client represented by an access token used in API requests.
   summary: An API for open access to financial accounts to send and receive payments.
@@ -253,14 +254,11 @@ paths:
                     id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
                     accountId: 'https://openpayments.guide/alice/'
                     state: prepared
-                    authorized: false
                     receivingAccount: 'https://openpayments.guide/bob/'
                     sendAmount:
                       amount: 2500
                       assetCode: USD
                       assetScale: 2
-                    fundsAvailable: true
-                    expiresAt: '2022-04-12T23:20:50.52Z'
                     description: Thank you for the shoes.
         '401':
           $ref: '#/components/responses/401'
@@ -270,6 +268,10 @@ paths:
         content:
           application/json:
             examples:
+              Create an outgoing payment based on a quote:
+                value:
+                  quoteId: 'https://openpayments.guide/alice/quotes/ab03296b-0c8b-4776-b94e-7ee27d868d4d'
+                  externalRef: INV2022-02-0137
               Create fixed-send-amount outgoing payment for $25 to pay invoice INV2022-02-0137:
                 value:
                   receivingAccount: 'https://openpayments.guide/alice'
@@ -285,10 +287,12 @@ paths:
             schema:
               type: object
               properties:
-                authorized:
-                  type: boolean
-                  description: Indicates if the payment is authorized to begin processing.
-                  default: false
+                quoteId:
+                  type: string
+                  format: uri
+                  description: The URL of the quote defining this payment's amounts.
+                  example: 'https://openpayments.guide/alice/quotes/ab03296b-0c8b-4776-b94e-7ee27d868d4d'
+                  readOnly: true
                 receivingAccount:
                   type: string
                   format: uri
@@ -301,14 +305,6 @@ paths:
                   $ref: '#/components/schemas/amount'
                 sendAmount:
                   $ref: '#/components/schemas/amount'
-                fundsAvailable:
-                  type: boolean
-                  description: Indicates that there are funds available in the underlying account to complete this payment. This is not a guarantee they will still be available when the payment is attempted but it is a good indicator to a client that it should attempt to authorize the payment.
-                  readOnly: true
-                expiresAt:
-                  type: string
-                  description: The date and time when the calculated `sendAmount` is no longer valid.
-                  readOnly: true
                 description:
                   type: string
                   description: Human readable description of the outgoing payment that will be visible to the account holder and shared with the receiver.
@@ -345,7 +341,6 @@ paths:
                         - id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
                           accountId: 'https://openpayments.guide/alice/'
                           state: completed
-                          authorized: true
                           receivingAccount: 'https://openpayments.guide/aplusvideo/'
                           receiveAmount:
                             amount: 2500
@@ -355,21 +350,16 @@ paths:
                             amount: 2500
                             assetCode: USD
                             assetScale: 2
-                          fundsAvailable: true
-                          expiresAt: '2022-04-12T23:20:50.52Z'
                           description: APlusVideo subscription
                           externalRef: 'customer: 847458475'
                         - id: 'https://openpayments.guide/alice/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
                           accountId: 'https://openpayments.guide/alice/'
                           state: completed
-                          authorized: true
                           receivingPayment: 'https://openpayments.guide/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
                           sendAmount:
                             amount: 7026
                             assetCode: USD
                             assetScale: 2
-                          fundsAvailable: true
-                          expiresAt: '2022-04-30T14:20:32.49Z'
                           description: Thank you for your purchase at ShoeShop!
                           externalRef: INV2022-8943756
                 backward pagination:
@@ -383,20 +373,16 @@ paths:
                         - id: 'https://openpayments.guide/alice/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
                           accountId: 'https://openpayments.guide/alice/'
                           state: completed
-                          authorized: true
                           receivingPayment: 'https://openpayments.guide/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
                           sendAmount:
                             amount: 7026
                             assetCode: USD
                             assetScale: 2
-                          fundsAvailable: true
-                          expiresAt: '2022-04-30T14:20:32.49Z'
                           description: Thank you for your purchase at ShoeShop!
                           externalRef: INV2022-8943756
                         - id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
                           accountId: 'https://openpayments.guide/alice/'
                           state: completed
-                          authorized: true
                           receivingAccount: 'https://openpayments.guide/aplusvideo/'
                           receiveAmount:
                             amount: 2500
@@ -406,8 +392,6 @@ paths:
                             amount: 2500
                             assetCode: USD
                             assetScale: 2
-                          fundsAvailable: true
-                          expiresAt: '2022-04-12T23:20:50.52Z'
                           description: APlusVideo subscription
                           externalRef: 'customer: 847458475'
         '401':
@@ -415,6 +399,142 @@ paths:
         '403':
           $ref: '#/components/responses/403'
       description: List all outgoing payments on the account
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: first
+          description: 'The number of items to return, forward pagination'
+        - schema:
+            type: integer
+          in: query
+          name: last
+          description: 'The number of items to return, backward pagination'
+        - schema:
+            type: string
+          in: query
+          name: cursor
+          description: The cursor key to list from
+  /quotes:
+    post:
+      summary: Create a Quote
+      tags: []
+      operationId: create-quote
+      responses:
+        '202':
+          description: Quote Created
+          headers:
+            Location:
+              schema:
+                type: string
+              description: The url of the created quote resource.
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+      requestBody:
+        content:
+          application/json:
+            examples:
+              Create fixed-send-amount quote for $25:
+                value:
+                  receivingAccount: 'https://openpayments.guide/alice'
+                  sendAmount:
+                    amount: 2500
+              Create fixed-receive-amount quote for $25:
+                value:
+                  receivingPayment: 'https://openpayments.guide/alice/incoming-payments/37a0d0ee-26dc-4c66-89e0-01fbf93156f7'
+                  receiveAmount:
+                    amount: 2500
+            schema:
+              type: object
+              properties:
+                receivingAccount:
+                  type: string
+                  format: uri
+                  description: The URL of the account that is being paid.
+                receivingPayment:
+                  type: string
+                  format: uri
+                  description: The URL of the incoming payment that is being paid.
+                receiveAmount:
+                  $ref: '#/components/schemas/amount'
+                sendAmount:
+                  $ref: '#/components/schemas/amount'
+        description: |-
+          A subset of the quotes schema is accepted as input to create a new quote.
+      description: An **quote** is a sub-resource of an account. It represents a quote for a payment from the account.
+    description: Create a new quote at the account.
+    get:
+      summary: List Quotes
+      operationId: list-quotes
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/list-quotes'
+              examples:
+                forward pagination:
+                  value:
+                    - pagination:
+                        startCursor: 241de237-f989-42be-926d-c0c1fca57708
+                        endCursor: 315581f8-9967-45a0-9cd3-87b60b6d6414
+                        hasNextPage: true
+                        first: 10
+                      result:
+                        - id: 'https://openpayments.guide/alice/oquotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
+                          accountId: 'https://openpayments.guide/alice/'
+                          receivingAccount: 'https://openpayments.guide/aplusvideo/'
+                          receiveAmount:
+                            amount: 2500
+                            assetCode: USD
+                            assetScale: 2
+                          sendAmount:
+                            amount: 2500
+                            assetCode: USD
+                            assetScale: 2
+                        - id: 'https://openpayments.guide/alice/quotes/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
+                          accountId: 'https://openpayments.guide/alice/'
+                          receivingPayment: 'https://openpayments.guide/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
+                          sendAmount:
+                            amount: 7026
+                            assetCode: USD
+                            assetScale: 2
+                backward pagination:
+                  value:
+                    - pagination:
+                        startCursor: 241de237-f989-42be-926d-c0c1fca57708
+                        endCursor: 315581f8-9967-45a0-9cd3-87b60b6d6414
+                        hasPreviousPage: true
+                        last: 10
+                      result:
+                        - id: 'https://openpayments.guide/alice/quotes/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
+                          accountId: 'https://openpayments.guide/alice/'
+                          receivingPayment: 'https://openpayments.guide/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
+                          sendAmount:
+                            amount: 7026
+                            assetCode: USD
+                            assetScale: 2
+                        - id: 'https://openpayments.guide/alice/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
+                          accountId: 'https://openpayments.guide/alice/'
+                          receivingAccount: 'https://openpayments.guide/aplusvideo/'
+                          receiveAmount:
+                            amount: 2500
+                            assetCode: USD
+                            assetScale: 2
+                          sendAmount:
+                            amount: 2500
+                            assetCode: USD
+                            assetScale: 2
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+      description: List all quotes on the account
       parameters:
         - schema:
             type: integer
@@ -530,7 +650,6 @@ paths:
                     id: 'https://openpayments.guide/bob/outgoing-payments/3859b39e-4666-4ce5-8745-72f1864c5371'
                     accountId: 'https://openpayments.guide/bob/'
                     state: processing
-                    authorized: true
                     receivingPayment: 'http://openpayments.guide/alice/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
                     sendAmount:
                       amount: 2500
@@ -540,8 +659,6 @@ paths:
                       amount: 2198
                       assetCode: EUR
                       assetScale: 2
-                    fundsAvailable: true
-                    expiresAt: '2022-04-12T23:20:50.52Z'
                     description: Thanks for the flowers!
                     externalRef: INV-12876
         '401':
@@ -549,7 +666,7 @@ paths:
         '403':
           $ref: '#/components/responses/403'
         '404':
-          description: Incoming Payment Not Found
+          description: Outgoing Payment Not Found
       description: A client can fetch the latest state of an outgoing payment.
     parameters:
       - schema:
@@ -557,53 +674,49 @@ paths:
         name: id
         in: path
         required: true
-        description: Incoming Payment identifier
-    put:
-      summary: Update an Outgoing Payment
-      operationId: update-outgoing-payment
+        description: Outgoing Payment identifier
+  '/quotes/{id}':
+    get:
+      summary: Get a Quote
+      tags: []
+      operationId: get-quote
       responses:
         '200':
-          description: OK
+          description: Quote Found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/outgoing-payment'
+                $ref: '#/components/schemas/quote'
+              examples:
+                Outgoing Payment with a fixed send amount of $25:
+                  value:
+                    id: 'https://openpayments.guide/bob/outgoing-payments/3859b39e-4666-4ce5-8745-72f1864c5371'
+                    accountId: 'https://openpayments.guide/bob/'
+                    receivingPayment: 'http://openpayments.guide/alice/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
+                    sendAmount:
+                      amount: 2500
+                      assetCode: USD
+                      assetScale: 2
+                    receiveAmount:
+                      amount: 2198
+                      assetCode: EUR
+                      assetScale: 2
+        '202':
+          description: Quote Processing
         '401':
           $ref: '#/components/responses/401'
         '403':
           $ref: '#/components/responses/403'
         '404':
           description: Outgoing Payment Not Found
-      description: |-
-        A client with the appropriate permissions MAY update an **outgoing payment** to either change the amount that was originally requested or authorize the payment.
-
-        To authorize the payment the client updates the value of `authorized` to `true`.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                state:
-                  type: string
-                  example: completed
-                  enum:
-                    - completed
-            examples:
-              Authorize Outgoing Payment:
-                value:
-                  authorized: true
-              Update Send Amount:
-                value:
-                  sendAmount:
-                    amount: 2500
-              Update Receive Amount:
-                value:
-                  receiveAmount:
-                    amount: 512
-                    assetCode: EUR
-                    assetScale: 2
-        description: Update the state of the incoming payment to `completed`.
+      description: A client can fetch the latest state of an outgoing payment.
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: Quote identifier
 components:
   schemas:
     account:
@@ -723,7 +836,6 @@ components:
         - id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
           accountId: 'https://openpayments.guide/alice/'
           state: completed
-          authorized: true
           receivingAccount: 'https://openpayments.guide/aplusvideo/'
           receiveAmount:
             amount: 2500
@@ -733,52 +845,47 @@ components:
             amount: 2500
             assetCode: USD
             assetScale: 2
-          fundsAvailable: true
-          expiresAt: '2022-04-12T23:20:50.52Z'
           description: APlusVideo subscription
           externalRef: 'customer: 847458475'
         - id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
           accountId: 'https://openpayments.guide/alice/'
           state: completed
-          authorized: true
           receivingPayment: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
           sendAmount:
             amount: 2500
             assetCode: USD
             assetScale: 2
-          fundsAvailable: true
-          expiresAt: '2022-04-12T23:20:50.52Z'
           description: APlusVideo subscription
           externalRef: 'customer: 847458475'
       properties:
         id:
           type: string
           format: uri
-          description: The URL identifying the incoming payment.
+          description: The URL identifying the outgoing payment.
           example: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
           readOnly: true
         accountId:
           type: string
           format: uri
-          description: The URL of the account this payment is being made into.
+          description: The URL of the account from which this payment is sent.
           example: 'https://openpayments.guide/alice/'
+          readOnly: true
+        quoteId:
+          type: string
+          format: uri
+          description: The URL of the quote defining this payment's amounts.
+          example: 'https://openpayments.guide/alice/quotes/ab03296b-0c8b-4776-b94e-7ee27d868d4d'
           readOnly: true
         state:
           type: string
           description: The state of the payment as described above.
           enum:
             - pending
-            - completed
-            - expired
-            - failed
-            - prepared
             - processing
+            - completed
+            - failed
           example: completed
           default: pending
-        authorized:
-          type: boolean
-          description: Indicates if the payment is authorized to begin processing.
-          default: false
         receivingAccount:
           type: string
           format: uri
@@ -793,6 +900,68 @@ components:
           $ref: '#/components/schemas/amount'
         sendAmount:
           $ref: '#/components/schemas/amount'
+        description:
+          type: string
+          description: Human readable description of the outgoing payment that will be visible to the account holder and shared with the receiver.
+          example: APlusVideo subscription
+        externalRef:
+          type: string
+          description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
+          example: 'customer: 847458475'
+    quote:
+      title: Quote
+      description: 'A **quote** resource represents a payment that will be, is currently being, or has previously been, sent from the account.'
+      type: object
+      examples:
+        - id: 'https://openpayments.guide/alice/quotes/ab03296b-0c8b-4776-b94e-7ee27d868d4d'
+          accountId: 'https://openpayments.guide/alice/'
+          receivingAccount: 'https://openpayments.guide/aplusvideo/'
+          receiveAmount:
+            amount: 2500
+            assetCode: USD
+            assetScale: 2
+          sendAmount:
+            amount: 2500
+            assetCode: USD
+            assetScale: 2
+          fundsAvailable: true
+          expiresAt: '2022-04-12T23:20:50.52Z'
+        - id: 'https://openpayments.guide/alice/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
+          accountId: 'https://openpayments.guide/alice/'
+          receivingPayment: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
+          sendAmount:
+            amount: 2500
+            assetCode: USD
+            assetScale: 2
+          fundsAvailable: true
+          expiresAt: '2022-04-12T23:20:50.52Z'
+      properties:
+        id:
+          type: string
+          format: uri
+          description: The URL identifying the quote.
+          example: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
+          readOnly: true
+        accountId:
+          type: string
+          format: uri
+          description: The URL of the account from which this quote's payment would be sent.
+          example: 'https://openpayments.guide/alice/'
+          readOnly: true
+        receivingAccount:
+          type: string
+          format: uri
+          description: The URL of the account that would be paid.
+          example: 'https://openpayments.guide/aplusvideo/'
+        receivingPayment:
+          type: string
+          format: uri
+          description: The URL of the incoming payment that would be paid.
+          example: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
+        receiveAmount:
+          $ref: '#/components/schemas/amount'
+        sendAmount:
+          $ref: '#/components/schemas/amount'
         fundsAvailable:
           type: boolean
           description: Indicates that there are funds available in the underlying account to complete this payment. This is not a guarantee they will still be available when the payment is attempted but it is a good indicator to a client that it should attempt to authorize the payment.
@@ -802,14 +971,6 @@ components:
           description: The date and time when the calculated `sendAmount` is no longer valid.
           example: '2022-04-12T23:20:50.52Z'
           readOnly: true
-        description:
-          type: string
-          description: Human readable description of the outgoing payment that will be visible to the account holder and shared with the receiver.
-          example: APlusVideo subscription
-        externalRef:
-          type: string
-          description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
-          example: 'customer: 847458475'
     amount:
       title: Amount
       type: object
@@ -961,7 +1122,6 @@ components:
             - id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
               accountId: 'https://openpayments.guide/alice/'
               state: completed
-              authorized: true
               receivingAccount: 'https://openpayments.guide/aplusvideo/'
               receiveAmount:
                 amount: 2500
@@ -971,8 +1131,6 @@ components:
                 amount: 2500
                 assetCode: USD
                 assetScale: 2
-              fundsAvailable: true
-              expiresAt: '2022-04-12T23:20:50.52Z'
               description: APlusVideo subscription
               externalRef: 'customer: 847458475'
         - pagination:
@@ -984,7 +1142,6 @@ components:
             - id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
               accountId: 'https://openpayments.guide/alice/'
               state: completed
-              authorized: true
               receivingAccount: 'https://openpayments.guide/aplusvideo/'
               receiveAmount:
                 amount: 2500
@@ -994,8 +1151,6 @@ components:
                 amount: 2500
                 assetCode: USD
                 assetScale: 2
-              fundsAvailable: true
-              expiresAt: '2022-04-12T23:20:50.52Z'
               description: APlusVideo subscription
               externalRef: 'customer: 847458475'
   securitySchemes:
