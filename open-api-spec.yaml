@@ -707,7 +707,7 @@ paths:
               examples:
                 Outgoing Payment with a fixed send amount of $25:
                   value:
-                    id: 'https://openpayments.guide/bob/outgoing-payments/3859b39e-4666-4ce5-8745-72f1864c5371'
+                    id: 'https://openpayments.guide/bob/quotes/3859b39e-4666-4ce5-8745-72f1864c5371'
                     accountId: 'https://openpayments.guide/bob/'
                     state: completed
                     receivingPayment: 'http://openpayments.guide/alice/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
@@ -959,7 +959,7 @@ components:
           type: string
           format: uri
           description: The URL identifying the quote.
-          example: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
+          example: 'https://openpayments.guide/alice/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
           readOnly: true
         accountId:
           type: string
