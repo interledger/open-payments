@@ -707,7 +707,7 @@ components:
         incomingAmount:
           $ref: '#/components/schemas/amount'
         receivedAmount:
-          $ref: '#/components/schemas/receivedAmount'
+          $ref: '#/components/schemas/amount'
         expiresAt:
           type: string
           description: The date and time when payments into the incoming payment will no longer be accepted.
@@ -856,7 +856,7 @@ components:
       description: |-
         All amounts in open payments are represented as a value and an asset code and scale.
 
-        The `value` is a positive monetary value, represented as a string. The following regular expression is an implementation of this definition: `^[1-9]\d*$`.
+        The `value` is an unsigned 64-bit integer amount, represented as a string.
 
         The `assetCode` is a code that indicates the underlying asset. In most cases this SHOULD be a 3-character ISO 4217 currency code.
 
@@ -874,9 +874,9 @@ components:
       properties:
         value:
           type: string
+          format: uint64
           description: The amount that must be paid into the receiver’s account.
           example: '2500'
-          pattern: '^[1-9]\d*$'
         assetCode:
           type: string
           description: The asset code of the amount. This SHOULD be an ISO4217 currency code.
@@ -1047,18 +1047,6 @@ components:
               expiresAt: '2022-04-12T23:20:50.52Z'
               description: APlusVideo subscription
               externalRef: 'customer: 847458475'
-    receivedAmount:
-      title: Received Amount
-      type: object
-      description: ''
-      properties:
-        value:
-          type: string
-          pattern: '^(0|[1-9]\d*)$'
-        assetCode:
-          type: string
-        assetScale:
-          type: integer
   securitySchemes:
     GNAP:
       name: Authorization
