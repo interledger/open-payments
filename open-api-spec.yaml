@@ -496,7 +496,7 @@ paths:
                   $ref: '#/components/schemas/amount'
         description: |-
           A subset of the quotes schema is accepted as input to create a new quote.
-      description: An **quote** is a sub-resource of an account. It represents a quote for a payment from the account.
+      description: A **quote** is a sub-resource of an account. It represents a quote for a payment from the account.
     description: Create a new quote at the account.
     get:
       summary: List Quotes
@@ -741,7 +741,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/quote'
               examples:
-                Outgoing Payment with a fixed send amount of $25:
+                Quote with a fixed send amount of $25:
                   value:
                     id: 'https://openpayments.guide/bob/quotes/3859b39e-4666-4ce5-8745-72f1864c5371'
                     accountId: 'https://openpayments.guide/bob/'
@@ -765,8 +765,8 @@ paths:
         '403':
           $ref: '#/components/responses/403'
         '404':
-          description: Outgoing Payment Not Found
-      description: A client can fetch the latest state of an outgoing payment.
+          description: Quote Not Found
+      description: A client can fetch the latest state of a quote.
     parameters:
       - schema:
           type: string
@@ -993,7 +993,7 @@ components:
           description: The date and time when the outgoing payment was updated.
     quote:
       title: Quote
-      description: 'A **quote** resource represents a payment that will be, is currently being, or has previously been, sent from the account.'
+      description: 'A **quote** resource represents the quoted amount details with which an Outgoing Payment may be created.'
       type: object
       examples:
         - id: 'https://openpayments.guide/alice/quotes/ab03296b-0c8b-4776-b94e-7ee27d868d4d'
