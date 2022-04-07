@@ -452,11 +452,14 @@ paths:
                   value:
                     id: 'https://openpayments.guide/alice/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
                     accountId: 'https://openpayments.guide/alice/'
-                    state: pending
                     receivingAccount: 'https://openpayments.guide/bob/'
                     sendAmount:
                       value: '2500'
                       assetCode: USD
+                      assetScale: 2
+                    receiveAmount:
+                      value: '2198'
+                      assetCode: EUR
                       assetScale: 2
                     amountType: 'fixed-send'
                     createdAt: '2022-03-12T23:20:50.52Z'
@@ -522,7 +525,6 @@ paths:
                       result:
                         - id: 'https://openpayments.guide/alice/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
                           accountId: 'https://openpayments.guide/alice/'
-                          state: completed
                           receivingAccount: 'https://openpayments.guide/aplusvideo/'
                           receiveAmount:
                             value: '2500'
@@ -538,11 +540,14 @@ paths:
                           expiresAt: '2022-04-12T23:20:50.52Z'
                         - id: 'https://openpayments.guide/alice/quotes/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
                           accountId: 'https://openpayments.guide/alice/'
-                          state: pending
                           receivingPayment: 'https://openpayments.guide/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
                           sendAmount:
-                            value: '7026'
+                            value: '2500'
                             assetCode: USD
+                            assetScale: 2
+                          receiveAmount:
+                            value: '2198'
+                            assetCode: EUR
                             assetScale: 2
                           amountType: 'fixed-send'
                           createdAt: '2022-04-01T10:24:36.11Z'
@@ -557,9 +562,12 @@ paths:
                       result:
                         - id: 'https://openpayments.guide/alice/quotes/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
                           accountId: 'https://openpayments.guide/alice/'
-                          state: pending
                           receivingPayment: 'https://openpayments.guide/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
                           sendAmount:
+                            value: '7026'
+                            assetCode: USD
+                            assetScale: 2
+                          receiveAmount:
                             value: '7026'
                             assetCode: USD
                             assetScale: 2
@@ -568,7 +576,6 @@ paths:
                           updatedAt: '2022-04-01T10:24:36.11Z'
                         - id: 'https://openpayments.guide/alice/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
                           accountId: 'https://openpayments.guide/alice/'
-                          state: completed
                           receivingAccount: 'https://openpayments.guide/aplusvideo/'
                           receiveAmount:
                             value: '2500'
@@ -750,7 +757,6 @@ paths:
                   value:
                     id: 'https://openpayments.guide/bob/quotes/3859b39e-4666-4ce5-8745-72f1864c5371'
                     accountId: 'https://openpayments.guide/bob/'
-                    state: completed
                     receivingPayment: 'http://openpayments.guide/alice/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
                     sendAmount:
                       value: '2500'
@@ -764,8 +770,6 @@ paths:
                     createdAt: '2022-03-12T23:20:50.52Z'
                     updatedAt: '2022-04-01T10:24:36.11Z'
                     expiresAt: '2022-04-12T23:20:50.52Z'
-        '202':
-          description: Quote Processing
         '401':
           $ref: '#/components/responses/401'
         '403':
@@ -1004,7 +1008,6 @@ components:
       examples:
         - id: 'https://openpayments.guide/alice/quotes/ab03296b-0c8b-4776-b94e-7ee27d868d4d'
           accountId: 'https://openpayments.guide/alice/'
-          state: completed
           receivingAccount: 'https://openpayments.guide/aplusvideo/'
           receiveAmount:
             value: '2500'
@@ -1020,11 +1023,14 @@ components:
           expiresAt: '2022-04-12T23:20:50.52Z'
         - id: 'https://openpayments.guide/alice/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
           accountId: 'https://openpayments.guide/alice/'
-          state: pending
           receivingPayment: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
           sendAmount:
             value: '2500'
             assetCode: USD
+            assetScale: 2
+          receiveAmount:
+            value: '2198'
+            assetCode: EUR
             assetScale: 2
           amountType: 'fixed-send'
           createdAt: '2022-03-12T23:20:50.52Z'
@@ -1043,14 +1049,6 @@ components:
           description: The URL of the account from which this quote's payment would be sent.
           example: 'https://openpayments.guide/alice/'
           readOnly: true
-        state:
-          type: string
-          description: The state of the quote as described above.
-          enum:
-            - pending
-            - completed
-            - failed
-            - expired
         receivingAccount:
           type: string
           format: uri
