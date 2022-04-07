@@ -73,11 +73,11 @@ paths:
                     accountId: 'http://openpayments.guide/alice/'
                     state: pending
                     incomingAmount:
-                      amount: 2500
+                      value: '2500'
                       assetCode: USD
                       assetScale: 2
                     receivedAmount:
-                      amount: 0
+                      value: '0'
                       assetCode: USD
                       assetScale: 2
                     expiresAt: '2022-02-03T23:20:50.52Z'
@@ -111,14 +111,14 @@ paths:
               Create incoming payment for $25 to pay invoice INV2022-02-0137:
                 value:
                   incomingAmount:
-                    amount: 2500
+                    value: '2500'
                     assetCode: USD
                     assetScale: 2
                   externalRef: INV2022-02-0137
         description: |-
           A subset of the incoming payments schema is accepted as input to create a new incoming payment.
 
-          If provided, the `incomingAmount` must use the same `assetCode` and `assetScale` as the account.
+          The `incomingAmount` must use the same `assetCode` and `assetScale` as the account.
       description: |-
         A client MUST create an **incoming payment** resource before it is possible to send any payments to the account. 
 
@@ -146,14 +146,16 @@ paths:
                         accountId: 'https://openpayments.guide/alice/'
                         state: completed
                         incomingAmount:
-                          amount: 250
+                          value: '250'
                           assetCode: USD
                           assetScale: 2
                         receivedAmount:
-                          amount: 250
+                          value: '250'
                           assetCode: USD
                           assetScale: 2
                         expiresAt: '2022-04-12T23:20:50.52Z'
+                        createdAt: '2022-03-12T23:20:50.52Z'
+                        updatedAt: '2022-04-01T10:24:36.11Z'
                         description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
                         externalRef: Coffee w/ Mo on 10 March 22
                         ilpApddress: g.ilp.iwuyge987y.98y08y
@@ -162,10 +164,12 @@ paths:
                         accountId: 'https://openpayments.guide/alice/'
                         state: completed
                         receivedAmount:
-                          amount: 100
+                          value: '100'
                           assetCode: USD
                           assetScale: 2
-                        expiresAt: '2022-04-13T10:23:52.50Z'
+                        expiresAt: '2022-04-12T23:20:50.52Z'
+                        createdAt: '2022-03-12T23:20:50.52Z'
+                        updatedAt: '2022-04-01T10:24:36.11Z'
                         description: 'I love your website, Alice! Thanks for the great content'
                         ilpApddress: g.ilp.98y08yiwuy.ge987y
                         sharedSecret: IVRvqeasJeCty66jR5iNC+YB5X9FhSOUPCL/5nha5Vs=
@@ -181,10 +185,12 @@ paths:
                         accountId: 'https://openpayments.guide/alice/'
                         state: completed
                         receivedAmount:
-                          amount: 100
+                          value: '100'
                           assetCode: USD
                           assetScale: 2
-                        expiresAt: '2022-04-13T10:23:52.50Z'
+                        expiresAt: '2022-04-12T23:20:50.52Z'
+                        createdAt: '2022-03-12T23:20:50.52Z'
+                        updatedAt: '2022-04-01T10:24:36.11Z'
                         description: 'I love your website, Alice! Thanks for the great content'
                         ilpApddress: g.ilp.98y08yiwuy.ge987y
                         sharedSecret: IVRvqeasJeCty66jR5iNC+YB5X9FhSOUPCL/5nha5Vs=
@@ -192,14 +198,16 @@ paths:
                         accountId: 'https://openpayments.guide/alice/'
                         state: completed
                         incomingAmount:
-                          amount: 250
+                          value: '250'
                           assetCode: USD
                           assetScale: 2
                         receivedAmount:
-                          amount: 250
+                          value: '250'
                           assetCode: USD
                           assetScale: 2
                         expiresAt: '2022-04-12T23:20:50.52Z'
+                        createdAt: '2022-03-12T23:20:50.52Z'
+                        updatedAt: '2022-04-01T10:24:36.11Z'
                         description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
                         externalRef: Coffee w/ Mo on 10 March 22
                         ilpApddress: g.ilp.iwuyge987y.98y08y
@@ -256,7 +264,7 @@ paths:
                     authorized: false
                     receivingAccount: 'https://openpayments.guide/bob/'
                     sendAmount:
-                      amount: 2500
+                      value: '2500'
                       assetCode: USD
                       assetScale: 2
                     fundsAvailable: true
@@ -274,13 +282,17 @@ paths:
                 value:
                   receivingAccount: 'https://openpayments.guide/alice'
                   sendAmount:
-                    amount: 2500
+                    value: '2500'
+                    assetCode: USD
+                    assetScale: 2
                   externalRef: INV2022-02-0137
               Create fixed-receive-amount outgoing payment for $25 to pay invoice INV2022-02-0137:
                 value:
                   receivingAccount: 'https://openpayments.guide/alice'
                   receiveAmount:
-                    amount: 2500
+                    value: '2500'
+                    assetCode: USD
+                    assetScale: 2
                   externalRef: INV2022-02-0137
             schema:
               type: object
@@ -318,7 +330,7 @@ paths:
         description: |-
           A subset of the outgoing payments schema is accepted as input to create a new outgoing payment.
 
-          If provided, the `sendAmount` must use the same `assetCode` and `assetScale` as the account.
+          The `sendAmount` must use the same `assetCode` and `assetScale` as the account.
       description: An **outgoing payment** is a sub-resource of an account. It represents a payment from the account.
     description: Create a new outgoing payment at the account.
     get:
@@ -348,15 +360,17 @@ paths:
                           authorized: true
                           receivingAccount: 'https://openpayments.guide/aplusvideo/'
                           receiveAmount:
-                            amount: 2500
+                            value: '2500'
                             assetCode: USD
                             assetScale: 2
                           sendAmount:
-                            amount: 2500
+                            value: '2500'
                             assetCode: USD
                             assetScale: 2
                           fundsAvailable: true
                           expiresAt: '2022-04-12T23:20:50.52Z'
+                          createdAt: '2022-03-12T23:20:50.52Z'
+                          updatedAt: '2022-04-01T10:24:36.11Z'
                           description: APlusVideo subscription
                           externalRef: 'customer: 847458475'
                         - id: 'https://openpayments.guide/alice/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
@@ -365,11 +379,13 @@ paths:
                           authorized: true
                           receivingPayment: 'https://openpayments.guide/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
                           sendAmount:
-                            amount: 7026
+                            value: '7026'
                             assetCode: USD
                             assetScale: 2
                           fundsAvailable: true
-                          expiresAt: '2022-04-30T14:20:32.49Z'
+                          expiresAt: '2022-04-12T23:20:50.52Z'
+                          createdAt: '2022-03-12T23:20:50.52Z'
+                          updatedAt: '2022-04-01T10:24:36.11Z'
                           description: Thank you for your purchase at ShoeShop!
                           externalRef: INV2022-8943756
                 backward pagination:
@@ -386,11 +402,13 @@ paths:
                           authorized: true
                           receivingPayment: 'https://openpayments.guide/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
                           sendAmount:
-                            amount: 7026
+                            value: '7026'
                             assetCode: USD
                             assetScale: 2
                           fundsAvailable: true
-                          expiresAt: '2022-04-30T14:20:32.49Z'
+                          expiresAt: '2022-04-12T23:20:50.52Z'
+                          createdAt: '2022-03-12T23:20:50.52Z'
+                          updatedAt: '2022-04-01T10:24:36.11Z'
                           description: Thank you for your purchase at ShoeShop!
                           externalRef: INV2022-8943756
                         - id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
@@ -399,15 +417,17 @@ paths:
                           authorized: true
                           receivingAccount: 'https://openpayments.guide/aplusvideo/'
                           receiveAmount:
-                            amount: 2500
+                            value: '2500'
                             assetCode: USD
                             assetScale: 2
                           sendAmount:
-                            amount: 2500
+                            value: '2500'
                             assetCode: USD
                             assetScale: 2
                           fundsAvailable: true
                           expiresAt: '2022-04-12T23:20:50.52Z'
+                          createdAt: '2022-03-12T23:20:50.52Z'
+                          updatedAt: '2022-04-01T10:24:36.11Z'
                           description: APlusVideo subscription
                           externalRef: 'customer: 847458475'
         '401':
@@ -450,14 +470,16 @@ paths:
                     accountId: 'https://openpayments.guide/alice/'
                     state: processing
                     incomingAmount:
-                      amount: 2500
+                      value: '2500'
                       assetCode: USD
                       assetScale: 2
                     receivedAmount:
-                      amount: 1234
+                      value: '1234'
                       assetCode: USD
                       assetScale: 2
                     expiresAt: '2022-04-12T23:20:50.52Z'
+                    createdAt: '2022-03-12T23:20:50.52Z'
+                    updatedAt: '2022-04-01T10:24:36.11Z'
                     description: Thanks for the flowers!
                     externalRef: INV-12876
                     ilpAddress: g.ilp.iwuyge987y.98y08y
@@ -507,6 +529,8 @@ paths:
                   example: completed
                   enum:
                     - completed
+              required:
+                - state
             examples:
               Complete Incoming Payment:
                 value:
@@ -533,15 +557,17 @@ paths:
                     authorized: true
                     receivingPayment: 'http://openpayments.guide/alice/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
                     sendAmount:
-                      amount: 2500
+                      value: '2500'
                       assetCode: USD
                       assetScale: 2
                     receiveAmount:
-                      amount: 2198
+                      value: '2198'
                       assetCode: EUR
                       assetScale: 2
                     fundsAvailable: true
                     expiresAt: '2022-04-12T23:20:50.52Z'
+                    createdAt: '2022-03-12T23:20:50.52Z'
+                    updatedAt: '2022-04-01T10:24:36.11Z'
                     description: Thanks for the flowers!
                     externalRef: INV-12876
         '401':
@@ -574,36 +600,24 @@ paths:
           $ref: '#/components/responses/403'
         '404':
           description: Outgoing Payment Not Found
-      description: |-
-        A client with the appropriate permissions MAY update an **outgoing payment** to either change the amount that was originally requested or authorize the payment.
-
-        To authorize the payment the client updates the value of `authorized` to `true`.
+      description: A client with the appropriate permissions MAY update an **outgoing payment** to authorize the payment.
       requestBody:
         content:
           application/json:
             schema:
               type: object
               properties:
-                state:
-                  type: string
-                  example: completed
-                  enum:
-                    - completed
+                authorized:
+                  type: boolean
+                  example: true
+                  default: true
+              required:
+                - authorized
             examples:
               Authorize Outgoing Payment:
                 value:
                   authorized: true
-              Update Send Amount:
-                value:
-                  sendAmount:
-                    amount: 2500
-              Update Receive Amount:
-                value:
-                  receiveAmount:
-                    amount: 512
-                    assetCode: EUR
-                    assetScale: 2
-        description: Update the state of the incoming payment to `completed`.
+        description: To authorize the payment the client updates the value of `authorized` to `true`.
 components:
   schemas:
     account:
@@ -653,14 +667,16 @@ components:
           accountId: 'https://openpayments.guide/alice/'
           state: completed
           incomingAmount:
-            amount: 250
+            value: '250'
             assetCode: USD
             assetScale: 2
           receivedAmount:
-            amount: 250
+            value: '250'
             assetCode: USD
             assetScale: 2
           expiresAt: '2022-04-12T23:20:50.52Z'
+          createdAt: '2022-03-12T23:20:50.52Z'
+          updatedAt: '2022-04-01T10:24:36.11Z'
           description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
           externalRef: Coffee w/ Mo on 10 March 22
           ilpApddress: g.ilp.iwuyge987y.98y08y
@@ -715,6 +731,16 @@ components:
           description: The shared secret to use when establishing a STREAM connection.
           example: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
           readOnly: true
+        createdAt:
+          type: string
+          format: date-time
+          example: '2022-03-12T23:20:50.52Z'
+          description: The date and time when the incoming payment was created.
+        updatedAt:
+          type: string
+          format: date-time
+          example: '2022-04-01T10:24:36.11Z'
+          description: The date and time when the incoming payment was updated.
     outgoing-payment:
       title: Outgoing Payment
       description: 'An **outgoing payment** resource represents a payment that will be, is currently being, or has previously been, sent from the account.'
@@ -726,15 +752,17 @@ components:
           authorized: true
           receivingAccount: 'https://openpayments.guide/aplusvideo/'
           receiveAmount:
-            amount: 2500
+            value: '2500'
             assetCode: USD
             assetScale: 2
           sendAmount:
-            amount: 2500
+            value: '2500'
             assetCode: USD
             assetScale: 2
           fundsAvailable: true
           expiresAt: '2022-04-12T23:20:50.52Z'
+          createdAt: '2022-03-12T23:20:50.52Z'
+          updatedAt: '2022-04-01T10:24:36.11Z'
           description: APlusVideo subscription
           externalRef: 'customer: 847458475'
         - id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
@@ -743,11 +771,13 @@ components:
           authorized: true
           receivingPayment: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
           sendAmount:
-            amount: 2500
+            value: '2500'
             assetCode: USD
             assetScale: 2
           fundsAvailable: true
           expiresAt: '2022-04-12T23:20:50.52Z'
+          createdAt: '2022-03-12T23:20:50.52Z'
+          updatedAt: '2022-04-01T10:24:36.11Z'
           description: APlusVideo subscription
           externalRef: 'customer: 847458475'
       properties:
@@ -810,32 +840,43 @@ components:
           type: string
           description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
           example: 'customer: 847458475'
+        createdAt:
+          type: string
+          format: date-time
+          pattern: '2022-03-12T23:20:50.52Z'
+          description: The date and time when the outgoing payment was created.
+        updatedAt:
+          type: string
+          format: date-time
+          pattern: '2022-04-01T10:24:36.11Z'
+          description: The date and time when the outgoing payment was updated.
     amount:
       title: Amount
       type: object
       description: |-
-        All amounts in open payments are represented as an unsigned 64-bit integer amount and an asset code and scale.
+        All amounts in open payments are represented as a value and an asset code and scale.
+
+        The `value` is an unsigned 64-bit integer amount, represented as a string.
 
         The `assetCode` is a code that indicates the underlying asset. In most cases this SHOULD be a 3-character ISO 4217 currency code.
 
-        The `assetScale` indicates how the value of `amount` has been scaled relative to the natural scale of the asset. For example, an `amount` of `1234` with an `assetScale` of `2` represents an amount of `12.34`.
+        The `assetScale` indicates how the `value` has been scaled relative to the natural scale of the asset. For example, an `value` of `"1234"` with an `assetScale` of `2` represents an amount of 12.34.
       examples:
-        - amount: 2500
+        - value: '2500'
           assetCode: USD
           assetScale: 2
-        - amount: 500
+        - value: '500'
           assetCode: EUR
           assetScale: 2
-        - amount: 123456789
+        - value: '123456789'
           assetCode: BTC
           assetScale: 8
       properties:
-        amount:
-          type: integer
+        value:
+          type: string
+          format: uint64
           description: The amount that must be paid into the receiver’s account.
-          example: 2500
-          maximum: 18446744073709552000
-          minimum: 0
+          example: '2500'
         assetCode:
           type: string
           description: The asset code of the amount. This SHOULD be an ISO4217 currency code.
@@ -844,6 +885,10 @@ components:
           type: integer
           description: The scale of the amount.
           example: 2
+      required:
+        - value
+        - assetCode
+        - assetScale
     pagination:
       description: ''
       type: object
@@ -907,14 +952,16 @@ components:
               accountId: 'https://openpayments.guide/alice/'
               state: completed
               incomingAmount:
-                amount: 250
+                value: '250'
                 assetCode: USD
                 assetScale: 2
               receivedAmount:
-                amount: 250
+                value: '250'
                 assetCode: USD
                 assetScale: 2
               expiresAt: '2022-04-12T23:20:50.52Z'
+              createdAt: '2022-03-12T23:20:50.52Z'
+              updatedAt: '2022-04-01T10:24:36.11Z'
               description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
               externalRef: Coffee w/ Mo on 10 March 22
               ilpApddress: g.ilp.iwuyge987y.98y08y
@@ -929,14 +976,16 @@ components:
               accountId: 'https://openpayments.guide/alice/'
               state: completed
               incomingAmount:
-                amount: 250
+                value: '250'
                 assetCode: USD
                 assetScale: 2
               receivedAmount:
-                amount: 250
+                value: '250'
                 assetCode: USD
                 assetScale: 2
               expiresAt: '2022-04-12T23:20:50.52Z'
+              createdAt: '2022-03-12T23:20:50.52Z'
+              updatedAt: '2022-04-01T10:24:36.11Z'
               description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
               externalRef: Coffee w/ Mo on 10 March 22
               ilpApddress: g.ilp.iwuyge987y.98y08y
@@ -964,11 +1013,11 @@ components:
               authorized: true
               receivingAccount: 'https://openpayments.guide/aplusvideo/'
               receiveAmount:
-                amount: 2500
+                value: 2500
                 assetCode: USD
                 assetScale: 2
               sendAmount:
-                amount: 2500
+                value: 2500
                 assetCode: USD
                 assetScale: 2
               fundsAvailable: true
@@ -987,11 +1036,11 @@ components:
               authorized: true
               receivingAccount: 'https://openpayments.guide/aplusvideo/'
               receiveAmount:
-                amount: 2500
+                value: '2500'
                 assetCode: USD
                 assetScale: 2
               sendAmount:
-                amount: 2500
+                value: '2500'
                 assetCode: USD
                 assetScale: 2
               fundsAvailable: true
