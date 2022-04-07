@@ -1,0 +1,573 @@
+openapi: 3.1.0
+info:
+  title: Open Payments Authorization Server
+  version: '1.0'
+  summary: Open Payments GNAP Authorization Server
+  description: 'The Open Payments API is secured via [GNAP](https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol). This specification describes the Open Payments Authorization Server API, which is an opiniated GNAP Server API.'
+servers:
+  - url: 'https://openpayments.guide/auth'
+paths:
+  /:
+    post:
+      summary: Grant Request
+      operationId: post
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  interact:
+                    $ref: '#/components/schemas/interact-response'
+                  continue:
+                    $ref: '#/components/schemas/continue'
+              examples:
+                Interaction instructions:
+                  value:
+                    interact:
+                      redirect: 'https://openpayments.guide/auth/4CF492MLVMSW9MKMXKHQ'
+                      finish: 4105340a-05eb-4290-8739-f9e2b463bfa7
+                    continue:
+                      access_token:
+                        value: 33OMUKMKSKU80UPRY5NM
+                      uri: 'https://openpayments.guide/auth/continue/4CF492MLVMSW9MKMXKHQ'
+                      wait: 30
+        '400':
+          description: Bad Request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                access_token:
+                  type: object
+                  required:
+                    - access
+                  properties:
+                    access:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/access'
+                client:
+                  $ref: '#/components/schemas/client'
+                interact:
+                  $ref: '#/components/schemas/interact-request'
+              required:
+                - access_token
+                - client
+                - interact
+            examples:
+              Grant for recurring fixed payment:
+                value:
+                  access_token:
+                    access:
+                      - type: outgoing-payment
+                        actions:
+                          - create
+                          - read
+                          - update
+                        identifier: 'https://openpayments.guide/alice'
+                        limits:
+                          startsAt: '2019-08-24T14:15:22Z'
+                          expiresAt: '2019-08-24T14:15:22Z'
+                          interval: P1M
+                          receivingAccount: 'http://openpayments.guide/webmonize'
+                          sendAmount:
+                            amount: '500'
+                            assetCode: USD
+                            assetScale: 2
+                  client:
+                    display:
+                      name: Webmonize
+                      uri: 'https://webmonize.com'
+                    key:
+                      proof: httpsig
+                      jwk:
+                        alg: EdDSA
+                        kid: 20f24ce2-a5f6-4f28-bf7d-ed52d0490187
+                        kty: OKP
+                        use: sig
+                        crv: Ed25519
+                        x: AAAAC3NzaC1lZDI1NTE5AAAAIK0wmN/Cr3JXqmLW7u+g9pTh+wyqDHpSQEIQczXkVx9q
+                  interact:
+                    start:
+                      - redirect
+                    finish:
+                      method: redirect
+                      uri: 'https://webmonize.com/return/876FGRD8VC'
+                      nonce: 4edb2194-dbdf-46bb-9397-d5fd57b7c8a7
+        description: ''
+      description: Make a new grant request
+    parameters: []
+  '/continue/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    post:
+      summary: Continuation Request
+      operationId: post-continue
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    $ref: '#/components/schemas/access_token'
+                  continue:
+                    $ref: '#/components/schemas/continue'
+              examples:
+                Continuing After a Completed Interaction:
+                  value:
+                    access_token:
+                      value: OS9M2PMHKUR64TB8N6BW7OZB8CDFONP219RP1LT0
+                      manage: 'https://openpayments.guide/auth/token'
+                      expires_in: 3600
+                      access:
+                        - type: outgoing-payment
+                          actions:
+                            - create
+                            - read
+                            - update
+                          identifier: 'https://openpayments.guide/alice'
+                          limits:
+                            startsAt: '2019-08-24T14:15:22Z'
+                            expiresAt: '2019-08-24T14:15:22Z'
+                            interval: P1M
+                            receivingAccount: 'http://openpayments.guide/bob'
+                            sendAmount:
+                              amount: '500'
+                              assetCode: USD
+                              assetScale: 2
+                    continue:
+                      access_token:
+                        value: 33OMUKMKSKU80UPRY5NM
+                      uri: 'https://openpayments.guide/auth/continue/4CF492MLVMSW9MKMXKHQ'
+                      wait: 30
+                Continuing During Pending Interaction:
+                  value:
+                    continue:
+                      access_token:
+                        value: 33OMUKMKSKU80UPRY5NM
+                      uri: 'https://openpayments.guide/auth/continue/4CF492MLVMSW9MKMXKHQ'
+                      wait: 30
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                interact_ref:
+                  type: string
+            examples:
+              Interaction Reference:
+                value:
+                  interact_ref: ad82597c-bbfa-4eb0-b72e-328e005b8689
+      description: Continue a grant request during or after user interaction.
+    patch:
+      summary: Update Request
+      operationId: patch-continue
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    $ref: '#/components/schemas/access_token'
+                  continue:
+                    $ref: '#/components/schemas/continue'
+              examples:
+                Add list access:
+                  value:
+                    access_token:
+                      value: OS9M2PMHKUR64TB8N6BW7OZB8CDFONP219RP1LT0
+                      manage: 'https://openpayments.guide/auth/token'
+                      expires_in: 3600
+                      access:
+                        - type: outgoing-payment
+                          actions:
+                            - create
+                            - read
+                            - update
+                          identifier: 'https://openpayments.guide/alice'
+                          limits:
+                            startsAt: '2019-08-24T14:15:22Z'
+                            expiresAt: '2019-08-24T14:15:22Z'
+                            interval: P1M
+                            receivingAccount: 'http://openpayments.guide/bob'
+                            sendAmount:
+                              amount: '500'
+                              assetCode: USD
+                              assetScale: 2
+                        - type: outgoing-payment
+                          actions:
+                            - list
+                          identifier: 'https://openpayments.guide/alice'
+                    continue:
+                      access_token:
+                        value: 33OMUKMKSKU80UPRY5NM
+                      uri: 'https://openpayments.guide/auth/continue/4CF492MLVMSW9MKMXKHQ'
+                      wait: 30
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+      description: Modify an existing grant request.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                access_token:
+                  $ref: '#/components/schemas/access_token'
+            examples:
+              Add list access:
+                value:
+                  access_token:
+                    value: OS9M2PMHKUR64TB8N6BW7OZB8CDFONP219RP1LT0
+                    manage: 'https://openpayments.guide/auth/token'
+                    expires_in: 3600
+                    access:
+                      - type: outgoing-payment
+                        actions:
+                          - create
+                          - read
+                          - update
+                        identifier: 'https://openpayments.guide/alice'
+                        limits:
+                          startsAt: '2019-08-24T14:15:22Z'
+                          expiresAt: '2019-08-24T14:15:22Z'
+                          interval: P1M
+                          receivingAccount: 'http://openpayments.guide/bob'
+                          sendAmount:
+                            amount: '500'
+                            assetCode: USD
+                            assetScale: 2
+                      - type: outgoing-payment
+                        actions:
+                          - list
+                        identifier: 'https://openpayments.guide/alice'
+    delete:
+      summary: Cancel Grant Request
+      operationId: delete-continue
+      responses:
+        '202':
+          description: Accepted
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+      description: Cancel a grant request.
+  /token:
+    parameters: []
+    post:
+      summary: ''
+      operationId: post-token
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    $ref: '#/components/schemas/access_token'
+              examples:
+                New access token:
+                  value:
+                    access_token:
+                      value: OZB8CDFONP219RP1LT0OS9M2PMHKUR64TB8N6BW7
+                      manage: 'https://openpayments.guide/auth/token'
+                      expires_in: 3600
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+      description: Management endpoint to rotate access token.
+    delete:
+      summary: ''
+      operationId: delete-token
+      description: Management endpoint to revoke access token.
+      responses:
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+  '/introspect/{token}':
+    parameters:
+      - schema:
+          type: string
+        name: token
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  active:
+                    type: boolean
+                  grant:
+                    type: string
+                  access:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/access'
+                  key:
+                    $ref: '#/components/schemas/key'
+              examples:
+                Token introspection:
+                  value:
+                    active: true
+                    grant: 1ee48d97-8fa1-4ab4-b89d-95284b665517
+                    access:
+                      - type: outgoing-payment
+                        actions:
+                          - create
+                          - read
+                          - update
+                        identifier: 'https://openpayments.guide/alice'
+                        limits:
+                          startsAt: '2019-08-24T14:15:22Z'
+                          expiresAt: '2019-08-24T14:15:22Z'
+                          interval: P1M
+                          receivingAccount: 'http://openpayments.guide/bob'
+                          sendAmount:
+                            amount: '500'
+                            assetCode: USD
+                            assetScale: 2
+                    key:
+                      proof: httpsig
+                      jwk:
+                        alg: EdDSA
+                        kid: 20f24ce2-a5f6-4f28-bf7d-ed52d0490187
+                        kty: OKP
+                        use: sig
+                        crv: Ed25519
+                        x: AAAAC3NzaC1lZDI1NTE5AAAAIK0wmN/Cr3JXqmLW7u+g9pTh+wyqDHpSQEIQczXkVx9q
+        '404':
+          description: Not Found
+      operationId: get-introspect-token
+      description: Introspection endpoint
+components:
+  schemas:
+    access:
+      title: access
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - account
+            - incoming-payment
+            - outgoing-payment
+        actions:
+          type: array
+          items:
+            type: string
+            enum:
+              - create
+              - read
+              - update
+              - read-all
+              - list
+              - list-all
+        identifier:
+          type: string
+          format: uri
+        limits:
+          $ref: '#/components/schemas/limits'
+      required:
+        - type
+        - actions
+    limits:
+      title: limits
+      description: ''
+      properties:
+        startsAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+        interval:
+          type: string
+          format: duration
+        receivingAccount:
+          type: string
+          format: uri
+        receivingPayment:
+          type: string
+          format: uri
+        sendAmount:
+          $ref: '#/components/schemas/amount'
+        receiveAmount:
+          $ref: '#/components/schemas/amount'
+      type: object
+    amount:
+      title: amount
+      type: object
+      properties:
+        amount:
+          type: string
+          format: uint64
+        assetCode:
+          type: string
+        assetScale:
+          type: integer
+          format: uint32
+    client:
+      title: client
+      type: object
+      properties:
+        display:
+          type: object
+          properties:
+            name:
+              type: string
+            uri:
+              type: string
+              format: uri
+        key:
+          $ref: '#/components/schemas/key'
+    key:
+      title: key
+      type: object
+      properties:
+        proof:
+          type: string
+          enum:
+            - httpsig
+        jwk:
+          type: object
+          properties:
+            alg:
+              type: string
+              description: 'The cryptographic algorithm family used with the key. The only allowed value is `EdDSA`. '
+              enum:
+                - EdDSA
+            kid:
+              type: string
+              description: A Key ID can be used to match a specific key.
+              example: 20f24ce2-a5f6-4f28-bf7d-ed52d0490187
+            kty:
+              type: string
+              enum:
+                - OKP
+              description: 'The Key Type. The only allowed value is `OKP`. '
+            use:
+              type: string
+              enum:
+                - sig
+              description: The intended use of the key.
+            crv:
+              type: string
+              enum:
+                - Ed25519
+              description: 'The cryptographic curve used with the key. The only allowed value is `Ed25519`. '
+            x:
+              type: string
+              description: Public key encoded using the `base64url` encoding.
+              example: AAAAC3NzaC1lZDI1NTE5AAAAIK0wmN/Cr3JXqmLW7u+g9pTh+wyqDHpSQEIQczXkVx9q
+          required:
+            - alg
+            - kty
+            - crv
+            - x
+    interact-request:
+      title: interact
+      type: object
+      properties:
+        start:
+          type: array
+          items:
+            type: string
+            enum:
+              - redirect
+        finish:
+          type: object
+          properties:
+            method:
+              type: string
+              enum:
+                - redirect
+            uri:
+              type: string
+              format: uri
+            nonce:
+              type: string
+    interact-response:
+      title: interact-response
+      type: object
+      properties:
+        redirect:
+          type: string
+          format: uri
+        finish:
+          type: string
+    continue:
+      title: continue
+      type: object
+      properties:
+        access_token:
+          type: object
+          properties:
+            value:
+              type: string
+              example: 33OMUKMKSKU80UPRY5NM
+        uri:
+          type: string
+          format: uri
+          example: 'https://openpayments.guide/auth/continue/4CF492MLVMSW9MKMXKHQ'
+        wait:
+          type: integer
+          example: 30
+    access_token:
+      title: access_token
+      type: object
+      properties:
+        value:
+          type: string
+          example: OS9M2PMHKUR64TB8N6BW7OZB8CDFONP219RP1LT0
+        manage:
+          type: string
+          format: uri
+          example: 'https://openpayments.guide/auth/token'
+        expires_in:
+          type: integer
+          example: 3600
+        access:
+          type: array
+          items:
+            $ref: '#/components/schemas/access'
+  securitySchemes:
+    GNAP:
+      name: Authorization
+      type: apiKey
+      in: header
