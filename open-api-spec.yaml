@@ -458,6 +458,7 @@ paths:
                       value: '2500'
                       assetCode: USD
                       assetScale: 2
+                    amountType: 'fixed-send'
                     createdAt: '2022-03-12T23:20:50.52Z'
                     updatedAt: '2022-03-12T23:20:50.52Z'
                     expiresAt: '2022-04-12T23:20:50.52Z'
@@ -531,6 +532,7 @@ paths:
                             value: '2500'
                             assetCode: USD
                             assetScale: 2
+                          amountType: 'fixed-receive'
                           createdAt: '2022-03-12T23:20:50.52Z'
                           updatedAt: '2022-04-01T10:24:36.11Z'
                           expiresAt: '2022-04-12T23:20:50.52Z'
@@ -542,6 +544,7 @@ paths:
                             value: '7026'
                             assetCode: USD
                             assetScale: 2
+                          amountType: 'fixed-send'
                           createdAt: '2022-04-01T10:24:36.11Z'
                           updatedAt: '2022-04-01T10:24:36.11Z'
                 backward pagination:
@@ -560,6 +563,7 @@ paths:
                             value: '7026'
                             assetCode: USD
                             assetScale: 2
+                          amountType: 'fixed-send'
                           createdAt: '2022-04-01T10:24:36.11Z'
                           updatedAt: '2022-04-01T10:24:36.11Z'
                         - id: 'https://openpayments.guide/alice/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
@@ -574,6 +578,7 @@ paths:
                             value: '2500'
                             assetCode: USD
                             assetScale: 2
+                          amountType: 'fixed-receive'
                           createdAt: '2022-03-12T23:20:50.52Z'
                           updatedAt: '2022-04-01T10:24:36.11Z'
                           expiresAt: '2022-04-12T23:20:50.52Z'
@@ -755,6 +760,7 @@ paths:
                       value: '2198'
                       assetCode: EUR
                       assetScale: 2
+                    amountType: 'fixed-send'
                     createdAt: '2022-03-12T23:20:50.52Z'
                     updatedAt: '2022-04-01T10:24:36.11Z'
                     expiresAt: '2022-04-12T23:20:50.52Z'
@@ -1008,6 +1014,7 @@ components:
             value: '2500'
             assetCode: USD
             assetScale: 2
+          amountType: 'fixed-receive'
           createdAt: '2022-03-12T23:20:50.52Z'
           updatedAt: '2022-04-01T10:24:36.11Z'
           expiresAt: '2022-04-12T23:20:50.52Z'
@@ -1019,6 +1026,7 @@ components:
             value: '2500'
             assetCode: USD
             assetScale: 2
+          amountType: 'fixed-send'
           createdAt: '2022-03-12T23:20:50.52Z'
           updatedAt: '2022-04-01T10:24:36.11Z'
           expiresAt: '2022-04-12T23:20:50.52Z'
@@ -1057,6 +1065,12 @@ components:
           $ref: '#/components/schemas/amount'
         sendAmount:
           $ref: '#/components/schemas/amount'
+        amountType:
+          type: string
+          description: The type of quote amount.
+          enum:
+            - fixed-send
+            - fixed-receive
         expiresAt:
           type: string
           description: The date and time when the calculated `sendAmount` is no longer valid.
