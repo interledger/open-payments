@@ -102,6 +102,7 @@ paths:
                       nonce: 4edb2194-dbdf-46bb-9397-d5fd57b7c8a7
         description: ''
       description: Make a new grant request
+      security: []
     parameters: []
   '/continue/{id}':
     parameters:
@@ -278,7 +279,7 @@ paths:
   /token:
     parameters: []
     post:
-      summary: ''
+      summary: Rotate Access Token
       operationId: post-token
       responses:
         '200':
@@ -303,7 +304,7 @@ paths:
           description: Not Found
       description: Management endpoint to rotate access token.
     delete:
-      summary: ''
+      summary: Revoke Access Token
       operationId: delete-token
       description: Management endpoint to revoke access token.
       responses:
@@ -321,7 +322,7 @@ paths:
         in: path
         required: true
     get:
-      summary: Your GET endpoint
+      summary: Introspect Access Token
       tags: []
       responses:
         '200':
