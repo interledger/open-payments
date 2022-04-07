@@ -1013,11 +1013,11 @@ components:
               authorized: true
               receivingAccount: 'https://openpayments.guide/aplusvideo/'
               receiveAmount:
-                amount: 2500
+                value: 2500
                 assetCode: USD
                 assetScale: 2
               sendAmount:
-                amount: 2500
+                value: 2500
                 assetCode: USD
                 assetScale: 2
               fundsAvailable: true
