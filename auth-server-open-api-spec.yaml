@@ -314,16 +314,11 @@ paths:
           description: Unauthorized
         '404':
           description: Not Found
-  '/introspect/{token}':
-    parameters:
-      - schema:
-          type: string
-        name: token
-        in: path
-        required: true
-    get:
+  /introspect:
+    parameters: []
+    post:
       summary: Introspect Access Token
-      tags: []
+      operationId: post-introspect
       responses:
         '200':
           description: OK
@@ -343,7 +338,7 @@ paths:
                   key:
                     $ref: '#/components/schemas/key'
               examples:
-                Token introspection:
+                Token Introspection:
                   value:
                     active: true
                     grant: 1ee48d97-8fa1-4ab4-b89d-95284b665517
@@ -374,8 +369,39 @@ paths:
                         x: AAAAC3NzaC1lZDI1NTE5AAAAIK0wmN/Cr3JXqmLW7u+g9pTh+wyqDHpSQEIQczXkVx9q
         '404':
           description: Not Found
-      operationId: get-introspect-token
-      description: Introspection endpoint
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                access_token:
+                  type: string
+                  description: The access token value presented to the RS by the client instance.
+                proof:
+                  type: string
+                  description: The proofing method used by the client instance to bind the token to the RS request.
+                resource_server:
+                  oneOf:
+                    - $ref: '#/components/schemas/key'
+                    - type: string
+                      properties: {}
+                  description: 'The identification used to authenticate the resource server making this call, either by value or by reference.'
+                access:
+                  type: array
+                  description: The minimum access rights required to fulfill the request.
+                  items:
+                    $ref: '#/components/schemas/access'
+              required:
+                - access_token
+                - resource_server
+            examples:
+              Introspect token:
+                value:
+                  access_token: OS9M2PMHKUR64TB8N6BW7OZB8CDFONP219RP1LT0
+                  proof: httpsig
+                  resource_server: 7C7C4AZ9KHRS6X63AJAO
 components:
   schemas:
     access:
