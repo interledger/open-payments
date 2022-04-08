@@ -397,7 +397,7 @@ paths:
                 - access_token
                 - resource_server
             examples:
-              example-1:
+              Introspect token:
                 value:
                   access_token: OS9M2PMHKUR64TB8N6BW7OZB8CDFONP219RP1LT0
                   proof: httpsig
