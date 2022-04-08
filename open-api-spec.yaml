@@ -478,11 +478,15 @@ paths:
                   receivingAccount: 'https://openpayments.guide/alice'
                   sendAmount:
                     value: '2500'
+                    assetCode: USD
+                    assetScale: 2
               Create fixed-receive-amount quote for $25:
                 value:
                   receivingPayment: 'https://openpayments.guide/alice/incoming-payments/37a0d0ee-26dc-4c66-89e0-01fbf93156f7'
                   receiveAmount:
                     value: '2500'
+                    assetCode: USD
+                    assetScale: 2
             schema:
               type: object
               properties:
