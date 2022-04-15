@@ -481,9 +481,7 @@ paths:
                       value: '2198'
                       assetCode: EUR
                       assetScale: 2
-                    amountType: 'fixed-send'
                     createdAt: '2022-03-12T23:20:50.52Z'
-                    updatedAt: '2022-03-12T23:20:50.52Z'
                     expiresAt: '2022-04-12T23:20:50.52Z'
         '401':
           $ref: '#/components/responses/401'
@@ -549,7 +547,7 @@ paths:
                       result:
                         - id: 'https://openpayments.guide/alice/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
                           accountId: 'https://openpayments.guide/alice/'
-                          receivingAccount: 'https://openpayments.guide/aplusvideo/'
+                          receivingPayment: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
                           receiveAmount:
                             value: '2500'
                             assetCode: USD
@@ -558,13 +556,11 @@ paths:
                             value: '2500'
                             assetCode: USD
                             assetScale: 2
-                          amountType: 'fixed-receive'
                           createdAt: '2022-03-12T23:20:50.52Z'
-                          updatedAt: '2022-04-01T10:24:36.11Z'
                           expiresAt: '2022-04-12T23:20:50.52Z'
                         - id: 'https://openpayments.guide/alice/quotes/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
                           accountId: 'https://openpayments.guide/alice/'
-                          receivingPayment: 'https://openpayments.guide/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
+                          receivingPayment: 'https://openpayments.guide/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
                           sendAmount:
                             value: '2500'
                             assetCode: USD
@@ -573,9 +569,8 @@ paths:
                             value: '2198'
                             assetCode: EUR
                             assetScale: 2
-                          amountType: 'fixed-send'
                           createdAt: '2022-04-01T10:24:36.11Z'
-                          updatedAt: '2022-04-01T10:24:36.11Z'
+                          expiresAt: '2022-05-01T10:24:36.11Z'
                 backward pagination:
                   value:
                     - pagination:
@@ -586,7 +581,7 @@ paths:
                       result:
                         - id: 'https://openpayments.guide/alice/quotes/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
                           accountId: 'https://openpayments.guide/alice/'
-                          receivingPayment: 'https://openpayments.guide/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
+                          receivingPayment: 'https://openpayments.guide/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
                           sendAmount:
                             value: '7026'
                             assetCode: USD
@@ -595,12 +590,11 @@ paths:
                             value: '7026'
                             assetCode: USD
                             assetScale: 2
-                          amountType: 'fixed-send'
                           createdAt: '2022-04-01T10:24:36.11Z'
-                          updatedAt: '2022-04-01T10:24:36.11Z'
+                          expiresAt: '2022-05-01T10:24:36.11Z'
                         - id: 'https://openpayments.guide/alice/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
                           accountId: 'https://openpayments.guide/alice/'
-                          receivingAccount: 'https://openpayments.guide/aplusvideo/'
+                          receivingPayment: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
                           receiveAmount:
                             value: '2500'
                             assetCode: USD
@@ -609,9 +603,7 @@ paths:
                             value: '2500'
                             assetCode: USD
                             assetScale: 2
-                          amountType: 'fixed-receive'
                           createdAt: '2022-03-12T23:20:50.52Z'
-                          updatedAt: '2022-04-01T10:24:36.11Z'
                           expiresAt: '2022-04-12T23:20:50.52Z'
         '401':
           $ref: '#/components/responses/401'
@@ -794,9 +786,7 @@ paths:
                       value: '2198'
                       assetCode: EUR
                       assetScale: 2
-                    amountType: 'fixed-send'
                     createdAt: '2022-03-12T23:20:50.52Z'
-                    updatedAt: '2022-04-01T10:24:36.11Z'
                     expiresAt: '2022-04-12T23:20:50.52Z'
         '401':
           $ref: '#/components/responses/401'
@@ -1040,7 +1030,7 @@ components:
       examples:
         - id: 'https://openpayments.guide/alice/quotes/ab03296b-0c8b-4776-b94e-7ee27d868d4d'
           accountId: 'https://openpayments.guide/alice/'
-          receivingAccount: 'https://openpayments.guide/aplusvideo/'
+          receivingPayment: 'https://openpayments.guide/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
           receiveAmount:
             value: '2500'
             assetCode: USD
@@ -1049,9 +1039,7 @@ components:
             value: '2500'
             assetCode: USD
             assetScale: 2
-          amountType: 'fixed-receive'
           createdAt: '2022-03-12T23:20:50.52Z'
-          updatedAt: '2022-04-01T10:24:36.11Z'
           expiresAt: '2022-04-12T23:20:50.52Z'
         - id: 'https://openpayments.guide/alice/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
           accountId: 'https://openpayments.guide/alice/'
@@ -1064,9 +1052,7 @@ components:
             value: '2198'
             assetCode: EUR
             assetScale: 2
-          amountType: 'fixed-send'
           createdAt: '2022-03-12T23:20:50.52Z'
-          updatedAt: '2022-04-01T10:24:36.11Z'
           expiresAt: '2022-04-12T23:20:50.52Z'
       properties:
         id:
@@ -1081,11 +1067,6 @@ components:
           description: The URL of the account from which this quote's payment would be sent.
           example: 'https://openpayments.guide/alice/'
           readOnly: true
-        receivingAccount:
-          type: string
-          format: uri
-          description: The URL of the account that would be paid.
-          example: 'https://openpayments.guide/aplusvideo/'
         receivingPayment:
           type: string
           format: uri
@@ -1095,12 +1076,6 @@ components:
           $ref: '#/components/schemas/amount'
         sendAmount:
           $ref: '#/components/schemas/amount'
-        amountType:
-          type: string
-          description: The type of quote amount.
-          enum:
-            - fixed-send
-            - fixed-receive
         expiresAt:
           type: string
           description: The date and time when the calculated `sendAmount` is no longer valid.
@@ -1111,11 +1086,6 @@ components:
           format: date-time
           pattern: '2022-03-12T23:20:50.52Z'
           description: The date and time when the quote was created.
-        updatedAt:
-          type: string
-          format: date-time
-          pattern: '2022-04-01T10:24:36.11Z'
-          description: The date and time when the quote was updated.
     amount:
       title: Amount
       type: object
