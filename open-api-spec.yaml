@@ -262,8 +262,12 @@ paths:
                     id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
                     accountId: 'https://openpayments.guide/alice/'
                     failed: false
-                    receivingAccount: 'https://openpayments.guide/bob/'
+                    receivingPayment: 'https://openpayments.guide/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2'
                     sendAmount:
+                      value: '2500'
+                      assetCode: USD
+                      assetScale: 2
+                    receiveAmount:
                       value: '2500'
                       assetCode: USD
                       assetScale: 2
@@ -357,7 +361,7 @@ paths:
                         - id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
                           accountId: 'https://openpayments.guide/alice/'
                           failed: false
-                          receivingAccount: 'https://openpayments.guide/aplusvideo/'
+                          receivingPayment: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
                           receiveAmount:
                             value: '2500'
                             assetCode: USD
@@ -379,6 +383,10 @@ paths:
                           failed: false
                           receivingPayment: 'https://openpayments.guide/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
                           sendAmount:
+                            value: '7026'
+                            assetCode: USD
+                            assetScale: 2
+                          receiveAmount:
                             value: '7026'
                             assetCode: USD
                             assetScale: 2
@@ -406,6 +414,10 @@ paths:
                             value: '7026'
                             assetCode: USD
                             assetScale: 2
+                          receiveAmount:
+                            value: '7026'
+                            assetCode: USD
+                            assetScale: 2
                           sentAmount:
                             value: '7026'
                             assetCode: USD
@@ -417,7 +429,7 @@ paths:
                         - id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
                           accountId: 'https://openpayments.guide/alice/'
                           failed: false
-                          receivingAccount: 'https://openpayments.guide/aplusvideo/'
+                          receivingPayment: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
                           receiveAmount:
                             value: '2500'
                             assetCode: USD
@@ -933,7 +945,7 @@ components:
         - id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
           accountId: 'https://openpayments.guide/alice/'
           failed: false
-          receivingAccount: 'https://openpayments.guide/aplusvideo/'
+          receivingPayment: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
           receiveAmount:
             value: '2500'
             assetCode: USD
@@ -989,11 +1001,6 @@ components:
           type: boolean
           description: Describes whether the payment failed to send its full amount.
           default: false
-        receivingAccount:
-          type: string
-          format: uri
-          description: The URL of the account that is being paid.
-          example: 'https://openpayments.guide/aplusvideo/'
         receivingPayment:
           type: string
           format: uri
@@ -1023,6 +1030,15 @@ components:
           format: date-time
           pattern: '2022-04-01T10:24:36.11Z'
           description: The date and time when the outgoing payment was updated.
+      required:
+        - id
+        - accountId
+        - receivingPayment
+        - sendAmount
+        - receiveAmount
+        - sentAmount
+        - createdAt
+        - updatedAt
     quote:
       title: Quote
       description: 'A **quote** resource represents the quoted amount details with which an Outgoing Payment may be created.'
@@ -1246,7 +1262,7 @@ components:
             - id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
               accountId: 'https://openpayments.guide/alice/'
               failed: false
-              receivingAccount: 'https://openpayments.guide/aplusvideo/'
+              receivingPayment: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
               receiveAmount:
                 value: '2500'
                 assetCode: USD
@@ -1266,6 +1282,10 @@ components:
               failed: false
               receivingPayment: 'https://openpayments.guide/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
               sendAmount:
+                value: '7026'
+                assetCode: USD
+                assetScale: 2
+              receiveAmount:
                 value: '7026'
                 assetCode: USD
                 assetScale: 2
