@@ -158,8 +158,6 @@ paths:
                         updatedAt: '2022-04-01T10:24:36.11Z'
                         description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
                         externalRef: Coffee w/ Mo on 10 March 22
-                        ilpApddress: g.ilp.iwuyge987y.98y08y
-                        sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
                       - id: 'https://openpayments.guide/alice/incoming-payments/32abc219-3dc3-44ec-a225-790cacfca8fa'
                         accountId: 'https://openpayments.guide/alice/'
                         state: completed
@@ -171,8 +169,6 @@ paths:
                         createdAt: '2022-03-12T23:20:50.52Z'
                         updatedAt: '2022-04-01T10:24:36.11Z'
                         description: 'I love your website, Alice! Thanks for the great content'
-                        ilpApddress: g.ilp.98y08yiwuy.ge987y
-                        sharedSecret: IVRvqeasJeCty66jR5iNC+YB5X9FhSOUPCL/5nha5Vs=
                 backward pagination:
                   value:
                     pagination:
@@ -192,8 +188,6 @@ paths:
                         createdAt: '2022-03-12T23:20:50.52Z'
                         updatedAt: '2022-04-01T10:24:36.11Z'
                         description: 'I love your website, Alice! Thanks for the great content'
-                        ilpApddress: g.ilp.98y08yiwuy.ge987y
-                        sharedSecret: IVRvqeasJeCty66jR5iNC+YB5X9FhSOUPCL/5nha5Vs=
                       - id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
                         accountId: 'https://openpayments.guide/alice/'
                         state: completed
@@ -210,8 +204,6 @@ paths:
                         updatedAt: '2022-04-01T10:24:36.11Z'
                         description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
                         externalRef: Coffee w/ Mo on 10 March 22
-                        ilpApddress: g.ilp.iwuyge987y.98y08y
-                        sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
           headers: {}
         '401':
           $ref: '#/components/responses/401'
