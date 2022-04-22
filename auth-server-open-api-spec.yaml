@@ -290,8 +290,13 @@ paths:
         '404':
           description: Not Found
       description: Cancel a grant request.
-  /token:
-    parameters: []
+  '/token/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
     post:
       summary: Rotate Access Token
       operationId: post-token
