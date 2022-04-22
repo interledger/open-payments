@@ -431,13 +431,13 @@ components:
       description: The access associated with the access token is described using objects that each contain multiple dimensions of access.
     limits-outgoing:
       title: limits-outgoing
-      description: Open Payments specific property that defines the limits under which outgoing payments can be created. Either `sendAmount` or `receiveAmount` is REQUIRED.
+      description: Open Payments specific property that defines the limits under which outgoing payments can be created.
       type: object
       properties:
         receivingAccount:
           type: string
           format: uri
-          description: URL for the account. REQUIRED if `receivingPayment` is not present.
+          description: URL for the account.
         receivingPayment:
           type: string
           format: uri
