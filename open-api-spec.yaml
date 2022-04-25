@@ -288,22 +288,6 @@ paths:
                 value:
                   quoteId: 'https://openpayments.guide/alice/quotes/ab03296b-0c8b-4776-b94e-7ee27d868d4d'
                   externalRef: INV2022-02-0137
-              Create fixed-send-amount outgoing payment for $25 to pay invoice INV2022-02-0137:
-                value:
-                  receivingAccount: 'https://openpayments.guide/alice'
-                  sendAmount:
-                    value: '2500'
-                    assetCode: USD
-                    assetScale: 2
-                  externalRef: INV2022-02-0137
-              Create fixed-receive-amount outgoing payment for $25 to pay invoice INV2022-02-0137:
-                value:
-                  receivingAccount: 'https://openpayments.guide/alice'
-                  receiveAmount:
-                    value: '2500'
-                    assetCode: USD
-                    assetScale: 2
-                  externalRef: INV2022-02-0137
             schema:
               type: object
               properties:
@@ -313,18 +297,6 @@ paths:
                   description: The URL of the quote defining this payment's amounts.
                   example: 'https://openpayments.guide/alice/quotes/ab03296b-0c8b-4776-b94e-7ee27d868d4d'
                   readOnly: true
-                receivingAccount:
-                  type: string
-                  format: uri
-                  description: The URL of the account that is being paid.
-                receivingPayment:
-                  type: string
-                  format: uri
-                  description: The URL of the incoming payment that is being paid.
-                receiveAmount:
-                  $ref: '#/components/schemas/amount'
-                sendAmount:
-                  $ref: '#/components/schemas/amount'
                 description:
                   type: string
                   description: Human readable description of the outgoing payment that will be visible to the account holder and shared with the receiver.
