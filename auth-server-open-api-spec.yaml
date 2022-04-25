@@ -72,10 +72,8 @@ paths:
                           - read
                           - update
                         identifier: 'https://openpayments.guide/alice'
+                        interval: 'R12/2019-08-24T14:15:22Z/P1M'
                         limits:
-                          startsAt: '2019-08-24T14:15:22Z'
-                          expiresAt: '2019-08-24T14:15:22Z'
-                          interval: P1M
                           receivingAccount: 'http://openpayments.guide/webmonize'
                           sendAmount:
                             value: '500'
@@ -141,10 +139,8 @@ paths:
                             - read
                             - update
                           identifier: 'https://openpayments.guide/alice'
+                          interval: 'R12/2019-08-24T14:15:22Z/P1M'
                           limits:
-                            startsAt: '2019-08-24T14:15:22Z'
-                            expiresAt: '2019-08-24T14:15:22Z'
-                            interval: P1M
                             receivingAccount: 'http://openpayments.guide/bob'
                             sendAmount:
                               value: '500'
@@ -214,10 +210,8 @@ paths:
                             - read
                             - update
                           identifier: 'https://openpayments.guide/alice'
+                          interval: 'R12/2019-08-24T14:15:22Z/P1M'
                           limits:
-                            startsAt: '2019-08-24T14:15:22Z'
-                            expiresAt: '2019-08-24T14:15:22Z'
-                            interval: P1M
                             receivingAccount: 'http://openpayments.guide/bob'
                             sendAmount:
                               value: '500'
@@ -266,10 +260,8 @@ paths:
                           - read
                           - update
                         identifier: 'https://openpayments.guide/alice'
+                        interval: 'R12/2019-08-24T14:15:22Z/P1M'
                         limits:
-                          startsAt: '2019-08-24T14:15:22Z'
-                          expiresAt: '2019-08-24T14:15:22Z'
-                          interval: P1M
                           receivingAccount: 'http://openpayments.guide/bob'
                           sendAmount:
                             value: '500'
@@ -368,10 +360,8 @@ paths:
                           - read
                           - update
                         identifier: 'https://openpayments.guide/alice'
+                        interval: 'R12/2019-08-24T14:15:22Z/P1M'
                         limits:
-                          startsAt: '2019-08-24T14:15:22Z'
-                          expiresAt: '2019-08-24T14:15:22Z'
-                          interval: P1M
                           receivingAccount: 'http://openpayments.guide/bob'
                           sendAmount:
                             value: '500'
