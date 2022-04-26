@@ -1,0 +1,24 @@
+name: OpenAPI Validator
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+
+      - name: Validate open-api-spec.yaml
+        run: |
+          npx @redocly/openapi-cli lint open-api-spec.yaml
+
+      - name: Validate auth-server-open-api-spec.yaml
+        run: |
+          npx @redocly/openapi-cli lint auth-server-open-api-spec.yaml
