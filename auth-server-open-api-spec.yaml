@@ -2,6 +2,9 @@ openapi: 3.1.0
 info:
   title: Open Payments Authorization Server
   version: '1.0'
+  license:
+    name: Apache 2.0
+    identifier: Apache-2.0
   summary: Open Payments GNAP Authorization Server
   description: 'The Open Payments API is secured via [GNAP](https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol). This specification describes the Open Payments Authorization Server API, which is an opiniated GNAP Server API.'
 servers:
