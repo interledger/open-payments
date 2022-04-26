@@ -72,10 +72,8 @@ paths:
                           - read
                           - update
                         identifier: 'https://openpayments.guide/alice'
+                        interval: 'R12/2019-08-24T14:15:22Z/P1M'
                         limits:
-                          startsAt: '2019-08-24T14:15:22Z'
-                          expiresAt: '2019-08-24T14:15:22Z'
-                          interval: P1M
                           receivingAccount: 'http://openpayments.guide/webmonize'
                           sendAmount:
                             value: '500'
@@ -141,10 +139,8 @@ paths:
                             - read
                             - update
                           identifier: 'https://openpayments.guide/alice'
+                          interval: 'R12/2019-08-24T14:15:22Z/P1M'
                           limits:
-                            startsAt: '2019-08-24T14:15:22Z'
-                            expiresAt: '2019-08-24T14:15:22Z'
-                            interval: P1M
                             receivingAccount: 'http://openpayments.guide/bob'
                             sendAmount:
                               value: '500'
@@ -214,10 +210,8 @@ paths:
                             - read
                             - update
                           identifier: 'https://openpayments.guide/alice'
+                          interval: 'R12/2019-08-24T14:15:22Z/P1M'
                           limits:
-                            startsAt: '2019-08-24T14:15:22Z'
-                            expiresAt: '2019-08-24T14:15:22Z'
-                            interval: P1M
                             receivingAccount: 'http://openpayments.guide/bob'
                             sendAmount:
                               value: '500'
@@ -266,10 +260,8 @@ paths:
                           - read
                           - update
                         identifier: 'https://openpayments.guide/alice'
+                        interval: 'R12/2019-08-24T14:15:22Z/P1M'
                         limits:
-                          startsAt: '2019-08-24T14:15:22Z'
-                          expiresAt: '2019-08-24T14:15:22Z'
-                          interval: P1M
                           receivingAccount: 'http://openpayments.guide/bob'
                           sendAmount:
                             value: '500'
@@ -290,8 +282,13 @@ paths:
         '404':
           description: Not Found
       description: Cancel a grant request.
-  /token:
-    parameters: []
+  '/token/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
     post:
       summary: Rotate Access Token
       operationId: post-token
@@ -363,10 +360,8 @@ paths:
                           - read
                           - update
                         identifier: 'https://openpayments.guide/alice'
+                        interval: 'R12/2019-08-24T14:15:22Z/P1M'
                         limits:
-                          startsAt: '2019-08-24T14:15:22Z'
-                          expiresAt: '2019-08-24T14:15:22Z'
-                          interval: P1M
                           receivingAccount: 'http://openpayments.guide/bob'
                           sendAmount:
                             value: '500'
@@ -429,27 +424,15 @@ components:
         - $ref: '#/components/schemas/access-incoming'
         - $ref: '#/components/schemas/access-outgoing'
       description: The access associated with the access token is described using objects that each contain multiple dimensions of access.
-    limits:
-      title: limits
+    limits-outgoing:
+      title: limits-outgoing
       description: Open Payments specific property that defines the limits under which outgoing payments can be created.
       type: object
       properties:
-        startsAt:
-          type: string
-          format: date-time
-          description: ISO 8601 date-time indicating when the grant becomes effective.
-        expiresAt:
-          type: string
-          format: date-time
-          description: ISO 8601 date-time indicating when the grant expires.
-        interval:
-          type: string
-          format: duration
-          description: 'ISO 8601 duration indicating how often the amounts, `sendAmount` or `receiveAmount`, are available.'
         receivingAccount:
           type: string
           format: uri
-          description: URL for the account. REQUIRED if `receivingPayment` is not present.
+          description: URL for the account.
         receivingPayment:
           type: string
           format: uri
@@ -458,10 +441,16 @@ components:
           $ref: '#/components/schemas/amount'
         receiveAmount:
           $ref: '#/components/schemas/amount'
+        description:
+          type: string
+          description: Outgoing payments MUST be created using this description.
+        externalRef:
+          type: string
+          description: Outgoing payments MUST be created using this external reference.
     amount:
       title: amount
       type: object
-      description: Either `sendAmount` or `receiveAmount` are REQUIRED.
+      description: 'All amounts are maxima, i.e. multiple payments can be created under a grant as long as the total amounts of these payments do not exceed the maximum amount per interval as specified in the grant.'
       properties:
         value:
           type: string
@@ -677,7 +666,11 @@ components:
           format: uri
           description: A string identifier indicating a specific resource at the RS.
         limits:
-          $ref: '#/components/schemas/limits'
+          $ref: '#/components/schemas/limits-outgoing'
+        interval:
+          type: string
+          description: '[ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)'
+          example: 'R5/2022-04-14T13:00:00Z/P1M'
       required:
         - type
         - actions
@@ -707,6 +700,12 @@ components:
           type: string
           format: uri
           description: A string identifier indicating a specific resource at the RS.
+        limits:
+          $ref: '#/components/schemas/limits-incoming'
+        interval:
+          type: string
+          description: '[ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)'
+          example: 'R0/2022-04-14T13:00:00Z/P1M'
       required:
         - type
         - actions
@@ -731,10 +730,31 @@ components:
           type: string
           format: uri
           description: A string identifier indicating a specific resource at the RS.
+        interval:
+          type: string
+          description: '[ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)'
+          example: 'R0/2022-04-14T13:00:00Z/P5Y'
       required:
         - type
         - actions
         - identifier
+    limits-incoming:
+      title: limits-incoming
+      type: object
+      properties:
+        incomingAmount:
+          $ref: '#/components/schemas/amount'
+        expiresAt:
+          type: string
+          format: date-time
+          description: The date and time when the incoming payment will not accept any payments anymore.
+        description:
+          type: string
+          description: Incoming payments MUST be created using this description.
+        externalRef:
+          type: string
+          description: Incoming payments MUST be created using this external reference.
+      description: 'Open Payments specific property that defines the limits under which incoming payments can be created. '
   securitySchemes:
     GNAP:
       name: Authorization
