@@ -25,7 +25,7 @@ servers:
   - url: 'https://openpayments.guide/bob'
     description: bob
 paths:
-  /:
+  '/{id}':
     get:
       summary: Get a Payment Pointer
       tags: []
@@ -54,7 +54,7 @@ paths:
 
         The content should be slow changing and cacheable for long periods. Servers SHOULD use cache control headers.
       security: []
-  /incoming-payments:
+  '/{accountId}/incoming-payments':
     post:
       summary: Create an Incoming Payment
       tags: []
@@ -235,7 +235,7 @@ paths:
           in: query
           name: cursor
           description: The cursor key to list from
-  /outgoing-payments:
+  '/{accountId}/outgoing-payments':
     post:
       summary: Create an Outgoing Payment
       tags: []
@@ -430,7 +430,7 @@ paths:
           in: query
           name: cursor
           description: The cursor key to list from
-  /quotes:
+  '/{accountId}/quotes':
     post:
       summary: Create a Quote
       tags: []
@@ -603,7 +603,7 @@ paths:
           in: query
           name: cursor
           description: The cursor key to list from
-  '/incoming-payments/{id}':
+  '/{accountId}/incoming-payments/{id}':
     get:
       summary: Get an Incoming Payment
       tags: []
@@ -688,7 +688,7 @@ paths:
                 value:
                   state: completed
         description: Update the state of the incoming payment to `completed`.
-  '/outgoing-payments/{id}':
+  '/{accountId}/outgoing-payments/{id}':
     get:
       summary: Get an Outgoing Payment
       tags: []
@@ -737,7 +737,7 @@ paths:
         in: path
         required: true
         description: Outgoing Payment identifier
-  '/quotes/{id}':
+  '/{accountId}/quotes/{id}':
     get:
       summary: Get a Quote
       tags: []
