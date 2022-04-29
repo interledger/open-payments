@@ -804,6 +804,8 @@ components:
           readOnly: true
         assetScale:
           type: integer
+          minimum: 0
+          maximum: 255
           description: The scale of the account.
           example: 2
           readOnly: true
@@ -1100,6 +1102,8 @@ components:
           example: USD
         assetScale:
           type: integer
+          minimum: 0
+          maximum: 255
           description: The scale of the amount.
           example: 2
       required:
