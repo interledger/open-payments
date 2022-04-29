@@ -173,7 +173,6 @@ paths:
               properties:
                 interact_ref:
                   type: string
-                  example: ad82597c-bbfa-4eb0-b72e-328e005b8689
                   description: |-
                     The interaction reference generated for this
                     interaction by the AS.
@@ -521,7 +520,6 @@ components:
             kid:
               type: string
               description: A Key ID can be used to match a specific key.
-              example: 20f24ce2-a5f6-4f28-bf7d-ed52d0490187
             kty:
               type: string
               enum:
@@ -540,7 +538,6 @@ components:
             x:
               type: string
               description: Public key encoded using the `base64url` encoding.
-              example: AAAAC3NzaC1lZDI1NTE5AAAAIK0wmN/Cr3JXqmLW7u+g9pTh+wyqDHpSQEIQczXkVx9q
       required:
         - proof
         - jwk
@@ -605,15 +602,12 @@ components:
           properties:
             value:
               type: string
-              example: 33OMUKMKSKU80UPRY5NM
         uri:
           type: string
           format: uri
-          example: 'https://openpayments.guide/auth/continue/4CF492MLVMSW9MKMXKHQ'
           description: The URI at which the client instance can make continuation requests.
         wait:
           type: integer
-          example: 30
           description: The amount of time in integer seconds the client instance MUST wait after receiving this request continuation response and calling the continuation URI.
       required:
         - access_token
@@ -625,16 +619,13 @@ components:
       properties:
         value:
           type: string
-          example: OS9M2PMHKUR64TB8N6BW7OZB8CDFONP219RP1LT0
           description: The value of the access token as a string.  The value is opaque to the client instance.  The value SHOULD be limited to ASCII characters to facilitate transmission over HTTP headers within other protocols without requiring additional encoding.
         manage:
           type: string
           format: uri
-          example: 'https://openpayments.guide/auth/token'
           description: The management URI for this access token. This URI MUST NOT include the access token value and SHOULD be different for each access token issued in a request.
         expires_in:
           type: integer
-          example: 3600
           description: The number of seconds in which the access will expire.  The client instance MUST NOT use the access token past this time.  An RS MUST NOT accept an access token past this time.
         access:
           type: array
@@ -673,7 +664,6 @@ components:
         interval:
           type: string
           description: '[ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)'
-          example: 'R5/2022-04-14T13:00:00Z/P1M'
       required:
         - type
         - actions
@@ -708,7 +698,6 @@ components:
         interval:
           type: string
           description: '[ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)'
-          example: 'R0/2022-04-14T13:00:00Z/P1M'
       required:
         - type
         - actions
@@ -736,7 +725,6 @@ components:
         interval:
           type: string
           description: '[ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)'
-          example: 'R0/2022-04-14T13:00:00Z/P5Y'
       required:
         - type
         - actions

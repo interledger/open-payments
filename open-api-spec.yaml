@@ -215,7 +215,6 @@ paths:
             type: integer
             minimum: 1
             maximum: 100
-            example: 10
             default: 10
           in: query
           name: first
@@ -223,7 +222,6 @@ paths:
         - schema:
             type: integer
             default: 10
-            example: 10
             minimum: 1
             maximum: 100
           in: query
@@ -231,7 +229,6 @@ paths:
           description: 'The number of items to return, backward pagination'
         - schema:
             type: string
-            example: gwe867t2frof
           in: query
           name: cursor
           description: The cursor key to list from
@@ -286,7 +283,6 @@ paths:
                   type: string
                   format: uri
                   description: The URL of the quote defining this payment's amounts.
-                  example: 'https://openpayments.guide/alice/quotes/ab03296b-0c8b-4776-b94e-7ee27d868d4d'
                   readOnly: true
                 description:
                   type: string
@@ -678,7 +674,6 @@ paths:
               properties:
                 state:
                   type: string
-                  example: completed
                   enum:
                     - completed
               required:
@@ -790,28 +785,23 @@ components:
           type: string
           format: uri
           description: The URL identifying the incoming payment.
-          example: 'https://openpayments.guide/alice'
           readOnly: true
         publicName:
           type: string
           description: A public name for the account. This should be set by the account holder with their provider to provide a hint to counterparties as to the identity of the account holder.
-          example: Alice
           readOnly: true
         assetCode:
           type: string
           description: The asset code of the account. This SHOULD be an ISO4217 currency code.
-          example: USD
           readOnly: true
         assetScale:
           type: integer
           description: The scale of the account.
-          example: 2
           readOnly: true
         authServer:
           type: string
           format: uri
           description: The URL of the authorization server endpoint for getting grants and access tokens for this account.
-          example: 'https://openpayments.guide/auth'
           readOnly: true
       examples:
         - id: 'https://openpayments.guide/alice'
@@ -847,13 +837,11 @@ components:
           type: string
           format: uri
           description: The URL identifying the incoming payment.
-          example: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
           readOnly: true
         accountId:
           type: string
           format: uri
           description: The URL of the account this payment is being made into.
-          example: 'https://openpayments.guide/alice/'
           readOnly: true
         state:
           type: string
@@ -863,7 +851,6 @@ components:
             - processing
             - completed
             - expired
-          example: completed
           default: pending
         incomingAmount:
           $ref: '#/components/schemas/amount'
@@ -873,34 +860,27 @@ components:
           type: string
           description: The date and time when payments into the incoming payment will no longer be accepted.
           format: date-time
-          example: '2022-04-12T23:20:50.52Z'
         description:
           type: string
           description: Human readable description of the incoming payment that will be visible to the account holder.
-          example: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
         externalRef:
           type: string
           description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
-          example: Coffee w/ Mo on 10 March 22
         ilpApddress:
           type: string
           description: The ILP address to use when establishing a STREAM connection.
-          example: g.ilp.iwuyge987y.98y08y
           readOnly: true
         sharedSecret:
           type: string
           description: The shared secret to use when establishing a STREAM connection.
-          example: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
           readOnly: true
         createdAt:
           type: string
           format: date-time
-          example: '2022-03-12T23:20:50.52Z'
           description: The date and time when the incoming payment was created.
         updatedAt:
           type: string
           format: date-time
-          example: '2022-04-01T10:24:36.11Z'
           description: The date and time when the incoming payment was updated.
     outgoing-payment:
       title: Outgoing Payment
@@ -948,19 +928,16 @@ components:
           type: string
           format: uri
           description: The URL identifying the outgoing payment.
-          example: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
           readOnly: true
         accountId:
           type: string
           format: uri
           description: The URL of the account from which this payment is sent.
-          example: 'https://openpayments.guide/alice/'
           readOnly: true
         quoteId:
           type: string
           format: uri
           description: The URL of the quote defining this payment's amounts.
-          example: 'https://openpayments.guide/alice/quotes/ab03296b-0c8b-4776-b94e-7ee27d868d4d'
           readOnly: true
         failed:
           type: boolean
@@ -970,7 +947,6 @@ components:
           type: string
           format: uri
           description: The URL of the incoming payment that is being paid.
-          example: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
         receiveAmount:
           $ref: '#/components/schemas/amount'
         sendAmount:
@@ -980,11 +956,9 @@ components:
         description:
           type: string
           description: Human readable description of the outgoing payment that will be visible to the account holder and shared with the receiver.
-          example: APlusVideo subscription
         externalRef:
           type: string
           description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
-          example: 'customer: 847458475'
         createdAt:
           type: string
           format: date-time
@@ -1040,19 +1014,16 @@ components:
           type: string
           format: uri
           description: The URL identifying the quote.
-          example: 'https://openpayments.guide/alice/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
           readOnly: true
         accountId:
           type: string
           format: uri
           description: The URL of the account from which this quote's payment would be sent.
-          example: 'https://openpayments.guide/alice/'
           readOnly: true
         receivingPayment:
           type: string
           format: uri
           description: The URL of the incoming payment that would be paid.
-          example: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
         receiveAmount:
           $ref: '#/components/schemas/amount'
         sendAmount:
@@ -1060,7 +1031,6 @@ components:
         expiresAt:
           type: string
           description: The date and time when the calculated `sendAmount` is no longer valid.
-          example: '2022-04-12T23:20:50.52Z'
           readOnly: true
         createdAt:
           type: string
@@ -1093,15 +1063,12 @@ components:
           type: string
           format: uint64
           description: The amount that must be paid into the receiver’s account.
-          example: '2500'
         assetCode:
           type: string
           description: The asset code of the amount. This SHOULD be an ISO4217 currency code.
-          example: USD
         assetScale:
           type: integer
           description: The scale of the amount.
-          example: 2
       required:
         - value
         - assetCode
@@ -1127,12 +1094,10 @@ components:
         startCursor:
           type: string
           minLength: 1
-          example: 241de237-f989-42be-926d-c0c1fca57708
           description: Cursor corresponding to the first element in the result array.
         endCursor:
           type: string
           minLength: 1
-          example: 315581f8-9967-45a0-9cd3-87b60b6d6414
           description: Cursor corresponding to the last element in the result array.
         hasNextPage:
           type: boolean
@@ -1142,12 +1107,10 @@ components:
           description: Describes whether the data set has previous entries.
         first:
           type: number
-          example: 10
           description: Number of entries requested using forward pagination.
         last:
           type: number
           description: Number of entries requested using backward pagination.
-          example: 10
     list-incoming-payments:
       title: list-incoming-payments
       type: object
