@@ -17,8 +17,8 @@ jobs:
 
       - name: Validate open-api-spec.yaml
         run: |
-          npx @redocly/openapi-cli lint open-api-spec.yaml
+          npx @stoplight/spectral-cli lint open-api-spec.yaml
 
       - name: Validate auth-server-open-api-spec.yaml
         run: |
-          npx @redocly/openapi-cli lint auth-server-open-api-spec.yaml
+          npx @stoplight/spectral-cli lint auth-server-open-api-spec.yaml
