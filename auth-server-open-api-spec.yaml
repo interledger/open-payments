@@ -463,7 +463,8 @@ components:
           description: The assetCode is a code that indicates the underlying asset. In most cases this SHOULD be a 3-character ISO 4217 currency code.
         assetScale:
           type: integer
-          format: uint32
+          minimum: 0
+          maximum: 255
           description: 'The assetScale indicates how the value has been scaled relative to the natural scale of the asset. For example, an value of "1234" with an assetScale of 2 represents an amount of 12.34.'
       required:
         - value
