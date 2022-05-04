@@ -969,12 +969,10 @@ components:
         createdAt:
           type: string
           format: date-time
-          example: '2022-03-12T23:20:50.52Z'
           description: The date and time when the outgoing payment was created.
         updatedAt:
           type: string
           format: date-time
-          example: '2022-04-01T10:24:36.11Z'
           description: The date and time when the outgoing payment was updated.
       required:
         - id
@@ -1042,7 +1040,6 @@ components:
         createdAt:
           type: string
           format: date-time
-          example: '2022-03-12T23:20:50.52Z'
           description: The date and time when the quote was created.
     amount:
       title: Amount
