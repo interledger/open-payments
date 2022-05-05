@@ -71,7 +71,7 @@ paths:
                   value:
                     id: 'http://openpayments.guide/alice/incoming-payments/08394f02-7b7b-45e2-b645-51d04e7c330c'
                     accountId: 'http://openpayments.guide/alice/'
-                    state: pending
+                    completed: false
                     incomingAmount:
                       value: '2500'
                       assetCode: USD
@@ -144,7 +144,7 @@ paths:
                     result:
                       - id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
                         accountId: 'https://openpayments.guide/alice/'
-                        state: completed
+                        completed: true
                         incomingAmount:
                           value: '250'
                           assetCode: USD
@@ -160,7 +160,7 @@ paths:
                         externalRef: Coffee w/ Mo on 10 March 22
                       - id: 'https://openpayments.guide/alice/incoming-payments/32abc219-3dc3-44ec-a225-790cacfca8fa'
                         accountId: 'https://openpayments.guide/alice/'
-                        state: completed
+                        completed: true
                         receivedAmount:
                           value: '100'
                           assetCode: USD
@@ -179,7 +179,7 @@ paths:
                     result:
                       - id: 'https://openpayments.guide/alice/incoming-payments/32abc219-3dc3-44ec-a225-790cacfca8fa'
                         accountId: 'https://openpayments.guide/alice/'
-                        state: completed
+                        completed: true
                         receivedAmount:
                           value: '100'
                           assetCode: USD
@@ -190,7 +190,7 @@ paths:
                         description: 'I love your website, Alice! Thanks for the great content'
                       - id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
                         accountId: 'https://openpayments.guide/alice/'
-                        state: completed
+                        completed: true
                         incomingAmount:
                           value: '250'
                           assetCode: USD
@@ -618,7 +618,7 @@ paths:
                   value:
                     id: 'https://openpayments.guide/alice/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
                     accountId: 'https://openpayments.guide/alice/'
-                    state: processing
+                    completed: false
                     incomingAmount:
                       value: '2500'
                       assetCode: USD
@@ -666,7 +666,7 @@ paths:
         '404':
           description: Incoming Payment Not Found
       description: |-
-        A client with the appropriate permissions MAY update the state of an **incoming payment** to `completed` if it is in a state of `pending` or `processing`.
+        A client with the appropriate permissions MAY update an **incoming payment** to `completed = true` if it is not passed the `expiresAt` time.
 
         This indicates to the receiving account provider that it can begin any post processing of the payment such as generating account statements or notifying the account holder of the completed payment.
       requestBody:
@@ -675,17 +675,15 @@ paths:
             schema:
               type: object
               properties:
-                state:
-                  type: string
-                  enum:
-                    - completed
+                completed:
+                  type: boolean
               required:
-                - state
+                - completed
             examples:
               Complete Incoming Payment:
                 value:
-                  state: completed
-        description: Update the state of the incoming payment to `completed`.
+                  completed: true
+        description: Complete an incoming payment.
   '/outgoing-payments/{id}':
     get:
       summary: Get an Outgoing Payment
@@ -823,7 +821,7 @@ components:
       examples:
         - id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
           accountId: 'https://openpayments.guide/alice/'
-          state: completed
+          completed: true
           incomingAmount:
             value: '250'
             assetCode: USD
@@ -850,15 +848,10 @@ components:
           format: uri
           description: The URL of the account this payment is being made into.
           readOnly: true
-        state:
-          type: string
-          description: The state of the payment as described above.
-          enum:
-            - pending
-            - processing
-            - completed
-            - expired
-          default: pending
+        completed:
+          type: boolean
+          description: Indicates whether the payment has been completed and does not accept any payments anymore.
+          default: false
         incomingAmount:
           $ref: '#/components/schemas/amount'
         receivedAmount:
@@ -987,7 +980,7 @@ components:
         - updatedAt
     quote:
       title: Quote
-      description: 'A **quote** resource represents the quoted amount details with which an Outgoing Payment may be created.'
+      description: A **quote** resource represents the quoted amount details with which an Outgoing Payment may be created.
       type: object
       examples:
         - id: 'https://openpayments.guide/alice/quotes/ab03296b-0c8b-4776-b94e-7ee27d868d4d'
@@ -1139,7 +1132,7 @@ components:
           result:
             - id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
               accountId: 'https://openpayments.guide/alice/'
-              state: completed
+              completed: true
               incomingAmount:
                 value: '250'
                 assetCode: USD
@@ -1163,7 +1156,7 @@ components:
           result:
             - id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
               accountId: 'https://openpayments.guide/alice/'
-              state: completed
+              completed: true
               incomingAmount:
                 value: '250'
                 assetCode: USD
