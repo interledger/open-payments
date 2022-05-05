@@ -19,16 +19,28 @@ info:
 
     Access to resources and permission to execute the methods exposed by the API is determined by the grants given to the client represented by an access token used in API requests.
   summary: An API for open access to financial accounts to send and receive payments.
+  contact:
+    email: tech@interledger.org
 servers:
   - url: 'https://openpayments.guide/alice'
     description: alice
   - url: 'https://openpayments.guide/bob'
     description: bob
+tags:
+  - name: account
+    description: account operations
+  - name: incoming-payment
+    description: incoming payment operations
+  - name: outgoing-payment
+    description: outgoing payment operations
+  - name: quote
+    description: quote operations
 paths:
   /:
     get:
       summary: Get a Payment Pointer
-      tags: []
+      tags:
+        - account
       responses:
         '200':
           description: Account Found
@@ -57,7 +69,8 @@ paths:
   /incoming-payments:
     post:
       summary: Create an Incoming Payment
-      tags: []
+      tags:
+        - incoming-payment
       operationId: create-incoming-payment
       responses:
         '201':
@@ -232,10 +245,13 @@ paths:
           in: query
           name: cursor
           description: The cursor key to list from
+      tags:
+        - incoming-payment
   /outgoing-payments:
     post:
       summary: Create an Outgoing Payment
-      tags: []
+      tags:
+        - outgoing-payment
       operationId: create-outgoing-payment
       responses:
         '201':
@@ -428,10 +444,13 @@ paths:
           in: query
           name: cursor
           description: The cursor key to list from
+      tags:
+        - outgoing-payment
   /quotes:
     post:
       summary: Create a Quote
-      tags: []
+      tags:
+        - quote
       operationId: create-quote
       responses:
         '201':
@@ -601,10 +620,13 @@ paths:
           in: query
           name: cursor
           description: The cursor key to list from
+      tags:
+        - quote
   '/incoming-payments/{id}':
     get:
       summary: Get an Incoming Payment
-      tags: []
+      tags:
+        - incoming-payment
       operationId: get-incoming-payment
       responses:
         '200':
@@ -686,10 +708,13 @@ paths:
                 value:
                   state: completed
         description: Update the state of the incoming payment to `completed`.
+      tags:
+        - incoming-payment
   '/outgoing-payments/{id}':
     get:
       summary: Get an Outgoing Payment
-      tags: []
+      tags:
+        - outgoing-payment
       operationId: get-outgoing-payment
       responses:
         '200':
@@ -739,7 +764,8 @@ paths:
   '/quotes/{id}':
     get:
       summary: Get a Quote
-      tags: []
+      tags:
+        - quote
       operationId: get-quote
       responses:
         '200':
@@ -985,7 +1011,7 @@ components:
         - updatedAt
     quote:
       title: Quote
-      description: 'A **quote** resource represents the quoted amount details with which an Outgoing Payment may be created.'
+      description: A **quote** resource represents the quoted amount details with which an Outgoing Payment may be created.
       type: object
       examples:
         - id: 'https://openpayments.guide/alice/quotes/ab03296b-0c8b-4776-b94e-7ee27d868d4d'
