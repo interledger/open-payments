@@ -1082,13 +1082,6 @@ components:
     pagination:
       description: ''
       type: object
-      x-examples:
-        example-1:
-          startCursor: string
-          endCursor: string
-          hasNextPage: true
-          hasPreviousPage: true
-          limit: 0
       examples:
         - startCursor: 241de237-f989-42be-926d-c0c1fca57708
           endCursor: 315581f8-9967-45a0-9cd3-87b60b6d6414
