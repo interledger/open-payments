@@ -969,12 +969,10 @@ components:
         createdAt:
           type: string
           format: date-time
-          example: '2022-03-12T23:20:50.52Z'
           description: The date and time when the outgoing payment was created.
         updatedAt:
           type: string
           format: date-time
-          example: '2022-04-01T10:24:36.11Z'
           description: The date and time when the outgoing payment was updated.
       required:
         - id
@@ -1042,7 +1040,6 @@ components:
         createdAt:
           type: string
           format: date-time
-          example: '2022-03-12T23:20:50.52Z'
           description: The date and time when the quote was created.
     amount:
       title: Amount
@@ -1085,13 +1082,6 @@ components:
     pagination:
       description: ''
       type: object
-      x-examples:
-        example-1:
-          startCursor: string
-          endCursor: string
-          hasNextPage: true
-          hasPreviousPage: true
-          limit: 0
       examples:
         - startCursor: 241de237-f989-42be-926d-c0c1fca57708
           endCursor: 315581f8-9967-45a0-9cd3-87b60b6d6414
