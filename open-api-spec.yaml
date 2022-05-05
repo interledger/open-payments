@@ -97,6 +97,8 @@ paths:
                     externalRef: INV2022-02-0137
                     ilpApddress: g.ilp.iwuyge987y.98y08y
                     sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
+                    createdAt: '2022-03-12T23:20:50.52Z'
+                    updatedAt: '2022-04-01T10:24:36.11Z'
         '401':
           $ref: '#/components/responses/401'
         '403':
@@ -915,6 +917,13 @@ components:
           type: string
           format: date-time
           description: The date and time when the incoming payment was updated.
+      required:
+        - id
+        - accountId
+        - state
+        - receivedAmount
+        - createdAt
+        - updatedAt
     outgoing-payment:
       title: Outgoing Payment
       description: 'An **outgoing payment** resource represents a payment that will be, is currently being, or has previously been, sent from the account.'
