@@ -7,8 +7,15 @@ info:
     identifier: Apache-2.0
   summary: Open Payments GNAP Authorization Server
   description: 'The Open Payments API is secured via [GNAP](https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol). This specification describes the Open Payments Authorization Server API, which is an opiniated GNAP Server API.'
+  contact:
+    email: tech@interledger.org
 servers:
   - url: 'https://openpayments.guide/auth'
+tags:
+  - name: grant
+    description: grant operations
+  - name: token
+    description: token operations
 paths:
   /:
     post:
@@ -105,6 +112,8 @@ paths:
         description: ''
       description: Make a new grant request
       security: []
+      tags:
+        - grant
     parameters: []
   '/continue/{id}':
     parameters:
@@ -183,6 +192,8 @@ paths:
                 value:
                   interact_ref: ad82597c-bbfa-4eb0-b72e-328e005b8689
       description: Continue a grant request during or after user interaction.
+      tags:
+        - grant
     patch:
       summary: Update Request
       operationId: patch-continue
@@ -273,6 +284,8 @@ paths:
                         actions:
                           - list
                         identifier: 'https://openpayments.guide/alice'
+      tags:
+        - grant
     delete:
       summary: Cancel Grant Request
       operationId: delete-continue
@@ -284,6 +297,8 @@ paths:
         '404':
           description: Not Found
       description: Cancel a grant request.
+      tags:
+        - grant
   '/token/{id}':
     parameters:
       - schema:
@@ -316,6 +331,8 @@ paths:
         '404':
           description: Not Found
       description: Management endpoint to rotate access token.
+      tags:
+        - token
     delete:
       summary: Revoke Access Token
       operationId: delete-token
@@ -327,6 +344,8 @@ paths:
           description: Unauthorized
         '404':
           description: Not Found
+      tags:
+        - token
   /introspect:
     parameters: []
     post:
@@ -380,7 +399,7 @@ paths:
                         x: AAAAC3NzaC1lZDI1NTE5AAAAIK0wmN/Cr3JXqmLW7u+g9pTh+wyqDHpSQEIQczXkVx9q
         '404':
           description: Not Found
-      description: ''
+      description: 'Introspect an access token to get grant details.'
       requestBody:
         content:
           application/json:
@@ -412,6 +431,8 @@ paths:
                   access_token: OS9M2PMHKUR64TB8N6BW7OZB8CDFONP219RP1LT0
                   proof: httpsig
                   resource_server: 7C7C4AZ9KHRS6X63AJAO
+      tags:
+        - token
 components:
   schemas:
     access:
