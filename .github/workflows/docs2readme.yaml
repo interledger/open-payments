@@ -2,7 +2,8 @@ name: Deploy docs to readme
 
 on:
   push:
-    branches: -master
+    branches:
+      - master
 
 obs:
   sync:
