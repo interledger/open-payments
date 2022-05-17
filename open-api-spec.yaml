@@ -842,6 +842,11 @@ components:
           format: uri
           description: The URL of the authorization server endpoint for getting grants and access tokens for this account.
           readOnly: true
+      required:
+        - id
+        - assetCode
+        - assetScale
+        - authServer
       additionalProperties: false
       examples:
         - id: 'https://openpayments.guide/alice'
