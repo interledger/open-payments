@@ -1,0 +1,24 @@
+name: Deploy docs to readme
+
+on:
+  push:
+    branches:
+      - master
+
+obs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        name: Check out repository
+
+      - uses: readmeio/rdme@7.2.0
+        name: Sync Open Payments Docs
+        with:
+          rdme: openapi open-api-spec.yaml --key=${{ secrets.README_API_KEY }} --id=${{ secrets.README_OP_API_ID }}
+
+      - uses: readmeio/rdme@7.2.0
+        name: Sync Auth Server Docs
+        with:
+          rdme: openapi auth-server-open-api-spec.yaml --key=${{ secrets.README_API_KEY }} --id=${{ secrets.README_AUTH_API_ID }}
