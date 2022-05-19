@@ -95,8 +95,10 @@ paths:
                       assetScale: 2
                     expiresAt: '2022-02-03T23:20:50.52Z'
                     externalRef: INV2022-02-0137
-                    ilpApddress: g.ilp.iwuyge987y.98y08y
+                    ilpAddress: g.ilp.iwuyge987y.98y08y
                     sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
+                    createdAt: '2022-03-12T23:20:50.52Z'
+                    updatedAt: '2022-04-01T10:24:36.11Z'
         '401':
           $ref: '#/components/responses/401'
         '403':
@@ -120,6 +122,7 @@ paths:
                 externalRef:
                   type: string
                   description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
+              additionalProperties: false
             examples:
               Create incoming payment for $25 to pay invoice INV2022-02-0137:
                 value:
@@ -308,6 +311,7 @@ paths:
                 externalRef:
                   type: string
                   description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
+              additionalProperties: false
         description: |-
           A subset of the outgoing payments schema is accepted as input to create a new outgoing payment.
 
@@ -464,7 +468,7 @@ paths:
                   value:
                     id: 'https://openpayments.guide/alice/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
                     accountId: 'https://openpayments.guide/alice/'
-                    receivingAccount: 'https://openpayments.guide/bob/'
+                    receivingPayment: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
                     sendAmount:
                       value: '2500'
                       assetCode: USD
@@ -512,6 +516,7 @@ paths:
                   $ref: '#/components/schemas/amount'
                 sendAmount:
                   $ref: '#/components/schemas/amount'
+              additionalProperties: false
         description: |-
           A subset of the quotes schema is accepted as input to create a new quote.
 
@@ -703,6 +708,7 @@ paths:
                     - completed
               required:
                 - state
+              additionalProperties: false
             examples:
               Complete Incoming Payment:
                 value:
@@ -836,6 +842,12 @@ components:
           format: uri
           description: The URL of the authorization server endpoint for getting grants and access tokens for this account.
           readOnly: true
+      required:
+        - id
+        - assetCode
+        - assetScale
+        - authServer
+      additionalProperties: false
       examples:
         - id: 'https://openpayments.guide/alice'
           publicName: Alice
@@ -899,7 +911,7 @@ components:
         externalRef:
           type: string
           description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
-        ilpApddress:
+        ilpAddress:
           type: string
           description: The ILP address to use when establishing a STREAM connection.
           readOnly: true
@@ -915,6 +927,14 @@ components:
           type: string
           format: date-time
           description: The date and time when the incoming payment was updated.
+      required:
+        - id
+        - accountId
+        - state
+        - receivedAmount
+        - createdAt
+        - updatedAt
+      additionalProperties: false
     outgoing-payment:
       title: Outgoing Payment
       description: 'An **outgoing payment** resource represents a payment that will be, is currently being, or has previously been, sent from the account.'
@@ -1009,6 +1029,7 @@ components:
         - sentAmount
         - createdAt
         - updatedAt
+      additionalProperties: false
     quote:
       title: Quote
       description: A **quote** resource represents the quoted amount details with which an Outgoing Payment may be created.
@@ -1067,6 +1088,14 @@ components:
           type: string
           format: date-time
           description: The date and time when the quote was created.
+      required:
+        - id
+        - accountId
+        - receivingPayment
+        - sendAmount
+        - receiveAmount
+        - createdAt
+      additionalProperties: false
     amount:
       title: Amount
       type: object
@@ -1105,6 +1134,7 @@ components:
         - value
         - assetCode
         - assetScale
+      additionalProperties: false
     pagination:
       description: ''
       type: object
@@ -1136,6 +1166,7 @@ components:
         last:
           type: number
           description: Number of entries requested using backward pagination.
+      additionalProperties: false
     list-incoming-payments:
       title: list-incoming-payments
       type: object
@@ -1146,6 +1177,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/incoming-payment'
+      additionalProperties: false
       examples:
         - pagination:
             startCursor: 241de237-f989-42be-926d-c0c1fca57708
@@ -1169,8 +1201,6 @@ components:
               updatedAt: '2022-04-01T10:24:36.11Z'
               description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
               externalRef: Coffee w/ Mo on 10 March 22
-              ilpApddress: g.ilp.iwuyge987y.98y08y
-              sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
         - pagination:
             startCursor: 241de237-f989-42be-926d-c0c1fca57708
             endCursor: 315581f8-9967-45a0-9cd3-87b60b6d6414
@@ -1193,8 +1223,6 @@ components:
               updatedAt: '2022-04-01T10:24:36.11Z'
               description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
               externalRef: Coffee w/ Mo on 10 March 22
-              ilpApddress: g.ilp.iwuyge987y.98y08y
-              sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
     list-outgoing-payments:
       title: list-outgoing-payments
       type: object
@@ -1205,6 +1233,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/outgoing-payment'
+      additionalProperties: false
       examples:
         - pagination:
             startCursor: 241de237-f989-42be-926d-c0c1fca57708
@@ -1260,6 +1289,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/quote'
+      additionalProperties: false
       examples:
         - pagination:
             startCursor: 241de237-f989-42be-926d-c0c1fca57708
