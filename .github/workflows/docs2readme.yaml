@@ -5,7 +5,7 @@ on:
     branches:
       - master
 
-obs:
+jobs:
   sync:
     runs-on: ubuntu-latest
 
