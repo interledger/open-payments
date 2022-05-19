@@ -22,10 +22,7 @@ info:
   contact:
     email: tech@interledger.org
 servers:
-  - url: 'https://openpayments.guide/alice'
-    description: alice
-  - url: 'https://openpayments.guide/bob'
-    description: bob
+  - url: 'https://openpayments.guide'
 tags:
   - name: account
     description: account operations
@@ -36,7 +33,7 @@ tags:
   - name: quote
     description: quote operations
 paths:
-  /:
+  '/{id}':
     get:
       summary: Get a Payment Pointer
       tags:
@@ -66,7 +63,14 @@ paths:
 
         The content should be slow changing and cacheable for long periods. Servers SHOULD use cache control headers.
       security: []
-  /incoming-payments:
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: Account identifier
+  '/{accountId}/incoming-payments':
     post:
       summary: Create an Incoming Payment
       tags:
@@ -250,7 +254,14 @@ paths:
           description: The cursor key to list from
       tags:
         - incoming-payment
-  /outgoing-payments:
+    parameters:
+      - schema:
+          type: string
+        name: accountId
+        in: path
+        required: true
+        description: Account identifier
+  '/{accountId}/outgoing-payments':
     post:
       summary: Create an Outgoing Payment
       tags:
@@ -450,7 +461,14 @@ paths:
           description: The cursor key to list from
       tags:
         - outgoing-payment
-  /quotes:
+    parameters:
+      - schema:
+          type: string
+        name: accountId
+        in: path
+        required: true
+        description: Account identifier
+  '/{accountId}/quotes':
     post:
       summary: Create a Quote
       tags:
@@ -627,7 +645,14 @@ paths:
           description: The cursor key to list from
       tags:
         - quote
-  '/incoming-payments/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: accountId
+        in: path
+        required: true
+        description: Account identifier
+  '/{accountId}/incoming-payments/{id}':
     get:
       summary: Get an Incoming Payment
       tags:
@@ -669,6 +694,12 @@ paths:
           description: Incoming Payment Not Found
       description: A client can fetch the latest state of an incoming payment to determine the amount received into the account.
     parameters:
+      - schema:
+          type: string
+        name: accountId
+        in: path
+        required: true
+        description: Account identifier
       - schema:
           type: string
           format: uuid
@@ -716,7 +747,7 @@ paths:
         description: Update the state of the incoming payment to `completed`.
       tags:
         - incoming-payment
-  '/outgoing-payments/{id}':
+  '/{accountId}/outgoing-payments/{id}':
     get:
       summary: Get an Outgoing Payment
       tags:
@@ -762,12 +793,18 @@ paths:
     parameters:
       - schema:
           type: string
+        name: accountId
+        in: path
+        required: true
+        description: Account identifier
+      - schema:
+          type: string
           format: uuid
         name: id
         in: path
         required: true
         description: Outgoing Payment identifier
-  '/quotes/{id}':
+  '/{accountId}/quotes/{id}':
     get:
       summary: Get a Quote
       tags:
@@ -804,6 +841,12 @@ paths:
           description: Quote Not Found
       description: A client can fetch the latest state of a quote.
     parameters:
+      - schema:
+          type: string
+        name: accountId
+        in: path
+        required: true
+        description: Account identifier
       - schema:
           type: string
           format: uuid
