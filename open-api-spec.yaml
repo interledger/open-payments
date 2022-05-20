@@ -139,6 +139,7 @@ paths:
           A subset of the incoming payments schema is accepted as input to create a new incoming payment.
 
           The `incomingAmount` must use the same `assetCode` and `assetScale` as the account.
+        required: true
       description: |-
         A client MUST create an **incoming payment** resource before it is possible to send any payments to the account. 
 
@@ -327,6 +328,7 @@ paths:
           A subset of the outgoing payments schema is accepted as input to create a new outgoing payment.
 
           The `sendAmount` must use the same `assetCode` and `assetScale` as the account.
+        required: true
       description: An **outgoing payment** is a sub-resource of an account. It represents a payment from the account.
     description: Create a new outgoing payment at the account.
     get:
@@ -539,6 +541,7 @@ paths:
           A subset of the quotes schema is accepted as input to create a new quote.
 
           The quote must be created with (`receivingPayment` xor `receivingAccount`) and (`sendAmount` xor `receiveAmount`) or `receivingPayment` and no specified amount (assuming the Incoming Payment has an `incomingAmount`).
+        required: true
       description: A **quote** is a sub-resource of an account. It represents a quote for a payment from the account.
     description: Create a new quote at the account.
     get:
@@ -745,6 +748,7 @@ paths:
                 value:
                   state: completed
         description: Update the state of the incoming payment to `completed`.
+        required: true
       tags:
         - incoming-payment
   '/{accountId}/outgoing-payments/{id}':
