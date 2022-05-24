@@ -99,10 +99,9 @@ paths:
                       assetScale: 2
                     expiresAt: '2022-02-03T23:20:50.52Z'
                     externalRef: INV2022-02-0137
-                    ilpAddress: g.ilp.iwuyge987y.98y08y
-                    sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
                     createdAt: '2022-03-12T23:20:50.52Z'
                     updatedAt: '2022-04-01T10:24:36.11Z'
+                    payId: 'https://openpayments.guide/pay/5c3b59ca-662f-4ff5-ba81-ddfc1b5bfd90'
         '401':
           $ref: '#/components/responses/401'
         '403':
@@ -179,6 +178,7 @@ paths:
                         updatedAt: '2022-04-01T10:24:36.11Z'
                         description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
                         externalRef: Coffee w/ Mo on 10 March 22
+                        payId: 'https://openpayments.guide/pay/97fa2a0f-e795-425b-837c-06f3dc808af4'
                       - id: 'https://openpayments.guide/alice/incoming-payments/32abc219-3dc3-44ec-a225-790cacfca8fa'
                         accountId: 'https://openpayments.guide/alice/'
                         state: completed
@@ -190,6 +190,7 @@ paths:
                         createdAt: '2022-03-12T23:20:50.52Z'
                         updatedAt: '2022-04-01T10:24:36.11Z'
                         description: 'I love your website, Alice! Thanks for the great content'
+                        payId: 'https://openpayments.guide/pay/5c3b59ca-662f-4ff5-ba81-ddfc1b5bfd90'
                 backward pagination:
                   value:
                     pagination:
@@ -209,6 +210,7 @@ paths:
                         createdAt: '2022-03-12T23:20:50.52Z'
                         updatedAt: '2022-04-01T10:24:36.11Z'
                         description: 'I love your website, Alice! Thanks for the great content'
+                        payId: 'https://openpayments.guide/pay/5c3b59ca-662f-4ff5-ba81-ddfc1b5bfd90'
                       - id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
                         accountId: 'https://openpayments.guide/alice/'
                         state: completed
@@ -225,6 +227,7 @@ paths:
                         updatedAt: '2022-04-01T10:24:36.11Z'
                         description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
                         externalRef: Coffee w/ Mo on 10 March 22
+                        payId: 'https://openpayments.guide/pay/97fa2a0f-e795-425b-837c-06f3dc808af4'
           headers: {}
         '401':
           $ref: '#/components/responses/401'
@@ -687,8 +690,7 @@ paths:
                     updatedAt: '2022-04-01T10:24:36.11Z'
                     description: Thanks for the flowers!
                     externalRef: INV-12876
-                    ilpAddress: g.ilp.iwuyge987y.98y08y
-                    sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
+                    payId: 'https://openpayments.guide/pay/5c3b59ca-662f-4ff5-ba81-ddfc1b5bfd90'
         '401':
           $ref: '#/components/responses/401'
         '403':
@@ -858,6 +860,33 @@ paths:
         in: path
         required: true
         description: Quote identifier
+  '/pay/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - incoming-payment
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/stream-credentials'
+              examples:
+                STREAM credentials:
+                  value:
+                    ilpAddress: g.ilp.iwuyge987y.98y08y
+                    sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
+        '404':
+          description: Not Found
+      operationId: get-pay-id
+      description: Request STREAM credentials for an incoming payment.
 components:
   schemas:
     account:
@@ -924,6 +953,7 @@ components:
           externalRef: Coffee w/ Mo on 10 March 22
           ilpApddress: g.ilp.iwuyge987y.98y08y
           sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
+      additionalProperties: false
       properties:
         id:
           type: string
@@ -958,14 +988,6 @@ components:
         externalRef:
           type: string
           description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
-        ilpAddress:
-          type: string
-          description: The ILP address to use when establishing a STREAM connection.
-          readOnly: true
-        sharedSecret:
-          type: string
-          description: The shared secret to use when establishing a STREAM connection.
-          readOnly: true
         createdAt:
           type: string
           format: date-time
@@ -974,6 +996,11 @@ components:
           type: string
           format: date-time
           description: The date and time when the incoming payment was updated.
+        payId:
+          type: string
+          format: uri
+          description: URL used to request STREAM credentials to pay the incoming payment. SHOULD not be correlatable with the incoming payment itself.
+          readOnly: true
       required:
         - id
         - accountId
@@ -981,7 +1008,7 @@ components:
         - receivedAmount
         - createdAt
         - updatedAt
-      additionalProperties: false
+        - payId
     outgoing-payment:
       title: Outgoing Payment
       description: 'An **outgoing payment** resource represents a payment that will be, is currently being, or has previously been, sent from the account.'
@@ -1370,6 +1397,18 @@ components:
                 assetScale: 2
               createdAt: '2022-04-01T10:24:36.11Z'
               expiresAt: '2022-05-01T10:24:36.11Z'
+    stream-credentials:
+      title: stream-credentials
+      x-stoplight:
+        id: we1xwecx75d7f
+      type: object
+      properties:
+        ilpAddress:
+          type: string
+          readOnly: true
+        sharedSecret:
+          type: string
+          readOnly: true
   securitySchemes:
     GNAP:
       name: Authorization
