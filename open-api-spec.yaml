@@ -723,6 +723,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/incoming-payment'
+              examples:
+                Completed Incoming Payment:
+                  value:
+                    id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
+                    accountId: 'https://openpayments.guide/alice/'
+                    incomingAmount:
+                      value: '250'
+                      assetCode: USD
+                      assetScale: 2
+                    receivedAmount:
+                      value: '250'
+                      assetCode: USD
+                      assetScale: 2
+                    completed: true
+                    expiresAt: '2022-04-12T23:20:50.52Z'
+                    createdAt: '2022-03-12T23:20:50.52Z'
+                    updatedAt: '2022-04-01T10:24:36.11Z'
+                    description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
+                    externalRef: Coffee w/ Mo on 10 March 22
         '401':
           $ref: '#/components/responses/401'
         '403':
