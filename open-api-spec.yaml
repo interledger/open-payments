@@ -88,7 +88,6 @@ paths:
                   value:
                     id: 'http://openpayments.guide/alice/incoming-payments/08394f02-7b7b-45e2-b645-51d04e7c330c'
                     accountId: 'http://openpayments.guide/alice/'
-                    state: pending
                     incomingAmount:
                       value: '2500'
                       assetCode: USD
@@ -97,6 +96,7 @@ paths:
                       value: '0'
                       assetCode: USD
                       assetScale: 2
+                    completed: false
                     expiresAt: '2022-02-03T23:20:50.52Z'
                     externalRef: INV2022-02-0137
                     ilpAddress: g.ilp.iwuyge987y.98y08y
@@ -165,7 +165,6 @@ paths:
                     result:
                       - id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
                         accountId: 'https://openpayments.guide/alice/'
-                        state: completed
                         incomingAmount:
                           value: '250'
                           assetCode: USD
@@ -174,6 +173,7 @@ paths:
                           value: '250'
                           assetCode: USD
                           assetScale: 2
+                        completed: true
                         expiresAt: '2022-04-12T23:20:50.52Z'
                         createdAt: '2022-03-12T23:20:50.52Z'
                         updatedAt: '2022-04-01T10:24:36.11Z'
@@ -181,11 +181,11 @@ paths:
                         externalRef: Coffee w/ Mo on 10 March 22
                       - id: 'https://openpayments.guide/alice/incoming-payments/32abc219-3dc3-44ec-a225-790cacfca8fa'
                         accountId: 'https://openpayments.guide/alice/'
-                        state: completed
                         receivedAmount:
                           value: '100'
                           assetCode: USD
                           assetScale: 2
+                        completed: true
                         expiresAt: '2022-04-12T23:20:50.52Z'
                         createdAt: '2022-03-12T23:20:50.52Z'
                         updatedAt: '2022-04-01T10:24:36.11Z'
@@ -200,18 +200,17 @@ paths:
                     result:
                       - id: 'https://openpayments.guide/alice/incoming-payments/32abc219-3dc3-44ec-a225-790cacfca8fa'
                         accountId: 'https://openpayments.guide/alice/'
-                        state: completed
                         receivedAmount:
                           value: '100'
                           assetCode: USD
                           assetScale: 2
+                        completed: true
                         expiresAt: '2022-04-12T23:20:50.52Z'
                         createdAt: '2022-03-12T23:20:50.52Z'
                         updatedAt: '2022-04-01T10:24:36.11Z'
                         description: 'I love your website, Alice! Thanks for the great content'
                       - id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
                         accountId: 'https://openpayments.guide/alice/'
-                        state: completed
                         incomingAmount:
                           value: '250'
                           assetCode: USD
@@ -220,6 +219,7 @@ paths:
                           value: '250'
                           assetCode: USD
                           assetScale: 2
+                        completed: true
                         expiresAt: '2022-04-12T23:20:50.52Z'
                         createdAt: '2022-03-12T23:20:50.52Z'
                         updatedAt: '2022-04-01T10:24:36.11Z'
@@ -673,7 +673,6 @@ paths:
                   value:
                     id: 'https://openpayments.guide/alice/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
                     accountId: 'https://openpayments.guide/alice/'
-                    state: processing
                     incomingAmount:
                       value: '2500'
                       assetCode: USD
@@ -682,6 +681,7 @@ paths:
                       value: '1234'
                       assetCode: USD
                       assetScale: 2
+                    completed: false
                     expiresAt: '2022-04-12T23:20:50.52Z'
                     createdAt: '2022-03-12T23:20:50.52Z'
                     updatedAt: '2022-04-01T10:24:36.11Z'
@@ -710,9 +710,12 @@ paths:
         in: path
         required: true
         description: Incoming Payment identifier
-    put:
-      summary: Update an Incoming Payment
-      operationId: update-incoming-payment
+  '/{accountId}/incoming-payments/{id}/complete':
+    post:
+      summary: Complete an Incoming Payment
+      tags:
+        - incoming-payment
+      operationId: complete-incoming-payment
       responses:
         '200':
           description: OK
@@ -720,6 +723,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/incoming-payment'
+              examples:
+                Completed Incoming Payment:
+                  value:
+                    id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
+                    accountId: 'https://openpayments.guide/alice/'
+                    incomingAmount:
+                      value: '250'
+                      assetCode: USD
+                      assetScale: 2
+                    receivedAmount:
+                      value: '250'
+                      assetCode: USD
+                      assetScale: 2
+                    completed: true
+                    expiresAt: '2022-04-12T23:20:50.52Z'
+                    createdAt: '2022-03-12T23:20:50.52Z'
+                    updatedAt: '2022-04-01T10:24:36.11Z'
+                    description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
+                    externalRef: Coffee w/ Mo on 10 March 22
         '401':
           $ref: '#/components/responses/401'
         '403':
@@ -727,30 +749,23 @@ paths:
         '404':
           description: Incoming Payment Not Found
       description: |-
-        A client with the appropriate permissions MAY update the state of an **incoming payment** to `completed` if it is in a state of `pending` or `processing`.
+        A client with the appropriate permissions MAY mark a non-expired **incoming payment** as `completed` if it has not yet received `incomingAmount`.
 
         This indicates to the receiving account provider that it can begin any post processing of the payment such as generating account statements or notifying the account holder of the completed payment.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                state:
-                  type: string
-                  enum:
-                    - completed
-              required:
-                - state
-              additionalProperties: false
-            examples:
-              Complete Incoming Payment:
-                value:
-                  state: completed
-        description: Update the state of the incoming payment to `completed`.
+    parameters:
+      - schema:
+          type: string
+        name: accountId
+        in: path
         required: true
-      tags:
-        - incoming-payment
+        description: Account identifier
+      - schema:
+          type: string
+          format: uuid
+        name: id
+        in: path
+        required: true
+        description: Incoming Payment identifier
   '/{accountId}/outgoing-payments/{id}':
     get:
       summary: Get an Outgoing Payment
@@ -908,7 +923,6 @@ components:
       examples:
         - id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
           accountId: 'https://openpayments.guide/alice/'
-          state: completed
           incomingAmount:
             value: '250'
             assetCode: USD
@@ -917,6 +931,7 @@ components:
             value: '250'
             assetCode: USD
             assetScale: 2
+          completed: true
           expiresAt: '2022-04-12T23:20:50.52Z'
           createdAt: '2022-03-12T23:20:50.52Z'
           updatedAt: '2022-04-01T10:24:36.11Z'
@@ -935,15 +950,10 @@ components:
           format: uri
           description: The URL of the account this payment is being made into.
           readOnly: true
-        state:
-          type: string
-          description: The state of the payment as described above.
-          enum:
-            - pending
-            - processing
-            - completed
-            - expired
-          default: pending
+        completed:
+          type: boolean
+          description: Describes whether the incoming payment has completed receiving fund.
+          default: false
         incomingAmount:
           $ref: '#/components/schemas/amount'
         receivedAmount:
@@ -977,7 +987,7 @@ components:
       required:
         - id
         - accountId
-        - state
+        - completed
         - receivedAmount
         - createdAt
         - updatedAt
@@ -1234,7 +1244,6 @@ components:
           result:
             - id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
               accountId: 'https://openpayments.guide/alice/'
-              state: completed
               incomingAmount:
                 value: '250'
                 assetCode: USD
@@ -1243,6 +1252,7 @@ components:
                 value: '250'
                 assetCode: USD
                 assetScale: 2
+              completed: true
               expiresAt: '2022-04-12T23:20:50.52Z'
               createdAt: '2022-03-12T23:20:50.52Z'
               updatedAt: '2022-04-01T10:24:36.11Z'
@@ -1256,7 +1266,6 @@ components:
           result:
             - id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
               accountId: 'https://openpayments.guide/alice/'
-              state: completed
               incomingAmount:
                 value: '250'
                 assetCode: USD
@@ -1265,6 +1274,7 @@ components:
                 value: '250'
                 assetCode: USD
                 assetScale: 2
+              completed: true
               expiresAt: '2022-04-12T23:20:50.52Z'
               createdAt: '2022-03-12T23:20:50.52Z'
               updatedAt: '2022-04-01T10:24:36.11Z'
