@@ -32,6 +32,8 @@ tags:
     description: outgoing payment operations
   - name: quote
     description: quote operations
+  - name: interledger
+    description: interledger STREAM connections
 paths:
   '/{id}':
     get:
@@ -70,6 +72,41 @@ paths:
         in: path
         required: true
         description: Account identifier
+  '/connections/{id}':
+    get:
+      summary: Get ILP STREAM credentials for a connection
+      tags:
+        - interledger
+      responses:
+        '200':
+          description: Connection Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ilp-stream-connection'
+              examples:
+                Get connection:
+                  value:
+                    id: 'https://openpayments.guide/connections/016da9d5-c9a4-4c80-a354-86b915a04ff8'
+                    ilpAddress: g.ilp.iwuyge987y.98y0f34tsrt8y
+                    sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
+        '404':
+          description: Connection Not Found
+      operationId: get-ilp-stream-connection
+      description: |-
+        Fetch new connection credentials for an ILP STREAM connection.
+
+        A connection is an ephemeral resource that is created to accommodate new incoming payments.
+
+        A new set of credential will be generated each time this API is called.
+      security: []
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: Connection identifier
   '/{accountId}/incoming-payments':
     post:
       summary: Create an Incoming Payment
