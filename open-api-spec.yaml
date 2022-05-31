@@ -32,7 +32,7 @@ tags:
     description: outgoing payment operations
   - name: quote
     description: quote operations
-  - name: interledger
+  - name: stream-connection
     description: interledger STREAM connections
 paths:
   '/{id}':
@@ -76,7 +76,7 @@ paths:
     get:
       summary: Get ILP STREAM credentials for a connection
       tags:
-        - interledger
+        - stream-connection
       responses:
         '200':
           description: Connection Found
