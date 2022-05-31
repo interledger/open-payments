@@ -340,106 +340,104 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/list-outgoing-payments'
+                $ref: '#/components/schemas/list-outgoing-payments'
               examples:
                 forward pagination:
                   value:
-                    - pagination:
-                        startCursor: 241de237-f989-42be-926d-c0c1fca57708
-                        endCursor: 315581f8-9967-45a0-9cd3-87b60b6d6414
-                        hasNextPage: true
-                        first: 10
-                      result:
-                        - id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
-                          accountId: 'https://openpayments.guide/alice/'
-                          failed: false
-                          receivingPayment: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
-                          receiveAmount:
-                            value: '2500'
-                            assetCode: USD
-                            assetScale: 2
-                          sendAmount:
-                            value: '2500'
-                            assetCode: USD
-                            assetScale: 2
-                          sentAmount:
-                            value: '2500'
-                            assetCode: USD
-                            assetScale: 2
-                          createdAt: '2022-03-12T23:20:50.52Z'
-                          updatedAt: '2022-04-01T10:24:36.11Z'
-                          description: APlusVideo subscription
-                          externalRef: 'customer: 847458475'
-                        - id: 'https://openpayments.guide/alice/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
-                          accountId: 'https://openpayments.guide/alice/'
-                          failed: false
-                          receivingPayment: 'https://openpayments.guide/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
-                          sendAmount:
-                            value: '7026'
-                            assetCode: USD
-                            assetScale: 2
-                          receiveAmount:
-                            value: '7026'
-                            assetCode: USD
-                            assetScale: 2
-                          sentAmount:
-                            value: '7026'
-                            assetCode: USD
-                            assetScale: 2
-                          createdAt: '2022-03-12T23:20:50.52Z'
-                          updatedAt: '2022-04-01T10:24:36.11Z'
-                          description: Thank you for your purchase at ShoeShop!
-                          externalRef: INV2022-8943756
+                    pagination:
+                      startCursor: 241de237-f989-42be-926d-c0c1fca57708
+                      endCursor: 315581f8-9967-45a0-9cd3-87b60b6d6414
+                      hasNextPage: true
+                      first: 10
+                    result:
+                      - id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
+                        accountId: 'https://openpayments.guide/alice/'
+                        failed: false
+                        receivingPayment: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
+                        receiveAmount:
+                          value: '2500'
+                          assetCode: USD
+                          assetScale: 2
+                        sendAmount:
+                          value: '2500'
+                          assetCode: USD
+                          assetScale: 2
+                        sentAmount:
+                          value: '2500'
+                          assetCode: USD
+                          assetScale: 2
+                        createdAt: '2022-03-12T23:20:50.52Z'
+                        updatedAt: '2022-04-01T10:24:36.11Z'
+                        description: APlusVideo subscription
+                        externalRef: 'customer: 847458475'
+                      - id: 'https://openpayments.guide/alice/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
+                        accountId: 'https://openpayments.guide/alice/'
+                        failed: false
+                        receivingPayment: 'https://openpayments.guide/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
+                        sendAmount:
+                          value: '7026'
+                          assetCode: USD
+                          assetScale: 2
+                        receiveAmount:
+                          value: '7026'
+                          assetCode: USD
+                          assetScale: 2
+                        sentAmount:
+                          value: '7026'
+                          assetCode: USD
+                          assetScale: 2
+                        createdAt: '2022-03-12T23:20:50.52Z'
+                        updatedAt: '2022-04-01T10:24:36.11Z'
+                        description: Thank you for your purchase at ShoeShop!
+                        externalRef: INV2022-8943756
                 backward pagination:
                   value:
-                    - pagination:
-                        startCursor: 241de237-f989-42be-926d-c0c1fca57708
-                        endCursor: 315581f8-9967-45a0-9cd3-87b60b6d6414
-                        hasPreviousPage: true
-                        last: 10
-                      result:
-                        - id: 'https://openpayments.guide/alice/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
-                          accountId: 'https://openpayments.guide/alice/'
-                          failed: false
-                          receivingPayment: 'https://openpayments.guide/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
-                          sendAmount:
-                            value: '7026'
-                            assetCode: USD
-                            assetScale: 2
-                          receiveAmount:
-                            value: '7026'
-                            assetCode: USD
-                            assetScale: 2
-                          sentAmount:
-                            value: '7026'
-                            assetCode: USD
-                            assetScale: 2
-                          createdAt: '2022-03-12T23:20:50.52Z'
-                          updatedAt: '2022-04-01T10:24:36.11Z'
-                          description: Thank you for your purchase at ShoeShop!
-                          externalRef: INV2022-8943756
-                        - id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
-                          accountId: 'https://openpayments.guide/alice/'
-                          failed: false
-                          receivingPayment: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
-                          receiveAmount:
-                            value: '2500'
-                            assetCode: USD
-                            assetScale: 2
-                          sendAmount:
-                            value: '2500'
-                            assetCode: USD
-                            assetScale: 2
-                          sentAmount:
-                            value: '2500'
-                            assetCode: USD
-                            assetScale: 2
-                          createdAt: '2022-03-12T23:20:50.52Z'
-                          updatedAt: '2022-04-01T10:24:36.11Z'
-                          description: APlusVideo subscription
-                          externalRef: 'customer: 847458475'
+                    pagination:
+                      startCursor: 241de237-f989-42be-926d-c0c1fca57708
+                      endCursor: 315581f8-9967-45a0-9cd3-87b60b6d6414
+                      hasPreviousPage: true
+                      last: 10
+                    result:
+                      - id: 'https://openpayments.guide/alice/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
+                        accountId: 'https://openpayments.guide/alice/'
+                        failed: false
+                        receivingPayment: 'https://openpayments.guide/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
+                        sendAmount:
+                          value: '7026'
+                          assetCode: USD
+                          assetScale: 2
+                        receiveAmount:
+                          value: '7026'
+                          assetCode: USD
+                          assetScale: 2
+                        sentAmount:
+                          value: '7026'
+                          assetCode: USD
+                          assetScale: 2
+                        createdAt: '2022-03-12T23:20:50.52Z'
+                        updatedAt: '2022-04-01T10:24:36.11Z'
+                        description: Thank you for your purchase at ShoeShop!
+                        externalRef: INV2022-8943756
+                      - id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
+                        accountId: 'https://openpayments.guide/alice/'
+                        failed: false
+                        receivingPayment: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
+                        receiveAmount:
+                          value: '2500'
+                          assetCode: USD
+                          assetScale: 2
+                        sendAmount:
+                          value: '2500'
+                          assetCode: USD
+                          assetScale: 2
+                        sentAmount:
+                          value: '2500'
+                          assetCode: USD
+                          assetScale: 2
+                        createdAt: '2022-03-12T23:20:50.52Z'
+                        updatedAt: '2022-04-01T10:24:36.11Z'
+                        description: APlusVideo subscription
+                        externalRef: 'customer: 847458475'
         '401':
           $ref: '#/components/responses/401'
         '403':
@@ -553,78 +551,76 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/list-quotes'
+                $ref: '#/components/schemas/list-quotes'
               examples:
                 forward pagination:
                   value:
-                    - pagination:
-                        startCursor: 241de237-f989-42be-926d-c0c1fca57708
-                        endCursor: 315581f8-9967-45a0-9cd3-87b60b6d6414
-                        hasNextPage: true
-                        first: 10
-                      result:
-                        - id: 'https://openpayments.guide/alice/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
-                          accountId: 'https://openpayments.guide/alice/'
-                          receivingPayment: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
-                          receiveAmount:
-                            value: '2500'
-                            assetCode: USD
-                            assetScale: 2
-                          sendAmount:
-                            value: '2500'
-                            assetCode: USD
-                            assetScale: 2
-                          createdAt: '2022-03-12T23:20:50.52Z'
-                          expiresAt: '2022-04-12T23:20:50.52Z'
-                        - id: 'https://openpayments.guide/alice/quotes/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
-                          accountId: 'https://openpayments.guide/alice/'
-                          receivingPayment: 'https://openpayments.guide/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
-                          sendAmount:
-                            value: '2500'
-                            assetCode: USD
-                            assetScale: 2
-                          receiveAmount:
-                            value: '2198'
-                            assetCode: EUR
-                            assetScale: 2
-                          createdAt: '2022-04-01T10:24:36.11Z'
-                          expiresAt: '2022-05-01T10:24:36.11Z'
+                    pagination:
+                      startCursor: 241de237-f989-42be-926d-c0c1fca57708
+                      endCursor: 315581f8-9967-45a0-9cd3-87b60b6d6414
+                      hasNextPage: true
+                      first: 10
+                    result:
+                      - id: 'https://openpayments.guide/alice/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
+                        accountId: 'https://openpayments.guide/alice/'
+                        receivingPayment: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
+                        receiveAmount:
+                          value: '2500'
+                          assetCode: USD
+                          assetScale: 2
+                        sendAmount:
+                          value: '2500'
+                          assetCode: USD
+                          assetScale: 2
+                        createdAt: '2022-03-12T23:20:50.52Z'
+                        expiresAt: '2022-04-12T23:20:50.52Z'
+                      - id: 'https://openpayments.guide/alice/quotes/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
+                        accountId: 'https://openpayments.guide/alice/'
+                        receivingPayment: 'https://openpayments.guide/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
+                        sendAmount:
+                          value: '2500'
+                          assetCode: USD
+                          assetScale: 2
+                        receiveAmount:
+                          value: '2198'
+                          assetCode: EUR
+                          assetScale: 2
+                        createdAt: '2022-04-01T10:24:36.11Z'
+                        expiresAt: '2022-05-01T10:24:36.11Z'
                 backward pagination:
                   value:
-                    - pagination:
-                        startCursor: 241de237-f989-42be-926d-c0c1fca57708
-                        endCursor: 315581f8-9967-45a0-9cd3-87b60b6d6414
-                        hasPreviousPage: true
-                        last: 10
-                      result:
-                        - id: 'https://openpayments.guide/alice/quotes/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
-                          accountId: 'https://openpayments.guide/alice/'
-                          receivingPayment: 'https://openpayments.guide/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
-                          sendAmount:
-                            value: '7026'
-                            assetCode: USD
-                            assetScale: 2
-                          receiveAmount:
-                            value: '7026'
-                            assetCode: USD
-                            assetScale: 2
-                          createdAt: '2022-04-01T10:24:36.11Z'
-                          expiresAt: '2022-05-01T10:24:36.11Z'
-                        - id: 'https://openpayments.guide/alice/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
-                          accountId: 'https://openpayments.guide/alice/'
-                          receivingPayment: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
-                          receiveAmount:
-                            value: '2500'
-                            assetCode: USD
-                            assetScale: 2
-                          sendAmount:
-                            value: '2500'
-                            assetCode: USD
-                            assetScale: 2
-                          createdAt: '2022-03-12T23:20:50.52Z'
-                          expiresAt: '2022-04-12T23:20:50.52Z'
+                    pagination:
+                      startCursor: 241de237-f989-42be-926d-c0c1fca57708
+                      endCursor: 315581f8-9967-45a0-9cd3-87b60b6d6414
+                      hasPreviousPage: true
+                      last: 10
+                    result:
+                      - id: 'https://openpayments.guide/alice/quotes/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
+                        accountId: 'https://openpayments.guide/alice/'
+                        receivingPayment: 'https://openpayments.guide/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
+                        sendAmount:
+                          value: '7026'
+                          assetCode: USD
+                          assetScale: 2
+                        receiveAmount:
+                          value: '7026'
+                          assetCode: USD
+                          assetScale: 2
+                        createdAt: '2022-04-01T10:24:36.11Z'
+                        expiresAt: '2022-05-01T10:24:36.11Z'
+                      - id: 'https://openpayments.guide/alice/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
+                        accountId: 'https://openpayments.guide/alice/'
+                        receivingPayment: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
+                        receiveAmount:
+                          value: '2500'
+                          assetCode: USD
+                          assetScale: 2
+                        sendAmount:
+                          value: '2500'
+                          assetCode: USD
+                          assetScale: 2
+                        createdAt: '2022-03-12T23:20:50.52Z'
+                        expiresAt: '2022-04-12T23:20:50.52Z'
         '401':
           $ref: '#/components/responses/401'
         '403':
