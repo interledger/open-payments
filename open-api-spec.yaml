@@ -1073,7 +1073,6 @@ components:
         - accountId
         - completed
         - receivedAmount
-        - ilpStreamConnection
         - createdAt
         - updatedAt
       additionalProperties: false
