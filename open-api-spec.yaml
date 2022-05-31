@@ -218,6 +218,7 @@ paths:
                         updatedAt: '2022-04-01T10:24:36.11Z'
                         description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
                         externalRef: Coffee w/ Mo on 10 March 22
+                        completed: true
                       - id: 'https://openpayments.guide/alice/incoming-payments/32abc219-3dc3-44ec-a225-790cacfca8fa'
                         accountId: 'https://openpayments.guide/alice/'
                         receivedAmount:
@@ -229,6 +230,7 @@ paths:
                         createdAt: '2022-03-12T23:20:50.52Z'
                         updatedAt: '2022-04-01T10:24:36.11Z'
                         description: 'I love your website, Alice! Thanks for the great content'
+                        completed: false
                 backward pagination:
                   value:
                     pagination:
