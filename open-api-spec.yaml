@@ -233,26 +233,10 @@ paths:
       description: List all incoming payments on the account
       parameters:
         - schema:
-            type: integer
-            minimum: 1
-            maximum: 100
-            default: 10
+            $ref: '#/components/schemas/pagination'
           in: query
-          name: first
-          description: 'The number of items to return, forward pagination'
-        - schema:
-            type: integer
-            default: 10
-            minimum: 1
-            maximum: 100
-          in: query
-          name: last
-          description: 'The number of items to return, backward pagination'
-        - schema:
-            type: string
-          in: query
-          name: cursor
-          description: The cursor key to list from
+          name: pagination
+          description: Pagination parameters
       tags:
         - incoming-payment
     parameters:
@@ -343,7 +327,7 @@ paths:
                 type: object
                 properties:
                   pagination:
-                    $ref: '#/components/schemas/pagination'
+                    $ref: '#/components/schemas/page-info'
                   result:
                     type: array
                     items:
@@ -452,20 +436,10 @@ paths:
       description: List all outgoing payments on the account
       parameters:
         - schema:
-            type: integer
+            $ref: '#/components/schemas/pagination'
           in: query
-          name: first
-          description: 'The number of items to return, forward pagination'
-        - schema:
-            type: integer
-          in: query
-          name: last
-          description: 'The number of items to return, backward pagination'
-        - schema:
-            type: string
-          in: query
-          name: cursor
-          description: The cursor key to list from
+          name: pagination
+          description: Pagination parameters
       tags:
         - outgoing-payment
     parameters:
@@ -561,7 +535,7 @@ paths:
                 type: object
                 properties:
                   pagination:
-                    $ref: '#/components/schemas/pagination'
+                    $ref: '#/components/schemas/page-info'
                   result:
                     type: array
                     items:
@@ -643,20 +617,10 @@ paths:
       description: List all quotes on the account
       parameters:
         - schema:
-            type: integer
+            $ref: '#/components/schemas/pagination'
           in: query
-          name: first
-          description: 'The number of items to return, forward pagination'
-        - schema:
-            type: integer
-          in: query
-          name: last
-          description: 'The number of items to return, backward pagination'
-        - schema:
-            type: string
-          in: query
-          name: cursor
-          description: The cursor key to list from
+          name: pagination
+          description: Pagination parameters
       tags:
         - quote
     parameters:
@@ -1204,6 +1168,52 @@ components:
         - assetScale
       additionalProperties: false
     pagination:
+      description: 'Pagination parameters'
+      oneOf:
+        - $ref: '#/components/schemas/forward-pagination'
+        - $ref: '#/components/schemas/backward-pagination'
+    forward-pagination:
+      description: 'Forward pagination parameters'
+      type: object
+      examples:
+        - first: 10
+          cursor: 315581f8-9967-45a0-9cd3-87b60b6d6414
+      properties:
+        first:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 10
+          description: The number of items to return.
+        cursor:
+          type: string
+          minLength: 1
+          description: The cursor key to list from.
+      required:
+        - first
+      additionalProperties: false
+    backward-pagination:
+      description: 'Backward pagination parameters'
+      type: object
+      examples:
+        - last: 10
+          cursor: 315581f8-9967-45a0-9cd3-87b60b6d6414
+      properties:
+        last:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 10
+          description: The number of items to return.
+        cursor:
+          type: string
+          minLength: 1
+          description: The cursor key to list from.
+      required:
+        - last
+        - cursor
+      additionalProperties: false
+    page-info:
       description: ''
       type: object
       examples:
@@ -1237,7 +1247,7 @@ components:
       type: object
       properties:
         pagination:
-          $ref: '#/components/schemas/pagination'
+          $ref: '#/components/schemas/page-info'
         result:
           type: array
           items:
