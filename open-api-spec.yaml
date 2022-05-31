@@ -160,6 +160,7 @@ paths:
                     pagination:
                       startCursor: 241de237-f989-42be-926d-c0c1fca57708
                       endCursor: 315581f8-9967-45a0-9cd3-87b60b6d6414
+                      hasPreviousPage: false
                       hasNextPage: true
                     result:
                       - id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
@@ -195,6 +196,7 @@ paths:
                       startCursor: 241de237-f989-42be-926d-c0c1fca57708
                       endCursor: 315581f8-9967-45a0-9cd3-87b60b6d6414
                       hasPreviousPage: true
+                      hasNextPage: false
                     result:
                       - id: 'https://openpayments.guide/alice/incoming-payments/32abc219-3dc3-44ec-a225-790cacfca8fa'
                         accountId: 'https://openpayments.guide/alice/'
@@ -352,6 +354,7 @@ paths:
                     pagination:
                       startCursor: 241de237-f989-42be-926d-c0c1fca57708
                       endCursor: 315581f8-9967-45a0-9cd3-87b60b6d6414
+                      hasPreviousPage: false
                       hasNextPage: true
                     result:
                       - id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
@@ -400,6 +403,7 @@ paths:
                       startCursor: 241de237-f989-42be-926d-c0c1fca57708
                       endCursor: 315581f8-9967-45a0-9cd3-87b60b6d6414
                       hasPreviousPage: true
+                      hasNextPage: false
                     result:
                       - id: 'https://openpayments.guide/alice/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
                         accountId: 'https://openpayments.guide/alice/'
@@ -569,6 +573,7 @@ paths:
                     pagination:
                       startCursor: 241de237-f989-42be-926d-c0c1fca57708
                       endCursor: 315581f8-9967-45a0-9cd3-87b60b6d6414
+                      hasPreviousPage: false
                       hasNextPage: true
                     result:
                       - id: 'https://openpayments.guide/alice/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
@@ -603,6 +608,7 @@ paths:
                       startCursor: 241de237-f989-42be-926d-c0c1fca57708
                       endCursor: 315581f8-9967-45a0-9cd3-87b60b6d6414
                       hasPreviousPage: true
+                      hasNextPage: false
                     result:
                       - id: 'https://openpayments.guide/alice/quotes/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
                         accountId: 'https://openpayments.guide/alice/'
@@ -1220,6 +1226,11 @@ components:
         hasPreviousPage:
           type: boolean
           description: Describes whether the data set has previous entries.
+      required:
+        - startCursor
+        - endCursor
+        - hasNextPage
+        - hasPreviousPage
       additionalProperties: false
     list-incoming-payments:
       title: list-incoming-payments
@@ -1237,6 +1248,7 @@ components:
             startCursor: 241de237-f989-42be-926d-c0c1fca57708
             endCursor: 315581f8-9967-45a0-9cd3-87b60b6d6414
             hasPreviousPage: true
+            hasNextPage: false
           result:
             - id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
               accountId: 'https://openpayments.guide/alice/'
@@ -1257,6 +1269,7 @@ components:
         - pagination:
             startCursor: 241de237-f989-42be-926d-c0c1fca57708
             endCursor: 315581f8-9967-45a0-9cd3-87b60b6d6414
+            hasPreviousPage: false
             hasNextPage: true
           result:
             - id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
