@@ -39,7 +39,7 @@ tags:
   - name: stream-connection
     description: interledger STREAM connections
 paths:
-  '/{id}':
+  '/{accountId}':
     get:
       summary: Get a Payment Pointer
       tags:
@@ -72,11 +72,11 @@ paths:
     parameters:
       - schema:
           type: string
-        name: id
+        name: accountId
         in: path
         required: true
         description: Account identifier
-  '/connections/{id}':
+  '/connections/{connectionId}':
     get:
       summary: Get ILP STREAM credentials for a connection
       tags:
@@ -107,7 +107,7 @@ paths:
     parameters:
       - schema:
           type: string
-        name: id
+        name: connectionId
         in: path
         required: true
         description: Connection identifier
@@ -157,7 +157,8 @@ paths:
               type: object
               properties:
                 incomingAmount:
-                  $ref: '#/components/schemas/amount'
+                  description: The maximum amount that should be paid into the account under this incoming payment.
+                  allOf: [ $ref: '#/components/schemas/amount' ]
                 expiresAt:
                   type: string
                   description: The date and time when payments into the incoming payment must no longer be accepted.
@@ -683,7 +684,7 @@ paths:
         in: path
         required: true
         description: Account identifier
-  '/{accountId}/incoming-payments/{id}':
+  '/{accountId}/incoming-payments/{incomingPaymentId}':
     get:
       summary: Get an Incoming Payment
       tags:
@@ -736,11 +737,11 @@ paths:
       - schema:
           type: string
           format: uuid
-        name: id
+        name: incomingPaymentId
         in: path
         required: true
         description: Incoming Payment identifier
-  '/{accountId}/incoming-payments/{id}/complete':
+  '/{accountId}/incoming-payments/{incomingPaymentId}/complete':
     post:
       summary: Complete an Incoming Payment
       tags:
@@ -792,11 +793,11 @@ paths:
       - schema:
           type: string
           format: uuid
-        name: id
+        name: incomingPaymentId
         in: path
         required: true
         description: Incoming Payment identifier
-  '/{accountId}/outgoing-payments/{id}':
+  '/{accountId}/outgoing-payments/{outgoingPaymentId}':
     get:
       summary: Get an Outgoing Payment
       tags:
@@ -849,11 +850,11 @@ paths:
       - schema:
           type: string
           format: uuid
-        name: id
+        name: outgoingPaymentId
         in: path
         required: true
         description: Outgoing Payment identifier
-  '/{accountId}/quotes/{id}':
+  '/{accountId}/quotes/{quoteId}':
     get:
       summary: Get a Quote
       tags:
@@ -899,7 +900,7 @@ paths:
       - schema:
           type: string
           format: uuid
-        name: id
+        name: quoteId
         in: path
         required: true
         description: Quote identifier
@@ -1028,26 +1029,29 @@ components:
           description: Describes whether the incoming payment has completed receiving fund.
           default: false
         incomingAmount:
-          $ref: '#/components/schemas/amount'
+          description: The maximum amount that should be paid into the account under this incoming payment.
+          allOf: [ $ref: '#/components/schemas/amount' ]
         receivedAmount:
-          $ref: '#/components/schemas/amount'
+          description: The total amount that has been paid into the account under this incoming payment.
+          allOf: [ $ref: '#/components/schemas/amount' ]
         expiresAt:
           type: string
-          description: The date and time when payments into the incoming payment will no longer be accepted.
+          description: The date and time when payments under this incoming payment will no longer be accepted.
           format: date-time
         description:
           type: string
           description: Human readable description of the incoming payment that will be visible to the account holder.
         externalRef:
           type: string
-          description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
+          description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number.
         ilpStreamConnection:
-          oneOf:
-            - $ref: '#/components/schemas/ilp-stream-connection'
-            - type: string
-              format: uri
-              description: Endpoint that returns unique STREAM connection credentials to establish a STREAM connection to the underlying account.
-              readOnly: true
+          description: The Interledger STREAM Connection to use to pay into the account under this incoming payment
+          oneOf: 
+            -  $ref: '#/components/schemas/ilp-stream-connection'
+            -  type: string
+               format: uri
+               description: Endpoint that returns unique STREAM connection credentials to establish a STREAM connection to the underlying account.
+               readOnly: true
         createdAt:
           type: string
           format: date-time
@@ -1130,11 +1134,14 @@ components:
           format: uri
           description: The URL of the incoming payment or ILP STREAM Connection that is being paid.
         receiveAmount:
-          $ref: '#/components/schemas/amount'
+          description: The total amount that should be received by the receiver when this outgoing payment has been paid.
+          allOf: [ $ref: '#/components/schemas/amount' ]
         sendAmount:
-          $ref: '#/components/schemas/amount'
+          description: The total amount that should be sent when this outgoing payment has been paid.
+          allOf: [ $ref: '#/components/schemas/amount' ]
         sentAmount:
-          $ref: '#/components/schemas/amount'
+          description: The total amount that has been sent under this outgoing payment.
+          allOf: [ $ref: '#/components/schemas/amount' ]
         description:
           type: string
           description: Human readable description of the outgoing payment that will be visible to the account holder and shared with the receiver.
@@ -1206,9 +1213,11 @@ components:
           format: uri
           description: The URL of the incoming payment or ILP Stream Connection that would be paid.
         receiveAmount:
-          $ref: '#/components/schemas/amount'
+          description: The total amount that should be received by the receiver.
+          allOf: [ $ref: '#/components/schemas/amount' ]
         sendAmount:
-          $ref: '#/components/schemas/amount'
+          description: The total amount that should be sent by the sender.
+          allOf: [ $ref: '#/components/schemas/amount' ]
         expiresAt:
           type: string
           description: The date and time when the calculated `sendAmount` is no longer valid.
@@ -1250,7 +1259,7 @@ components:
         value:
           type: string
           format: uint64
-          description: The amount that must be paid into the receiver’s account.
+          description: The amount, scaled by the given scale.
         assetCode:
           type: string
           description: The asset code of the amount. This SHOULD be an ISO4217 currency code.
