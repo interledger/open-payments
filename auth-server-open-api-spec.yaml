@@ -689,7 +689,6 @@ components:
       required:
         - type
         - actions
-        - identifier
     access-incoming:
       title: access-incoming
       type: object
@@ -723,7 +722,6 @@ components:
       required:
         - type
         - actions
-        - identifier
     access-account:
       title: access-account
       type: object
@@ -750,7 +748,6 @@ components:
       required:
         - type
         - actions
-        - identifier
     limits-incoming:
       title: limits-incoming
       type: object
