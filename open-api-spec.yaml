@@ -6,16 +6,20 @@ info:
     name: Apache 2.0
     identifier: Apache-2.0
   description: |-
-    The Open Payments API is a simple REST API with 4 resource types: **account**, **quote**, **incoming payment** and **outgoing payment**.  
+    The Open Payments API is a simple REST API with 5 resource types: **account**, **quote**, **connection**, **incoming payment** and **outgoing payment**.  
 
-    The *service endpoint* for the API is always the URL of the account resource and all other resources are sub-resources of the account.  
+    The *service endpoint* for the API is always the URL of the account resource and all other resources (except connections) are sub-resources of the account.  
+
+    For privacy reasons a connection resource is not a sub-resource of an account.
 
     All resource and collection resource representations use JSON and the media-type `application/json`.  
 
     The `account` resource has three collections of sub-resources and a single **account holder** sub-resource:   
     1. `/incoming-payments` contains the **incoming payment** sub-resources  
     2. `/outgoing-payments` contains the **outgoing payment** sub-resources  
-    3. `/quotes` contains the **quote** sub-resources  
+    3. `/quotes` contains the **quote** sub-resources
+
+    There is no normative path for **connection** resources. In this documentation we use the path `/connections` but implementations may use any arbitrary path.
 
     Access to resources and permission to execute the methods exposed by the API is determined by the grants given to the client represented by an access token used in API requests.
   summary: An API for open access to financial accounts to send and receive payments.
@@ -32,6 +36,8 @@ tags:
     description: outgoing payment operations
   - name: quote
     description: quote operations
+  - name: stream-connection
+    description: interledger STREAM connections
 paths:
   '/{id}':
     get:
@@ -70,6 +76,41 @@ paths:
         in: path
         required: true
         description: Account identifier
+  '/connections/{id}':
+    get:
+      summary: Get ILP STREAM credentials for a connection
+      tags:
+        - stream-connection
+      responses:
+        '200':
+          description: Connection Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ilp-stream-connection'
+              examples:
+                Get connection:
+                  value:
+                    id: 'https://openpayments.guide/connections/016da9d5-c9a4-4c80-a354-86b915a04ff8'
+                    ilpAddress: g.ilp.iwuyge987y.98y0f34tsrt8y
+                    sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
+        '404':
+          description: Connection Not Found
+      operationId: get-ilp-stream-connection
+      description: |-
+        Fetch new connection credentials for an ILP STREAM connection.
+
+        A connection is an ephemeral resource that is created to accommodate new incoming payments.
+
+        A new set of credential will be generated each time this API is called.
+      security: []
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: Connection identifier
   '/{accountId}/incoming-payments':
     post:
       summary: Create an Incoming Payment
@@ -99,8 +140,10 @@ paths:
                     completed: false
                     expiresAt: '2022-02-03T23:20:50.52Z'
                     externalRef: INV2022-02-0137
-                    ilpAddress: g.ilp.iwuyge987y.98y08y
-                    sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
+                    ilpStreamConnection:
+                      id: 'http://openpayments.guide/connections/ff394f02-7b7b-45e2-b645-51d04e7c345c'
+                      ilpAddress: g.ilp.iwuyge987y.98y08y
+                      sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
                     createdAt: '2022-03-12T23:20:50.52Z'
                     updatedAt: '2022-04-01T10:24:36.11Z'
         '401':
@@ -173,23 +216,25 @@ paths:
                           value: '250'
                           assetCode: USD
                           assetScale: 2
-                        completed: true
+                        ilpStreamConnection: 'https://openpayments.guide/connections/376df9d5-c9a4-4c80-a354-86b915a04ff8'
                         expiresAt: '2022-04-12T23:20:50.52Z'
                         createdAt: '2022-03-12T23:20:50.52Z'
                         updatedAt: '2022-04-01T10:24:36.11Z'
                         description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
                         externalRef: Coffee w/ Mo on 10 March 22
+                        completed: true
                       - id: 'https://openpayments.guide/alice/incoming-payments/32abc219-3dc3-44ec-a225-790cacfca8fa'
                         accountId: 'https://openpayments.guide/alice/'
                         receivedAmount:
                           value: '100'
                           assetCode: USD
                           assetScale: 2
-                        completed: true
+                        ilpStreamConnection: 'https://openpayments.guide/connections/1f6df9d5-c9a4-4c80-a354-86b915a04ff8'
                         expiresAt: '2022-04-12T23:20:50.52Z'
                         createdAt: '2022-03-12T23:20:50.52Z'
                         updatedAt: '2022-04-01T10:24:36.11Z'
                         description: 'I love your website, Alice! Thanks for the great content'
+                        completed: false
                 backward pagination:
                   value:
                     pagination:
@@ -281,7 +326,7 @@ paths:
                     id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
                     accountId: 'https://openpayments.guide/alice/'
                     failed: false
-                    receivingPayment: 'https://openpayments.guide/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2'
+                    receiver: 'https://openpayments.guide/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2'
                     sendAmount:
                       value: '2500'
                       assetCode: USD
@@ -316,13 +361,14 @@ paths:
                   type: string
                   format: uri
                   description: The URL of the quote defining this payment's amounts.
-                  readOnly: true
                 description:
                   type: string
                   description: Human readable description of the outgoing payment that will be visible to the account holder and shared with the receiver.
                 externalRef:
                   type: string
                   description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
+              required:
+               - quoteId
               additionalProperties: false
         description: |-
           A subset of the outgoing payments schema is accepted as input to create a new outgoing payment.
@@ -355,7 +401,7 @@ paths:
                         - id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
                           accountId: 'https://openpayments.guide/alice/'
                           failed: false
-                          receivingPayment: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
+                          receiver: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
                           receiveAmount:
                             value: '2500'
                             assetCode: USD
@@ -375,7 +421,7 @@ paths:
                         - id: 'https://openpayments.guide/alice/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
                           accountId: 'https://openpayments.guide/alice/'
                           failed: false
-                          receivingPayment: 'https://openpayments.guide/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
+                          receiver: 'https://openpayments.guide/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
                           sendAmount:
                             value: '7026'
                             assetCode: USD
@@ -403,7 +449,7 @@ paths:
                         - id: 'https://openpayments.guide/alice/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
                           accountId: 'https://openpayments.guide/alice/'
                           failed: false
-                          receivingPayment: 'https://openpayments.guide/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
+                          receiver: 'https://openpayments.guide/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
                           sendAmount:
                             value: '7026'
                             assetCode: USD
@@ -423,7 +469,7 @@ paths:
                         - id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
                           accountId: 'https://openpayments.guide/alice/'
                           failed: false
-                          receivingPayment: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
+                          receiver: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
                           receiveAmount:
                             value: '2500'
                             assetCode: USD
@@ -488,7 +534,7 @@ paths:
                   value:
                     id: 'https://openpayments.guide/alice/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
                     accountId: 'https://openpayments.guide/alice/'
-                    receivingPayment: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
+                    receiver: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
                     sendAmount:
                       value: '2500'
                       assetCode: USD
@@ -499,6 +545,8 @@ paths:
                       assetScale: 2
                     createdAt: '2022-03-12T23:20:50.52Z'
                     expiresAt: '2022-04-12T23:20:50.52Z'
+        '400':
+          description: No amount was provided and no amount could be inferred from the receiver.
         '401':
           $ref: '#/components/responses/401'
         '403':
@@ -507,16 +555,16 @@ paths:
         content:
           application/json:
             examples:
-              Create fixed-send-amount quote for $25:
+              Create fixed-send-amount quote for $25 to an ILP STREAM connection:
                 value:
-                  receivingAccount: 'https://openpayments.guide/alice'
+                  receiver: 'https://openpayments.guide/connections/45a0d0ee-26dc-4c66-89e0-01fbf93156f7'
                   sendAmount:
                     value: '2500'
                     assetCode: USD
                     assetScale: 2
               Create fixed-receive-amount quote for $25:
                 value:
-                  receivingPayment: 'https://openpayments.guide/alice/incoming-payments/37a0d0ee-26dc-4c66-89e0-01fbf93156f7'
+                  receiver: 'https://openpayments.guide/alice/incoming-payments/37a0d0ee-26dc-4c66-89e0-01fbf93156f7'
                   receiveAmount:
                     value: '2500'
                     assetCode: USD
@@ -524,23 +572,21 @@ paths:
             schema:
               type: object
               properties:
-                receivingAccount:
+                receiver:
                   type: string
                   format: uri
-                  description: The URL of the account that is being paid.
-                receivingPayment:
-                  type: string
-                  format: uri
-                  description: The URL of the incoming payment that is being paid.
+                  description: The URL of the incoming payment or ILP STREAM connection that is being paid.
                 receiveAmount:
                   $ref: '#/components/schemas/amount'
                 sendAmount:
                   $ref: '#/components/schemas/amount'
+              required:
+                - receiver
               additionalProperties: false
         description: |-
           A subset of the quotes schema is accepted as input to create a new quote.
 
-          The quote must be created with (`receivingPayment` xor `receivingAccount`) and (`sendAmount` xor `receiveAmount`) or `receivingPayment` and no specified amount (assuming the Incoming Payment has an `incomingAmount`).
+          The quote must be created with a (`sendAmount` xor `receiveAmount`) unless the `receiver` is an Incoming Payment which has an `incomingAmount`.
         required: true
       description: A **quote** is a sub-resource of an account. It represents a quote for a payment from the account.
     description: Create a new quote at the account.
@@ -567,7 +613,7 @@ paths:
                       result:
                         - id: 'https://openpayments.guide/alice/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
                           accountId: 'https://openpayments.guide/alice/'
-                          receivingPayment: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
+                          receiver: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
                           receiveAmount:
                             value: '2500'
                             assetCode: USD
@@ -580,7 +626,7 @@ paths:
                           expiresAt: '2022-04-12T23:20:50.52Z'
                         - id: 'https://openpayments.guide/alice/quotes/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
                           accountId: 'https://openpayments.guide/alice/'
-                          receivingPayment: 'https://openpayments.guide/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
+                          receiver: 'https://openpayments.guide/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
                           sendAmount:
                             value: '2500'
                             assetCode: USD
@@ -601,7 +647,7 @@ paths:
                       result:
                         - id: 'https://openpayments.guide/alice/quotes/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
                           accountId: 'https://openpayments.guide/alice/'
-                          receivingPayment: 'https://openpayments.guide/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
+                          receiver: 'https://openpayments.guide/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
                           sendAmount:
                             value: '7026'
                             assetCode: USD
@@ -614,7 +660,7 @@ paths:
                           expiresAt: '2022-05-01T10:24:36.11Z'
                         - id: 'https://openpayments.guide/alice/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
                           accountId: 'https://openpayments.guide/alice/'
-                          receivingPayment: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
+                          receiver: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
                           receiveAmount:
                             value: '2500'
                             assetCode: USD
@@ -687,8 +733,10 @@ paths:
                     updatedAt: '2022-04-01T10:24:36.11Z'
                     description: Thanks for the flowers!
                     externalRef: INV-12876
-                    ilpAddress: g.ilp.iwuyge987y.98y08y
-                    sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
+                    ilpStreamConnection:
+                        id: 'https://openpayments.guide/connections/4a1b0150-db73-49e8-8713-628baa4a17ff'
+                        ilpAddress: g.ilp.iwuyge987y.98y08y
+                        sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
         '401':
           $ref: '#/components/responses/401'
         '403':
@@ -785,7 +833,7 @@ paths:
                     id: 'https://openpayments.guide/bob/outgoing-payments/3859b39e-4666-4ce5-8745-72f1864c5371'
                     accountId: 'https://openpayments.guide/bob/'
                     failed: false
-                    receivingPayment: 'http://openpayments.guide/alice/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
+                    receiver: 'http://openpayments.guide/alice/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
                     sendAmount:
                       value: '2500'
                       assetCode: USD
@@ -841,7 +889,7 @@ paths:
                   value:
                     id: 'https://openpayments.guide/bob/quotes/3859b39e-4666-4ce5-8745-72f1864c5371'
                     accountId: 'https://openpayments.guide/bob/'
-                    receivingPayment: 'http://openpayments.guide/alice/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
+                    receiver: 'http://openpayments.guide/alice/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
                     sendAmount:
                       value: '2500'
                       assetCode: USD
@@ -916,6 +964,33 @@ components:
           assetCode: USD
           assetScale: 2
           authServer: 'https://openpayments.guide/auth'
+    ilp-stream-connection:
+      title: ILP Stream Connection
+      type: object
+      description: An **ILP STREAM Connection** is an endpoint that returns unique STREAM connection credentials to establish a STREAM connection to the underlying account.
+      properties:
+        id:
+          type: string
+          format: uri
+          description: The URL identifying the endpoint.
+          readOnly: true
+        ilpAddress:
+          type: string
+          description: The ILP address to use when establishing a STREAM connection.
+          readOnly: true
+        sharedSecret:
+          type: string
+          description: The shared secret to use when establishing a STREAM connection.
+          readOnly: true
+      required:
+        - id
+        - ilpAddress
+        - sharedSecret
+      additionalProperties: false
+      examples:
+        - id: 'https://openpayments.guide/connections/016da9d5-c9a4-4c80-a354-86b915a04ff8'
+          ilpApddress: g.ilp.iwuyge987y.98y08y
+          sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
     incoming-payment:
       title: Incoming Payment
       description: 'An **incoming payment** resource represents a payment that will be, is currently being, or has been received by the account.'
@@ -937,8 +1012,24 @@ components:
           updatedAt: '2022-04-01T10:24:36.11Z'
           description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
           externalRef: Coffee w/ Mo on 10 March 22
-          ilpApddress: g.ilp.iwuyge987y.98y08y
-          sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
+          ilpStreamConnection:
+            id: 'https://openpayments.guide/connections/032da9d5-c9a4-4c80-a354-86b915a04ff8'
+            ilpApddress: g.ilp.iwuyge987y.98y08y
+            sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
+        - id: 'https://openpayments.guide/alice/incoming-payments/456da9d5-c9a4-4c80-a354-86b915a04ff8'
+          accountId: 'https://openpayments.guide/alice/'
+          incomingAmount:
+            value: '2500'
+            assetCode: USD
+            assetScale: 2
+          receivedAmount:
+            value: '0'
+            assetCode: USD
+            assetScale: 2
+          expiresAt: '2022-04-12T23:20:50.52Z'
+          createdAt: '2022-03-12T23:20:50.52Z'
+          updatedAt: '2022-03-12T23:20:50.52Z'
+          ilpStreamConnection: 'https://openpayments.guide/connections/782da9d5-c9a4-4c80-a354-86b915a04ff8'
       properties:
         id:
           type: string
@@ -968,14 +1059,13 @@ components:
         externalRef:
           type: string
           description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
-        ilpAddress:
-          type: string
-          description: The ILP address to use when establishing a STREAM connection.
-          readOnly: true
-        sharedSecret:
-          type: string
-          description: The shared secret to use when establishing a STREAM connection.
-          readOnly: true
+        ilpStreamConnection:
+          oneOf: 
+            -  $ref: '#/components/schemas/ilp-stream-connection'
+            -  type: string
+               format: uri
+               description: Endpoint that returns unique STREAM connection credentials to establish a STREAM connection to the underlying account.
+               readOnly: true
         createdAt:
           type: string
           format: date-time
@@ -1000,7 +1090,7 @@ components:
         - id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
           accountId: 'https://openpayments.guide/alice/'
           failed: false
-          receivingPayment: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
+          receiver: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
           receiveAmount:
             value: '2500'
             assetCode: USD
@@ -1020,7 +1110,7 @@ components:
         - id: 'https://openpayments.guide/alice/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
           accountId: 'https://openpayments.guide/alice/'
           failed: false
-          receivingPayment: 'https://openpayments.guide/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
+          receiver: 'https://openpayments.guide/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
           sendAmount:
             value: '7026'
             assetCode: USD
@@ -1053,10 +1143,10 @@ components:
           type: boolean
           description: Describes whether the payment failed to send its full amount.
           default: false
-        receivingPayment:
+        receiver:
           type: string
           format: uri
-          description: The URL of the incoming payment that is being paid.
+          description: The URL of the incoming payment or ILP STREAM Connection that is being paid.
         receiveAmount:
           $ref: '#/components/schemas/amount'
         sendAmount:
@@ -1080,7 +1170,7 @@ components:
       required:
         - id
         - accountId
-        - receivingPayment
+        - receiver
         - sendAmount
         - receiveAmount
         - sentAmount
@@ -1094,7 +1184,7 @@ components:
       examples:
         - id: 'https://openpayments.guide/alice/quotes/ab03296b-0c8b-4776-b94e-7ee27d868d4d'
           accountId: 'https://openpayments.guide/alice/'
-          receivingPayment: 'https://openpayments.guide/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
+          receiver: 'https://openpayments.guide/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
           receiveAmount:
             value: '2500'
             assetCode: USD
@@ -1107,7 +1197,7 @@ components:
           expiresAt: '2022-04-12T23:20:50.52Z'
         - id: 'https://openpayments.guide/alice/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
           accountId: 'https://openpayments.guide/alice/'
-          receivingPayment: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
+          receiver: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
           sendAmount:
             value: '2500'
             assetCode: USD
@@ -1129,10 +1219,10 @@ components:
           format: uri
           description: The URL of the account from which this quote's payment would be sent.
           readOnly: true
-        receivingPayment:
+        receiver:
           type: string
           format: uri
-          description: The URL of the incoming payment that would be paid.
+          description: The URL of the incoming payment or ILP Stream Connection that would be paid.
         receiveAmount:
           $ref: '#/components/schemas/amount'
         sendAmount:
@@ -1148,7 +1238,7 @@ components:
       required:
         - id
         - accountId
-        - receivingPayment
+        - receiver
         - sendAmount
         - receiveAmount
         - createdAt
@@ -1301,7 +1391,7 @@ components:
             - id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
               accountId: 'https://openpayments.guide/alice/'
               failed: false
-              receivingPayment: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
+              receiver: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
               receiveAmount:
                 value: '2500'
                 assetCode: USD
@@ -1319,7 +1409,7 @@ components:
             - id: 'https://openpayments.guide/alice/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
               accountId: 'https://openpayments.guide/alice/'
               failed: false
-              receivingPayment: 'https://openpayments.guide/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
+              receiver: 'https://openpayments.guide/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
               sendAmount:
                 value: '7026'
                 assetCode: USD
@@ -1356,7 +1446,7 @@ components:
           result:
             - id: 'https://openpayments.guide/alice/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
               accountId: 'https://openpayments.guide/alice/'
-              receivingPayment: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
+              receiver: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
               receiveAmount:
                 value: '2500'
                 assetCode: USD
@@ -1369,7 +1459,7 @@ components:
               expiresAt: '2022-04-12T23:20:50.52Z'
             - id: 'https://openpayments.guide/alice/quotes/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
               accountId: 'https://openpayments.guide/alice/'
-              receivingPayment: 'https://openpayments.guide/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
+              receiver: 'https://openpayments.guide/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
               sendAmount:
                 value: '2500'
                 assetCode: USD
