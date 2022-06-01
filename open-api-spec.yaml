@@ -6,16 +6,20 @@ info:
     name: Apache 2.0
     identifier: Apache-2.0
   description: |-
-    The Open Payments API is a simple REST API with 4 resource types: **account**, **quote**, **incoming payment** and **outgoing payment**.  
+    The Open Payments API is a simple REST API with 5 resource types: **account**, **quote**, **connection**, **incoming payment** and **outgoing payment**.  
 
-    The *service endpoint* for the API is always the URL of the account resource and all other resources are sub-resources of the account.  
+    The *service endpoint* for the API is always the URL of the account resource and all other resources (except connections) are sub-resources of the account.  
+
+    For privacy reasons a connection resource is not a sub-resource of an account.
 
     All resource and collection resource representations use JSON and the media-type `application/json`.  
 
     The `account` resource has three collections of sub-resources and a single **account holder** sub-resource:   
     1. `/incoming-payments` contains the **incoming payment** sub-resources  
     2. `/outgoing-payments` contains the **outgoing payment** sub-resources  
-    3. `/quotes` contains the **quote** sub-resources  
+    3. `/quotes` contains the **quote** sub-resources
+
+    There is no normative path for **connection** resources. In this documentation we use the path `/connections` but implementations may use any arbitrary path.
 
     Access to resources and permission to execute the methods exposed by the API is determined by the grants given to the client represented by an access token used in API requests.
   summary: An API for open access to financial accounts to send and receive payments.
