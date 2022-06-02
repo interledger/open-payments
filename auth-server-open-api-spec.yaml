@@ -80,7 +80,6 @@ paths:
                         actions:
                           - create
                           - read
-                          - update
                         identifier: 'https://openpayments.guide/alice'
                         interval: 'R12/2019-08-24T14:15:22Z/P1M'
                         limits:
@@ -149,7 +148,6 @@ paths:
                           actions:
                             - create
                             - read
-                            - update
                           identifier: 'https://openpayments.guide/alice'
                           interval: 'R12/2019-08-24T14:15:22Z/P1M'
                           limits:
@@ -221,7 +219,6 @@ paths:
                           actions:
                             - create
                             - read
-                            - update
                           identifier: 'https://openpayments.guide/alice'
                           interval: 'R12/2019-08-24T14:15:22Z/P1M'
                           limits:
@@ -271,7 +268,6 @@ paths:
                         actions:
                           - create
                           - read
-                          - update
                         identifier: 'https://openpayments.guide/alice'
                         interval: 'R12/2019-08-24T14:15:22Z/P1M'
                         limits:
@@ -379,7 +375,6 @@ paths:
                         actions:
                           - create
                           - read
-                          - update
                         identifier: 'https://openpayments.guide/alice'
                         interval: 'R12/2019-08-24T14:15:22Z/P1M'
                         limits:
@@ -668,7 +663,6 @@ components:
             type: string
             enum:
               - create
-              - update
               - read
               - read-all
               - list
@@ -701,7 +695,7 @@ components:
             type: string
             enum:
               - create
-              - update
+              - complete
               - read
               - read-all
               - list
