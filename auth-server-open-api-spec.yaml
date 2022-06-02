@@ -80,11 +80,10 @@ paths:
                         actions:
                           - create
                           - read
-                          - update
                         identifier: 'https://openpayments.guide/alice'
                         interval: 'R12/2019-08-24T14:15:22Z/P1M'
                         limits:
-                          receivingAccount: 'http://openpayments.guide/webmonize'
+                          receiver: 'https://openpayments.guide/connections/45a0d0ee-26dc-4c66-89e0-01fbf93156f7'
                           sendAmount:
                             value: '500'
                             assetCode: USD
@@ -149,11 +148,10 @@ paths:
                           actions:
                             - create
                             - read
-                            - update
                           identifier: 'https://openpayments.guide/alice'
                           interval: 'R12/2019-08-24T14:15:22Z/P1M'
                           limits:
-                            receivingAccount: 'http://openpayments.guide/bob'
+                            receiver: 'https://openpayments.guide/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2'
                             sendAmount:
                               value: '500'
                               assetCode: USD
@@ -221,11 +219,10 @@ paths:
                           actions:
                             - create
                             - read
-                            - update
                           identifier: 'https://openpayments.guide/alice'
                           interval: 'R12/2019-08-24T14:15:22Z/P1M'
                           limits:
-                            receivingAccount: 'http://openpayments.guide/bob'
+                            receiver: 'https://openpayments.guide/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2'
                             sendAmount:
                               value: '500'
                               assetCode: USD
@@ -271,11 +268,10 @@ paths:
                         actions:
                           - create
                           - read
-                          - update
                         identifier: 'https://openpayments.guide/alice'
                         interval: 'R12/2019-08-24T14:15:22Z/P1M'
                         limits:
-                          receivingAccount: 'http://openpayments.guide/bob'
+                          receiver: 'https://openpayments.guide/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2'
                           sendAmount:
                             value: '500'
                             assetCode: USD
@@ -379,11 +375,10 @@ paths:
                         actions:
                           - create
                           - read
-                          - update
                         identifier: 'https://openpayments.guide/alice'
                         interval: 'R12/2019-08-24T14:15:22Z/P1M'
                         limits:
-                          receivingAccount: 'http://openpayments.guide/bob'
+                          receiver: 'https://openpayments.guide/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2'
                           sendAmount:
                             value: '500'
                             assetCode: USD
@@ -452,14 +447,10 @@ components:
       description: Open Payments specific property that defines the limits under which outgoing payments can be created.
       type: object
       properties:
-        receivingAccount:
+        receiver:
           type: string
           format: uri
-          description: URL for the account.
-        receivingPayment:
-          type: string
-          format: uri
-          description: URL for the incoming payment. REQUIRED if `receivingAccount` is not present.
+          description: URL for the incoming payment or ILP STREAM Connection.
         sendAmount:
           $ref: '#/components/schemas/amount'
         receiveAmount:
@@ -672,7 +663,6 @@ components:
             type: string
             enum:
               - create
-              - update
               - read
               - read-all
               - list
@@ -705,7 +695,7 @@ components:
             type: string
             enum:
               - create
-              - update
+              - complete
               - read
               - read-all
               - list
