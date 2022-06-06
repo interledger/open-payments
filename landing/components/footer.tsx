@@ -2,6 +2,7 @@ import * as React from 'react'
 
 type props = {
   bg?: string
+  children?: any
 }
 
 const Footer: React.FC<props> = (props) => {

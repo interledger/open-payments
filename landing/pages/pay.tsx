@@ -20,7 +20,7 @@ const Home: NextPage = () => {
             An inter-wallet <br className="sm:hidden"/> payments protocol
           </div>
           <div className="my-6">
-            <Button onClick={() => window.location.href = 'https://docs.openpayments.dev'}>
+            <Button onClick={() => window.location.href = 'https://docs.openpayments.guide'}>
               Read the docs
             </Button>
           </div>
@@ -78,7 +78,7 @@ const Home: NextPage = () => {
           <div className="flex flex-row items-start justify-center w-full">
             <div className="flex flex-col w-card">
               <div className="text-lg font-medium mb-4">Protocol</div>
-              <a className="text-base md:opacity-60 md:hover:opacity-100 mb-1" href="https://docs.openpayments.dev">
+              <a className="text-base md:opacity-60 md:hover:opacity-100 mb-1" href="https://docs.openpayments.guide">
                 Specification
               </a>
             </div>
@@ -87,7 +87,7 @@ const Home: NextPage = () => {
               <a className="text-base md:opacity-60 md:hover:opacity-100 mb-1" href="https://communityinviter.com/apps/interledger/interledger-working-groups-slack">
                 Slack
               </a>
-              <a className="text-base md:opacity-60 md:hover:opacity-100 mb-4" href="https://github.com/adrianhopebailie/open-payments">
+              <a className="text-base md:opacity-60 md:hover:opacity-100 mb-4" href="https://github.com/interledger/open-payments">
                 Github
               </a>
             </div>
@@ -103,7 +103,7 @@ const Home: NextPage = () => {
 
 Home.getInitialProps = async ({ req, res }) => {
   if (req.method === 'HEAD' || req.method === 'GET') {
-    res.setHeader('Link', '<https://openpayments.dev/payment-manifest.json>; rel="payment-method-manifest"')
+    res.setHeader('Link', '<https://openpayments.guide/payment-manifest.json>; rel="payment-method-manifest"')
   }
   return {}
 }

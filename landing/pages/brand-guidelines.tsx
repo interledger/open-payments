@@ -6,6 +6,7 @@ import { useRouter } from 'next/router'
 
 type sectionProps = {
   header ?: string
+  children?: any
 }
 
 const Section: React.FC<sectionProps> = (props) => {
@@ -25,7 +26,11 @@ const Divider: React.FC = () => {
   )
 }
 
-const Card: React.FC = (props) => {
+type cardProps = {
+  children?: any
+}
+
+const Card: React.FC<cardProps> = (props) => {
   let className = 'p-8 sm:p-16 bg-white elevation-2 rounded w-full'
   return (
     <div className={className}>
@@ -353,10 +358,10 @@ const Home: NextPage = () => {
           <div className="flex flex-row items-start justify-center w-full">
             <div className="flex flex-col w-card">
               <div className="text-lg font-medium mb-4">Protocol</div>
-              <a className="text-base md:opacity-60 md:hover:opacity-100 mb-1" href="https://docs.openpayments.dev">
+              <a className="text-base md:opacity-60 md:hover:opacity-100 mb-1" href="https://docs.openpayments.guide">
                 Specification
               </a>
-              <a className="text-base md:opacity-60 md:hover:opacity-100 mb-1" href="https://openpayments.dev/brand-guidelines">
+              <a className="text-base md:opacity-60 md:hover:opacity-100 mb-1" href="https://openpayments.guide/brand-guidelines">
                 Brand guidelines
               </a>
             </div>

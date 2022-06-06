@@ -1,4 +1,8 @@
 module.exports = {
+  content: [
+    './pages/**/*.tsx',
+    './components/**/*.tsx',
+  ],
   prefix: '',
   important: false,
   separator: ':',

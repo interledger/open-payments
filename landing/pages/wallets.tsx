@@ -20,7 +20,7 @@ const Wallets: NextPage = () => {
             An inter-wallet <br className="sm:hidden"/> payments protocol
           </div>
           <div className="my-6">
-            <Button onClick={() => window.location.href = 'https://docs.openpayments.dev'}>
+            <Button onClick={() => window.location.href = 'https://docs.openpayments.guide'}>
               Read the docs
             </Button>
           </div>
@@ -43,7 +43,7 @@ const Wallets: NextPage = () => {
             Facilitating the discovery, setup and authorization of payments between different wallet providers; so you don't have to.
           </div>
           <div className="my-6">
-            <Button onClick={() => window.location.href = 'https://docs.openpayments.dev'}>
+            <Button onClick={() => window.location.href = 'https://docs.openpayments.guide'}>
               Learn more
             </Button>
           </div>
@@ -60,7 +60,7 @@ const Wallets: NextPage = () => {
             Facilitating the discovery, setup and authorization of payments between different wallet providers; so you don't have to.
           </div>
           <div className="my-6">
-            <Button onClick={() => window.location.href = 'https://docs.openpayments.dev'}>
+            <Button onClick={() => window.location.href = 'https://docs.openpayments.guide'}>
               Learn more
             </Button>
           </div>

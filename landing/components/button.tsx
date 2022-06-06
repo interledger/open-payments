@@ -2,6 +2,7 @@ import * as React from 'react'
 
 type props = {
   onClick?: (event: any) => void
+  children?: any
 }
 
 const Button: React.FC<props> = (props) => {
