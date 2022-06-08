@@ -196,7 +196,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/list-incoming-payments'
+                type: object
+                properties:
+                  pagination:
+                    $ref: '#/components/schemas/page-info'
+                  result:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/incoming-payment'
               examples:
                 forward pagination:
                   value:
@@ -352,7 +359,7 @@ paths:
                   type: string
                   description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
               required:
-               - quoteId
+                - quoteId
               additionalProperties: false
         description: |-
           A subset of the outgoing payments schema is accepted as input to create a new outgoing payment.
@@ -709,9 +716,9 @@ paths:
                     description: Thanks for the flowers!
                     externalRef: INV-12876
                     ilpStreamConnection:
-                        id: 'https://openpayments.guide/connections/4a1b0150-db73-49e8-8713-628baa4a17ff'
-                        ilpAddress: g.ilp.iwuyge987y.98y08y
-                        sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
+                      id: 'https://openpayments.guide/connections/4a1b0150-db73-49e8-8713-628baa4a17ff'
+                      ilpAddress: g.ilp.iwuyge987y.98y08y
+                      sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
         '401':
           $ref: '#/components/responses/401'
         '403':
@@ -1035,12 +1042,12 @@ components:
           type: string
           description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
         ilpStreamConnection:
-          oneOf: 
-            -  $ref: '#/components/schemas/ilp-stream-connection'
-            -  type: string
-               format: uri
-               description: Endpoint that returns unique STREAM connection credentials to establish a STREAM connection to the underlying account.
-               readOnly: true
+          oneOf:
+            - $ref: '#/components/schemas/ilp-stream-connection'
+            - type: string
+              format: uri
+              description: Endpoint that returns unique STREAM connection credentials to establish a STREAM connection to the underlying account.
+              readOnly: true
         createdAt:
           type: string
           format: date-time
@@ -1258,12 +1265,12 @@ components:
         - assetScale
       additionalProperties: false
     pagination:
-      description: 'Pagination parameters'
+      description: Pagination parameters
       oneOf:
         - $ref: '#/components/schemas/forward-pagination'
         - $ref: '#/components/schemas/backward-pagination'
     forward-pagination:
-      description: 'Forward pagination parameters'
+      description: Forward pagination parameters
       type: object
       examples:
         - first: 10
@@ -1283,7 +1290,7 @@ components:
         - first
       additionalProperties: false
     backward-pagination:
-      description: 'Backward pagination parameters'
+      description: Backward pagination parameters
       type: object
       examples:
         - last: 10
@@ -1332,62 +1339,6 @@ components:
         - hasNextPage
         - hasPreviousPage
       additionalProperties: false
-    list-incoming-payments:
-      title: list-incoming-payments
-      type: object
-      properties:
-        pagination:
-          $ref: '#/components/schemas/page-info'
-        result:
-          type: array
-          items:
-            $ref: '#/components/schemas/incoming-payment'
-      additionalProperties: false
-      examples:
-        - pagination:
-            startCursor: 241de237-f989-42be-926d-c0c1fca57708
-            endCursor: 315581f8-9967-45a0-9cd3-87b60b6d6414
-            hasPreviousPage: true
-            hasNextPage: false
-          result:
-            - id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
-              accountId: 'https://openpayments.guide/alice/'
-              incomingAmount:
-                value: '250'
-                assetCode: USD
-                assetScale: 2
-              receivedAmount:
-                value: '250'
-                assetCode: USD
-                assetScale: 2
-              completed: true
-              expiresAt: '2022-04-12T23:20:50.52Z'
-              createdAt: '2022-03-12T23:20:50.52Z'
-              updatedAt: '2022-04-01T10:24:36.11Z'
-              description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
-              externalRef: Coffee w/ Mo on 10 March 22
-        - pagination:
-            startCursor: 241de237-f989-42be-926d-c0c1fca57708
-            endCursor: 315581f8-9967-45a0-9cd3-87b60b6d6414
-            hasPreviousPage: false
-            hasNextPage: true
-          result:
-            - id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
-              accountId: 'https://openpayments.guide/alice/'
-              incomingAmount:
-                value: '250'
-                assetCode: USD
-                assetScale: 2
-              receivedAmount:
-                value: '250'
-                assetCode: USD
-                assetScale: 2
-              completed: true
-              expiresAt: '2022-04-12T23:20:50.52Z'
-              createdAt: '2022-03-12T23:20:50.52Z'
-              updatedAt: '2022-04-01T10:24:36.11Z'
-              description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
-              externalRef: Coffee w/ Mo on 10 March 22
   securitySchemes:
     GNAP:
       name: Authorization
