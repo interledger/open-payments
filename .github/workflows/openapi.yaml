@@ -17,6 +17,7 @@ jobs:
 
       - name: Validate open-api-spec.yaml
         run: |
+          echo "{\"extends\":[\"spectral:oas\",\"spectral:asyncapi\"]}" >> .spectral.json
           npx @stoplight/spectral-cli lint open-api-spec.yaml
 
       - name: Validate auth-server-open-api-spec.yaml
