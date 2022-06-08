@@ -8,7 +8,13 @@ info:
   description: |-
     The Open Payments API is a simple REST API with 5 resource types: **account**, **quote**, **connection**, **incoming payment** and **outgoing payment**.  
 
-    The *service endpoint* for the API is always the URL of the account resource and all other resources (except connections) are sub-resources of the account.  
+    The *service endpoint* for the API is always the URL of the account resource and all other resources (except connections) are sub-resources of the account.
+    
+    An incoming payment defines meta data that is automatically attached to payments made into the account under that incoming payment. This facilitates automation of processes like reconciliation of payment into the account with external systems.
+
+    An outgoing payment is an instruction to make a payment out of the account.
+
+    A quote is a commitment from the account provider to deliver a particular amount to a receiver when sending a particular amount from the account. It is only valid for a limited time.
 
     For privacy reasons a connection resource is not a sub-resource of an account.
 
