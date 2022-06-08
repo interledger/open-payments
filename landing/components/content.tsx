@@ -2,6 +2,7 @@ import * as React from 'react'
 
 type props = {
   navigation?: boolean
+  children ?: any
 }
 
 const Content: React.FC<props> = (props) => {

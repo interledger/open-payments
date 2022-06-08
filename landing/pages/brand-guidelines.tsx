@@ -1,7 +1,7 @@
 import React from 'react'
 import { NextPage } from 'next'
 // import { UsersService } from '../services/users'
-import { OpenPaymentsButton, Logo, Decor, Phone, Browser, Footer } from '../components'
+import { OpenPaymentsButton, Decor, Footer } from '../components'
 import { useRouter } from 'next/router'
 
 type sectionProps = {
@@ -22,7 +22,7 @@ const Section: React.FC<sectionProps> = (props) => {
 
 const Divider: React.FC = () => {
   return (
-      <div className="border-b border-gray border-opacity-12 my-20"/>
+      <div className="border-b border-gray/12 my-20"/>
   )
 }
 
@@ -31,7 +31,7 @@ type cardProps = {
 }
 
 const Card: React.FC<cardProps> = (props) => {
-  let className = 'p-8 sm:p-16 bg-white elevation-2 rounded w-full'
+  let className = 'p-8 sm:p-16 bg-white shadow-md rounded w-full'
   return (
     <div className={className}>
       {props.children}
@@ -83,8 +83,8 @@ const Home: NextPage = () => {
             </div>
             <div className="flex flex-col lg:flex-row">
               <div className="w-full lg:w-1/2 flex flex-col pr-0 lg:pr-8">
-                <div className="flex content-center h-48 sm:h-56 mb-4 p-8 border border-gray border-opacity-12 rounded-md">
-                  <img className="mx-auto self-center max-w-full" src="/Open_Payments_standard_logo.svg"/>
+                <div className="flex content-center h-48 sm:h-56 mb-4 p-8 border border-gray/12 rounded-md">
+                  <img className="mx-auto self-center max-w-full" src="/Open_Payments_standard_logo.svg" alt='Logo'/>
                 </div>
                 <div className="text-lg sm:text-xl text-gray mb-16 lg:mb-0">
                   Standard lockup<br/>
@@ -96,8 +96,8 @@ const Home: NextPage = () => {
                 </div>
               </div>
               <div className="w-full lg:w-1/2 flex flex-col pl-0 lg:pl-8">
-                <div className="flex content-center h-48 sm:h-56 mb-4 p-8 border border-gray border-opacity-12 rounded-md">
-                  <img className="mx-auto self-center max-h-full" src="/Open_Payments_logomark.svg"/>
+                <div className="flex content-center h-48 sm:h-56 mb-4 p-8 border border-gray/12 rounded-md">
+                  <img className="mx-auto self-center max-h-full" src="/Open_Payments_logomark.svg" alt='Logo'/>
                 </div>
                 <div className="text-lg sm:text-xl text-gray">
                   Logomark<br/>
@@ -166,8 +166,8 @@ const Home: NextPage = () => {
               </div>
               <div className="flex flex-col lg:flex-row mb-16">
                 <div className="w-full lg:w-1/3 flex flex-col pr-0 lg:pr-8">
-                  <div className="flex content-center h-48 sm:h-56 mb-4 p-8 border border-gray border-opacity-12 rounded-md">
-                    <img className="mx-auto self-center max-w-full" src="/Specification.svg"/>
+                  <div className="flex content-center h-48 sm:h-56 mb-4 p-8 border border-gray/12 rounded-md">
+                    <img className="mx-auto self-center max-w-full" src="/Specification.svg" alt='a specification image'/>
                   </div>
                   <div className="text-lg sm:text-xl text-gray mb-16 lg:mb-0">
                     Specification<br/>
@@ -181,12 +181,12 @@ const Home: NextPage = () => {
                   </div>
                 </div>
                 <div className="w-full lg:w-1/3 flex flex-col px-0 lg:px-8">
-                  <div className="flex content-center h-48 sm:h-56 mb-4 border border-gray border-opacity-12 rounded-md">
+                  <div className="flex content-center h-48 sm:h-56 mb-4 border border-gray/12 rounded-md">
                     <div className="flex content-center w-full h-full rounded-l-md text-white bg-cyan-light">
-                      <OpenPaymentsButton verb="Pay" className="mx-auto self-center rounded-md text-black bg-white elevation-3"/>
+                      <OpenPaymentsButton verb="Pay" className="mx-auto self-center rounded-md text-black bg-white shadow-lg"/>
                     </div>
                     <div className="flex content-center w-full h-full rounded-md text-white">
-                      <OpenPaymentsButton verb="Pay" className="mx-auto self-center rounded-md text-white bg-black elevation-3"/>
+                      <OpenPaymentsButton verb="Pay" className="mx-auto self-center rounded-md text-white bg-black shadow-lg"/>
                     </div>
                   </div>
                   <div className="text-lg sm:text-xl text-gray mb-16 lg:mb-0">
@@ -199,8 +199,8 @@ const Home: NextPage = () => {
                   </div>
                 </div>
                 <div className="w-full lg:w-1/3 flex flex-col pl-0 lg:pl-8">
-                  <div className="flex content-center h-48 sm:h-56 mb-4 border border-gray border-opacity-12 rounded-md">
-                    <div className="flex content-center w-full h-full text-black border-r border-gray border-opacity-12">
+                  <div className="flex content-center h-48 sm:h-56 mb-4 border border-gray/12 rounded-md">
+                    <div className="flex content-center w-full h-full text-black border-r border-gray/12">
                       <span className="w-full text-right mr-2 self-center text-md">
                       Rubik<br/>
                       Regular<br/>
@@ -227,18 +227,18 @@ const Home: NextPage = () => {
             <div className="flex flex-col lg:flex-row">
               <div className="w-full lg:w-1/3 flex flex-col pr-0 lg:pr-8">
                 <div className="flex content-center h-48 sm:h-56 bg-cyan-light rounded-full mb-4">
-                  <OpenPaymentsButton verb="Donate" className="w-8/12 mx-auto self-center rounded-full text-black bg-white elevation-3"/>
+                  <OpenPaymentsButton verb="Donate" className="w-8/12 mx-auto self-center rounded-full text-black bg-white shadow-lg"/>
                 </div>
                 <div className="text-lg sm:text-xl text-gray mb-16 lg:mb-0">
                   Shape<br/>
                   <p className="text-sm text-gray-light mt-4">
-                    Variations in the button's corner radius and shape, to match other elements on the page. Note the larger width and corner radius.
+                    Variations in the button&apos;s corner radius and shape, to match other elements on the page. Note the larger width and corner radius.
                   </p>
                 </div>
               </div>
               <div className="w-full lg:w-1/3 flex flex-col px-0 lg:px-8">
-                <div className="flex content-center h-48 sm:h-56 mb-4 border border-gray border-opacity-12 rounded-md">
-                  <OpenPaymentsButton verb="Tip" className="mx-auto self-center rounded-md text-white bg-black elevation-8"/>
+                <div className="flex content-center h-48 sm:h-56 mb-4 border border-gray/12 rounded-md">
+                  <OpenPaymentsButton verb="Tip" className="mx-auto self-center rounded-md text-white bg-black shadow-2xl"/>
                 </div>
                 <div className="text-lg sm:text-xl text-gray mb-16 lg:mb-0">
                   Elevation<br/>
@@ -249,7 +249,7 @@ const Home: NextPage = () => {
               </div>
               <div className="w-full lg:w-1/3 flex flex-col pl-0 lg:pl-8">
                 <div className="flex content-center h-48 sm:h-56 bg-cyan-light rounded-md mb-4">
-                  <OpenPaymentsButton verb="Subscribe" className="mx-auto self-center rounded-md text-black bg-white elevation-1 hover:elevation-6 focus:elevation-24"/>
+                  <OpenPaymentsButton verb="Subscribe" className="mx-auto self-center rounded-md text-black bg-white shadow-sm hover:shadow-xl focus:shadow-2xl"/>
                 </div>
                 <div className="text-lg sm:text-xl text-gray">
                   State<br/>
@@ -266,42 +266,42 @@ const Home: NextPage = () => {
               The Open Payments pay mark should be used when displaying Open Payments as a payment option in a payment flow.
               <div className="flex flex-col lg:flex-row my-16">
                 <div className="w-full lg:w-1/2 flex flex-col pr-0 lg:pr-8">
-                  <div className="flex content-center h-48 sm:h-56 mb-4 border border-gray border-opacity-12 rounded-md">
-                    <img className="mx-auto self-center w-1/2 sm:w-1/4 " src="/Open_Payments_mark.svg"/>
+                  <div className="flex content-center h-48 sm:h-56 mb-4 border border-gray/12 rounded-md">
+                    <img className="mx-auto self-center w-1/2 sm:w-1/4 " src="/Open_Payments_mark.svg" alt='Logo' />
                   </div>
                   <div className="text-lg sm:text-xl text-gray mb-16 lg:mb-0">
                     Mark<br/>
                     <p className="text-sm text-gray-light mt-4">
-                      Do not change the color or weight of the mark's outline or alter the mark in any way. Use only the mark provided by Open Payments.
+                      Do not change the color or weight of the mark&apos;s outline or alter the mark in any way. Use only the mark provided by Open Payments.
                     </p>
                   </div>
                 </div>
                 <div className="w-full lg:w-1/2 flex flex-col pl-0 lg:pl-8">
-                  <div className="flex flex-col p-4 justify-center h-48 sm:h-56 mb-4 border border-gray border-opacity-12 rounded-md">
+                  <div className="flex flex-col p-4 justify-center h-48 sm:h-56 mb-4 border border-gray/12 rounded-md">
                     <div className="flex">
                       <div className="text-primary align-middle h-12 flex flex-row justify-between" >
                         <div className="flex flex-row">
-                          <img className="m-2 w-2/12 sm:1/12" src="/Open_Payments_mark.svg"/>
+                          <img className="m-2 w-2/12 sm:1/12" src="/Open_Payments_mark.svg" alt='Logo' />
                           <div className="text-xs my-auto">Open Payments</div>
                         </div>
                         <i className={`self-center material-icons`}>navigate_next</i>
                       </div>
                     </div>
-                    <div className="border-b border-gray border-opacity-12"/>
+                    <div className="border-b border-gray/12"/>
                     <div className="flex">
                       <div className="text-primary align-middle h-12 flex flex-row justify-between" >
                         <div className="flex flex-row">
-                          <img className="m-2 w-2/12 sm:1/12" src="/Rafiki Mark.svg"/>
+                          <img className="m-2 w-2/12 sm:1/12" src="/Rafiki Mark.svg" alt='Rafiki logo' />
                           <div className="text-xs my-auto">Generic Pay</div>
                         </div>
                         <i className={`self-center material-icons`}>navigate_next</i>
                       </div>
                     </div>
-                    <div className="border-b border-gray border-opacity-12"/>
+                    <div className="border-b border-gray/12"/>
                     <div className="flex">
                       <div className="text-primary align-middle h-12 flex flex-row justify-between" >
                         <div className="flex flex-row">
-                          <img className="m-2 w-2/12 sm:1/12" src="/CARD Mark.svg"/>
+                          <img className="m-2 w-2/12 sm:1/12" src="/CARD Mark.svg" alt='card logo' />
                           <div className="text-xs my-auto">**** 4242</div>
                         </div>
                         <i className={`self-center material-icons`}>navigate_next</i>
@@ -318,68 +318,9 @@ const Home: NextPage = () => {
               </div>
             </div>
           </Section>
-          {/* <Divider/>
-          <Section header="In text">
-            <div className="text-sm text-gray-light">
-              Do not use the Open Payments mark or any variant of the Open Payments mark in conjunction with the overall name of your application, product, service, or website. 
-              Do not alter or use the Open Payments mark in a way that may be confusing or misleading, and never use Open Payments branding as the most prominent element on your page. 
-            </div>
-            <div className="flex flex-col lg:flex-row">
-              <div className="w-full lg:w-1/2 flex flex-col pr-0 lg:pr-8">
-                <div className="flex content-center h-48 sm:h-56">
-                  <img className="mx-auto self-center" src="/Standard lockup.png"/>
-                </div>
-                <div className="text-lg sm:text-xl text-gray">
-                  Standard lockup<br/>
-                  <p className="text-sm text-gray-light mt-4">
-                    The standard lockup can be used in slide decks and blog posts.
-                    <br/>
-                    Whenever possible, the logo should be represented as a horizontal lockup with a full color logomark and #1E3250 or solid white logotype.
-                  </p>
-                </div>
-              </div>
-              <div className="w-full lg:w-1/2 flex flex-col pl-0 lg:pl-8">
-                <div className="flex content-center h-48 sm:h-56">
-                  <Logo className="w-1/2 sm:w-1/4 mx-auto self-center"/>
-                </div>
-                <div className="text-lg sm:text-xl text-gray">
-                  Logomark<br/>
-                  <p className="text-sm text-gray-light mt-4">
-                    When there is limited vertical and horizontal space, the logomark can be used by itself without the logotype. 
-                  </p>
-                </div>
-              </div>
-            </div>
-          </Section> */}
         </Card>
       </div>
-      <Footer bg="red">
-        <div className="flex flex-col items-center justify-center text-white wrap">
-          <div className="flex flex-row items-start justify-center w-full">
-            <div className="flex flex-col w-card">
-              <div className="text-lg font-medium mb-4">Protocol</div>
-              <a className="text-base md:opacity-60 md:hover:opacity-100 mb-1" href="https://docs.openpayments.guide">
-                Specification
-              </a>
-              <a className="text-base md:opacity-60 md:hover:opacity-100 mb-1" href="https://openpayments.guide/brand-guidelines">
-                Brand guidelines
-              </a>
-            </div>
-            <div className="flex flex-col w-card">
-              <div className="text-lg font-medium mb-4">Community</div>
-              <a className="text-base md:opacity-60 md:hover:opacity-100 mb-1" href="https://communityinviter.com/apps/interledger/interledger-working-groups-slack">
-                Slack
-              </a>
-              <a className="text-base md:opacity-60 md:hover:opacity-100 mb-4" href="https://github.com/adrianhopebailie/open-payments">
-                Github
-              </a>
-            </div>
-          </div>
-          <div className="w-full text-center sm:text-right text-xs">
-            Copyright &copy; 2019 - {new Date().getFullYear()} Interledger Foundation
-          </div>
-        </div>
-      </Footer>
+      <Footer />
     </div>
   )
 }
