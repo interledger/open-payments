@@ -6,7 +6,7 @@ module.exports = {
   ],
   safelist: [
     {
-      pattern: /bg-(gray|red|orange|green|cyan|teal|purple)(-(light|other))?/,
+      pattern: /bg-(primary|gray|red|orange|green|cyan|teal|purple)(-(light|other))?/,
     },
   ],
   prefix: '',
