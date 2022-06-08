@@ -5,17 +5,7 @@
 ---
 
 Open Payments is a protocol that can be implemented by digital wallets to
-facilitate interoperability in the setup of payments for different use cases.
-
-It builds on ideas from the OAuth and OpenID Connect protocols that allow two
-account-servicing entities (wallets, merchants etc.) to interoperate so that a
-user/business with an account at one wallet is able to setup and execute a
-payment to a user/business with an account at another institution.
-
-Open Payments builds on the Interledger protocol which is used to execute the
-payment. Open Payments is focused purely on assisting the two
-Interledger-enabled systems to discover the necessary service endpoints and
-exchange the necessary data to execute a payment for a variety of use cases
+facilitate interoperability in the setup of payments for different use cases
 including:
 
 - [Web Monetization](https://webmonetization.org)
@@ -24,6 +14,16 @@ including:
 - P2P transfers
 - Subscriptions
 - Invoice Payments
+
+An Open Payments server runs two sub-systems, a **resource server** which exposes APIs for performing functions against the 
+underlying accounts and and **authorisation server** which exposes APIs compliant with the 
+[GNAP](https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol) standard for getting grants to access the resource server 
+APIs.
+
+This repository hosts the Open API Specifications of the two APIs which are published along with additional documentation at 
+https://docs.openpayments.guide.
+
+The code for the landing [page](https://openpayments.guide) is in `./landing`.
 
 ## Dependencies
 
