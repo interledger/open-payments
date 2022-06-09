@@ -1,10 +1,12 @@
-name: Deploy docs to readme
+name: Deploy RS API spec to readme.io
 
 on:
   push:
     branches:
       - master
-
+    paths:
+      - open-api-spec.yaml
+  
 jobs:
   sync:
     runs-on: ubuntu-latest
@@ -14,11 +16,6 @@ jobs:
         name: Check out repository
 
       - uses: readmeio/rdme@7.2.0
-        name: Sync Open Payments Docs
+        name: Sync Open Payments API spec
         with:
           rdme: openapi open-api-spec.yaml --key=${{ secrets.README_API_KEY }} --id=${{ secrets.README_OP_API_ID }}
-
-      - uses: readmeio/rdme@7.2.0
-        name: Sync Auth Server Docs
-        with:
-          rdme: openapi auth-server-open-api-spec.yaml --key=${{ secrets.README_API_KEY }} --id=${{ secrets.README_AUTH_API_ID }}

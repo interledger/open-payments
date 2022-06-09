@@ -1,0 +1,41 @@
+# This workflow will do a clean installation of node dependencies, build the Next.js project and export the static site then deploy it to Github Pages
+
+name: Deploy `landing` to Github Pages
+
+on:
+  push:
+    branches: 
+      - "master"
+    paths:
+      - "landing/**"
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout 🛎️
+      uses: actions/checkout@v3
+      
+    - name: Use Node.js v16.x  
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16.x
+        
+    - name: Install dependencies
+      working-directory: ./landing
+      run: |
+        yarn install
+
+    - name: Build and export Next.js site 🔧
+      working-directory: ./landing
+      run: |
+        yarn build
+        touch ./out/.nojekyll
+        
+    - name: Deploy 🚀
+      uses: JamesIves/github-pages-deploy-action@4.3.3
+      with:
+        branch: gh-pages
+        folder: ./landing/out

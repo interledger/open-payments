@@ -20,7 +20,7 @@ const Home: NextPage = () => {
             An inter-wallet <br className="sm:hidden"/> payments protocol
           </div>
           <div className="my-6">
-            <Button onClick={() => window.location.href = 'https://docs.openpayments.dev'}>
+            <Button onClick={() => window.location.href = 'https://docs.openpayments.guide'}>
               Read the docs
             </Button>
           </div>
@@ -42,13 +42,13 @@ const Home: NextPage = () => {
             Open Payments allows easy integration into new or existing applications that require the use of a digital wallet.
             <br/>
             <br/>
-            Facilitating the discovery, setup and authorization of payments between different wallet providers; so you don't have to.
+            Facilitating the discovery, setup and authorization of payments between different wallet providers; so you don&apos;t have to.
           </div>
-          {/* <div className="my-6">
-            <Button onClick={() => router.push('/applications')}>
-              Learn more
+          <div className="my-6">
+            <Button onClick={() => window.location.href = 'https://docs.openpayments.guide'}>
+              Read the docs
             </Button>
-          </div> */}
+          </div>
         </div>
       </div>
       {/* SCREEN 3 */}
@@ -61,54 +61,21 @@ const Home: NextPage = () => {
             Open Payments allows for seamless, secure, easy inter-wallet payments. 
             <br/>
             <br/>
-            Facilitating the discovery, setup and authorization of payments with other wallet providers; so you don't have to.
+            Facilitating the discovery, setup and authorization of payments with other wallet providers; so you don&apos;t have to.
           </div>
-          {/* <div className="my-6">
-            <Button onClick={() => router.push('/wallets')}>
-              Learn more
+          <div className="my-6">
+            <Button onClick={() => window.location.href = 'https://docs.openpayments.guide'}>
+              Read the docs
             </Button>
-          </div> */}
+          </div>
         </div>
         <div className="flex flex-col w-full sm:w-1/2 h-full justify-center items-center self-center sm:items-start sm:self-start sm:pl-12">
           <Browser className="sm:ml-24 my-16 sm:my-0 w-browser-mobile sm:w-browser"/>
         </div>
       </div>
-      <Footer bg="red">
-        <div className="flex flex-col items-center justify-center text-white wrap">
-          <div className="flex flex-row items-start justify-center w-full">
-            <div className="flex flex-col w-card">
-              <div className="text-lg font-medium mb-4">Protocol</div>
-              <a className="text-base md:opacity-60 md:hover:opacity-100 mb-1" href="https://docs.openpayments.dev">
-                Specification
-              </a>
-              <a className="text-base md:opacity-60 md:hover:opacity-100 mb-1" href="https://openpayments.dev/brand-guidelines">
-                Brand guidelines
-              </a>
-            </div>
-            <div className="flex flex-col w-card">
-              <div className="text-lg font-medium mb-4">Community</div>
-              <a className="text-base md:opacity-60 md:hover:opacity-100 mb-1" href="https://communityinviter.com/apps/interledger/interledger-working-groups-slack">
-                Slack
-              </a>
-              <a className="text-base md:opacity-60 md:hover:opacity-100 mb-4" href="https://github.com/adrianhopebailie/open-payments">
-                Github
-              </a>
-            </div>
-          </div>
-          <div className="w-full text-center sm:text-right text-xs">
-            Copyright &copy; 2019 - {new Date().getFullYear()} Interledger Foundation
-          </div>
-        </div>
-      </Footer>
+      <Footer />
     </div>
   )
-}
-
-Home.getInitialProps = async ({ req, res }) => {
-  if (req.method === 'HEAD' || req.method === 'GET') {
-    res.setHeader('Link', '<https://openpayments.dev/payment-manifest.json>; rel="payment-method-manifest"')
-  }
-  return {}
 }
 
 export default Home

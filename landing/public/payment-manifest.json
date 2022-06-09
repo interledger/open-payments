@@ -1,4 +1,0 @@
-{
-  "default_applications": ["https://rafiki.money/manifest.json"],
-  "supported_origins": ["https://rafiki.money", "http://localhost:3000", "https://matdehaast.github.io"]
-}

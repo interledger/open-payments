@@ -1,0 +1,21 @@
+name: Deploy AS API spec to readme.io
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - auth-server-open-api-spec.yaml
+  
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        name: Check out repository
+
+      - uses: readmeio/rdme@7.2.0
+        name: Sync Auth Server API spec
+        with:
+          rdme: openapi auth-server-open-api-spec.yaml --key=${{ secrets.README_API_KEY }} --id=${{ secrets.README_AUTH_API_ID }}

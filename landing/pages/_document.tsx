@@ -14,6 +14,8 @@ class MyDocument extends Document {
     return (
       <Html>
         <Head> 
+          <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Rubik:400,500&display=swap" />
+          <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
           <link rel="shortcut icon" href="/favicon.svg" />
         </Head>
         <body className="bg-surface">

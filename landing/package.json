@@ -4,22 +4,23 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && next export",
+    "lint": "next lint",
     "start": "next start"
   },
   "dependencies": {
-    "@zeit/next-css": "^1.0.1",
-    "next": "9.3.2",
-    "react": "16.13.0",
-    "react-dom": "16.13.0"
+    "next": "12.1.6",
+    "react": "18.1.0",
+    "react-dom": "18.1.0"
   },
   "devDependencies": {
-    "@types/node": "^13.7.7",
-    "@types/react": "^16.9.23",
-    "autoprefixer": "^9.7.2",
-    "postcss-loader": "^3.0.0",
-    "tailwindcss": "^1.4.1",
-    "tailwindcss-elevation": "^0.3.3",
-    "typescript": "^3.8.3"
+    "@types/node": "^17.0.40",
+    "@types/react": "^18.0.12",
+    "autoprefixer": "^10.4.7",
+    "eslint": "8.17.0",
+    "eslint-config-next": "12.1.6",
+    "postcss": "^8.4.14",
+    "tailwindcss": "^3.0.24",
+    "typescript": "^4.7.3"
   }
 }
