@@ -16,4 +16,4 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## Deployment
 
-There is a Github action that will build the static site to the `./out` folder and deploy this to Github pages
+There is a Github action that will build the static site to the `./out` folder and deploy this to Github pages.
