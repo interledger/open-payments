@@ -33,6 +33,9 @@ paths:
                     $ref: '#/components/schemas/interact-response'
                   continue:
                     $ref: '#/components/schemas/continue'
+                required:
+                  - interact
+                  - continue
               examples:
                 Interaction instructions:
                   value:
@@ -136,12 +139,14 @@ paths:
                     $ref: '#/components/schemas/access_token'
                   continue:
                     $ref: '#/components/schemas/continue'
+                required:
+                  - continue
               examples:
                 Continuing After a Completed Interaction:
                   value:
                     access_token:
                       value: OS9M2PMHKUR64TB8N6BW7OZB8CDFONP219RP1LT0
-                      manage: 'https://openpayments.guide/auth/token'
+                      manage: 'https://openpayments.guide/auth/token/dd17a202-9982-4ed9-ae31-564947fb6379'
                       expires_in: 3600
                       access:
                         - type: outgoing-payment
@@ -207,6 +212,9 @@ paths:
                     $ref: '#/components/schemas/access_token'
                   continue:
                     $ref: '#/components/schemas/continue'
+                required:
+                  - access_token
+                  - continue
               examples:
                 Add list access:
                   value:
@@ -315,13 +323,28 @@ paths:
                 properties:
                   access_token:
                     $ref: '#/components/schemas/access_token'
+                required:
+                  - access_token
               examples:
                 New access token:
                   value:
                     access_token:
                       value: OZB8CDFONP219RP1LT0OS9M2PMHKUR64TB8N6BW7
-                      manage: 'https://openpayments.guide/auth/token'
+                      manage: 'https://openpayments.guide/auth/token/8f69de01-5bf9-4603-91ed-eeca101081f1'
                       expires_in: 3600
+                      access:
+                        - type: outgoing-payment
+                          actions:
+                            - create
+                            - read
+                          identifier: 'https://openpayments.guide/alice'
+                          interval: 'R12/2019-08-24T14:15:22Z/P1M'
+                          limits:
+                            receiver: 'https://openpayments.guide/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2'
+                            sendAmount:
+                              value: '500'
+                              assetCode: USD
+                              assetScale: 2
         '401':
           description: Unauthorized
         '404':
@@ -338,8 +361,6 @@ paths:
           description: No Content
         '401':
           description: Unauthorized
-        '404':
-          description: Not Found
       tags:
         - token
   /introspect:
@@ -365,6 +386,11 @@ paths:
                       $ref: '#/components/schemas/access'
                   key:
                     $ref: '#/components/schemas/key'
+                required:
+                  - active
+                  - grant
+                  - access
+                  - key
               examples:
                 Token Introspection:
                   value:
@@ -394,7 +420,7 @@ paths:
                         x: AAAAC3NzaC1lZDI1NTE5AAAAIK0wmN/Cr3JXqmLW7u+g9pTh+wyqDHpSQEIQczXkVx9q
         '404':
           description: Not Found
-      description: 'Introspect an access token to get grant details.'
+      description: Introspect an access token to get grant details.
       requestBody:
         content:
           application/json:
@@ -602,6 +628,7 @@ components:
           description: Unique key to secure the callback.
       required:
         - redirect
+        - finish
     continue:
       title: continue
       type: object
@@ -647,6 +674,8 @@ components:
             $ref: '#/components/schemas/access'
       required:
         - value
+        - manage
+        - access
     access-outgoing:
       title: access-outgoing
       type: object
