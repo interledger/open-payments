@@ -16,6 +16,8 @@ tags:
     description: grant operations
   - name: token
     description: token operations
+  - name: interaction
+    description: User interaction endpoints
 paths:
   /:
     post:
@@ -451,6 +453,55 @@ paths:
                   resource_server: 7C7C4AZ9KHRS6X63AJAO
       tags:
         - token
+  '/interact/{id}':
+    get:
+      summary: Start user interaction
+      tags:
+        - interaction
+        - grant
+      responses:
+        '302':
+          description: Found
+          headers:
+            Location:
+              schema:
+                type: string
+              description: Identity server endpoint
+            Cookie:
+              schema:
+                type: string
+              description: Interaction id
+      operationId: get-interact
+      parameters: []
+      description: 'To start the user interaction for grant approval, this endpoint redirects to identity server for authentication of the user.'
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: Interaction id
+    post:
+      summary: Finish user interaction
+      operationId: post-interact-id
+      responses:
+        '302':
+          description: Found
+          headers:
+            Location:
+              schema:
+                type: string
+              description: Client finish endpoint
+      description: 'To finish the user interaction for grant approval, this endpoint redirects to the client''s finish url.'
+      tags:
+        - interaction
+        - grant
+      parameters:
+        - schema:
+            type: string
+          in: cookie
+          name: interactId
+          description: Interaction id
 components:
   schemas:
     access:
