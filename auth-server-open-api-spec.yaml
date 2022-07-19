@@ -141,8 +141,6 @@ paths:
                     $ref: '#/components/schemas/access_token'
                   continue:
                     $ref: '#/components/schemas/continue'
-                required:
-                  - continue
               examples:
                 Continuing After a Completed Interaction:
                   value:
