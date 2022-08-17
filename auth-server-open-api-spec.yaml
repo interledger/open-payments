@@ -814,6 +814,8 @@ components:
         access:
           type: array
           description: A description of the rights associated with this access token.
+          minItems: 1
+          maxItems: 1
           items:
             $ref: '#/components/schemas/access'
       required:
