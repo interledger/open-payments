@@ -32,6 +32,7 @@ info:
   contact:
     email: tech@interledger.org
 servers:
+  - url: 'https://openpayments.guide/.well-known/pay'
   - url: 'https://openpayments.guide/alice'
 tags:
   - name: payment-pointer
