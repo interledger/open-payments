@@ -3,13 +3,13 @@ name: OpenAPI Validator
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - auth-server-open-api-spec.yaml
       - open-api-spec.yaml
   pull_request:
     branches:
-      - master
+      - main
     paths:
       - auth-server-open-api-spec.yaml
       - open-api-spec.yaml

@@ -5,7 +5,7 @@ name: Deploy `landing` to Github Pages
 on:
   push:
     branches: 
-      - "master"
+      - "main"
     paths:
       - "landing/**"
 
