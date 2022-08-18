@@ -265,6 +265,8 @@ paths:
                       description: Describes the rights that the client instance is requesting for one or more access tokens to be used at RS's.
                       items:
                         $ref: '#/components/schemas/access'
+                      minItems: 1
+                      maxItems: 1
               required:
                 - access_token
             examples:
@@ -611,6 +613,27 @@ components:
         - $ref: '#/components/schemas/access-outgoing'
         - $ref: '#/components/schemas/access-quote'
       description: The access associated with the access token is described using objects that each contain multiple dimensions of access.
+    limits-outgoing-recurring:
+      title: limits-outgoing-recurring
+      description: Open Payments specific property that defines the limits under which outgoing payments can be created.
+      type: object
+      properties:
+        receiver:
+          type: string
+          format: uri
+          description: URL for the incoming payment or ILP STREAM Connection.
+        sendAmount:
+          $ref: '#/components/schemas/amount'
+        receiveAmount:
+          $ref: '#/components/schemas/amount'
+        interval:
+          type: string
+          description: '[ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)'  
+      required: 
+        -  interval
+        -  oneOf
+          - sendAmount
+          - receiveAmount
     limits-outgoing:
       title: limits-outgoing
       description: Open Payments specific property that defines the limits under which outgoing payments can be created.
@@ -624,12 +647,9 @@ components:
           $ref: '#/components/schemas/amount'
         receiveAmount:
           $ref: '#/components/schemas/amount'
-        description:
+        interval:
           type: string
-          description: Outgoing payments MUST be created using this description.
-        externalRef:
-          type: string
-          description: Outgoing payments MUST be created using this external reference.
+          description: '[ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)'  
     amount:
       title: amount
       type: object
@@ -847,10 +867,9 @@ components:
           format: uri
           description: A string identifier indicating a specific resource at the RS.
         limits:
-          $ref: '#/components/schemas/limits-outgoing'
-        interval:
-          type: string
-          description: '[ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)'
+          oneOf: 
+            -  $ref: '#/components/schemas/limits-outgoing'
+            -  $ref: '#/components/schemas/limits-outgoing-recurring'
       required:
         - type
         - actions
