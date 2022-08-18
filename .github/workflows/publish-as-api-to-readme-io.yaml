@@ -3,7 +3,7 @@ name: Deploy AS API spec to readme.io
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - auth-server-open-api-spec.yaml
   
