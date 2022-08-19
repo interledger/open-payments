@@ -509,10 +509,12 @@ components:
           account: '#/components/schemas/access-account'
           incoming-payment: '#/components/schemas/access-incoming'
           outgoing-payment: '#/components/schemas/access-outgoing'
+          quote: '#/components/schemas/access-quote'
       oneOf:
         - $ref: '#/components/schemas/access-account'
         - $ref: '#/components/schemas/access-incoming'
         - $ref: '#/components/schemas/access-outgoing'
+        - $ref: '#components/schemas/access-quote'
       description: The access associated with the access token is described using objects that each contain multiple dimensions of access.
     limits-outgoing:
       title: limits-outgoing
@@ -813,6 +815,33 @@ components:
       required:
         - type
         - actions
+    access-quote:
+      title: access-quote
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - quote
+            description: The type of resource request as a string.  This field defines which other fields are allowed in the request object.
+        actions:
+          type: array
+          description: The types of actions the client will take at the RS as an array of strings.
+          items:
+            type: string
+            enum:
+              - read
+              - create
+        identifier:
+          type: string
+          format: uri
+          description: A string identifier indicating a specific resource at the RS.
+        interval:
+          type: string
+          description: '[ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)'
+        required:
+          - type
+          - actions
     limits-incoming:
       title: limits-incoming
       type: object
