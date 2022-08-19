@@ -9,7 +9,7 @@ info:
     The Open Payments API is a simple REST API with 5 resource types: **account**, **quote**, **connection**, **incoming payment** and **outgoing payment**.  
 
     The *service endpoint* for the API is always the URL of the account resource and all other resources (except connections) are sub-resources of the account.
-    
+
     An incoming payment defines meta data that is automatically attached to payments made into the account under that incoming payment. This facilitates automation of processes like reconciliation of payment into the account with external systems.
 
     An outgoing payment is an instruction to make a payment out of the account.
@@ -164,7 +164,8 @@ paths:
               properties:
                 incomingAmount:
                   description: The maximum amount that should be paid into the account under this incoming payment.
-                  allOf: [ $ref: '#/components/schemas/amount' ]
+                  allOf:
+                    - $ref: '#/components/schemas/amount'
                 expiresAt:
                   type: string
                   description: The date and time when payments into the incoming payment must no longer be accepted.
@@ -1036,10 +1037,12 @@ components:
           default: false
         incomingAmount:
           description: The maximum amount that should be paid into the account under this incoming payment.
-          allOf: [ $ref: '#/components/schemas/amount' ]
+          allOf:
+            - $ref: '#/components/schemas/amount'
         receivedAmount:
           description: The total amount that has been paid into the account under this incoming payment.
-          allOf: [ $ref: '#/components/schemas/amount' ]
+          allOf:
+            - $ref: '#/components/schemas/amount'
         expiresAt:
           type: string
           description: The date and time when payments under this incoming payment will no longer be accepted.
@@ -1052,12 +1055,12 @@ components:
           description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number.
         ilpStreamConnection:
           description: The Interledger STREAM Connection to use to pay into the account under this incoming payment
-          oneOf: 
-            -  $ref: '#/components/schemas/ilp-stream-connection'
-            -  type: string
-               format: uri
-               description: Endpoint that returns unique STREAM connection credentials to establish a STREAM connection to the underlying account.
-               readOnly: true
+          oneOf:
+            - $ref: '#/components/schemas/ilp-stream-connection'
+            - type: string
+              format: uri
+              description: Endpoint that returns unique STREAM connection credentials to establish a STREAM connection to the underlying account.
+              readOnly: true
         createdAt:
           type: string
           format: date-time
@@ -1141,13 +1144,16 @@ components:
           description: The URL of the incoming payment or ILP STREAM Connection that is being paid.
         receiveAmount:
           description: The total amount that should be received by the receiver when this outgoing payment has been paid.
-          allOf: [ $ref: '#/components/schemas/amount' ]
+          allOf:
+            - $ref: '#/components/schemas/amount'
         sendAmount:
           description: The total amount that should be sent when this outgoing payment has been paid.
-          allOf: [ $ref: '#/components/schemas/amount' ]
+          allOf:
+            - $ref: '#/components/schemas/amount'
         sentAmount:
           description: The total amount that has been sent under this outgoing payment.
-          allOf: [ $ref: '#/components/schemas/amount' ]
+          allOf:
+            - $ref: '#/components/schemas/amount'
         description:
           type: string
           description: Human readable description of the outgoing payment that will be visible to the account holder and shared with the receiver.
@@ -1220,10 +1226,12 @@ components:
           description: The URL of the incoming payment or ILP Stream Connection that would be paid.
         receiveAmount:
           description: The total amount that should be received by the receiver.
-          allOf: [ $ref: '#/components/schemas/amount' ]
+          allOf:
+            - $ref: '#/components/schemas/amount'
         sendAmount:
           description: The total amount that should be sent by the sender.
-          allOf: [ $ref: '#/components/schemas/amount' ]
+          allOf:
+            - $ref: '#/components/schemas/amount'
         expiresAt:
           type: string
           description: The date and time when the calculated `sendAmount` is no longer valid.
@@ -1265,7 +1273,7 @@ components:
         value:
           type: string
           format: uint64
-          description: The amount, scaled by the given scale.
+          description: 'The amount, scaled by the given scale.'
         assetCode:
           type: string
           description: The asset code of the amount. This SHOULD be an ISO4217 currency code.
@@ -1290,19 +1298,15 @@ components:
       examples:
         - first: 10
           cursor: 315581f8-9967-45a0-9cd3-87b60b6d6414
+      additionalProperties: false
       properties:
         first:
           type: integer
-          minimum: 1
-          maximum: 100
-          default: 10
           description: The number of items to return.
         cursor:
           type: string
           minLength: 1
           description: The cursor key to list from.
-      required:
-        - first
       additionalProperties: false
     backward-pagination:
       description: Backward pagination parameters
@@ -1313,9 +1317,6 @@ components:
       properties:
         last:
           type: integer
-          minimum: 1
-          maximum: 100
-          default: 10
           description: The number of items to return.
         cursor:
           type: string
