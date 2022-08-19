@@ -849,13 +849,11 @@ components:
             enum:
               - read
               - create
+              - list
         identifier:
           type: string
           description: A string identifier indicating a specific resource at the RS.
           format: uri
-        interval:
-          type: string
-          description: '[ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)'
       required:
         - type
         - actions
