@@ -815,33 +815,6 @@ components:
       required:
         - type
         - actions
-    access-quote:
-      title: access-quote
-      type: object
-      properties:
-        type:
-          type: string
-          enum:
-            - quote
-            description: The type of resource request as a string.  This field defines which other fields are allowed in the request object.
-        actions:
-          type: array
-          description: The types of actions the client will take at the RS as an array of strings.
-          items:
-            type: string
-            enum:
-              - read
-              - create
-        identifier:
-          type: string
-          format: uri
-          description: A string identifier indicating a specific resource at the RS.
-        interval:
-          type: string
-          description: '[ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)'
-        required:
-          - type
-          - actions
     limits-incoming:
       title: limits-incoming
       type: object
@@ -859,6 +832,33 @@ components:
           type: string
           description: Incoming payments MUST be created using this external reference.
       description: 'Open Payments specific property that defines the limits under which incoming payments can be created. '
+    access-quote:
+      title: access-quote
+      type: object
+      properties:
+        type:
+          type: string
+          description: The type of resource request as a string.  This field defines which other fields are allowed in the request object.
+          enum:
+            - quote
+        actions:
+          type: array
+          description: The types of actions the client will take at the RS as an array of strings.
+          items:
+            type: string
+            enum:
+              - read
+              - create
+        identifier:
+          type: string
+          description: A string identifier indicating a specific resource at the RS.
+          format: uri
+        interval:
+          type: string
+          description: '[ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)'
+      required:
+        - type
+        - actions
   securitySchemes:
     GNAP:
       name: Authorization
