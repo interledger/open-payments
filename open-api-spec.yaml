@@ -32,7 +32,16 @@ info:
   contact:
     email: tech@interledger.org
 servers:
-  - url: 'https://openpayments.guide'
+  - url: '{paymentPointer}'
+    description: "Server for when Payment Pointer has a pathname  (ie https://openpayments.guide/alice)"
+    variables:
+      paymentPointer:
+        default: 'openpayments.guide/alice'
+  - url: '{paymentPointer}/.well-known/pay'
+    description: "Server for when Payment Pointer has no pathname (ie https://openpayments.guide)"
+    variables:
+      paymentPointer:
+        default: 'openpayments.guide'
 tags:
   - name: payment-pointer
     description: payment pointer operations
@@ -76,6 +85,8 @@ paths:
         The content should be slow changing and cacheable for long periods. Servers SHOULD use cache control headers.
       security: []
   '/connections/{connectionId}':
+    servers:
+      - url: https://openpayments.guide/
     get:
       summary: Get ILP STREAM credentials for a connection
       tags:
@@ -97,6 +108,8 @@ paths:
           description: Connection Not Found
       operationId: get-ilp-stream-connection
       description: |-
+        *NB* Use server url specific to this path.
+
         Fetch new connection credentials for an ILP STREAM connection.
 
         A connection is an ephemeral resource that is created to accommodate new incoming payments.
@@ -127,7 +140,7 @@ paths:
                 New Incoming Payment for $25:
                   value:
                     id: 'http://openpayments.guide/alice/incoming-payments/08394f02-7b7b-45e2-b645-51d04e7c330c'
-                    paymentPointer: 'http://openpayments.guide/alice/'
+                    paymentPointer: 'https://openpayments.guide/alice/'
                     incomingAmount:
                       value: '2500'
                       assetCode: USD
@@ -140,7 +153,7 @@ paths:
                     expiresAt: '2022-02-03T23:20:50.52Z'
                     externalRef: INV2022-02-0137
                     ilpStreamConnection:
-                      id: 'http://openpayments.guide/connections/ff394f02-7b7b-45e2-b645-51d04e7c345c'
+                      id: 'https://openpayments.guide/connections/ff394f02-7b7b-45e2-b645-51d04e7c345c'
                       ilpAddress: g.ilp.iwuyge987y.98y08y
                       sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
                     createdAt: '2022-03-12T23:20:50.52Z'
@@ -783,7 +796,7 @@ paths:
                     id: 'https://openpayments.guide/bob/outgoing-payments/3859b39e-4666-4ce5-8745-72f1864c5371'
                     paymentPointer: 'https://openpayments.guide/bob/'
                     failed: false
-                    receiver: 'http://openpayments.guide/alice/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
+                    receiver: 'https://openpayments.guide/alice/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
                     sendAmount:
                       value: '2500'
                       assetCode: USD
@@ -833,7 +846,7 @@ paths:
                   value:
                     id: 'https://openpayments.guide/bob/quotes/3859b39e-4666-4ce5-8745-72f1864c5371'
                     paymentPointer: 'https://openpayments.guide/bob/'
-                    receiver: 'http://openpayments.guide/alice/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
+                    receiver: 'https://openpayments.guide/alice/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
                     sendAmount:
                       value: '2500'
                       assetCode: USD
