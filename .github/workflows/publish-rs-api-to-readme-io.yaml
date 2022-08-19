@@ -3,7 +3,7 @@ name: Deploy RS API spec to readme.io
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - open-api-spec.yaml
   
