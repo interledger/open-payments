@@ -1302,6 +1302,7 @@ components:
       properties:
         first:
           type: integer
+          minimum: 1
           description: The number of items to return.
         cursor:
           type: string
@@ -1316,13 +1317,13 @@ components:
       properties:
         last:
           type: integer
+          minimum: 1
           description: The number of items to return.
         cursor:
           type: string
           minLength: 1
           description: The cursor key to list from.
       required:
-        - last
         - cursor
       additionalProperties: false
     page-info:
