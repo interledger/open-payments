@@ -514,7 +514,7 @@ components:
         - $ref: '#/components/schemas/access-account'
         - $ref: '#/components/schemas/access-incoming'
         - $ref: '#/components/schemas/access-outgoing'
-        - $ref: '#components/schemas/access-quote'
+        - $ref: '#/components/schemas/access-quote'
       description: The access associated with the access token is described using objects that each contain multiple dimensions of access.
     limits-outgoing:
       title: limits-outgoing
