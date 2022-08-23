@@ -391,7 +391,6 @@ paths:
                     description: Opaque client identifier.
                 required:
                   - active
-                  - client_id
               examples:
                 Token Introspection:
                   value:
