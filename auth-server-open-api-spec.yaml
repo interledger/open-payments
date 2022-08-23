@@ -386,8 +386,12 @@ paths:
                       $ref: '#/components/schemas/access'
                   key:
                     $ref: '#/components/schemas/key'
+                  client_id:
+                    type: string
+                    description: Opaque client identifier.
                 required:
                   - active
+                  - client_id
               examples:
                 Token Introspection:
                   value:
@@ -415,6 +419,7 @@ paths:
                         use: sig
                         crv: Ed25519
                         x: AAAAC3NzaC1lZDI1NTE5AAAAIK0wmN/Cr3JXqmLW7u+g9pTh+wyqDHpSQEIQczXkVx9q
+                    client_id: 581a1dd9-aef5-4b1a-9d78-c1afc4a5fdbf
         '404':
           description: Not Found
       description: Introspect an access token to get grant details.
