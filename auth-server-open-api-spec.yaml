@@ -629,6 +629,7 @@ components:
             x:
               type: string
               description: Public key encoded using the `base64url` encoding.
+          additionalProperties: false
       required:
         - proof
         - jwk
