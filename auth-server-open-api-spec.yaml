@@ -514,10 +514,12 @@ components:
           account: '#/components/schemas/access-account'
           incoming-payment: '#/components/schemas/access-incoming'
           outgoing-payment: '#/components/schemas/access-outgoing'
+          quote: '#/components/schemas/access-quote'
       oneOf:
         - $ref: '#/components/schemas/access-account'
         - $ref: '#/components/schemas/access-incoming'
         - $ref: '#/components/schemas/access-outgoing'
+        - $ref: '#/components/schemas/access-quote'
       description: The access associated with the access token is described using objects that each contain multiple dimensions of access.
     limits-outgoing:
       title: limits-outgoing
@@ -835,6 +837,30 @@ components:
           type: string
           description: Incoming payments MUST be created using this external reference.
       description: 'Open Payments specific property that defines the limits under which incoming payments can be created. '
+    access-quote:
+      title: access-quote
+      type: object
+      properties:
+        type:
+          type: string
+          description: The type of resource request as a string.  This field defines which other fields are allowed in the request object.
+          enum:
+            - quote
+        actions:
+          type: array
+          description: The types of actions the client will take at the RS as an array of strings.
+          items:
+            type: string
+            enum:
+              - read
+              - create
+        identifier:
+          type: string
+          description: A string identifier indicating a specific resource at the RS.
+          format: uri
+      required:
+        - type
+        - actions
   securitySchemes:
     GNAP:
       name: Authorization
