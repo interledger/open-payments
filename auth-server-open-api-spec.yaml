@@ -849,7 +849,6 @@ components:
             enum:
               - read
               - create
-              - list
         identifier:
           type: string
           description: A string identifier indicating a specific resource at the RS.
