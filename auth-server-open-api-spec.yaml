@@ -732,6 +732,15 @@ components:
             x:
               type: string
               description: Public key encoded using the `base64url` encoding.
+            nbf:
+              type: integer
+              description: UNIX timestamp indicating the earliest this key may be used.
+            exp:
+              type: integer
+              description: UNIX timestamp indicating the latest this key may be used.
+            revoked:
+              type: boolean
+              description: The revocation status of the key.
           additionalProperties: false
       required:
         - proof
