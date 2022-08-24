@@ -732,6 +732,14 @@ components:
             x:
               type: string
               description: Public key encoded using the `base64url` encoding.
+            key_ops:
+              type: array
+              description: Array of allowed operations this key may be used for.
+              items:
+                type: string
+                enum:
+                  - sign
+                  - verify
             nbf:
               type: integer
               description: UNIX timestamp indicating the earliest this key may be used.
