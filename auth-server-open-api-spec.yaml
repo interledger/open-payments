@@ -235,10 +235,6 @@ paths:
                               value: '500'
                               assetCode: USD
                               assetScale: 2
-                        - type: outgoing-payment
-                          actions:
-                            - list
-                          identifier: 'https://openpayments.guide/alice'
                     continue:
                       access_token:
                         value: 33OMUKMKSKU80UPRY5NM
@@ -265,6 +261,8 @@ paths:
                       description: Describes the rights that the client instance is requesting for one or more access tokens to be used at RS's.
                       items:
                         $ref: '#/components/schemas/access'
+                      minItems: 1
+                      maxItems: 1
               required:
                 - access_token
             examples:
@@ -284,10 +282,6 @@ paths:
                             value: '500'
                             assetCode: USD
                             assetScale: 2
-                      - type: outgoing-payment
-                        actions:
-                          - list
-                        identifier: 'https://openpayments.guide/alice'
       tags:
         - grant
     delete:
@@ -611,6 +605,27 @@ components:
         - $ref: '#/components/schemas/access-outgoing'
         - $ref: '#/components/schemas/access-quote'
       description: The access associated with the access token is described using objects that each contain multiple dimensions of access.
+    limits-outgoing-recurring:
+      title: limits-outgoing-recurring
+      description: Open Payments specific property that defines the limits under which outgoing payments can be created.
+      type: object
+      properties:
+        receiver:
+          type: string
+          format: uri
+          description: URL for the incoming payment or ILP STREAM Connection.
+        sendAmount:
+          $ref: '#/components/schemas/amount'
+        receiveAmount:
+          $ref: '#/components/schemas/amount'
+        interval:
+          type: string
+          description: '[ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)'  
+      required: 
+        -  interval
+        -  oneOf
+          - sendAmount
+          - receiveAmount
     limits-outgoing:
       title: limits-outgoing
       description: Open Payments specific property that defines the limits under which outgoing payments can be created.
@@ -624,12 +639,9 @@ components:
           $ref: '#/components/schemas/amount'
         receiveAmount:
           $ref: '#/components/schemas/amount'
-        description:
+        interval:
           type: string
-          description: Outgoing payments MUST be created using this description.
-        externalRef:
-          type: string
-          description: Outgoing payments MUST be created using this external reference.
+          description: '[ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)'  
     amount:
       title: amount
       type: object
@@ -814,6 +826,8 @@ components:
         access:
           type: array
           description: A description of the rights associated with this access token.
+          minItems: 1
+          maxItems: 1
           items:
             $ref: '#/components/schemas/access'
       required:
@@ -845,13 +859,13 @@ components:
           format: uri
           description: A string identifier indicating a specific resource at the RS.
         limits:
-          $ref: '#/components/schemas/limits-outgoing'
-        interval:
-          type: string
-          description: '[ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)'
+          oneOf: 
+            -  $ref: '#/components/schemas/limits-outgoing'
+            -  $ref: '#/components/schemas/limits-outgoing-recurring'
       required:
         - type
         - actions
+        - identifier
     access-incoming:
       title: access-incoming
       type: object
@@ -877,11 +891,26 @@ components:
           type: string
           format: uri
           description: A string identifier indicating a specific resource at the RS.
-        limits:
-          $ref: '#/components/schemas/limits-incoming'
-        interval:
+      required:
+        - type
+        - actions
+    access-quote:
+      title: access-quote
+      type: object
+      properties:
+        type:
           type: string
-          description: '[ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)'
+          enum:
+            - quote
+          description: The type of resource request as a string.  This field defines which other fields are allowed in the request object.
+        actions:
+          type: array
+          description: The types of actions the client instance will take at the RS as an array of strings.
+          items:
+            type: string
+            enum:
+              - create
+              - read
       required:
         - type
         - actions
@@ -905,50 +934,6 @@ components:
           type: string
           format: uri
           description: A string identifier indicating a specific resource at the RS.
-        interval:
-          type: string
-          description: '[ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)'
-      required:
-        - type
-        - actions
-    limits-incoming:
-      title: limits-incoming
-      type: object
-      properties:
-        incomingAmount:
-          $ref: '#/components/schemas/amount'
-        expiresAt:
-          type: string
-          format: date-time
-          description: The date and time when the incoming payment will not accept any payments anymore.
-        description:
-          type: string
-          description: Incoming payments MUST be created using this description.
-        externalRef:
-          type: string
-          description: Incoming payments MUST be created using this external reference.
-      description: 'Open Payments specific property that defines the limits under which incoming payments can be created. '
-    access-quote:
-      title: access-quote
-      type: object
-      properties:
-        type:
-          type: string
-          description: The type of resource request as a string.  This field defines which other fields are allowed in the request object.
-          enum:
-            - quote
-        actions:
-          type: array
-          description: The types of actions the client will take at the RS as an array of strings.
-          items:
-            type: string
-            enum:
-              - read
-              - create
-        identifier:
-          type: string
-          description: A string identifier indicating a specific resource at the RS.
-          format: uri
       required:
         - type
         - actions
