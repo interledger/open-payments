@@ -235,10 +235,6 @@ paths:
                               value: '500'
                               assetCode: USD
                               assetScale: 2
-                        - type: outgoing-payment
-                          actions:
-                            - list
-                          identifier: 'https://openpayments.guide/alice'
                     continue:
                       access_token:
                         value: 33OMUKMKSKU80UPRY5NM
@@ -286,10 +282,6 @@ paths:
                             value: '500'
                             assetCode: USD
                             assetScale: 2
-                      - type: outgoing-payment
-                        actions:
-                          - list
-                        identifier: 'https://openpayments.guide/alice'
       tags:
         - grant
     delete:
