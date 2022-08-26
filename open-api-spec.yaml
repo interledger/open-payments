@@ -61,7 +61,7 @@ paths:
         - payment-pointer
       responses:
         '200':
-          description: Account Found
+          description: Payment Pointer Found
           content:
             application/json:
               schema:
@@ -75,7 +75,7 @@ paths:
                     assetScale: 2
                     authServer: 'https://openpayments.guide/auth'
         '404':
-          description: Account Not Found
+          description: Payment Pointer Not Found
       operationId: get-payment-pointer
       description: |-
         Retrieve the public information of the Payment Pointer.
@@ -875,7 +875,7 @@ paths:
 components:
   schemas:
     payment-pointer:
-      title: Account
+      title: Payment Pointer
       type: object
       description: A **payment pointer** resource is the root of the API and contains the public details of the financial account represented by the Payment Pointer that is also the service endpoint URL.
       properties:
