@@ -135,7 +135,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/incoming-payment'
+                $ref: '#/components/schemas/incoming-payment-with-connection'
               examples:
                 New Incoming Payment for $25:
                   value:
@@ -217,7 +217,7 @@ paths:
                   result:
                     type: array
                     items:
-                      $ref: '#/components/schemas/incoming-payment'
+                      $ref: '#/components/schemas/incoming-payment-with-connection-url'
               examples:
                 forward pagination:
                   value:
@@ -271,6 +271,7 @@ paths:
                           assetCode: USD
                           assetScale: 2
                         completed: true
+                        ilpStreamConnection: 'https://openpayments.guide/connections/1f6df9d5-c9a4-4c80-a354-86b915a04ff8'
                         expiresAt: '2022-04-12T23:20:50.52Z'
                         createdAt: '2022-03-12T23:20:50.52Z'
                         updatedAt: '2022-04-01T10:24:36.11Z'
@@ -286,6 +287,7 @@ paths:
                           assetCode: USD
                           assetScale: 2
                         completed: true
+                        ilpStreamConnection: 'https://openpayments.guide/connections/376df9d5-c9a4-4c80-a354-86b915a04ff8'
                         expiresAt: '2022-04-12T23:20:50.52Z'
                         createdAt: '2022-03-12T23:20:50.52Z'
                         updatedAt: '2022-04-01T10:24:36.11Z'
@@ -688,7 +690,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/incoming-payment'
+                $ref: '#/components/schemas/incoming-payment-with-connection'
               examples:
                 Incoming Payment for $25 with $12.34 received so far:
                   value:
@@ -740,6 +742,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/incoming-payment'
+                additionalProperties: false
               examples:
                 Completed Incoming Payment:
                   value:
@@ -963,10 +966,6 @@ components:
           updatedAt: '2022-04-01T10:24:36.11Z'
           description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
           externalRef: Coffee w/ Mo on 10 March 22
-          ilpStreamConnection:
-            id: 'https://openpayments.guide/connections/032da9d5-c9a4-4c80-a354-86b915a04ff8'
-            ilpApddress: g.ilp.iwuyge987y.98y08y
-            sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
         - id: 'https://openpayments.guide/alice/incoming-payments/456da9d5-c9a4-4c80-a354-86b915a04ff8'
           paymentPointer: 'https://openpayments.guide/alice/'
           incomingAmount:
@@ -980,7 +979,6 @@ components:
           expiresAt: '2022-04-12T23:20:50.52Z'
           createdAt: '2022-03-12T23:20:50.52Z'
           updatedAt: '2022-03-12T23:20:50.52Z'
-          ilpStreamConnection: 'https://openpayments.guide/connections/782da9d5-c9a4-4c80-a354-86b915a04ff8'
       properties:
         id:
           type: string
@@ -1014,14 +1012,6 @@ components:
         externalRef:
           type: string
           description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number.
-        ilpStreamConnection:
-          description: The Interledger STREAM Connection to use to pay into the payment pointer under this incoming payment
-          oneOf:
-            - $ref: '#/components/schemas/ilp-stream-connection'
-            - type: string
-              format: uri
-              description: Endpoint that returns unique STREAM connection credentials to establish a STREAM connection to the underlying account.
-              readOnly: true
         createdAt:
           type: string
           format: date-time
@@ -1037,7 +1027,71 @@ components:
         - receivedAmount
         - createdAt
         - updatedAt
-      additionalProperties: false
+    incoming-payment-with-connection:
+      title: Incoming Payment with Connection
+      description: 'An **incoming payment** resource with the Interledger STREAM Connection to use to pay into the payment pointer under this incoming payment.'
+      type: object
+      examples:
+        - id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
+          paymentPointer: 'https://openpayments.guide/alice/'
+          incomingAmount:
+            value: '250'
+            assetCode: USD
+            assetScale: 2
+          receivedAmount:
+            value: '250'
+            assetCode: USD
+            assetScale: 2
+          completed: true
+          expiresAt: '2022-04-12T23:20:50.52Z'
+          createdAt: '2022-03-12T23:20:50.52Z'
+          updatedAt: '2022-04-01T10:24:36.11Z'
+          description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
+          externalRef: Coffee w/ Mo on 10 March 22
+          ilpStreamConnection:
+            id: 'https://openpayments.guide/connections/032da9d5-c9a4-4c80-a354-86b915a04ff8'
+            ilpApddress: g.ilp.iwuyge987y.98y08y
+            sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
+      allOf:
+      - $ref: '#/components/schemas/incoming-payment'
+      - type: object
+        properties:
+          ilpStreamConnection:
+            $ref: '#/components/schemas/ilp-stream-connection'
+        required:
+          - ilpStreamConnection
+      unevaluatedProperties: false
+    incoming-payment-with-connection-url:
+      title: Incoming Payment with Connection
+      description: 'An **incoming payment** resource with the url for the Interledger STREAM Connection resource to use to pay into the payment pointer under this incoming payment.'
+      type: object
+      examples:
+        - id: 'https://openpayments.guide/alice/incoming-payments/456da9d5-c9a4-4c80-a354-86b915a04ff8'
+          paymentPointer: 'https://openpayments.guide/alice/'
+          incomingAmount:
+            value: '2500'
+            assetCode: USD
+            assetScale: 2
+          receivedAmount:
+            value: '0'
+            assetCode: USD
+            assetScale: 2
+          expiresAt: '2022-04-12T23:20:50.52Z'
+          createdAt: '2022-03-12T23:20:50.52Z'
+          updatedAt: '2022-03-12T23:20:50.52Z'
+          ilpStreamConnection: 'https://openpayments.guide/connections/782da9d5-c9a4-4c80-a354-86b915a04ff8'
+      allOf:
+        - $ref: '#/components/schemas/incoming-payment'
+        - type: object
+          properties:
+            ilpStreamConnection:
+              type: string
+              format: uri
+              description: Endpoint that returns unique STREAM connection credentials to establish a STREAM connection to the underlying account.
+              readOnly: true
+          required:
+            - ilpStreamConnection
+      unevaluatedProperties: false
     outgoing-payment:
       title: Outgoing Payment
       description: 'An **outgoing payment** resource represents a payment that will be, is currently being, or has previously been, sent from the payment pointer.'
