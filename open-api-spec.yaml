@@ -170,8 +170,7 @@ paths:
               properties:
                 incomingAmount:
                   description: The maximum amount that should be paid into the payment pointer under this incoming payment.
-                  allOf:
-                    - $ref: '#/components/schemas/amount'
+                  $ref: '#/components/schemas/amount'
                 expiresAt:
                   type: string
                   description: The date and time when payments into the incoming payment must no longer be accepted.
@@ -996,12 +995,10 @@ components:
           default: false
         incomingAmount:
           description: The maximum amount that should be paid into the payment pointer under this incoming payment.
-          allOf:
-            - $ref: '#/components/schemas/amount'
+          $ref: '#/components/schemas/amount'
         receivedAmount:
           description: The total amount that has been paid into the payment pointer under this incoming payment.
-          allOf:
-            - $ref: '#/components/schemas/amount'
+          $ref: '#/components/schemas/amount'
         expiresAt:
           type: string
           description: The date and time when payments under this incoming payment will no longer be accepted.
@@ -1159,16 +1156,13 @@ components:
           description: The URL of the incoming payment or ILP STREAM Connection that is being paid.
         receiveAmount:
           description: The total amount that should be received by the receiver when this outgoing payment has been paid.
-          allOf:
-            - $ref: '#/components/schemas/amount'
+          $ref: '#/components/schemas/amount'
         sendAmount:
           description: The total amount that should be sent when this outgoing payment has been paid.
-          allOf:
-            - $ref: '#/components/schemas/amount'
+          $ref: '#/components/schemas/amount'
         sentAmount:
           description: The total amount that has been sent under this outgoing payment.
-          allOf:
-            - $ref: '#/components/schemas/amount'
+          $ref: '#/components/schemas/amount'
         description:
           type: string
           description: Human readable description of the outgoing payment that will be visible to the account holder and shared with the receiver.
@@ -1241,12 +1235,10 @@ components:
           description: The URL of the incoming payment or ILP Stream Connection that would be paid.
         receiveAmount:
           description: The total amount that should be received by the receiver.
-          allOf:
-            - $ref: '#/components/schemas/amount'
+          $ref: '#/components/schemas/amount'
         sendAmount:
           description: The total amount that should be sent by the sender.
-          allOf:
-            - $ref: '#/components/schemas/amount'
+          $ref: '#/components/schemas/amount'
         expiresAt:
           type: string
           description: The date and time when the calculated `sendAmount` is no longer valid.
