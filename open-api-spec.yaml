@@ -1055,8 +1055,6 @@ components:
         properties:
           ilpStreamConnection:
             $ref: '#/components/schemas/ilp-stream-connection'
-        required:
-          - ilpStreamConnection
       unevaluatedProperties: false
     incoming-payment-with-connection-url:
       title: Incoming Payment with Connection
@@ -1086,8 +1084,6 @@ components:
               format: uri
               description: Endpoint that returns unique STREAM connection credentials to establish a STREAM connection to the underlying account.
               readOnly: true
-          required:
-            - ilpStreamConnection
       unevaluatedProperties: false
     outgoing-payment:
       title: Outgoing Payment
