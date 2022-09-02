@@ -24,20 +24,29 @@ paths:
       summary: Grant Request
       operationId: post
       responses:
-        '201':
-          description: Created
+        '200':
+          description: OK
           content:
             application/json:
               schema:
+                oneOf:
+                  - properties:
+                      interact:
+                        $ref: '#/components/schemas/interact-response'
+                      continue:
+                        $ref: '#/components/schemas/continue'
+                    required:
+                      - interact
+                      - continue
+                  - properties:
+                      access_token:
+                        $ref: '#/components/schemas/access_token'
+                      continue:
+                        $ref: '#/components/schemas/continue'
+                    required:
+                      - access_token
+                      - continue
                 type: object
-                properties:
-                  interact:
-                    $ref: '#/components/schemas/interact-response'
-                  continue:
-                    $ref: '#/components/schemas/continue'
-                required:
-                  - interact
-                  - continue
               examples:
                 Interaction instructions:
                   value:
@@ -65,7 +74,7 @@ paths:
                   properties:
                     access:
                       type: array
-                      description: Describes the rights that the client instance is requesting for one or more access tokens to be used at RS's.
+                      description: Describes the rights that the client instance is requesting for one or more access tokens to be used at RS's. Each access type must only be represented once within the access array.
                       items:
                         $ref: '#/components/schemas/access'
                 client:
@@ -75,7 +84,6 @@ paths:
               required:
                 - access_token
                 - client
-                - interact
             examples:
               Grant for recurring fixed payment:
                 value:
@@ -141,6 +149,8 @@ paths:
                     $ref: '#/components/schemas/access_token'
                   continue:
                     $ref: '#/components/schemas/continue'
+                required:
+                  - continue
               examples:
                 Continuing After a Completed Interaction:
                   value:
@@ -532,7 +542,7 @@ paths:
         '404':
           description: Not Found
       operationId: get-grant
-      description: 'Retrieve the grant associated with the provided interactId'
+      description: Retrieve the grant associated with the provided interactId
       parameters:
         - schema:
             type: string
@@ -557,7 +567,7 @@ paths:
           description: Unauthorized
         '404':
           description: Not Found
-      description: 'Submit the RO''s consent choice for a particular grant'
+      description: Submit the RO's consent choice for a particular grant
       tags:
         - interaction
         - grant
@@ -594,7 +604,6 @@ components:
           outgoing-payment: '#/components/schemas/access-outgoing'
           quote: '#/components/schemas/access-quote'
       oneOf:
-        - $ref: '#/components/schemas/access-account'
         - $ref: '#/components/schemas/access-incoming'
         - $ref: '#/components/schemas/access-outgoing'
         - $ref: '#/components/schemas/access-quote'
@@ -614,12 +623,10 @@ components:
           $ref: '#/components/schemas/amount'
         interval:
           type: string
-          description: '[ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)'  
-      required: 
-        -  interval
-        -  oneOf
-          - sendAmount
-          - receiveAmount
+          description: '[ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)'
+      required:
+        - interval
+        - oneOf - sendAmount - receiveAmount
     limits-outgoing:
       title: limits-outgoing
       description: Open Payments specific property that defines the limits under which outgoing payments can be created.
@@ -635,7 +642,7 @@ components:
           $ref: '#/components/schemas/amount'
         interval:
           type: string
-          description: '[ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)'  
+          description: '[ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)'
     amount:
       title: amount
       type: object
@@ -680,7 +687,7 @@ components:
           description: The public key of the client instance to be used in this request or a reference to a key.
       description: |-
         Describes the client instance that is making this request, including the key that the client instance will use to protect this request and any continuation requests at the AS and any user-facing information about the client instance used in interactions.
-        
+
         When sending a non-continuation request to the AS, the client instance MUST identify itself by including the client field of the request and by signing the request.
     key:
       title: key
@@ -870,9 +877,9 @@ components:
           format: uri
           description: A string identifier indicating a specific resource at the RS.
         limits:
-          oneOf: 
-            -  $ref: '#/components/schemas/limits-outgoing'
-            -  $ref: '#/components/schemas/limits-outgoing-recurring'
+          oneOf:
+            - $ref: '#/components/schemas/limits-outgoing'
+            - $ref: '#/components/schemas/limits-outgoing-recurring'
       required:
         - type
         - actions
@@ -922,29 +929,6 @@ components:
             enum:
               - create
               - read
-      required:
-        - type
-        - actions
-    access-account:
-      title: access-account
-      type: object
-      properties:
-        type:
-          type: string
-          enum:
-            - account
-          description: The type of resource request as a string.  This field defines which other fields are allowed in the request object.
-        actions:
-          type: array
-          description: The types of actions the client instance will take at the RS as an array of strings.
-          items:
-            type: string
-            enum:
-              - read
-        identifier:
-          type: string
-          format: uri
-          description: A string identifier indicating a specific resource at the RS.
       required:
         - type
         - actions
