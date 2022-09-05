@@ -295,7 +295,7 @@ paths:
       tags:
         - grant
     delete:
-      summary: Cancel Grant Request
+      summary: Cancel Grant
       operationId: delete-continue
       responses:
         '202':
@@ -626,7 +626,9 @@ components:
           description: '[ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)'
       required:
         - interval
-        - oneOf - sendAmount - receiveAmount
+        - oneOf: 
+          - sendAmount 
+          - receiveAmount
     limits-outgoing:
       title: limits-outgoing
       description: Open Payments specific property that defines the limits under which outgoing payments can be created.
@@ -844,8 +846,6 @@ components:
         access:
           type: array
           description: A description of the rights associated with this access token.
-          minItems: 1
-          maxItems: 1
           items:
             $ref: '#/components/schemas/access'
       required:
