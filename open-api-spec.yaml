@@ -829,6 +829,8 @@ components:
           readOnly: true
         ilpAddress:
           type: string
+          maxLength: 1023
+          pattern: "^(g|private|example|peer|self|test[1-3]?|local)([.][a-zA-Z0-9_~-]+)+$"
           description: The ILP address to use when establishing a STREAM connection.
           readOnly: true
         sharedSecret:
