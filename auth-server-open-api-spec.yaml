@@ -245,93 +245,6 @@ paths:
       description: Continue a grant request during or after user interaction.
       tags:
         - grant
-    patch:
-      summary: Update Request
-      operationId: patch-continue
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  access_token:
-                    $ref: '#/components/schemas/access_token'
-                  continue:
-                    $ref: '#/components/schemas/continue'
-                required:
-                  - access_token
-                  - continue
-              examples:
-                Add list access:
-                  value:
-                    access_token:
-                      value: OS9M2PMHKUR64TB8N6BW7OZB8CDFONP219RP1LT0
-                      manage: 'https://openpayments.guide/auth/token'
-                      expires_in: 3600
-                      access:
-                        - type: outgoing-payment
-                          actions:
-                            - create
-                            - read
-                          identifier: 'https://openpayments.guide/alice'
-                          interval: 'R12/2019-08-24T14:15:22Z/P1M'
-                          limits:
-                            receiver: 'https://openpayments.guide/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2'
-                            sendAmount:
-                              value: '500'
-                              assetCode: USD
-                              assetScale: 2
-                    continue:
-                      access_token:
-                        value: 33OMUKMKSKU80UPRY5NM
-                      uri: 'https://openpayments.guide/auth/continue/4CF492MLVMSW9MKMXKHQ'
-                      wait: 30
-        '401':
-          description: Unauthorized
-        '404':
-          description: Not Found
-      description: Modify an existing grant request.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                access_token:
-                  required:
-                    - access
-                  type: object
-                  properties:
-                    access:
-                      type: array
-                      description: Describes the rights that the client instance is requesting for one or more access tokens to be used at RS's.
-                      items:
-                        $ref: '#/components/schemas/access'
-                      minItems: 1
-                      maxItems: 1
-              required:
-                - access_token
-            examples:
-              Add list access:
-                value:
-                  access_token:
-                    access:
-                      - type: outgoing-payment
-                        actions:
-                          - create
-                          - read
-                        identifier: 'https://openpayments.guide/alice'
-                        interval: 'R12/2019-08-24T14:15:22Z/P1M'
-                        limits:
-                          receiver: 'https://openpayments.guide/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2'
-                          sendAmount:
-                            value: '500'
-                            assetCode: USD
-                            assetScale: 2
-      tags:
-        - grant
     delete:
       summary: Cancel Grant
       operationId: delete-continue
@@ -664,9 +577,7 @@ components:
           description: '[ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)'
       required:
         - interval
-        - oneOf 
-          - sendAmount 
-          - receiveAmount
+        - oneOf - sendAmount - receiveAmount
     limits-outgoing:
       title: limits-outgoing
       description: Open Payments specific property that defines the limits under which outgoing payments can be created.
