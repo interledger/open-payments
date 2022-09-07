@@ -293,8 +293,8 @@ paths:
                             - create
                             - read
                           identifier: 'https://openpayments.guide/alice'
-                          interval: 'R12/2019-08-24T14:15:22Z/P1M'
                           limits:
+                            interval: 'R12/2019-08-24T14:15:22Z/P1M'
                             receiver: 'https://openpayments.guide/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2'
                             sendAmount:
                               value: '500'
@@ -357,8 +357,8 @@ paths:
                           - create
                           - read
                         identifier: 'https://openpayments.guide/alice'
-                        interval: 'R12/2019-08-24T14:15:22Z/P1M'
                         limits:
+                          interval: 'R12/2019-08-24T14:15:22Z/P1M'
                           receiver: 'https://openpayments.guide/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2'
                           sendAmount:
                             value: '500'
@@ -559,25 +559,7 @@ components:
         - $ref: '#/components/schemas/access-outgoing'
         - $ref: '#/components/schemas/access-quote'
       description: The access associated with the access token is described using objects that each contain multiple dimensions of access.
-    limits-outgoing-recurring:
-      title: limits-outgoing-recurring
-      description: Open Payments specific property that defines the limits under which outgoing payments can be created.
-      type: object
-      properties:
-        receiver:
-          type: string
-          format: uri
-          description: URL for the incoming payment or ILP STREAM Connection.
-        sendAmount:
-          $ref: '#/components/schemas/amount'
-        receiveAmount:
-          $ref: '#/components/schemas/amount'
-        interval:
-          type: string
-          description: '[ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)'
-      required:
-        - interval
-        - oneOf - sendAmount - receiveAmount
+      unevaluatedProperties: false
     limits-outgoing:
       title: limits-outgoing
       description: Open Payments specific property that defines the limits under which outgoing payments can be created.
@@ -594,6 +576,14 @@ components:
         interval:
           type: string
           description: '[ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)'
+      anyOf:
+        - not:
+            required:
+              - interval
+        - required:
+          - sendAmount
+        - required:
+          - receiveAmount
     amount:
       title: amount
       type: object
@@ -826,9 +816,7 @@ components:
           format: uri
           description: A string identifier indicating a specific resource at the RS.
         limits:
-          oneOf:
-            - $ref: '#/components/schemas/limits-outgoing'
-            - $ref: '#/components/schemas/limits-outgoing-recurring'
+          $ref: '#/components/schemas/limits-outgoing'
       required:
         - type
         - actions
