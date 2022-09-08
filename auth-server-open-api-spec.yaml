@@ -24,20 +24,29 @@ paths:
       summary: Grant Request
       operationId: post
       responses:
-        '201':
-          description: Created
+        '200':
+          description: OK
           content:
             application/json:
               schema:
+                oneOf:
+                  - properties:
+                      interact:
+                        $ref: '#/components/schemas/interact-response'
+                      continue:
+                        $ref: '#/components/schemas/continue'
+                    required:
+                      - interact
+                      - continue
+                  - properties:
+                      access_token:
+                        $ref: '#/components/schemas/access_token'
+                      continue:
+                        $ref: '#/components/schemas/continue'
+                    required:
+                      - access_token
+                      - continue
                 type: object
-                properties:
-                  interact:
-                    $ref: '#/components/schemas/interact-response'
-                  continue:
-                    $ref: '#/components/schemas/continue'
-                required:
-                  - interact
-                  - continue
               examples:
                 Interaction instructions:
                   value:
@@ -49,6 +58,22 @@ paths:
                         value: 33OMUKMKSKU80UPRY5NM
                       uri: 'https://openpayments.guide/auth/continue/4CF492MLVMSW9MKMXKHQ'
                       wait: 30
+                Grant:
+                  value:
+                    access_token:
+                      value: OS9M2PMHKUR64TB8N6BW7OZB8CDFONP219RP1LT0
+                      manage: 'https://openpayments.guide/auth/token/dd17a202-9982-4ed9-ae31-564947fb6379'
+                      expires_in: 3600
+                      access:
+                        - type: incoming-payment
+                          actions:
+                            - create
+                            - read
+                          identifier: 'https://openpayments.guide/bob'
+                    continue:
+                      access_token:
+                        value: 33OMUKMKSKU80UPRY5NM
+                      uri: 'https://openpayments.guide/auth/continue/4CF492MLVMSW9MKMXKHQ'
         '400':
           description: Bad Request
       requestBody:
@@ -65,7 +90,7 @@ paths:
                   properties:
                     access:
                       type: array
-                      description: Describes the rights that the client instance is requesting for one or more access tokens to be used at RS's.
+                      description: Describes the rights that the client instance is requesting for one or more access tokens to be used at RS's. Each access type must only be represented once within the access array.
                       items:
                         $ref: '#/components/schemas/access'
                 client:
@@ -75,9 +100,8 @@ paths:
               required:
                 - access_token
                 - client
-                - interact
             examples:
-              Grant for recurring fixed payment:
+              Grant request for creating and reading recurring fixed payment:
                 value:
                   access_token:
                     access:
@@ -86,9 +110,9 @@ paths:
                           - create
                           - read
                         identifier: 'https://openpayments.guide/alice'
-                        interval: 'R12/2019-08-24T14:15:22Z/P1M'
                         limits:
                           receiver: 'https://openpayments.guide/connections/45a0d0ee-26dc-4c66-89e0-01fbf93156f7'
+                          interval: 'R12/2019-08-24T14:15:22Z/P1M'
                           sendAmount:
                             value: '500'
                             assetCode: USD
@@ -113,6 +137,28 @@ paths:
                       method: redirect
                       uri: 'https://webmonize.com/return/876FGRD8VC'
                       nonce: 4edb2194-dbdf-46bb-9397-d5fd57b7c8a7
+              Grant request for creating and reading incoming payments:
+                value:
+                  access_token:
+                    access:
+                      - type: incoming-payment
+                        actions:
+                          - create
+                          - read
+                        identifier: 'http://openpayments.guide/bob'
+                  client:
+                    display:
+                      name: Webmonize
+                      uri: 'https://webmonize.com'
+                    key:
+                      proof: httpsig
+                      jwk:
+                        alg: EdDSA
+                        kid: 20f24ce2-a5f6-4f28-bf7d-ed52d0490187
+                        kty: OKP
+                        use: sig
+                        crv: Ed25519
+                        x: AAAAC3NzaC1lZDI1NTE5AAAAIK0wmN/Cr3JXqmLW7u+g9pTh+wyqDHpSQEIQczXkVx9q
         description: ''
       description: Make a new grant request
       security: []
@@ -141,6 +187,8 @@ paths:
                     $ref: '#/components/schemas/access_token'
                   continue:
                     $ref: '#/components/schemas/continue'
+                required:
+                  - continue
               examples:
                 Continuing After a Completed Interaction:
                   value:
@@ -154,9 +202,9 @@ paths:
                             - create
                             - read
                           identifier: 'https://openpayments.guide/alice'
-                          interval: 'R12/2019-08-24T14:15:22Z/P1M'
                           limits:
                             receiver: 'https://openpayments.guide/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2'
+                            interval: 'R12/2019-08-24T14:15:22Z/P1M'
                             sendAmount:
                               value: '500'
                               assetCode: USD
@@ -197,95 +245,8 @@ paths:
       description: Continue a grant request during or after user interaction.
       tags:
         - grant
-    patch:
-      summary: Update Request
-      operationId: patch-continue
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  access_token:
-                    $ref: '#/components/schemas/access_token'
-                  continue:
-                    $ref: '#/components/schemas/continue'
-                required:
-                  - access_token
-                  - continue
-              examples:
-                Add list access:
-                  value:
-                    access_token:
-                      value: OS9M2PMHKUR64TB8N6BW7OZB8CDFONP219RP1LT0
-                      manage: 'https://openpayments.guide/auth/token'
-                      expires_in: 3600
-                      access:
-                        - type: outgoing-payment
-                          actions:
-                            - create
-                            - read
-                          identifier: 'https://openpayments.guide/alice'
-                          interval: 'R12/2019-08-24T14:15:22Z/P1M'
-                          limits:
-                            receiver: 'https://openpayments.guide/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2'
-                            sendAmount:
-                              value: '500'
-                              assetCode: USD
-                              assetScale: 2
-                    continue:
-                      access_token:
-                        value: 33OMUKMKSKU80UPRY5NM
-                      uri: 'https://openpayments.guide/auth/continue/4CF492MLVMSW9MKMXKHQ'
-                      wait: 30
-        '401':
-          description: Unauthorized
-        '404':
-          description: Not Found
-      description: Modify an existing grant request.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                access_token:
-                  required:
-                    - access
-                  type: object
-                  properties:
-                    access:
-                      type: array
-                      description: Describes the rights that the client instance is requesting for one or more access tokens to be used at RS's.
-                      items:
-                        $ref: '#/components/schemas/access'
-                      minItems: 1
-                      maxItems: 1
-              required:
-                - access_token
-            examples:
-              Add list access:
-                value:
-                  access_token:
-                    access:
-                      - type: outgoing-payment
-                        actions:
-                          - create
-                          - read
-                        identifier: 'https://openpayments.guide/alice'
-                        interval: 'R12/2019-08-24T14:15:22Z/P1M'
-                        limits:
-                          receiver: 'https://openpayments.guide/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2'
-                          sendAmount:
-                            value: '500'
-                            assetCode: USD
-                            assetScale: 2
-      tags:
-        - grant
     delete:
-      summary: Cancel Grant Request
+      summary: Cancel Grant
       operationId: delete-continue
       responses:
         '202':
@@ -294,7 +255,7 @@ paths:
           description: Unauthorized
         '404':
           description: Not Found
-      description: Cancel a grant request.
+      description: Cancel a grant request or delete a grant client side.
       tags:
         - grant
   '/token/{id}':
@@ -532,7 +493,7 @@ paths:
         '404':
           description: Not Found
       operationId: get-grant
-      description: 'Retrieve the grant associated with the provided interactId'
+      description: Retrieve the grant associated with the provided interactId
       parameters:
         - schema:
             type: string
@@ -557,7 +518,7 @@ paths:
           description: Unauthorized
         '404':
           description: Not Found
-      description: 'Submit the RO''s consent choice for a particular grant'
+      description: Submit the RO's consent choice for a particular grant
       tags:
         - interaction
         - grant
@@ -594,7 +555,6 @@ components:
           outgoing-payment: '#/components/schemas/access-outgoing'
           quote: '#/components/schemas/access-quote'
       oneOf:
-        - $ref: '#/components/schemas/access-account'
         - $ref: '#/components/schemas/access-incoming'
         - $ref: '#/components/schemas/access-outgoing'
         - $ref: '#/components/schemas/access-quote'
@@ -614,12 +574,10 @@ components:
           $ref: '#/components/schemas/amount'
         interval:
           type: string
-          description: '[ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)'  
-      required: 
-        -  interval
-        -  oneOf
-          - sendAmount
-          - receiveAmount
+          description: '[ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)'
+      required:
+        - interval
+        - oneOf - sendAmount - receiveAmount
     limits-outgoing:
       title: limits-outgoing
       description: Open Payments specific property that defines the limits under which outgoing payments can be created.
@@ -635,7 +593,7 @@ components:
           $ref: '#/components/schemas/amount'
         interval:
           type: string
-          description: '[ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)'  
+          description: '[ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)'
     amount:
       title: amount
       type: object
@@ -680,7 +638,7 @@ components:
           description: The public key of the client instance to be used in this request or a reference to a key.
       description: |-
         Describes the client instance that is making this request, including the key that the client instance will use to protect this request and any continuation requests at the AS and any user-facing information about the client instance used in interactions.
-        
+
         When sending a non-continuation request to the AS, the client instance MUST identify itself by including the client field of the request and by signing the request.
     key:
       title: key
@@ -837,8 +795,6 @@ components:
         access:
           type: array
           description: A description of the rights associated with this access token.
-          minItems: 1
-          maxItems: 1
           items:
             $ref: '#/components/schemas/access'
       required:
@@ -870,9 +826,9 @@ components:
           format: uri
           description: A string identifier indicating a specific resource at the RS.
         limits:
-          oneOf: 
-            -  $ref: '#/components/schemas/limits-outgoing'
-            -  $ref: '#/components/schemas/limits-outgoing-recurring'
+          oneOf:
+            - $ref: '#/components/schemas/limits-outgoing'
+            - $ref: '#/components/schemas/limits-outgoing-recurring'
       required:
         - type
         - actions
@@ -922,29 +878,6 @@ components:
             enum:
               - create
               - read
-      required:
-        - type
-        - actions
-    access-account:
-      title: access-account
-      type: object
-      properties:
-        type:
-          type: string
-          enum:
-            - account
-          description: The type of resource request as a string.  This field defines which other fields are allowed in the request object.
-        actions:
-          type: array
-          description: The types of actions the client instance will take at the RS as an array of strings.
-          items:
-            type: string
-            enum:
-              - read
-        identifier:
-          type: string
-          format: uri
-          description: A string identifier indicating a specific resource at the RS.
       required:
         - type
         - actions
