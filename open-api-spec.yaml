@@ -104,6 +104,8 @@ paths:
                     id: 'https://openpayments.guide/connections/016da9d5-c9a4-4c80-a354-86b915a04ff8'
                     ilpAddress: g.ilp.iwuyge987y.98y0f34tsrt8y
                     sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
+                    assetCode: USD
+                    assetScale: 2
         '404':
           description: Connection Not Found
       operationId: get-ilp-stream-connection
@@ -156,6 +158,8 @@ paths:
                       id: 'https://openpayments.guide/connections/ff394f02-7b7b-45e2-b645-51d04e7c345c'
                       ilpAddress: g.ilp.iwuyge987y.98y08y
                       sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
+                      assetCode: USD
+                      assetScale: 2
                     createdAt: '2022-03-12T23:20:50.52Z'
                     updatedAt: '2022-04-01T10:24:36.11Z'
         '401':
@@ -613,6 +617,8 @@ paths:
                       id: 'https://openpayments.guide/connections/4a1b0150-db73-49e8-8713-628baa4a17ff'
                       ilpAddress: g.ilp.iwuyge987y.98y08y
                       sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
+                      assetCode: USD
+                      assetScale: 2
         '401':
           $ref: '#/components/responses/401'
         '403':
@@ -791,14 +797,11 @@ components:
           description: A public name for the account. This should be set by the account holder with their provider to provide a hint to counterparties as to the identity of the account holder.
           readOnly: true
         assetCode:
-          type: string
-          description: The asset code of the account. This SHOULD be an ISO4217 currency code.
+          $ref: '#/components/schemas/assetCode'
+          description: The asset code of the account.
           readOnly: true
         assetScale:
-          type: integer
-          minimum: 0
-          maximum: 255
-          description: The scale of the account.
+          $ref: '#/components/schemas/assetScale'
           readOnly: true
         authServer:
           type: string
@@ -837,10 +840,18 @@ components:
           type: string
           description: The shared secret to use when establishing a STREAM connection.
           readOnly: true
+        assetCode:
+          $ref: '#/components/schemas/assetCode'
+          description: The asset code of the amount.
+        assetScale:
+          $ref: '#/components/schemas/assetScale'
+          description: The scale of the amount.
       required:
         - id
         - ilpAddress
         - sharedSecret
+        - assetCode
+        - assetScale
       additionalProperties: false
       examples:
         - id: 'https://openpayments.guide/connections/016da9d5-c9a4-4c80-a354-86b915a04ff8'
@@ -1180,18 +1191,26 @@ components:
           format: uint64
           description: 'The amount, scaled by the given scale.'
         assetCode:
-          type: string
-          description: The asset code of the amount. This SHOULD be an ISO4217 currency code.
+          $ref: '#/components/schemas/assetCode'
+          description: The asset code of the amount.
         assetScale:
-          type: integer
-          minimum: 0
-          maximum: 255
+          $ref: '#/components/schemas/assetScale'
           description: The scale of the amount.
       required:
         - value
         - assetCode
         - assetScale
       additionalProperties: false
+    assetCode:
+      title: Asset code
+      type: string
+      description: This SHOULD be an ISO4217 currency code.
+    assetScale:
+      title: Asset scale
+      type: integer
+      minimum: 0
+      maximum: 255
+      description: The scale of amounts denoted in the corresponding asset code.
     pagination:
       description: Pagination parameters
       oneOf:
