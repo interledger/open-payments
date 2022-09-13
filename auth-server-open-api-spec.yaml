@@ -613,6 +613,10 @@ components:
       title: Interval
       type: string
       description: '[ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)'
+      examples:
+        - 'R11/2022-08-24T14:15:22Z/P1M'
+        - 'R/2017-03-01T13:00:00Z/2018-05-11T15:30:00Z'
+        - 'R-1/P1Y2M10DT2H30M/2022-05-11T15:30:00Z'
     receiver:
       title: Receiver
       type: string
