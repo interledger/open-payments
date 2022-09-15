@@ -577,7 +577,9 @@ components:
           description: '[ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)'
       required:
         - interval
-        - oneOf - sendAmount - receiveAmount
+        - oneOf
+        - sendAmount
+        - receiveAmount
     limits-outgoing:
       title: limits-outgoing
       description: Open Payments specific property that defines the limits under which outgoing payments can be created.
