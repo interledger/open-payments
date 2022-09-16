@@ -821,6 +821,16 @@ components:
               - read-all
               - list
               - list-all
+          allOf:
+            - contains:
+                $ref: '#/components/schemas/read-actions'
+              minContains: 0
+              maxContains: 1
+            - contains:
+                $ref: '#/components/schemas/list-actions'
+              minContains: 0
+              maxContains: 1
+          uniqueItems: true
         identifier:
           type: string
           format: uri
@@ -854,6 +864,16 @@ components:
               - read-all
               - list
               - list-all
+          allOf:
+            - contains:
+                $ref: '#/components/schemas/read-actions'
+              minContains: 0
+              maxContains: 1
+            - contains:
+                $ref: '#/components/schemas/list-actions'
+              minContains: 0
+              maxContains: 1
+          uniqueItems: true
         identifier:
           type: string
           format: uri
@@ -878,9 +898,24 @@ components:
             enum:
               - create
               - read
+              - read-all
+          allOf:
+            - contains:
+                $ref: '#/components/schemas/read-actions'
+              minContains: 0
+              maxContains: 1
+          uniqueItems: true
       required:
         - type
         - actions
+    read-actions:
+      enum:
+        - read
+        - read-all
+    list-actions:
+      enum:
+        - list
+        - list-all
   securitySchemes:
     GNAP:
       name: Authorization
