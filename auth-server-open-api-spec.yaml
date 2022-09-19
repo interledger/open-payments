@@ -820,7 +820,6 @@ components:
       required:
         - type
         - actions
-        - identifier
     access-incoming:
       title: access-incoming
       type: object
