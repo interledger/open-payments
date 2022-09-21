@@ -838,8 +838,8 @@ components:
           readOnly: true
         sharedSecret:
           type: string
-          pattern: "^[a-zA-Z0-9-_]{43}$"
-          description: The base64 url-encoded 32-byte shared secret to use when establishing a STREAM connection.
+          pattern: "^[a-zA-Z0-9-_]+$"
+          description: The base64 url-encoded shared secret to use when establishing a STREAM connection.
           readOnly: true
         assetCode:
           $ref: '#/components/schemas/assetCode'
