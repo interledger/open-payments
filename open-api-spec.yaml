@@ -103,7 +103,7 @@ paths:
                   value:
                     id: 'https://openpayments.guide/connections/016da9d5-c9a4-4c80-a354-86b915a04ff8'
                     ilpAddress: g.ilp.iwuyge987y.98y0f34tsrt8y
-                    sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
+                    sharedSecret: 1c7eaXa4rd2fFOBl1iydvCT1tV5TbM3RW1WLCafu_JA
                     assetCode: USD
                     assetScale: 2
         '404':
@@ -157,7 +157,7 @@ paths:
                     ilpStreamConnection:
                       id: 'https://openpayments.guide/connections/ff394f02-7b7b-45e2-b645-51d04e7c345c'
                       ilpAddress: g.ilp.iwuyge987y.98y08y
-                      sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
+                      sharedSecret: 1c7eaXa4rd2fFOBl1iydvCT1tV5TbM3RW1WLCafu_JA
                       assetCode: USD
                       assetScale: 2
                     createdAt: '2022-03-12T23:20:50.52Z'
@@ -626,7 +626,7 @@ paths:
                     ilpStreamConnection:
                       id: 'https://openpayments.guide/connections/4a1b0150-db73-49e8-8713-628baa4a17ff'
                       ilpAddress: g.ilp.iwuyge987y.98y08y
-                      sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
+                      sharedSecret: 1c7eaXa4rd2fFOBl1iydvCT1tV5TbM3RW1WLCafu_JA
                       assetCode: USD
                       assetScale: 2
         '401':
@@ -860,7 +860,8 @@ components:
           readOnly: true
         sharedSecret:
           type: string
-          description: The shared secret to use when establishing a STREAM connection.
+          pattern: "^[a-zA-Z0-9-_]+$"
+          description: The base64 url-encoded shared secret to use when establishing a STREAM connection.
           readOnly: true
         assetCode:
           $ref: '#/components/schemas/assetCode'
@@ -878,7 +879,7 @@ components:
       examples:
         - id: 'https://openpayments.guide/connections/016da9d5-c9a4-4c80-a354-86b915a04ff8'
           ilpApddress: g.ilp.iwuyge987y.98y08y
-          sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
+          sharedSecret: 1c7eaXa4rd2fFOBl1iydvCT1tV5TbM3RW1WLCafu_JA
     incoming-payment:
       title: Incoming Payment
       description: 'An **incoming payment** resource represents a payment that will be, is currently being, or has been received by the account.'
@@ -983,7 +984,7 @@ components:
           ilpStreamConnection:
             id: 'https://openpayments.guide/connections/032da9d5-c9a4-4c80-a354-86b915a04ff8'
             ilpApddress: g.ilp.iwuyge987y.98y08y
-            sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
+            sharedSecret: 1c7eaXa4rd2fFOBl1iydvCT1tV5TbM3RW1WLCafu_JA
       allOf:
         - $ref: '#/components/schemas/incoming-payment'
         - type: object
