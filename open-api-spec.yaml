@@ -1304,7 +1304,6 @@ components:
       in: path
       schema:
         type: string
-        format: uuid
       description: Sub-resource identifier
       required: true
     signature:
