@@ -33,15 +33,15 @@ info:
     email: tech@interledger.org
 servers:
   - url: '{paymentPointer}'
-    description: "Server for when Payment Pointer has a pathname  (ie https://openpayments.guide/alice)"
+    description: 'Server for when Payment Pointer has a pathname  (ie https://openpayments.guide/alice)'
     variables:
       paymentPointer:
-        default: 'openpayments.guide/alice'
+        default: openpayments.guide/alice
   - url: '{paymentPointer}/.well-known/pay'
-    description: "Server for when Payment Pointer has no pathname (ie https://openpayments.guide)"
+    description: 'Server for when Payment Pointer has no pathname (ie https://openpayments.guide)'
     variables:
       paymentPointer:
-        default: 'openpayments.guide'
+        default: openpayments.guide
 tags:
   - name: payment-pointer
     description: payment pointer operations
@@ -54,7 +54,7 @@ tags:
   - name: stream-connection
     description: interledger STREAM connections
 paths:
-  '/':
+  /:
     get:
       summary: Get a Payment Pointer
       tags:
@@ -86,7 +86,7 @@ paths:
       security: []
   '/connections/{connectionId}':
     servers:
-      - url: https://openpayments.guide/
+      - url: 'https://openpayments.guide/'
     get:
       summary: Get ILP STREAM credentials for a connection
       tags:
@@ -125,7 +125,7 @@ paths:
         in: path
         required: true
         description: Connection identifier
-  '/incoming-payments':
+  /incoming-payments:
     post:
       summary: Create an Incoming Payment
       tags:
@@ -204,6 +204,9 @@ paths:
         A client MUST create an **incoming payment** resource before it is possible to send any payments to the payment pointer.
 
         All of the input parameters are _optional_.
+      parameters:
+        - $ref: '#/components/parameters/signature-input'
+        - $ref: '#/components/parameters/signature'
     get:
       summary: List Incoming Payments
       operationId: list-incoming-payments
@@ -296,7 +299,6 @@ paths:
                         updatedAt: '2022-04-01T10:24:36.11Z'
                         description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
                         externalRef: Coffee w/ Mo on 10 March 22
-          headers: {}
         '401':
           $ref: '#/components/responses/401'
         '403':
@@ -308,9 +310,11 @@ paths:
           in: query
           name: pagination
           description: Pagination parameters
+        - $ref: '#/components/parameters/signature-input'
+        - $ref: '#/components/parameters/signature'
       tags:
         - incoming-payment
-  '/outgoing-payments':
+  /outgoing-payments:
     post:
       summary: Create an Outgoing Payment
       tags:
@@ -379,6 +383,9 @@ paths:
           The `sendAmount` must use the same `assetCode` and `assetScale` as the payment pointer.
         required: true
       description: An **outgoing payment** is a sub-resource of a payment pointer. It represents a payment from the payment pointer.
+      parameters:
+        - $ref: '#/components/parameters/signature-input'
+        - $ref: '#/components/parameters/signature'
     description: Create a new outgoing payment at the payment pointer.
     get:
       summary: List Outgoing Payments
@@ -505,9 +512,11 @@ paths:
           in: query
           name: pagination
           description: Pagination parameters
+        - $ref: '#/components/parameters/signature-input'
+        - $ref: '#/components/parameters/signature'
       tags:
         - outgoing-payment
-  '/quotes':
+  /quotes:
     post:
       summary: Create a Quote
       tags:
@@ -578,6 +587,9 @@ paths:
           The quote must be created with a (`sendAmount` xor `receiveAmount`) unless the `receiver` is an Incoming Payment which has an `incomingAmount`.
         required: true
       description: A **quote** is a sub-resource of a payment pointer. It represents a quote for a payment from the payment pointer.
+      parameters:
+        - $ref: '#/components/parameters/signature-input'
+        - $ref: '#/components/parameters/signature'
     description: Create a new quote at the payment pointer.
   '/incoming-payments/{incomingPaymentId}':
     get:
@@ -624,6 +636,9 @@ paths:
         '404':
           description: Incoming Payment Not Found
       description: A client can fetch the latest state of an incoming payment to determine the amount received into the payment pointer.
+      parameters:
+        - $ref: '#/components/parameters/signature-input'
+        - $ref: '#/components/parameters/signature'
     parameters:
       - schema:
           type: string
@@ -675,6 +690,9 @@ paths:
         A client with the appropriate permissions MAY mark a non-expired **incoming payment** as `completed` if it has not yet received `incomingAmount`.
 
         This indicates to the receiving account provider that it can begin any post processing of the payment such as generating account statements or notifying the account holder of the completed payment.
+      parameters:
+        - $ref: '#/components/parameters/signature-input'
+        - $ref: '#/components/parameters/signature'
     parameters:
       - schema:
           type: string
@@ -726,6 +744,9 @@ paths:
         '404':
           description: Outgoing Payment Not Found
       description: A client can fetch the latest state of an outgoing payment.
+      parameters:
+        - $ref: '#/components/parameters/signature-input'
+        - $ref: '#/components/parameters/signature'
     parameters:
       - schema:
           type: string
@@ -770,6 +791,9 @@ paths:
         '404':
           description: Quote Not Found
       description: A client can fetch the latest state of a quote.
+      parameters:
+        - $ref: '#/components/parameters/signature-input'
+        - $ref: '#/components/parameters/signature'
     parameters:
       - schema:
           type: string
@@ -831,7 +855,7 @@ components:
         ilpAddress:
           type: string
           maxLength: 1023
-          pattern: "^(g|private|example|peer|self|test[1-3]?|local)([.][a-zA-Z0-9_~-]+)+$"
+          pattern: '^(g|private|example|peer|self|test[1-3]?|local)([.][a-zA-Z0-9_~-]+)+$'
           description: The ILP address to use when establishing a STREAM connection.
           readOnly: true
         sharedSecret:
@@ -937,7 +961,7 @@ components:
         - updatedAt
     incoming-payment-with-connection:
       title: Incoming Payment with Connection
-      description: 'An **incoming payment** resource with the Interledger STREAM Connection to use to pay into the payment pointer under this incoming payment.'
+      description: An **incoming payment** resource with the Interledger STREAM Connection to use to pay into the payment pointer under this incoming payment.
       type: object
       examples:
         - id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
@@ -961,15 +985,15 @@ components:
             ilpApddress: g.ilp.iwuyge987y.98y08y
             sharedSecret: 6jR5iNIVRvqeasJeCty6C+YB5X9FhSOUPCL/5nha5Vs=
       allOf:
-      - $ref: '#/components/schemas/incoming-payment'
-      - type: object
-        properties:
-          ilpStreamConnection:
-            $ref: '#/components/schemas/ilp-stream-connection'
+        - $ref: '#/components/schemas/incoming-payment'
+        - type: object
+          properties:
+            ilpStreamConnection:
+              $ref: '#/components/schemas/ilp-stream-connection'
       unevaluatedProperties: false
     incoming-payment-with-connection-url:
       title: Incoming Payment with Connection
-      description: 'An **incoming payment** resource with the url for the Interledger STREAM Connection resource to use to pay into the payment pointer under this incoming payment.'
+      description: An **incoming payment** resource with the url for the Interledger STREAM Connection resource to use to pay into the payment pointer under this incoming payment.
       type: object
       examples:
         - id: 'https://openpayments.guide/alice/incoming-payments/456da9d5-c9a4-4c80-a354-86b915a04ff8'
@@ -1303,5 +1327,22 @@ components:
           description: The address of the authorization server for grant requests in the format `GNAP as_uri=<URI>`
     '403':
       description: Forbidden
+  parameters:
+    signature:
+      name: Signature
+      in: header
+      schema:
+        type: string
+        example: 'Signature: sig1=:EWJgAONk3D6542Scj8g51rYeMHw96cH2XiCMxcyL511wyemGcw==:'
+      description: 'The signature generated based on the Signature-Input, using the signing algorithm specified in the "alg" field of the JWK.'
+      required: true
+    signature-input:
+      name: Signature-Input
+      in: header
+      schema:
+        type: string
+        example: 'Signature-Input: sig1=("@method" "@target-uri" "content-digest" "content-length" "content-type");created=1618884473;keyid="gnap-rsa"'
+      description: 'The Signature-Input field is a Dictionary structured field containing the metadata for one or more message signatures generated from components within the HTTP message.  Each member describes a single message signature.  The member''s key is the label that uniquely identifies the message signature within the context of the HTTP message.  The member''s value is the serialization of the covered components Inner List plus all signature metadata parameters identified by the label.  The following components MUST be included: - "@method" - "@target-uri" - "authorization" When the message contains a request body, the covered components MUST also include the following: - "content-digest"  The keyid parameter of the signature MUST be set to the kid value of the JWK.      See [ietf-httpbis-message-signatures](https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-message-signatures#section-4.1) for more details.'
+      required: true
 security:
   - GNAP: []
