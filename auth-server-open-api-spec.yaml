@@ -550,7 +550,6 @@ components:
       discriminator:
         propertyName: type
         mapping:
-          account: '#/components/schemas/access-account'
           incoming-payment: '#/components/schemas/access-incoming'
           outgoing-payment: '#/components/schemas/access-outgoing'
           quote: '#/components/schemas/access-quote'
@@ -801,6 +800,25 @@ components:
           description: A description of the rights associated with this access token.
           items:
             $ref: '#/components/schemas/access'
+          allOf:
+            - contains:
+                properties:
+                  type:
+                    const: incoming-payment
+              minContains: 0
+              maxContains: 1
+            - contains:
+                properties:
+                  type:
+                    const: outgoing-payment
+              minContains: 0
+              maxContains: 1
+            - contains:
+                properties:
+                  type:
+                    const: quote
+              minContains: 0
+              maxContains: 1
       required:
         - value
         - manage
