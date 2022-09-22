@@ -84,7 +84,7 @@ paths:
 
         The content should be slow changing and cacheable for long periods. Servers SHOULD use cache control headers.
       security: []
-  '/connections/{connectionId}':
+  '/connections/{id}':
     servers:
       - url: 'https://openpayments.guide/'
     get:
@@ -119,12 +119,7 @@ paths:
         A new set of credential will be generated each time this API is called.
       security: []
     parameters:
-      - schema:
-          type: string
-        name: connectionId
-        in: path
-        required: true
-        description: Connection identifier
+      - $ref: '#/components/parameters/id'
   /incoming-payments:
     post:
       summary: Create an Incoming Payment
@@ -591,7 +586,7 @@ paths:
         - $ref: '#/components/parameters/signature-input'
         - $ref: '#/components/parameters/signature'
     description: Create a new quote at the payment pointer.
-  '/incoming-payments/{incomingPaymentId}':
+  '/incoming-payments/{id}':
     get:
       summary: Get an Incoming Payment
       tags:
@@ -640,14 +635,8 @@ paths:
         - $ref: '#/components/parameters/signature-input'
         - $ref: '#/components/parameters/signature'
     parameters:
-      - schema:
-          type: string
-          format: uuid
-        name: incomingPaymentId
-        in: path
-        required: true
-        description: Incoming Payment identifier
-  '/incoming-payments/{incomingPaymentId}/complete':
+      - $ref: '#/components/parameters/id'
+  '/incoming-payments/{id}/complete':
     post:
       summary: Complete an Incoming Payment
       tags:
@@ -694,14 +683,8 @@ paths:
         - $ref: '#/components/parameters/signature-input'
         - $ref: '#/components/parameters/signature'
     parameters:
-      - schema:
-          type: string
-          format: uuid
-        name: incomingPaymentId
-        in: path
-        required: true
-        description: Incoming Payment identifier
-  '/outgoing-payments/{outgoingPaymentId}':
+      - $ref: '#/components/parameters/id'
+  '/outgoing-payments/{id}':
     get:
       summary: Get an Outgoing Payment
       tags:
@@ -748,14 +731,8 @@ paths:
         - $ref: '#/components/parameters/signature-input'
         - $ref: '#/components/parameters/signature'
     parameters:
-      - schema:
-          type: string
-          format: uuid
-        name: outgoingPaymentId
-        in: path
-        required: true
-        description: Outgoing Payment identifier
-  '/quotes/{quoteId}':
+      - $ref: '#/components/parameters/id'
+  '/quotes/{id}':
     get:
       summary: Get a Quote
       tags:
@@ -795,13 +772,7 @@ paths:
         - $ref: '#/components/parameters/signature-input'
         - $ref: '#/components/parameters/signature'
     parameters:
-      - schema:
-          type: string
-          format: uuid
-        name: quoteId
-        in: path
-        required: true
-        description: Quote identifier
+      - $ref: '#/components/parameters/id'
 components:
   schemas:
     payment-pointer:
@@ -1329,6 +1300,13 @@ components:
     '403':
       description: Forbidden
   parameters:
+    id:
+      name: id
+      in: path
+      schema:
+        type: string
+      description: Sub-resource identifier
+      required: true
     signature:
       name: Signature
       in: header
