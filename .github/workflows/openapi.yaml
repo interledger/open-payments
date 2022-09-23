@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-    # TODO: remove old ones
+      # TODO: remove old ones
       - auth-server-open-api-spec.yaml
       - open-api-spec.yaml
       - openapi-specs/openapi.yaml
@@ -16,7 +16,7 @@ on:
     branches:
       - main
     paths:
-    # TODO: remove old ones
+      # TODO: remove old ones
       - auth-server-open-api-spec.yaml
       - open-api-spec.yaml
       - openapi-specs/openapi.yaml
@@ -32,7 +32,7 @@ jobs:
       - uses: actions/setup-node@v2
 
       - name: AsyncAPI extension
-      run: |
+        run: |
           echo "{\"extends\":[\"spectral:oas\",\"spectral:asyncapi\"]}" >> .spectral.json
 
       # TODO: remove old ones
