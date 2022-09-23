@@ -85,6 +85,24 @@ paths:
         The content should be slow changing and cacheable for long periods. Servers SHOULD use cache control headers.
       security: []
       x-internal: false
+  /jwks.json:
+    get:
+      summary: Get the keys bound to a Payment Pointer
+      tags:
+        - payment-pointer
+      responses:
+        '200':
+          description: JWKS Document Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/json-web-key-set'
+              examples: {}
+        '404':
+          description: JWKS Document Not Found
+      operationId: get-payment-pointer-keys
+      description: Retrieve the public keys of the Payment Pointer.
+      security: []
   '/connections/{id}':
     servers:
       - url: 'https://openpayments.guide/'
@@ -811,6 +829,26 @@ components:
         - assetCode
         - assetScale
         - authServer
+    json-web-key-set:
+      title: JSON Web Key Set document
+      type: object
+      description: 'A JSON Web Key Set document according to [rfc7517](https://datatracker.ietf.org/doc/html/rfc7517) listing the keys associated with this payment pointer. These keys are used to sign requests made by this payment pointer.'
+      additionalProperties: false
+      properties:
+        keys:
+          type: array
+          items:
+            $ref: '#/components/schemas/json-web-key'
+          readOnly: true
+      required:
+        - keys
+      examples:
+        - keys:
+            - kid: key-1
+              use: sig
+              kty: OKP
+              crv: Ed25519
+              x: 11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo
     ilp-stream-connection:
       title: ILP Stream Connection
       type: object
@@ -1217,6 +1255,45 @@ components:
         - hasNextPage
         - hasPreviousPage
       additionalProperties: false
+    json-web-key:
+      type: object
+      properties:
+        kid:
+          type: string
+        use:
+          type: string
+          enum:
+            - sig
+        kty:
+          type: string
+          enum:
+            - OKP
+        crv:
+          type: string
+          enum:
+            - Ed25519
+        x:
+          type: string
+          pattern: "^[a-zA-Z0-9-_]+$"
+          description: The base64 url-encoded public key.
+      required:
+        - kid
+        - kty
+        - crv
+        - x
+      title: Ed25519 Public Key
+      description: A JWK representation of an Ed25519 Public Key
+      examples:
+        - kid: key-1
+          use: sig
+          kty: OKP
+          crv: Ed25519
+          x: 11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo
+        - kid: '2022-09-02'
+          use: sig
+          kty: OKP
+          crv: Ed25519
+          x: oy0L_vTygNE4IogRyn_F5GmHXdqYVjIXkWs2jky7zsI
   securitySchemes:
     GNAP:
       name: Authorization
