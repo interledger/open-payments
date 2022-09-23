@@ -5,14 +5,24 @@ on:
     branches:
       - main
     paths:
+    # TODO: remove old ones
       - auth-server-open-api-spec.yaml
       - open-api-spec.yaml
+      - openapi-specs/openapi.yaml
+      - openapi-specs/AS/client/openapi.yaml
+      - openapi-specs/AS/IdP/openapi.yaml
+      - openapi-specs/AS/RS/openapi.yaml
   pull_request:
     branches:
       - main
     paths:
+    # TODO: remove old ones
       - auth-server-open-api-spec.yaml
       - open-api-spec.yaml
+      - openapi-specs/openapi.yaml
+      - openapi-specs/AS/client/openapi.yaml
+      - openapi-specs/AS/IdP/openapi.yaml
+      - openapi-specs/AS/RS/openapi.yaml
 
 jobs:
   validate:
@@ -21,11 +31,30 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
 
+      - name: AsyncAPI extension
+      run: |
+          echo "{\"extends\":[\"spectral:oas\",\"spectral:asyncapi\"]}" >> .spectral.json
+
+      # TODO: remove old ones
       - name: Validate open-api-spec.yaml
         run: |
-          echo "{\"extends\":[\"spectral:oas\",\"spectral:asyncapi\"]}" >> .spectral.json
           npx @stoplight/spectral-cli lint open-api-spec.yaml
 
       - name: Validate auth-server-open-api-spec.yaml
         run: |
           npx @stoplight/spectral-cli lint auth-server-open-api-spec.yaml
+
+      - name: Validate openapi.yaml
+          npx @stoplight/spectral-cli lint openapi-specs/openapi.yaml
+
+      - name: Validate AS/client/openapi.yaml
+        run: |
+          npx @stoplight/spectral-cli lint openapi-specs/AS/client/openapi.yaml
+
+      - name: Validate AS/IdP/openapi.yaml
+        run: |
+          npx @stoplight/spectral-cli lint openapi-specs/AS/IdP/openapi.yaml
+
+      - name: Validate AS/RS/openapi.yaml
+        run: |
+          npx @stoplight/spectral-cli lint openapi-specs/AS/RS/openapi.yaml
