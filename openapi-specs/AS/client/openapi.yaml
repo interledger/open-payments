@@ -90,7 +90,7 @@ paths:
                       type: array
                       description: Describes the rights that the client instance is requesting for one or more access tokens to be used at RS's. Each access type must only be represented once within the access array.
                       items:
-                        $ref: '../shared/schemas.yaml#/access'
+                        $ref: ../../shared/schemas.yaml#/access
                 client:
                   $ref: '#/components/schemas/client'
                 interact:
@@ -340,7 +340,7 @@ components:
           description: An identifier string that the AS can use to identify the client software comprising this client instance.
         key:
           oneOf:
-            - $ref: ../shared/schemas.yaml#/key
+            - $ref: ../../shared/schemas.yaml#/key
             - type: string
           description: The public key of the client instance to be used in this request or a reference to a key.
     interact-request:
@@ -433,7 +433,7 @@ components:
           type: array
           description: A description of the rights associated with this access token.
           items:
-            $ref: ../shared/schemas.yaml#/access
+            $ref: ../../shared/schemas.yaml#/access
       required:
         - value
         - manage

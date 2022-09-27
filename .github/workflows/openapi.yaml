@@ -5,9 +5,6 @@ on:
     branches:
       - main
     paths:
-      # TODO: remove old ones
-      - auth-server-open-api-spec.yaml
-      - open-api-spec.yaml
       - openapi-specs/openapi.yaml
       - openapi-specs/AS/client/openapi.yaml
       - openapi-specs/AS/IdP/openapi.yaml
@@ -16,9 +13,6 @@ on:
     branches:
       - main
     paths:
-      # TODO: remove old ones
-      - auth-server-open-api-spec.yaml
-      - open-api-spec.yaml
       - openapi-specs/openapi.yaml
       - openapi-specs/AS/client/openapi.yaml
       - openapi-specs/AS/IdP/openapi.yaml
@@ -38,12 +32,3 @@ jobs:
       - name: Validate openapi.yaml
         run: |
           npx @stoplight/spectral-cli lint openapi-specs/../openapi.yaml
-
-      # TODO: remove old ones
-      - name: Validate open-api-spec.yaml
-        run: |
-          npx @stoplight/spectral-cli lint open-api-spec.yaml
-
-      - name: Validate auth-server-open-api-spec.yaml
-        run: |
-          npx @stoplight/spectral-cli lint auth-server-open-api-spec.yaml

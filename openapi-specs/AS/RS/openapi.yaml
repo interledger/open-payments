@@ -35,9 +35,9 @@ paths:
                   access:
                     type: array
                     items:
-                      $ref: ../shared/schemas.yaml#/access
+                      $ref: ../../shared/schemas.yaml#/access
                   key:
-                    $ref: ../shared/schemas.yaml#/key
+                    $ref: ../../shared/schemas.yaml#/key
                   client_id:
                     type: string
                     description: Opaque client identifier.
@@ -88,14 +88,14 @@ paths:
                   description: The proofing method used by the client instance to bind the token to the RS request.
                 resource_server:
                   oneOf:
-                    - $ref: ../shared/schemas.yaml#/key
+                    - $ref: ../../shared/schemas.yaml#/key
                     - type: string
                   description: 'The identification used to authenticate the resource server making this call, either by value or by reference.'
                 access:
                   type: array
                   description: The minimum access rights required to fulfill the request.
                   items:
-                    $ref: ../shared/schemas.yaml#/access
+                    $ref: ../../shared/schemas.yaml#/access
               required:
                 - access_token
                 - resource_server
