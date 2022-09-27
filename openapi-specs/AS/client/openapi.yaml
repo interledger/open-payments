@@ -434,6 +434,25 @@ components:
           description: A description of the rights associated with this access token.
           items:
             $ref: ../../shared/schemas.yaml#/access
+          allOf:
+            - contains:
+                properties:
+                  type:
+                    const: incoming-payment
+              minContains: 0
+              maxContains: 1
+            - contains:
+                properties:
+                  type:
+                    const: outgoing-payment
+              minContains: 0
+              maxContains: 1
+            - contains:
+                properties:
+                  type:
+                    const: quote
+              minContains: 0
+              maxContains: 1
       required:
         - value
         - manage
