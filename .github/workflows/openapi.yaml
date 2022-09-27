@@ -5,18 +5,12 @@ on:
     branches:
       - main
     paths:
-      - openapi-specs/openapi.yaml
-      - openapi-specs/AS/client/openapi.yaml
-      - openapi-specs/AS/IdP/openapi.yaml
-      - openapi-specs/AS/RS/openapi.yaml
+      - openapi-specs/**
   pull_request:
     branches:
       - main
     paths:
-      - openapi-specs/openapi.yaml
-      - openapi-specs/AS/client/openapi.yaml
-      - openapi-specs/AS/IdP/openapi.yaml
-      - openapi-specs/AS/RS/openapi.yaml
+      - openapi-specs/**
 
 jobs:
   validate:
