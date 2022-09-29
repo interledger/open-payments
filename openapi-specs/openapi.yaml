@@ -780,6 +780,13 @@ components:
       title: Payment Pointer
       type: object
       description: A **payment pointer** resource is the root of the API and contains the public details of the financial account represented by the Payment Pointer that is also the service endpoint URL.
+      additionalProperties: false
+      examples:
+        - id: 'https://openpayments.guide/alice'
+          publicName: Alice
+          assetCode: USD
+          assetScale: 2
+          authServer: 'https://openpayments.guide/auth'
       properties:
         id:
           type: string
@@ -791,12 +798,9 @@ components:
           description: A public name for the account. This should be set by the account holder with their provider to provide a hint to counterparties as to the identity of the account holder.
           readOnly: true
         assetCode:
-          $ref: '#/components/schemas/assetCode'
-          description: The asset code of the account.
-          readOnly: true
+          $ref: ./shared/schemas.yaml#/assetCode
         assetScale:
-          $ref: '#/components/schemas/assetScale'
-          readOnly: true
+          $ref: ./shared/schemas.yaml#/assetScale
         authServer:
           type: string
           format: uri
@@ -807,17 +811,15 @@ components:
         - assetCode
         - assetScale
         - authServer
-      additionalProperties: false
-      examples:
-        - id: 'https://openpayments.guide/alice'
-          publicName: Alice
-          assetCode: USD
-          assetScale: 2
-          authServer: 'https://openpayments.guide/auth'
     ilp-stream-connection:
       title: ILP Stream Connection
       type: object
       description: An **ILP STREAM Connection** is an endpoint that returns unique STREAM connection credentials to establish a STREAM connection to the underlying account.
+      additionalProperties: false
+      examples:
+        - id: 'https://openpayments.guide/connections/016da9d5-c9a4-4c80-a354-86b915a04ff8'
+          ilpApddress: g.ilp.iwuyge987y.98y08y
+          sharedSecret: 1c7eaXa4rd2fFOBl1iydvCT1tV5TbM3RW1WLCafu_JA
       properties:
         id:
           type: string
@@ -836,22 +838,15 @@ components:
           description: The base64 url-encoded shared secret to use when establishing a STREAM connection.
           readOnly: true
         assetCode:
-          $ref: '#/components/schemas/assetCode'
-          description: The asset code of the amount.
+          $ref: ./shared/schemas.yaml#/assetCode
         assetScale:
-          $ref: '#/components/schemas/assetScale'
-          description: The scale of the amount.
+          $ref: ./shared/schemas.yaml#/assetScale
       required:
         - id
         - ilpAddress
         - sharedSecret
         - assetCode
         - assetScale
-      additionalProperties: false
-      examples:
-        - id: 'https://openpayments.guide/connections/016da9d5-c9a4-4c80-a354-86b915a04ff8'
-          ilpApddress: g.ilp.iwuyge987y.98y08y
-          sharedSecret: 1c7eaXa4rd2fFOBl1iydvCT1tV5TbM3RW1WLCafu_JA
     incoming-payment:
       title: Incoming Payment
       description: 'An **incoming payment** resource represents a payment that will be, is currently being, or has been received by the account.'
@@ -1154,16 +1149,6 @@ components:
         - receiveAmount
         - sendAmount
         - createdAt
-    assetCode:
-      title: Asset code
-      type: string
-      description: This SHOULD be an ISO4217 currency code.
-    assetScale:
-      title: Asset scale
-      type: integer
-      minimum: 0
-      maximum: 255
-      description: The scale of amounts denoted in the corresponding asset code.
     pagination:
       description: Pagination parameters
       oneOf:

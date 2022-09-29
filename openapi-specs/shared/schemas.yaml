@@ -126,17 +126,23 @@ amount:
       format: uint64
       description: "The value is an unsigned 64-bit integer amount, represented as a string."
     assetCode:
-      type: string
-      description: The assetCode is a code that indicates the underlying asset. In most cases this SHOULD be a 3-character ISO 4217 currency code.
+      $ref: "#/assetCode"
     assetScale:
-      type: integer
-      minimum: 0
-      maximum: 255
-      description: 'The assetScale indicates how the value has been scaled relative to the natural scale of the asset. For example, an value of "1234" with an assetScale of 2 represents an amount of 12.34.'
+      $ref: "#/assetScale"
   required:
     - value
     - assetCode
     - assetScale
+assetCode:
+  title: Asset code
+  type: string
+  description: The assetCode is a code that indicates the underlying asset. This SHOULD be an ISO4217 currency code.
+assetScale:
+  title: Asset scale
+  type: integer
+  minimum: 0
+  maximum: 255
+  description: The scale of amounts denoted in the corresponding asset code.
 interval:
   title: Interval
   type: string
