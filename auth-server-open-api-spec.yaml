@@ -418,6 +418,10 @@ paths:
         - grant
       responses:
         '302':
+          content:
+            text/html:
+              schema:
+                type: string
           description: Found
           headers:
             Location:
