@@ -33,9 +33,7 @@ paths:
                   grant:
                     type: string
                   access:
-                    type: array
-                    items:
-                      $ref: ../../shared/schemas.yaml#/access
+                    $ref: ../../shared/schemas.yaml#/access
                   key:
                     $ref: ../../shared/schemas.yaml#/key
                   client_id:
@@ -92,10 +90,7 @@ paths:
                     - type: string
                   description: 'The identification used to authenticate the resource server making this call, either by value or by reference.'
                 access:
-                  type: array
-                  description: The minimum access rights required to fulfill the request.
-                  items:
-                    $ref: ../../shared/schemas.yaml#/access
+                  $ref: ../../shared/schemas.yaml#/access
               required:
                 - access_token
                 - resource_server

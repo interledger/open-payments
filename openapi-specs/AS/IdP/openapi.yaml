@@ -89,9 +89,7 @@ paths:
                 type: object
                 properties:
                   access:
-                    type: array
-                    items:
-                      $ref: ../../shared/schemas.yaml#/access
+                    $ref: ../../shared/schemas.yaml#/access
         '404':
           description: Not Found
       operationId: get-grant
