@@ -170,7 +170,7 @@ paths:
               properties:
                 incomingAmount:
                   description: The maximum amount that should be paid into the payment pointer under this incoming payment.
-                  $ref: shared/schemas.yaml#/amount
+                  $ref: ../shared/schemas.yaml#/amount
                 expiresAt:
                   type: string
                   description: The date and time when payments into the incoming payment must no longer be accepted.
@@ -570,11 +570,11 @@ paths:
               additionalProperties: false
               properties:
                 receiver:
-                  $ref: shared/schemas.yaml#/receiver
+                  $ref: ../shared/schemas.yaml#/receiver
                 receiveAmount:
-                  $ref: shared/schemas.yaml#/amount
+                  $ref: ../shared/schemas.yaml#/amount
                 sendAmount:
-                  $ref: shared/schemas.yaml#/amount
+                  $ref: ../shared/schemas.yaml#/amount
               required:
                 - receiver
         description: |-
@@ -798,9 +798,9 @@ components:
           description: A public name for the account. This should be set by the account holder with their provider to provide a hint to counterparties as to the identity of the account holder.
           readOnly: true
         assetCode:
-          $ref: ./shared/schemas.yaml#/assetCode
+          $ref: ../shared/schemas.yaml#/assetCode
         assetScale:
-          $ref: ./shared/schemas.yaml#/assetScale
+          $ref: ../shared/schemas.yaml#/assetScale
         authServer:
           type: string
           format: uri
@@ -838,9 +838,9 @@ components:
           description: The base64 url-encoded shared secret to use when establishing a STREAM connection.
           readOnly: true
         assetCode:
-          $ref: ./shared/schemas.yaml#/assetCode
+          $ref: ../shared/schemas.yaml#/assetCode
         assetScale:
-          $ref: ./shared/schemas.yaml#/assetScale
+          $ref: ../shared/schemas.yaml#/assetScale
       required:
         - id
         - ilpAddress
@@ -898,10 +898,10 @@ components:
           default: false
         incomingAmount:
           description: The maximum amount that should be paid into the payment pointer under this incoming payment.
-          $ref: shared/schemas.yaml#/amount
+          $ref: ../shared/schemas.yaml#/amount
         receivedAmount:
           description: The total amount that has been paid into the payment pointer under this incoming payment.
-          $ref: shared/schemas.yaml#/amount
+          $ref: ../shared/schemas.yaml#/amount
         expiresAt:
           type: string
           description: The date and time when payments under this incoming payment will no longer be accepted.
@@ -1051,16 +1051,16 @@ components:
           default: false
         receiver:
           description: The URL of the incoming payment or ILP STREAM Connection that is being paid.
-          $ref: shared/schemas.yaml#/receiver
+          $ref: ../shared/schemas.yaml#/receiver
         receiveAmount:
           description: The total amount that should be received by the receiver when this outgoing payment has been paid.
-          $ref: shared/schemas.yaml#/amount
+          $ref: ../shared/schemas.yaml#/amount
         sendAmount:
           description: The total amount that should be sent when this outgoing payment has been paid.
-          $ref: shared/schemas.yaml#/amount
+          $ref: ../shared/schemas.yaml#/amount
         sentAmount:
           description: The total amount that has been sent under this outgoing payment.
-          $ref: shared/schemas.yaml#/amount
+          $ref: ../shared/schemas.yaml#/amount
         description:
           type: string
           description: Human readable description of the outgoing payment that will be visible to the account holder and shared with the receiver.
@@ -1129,11 +1129,11 @@ components:
           description: The URL of the payment pointer from which this quote's payment would be sent.
           readOnly: true
         receiver:
-          $ref: shared/schemas.yaml#/receiver
+          $ref: ../shared/schemas.yaml#/receiver
         receiveAmount:
-          $ref: shared/schemas.yaml#/amount
+          $ref: ../shared/schemas.yaml#/amount
         sendAmount:
-          $ref: shared/schemas.yaml#/amount
+          $ref: ../shared/schemas.yaml#/amount
         expiresAt:
           type: string
           description: The date and time when the calculated `sendAmount` is no longer valid.
