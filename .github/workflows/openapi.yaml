@@ -5,12 +5,12 @@ on:
     branches:
       - main
     paths:
-      - openapi-specs/**
+      - openapi/**
   pull_request:
     branches:
       - main
     paths:
-      - openapi-specs/**
+      - openapi/**
 
 jobs:
   validate:
@@ -25,4 +25,4 @@ jobs:
 
       - name: Validate openapi.yaml
         run: |
-          npx @stoplight/spectral-cli lint openapi-specs/../openapi.yaml
+          npx @stoplight/spectral-cli lint openapi/../openapi.yaml
