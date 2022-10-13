@@ -30,3 +30,19 @@ jobs:
       - name: Validate openapi.yaml
         run: |
           npx @stoplight/spectral-cli lint openapi/**/openapi.yaml
+  publish:
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        name: Check out repository
+
+      - uses: readmeio/rdme@7.2.0
+        name: Sync Open Payments API spec
+        with:
+          rdme: openapi openapi/RS/openapi.yaml --key=${{ secrets.README_API_KEY }} --id=${{ secrets.README_OP_API_ID }}
+
+      - uses: readmeio/rdme@7.2.0
+        name: Sync Auth Server API spec
+        with:
+          rdme: openapi openapi/AS/client/openapi.yaml --key=${{ secrets.README_API_KEY }} --id=${{ secrets.README_AUTH_API_ID }}
