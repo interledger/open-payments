@@ -422,6 +422,7 @@ paths:
             text/html:
               schema:
                 type: string
+                nullable: true
           description: Found
           headers:
             Location:
