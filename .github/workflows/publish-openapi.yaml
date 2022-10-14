@@ -1,4 +1,4 @@
-name: OpenAPI Validator
+name: OpenAPI Publisher
 
 on:
   push:
@@ -6,32 +6,14 @@ on:
       - main
     paths:
       - openapi/**
-  pull_request:
-    branches:
-      - main
-    paths:
-      - openapi/**
 
 jobs:
-  validate:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-
-      - name: Lint openapi.yaml
-        run: |
-          npx prettier --check openapi/**/openapi.yaml
-
-      - name: AsyncAPI extension
-        run: |
-          echo "{\"extends\":[\"spectral:oas\",\"spectral:asyncapi\"]}" >> .spectral.json
-
-      - name: Validate openapi.yaml
-        run: |
-          npx @stoplight/spectral-cli lint openapi/**/openapi.yaml
   publish:
-    needs: validate
+    workflow_run:
+      workflows: ['OpenAPI Validator']
+      branches: [main]
+      types:
+        - completed
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
