@@ -1,0 +1,282 @@
+access:
+  type: array
+  description: A description of the rights associated with this access token.
+  items:
+    $ref: '#/access-item'
+  allOf:
+    - contains:
+        properties:
+          type:
+            const: incoming-payment
+      minContains: 0
+      maxContains: 1
+    - contains:
+        properties:
+          type:
+            const: outgoing-payment
+      minContains: 0
+      maxContains: 1
+    - contains:
+        properties:
+          type:
+            const: quote
+      minContains: 0
+      maxContains: 1
+access-item:
+  discriminator:
+    propertyName: type
+    mapping:
+      incoming-payment: '#/access-incoming'
+      outgoing-payment: '#/access-outgoing'
+      quote: '#/access-quote'
+  oneOf:
+    - $ref: '#/access-incoming'
+    - $ref: '#/access-outgoing'
+    - $ref: '#/access-quote'
+  description: The access associated with the access token is described using objects that each contain multiple dimensions of access.
+  unevaluatedProperties: false
+access-incoming:
+  title: access-incoming
+  type: object
+  properties:
+    type:
+      type: string
+      enum:
+        - incoming-payment
+      description: The type of resource request as a string.  This field defines which other fields are allowed in the request object.
+    actions:
+      type: array
+      description: The types of actions the client instance will take at the RS as an array of strings.
+      items:
+        type: string
+        enum:
+          - create
+          - complete
+          - read
+          - read-all
+          - list
+          - list-all
+      allOf:
+        - contains:
+            $ref: '#/read-actions'
+          minContains: 0
+          maxContains: 1
+        - contains:
+            $ref: '#/list-actions'
+          minContains: 0
+          maxContains: 1
+      uniqueItems: true
+    identifier:
+      type: string
+      format: uri
+      description: A string identifier indicating a specific resource at the RS.
+  required:
+    - type
+    - actions
+access-outgoing:
+  title: access-outgoing
+  type: object
+  properties:
+    type:
+      type: string
+      enum:
+        - outgoing-payment
+      description: The type of resource request as a string.  This field defines which other fields are allowed in the request object.
+    actions:
+      type: array
+      description: The types of actions the client instance will take at the RS as an array of strings.
+      items:
+        type: string
+        enum:
+          - create
+          - read
+          - read-all
+          - list
+          - list-all
+      allOf:
+        - contains:
+            $ref: '#/read-actions'
+          minContains: 0
+          maxContains: 1
+        - contains:
+            $ref: '#/list-actions'
+          minContains: 0
+          maxContains: 1
+      uniqueItems: true
+    identifier:
+      type: string
+      format: uri
+      description: A string identifier indicating a specific resource at the RS.
+    limits:
+      $ref: '#/limits-outgoing'
+  required:
+    - type
+    - actions
+    - identifier
+access-quote:
+  title: access-quote
+  type: object
+  properties:
+    type:
+      type: string
+      enum:
+        - quote
+      description: The type of resource request as a string.  This field defines which other fields are allowed in the request object.
+    actions:
+      type: array
+      description: The types of actions the client instance will take at the RS as an array of strings.
+      items:
+        type: string
+        enum:
+          - create
+          - read
+          - read-all
+      allOf:
+        - contains:
+            $ref: '#/read-actions'
+          minContains: 0
+          maxContains: 1
+      uniqueItems: true
+  required:
+    - type
+    - actions
+amount:
+  title: amount
+  type: object
+  description: 'All amounts are maxima, i.e. multiple payments can be created under a grant as long as the total amounts of these payments do not exceed the maximum amount per interval as specified in the grant.'
+  properties:
+    value:
+      type: string
+      format: uint64
+      description: 'The value is an unsigned 64-bit integer amount, represented as a string.'
+    assetCode:
+      $ref: '#/assetCode'
+    assetScale:
+      $ref: '#/assetScale'
+  required:
+    - value
+    - assetCode
+    - assetScale
+assetCode:
+  title: Asset code
+  type: string
+  description: The assetCode is a code that indicates the underlying asset. This SHOULD be an ISO4217 currency code.
+assetScale:
+  title: Asset scale
+  type: integer
+  minimum: 0
+  maximum: 255
+  description: The scale of amounts denoted in the corresponding asset code.
+interval:
+  title: Interval
+  type: string
+  description: '[ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)'
+  examples:
+    - 'R11/2022-08-24T14:15:22Z/P1M'
+    - 'R/2017-03-01T13:00:00Z/2018-05-11T15:30:00Z'
+    - 'R-1/P1Y2M10DT2H30M/2022-05-11T15:30:00Z'
+key:
+  title: key
+  type: object
+  description: A key presented by value MUST be a public key.
+  properties:
+    proof:
+      type: string
+      enum:
+        - httpsig
+      description: The form of proof that the client instance will use when presenting the key.
+    jwk:
+      type: object
+      description: 'The public key and its properties represented as a JSON Web Key [[RFC7517](https://datatracker.ietf.org/doc/html/rfc7517)].'
+      additionalProperties: false
+      required:
+        - alg
+        - kid
+        - kty
+        - crv
+        - x
+      properties:
+        alg:
+          type: string
+          description: 'The cryptographic algorithm family used with the key. The only allowed value is `EdDSA`. '
+          enum:
+            - EdDSA
+        kid:
+          type: string
+          description: A Key ID can be used to match a specific key.
+        kty:
+          type: string
+          enum:
+            - OKP
+          description: 'The Key Type. The only allowed value is `OKP`. '
+        use:
+          type: string
+          enum:
+            - sig
+          description: The intended use of the key.
+        crv:
+          type: string
+          enum:
+            - Ed25519
+          description: 'The cryptographic curve used with the key. The only allowed value is `Ed25519`. '
+        x:
+          type: string
+          description: Public key encoded using the `base64url` encoding.
+        key_ops:
+          type: array
+          description: Array of allowed operations this key may be used for.
+          items:
+            type: string
+            enum:
+              - sign
+              - verify
+        nbf:
+          type: integer
+          description: UNIX timestamp indicating the earliest this key may be used.
+        exp:
+          type: integer
+          description: UNIX timestamp indicating the latest this key may be used.
+        revoked:
+          type: boolean
+          description: The revocation status of the key.
+  required:
+    - proof
+    - jwk
+limits-outgoing:
+  title: limits-outgoing
+  description: Open Payments specific property that defines the limits under which outgoing payments can be created.
+  type: object
+  properties:
+    receiver:
+      $ref: '#/receiver'
+    sendAmount:
+      $ref: '#/amount'
+    receiveAmount:
+      $ref: '#/amount'
+    interval:
+      $ref: '#/interval'
+  anyOf:
+    - not:
+        required:
+          - interval
+    - required:
+        - sendAmount
+    - required:
+        - receiveAmount
+list-actions:
+  enum:
+    - list
+    - list-all
+read-actions:
+  enum:
+    - read
+    - read-all
+receiver:
+  title: Receiver
+  type: string
+  description: The URL of the incoming payment or ILP STREAM connection that is being paid.
+  format: uri
+  pattern: '^https://(.+)/(incoming-payments|connections)/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+  examples:
+    - 'https://openpayments.guide/alice/incoming-payments/08394f02-7b7b-45e2-b645-51d04e7c330c'
+    - 'https://openpayments.guide/connections/016da9d5-c9a4-4c80-a354-86b915a04ff8'

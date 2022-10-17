@@ -84,6 +84,7 @@ paths:
 
         The content should be slow changing and cacheable for long periods. Servers SHOULD use cache control headers.
       security: []
+      x-internal: false
   '/connections/{id}':
     servers:
       - url: 'https://openpayments.guide/'
@@ -169,7 +170,7 @@ paths:
               properties:
                 incomingAmount:
                   description: The maximum amount that should be paid into the payment pointer under this incoming payment.
-                  $ref: '#/components/schemas/amount'
+                  $ref: ../shared/schemas.yaml#/amount
                 expiresAt:
                   type: string
                   description: The date and time when payments into the incoming payment must no longer be accepted.
@@ -566,16 +567,16 @@ paths:
                     assetScale: 2
             schema:
               type: object
+              additionalProperties: false
               properties:
                 receiver:
-                  $ref: '#/components/schemas/receiver'
+                  $ref: ../shared/schemas.yaml#/receiver
                 receiveAmount:
-                  $ref: '#/components/schemas/amount'
+                  $ref: ../shared/schemas.yaml#/amount
                 sendAmount:
-                  $ref: '#/components/schemas/amount'
+                  $ref: ../shared/schemas.yaml#/amount
               required:
                 - receiver
-              additionalProperties: false
         description: |-
           A subset of the quotes schema is accepted as input to create a new quote.
 
@@ -779,6 +780,13 @@ components:
       title: Payment Pointer
       type: object
       description: A **payment pointer** resource is the root of the API and contains the public details of the financial account represented by the Payment Pointer that is also the service endpoint URL.
+      additionalProperties: false
+      examples:
+        - id: 'https://openpayments.guide/alice'
+          publicName: Alice
+          assetCode: USD
+          assetScale: 2
+          authServer: 'https://openpayments.guide/auth'
       properties:
         id:
           type: string
@@ -790,12 +798,9 @@ components:
           description: A public name for the account. This should be set by the account holder with their provider to provide a hint to counterparties as to the identity of the account holder.
           readOnly: true
         assetCode:
-          $ref: '#/components/schemas/assetCode'
-          description: The asset code of the account.
-          readOnly: true
+          $ref: ../shared/schemas.yaml#/assetCode
         assetScale:
-          $ref: '#/components/schemas/assetScale'
-          readOnly: true
+          $ref: ../shared/schemas.yaml#/assetScale
         authServer:
           type: string
           format: uri
@@ -806,17 +811,15 @@ components:
         - assetCode
         - assetScale
         - authServer
-      additionalProperties: false
-      examples:
-        - id: 'https://openpayments.guide/alice'
-          publicName: Alice
-          assetCode: USD
-          assetScale: 2
-          authServer: 'https://openpayments.guide/auth'
     ilp-stream-connection:
       title: ILP Stream Connection
       type: object
       description: An **ILP STREAM Connection** is an endpoint that returns unique STREAM connection credentials to establish a STREAM connection to the underlying account.
+      additionalProperties: false
+      examples:
+        - id: 'https://openpayments.guide/connections/016da9d5-c9a4-4c80-a354-86b915a04ff8'
+          ilpApddress: g.ilp.iwuyge987y.98y08y
+          sharedSecret: 1c7eaXa4rd2fFOBl1iydvCT1tV5TbM3RW1WLCafu_JA
       properties:
         id:
           type: string
@@ -831,26 +834,19 @@ components:
           readOnly: true
         sharedSecret:
           type: string
-          pattern: "^[a-zA-Z0-9-_]+$"
+          pattern: '^[a-zA-Z0-9-_]+$'
           description: The base64 url-encoded shared secret to use when establishing a STREAM connection.
           readOnly: true
         assetCode:
-          $ref: '#/components/schemas/assetCode'
-          description: The asset code of the amount.
+          $ref: ../shared/schemas.yaml#/assetCode
         assetScale:
-          $ref: '#/components/schemas/assetScale'
-          description: The scale of the amount.
+          $ref: ../shared/schemas.yaml#/assetScale
       required:
         - id
         - ilpAddress
         - sharedSecret
         - assetCode
         - assetScale
-      additionalProperties: false
-      examples:
-        - id: 'https://openpayments.guide/connections/016da9d5-c9a4-4c80-a354-86b915a04ff8'
-          ilpApddress: g.ilp.iwuyge987y.98y08y
-          sharedSecret: 1c7eaXa4rd2fFOBl1iydvCT1tV5TbM3RW1WLCafu_JA
     incoming-payment:
       title: Incoming Payment
       description: 'An **incoming payment** resource represents a payment that will be, is currently being, or has been received by the account.'
@@ -902,10 +898,10 @@ components:
           default: false
         incomingAmount:
           description: The maximum amount that should be paid into the payment pointer under this incoming payment.
-          $ref: '#/components/schemas/amount'
+          $ref: ../shared/schemas.yaml#/amount
         receivedAmount:
           description: The total amount that has been paid into the payment pointer under this incoming payment.
-          $ref: '#/components/schemas/amount'
+          $ref: ../shared/schemas.yaml#/amount
         expiresAt:
           type: string
           description: The date and time when payments under this incoming payment will no longer be accepted.
@@ -1055,16 +1051,16 @@ components:
           default: false
         receiver:
           description: The URL of the incoming payment or ILP STREAM Connection that is being paid.
-          $ref: '#/components/schemas/receiver'
+          $ref: ../shared/schemas.yaml#/receiver
         receiveAmount:
           description: The total amount that should be received by the receiver when this outgoing payment has been paid.
-          $ref: '#/components/schemas/amount'
+          $ref: ../shared/schemas.yaml#/amount
         sendAmount:
           description: The total amount that should be sent when this outgoing payment has been paid.
-          $ref: '#/components/schemas/amount'
+          $ref: ../shared/schemas.yaml#/amount
         sentAmount:
           description: The total amount that has been sent under this outgoing payment.
-          $ref: '#/components/schemas/amount'
+          $ref: ../shared/schemas.yaml#/amount
         description:
           type: string
           description: Human readable description of the outgoing payment that will be visible to the account holder and shared with the receiver.
@@ -1120,6 +1116,7 @@ components:
             assetScale: 2
           createdAt: '2022-03-12T23:20:50.52Z'
           expiresAt: '2022-04-12T23:20:50.52Z'
+      additionalProperties: false
       properties:
         id:
           type: string
@@ -1132,14 +1129,11 @@ components:
           description: The URL of the payment pointer from which this quote's payment would be sent.
           readOnly: true
         receiver:
-          description: The URL of the incoming payment or ILP Stream Connection that would be paid.
-          $ref: '#/components/schemas/receiver'
+          $ref: ../shared/schemas.yaml#/receiver
         receiveAmount:
-          description: The total amount that should be received by the receiver.
-          $ref: '#/components/schemas/amount'
+          $ref: ../shared/schemas.yaml#/amount
         sendAmount:
-          description: The total amount that should be sent by the sender.
-          $ref: '#/components/schemas/amount'
+          $ref: ../shared/schemas.yaml#/amount
         expiresAt:
           type: string
           description: The date and time when the calculated `sendAmount` is no longer valid.
@@ -1152,66 +1146,9 @@ components:
         - id
         - paymentPointer
         - receiver
-        - sendAmount
         - receiveAmount
+        - sendAmount
         - createdAt
-      additionalProperties: false
-    amount:
-      title: Amount
-      type: object
-      description: |-
-        All amounts in open payments are represented as a value and an asset code and scale.
-
-        The `value` is an unsigned 64-bit integer amount, represented as a string.
-
-        The `assetCode` is a code that indicates the underlying asset. In most cases this SHOULD be a 3-character ISO 4217 currency code.
-
-        The `assetScale` indicates how the `value` has been scaled relative to the natural scale of the asset. For example, an `value` of `"1234"` with an `assetScale` of `2` represents an amount of 12.34.
-      examples:
-        - value: '2500'
-          assetCode: USD
-          assetScale: 2
-        - value: '500'
-          assetCode: EUR
-          assetScale: 2
-        - value: '123456789'
-          assetCode: BTC
-          assetScale: 8
-      properties:
-        value:
-          type: string
-          format: uint64
-          description: 'The amount, scaled by the given scale.'
-        assetCode:
-          $ref: '#/components/schemas/assetCode'
-          description: The asset code of the amount.
-        assetScale:
-          $ref: '#/components/schemas/assetScale'
-          description: The scale of the amount.
-      required:
-        - value
-        - assetCode
-        - assetScale
-      additionalProperties: false
-    assetCode:
-      title: Asset code
-      type: string
-      description: This SHOULD be an ISO4217 currency code.
-    assetScale:
-      title: Asset scale
-      type: integer
-      minimum: 0
-      maximum: 255
-      description: The scale of amounts denoted in the corresponding asset code.
-    receiver:
-      title: Receiver
-      type: string
-      description: The URL of the incoming payment or ILP STREAM connection that is being paid.
-      format: uri
-      pattern: '^https://(.+)/(incoming-payments|connections)/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
-      examples:
-        - 'https://openpayments.guide/alice/incoming-payments/08394f02-7b7b-45e2-b645-51d04e7c330c'
-        - 'https://openpayments.guide/connections/016da9d5-c9a4-4c80-a354-86b915a04ff8'
     pagination:
       description: Pagination parameters
       oneOf:

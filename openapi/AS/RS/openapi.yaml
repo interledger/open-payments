@@ -1,0 +1,111 @@
+openapi: 3.1.0
+info:
+  title: Open Payments Authorization Server - Resource Server Connection
+  version: '1.0'
+  license:
+    name: Apache 2.0
+    identifier: Apache-2.0
+  summary: Open Payments Authorization Server - Resource Server Connection
+  description: 'The Open Payments API is secured via [GNAP](https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol). This specification describes the connection between the Open Payments Authorization Server and the Open Payments Resource Server, which is an opinionated version of the [Grant Negotiation and Authorization Protocol Resource Server Connections](https://datatracker.ietf.org/doc/html/draft-ietf-gnap-resource-servers).'
+  contact:
+    email: tech@interledger.org
+servers:
+  - url: 'https://openpayments.guide/auth'
+tags:
+  - name: introspection
+    description: Token introspection
+paths:
+  /introspect:
+    parameters: []
+    post:
+      summary: Introspect Access Token
+      operationId: post-introspect
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  active:
+                    type: boolean
+                  grant:
+                    type: string
+                  access:
+                    $ref: ../../shared/schemas.yaml#/access
+                  key:
+                    $ref: ../../shared/schemas.yaml#/key
+                  client_id:
+                    type: string
+                    description: Opaque client identifier.
+                required:
+                  - active
+              examples:
+                Token Introspection:
+                  value:
+                    active: true
+                    grant: 1ee48d97-8fa1-4ab4-b89d-95284b665517
+                    access:
+                      - type: outgoing-payment
+                        actions:
+                          - create
+                          - read
+                        identifier: 'https://openpayments.guide/alice'
+                        limits:
+                          interval: 'R12/2019-08-24T14:15:22Z/P1M'
+                          receiver: 'https://openpayments.guide/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2'
+                          sendAmount:
+                            value: '500'
+                            assetCode: USD
+                            assetScale: 2
+                    key:
+                      proof: httpsig
+                      jwk:
+                        alg: EdDSA
+                        kid: 20f24ce2-a5f6-4f28-bf7d-ed52d0490187
+                        kty: OKP
+                        use: sig
+                        crv: Ed25519
+                        x: AAAAC3NzaC1lZDI1NTE5AAAAIK0wmN/Cr3JXqmLW7u+g9pTh+wyqDHpSQEIQczXkVx9q
+                    client_id: 581a1dd9-aef5-4b1a-9d78-c1afc4a5fdbf
+        '404':
+          description: Not Found
+      description: Introspect an access token to get grant details.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                access_token:
+                  type: string
+                  description: The access token value presented to the RS by the client instance.
+                proof:
+                  type: string
+                  description: The proofing method used by the client instance to bind the token to the RS request.
+                resource_server:
+                  oneOf:
+                    - $ref: ../../shared/schemas.yaml#/key
+                    - type: string
+                  description: 'The identification used to authenticate the resource server making this call, either by value or by reference.'
+                access:
+                  $ref: ../../shared/schemas.yaml#/access
+              required:
+                - access_token
+                - resource_server
+            examples:
+              Introspect token:
+                value:
+                  access_token: OS9M2PMHKUR64TB8N6BW7OZB8CDFONP219RP1LT0
+                  proof: httpsig
+                  resource_server: 7C7C4AZ9KHRS6X63AJAO
+      tags:
+        - introspection
+components:
+  schemas: {}
+  securitySchemes:
+    GNAP:
+      name: Authorization
+      type: apiKey
+      in: header

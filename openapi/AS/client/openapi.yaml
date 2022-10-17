@@ -1,0 +1,439 @@
+openapi: 3.1.0
+info:
+  title: Open Payments Authorization Server
+  version: '1.0'
+  license:
+    name: Apache 2.0
+    identifier: Apache-2.0
+  summary: Open Payments Authorization Server
+  description: 'The Open Payments API is secured via [GNAP](https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol). This specification describes the Open Payments Authorization Server API, which is an opinionated GNAP Server API.'
+  contact:
+    email: tech@interledger.org
+servers:
+  - url: 'https://openpayments.guide/auth'
+tags:
+  - name: grant
+    description: grant operations
+  - name: token
+    description: token operations
+paths:
+  /:
+    post:
+      summary: Grant Request
+      operationId: post-request
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - properties:
+                      interact:
+                        $ref: '#/components/schemas/interact-response'
+                      continue:
+                        $ref: '#/components/schemas/continue'
+                    required:
+                      - interact
+                      - continue
+                  - properties:
+                      access_token:
+                        $ref: '#/components/schemas/access_token'
+                      continue:
+                        $ref: '#/components/schemas/continue'
+                    required:
+                      - access_token
+                      - continue
+                type: object
+              examples:
+                Interaction instructions:
+                  value:
+                    interact:
+                      redirect: 'https://openpayments.guide/auth/4CF492MLVMSW9MKMXKHQ'
+                      finish: 4105340a-05eb-4290-8739-f9e2b463bfa7
+                    continue:
+                      access_token:
+                        value: 33OMUKMKSKU80UPRY5NM
+                      uri: 'https://openpayments.guide/auth/continue/4CF492MLVMSW9MKMXKHQ'
+                      wait: 30
+                Grant:
+                  value:
+                    access_token:
+                      value: OS9M2PMHKUR64TB8N6BW7OZB8CDFONP219RP1LT0
+                      manage: 'https://openpayments.guide/auth/token/dd17a202-9982-4ed9-ae31-564947fb6379'
+                      expires_in: 3600
+                      access:
+                        - type: incoming-payment
+                          actions:
+                            - create
+                            - read
+                          identifier: 'https://openpayments.guide/bob'
+                    continue:
+                      access_token:
+                        value: 33OMUKMKSKU80UPRY5NM
+                      uri: 'https://openpayments.guide/auth/continue/4CF492MLVMSW9MKMXKHQ'
+        '400':
+          description: Bad Request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                access_token:
+                  type: object
+                  required:
+                    - access
+                  properties:
+                    access:
+                      $ref: ../../shared/schemas.yaml#/access
+                client:
+                  $ref: '#/components/schemas/client'
+                interact:
+                  $ref: '#/components/schemas/interact-request'
+              required:
+                - access_token
+                - client
+            examples:
+              Grant request for creating and reading recurring fixed payment:
+                value:
+                  access_token:
+                    access:
+                      - type: outgoing-payment
+                        actions:
+                          - create
+                          - read
+                        identifier: 'https://openpayments.guide/alice'
+                        limits:
+                          receiver: 'https://openpayments.guide/connections/45a0d0ee-26dc-4c66-89e0-01fbf93156f7'
+                          interval: 'R12/2019-08-24T14:15:22Z/P1M'
+                          sendAmount:
+                            value: '500'
+                            assetCode: USD
+                            assetScale: 2
+                  client:
+                    display:
+                      name: Webmonize
+                      uri: 'https://webmonize.com'
+                    key:
+                      proof: httpsig
+                      jwk:
+                        alg: EdDSA
+                        kid: 20f24ce2-a5f6-4f28-bf7d-ed52d0490187
+                        kty: OKP
+                        use: sig
+                        crv: Ed25519
+                        x: AAAAC3NzaC1lZDI1NTE5AAAAIK0wmN/Cr3JXqmLW7u+g9pTh+wyqDHpSQEIQczXkVx9q
+                  interact:
+                    start:
+                      - redirect
+                    finish:
+                      method: redirect
+                      uri: 'https://webmonize.com/return/876FGRD8VC'
+                      nonce: 4edb2194-dbdf-46bb-9397-d5fd57b7c8a7
+              Grant request for creating and reading incoming payments:
+                value:
+                  access_token:
+                    access:
+                      - type: incoming-payment
+                        actions:
+                          - create
+                          - read
+                        identifier: 'http://openpayments.guide/bob'
+                  client:
+                    display:
+                      name: Webmonize
+                      uri: 'https://webmonize.com'
+                    key:
+                      proof: httpsig
+                      jwk:
+                        alg: EdDSA
+                        kid: 20f24ce2-a5f6-4f28-bf7d-ed52d0490187
+                        kty: OKP
+                        use: sig
+                        crv: Ed25519
+                        x: AAAAC3NzaC1lZDI1NTE5AAAAIK0wmN/Cr3JXqmLW7u+g9pTh+wyqDHpSQEIQczXkVx9q
+        description: ''
+      description: Make a new grant request
+      security: []
+      tags:
+        - grant
+    parameters: []
+  '/continue/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    post:
+      summary: Continuation Request
+      operationId: post-continue
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    $ref: '#/components/schemas/access_token'
+                  continue:
+                    $ref: '#/components/schemas/continue'
+                required:
+                  - continue
+              examples:
+                Continuing After a Completed Interaction:
+                  value:
+                    access_token:
+                      value: OS9M2PMHKUR64TB8N6BW7OZB8CDFONP219RP1LT0
+                      manage: 'https://openpayments.guide/auth/token/dd17a202-9982-4ed9-ae31-564947fb6379'
+                      expires_in: 3600
+                      access:
+                        - type: outgoing-payment
+                          actions:
+                            - create
+                            - read
+                          identifier: 'https://openpayments.guide/alice'
+                          limits:
+                            receiver: 'https://openpayments.guide/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2'
+                            interval: 'R12/2019-08-24T14:15:22Z/P1M'
+                            sendAmount:
+                              value: '500'
+                              assetCode: USD
+                              assetScale: 2
+                    continue:
+                      access_token:
+                        value: 33OMUKMKSKU80UPRY5NM
+                      uri: 'https://openpayments.guide/auth/continue/4CF492MLVMSW9MKMXKHQ'
+                      wait: 30
+                Continuing During Pending Interaction:
+                  value:
+                    continue:
+                      access_token:
+                        value: 33OMUKMKSKU80UPRY5NM
+                      uri: 'https://openpayments.guide/auth/continue/4CF492MLVMSW9MKMXKHQ'
+                      wait: 30
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                interact_ref:
+                  type: string
+                  description: |-
+                    The interaction reference generated for this
+                    interaction by the AS.
+              required:
+                - interact_ref
+            examples:
+              Interaction Reference:
+                value:
+                  interact_ref: ad82597c-bbfa-4eb0-b72e-328e005b8689
+      description: Continue a grant request during or after user interaction.
+      tags:
+        - grant
+    delete:
+      summary: Cancel Grant
+      operationId: delete-continue
+      responses:
+        '202':
+          description: Accepted
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+      description: Cancel a grant request or delete a grant client side.
+      tags:
+        - grant
+  '/token/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    post:
+      summary: Rotate Access Token
+      operationId: post-token
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    $ref: '#/components/schemas/access_token'
+                required:
+                  - access_token
+              examples:
+                New access token:
+                  value:
+                    access_token:
+                      value: OZB8CDFONP219RP1LT0OS9M2PMHKUR64TB8N6BW7
+                      manage: 'https://openpayments.guide/auth/token/8f69de01-5bf9-4603-91ed-eeca101081f1'
+                      expires_in: 3600
+                      access:
+                        - type: outgoing-payment
+                          actions:
+                            - create
+                            - read
+                          identifier: 'https://openpayments.guide/alice'
+                          limits:
+                            interval: 'R12/2019-08-24T14:15:22Z/P1M'
+                            receiver: 'https://openpayments.guide/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2'
+                            sendAmount:
+                              value: '500'
+                              assetCode: USD
+                              assetScale: 2
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+      description: Management endpoint to rotate access token.
+      tags:
+        - token
+    delete:
+      summary: Revoke Access Token
+      operationId: delete-token
+      description: Management endpoint to revoke access token.
+      responses:
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+      tags:
+        - token
+components:
+  schemas:
+    client:
+      title: client
+      type: object
+      description: |-
+        Describes the client instance that is making this request, including the key that the client instance will use to protect this request and any continuation requests at the AS and any user-facing information about the client instance used in interactions.
+
+        When sending a non-continuation request to the AS, the client instance MUST identify itself by including the client field of the request and by signing the request.
+      properties:
+        display:
+          type: object
+          description: 'An object containing additional information that the AS MAY display to the RO during interaction, authorization, and management.'
+          properties:
+            name:
+              type: string
+            uri:
+              type: string
+              format: uri
+        client_id:
+          type: string
+          description: An identifier string that the AS can use to identify the client software comprising this client instance.
+        key:
+          oneOf:
+            - $ref: ../../shared/schemas.yaml#/key
+            - type: string
+          description: The public key of the client instance to be used in this request or a reference to a key.
+    interact-request:
+      title: interact
+      type: object
+      properties:
+        start:
+          type: array
+          description: Indicates how the client instance can start an interaction.
+          items:
+            type: string
+            enum:
+              - redirect
+        finish:
+          type: object
+          description: Indicates how the client instance can receive an indication that interaction has finished at the AS.
+          properties:
+            method:
+              type: string
+              enum:
+                - redirect
+              description: The callback method that the AS will use to contact the client instance.
+            uri:
+              type: string
+              format: uri
+              description: Indicates the URI that the AS will either send the RO to after interaction or send an HTTP POST request.
+            nonce:
+              type: string
+              description: 'Unique value to be used in the calculation of the "hash" query parameter sent to the callback URI, must be sufficiently random to be unguessable by an attacker.  MUST be generated by the client instance as a unique value for this request.'
+          required:
+            - method
+            - uri
+            - nonce
+      required:
+        - start
+      description: The client instance declares the parameters for interaction methods that it can support using the interact field.
+    interact-response:
+      title: interact-response
+      type: object
+      properties:
+        redirect:
+          type: string
+          format: uri
+          description: The URI to direct the end user to.
+        finish:
+          type: string
+          description: Unique key to secure the callback.
+      required:
+        - redirect
+        - finish
+    continue:
+      title: continue
+      type: object
+      description: 'If the AS determines that the request can be continued with additional requests, it responds with the continue field.'
+      properties:
+        access_token:
+          type: object
+          description: 'A unique access token for continuing the request, called the "continuation access token".'
+          required:
+            - value
+          properties:
+            value:
+              type: string
+        uri:
+          type: string
+          format: uri
+          description: The URI at which the client instance can make continuation requests.
+        wait:
+          type: integer
+          description: The amount of time in integer seconds the client instance MUST wait after receiving this request continuation response and calling the continuation URI.
+      required:
+        - access_token
+        - uri
+    access_token:
+      title: access_token
+      type: object
+      description: A single access token or set of access tokens that the client instance can use to call the RS on behalf of the RO.
+      properties:
+        value:
+          type: string
+          description: The value of the access token as a string.  The value is opaque to the client instance.  The value SHOULD be limited to ASCII characters to facilitate transmission over HTTP headers within other protocols without requiring additional encoding.
+        manage:
+          type: string
+          format: uri
+          description: The management URI for this access token. This URI MUST NOT include the access token value and SHOULD be different for each access token issued in a request.
+        expires_in:
+          type: integer
+          description: The number of seconds in which the access will expire.  The client instance MUST NOT use the access token past this time.  An RS MUST NOT accept an access token past this time.
+        access:
+          $ref: ../../shared/schemas.yaml#/access
+      required:
+        - value
+        - manage
+        - access
+  securitySchemes:
+    GNAP:
+      name: Authorization
+      type: apiKey
+      in: header
