@@ -21,7 +21,7 @@ jobs:
 
       - name: Lint Open API specs
         run: |
-          npx prettier --check openapi/{auth-server|resource-server}.yaml
+          npx prettier --check openapi/*-server.yaml
 
       - name: AsyncAPI extension
         run: |
@@ -29,4 +29,4 @@ jobs:
 
       - name: Validate Open API specs
         run: |
-          npx @stoplight/spectral-cli lint openapi/{auth-server|resource-server}.yaml
+          npx @stoplight/spectral-cli lint openapi/*-server.yaml
