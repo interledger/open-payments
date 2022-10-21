@@ -33,9 +33,9 @@ paths:
                   grant:
                     type: string
                   access:
-                    $ref: ../../shared/schemas.yaml#/access
+                    $ref: ../../shared/schemas.yaml#/components/schemas/access
                   key:
-                    $ref: ../../shared/schemas.yaml#/key
+                    $ref: ../../shared/schemas.yaml#/components/schemas/key
                   client_id:
                     type: string
                     description: Opaque client identifier.
@@ -86,11 +86,11 @@ paths:
                   description: The proofing method used by the client instance to bind the token to the RS request.
                 resource_server:
                   oneOf:
-                    - $ref: ../../shared/schemas.yaml#/key
+                    - $ref: ../../shared/schemas.yaml#/components/schemas/key
                     - type: string
                   description: 'The identification used to authenticate the resource server making this call, either by value or by reference.'
                 access:
-                  $ref: ../../shared/schemas.yaml#/access
+                  $ref: ../../shared/schemas.yaml#/components/schemas/access
               required:
                 - access_token
                 - resource_server
