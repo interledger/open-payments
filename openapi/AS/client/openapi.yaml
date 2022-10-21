@@ -87,7 +87,7 @@ paths:
                     - access
                   properties:
                     access:
-                      $ref: ../../shared/schemas.yaml#/access
+                      $ref: ../../shared/schemas.yaml#/components/schemas/access
                 client:
                   $ref: '#/components/schemas/client'
                 interact:
@@ -337,7 +337,7 @@ components:
           description: An identifier string that the AS can use to identify the client software comprising this client instance.
         key:
           oneOf:
-            - $ref: ../../shared/schemas.yaml#/key
+            - $ref: ../../shared/schemas.yaml#/components/schemas/key
             - type: string
           description: The public key of the client instance to be used in this request or a reference to a key.
     interact-request:
@@ -427,7 +427,7 @@ components:
           type: integer
           description: The number of seconds in which the access will expire.  The client instance MUST NOT use the access token past this time.  An RS MUST NOT accept an access token past this time.
         access:
-          $ref: ../../shared/schemas.yaml#/access
+          $ref: ../../shared/schemas.yaml#/components/schemas/access
       required:
         - value
         - manage
