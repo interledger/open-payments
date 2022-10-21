@@ -19,14 +19,14 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
 
-      - name: Lint openapi.yaml
+      - name: Lint Open API specs
         run: |
-          npx prettier --check openapi/**/openapi.yaml
+          npx prettier --check openapi/{auth-server|resource-server}.yaml
 
       - name: AsyncAPI extension
         run: |
           echo "{\"extends\":[\"spectral:oas\",\"spectral:asyncapi\"]}" >> .spectral.json
 
-      - name: Validate openapi.yaml
+      - name: Validate Open API specs
         run: |
-          npx @stoplight/spectral-cli lint openapi/**/openapi.yaml
+          npx @stoplight/spectral-cli lint openapi/{auth-server|resource-server}.yaml
