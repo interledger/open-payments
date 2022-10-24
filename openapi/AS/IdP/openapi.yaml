@@ -60,6 +60,11 @@ paths:
       operationId: get-finish-interaction
       responses:
         '302':
+          content:
+            text/html:
+              schema:
+                type: string
+                nullable: true
           description: Found
           headers:
             Location:
