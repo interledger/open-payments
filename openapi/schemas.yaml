@@ -16,25 +16,8 @@ components:
       description: A description of the rights associated with this access token.
       items:
         $ref: '#/components/schemas/access-item'
-      allOf:
-        - contains:
-            properties:
-              type:
-                const: incoming-payment
-          minContains: 0
-          maxContains: 1
-        - contains:
-            properties:
-              type:
-                const: outgoing-payment
-          minContains: 0
-          maxContains: 1
-        - contains:
-            properties:
-              type:
-                const: quote
-          minContains: 0
-          maxContains: 1
+      uniqueItems: true
+      maxItems: 3
     access-item:
       discriminator:
         propertyName: type
@@ -258,7 +241,7 @@ components:
     limits-outgoing:
       title: limits-outgoing
       description: Open Payments specific property that defines the limits under which outgoing payments can be created.
-      type: object
+      type: [object, "null"]
       properties:
         receiver:
           $ref: '#/components/schemas/receiver'
