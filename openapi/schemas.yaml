@@ -241,9 +241,7 @@ components:
     limits-outgoing:
       title: limits-outgoing
       description: Open Payments specific property that defines the limits under which outgoing payments can be created.
-      type:
-        - object
-        - null
+      type: [object, "null"]
       properties:
         receiver:
           $ref: '#/components/schemas/receiver'
