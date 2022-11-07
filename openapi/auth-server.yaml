@@ -112,19 +112,7 @@ paths:
                             value: '500'
                             assetCode: USD
                             assetScale: 2
-                  client:
-                    display:
-                      name: Webmonize
-                      uri: 'https://webmonize.com'
-                    key:
-                      proof: httpsig
-                      jwk:
-                        alg: EdDSA
-                        kid: 20f24ce2-a5f6-4f28-bf7d-ed52d0490187
-                        kty: OKP
-                        use: sig
-                        crv: Ed25519
-                        x: AAAAC3NzaC1lZDI1NTE5AAAAIK0wmN/Cr3JXqmLW7u+g9pTh+wyqDHpSQEIQczXkVx9q
+                  client: 'https://webmonize.com/.well-known/pay'
                   interact:
                     start:
                       - redirect
@@ -141,19 +129,7 @@ paths:
                           - create
                           - read
                         identifier: 'http://openpayments.guide/bob'
-                  client:
-                    display:
-                      name: Webmonize
-                      uri: 'https://webmonize.com'
-                    key:
-                      proof: httpsig
-                      jwk:
-                        alg: EdDSA
-                        kid: 20f24ce2-a5f6-4f28-bf7d-ed52d0490187
-                        kty: OKP
-                        use: sig
-                        crv: Ed25519
-                        x: AAAAC3NzaC1lZDI1NTE5AAAAIK0wmN/Cr3JXqmLW7u+g9pTh+wyqDHpSQEIQczXkVx9q
+                  client: 'https://webmonize.com/.well-known/pay'
         description: ''
       description: Make a new grant request
       security: []
@@ -317,29 +293,15 @@ components:
   schemas:
     client:
       title: client
-      type: object
+      type: string
       description: |-
-        Describes the client instance that is making this request, including the key that the client instance will use to protect this request and any continuation requests at the AS and any user-facing information about the client instance used in interactions.
+        Payment pointer of the client instance that is making this request.
 
         When sending a non-continuation request to the AS, the client instance MUST identify itself by including the client field of the request and by signing the request.
-      properties:
-        display:
-          type: object
-          description: 'An object containing additional information that the AS MAY display to the RO during interaction, authorization, and management.'
-          properties:
-            name:
-              type: string
-            uri:
-              type: string
-              format: uri
-        client_id:
-          type: string
-          description: An identifier string that the AS can use to identify the client software comprising this client instance.
-        key:
-          oneOf:
-            - $ref: ./schemas.yaml#/components/schemas/key
-            - type: string
-          description: The public key of the client instance to be used in this request or a reference to a key.
+
+        A JSON Web Key Set document, including the public key that the client instance will use to protect this request and any continuation requests at the AS and any user-facing information about the client instance used in interactions, MUST be available at the payment pointer + `/jwks.json` url.
+
+        If sending a grant initiation request that requires RO interaction, the payment pointer MUST serve necessary client display information.
     interact-request:
       title: interact
       type: object

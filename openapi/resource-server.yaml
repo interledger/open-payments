@@ -845,6 +845,7 @@ components:
       examples:
         - keys:
             - kid: key-1
+              alg: EdDSA
               use: sig
               kty: OKP
               crv: Ed25519
@@ -1260,6 +1261,11 @@ components:
       properties:
         kid:
           type: string
+        alg:
+          type: string
+          description: 'The cryptographic algorithm family used with the key. The only allowed value is `EdDSA`. '
+          enum:
+            - EdDSA
         use:
           type: string
           enum:
@@ -1278,6 +1284,7 @@ components:
           description: The base64 url-encoded public key.
       required:
         - kid
+        - alg
         - kty
         - crv
         - x
