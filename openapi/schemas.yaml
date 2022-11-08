@@ -52,15 +52,6 @@ components:
               - read-all
               - list
               - list-all
-          allOf:
-            - contains:
-                $ref: '#/components/schemas/read-actions'
-              minContains: 0
-              maxContains: 1
-            - contains:
-                $ref: '#/components/schemas/list-actions'
-              minContains: 0
-              maxContains: 1
           uniqueItems: true
         identifier:
           type: string
@@ -89,15 +80,6 @@ components:
               - read-all
               - list
               - list-all
-          allOf:
-            - contains:
-                $ref: '#/components/schemas/read-actions'
-              minContains: 0
-              maxContains: 1
-            - contains:
-                $ref: '#/components/schemas/list-actions'
-              minContains: 0
-              maxContains: 1
           uniqueItems: true
         identifier:
           type: string
@@ -127,11 +109,6 @@ components:
               - create
               - read
               - read-all
-          allOf:
-            - contains:
-                $ref: '#/components/schemas/read-actions'
-              minContains: 0
-              maxContains: 1
           uniqueItems: true
       required:
         - type
