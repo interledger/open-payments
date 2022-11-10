@@ -1,19 +1,14 @@
 name: OpenAPI Publisher
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - openapi/**
+  workflow_run:
+    workflows: ['OpenAPI Validator']
+    branches: [main]
+    types:
+      - completed
 
 jobs:
   publish:
-    workflow_run:
-      workflows: ['OpenAPI Validator']
-      branches: [main]
-      types:
-        - completed
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
