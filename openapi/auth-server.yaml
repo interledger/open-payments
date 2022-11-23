@@ -394,6 +394,7 @@ components:
         - value
         - manage
         - access
+      additionalProperties: false
   securitySchemes:
     GNAP:
       name: Authorization
