@@ -809,7 +809,7 @@ components:
         id:
           type: string
           format: uri
-          description: The URL identifying the incoming payment.
+          description: The URL identifying the payment pointer.
           readOnly: true
         publicName:
           type: string
