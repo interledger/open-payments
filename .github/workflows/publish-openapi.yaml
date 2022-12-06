@@ -4,7 +4,6 @@ on:
   workflow_run:
     workflows: ['OpenAPI Validator']
     branches:
-      - main
       - mk-fix-pagination
     types:
       - completed
