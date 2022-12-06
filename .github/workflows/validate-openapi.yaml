@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - mk-fix-pagination
     paths:
       - openapi/**
   pull_request:
