@@ -3,7 +3,9 @@ name: OpenAPI Publisher
 on:
   workflow_run:
     workflows: ['OpenAPI Validator']
-    branches: [main, mk-fix-pagination]
+    branches:
+      - main
+      - mk-fix-pagination
     types:
       - completed
 
