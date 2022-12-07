@@ -1,16 +1,21 @@
 name: OpenAPI Publisher
 
 on:
-  workflow_run:
-    workflows: ['OpenAPI Validator']
-    branches: [main]
-    types:
-      - completed
+  workflow_call:
+    inputs:
+      README_RESOURCE_API_ID:
+        required: true
+        type: string
+      README_AUTH_API_ID:
+        required: true
+        type: string
+    secrets:
+      README_API_KEY:
+        required: true
 
 jobs:
   publish:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - uses: actions/checkout@v3
         name: Check out repository
@@ -18,9 +23,9 @@ jobs:
       - uses: readmeio/rdme@7.5.0
         name: Sync Open Payments API spec
         with:
-          rdme: openapi resource-server.yaml --workingDirectory=openapi --key=${{ secrets.README_API_KEY }} --id=${{ secrets.README_OP_API_ID }}
+          rdme: openapi resource-server.yaml --workingDirectory=openapi --key=${{ secrets.README_API_KEY }} --id=${{ inputs.README_RESOURCE_API_ID }}
 
       - uses: readmeio/rdme@7.5.0
         name: Sync Auth Server API spec
         with:
-          rdme: openapi auth-server.yaml --workingDirectory=openapi --key=${{ secrets.README_API_KEY }} --id=${{ secrets.README_AUTH_API_ID }}
+          rdme: openapi auth-server.yaml --workingDirectory=openapi --key=${{ secrets.README_API_KEY }} --id=${{ inputs.README_AUTH_API_ID }}
