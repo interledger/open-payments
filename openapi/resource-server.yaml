@@ -324,6 +324,7 @@ paths:
           in: query
           name: pagination
           description: Pagination parameters
+          style: form
         - $ref: '#/components/parameters/signature-input'
         - $ref: '#/components/parameters/signature'
       tags:
