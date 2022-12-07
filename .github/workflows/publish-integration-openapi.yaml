@@ -1,4 +1,4 @@
-name: OpenAPI Publisher
+name: OpenAPI Integration Publisher
 
 on:
   workflow_dispatch:
