@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - mk-add-integration-publish
+      - integration
     paths:
       - openapi/**
   pull_request:

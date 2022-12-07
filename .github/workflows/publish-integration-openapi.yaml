@@ -3,7 +3,7 @@ name: OpenAPI Integration Publisher
 on:
   push:
     branches:
-      - mk-add-integration-publish
+      - integration
 
 jobs:
   publish-integration:
