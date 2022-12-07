@@ -1,12 +1,9 @@
 name: OpenAPI Integration Publisher
 
 on:
-  workflow_dispatch:
-  workflow_run:
-    workflows: ['OpenAPI Validator']
-    branches: [mk-fix-pagination]
-    types:
-      - completed
+  push:
+    branches:
+      - mk-fix-pagination
 
 jobs:
   publish:
