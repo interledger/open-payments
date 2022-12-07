@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - integration
     paths:
       - openapi/**
   pull_request:
