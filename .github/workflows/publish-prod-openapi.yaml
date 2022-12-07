@@ -1,4 +1,4 @@
-name: OpenAPI Publisher
+name: OpenAPI Prod Publisher
 
 on:
   workflow_run:
@@ -9,7 +9,7 @@ on:
 
 jobs:
   if: ${{ github.event.workflow_run.conclusion == 'success' }}
-  publish-main:
+  publish-prod:
     uses: ./.github/workflows/publish-openapi.yaml
     secrets:
       README_RESOURCE_API_ID: ${{ secrets.README_OP_API_ID }}
