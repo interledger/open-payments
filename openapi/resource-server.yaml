@@ -321,6 +321,10 @@ paths:
       parameters:
         - schema:
             $ref: '#/components/schemas/pagination'
+          in: query
+          name: pagination
+          style: form
+          description: Pagination parameters
         - $ref: '#/components/parameters/signature-input'
         - $ref: '#/components/parameters/signature'
       tags:
