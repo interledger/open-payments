@@ -319,7 +319,8 @@ paths:
           $ref: '#/components/responses/403'
       description: List all incoming payments on the payment pointer
       parameters:
-        - $ref: '#/components/schemas/pagination'
+        - schema:
+            $ref: '#/components/schemas/pagination'
         - $ref: '#/components/parameters/signature-input'
         - $ref: '#/components/parameters/signature'
       tags:
