@@ -206,7 +206,7 @@ paths:
                   type: string
                   description: |-
                     The interaction reference generated for this
-                    interaction by the  AS.
+                    interaction by the AS.
               required:
                 - interact_ref
             examples:
