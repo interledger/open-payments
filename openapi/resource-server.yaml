@@ -319,11 +319,7 @@ paths:
           $ref: '#/components/responses/403'
       description: List all incoming payments on the payment pointer
       parameters:
-        - schema:
-            $ref: '#/components/schemas/pagination'
-          in: query
-          name: pagination
-          description: Pagination parameters
+        - $ref: '#/components/parameters/pagination'
         - $ref: '#/components/parameters/signature-input'
         - $ref: '#/components/parameters/signature'
       tags:
@@ -521,11 +517,7 @@ paths:
           $ref: '#/components/responses/403'
       description: List all outgoing payments on the payment pointer
       parameters:
-        - schema:
-            $ref: '#/components/schemas/pagination'
-          in: query
-          name: pagination
-          description: Pagination parameters
+        - $ref: '#/components/parameters/pagination'
         - $ref: '#/components/parameters/signature-input'
         - $ref: '#/components/parameters/signature'
       tags:
@@ -1321,6 +1313,13 @@ components:
     '403':
       description: Forbidden
   parameters:
+    pagination:
+      schema:
+        $ref: '#/components/schemas/pagination'
+      in: query
+      name: pagination
+      description: Pagination parameters
+      style: form
     id:
       name: id
       in: path
