@@ -144,7 +144,7 @@ paths:
         in: path
         required: true
     post:
-      summary: Grant Continuation Request
+      summary: Continuation Request
       operationId: post-continue
       responses:
         '200':
