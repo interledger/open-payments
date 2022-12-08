@@ -577,14 +577,14 @@ paths:
                     assetScale: 2
             schema:
               oneOf:
-                - description: Quote for incoming payment
+                - description: Create quote for an `receiver` that is an Incoming Payment with an `incomingAmount`
                   properties:
                     receiver:
                       $ref: ./schemas.yaml#/components/schemas/receiver
                   required:
                     - receiver
                   additionalProperties: false
-                - description: Fixed receive quote
+                - description: Create a quote with a fixed receive amount
                   properties:
                     receiver:
                       $ref: ./schemas.yaml#/components/schemas/receiver
@@ -595,7 +595,7 @@ paths:
                     - receiver
                     - receiveAmount
                   additionalProperties: false
-                - description: Fixed send quote
+                - description: Create a quote with a fixed send amount
                   properties:
                     receiver:
                       $ref: ./schemas.yaml#/components/schemas/receiver
