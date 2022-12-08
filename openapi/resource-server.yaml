@@ -577,7 +577,15 @@ paths:
                     assetScale: 2
             schema:
               oneOf:
-                - properties:
+                - description: Quote for incoming payment
+                  properties:
+                    receiver:
+                      $ref: ./schemas.yaml#/components/schemas/receiver
+                  required:
+                    - receiver
+                  additionalProperties: false
+                - description: Fixed receive quote
+                  properties:
                     receiver:
                       $ref: ./schemas.yaml#/components/schemas/receiver
                     receiveAmount:
@@ -587,7 +595,8 @@ paths:
                     - receiver
                     - receiveAmount
                   additionalProperties: false
-                - properties:
+                - description: Fixed send quote
+                  properties:
                     receiver:
                       $ref: ./schemas.yaml#/components/schemas/receiver
                     sendAmount:
