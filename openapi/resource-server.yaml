@@ -584,12 +584,12 @@ paths:
                 amount:
                   description: Possible amount types
                   oneOf:
-                    receiveAmount:
-                      description: The receiveAmount.
-                      $ref: ./schemas.yaml#/components/schemas/amount
-                    sendAmount:
-                      description: The sendAmount
-                      $ref: ./schemas.yaml#/components/schemas/amount
+                    - receiveAmount:
+                        description: The receiveAmount.
+                        $ref: ./schemas.yaml#/components/schemas/amount
+                    - sendAmount:
+                        description: The sendAmount
+                        $ref: ./schemas.yaml#/components/schemas/amount
               required:
                 - receiver
         description: |-
