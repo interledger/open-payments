@@ -581,10 +581,11 @@ paths:
               properties:
                 receiver:
                   $ref: ./schemas.yaml#/components/schemas/receiver
-                receiveAmount:
-                  $ref: ./schemas.yaml#/components/schemas/amount
-                sendAmount:
-                  $ref: ./schemas.yaml#/components/schemas/amount
+                oneOf:
+                  receiveAmount:
+                    $ref: ./schemas.yaml#/components/schemas/amount
+                  sendAmount:
+                    $ref: ./schemas.yaml#/components/schemas/amount
               required:
                 - receiver
         description: |-
