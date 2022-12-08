@@ -6,18 +6,9 @@ on:
       - integration
 
 jobs:
-  publish:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        name: Check out repository
-
-      - uses: readmeio/rdme@7.5.0
-        name: Sync Open Payments API spec
-        with:
-          rdme: openapi resource-server.yaml --workingDirectory=openapi --key=${{ secrets.README_INTEGRATION_API_KEY }} --id=${{ secrets.README_INTEGRATION_OP_API_ID }}
-
-      - uses: readmeio/rdme@7.5.0
-        name: Sync Auth Server API spec
-        with:
-          rdme: openapi auth-server.yaml --workingDirectory=openapi --key=${{ secrets.README_INTEGRATION_API_KEY }} --id=${{ secrets.README_INTEGRATION_AUTH_API_ID }}
+  publish-integration:
+    uses: ./.github/workflows/publish-openapi.yaml
+    secrets:
+      README_RESOURCE_API_ID: ${{ secrets.README_INTEGRATION_RESOURCE_API_ID }}
+      README_AUTH_API_ID: ${{ secrets.README_INTEGRATION_AUTH_API_ID }}
+      README_API_KEY: ${{ secrets.README_INTEGRATION_API_KEY }}
