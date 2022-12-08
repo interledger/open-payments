@@ -576,9 +576,8 @@ paths:
                     assetCode: USD
                     assetScale: 2
             schema:
-              type: object
               oneOf:
-                - schema:
+                - receiverWithReceiveAmount:
                     type: object
                     properties:
                       receiver:
@@ -590,7 +589,7 @@ paths:
                       - receiver
                       - receiveAmount
                     additionalProperties: false
-                - schema:
+                - receiverWithSendAmount:
                     type: object
                     properties:
                       receiver:
