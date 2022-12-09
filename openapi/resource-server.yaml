@@ -589,7 +589,7 @@ paths:
                     receiver:
                       $ref: ./schemas.yaml#/components/schemas/receiver
                     receiveAmount:
-                      description: The maximum amount that should be paid into the receiving payment pointer.
+                      description: The fixed amount that would be paid into the receiving payment pointer given a successful outgoing payment.
                       $ref: ./schemas.yaml#/components/schemas/amount
                   required:
                     - receiver
@@ -600,7 +600,7 @@ paths:
                     receiver:
                       $ref: ./schemas.yaml#/components/schemas/receiver
                     sendAmount:
-                      description: The maximum amount that should be sent from the sending payment pointer.
+                      description: The fixed amount that would be sent from the sending payment pointer given a successful outgoing payment.
                       $ref: ./schemas.yaml#/components/schemas/amount
                   required:
                     - receiver
