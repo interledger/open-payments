@@ -74,6 +74,8 @@ paths:
                       uri: 'https://openpayments.guide/auth/continue/4CF492MLVMSW9MKMXKHQ'
         '400':
           description: Bad Request
+        '401':
+          description: Unauthorized
       requestBody:
         content:
           application/json:
