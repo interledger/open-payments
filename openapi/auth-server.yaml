@@ -76,6 +76,8 @@ paths:
           description: Bad Request
         '401':
           description: Unauthorized
+        '500':
+          description: Internal Server Error
       requestBody:
         content:
           application/json:
@@ -194,6 +196,8 @@ paths:
                         value: 33OMUKMKSKU80UPRY5NM
                       uri: 'https://openpayments.guide/auth/continue/4CF492MLVMSW9MKMXKHQ'
                       wait: 30
+        '400':
+          description: Bad Request
         '401':
           description: Unauthorized
         '404':
@@ -222,8 +226,10 @@ paths:
       summary: Cancel Grant
       operationId: delete-continue
       responses:
-        '202':
-          description: Accepted
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
         '401':
           description: Unauthorized
         '404':
@@ -273,6 +279,8 @@ paths:
                               value: '500'
                               assetCode: USD
                               assetScale: 2
+        '400':
+          description: Bad Request
         '401':
           description: Unauthorized
         '404':
@@ -287,6 +295,8 @@ paths:
       responses:
         '204':
           description: No Content
+        '400':
+          description: Bad Request
         '401':
           description: Unauthorized
       tags:
