@@ -319,7 +319,9 @@ paths:
           $ref: '#/components/responses/403'
       description: List all incoming payments on the payment pointer
       parameters:
-        - $ref: '#/components/parameters/pagination'
+        - $ref: '#/components/parameters/cursor'
+        - $ref: '#/components/parameters/first'
+        - $ref: '#/components/parameters/last'
         - $ref: '#/components/parameters/signature-input'
         - $ref: '#/components/parameters/signature'
       tags:
@@ -517,7 +519,9 @@ paths:
           $ref: '#/components/responses/403'
       description: List all outgoing payments on the payment pointer
       parameters:
-        - $ref: '#/components/parameters/pagination'
+        - $ref: '#/components/parameters/cursor'
+        - $ref: '#/components/parameters/first'
+        - $ref: '#/components/parameters/last'
         - $ref: '#/components/parameters/signature-input'
         - $ref: '#/components/parameters/signature'
       tags:
@@ -1200,45 +1204,6 @@ components:
         - receiveAmount
         - sendAmount
         - createdAt
-    pagination:
-      description: Pagination parameters
-      oneOf:
-        - $ref: '#/components/schemas/forward-pagination'
-        - $ref: '#/components/schemas/backward-pagination'
-    forward-pagination:
-      description: Forward pagination parameters
-      type: object
-      examples:
-        - first: 10
-          cursor: 315581f8-9967-45a0-9cd3-87b60b6d6414
-      additionalProperties: false
-      properties:
-        first:
-          type: integer
-          minimum: 1
-          description: The number of items to return.
-        cursor:
-          type: string
-          minLength: 1
-          description: The cursor key to list from.
-    backward-pagination:
-      description: Backward pagination parameters
-      type: object
-      examples:
-        - last: 10
-          cursor: 315581f8-9967-45a0-9cd3-87b60b6d6414
-      properties:
-        last:
-          type: integer
-          minimum: 1
-          description: The number of items to return.
-        cursor:
-          type: string
-          minLength: 1
-          description: The cursor key to list from.
-      required:
-        - cursor
-      additionalProperties: false
     page-info:
       description: ''
       type: object
@@ -1333,13 +1298,27 @@ components:
     '403':
       description: Forbidden
   parameters:
-    pagination:
+    cursor:
       schema:
-        $ref: '#/components/schemas/pagination'
+        type: string
+        minLength: 1
+      name: cursor
       in: query
-      name: pagination
-      description: Pagination parameters
-      style: form
+      description: The cursor key to list from.
+    first:
+      schema:
+        type: integer
+        minimum: 1
+      name: first
+      in: query
+      description: The number of items to return after the cursor.
+    last:
+      schema:
+        type: integer
+        minimum: 1
+      name: last
+      in: query
+      description: The number of items to return before the cursor.
     id:
       name: id
       in: path
