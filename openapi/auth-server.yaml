@@ -13,9 +13,9 @@ servers:
   - url: 'https://openpayments.guide/auth'
 tags:
   - name: grant
-    description: grant operations
+    description: Grant operations
   - name: token
-    description: token operations
+    description: Token operations
 paths:
   /:
     post:
