@@ -14,7 +14,7 @@ info:
 
     An outgoing payment is an instruction to make a payment out of the payment pointer.
 
-    A quote is a commitment from the account provider to deliver a particular amount to a receiver when sending a particular amount from the payment pointer. It is only valid for a limited time.
+    A quote is a commitment from the Account Servicing Entity to deliver a particular amount to a receiver when sending a particular amount from the payment pointer. It is only valid for a limited time.
 
     For privacy reasons a connection resource is not a sub-resource of a payment pointer.
 
@@ -217,7 +217,15 @@ paths:
       description: |-
         A client MUST create an **incoming payment** resource before it is possible to send any payments to the payment pointer.
 
+        When a client creates an **incoming payment** the receiving Account Servicing Entity generates unique payment details that can be used to address payments to the account and returns these details to the client as properties of the new **incoming payment**. Any payments received using those details are then associated with the **incoming payment**.
+
         All of the input parameters are _optional_.
+
+        For example, the client can specify an invoice number as the `externalRef` property of the **incoming payment** and this can be shared with the account holder to assist with reconciliation.
+
+        If `incomingAmount` is specified and the total received using the payment details equals or exceeds the specified `incomingAmount`, then the receiving Account Servicing Entity MUST reject any further payments and set `completed` to `true`.
+
+        If an `expiresAt` value is defined, and the current date and time on the receiving Account Servicing Entity's systems exceeds that value, the receiving Account Servicing Entity MUST reject any further payments.
       parameters:
         - $ref: '#/components/parameters/signature-input'
         - $ref: '#/components/parameters/signature'
@@ -394,7 +402,10 @@ paths:
 
           The `sendAmount` must use the same `assetCode` and `assetScale` as the payment pointer.
         required: true
-      description: An **outgoing payment** is a sub-resource of a payment pointer. It represents a payment from the payment pointer.
+      description: |-
+        An **outgoing payment** is a sub-resource of a payment pointer. It represents a payment from the payment pointer.
+
+        Once created, it is already authorized and SHOULD be processed immediately. If payment fails, the Account Servicing Entity must mark the **outgoing payment** as `failed`.
       parameters:
         - $ref: '#/components/parameters/signature-input'
         - $ref: '#/components/parameters/signature'
@@ -711,9 +722,9 @@ paths:
         '404':
           description: Incoming Payment Not Found
       description: |-
-        A client with the appropriate permissions MAY mark a non-expired **incoming payment** as `completed` if it has not yet received `incomingAmount`.
+        A client with the appropriate permissions MAY mark a non-expired **incoming payment** as `completed` indicating that the client is not going to make any further payments toward this **incoming payment**, even though the full `incomingAmount` may not have been received.
 
-        This indicates to the receiving account provider that it can begin any post processing of the payment such as generating account statements or notifying the account holder of the completed payment.
+        This indicates to the receiving Account Servicing Entity that it can begin any post processing of the payment such as generating account statements or notifying the account holder of the completed payment.
       parameters:
         - $ref: '#/components/parameters/signature-input'
         - $ref: '#/components/parameters/signature'
