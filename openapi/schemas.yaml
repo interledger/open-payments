@@ -21,10 +21,6 @@ components:
     access-item:
       discriminator:
         propertyName: type
-        mapping:
-          incoming-payment: 'access-incoming'
-          outgoing-payment: 'access-outgoing'
-          quote: 'access-quote'
       oneOf:
         - $ref: '#/components/schemas/access-incoming'
         - $ref: '#/components/schemas/access-outgoing'
