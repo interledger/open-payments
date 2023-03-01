@@ -22,9 +22,9 @@ components:
       discriminator:
         propertyName: type
         mapping:
-          incoming-payment: '#/components/schemas/access-incoming'
-          outgoing-payment: '#/components/schemas/access-outgoing'
-          quote: '#/components/schemas/access-quote'
+          incoming-payment: 'access-incoming'
+          outgoing-payment: 'access-outgoing'
+          quote: 'access-quote'
       oneOf:
         - $ref: '#/components/schemas/access-incoming'
         - $ref: '#/components/schemas/access-outgoing'
