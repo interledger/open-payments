@@ -311,8 +311,6 @@ components:
       uniqueItems: true
       maxItems: 3
     access-item:
-      discriminator:
-        propertyName: type
       oneOf:
         - $ref: '#/components/schemas/access-incoming'
         - $ref: '#/components/schemas/access-outgoing'
@@ -325,7 +323,7 @@ components:
       properties:
         type:
           type: string
-          const: 'incoming-payment'
+          enum: ['incoming-payment']
           description: The type of resource request as a string.  This field defines which other fields are allowed in the request object.
         actions:
           type: array
@@ -353,7 +351,7 @@ components:
       properties:
         type:
           type: string
-          const: 'outgoing-payment'
+          enum: ['outgoing-payment']
           description: The type of resource request as a string.  This field defines which other fields are allowed in the request object.
         actions:
           type: array
@@ -383,7 +381,7 @@ components:
       properties:
         type:
           type: string
-          const: 'quote'
+          enum: ['quote']
           description: The type of resource request as a string.  This field defines which other fields are allowed in the request object.
         actions:
           type: array
