@@ -529,14 +529,6 @@ components:
             - sendAmount
         - required:
             - receiveAmount
-    list-actions:
-      enum:
-        - list
-        - list-all
-    read-actions:
-      enum:
-        - read
-        - read-all
   securitySchemes:
     GNAP:
       name: Authorization
