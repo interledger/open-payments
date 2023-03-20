@@ -93,22 +93,19 @@ export const isPendingGrant = (
   grant: PendingGrant | Grant
 ): grant is PendingGrant => !!(grant as PendingGrant).interact
 
-type ASExternalComponents = ASExternal['schemas.yaml']['components']['schemas']
 export type AccessIncomingActions =
-  ASExternalComponents['access-incoming']['actions']
+  ASComponents['schemas']['access-incoming']['actions']
 export type AccessOutgoingActions =
-  ASExternalComponents['access-outgoing']['actions']
-export type AccessQuoteActions = ASExternalComponents['access-quote']['actions']
+  ASComponents['schemas']['access-outgoing']['actions']
+export type AccessQuoteActions =
+  ASComponents['schemas']['access-quote']['actions']
 
-export type AccessItem =
-  | ASExternalComponents['access-incoming']
-  | ASExternalComponents['access-outgoing']
-  | ASExternalComponents['access-quote']
+export type AccessItem = ASComponents['schemas']['access-item']
 
 export type AccessType =
-  | ASExternalComponents['access-incoming']['type']
-  | ASExternalComponents['access-outgoing']['type']
-  | ASExternalComponents['access-quote']['type']
+  | ASComponents['schemas']['access-incoming']['type']
+  | ASComponents['schemas']['access-outgoing']['type']
+  | ASComponents['schemas']['access-quote']['type']
 
 export type AccessAction = (
   | AccessIncomingActions
