@@ -6,8 +6,7 @@ import {
 import {
   components as ASComponents,
   paths as ASPaths,
-  operations as ASOperations,
-  external as ASExternal
+  operations as ASOperations
 } from './openapi/generated/auth-server-types'
 
 export const getRSPath = <P extends keyof RSPaths>(path: P): string =>
