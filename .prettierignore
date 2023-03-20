@@ -9,3 +9,4 @@ pnpm-lock.yaml
 Dockerfile
 .gitignore
 .prettierignore
+landing/
