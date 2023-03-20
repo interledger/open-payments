@@ -46,21 +46,11 @@ jobs:
       - uses: ./.github/workflows/env-setup
       - run: pnpm --filter http-signature-utils test
 
-  build:
+  all_pr_checks_passed:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
     needs:
       - openapi
       - open-payments
       - http-signature-utils
-    steps:
-      - uses: actions/checkout@v3
-      - uses: ./.github/workflows/rafiki/env-setup
-      - run: pnpm build
-
-  all_pr_checks_passed:
-    runs-on: ubuntu-latest
-    needs:
-      - build
     steps:
       - run: echo 'PR Checks Passed'
