@@ -15,7 +15,7 @@ jobs:
     timeout-minutes: 3
     steps:
       - uses: actions/checkout@v3
-      - uses: ./env-setup
+      - uses: ./.github/workflows/env-setup
       - run: pnpm checks
 
   openapi:
@@ -24,7 +24,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
-      - uses: ./env-setup
+      - uses: ./.github/workflows/env-setup
       - run: pnpm --filter openapi test
 
   open-payments:
@@ -33,7 +33,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
-      - uses: ./env-setup
+      - uses: ./.github/workflows/env-setup
       - run: pnpm --filter open-payments build
       - run: pnpm --filter open-payments test
 
@@ -43,7 +43,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
-      - uses: ./env-setup
+      - uses: ./.github/workflows/env-setup
       - run: pnpm --filter http-signature-utils test
 
   build:
