@@ -1,0 +1,24 @@
+{
+  "name": "@interledger/http-signature-utils",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "build": "tsc --build tsconfig.json",
+    "test": "jest --passWithNoTests --maxWorkers=50%"
+  },
+  "dependencies": {
+    "http-message-signatures": "^0.1.2",
+    "httpbis-digest-headers": "github:interledger/httpbis-digest-headers",
+    "jose": "^4.13.1",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.7.12",
+    "@types/uuid": "^9.0.0",
+    "typescript": "^4.9.5"
+  }
+}

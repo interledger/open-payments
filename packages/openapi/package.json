@@ -1,0 +1,34 @@
+{
+  "name": "@interledger/openapi",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "test": "jest --passWithNoTests",
+    "build": "pnpm clean && tsc --build tsconfig.json",
+    "clean": "rm -fr dist/",
+    "prepack": "pnpm build"
+  },
+  "dependencies": {
+    "@apidevtools/json-schema-ref-parser": "^10.1.0",
+    "ajv": "^8.12.0",
+    "ajv-formats": "^2.1.1",
+    "openapi-default-setter": "^12.1.0",
+    "openapi-request-coercer": "^12.1.0",
+    "openapi-request-validator": "^12.1.0",
+    "openapi-response-validator": "^12.1.0",
+    "openapi-types": "^12.1.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.4.4",
+    "@types/koa": "2.13.5",
+    "@types/uuid": "^9.0.0",
+    "koa": "^2.14.1",
+    "node-mocks-http": "^1.12.2",
+    "typescript": "^4.9.5",
+    "uuid": "^9.0.0"
+  }
+}

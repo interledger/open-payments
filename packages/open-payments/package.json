@@ -1,0 +1,37 @@
+{
+  "name": "@interledger/open-payments",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "build:deps": "pnpm --filter openapi build && pnpm --filter http-signature-utils build",
+    "build": "pnpm build:deps && pnpm clean && tsc --build tsconfig.json && pnpm copy-files",
+    "clean": "rm -fr dist/",
+    "copy-files": "cp ./src/openapi/*.yaml ./dist/openapi/",
+    "generate:auth-server-types": "openapi-typescript src/openapi/auth-server.yaml --output src/openapi/generated/auth-server-types.ts",
+    "generate:resource-server-types": "openapi-typescript src/openapi/resource-server.yaml --output src/openapi/generated/resource-server-types.ts",
+    "generate:types": "pnpm generate:auth-server-types && pnpm generate:resource-server-types",
+    "prepack": "pnpm build",
+    "test": "jest --passWithNoTests"
+  },
+  "devDependencies": {
+    "@types/node": "^18.7.12",
+    "@types/uuid": "^9.0.0",
+    "base64url": "^3.0.1",
+    "nock": "^13.3.0",
+    "openapi-typescript": "^4.5.0",
+    "typescript": "^4.9.5"
+  },
+  "dependencies": {
+    "@interledger/http-signature-utils": "workspace:1.0.0",
+    "@interledger/openapi": "workspace:1.0.0",
+    "axios": "^1.3.4",
+    "http-message-signatures": "^0.1.2",
+    "pino": "^8.11.0",
+    "uuid": "^9.0.0"
+  }
+}

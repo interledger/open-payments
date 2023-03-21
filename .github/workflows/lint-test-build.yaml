@@ -1,0 +1,56 @@
+on:
+  push:
+    branches:
+      - '!main'
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
+name: PR Checks
+
+jobs:
+  checkout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/workflows/env-setup
+      - run: pnpm checks
+
+  openapi:
+    runs-on: ubuntu-latest
+    needs: checkout
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/workflows/env-setup
+      - run: pnpm --filter openapi test
+
+  open-payments:
+    runs-on: ubuntu-latest
+    needs: checkout
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/workflows/env-setup
+      - run: pnpm --filter open-payments build
+      - run: pnpm --filter open-payments test
+
+  http-signature-utils:
+    runs-on: ubuntu-latest
+    needs: checkout
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/workflows/env-setup
+      - run: pnpm --filter http-signature-utils test
+
+  all-pr-checks-passed:
+    runs-on: ubuntu-latest
+    needs:
+      - openapi
+      - open-payments
+      - http-signature-utils
+    steps:
+      - run: echo 'PR Checks Passed'
