@@ -1,6 +1,8 @@
 {
   "name": "@interledger/http-signature-utils",
   "version": "1.0.0",
+  "description": "Provides utilities for working with HTTP signatures",
+  "author": "Interledger Tech Team <tech@interledger.org>",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [

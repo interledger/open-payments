@@ -1,7 +1,8 @@
 {
   "name": "@interledger/open-payments",
   "version": "1.0.0",
-  "description": "",
+  "description": "Tools for interacting with the Open Payments API",
+  "author": "Interledger Tech Team <tech@interledger.org>",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
