@@ -14,7 +14,7 @@
     "check:lint": "eslint --max-warnings=0 .",
     "check:prettier": "prettier --check .",
     "clean": "find . -name 'node_modules' -type d -prune -exec rm -rf '{}' +",
-    "lerna": "lerna"
+    "lerna:publish": "lerna publish from-package"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.4.4",
