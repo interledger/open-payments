@@ -13,7 +13,8 @@
     "checks": "pnpm check:prettier && pnpm check:lint",
     "check:lint": "eslint --max-warnings=0 .",
     "check:prettier": "prettier --check .",
-    "clean": "find . -name 'node_modules' -type d -prune -exec rm -rf '{}' +"
+    "clean": "find . -name 'node_modules' -type d -prune -exec rm -rf '{}' +",
+    "publish-packages": "pnpm -r publish"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.4.4",
