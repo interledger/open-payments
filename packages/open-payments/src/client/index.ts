@@ -42,10 +42,24 @@ export interface RouteDeps extends BaseDeps {
 }
 
 export interface UnauthenticatedResourceRequestArgs {
+  /**
+   * The full URL of the requested resource.
+   *
+   * For example, if the requested resource is an incoming payment:
+   * ```
+   * https://openpayments.guide/alice/incoming-payments/08394f02-7b7b-45e2-b645-51d04e7c330c`
+   * ```
+   */
   url: string
 }
 
 interface AuthenticatedRequestArgs {
+  /**
+   * The access token required to access the resource.
+   * This token is provided when a grant is created.
+   *
+   * @see [Open Payments - Grant Request](https://docs.openpayments.guide/reference/post-request)
+   */
   accessToken: string
 }
 export interface ResourceRequestArgs
@@ -53,6 +67,14 @@ export interface ResourceRequestArgs
     AuthenticatedRequestArgs {}
 
 export interface CollectionRequestArgs extends AuthenticatedRequestArgs {
+  /**
+   * The payment pointer URL of the requested collection.
+   *
+   * Example:
+   * ```
+   * https://openpayments.guide/alice`
+   * ```
+   */
   paymentPointer: string
 }
 
@@ -81,7 +103,9 @@ const createDeps = async (
 }
 
 export interface CreateUnauthenticatedClientArgs {
+  /** Milliseconds to wait before timing out an HTTP request */
   requestTimeoutMs?: number
+  /** The custom logger instance to use. This defaults to the pino logger. */
   logger?: Logger
 }
 
@@ -90,6 +114,9 @@ export interface UnauthenticatedClient {
   paymentPointer: PaymentPointerRoutes
 }
 
+/**
+ * Creates an OpenPayments client that is only able to make requests to get payment pointers, payment pointer keys, and ILP connections.
+ */
 export const createUnauthenticatedClient = async (
   args: CreateUnauthenticatedClientArgs
 ): Promise<UnauthenticatedClient> => {
@@ -113,8 +140,11 @@ export const createUnauthenticatedClient = async (
 
 export interface CreateAuthenticatedClientArgs
   extends CreateUnauthenticatedClientArgs {
+  /** The private EdDSA-Ed25519 key with which requests will be signed */
   privateKey: KeyLike
+  /** The key identifier referring to the private key */
   keyId: string
+  /** The payment pointer which the client will identify itself by */
   paymentPointerUrl: string
 }
 
