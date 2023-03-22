@@ -1,8 +1,8 @@
 # Open Payments
 
-[Open Payments](../../docs/open-payments.md) is an API standard that allows third-parties (with the account holder's consent) to initiate payments and to view the transaction history on the account holder's account.
+[Open Payments](https://docs.openpayments.guide/) is an API standard that allows third-parties (with the account holder's consent) to initiate payments and to view the transaction history on the account holder's account.
 
-Open Payments consists of two OpenAPI specifications, a **resource server** which exposes APIs for performing functions against the underlying accounts and an **authorization server** which exposes APIs compliant with the [GNAP](../../docs/glossary.md#grant-negotiation-authorization-protocol) standard for getting grants to access the resource server APIs.
+Open Payments consists of two OpenAPI specifications, a **resource server** which exposes APIs for performing functions against the underlying accounts and an **authorization server** which exposes APIs compliant with the [GNAP](https://docs.openpayments.guide/docs/security) standard for getting grants to access the resource server APIs.
 
 This package provides TypeScript & NodeJS tools for using Open Payments:
 

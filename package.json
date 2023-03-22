@@ -17,6 +17,7 @@
     "publish-packages": "pnpm -r publish"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.26.1",
     "@commitlint/cli": "^17.4.4",
     "@commitlint/config-conventional": "^17.4.4",
     "@swc/jest": "^0.2.24",
