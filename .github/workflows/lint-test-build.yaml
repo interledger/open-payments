@@ -30,6 +30,6 @@ jobs:
   all-pr-checks-passed:
     runs-on: ubuntu-latest
     needs:
-      - build-test
+      - test
     steps:
       - run: echo 'PR Checks Passed'
