@@ -25,7 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/workflows/env-setup
-      - run: pnpm build:all
+      - run: pnpm build -r
       - run: pnpm test -r
       
   all-pr-checks-passed:
