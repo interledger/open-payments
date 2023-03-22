@@ -18,15 +18,14 @@ jobs:
       - uses: ./.github/workflows/env-setup
       - run: pnpm checks
 
-  build-test:
+  test:
     runs-on: ubuntu-latest
     needs: checkout
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/workflows/env-setup
-      - run: pnpm -r build
-      - run: pnpm -r test
+      - run: pnpm test:all
       
   all-pr-checks-passed:
     runs-on: ubuntu-latest
