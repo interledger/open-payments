@@ -10,5 +10,8 @@
   },
   "include": ["src/**/*"],
   "exclude": ["**/*.test.ts"],
-  "references": [{ "path": "../openapi" }, { "path": "../http-signature-utils" }]
+  "references": [
+    { "path": "../openapi" },
+    { "path": "../http-signature-utils" }
+  ]
 }
