@@ -1,6 +1,6 @@
 {
   "name": "@interledger/http-signature-utils",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Provides utilities for working with HTTP signatures",
   "repository": {
     "type": "git",
