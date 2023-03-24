@@ -10,13 +10,15 @@
     "lint": "eslint --max-warnings=0 --fix .",
     "format": "prettier --write . && pnpm lint",
     "format:docs": "prettier --write ./docs/**/*.md",
+    "changeset:add": "pnpm changeset add",
+    "ci:version": "pnpm changeset version && pnpm i --lockfile-only",
     "checks": "pnpm check:prettier && pnpm check:lint",
     "check:lint": "eslint --max-warnings=0 .",
     "check:prettier": "prettier --check .",
-    "clean": "find . -name 'node_modules' -type d -prune -exec rm -rf '{}' +",
-    "publish-packages": "pnpm -r publish"
+    "clean": "find . -name 'node_modules' -type d -prune -exec rm -rf '{}' +"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.26.1",
     "@commitlint/cli": "^17.4.4",
     "@commitlint/config-conventional": "^17.4.4",
     "@swc/jest": "^0.2.24",
