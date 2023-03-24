@@ -52,7 +52,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/workflows/env-setup
-      - run: pnpm changeset status
+      - run: pnpm changeset:status
 
   all-pr-checks-passed:
     runs-on: ubuntu-latest
