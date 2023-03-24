@@ -7,7 +7,7 @@
   },
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "build:all": "pnpm turbo build",
+    "build:all": "pnpm turbo build --cache-dir=.turbo",
     "test:all": "pnpm turbo test",
     "lint": "eslint --max-warnings=0 --fix .",
     "format": "prettier --write . && pnpm lint",
