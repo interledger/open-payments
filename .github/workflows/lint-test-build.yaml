@@ -52,6 +52,5 @@ jobs:
       - openapi
       - open-payments
       - http-signature-utils
-      - changeset
     steps:
       - run: echo 'PR Checks Passed'
