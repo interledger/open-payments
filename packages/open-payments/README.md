@@ -73,7 +73,7 @@ In order to create the client, three properties need to be provided: `keyId`, th
 
 > **Note**
 >
-> To simplify EdDSA-Ed25519 key provisioning and JWK generation, you can use the `parseOrProvisionKey` and `generateJwk` methods from the [`@interledger/http-signature-utils`](https://github.com/interledger/open-payments/tree/main/packages/http-signature-utils)) package.
+> To simplify EdDSA-Ed25519 key provisioning and JWK generation, you can use methods from the [`@interledger/http-signature-utils`](https://github.com/interledger/open-payments/tree/main/packages/http-signature-utils)) package.
 
 ## Example
 
