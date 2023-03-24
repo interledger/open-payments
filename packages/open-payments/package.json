@@ -27,8 +27,8 @@
     "typescript": "^4.9.5"
   },
   "dependencies": {
-    "@interledger/http-signature-utils": "workspace:*",
-    "@interledger/openapi": "workspace:*",
+    "@interledger/http-signature-utils": "workspace:1.0.0",
+    "@interledger/openapi": "workspace:1.0.0",
     "axios": "^1.3.4",
     "http-message-signatures": "^0.1.2",
     "pino": "^8.11.0",
