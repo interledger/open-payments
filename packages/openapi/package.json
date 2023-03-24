@@ -9,6 +9,9 @@
     "directory": "packages/openapi"
   },
   "homepage": "https://github.com/interledger/open-payments/tree/main/packages/openapi#readme",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [

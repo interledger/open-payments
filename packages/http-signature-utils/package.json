@@ -8,6 +8,9 @@
     "directory": "packages/http-signature-utils"
   },
   "homepage": "https://github.com/interledger/open-payments/tree/main/packages/http-signature-utils#readme",
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "Interledger Tech Team <tech@interledger.org>",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
