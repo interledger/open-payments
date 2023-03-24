@@ -16,5 +16,7 @@ jobs:
       - uses: ./.github/workflows/env-setup
       - name: Create Release Pull Request
         uses: changesets/action@v1
+        with: 
+          version: pnpm changeset version && pnpm i
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
