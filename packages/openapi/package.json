@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Validates requests and responses according to an OpenAPI 3.1 schema",
   "author": "Interledger Tech Team <tech@interledger.org>",
+  "repository": "https://github.com/interledger/open-payments",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
