@@ -10,6 +10,7 @@
     "lint": "eslint --max-warnings=0 --fix .",
     "format": "prettier --write . && pnpm lint",
     "format:docs": "prettier --write ./docs/**/*.md",
+    "changeset": "pnpm changeset",
     "checks": "pnpm check:prettier && pnpm check:lint",
     "check:lint": "eslint --max-warnings=0 .",
     "check:prettier": "prettier --check .",
