@@ -51,7 +51,7 @@ jobs:
     needs: checkout
     steps:
       - uses: actions/checkout@v3
-      - with:
+        with:
           ref: ${{github.event.pull_request.head.sha}}
           fetch-depth: 0
       - uses: ./.github/workflows/env-setup
