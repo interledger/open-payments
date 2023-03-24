@@ -1,0 +1,19 @@
+name: Release PR
+
+on:
+  push:
+    branches:
+      - mk/test-changesets
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/workflows/env-setup
+      - name: Create Release Pull Request
+        uses: changesets/action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
