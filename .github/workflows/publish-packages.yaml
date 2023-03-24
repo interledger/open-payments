@@ -3,7 +3,7 @@ name: Publish Packages
 on:
   push:
     branches:
-      - mk/test-changesets
+      - main
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -20,6 +20,6 @@ jobs:
         with: 
           createGithubReleases: false
           version: pnpm ci:version
-          publish: pnpm ci:publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
