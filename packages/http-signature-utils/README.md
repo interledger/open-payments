@@ -1,39 +1,31 @@
 # HTTP Signature Utils Library
 
-The Library includes
+This library provides tools for working with [HTTP Message Signatures](https://datatracker.ietf.org/doc/draft-ietf-httpbis-message-signatures):
 
-- loading Ed25519 keys from file or creating them
-- generating JWKs from Ed25519 keys
-- creating HTTP signature headers
-- validate and verify HTTP signature headers
+- Loading Ed25519 keys from a file or creating them
+- Generating JWKs from Ed25519 keys
+- Creating HTTP Signature headers & digests
+- Validating and verifying HTTP Signature headers
 
-## Local Development
+HTTP Message Signatures are used for protecting the integrity of [Open Payments](https://docs.openpayments.guide/) API requests.
 
-### Building
+## Installation
 
-From the monorepo root directory:
-
-```shell
-pnpm --filter http-signature-utils build
-```
-
-### Testing
-
-From the monorepo root directory:
+You can install the package using:
 
 ```shell
-pnpm --filter http-signature-utils test
+npm install @interledger/http-signature-utils
 ```
 
 ## Usage
 
-Load or generate a private key
+Load or generate a private Ed25519 key:
 
 ```ts
 const key = parseOrProvisionKey('/PATH/TO/private-key.pem')
 ```
 
-Create JWK from private key
+Create JWK from private Ed25519 key:
 
 ```ts
 const jwk = generateJwk({
@@ -42,7 +34,7 @@ const jwk = generateJwk({
 })
 ```
 
-Create Signature Headers
+Create signature headers:
 
 ```ts
 const signatureHeaders = await createSignatureHeaders({
@@ -59,7 +51,7 @@ const signatureHeaders = await createSignatureHeaders({
 })
 ```
 
-Create Signature and Content Headers
+Create signature and content headers:
 
 ```ts
 const headers = await createHeaders({
@@ -76,7 +68,7 @@ const headers = await createHeaders({
 })
 ```
 
-Validate Signature and Content Headers
+Validate signature and content headers:
 
 ```ts
 const isValidHeader = validateSignatureHeaders(request: {
@@ -94,7 +86,7 @@ const isValidHeader = validateSignatureHeaders(request: {
   })
 ```
 
-Verify signature
+Verify signature:
 
 ```ts
 const isValidSig = await validateSignature(

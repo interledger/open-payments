@@ -2,20 +2,12 @@
 
 This package exposes functionality to validate requests and responses according to a given OpenAPI 3.1 schema.
 
-## Local Development
+## Installation
 
-### Building
-
-```shell
-pnpm --filter openapi build
-```
-
-### Testing
-
-From the monorepo root directory:
+You can install the package using:
 
 ```shell
-pnpm --filter openapi test
+npm install @interledger/openapi
 ```
 
 ## Usage
@@ -50,7 +42,7 @@ validateResponse({ body: response.body, status }) // throws or returns true
 
 <br>
 
-Likewise, you can validate both requests and responses inside a middleware method, using `createValidatorMiddleware`:
+Likewise, you can validate both requests and responses inside a [Koa](https://github.com/koajs/koa) middleware method, using `createValidatorMiddleware`:
 
 ```ts
 const openApi = await createOpenAPI(OPEN_API_URL)

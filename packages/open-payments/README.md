@@ -1,8 +1,8 @@
 # Open Payments
 
-[Open Payments](../../docs/open-payments.md) is an API standard that allows third-parties (with the account holder's consent) to initiate payments and to view the transaction history on the account holder's account.
+[Open Payments](https://docs.openpayments.guide/) is an API standard that allows third-parties (with the account holder's consent) to initiate payments and to view the transaction history on the account holder's account.
 
-Open Payments consists of two OpenAPI specifications, a **resource server** which exposes APIs for performing functions against the underlying accounts and an **authorization server** which exposes APIs compliant with the [GNAP](../../docs/glossary.md#grant-negotiation-authorization-protocol) standard for getting grants to access the resource server APIs.
+Open Payments consists of two OpenAPI specifications, a **resource server** which exposes APIs for performing functions against the underlying accounts and an **authorization server** which exposes APIs compliant with the [GNAP](https://docs.openpayments.guide/docs/security) standard for getting grants to access the resource server APIs.
 
 This package provides TypeScript & NodeJS tools for using Open Payments:
 
@@ -51,7 +51,7 @@ const paymentPointer = await client.paymentPointer.get({
 
 ### `AuthenticatedClient`
 
-An `AuthenticatedClient` provides all of the methods that `UnauthenticatedClient` does, as well as the rest of the Open Payment APIs (both the authorizaton and resource specs). Each request requiring authentication will be signed (using [HTTP signatures](../../docs/architecture.md#http-signature-utils)) with the given private key.
+An `AuthenticatedClient` provides all of the methods that `UnauthenticatedClient` does, as well as the rest of the Open Payment APIs (both the authorizaton and resource specs). Each request requiring authentication will be signed (using [HTTP Message Signatures](https://github.com/interledger/open-payments/tree/main/packages/http-signature-utils)) with the given private key.
 
 ```ts
 import { createAuthenticatedClient } from '@interledger/open-payments'
@@ -73,7 +73,7 @@ In order to create the client, three properties need to be provided: `keyId`, th
 
 > **Note**
 >
-> To simplify EdDSA-Ed25519 key provisioning and JWK generation, you can use the `parseOrProvisionKey` and `generateJwk` methods from the [`http-signature-utils`](../http-signature-utils/README.md#usage) package.
+> To simplify EdDSA-Ed25519 key provisioning and JWK generation, you can use methods from the [`@interledger/http-signature-utils`](https://github.com/interledger/open-payments/tree/main/packages/http-signature-utils)) package.
 
 ## Example
 
@@ -182,7 +182,9 @@ const quote = await client.quote.create(
 
 5. Create `OutgoingPayment` grant & start interaction flow:
 
-The final step for Online Marketplace's backend system will be to create an `OutgoingPayment` on Alice's wallet. Before this, however, Online Marketplace will need to create an outgoing payment grant, which typically requires some sort of interaction with Alice. Online Marketplace will need to facilitate this interaction with Alice (e.g. redirect her to a webpage with a dialog) to get her consent for creating an `OutgoingPayment` on her account. The detailed sequence for how this is achieved can be found [here](../../docs/grant-interaction.md).
+The final step for Online Marketplace's backend system will be to create an `OutgoingPayment` on Alice's wallet. Before this, however, Online Marketplace will need to create an outgoing payment grant, which typically requires some sort of interaction with Alice. Online Marketplace will need to facilitate this interaction with Alice (e.g. redirect her to a webpage with a dialog) to get her consent for creating an `OutgoingPayment` on her account.
+
+To see a detailed sequence and an example implementation for how this is achieved, see https://github.com/interledger/rafiki.
 
 6. Create `OutgoingPayment`:
 
