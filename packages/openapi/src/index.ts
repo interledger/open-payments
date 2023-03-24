@@ -24,6 +24,7 @@ export const isHttpMethod = (o: any): o is HttpMethod =>
   Object.values(HttpMethod).includes(o)
 
 export async function createOpenAPI(spec: string): Promise<OpenAPI> {
+  // some change for testing
   return new OpenAPIImpl(
     (await $RefParser.dereference(spec)) as OpenAPIV3_1.Document
   )
