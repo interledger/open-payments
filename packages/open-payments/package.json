@@ -3,7 +3,12 @@
   "version": "1.0.0",
   "description": "Tools for interacting with the Open Payments API",
   "author": "Interledger Tech Team <tech@interledger.org>",
-  "repository": "https://github.com/interledger/open-payments",
+  "repository": {
+    "type": "git",
+    "url":  "https://github.com/interledger/open-payments",
+    "directory": "packages/open-payments"
+  },
+  "homepage": "https://github.com/interledger/open-payments/tree/main/packages/open-payments#readme",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
