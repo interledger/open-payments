@@ -12,6 +12,7 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - uses: ./.github/workflows/env-setup
       - name: Create Release Pull Request
         uses: changesets/action@v1
