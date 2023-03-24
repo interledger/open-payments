@@ -162,6 +162,8 @@ export const createAuthenticatedClient = async (
   const { axiosInstance, resourceServerOpenApi, authServerOpenApi, logger } =
     await createDeps(args)
 
+  console.log('test cache')
+
   return {
     incomingPayment: createIncomingPaymentRoutes({
       axiosInstance,
