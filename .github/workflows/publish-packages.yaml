@@ -1,4 +1,4 @@
-name: Release PR
+name: Publish Packages
 
 on:
   push:
