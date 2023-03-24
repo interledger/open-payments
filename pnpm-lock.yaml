@@ -82,8 +82,8 @@ importers:
 
   packages/open-payments:
     specifiers:
-      '@interledger/http-signature-utils': workspace:1.0.0
-      '@interledger/openapi': workspace:1.0.0
+      '@interledger/http-signature-utils': workspace:1.0.1
+      '@interledger/openapi': workspace:1.0.1
       '@types/node': ^18.7.12
       '@types/uuid': ^9.0.0
       axios: ^1.3.4
