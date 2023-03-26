@@ -9,6 +9,9 @@
     "directory": "packages/open-payments"
   },
   "homepage": "https://github.com/interledger/open-payments/tree/main/packages/open-payments#readme",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
