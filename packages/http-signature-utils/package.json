@@ -18,8 +18,10 @@
     "dist/**/*"
   ],
   "scripts": {
-    "build": "tsc --build tsconfig.json",
-    "test": "jest --passWithNoTests --maxWorkers=50%"
+    "build": "pnpm clean && tsc --build tsconfig.json",
+    "clean": "rm -fr dist/",
+    "test": "jest --passWithNoTests --maxWorkers=50%",
+    "prepack": "pnpm build"
   },
   "dependencies": {
     "http-message-signatures": "^0.1.2",
