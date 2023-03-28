@@ -82,7 +82,7 @@ importers:
 
   packages/open-payments:
     specifiers:
-      '@interledger/http-signature-utils': workspace:1.0.2
+      '@interledger/http-signature-utils': workspace:1.0.3
       '@interledger/openapi': workspace:1.0.2
       '@types/node': ^18.7.12
       '@types/uuid': ^9.0.0
