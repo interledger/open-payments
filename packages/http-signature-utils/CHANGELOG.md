@@ -1,5 +1,11 @@
 # @interledger/http-signature-utils
 
+## 1.0.3
+
+### Patch Changes
+
+- dfecee7: Update prepack command
+
 ## 1.0.2
 
 ### Patch Changes
