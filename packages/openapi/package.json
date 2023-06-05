@@ -27,6 +27,7 @@
     "@apidevtools/json-schema-ref-parser": "^10.1.0",
     "ajv": "^8.12.0",
     "ajv-formats": "^2.1.1",
+    "koa": "^2.14.1",
     "openapi-default-setter": "^12.1.0",
     "openapi-request-coercer": "^12.1.0",
     "openapi-request-validator": "^12.1.0",
@@ -37,7 +38,6 @@
     "@types/jest": "^29.4.4",
     "@types/koa": "2.13.5",
     "@types/uuid": "^9.0.0",
-    "koa": "^2.14.1",
     "node-mocks-http": "^1.12.2",
     "typescript": "^4.9.5",
     "uuid": "^9.0.0"
