@@ -1239,8 +1239,6 @@ components:
           type: boolean
           description: Describes whether the data set has previous entries.
       required:
-        - startCursor
-        - endCursor
         - hasNextPage
         - hasPreviousPage
       additionalProperties: false
