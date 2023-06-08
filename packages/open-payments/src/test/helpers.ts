@@ -173,6 +173,7 @@ export const mockOutgoingPayment = (
   receiver: uuid(),
   description: 'some description',
   externalRef: 'INV #1',
+  metadata: '{"externalRef": "INV #1", "description": "some description"}',
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
   ...overrides

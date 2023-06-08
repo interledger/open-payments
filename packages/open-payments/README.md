@@ -146,6 +146,7 @@ const incomingPayment = await client.incomingPayment.create(
     },
     description: 'Purchase at Shoe Shop',
     externalRef: '#INV2022-8363828'
+    metadata: '{"externalRef": "#INV2022-8363828", "description": "Purchase at Shoe Shop"}',
   }
 )
 ```

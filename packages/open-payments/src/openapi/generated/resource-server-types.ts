@@ -192,6 +192,8 @@ export interface components {
       description?: string;
       /** @description A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. */
       externalRef?: string;
+      /** @description Additional metadata associated with the incoming payment, represented as a JSON string. (Optional) */
+      metadata?: string;
       /**
        * Format: date-time
        * @description The date and time when the incoming payment was created.
@@ -255,6 +257,8 @@ export interface components {
       description?: string;
       /** @description A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional) */
       externalRef?: string;
+      /** @description Additional metadata associated with the incoming payment, represented as a JSON string. (Optional) */
+      metadata?: string;
       /**
        * Format: date-time
        * @description The date and time when the outgoing payment was created.
@@ -482,6 +486,8 @@ export interface operations {
           description?: string;
           /** @description A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional) */
           externalRef?: string;
+          /** @description Additional metadata associated with the incoming payment, represented as a JSON string. (Optional) */
+          metadata?: string;
         };
       };
     };
@@ -559,6 +565,8 @@ export interface operations {
           description?: string;
           /** @description A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional) */
           externalRef?: string;
+          /** @description Additional metadata associated with the outgoing payment, represented as a JSON string. (Optional) */
+          metadata?: string;
         };
       };
     };
