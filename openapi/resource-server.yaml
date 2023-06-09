@@ -202,7 +202,8 @@ paths:
                   type: string
                   description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
                 metadata:
-                  type: string
+                  type: object
+                  additionalProperties: true
                   description: Additional metadata associated with the incoming payment. (Optional)
               additionalProperties: false
             examples:
@@ -403,7 +404,8 @@ paths:
                   type: string
                   description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
                 metadata:
-                  type: string
+                  type: object
+                  additionalProperties: true
                   description: Additional metadata associated with the outgoing payment. (Optional)
               required:
                 - quoteId
@@ -998,7 +1000,8 @@ components:
           type: string
           description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number.
         metadata:
-          type: string
+          type: object
+          additionalProperties: true
           description: Additional metadata associated with the incoming payment. (Optional)
         createdAt:
           type: string
@@ -1159,7 +1162,8 @@ components:
           type: string
           description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
         metadata:
-          type: string
+          type: object
+          additionalProperties: true
           description: Additional metadata associated with the outgoing payment. (Optional)
         createdAt:
           type: string
