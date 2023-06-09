@@ -36,12 +36,13 @@ jobs:
       - uses: ./.github/workflows/env-setup
       - name: Generate open-payments types
         run: pnpm --filter open-payments generate:types
-      - name: Check for missing new open-payments types
+      - name: Check for newly generated open-payments types
         uses: tj-actions/verify-changed-files@v14
         id: verify-changed-files
         with:
           files: |
             **/generated/*.ts
+      - name: Fail if missing generated open-payments types
         if: steps.verify-changed-files.outputs.files_changed == 'true'
         run: exit 1
       - run: pnpm --filter open-payments build
