@@ -203,8 +203,7 @@ paths:
                   description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
                 metadata:
                   type: string
-                  format: json
-                  description: Additional metadata associated with the incoming payment, represented as a JSON string. (Optional)
+                  description: Additional metadata associated with the incoming payment. (Optional)
               additionalProperties: false
             examples:
               Create incoming payment for $25 to pay invoice INV2022-02-0137:
@@ -405,8 +404,7 @@ paths:
                   description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
                 metadata:
                   type: string
-                  format: json
-                  description: Additional metadata associated with the outgoing payment, represented as a JSON string. (Optional)
+                  description: Additional metadata associated with the outgoing payment. (Optional)
               required:
                 - quoteId
               additionalProperties: false
@@ -1001,8 +999,7 @@ components:
           description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number.
         metadata:
           type: string
-          format: json
-          description: Additional metadata associated with the incoming payment, represented as a JSON string. (Optional)
+          description: Additional metadata associated with the incoming payment. (Optional)
         createdAt:
           type: string
           format: date-time
@@ -1163,8 +1160,7 @@ components:
           description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
         metadata:
           type: string
-          format: json
-          description: Additional metadata associated with the outgoing payment, represented as a JSON string. (Optional)
+          description: Additional metadata associated with the outgoing payment. (Optional)
         createdAt:
           type: string
           format: date-time
