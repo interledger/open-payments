@@ -42,7 +42,7 @@ jobs:
         with:
           files: |
             **/generated/*.ts
-      - name: Fail if missing generated open-payments types
+      - name: Fail if missing new open-payments types
         if: steps.verify-changed-files.outputs.files_changed == 'true'
         run: exit 1
       - run: pnpm --filter open-payments build
