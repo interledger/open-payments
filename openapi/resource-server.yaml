@@ -168,7 +168,7 @@ paths:
                     completed: false
                     expiresAt: '2022-02-03T23:20:50.52Z'
                     externalRef: INV2022-02-0137
-                    metadata: '{"externalRef": "INV2022-02-0137"}'
+                    metadata: { externalRef: 'INV2022-02-0137' }
                     ilpStreamConnection:
                       id: 'https://openpayments.guide/connections/ff394f02-7b7b-45e2-b645-51d04e7c345c'
                       ilpAddress: g.ilp.iwuyge987y.98y08y
@@ -214,7 +214,7 @@ paths:
                     assetCode: USD
                     assetScale: 2
                   externalRef: INV2022-02-0137
-                  metadata: '{"externalRef": "INV2022-02-0137"}'
+                  metadata: { externalRef: 'INV2022-02-0137' }
         description: |-
           A subset of the incoming payments schema is accepted as input to create a new incoming payment.
 
@@ -277,7 +277,11 @@ paths:
                         updatedAt: '2022-04-01T10:24:36.11Z'
                         description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
                         externalRef: Coffee w/ Mo on 10 March 22
-                        metadata: '{"description": "Hi Mo, this is for the cappuccino I bought for you the other day.", "externalRef": "Coffee w/ Mo on 10 March 22"}'
+                        metadata:
+                          {
+                            description: 'Hi Mo, this is for the cappuccino I bought for you the other day.',
+                            externalRef: 'Coffee w/ Mo on 10 March 22'
+                          }
                         completed: true
                       - id: 'https://openpayments.guide/alice/incoming-payments/32abc219-3dc3-44ec-a225-790cacfca8fa'
                         paymentPointer: 'https://openpayments.guide/alice/'
@@ -328,7 +332,11 @@ paths:
                         updatedAt: '2022-04-01T10:24:36.11Z'
                         description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
                         externalRef: Coffee w/ Mo on 10 March 22
-                        metadata: '{"description": "Hi Mo, this is for the cappuccino I bought for you the other day.", "externalRef": "Coffee w/ Mo on 10 March 22"}'
+                        metadata:
+                          {
+                            description: 'Hi Mo, this is for the cappuccino I bought for you the other day.',
+                            externalRef: 'Coffee w/ Mo on 10 March 22'
+                          }
         '401':
           $ref: '#/components/responses/401'
         '403':
@@ -389,7 +397,7 @@ paths:
                 value:
                   quoteId: 'https://openpayments.guide/alice/quotes/ab03296b-0c8b-4776-b94e-7ee27d868d4d'
                   externalRef: INV2022-02-0137
-                  metadata: '{"externalRef": "INV2022-02-0137"}'
+                  metadata: { externalRef: 'INV2022-02-0137' }
             schema:
               type: object
               properties:
@@ -469,7 +477,11 @@ paths:
                         updatedAt: '2022-04-01T10:24:36.11Z'
                         description: APlusVideo subscription
                         externalRef: 'customer: 847458475'
-                        metadata: '{"description": "APlusVideo subscription", "externalRef": "customer: 847458475"}'
+                        metadata:
+                          {
+                            description: 'APlusVideo subscription',
+                            externalRef: 'customer: 847458475'
+                          }
                       - id: 'https://openpayments.guide/alice/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
                         paymentPointer: 'https://openpayments.guide/alice/'
                         failed: false
@@ -490,7 +502,11 @@ paths:
                         updatedAt: '2022-04-01T10:24:36.11Z'
                         description: Thank you for your purchase at ShoeShop!
                         externalRef: INV2022-8943756
-                        metadata: '{"description": "Thank you for your purchase at ShoeShop!", "externalRef": "INV2022-8943756"}'
+                        metadata:
+                          {
+                            description: 'Thank you for your purchase at ShoeShop!',
+                            externalRef: 'INV2022-8943756'
+                          }
                 backward pagination:
                   value:
                     pagination:
@@ -519,7 +535,11 @@ paths:
                         updatedAt: '2022-04-01T10:24:36.11Z'
                         description: Thank you for your purchase at ShoeShop!
                         externalRef: INV2022-8943756
-                        metadata: '{"description": "Thank you for your purchase at ShoeShop!", "externalRef": "INV2022-8943756"}'
+                        metadata:
+                          {
+                            description: 'Thank you for your purchase at ShoeShop!',
+                            externalRef: 'INV2022-8943756'
+                          }
                       - id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
                         paymentPointer: 'https://openpayments.guide/alice/'
                         failed: false
@@ -540,7 +560,11 @@ paths:
                         updatedAt: '2022-04-01T10:24:36.11Z'
                         description: APlusVideo subscription
                         externalRef: 'customer: 847458475'
-                        metadata: '{"description": "APlusVideo subscription", "externalRef": "customer: 847458475"}'
+                        metadata:
+                          {
+                            description: 'APlusVideo subscription',
+                            externalRef: 'customer: 847458475'
+                          }
         '401':
           $ref: '#/components/responses/401'
         '403':
@@ -681,7 +705,11 @@ paths:
                     updatedAt: '2022-04-01T10:24:36.11Z'
                     description: Thanks for the flowers!
                     externalRef: INV-12876
-                    metadata: '{"description": "Thanks for the flowers!", "externalRef": "INV-12876"}'
+                    metadata:
+                      {
+                        description: 'Thanks for the flowers!',
+                        externalRef: 'INV-12876'
+                      }
                     ilpStreamConnection:
                       id: 'https://openpayments.guide/connections/4a1b0150-db73-49e8-8713-628baa4a17ff'
                       ilpAddress: g.ilp.iwuyge987y.98y08y
@@ -733,7 +761,11 @@ paths:
                     updatedAt: '2022-04-01T10:24:36.11Z'
                     description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
                     externalRef: Coffee w/ Mo on 10 March 22
-                    metadata: '{"description": "Hi Mo, this is for the cappuccino I bought for you the other day.", "externalRef": "Coffee w/ Mo on 10 March 22"}'
+                    metadata:
+                      {
+                        description: 'Hi Mo, this is for the cappuccino I bought for you the other day.',
+                        externalRef: 'Coffee w/ Mo on 10 March 2'
+                      }
         '401':
           $ref: '#/components/responses/401'
         '403':
@@ -785,7 +817,11 @@ paths:
                     updatedAt: '2022-04-01T10:24:36.11Z'
                     description: Thanks for the flowers!
                     externalRef: INV-12876
-                    metadata: '{"description": "Thanks for the flowers!", "externalRef": "INV-12876"}'
+                    metadata:
+                      {
+                        description: 'Thanks for the flowers!',
+                        externalRef: 'INV-12876'
+                      }
         '401':
           $ref: '#/components/responses/401'
         '403':
@@ -954,7 +990,11 @@ components:
           updatedAt: '2022-04-01T10:24:36.11Z'
           description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
           externalRef: Coffee w/ Mo on 10 March 22
-          metadata: '{"description": "Hi Mo, this is for the cappuccino I bought for you the other day.", "externalRef": "Coffee w/ Mo on 10 March 22"}'
+          metadata:
+            {
+              description: 'Hi Mo, this is for the cappuccino I bought for you the other day.',
+              externalRef: 'Coffee w/ Mo on 10 March 22'
+            }
         - id: 'https://openpayments.guide/alice/incoming-payments/456da9d5-c9a4-4c80-a354-86b915a04ff8'
           paymentPointer: 'https://openpayments.guide/alice/'
           incomingAmount:
@@ -1039,7 +1079,11 @@ components:
           updatedAt: '2022-04-01T10:24:36.11Z'
           description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
           externalRef: Coffee w/ Mo on 10 March 22
-          metadata: '{"description": "Hi Mo, this is for the cappuccino I bought for you the other day.", "externalRef": "Coffee w/ Mo on 10 March 22"}'
+          metadata:
+            {
+              description: 'Hi Mo, this is for the cappuccino I bought for you the other day.',
+              externalRef: 'Coffee w/ Mo on 10 March 22'
+            }
           ilpStreamConnection:
             id: 'https://openpayments.guide/connections/032da9d5-c9a4-4c80-a354-86b915a04ff8'
             ilpApddress: g.ilp.iwuyge987y.98y08y
@@ -1105,7 +1149,11 @@ components:
           updatedAt: '2022-04-01T10:24:36.11Z'
           description: APlusVideo subscription
           externalRef: 'customer: 847458475'
-          metadata: '{"description": "APlusVideo subscription", "externalRef": "customer: 847458475"}'
+          metadata:
+            {
+              description: 'APlusVideo subscription',
+              externalRef: 'customer: 847458475'
+            }
         - id: 'https://openpayments.guide/alice/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
           paymentPointer: 'https://openpayments.guide/alice/'
           failed: false
@@ -1122,7 +1170,11 @@ components:
           updatedAt: '2022-04-01T10:24:36.11Z'
           description: Thank you for your purchase at ShoeShop!
           externalRef: INV2022-8943756
-          metadata: '{"description": "Thank you for your purchase at ShoeShop!", "externalRef": "INV2022-8943756"}'
+          metadata:
+            {
+              description: 'Thank you for your purchase at ShoeShop!',
+              externalRef: 'INV2022-8943756'
+            }
       properties:
         id:
           type: string
