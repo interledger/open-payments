@@ -41,7 +41,7 @@ jobs:
         id: verify-changed-files
         with:
           files: |
-            **/generated/*.ts
+            packages/open-payments/**/generated/*.ts
       - name: Fail if missing new open-payments types
         if: steps.verify-changed-files.outputs.files_changed == 'true'
         run: exit 1
