@@ -34,8 +34,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/workflows/env-setup
-      - name: Check generated open-payments types
+      - name: Generate open-payments types
         run: pnpm --filter open-payments generate:types
+      - name: Check for missing new open-payments types
         uses: tj-actions/verify-changed-files@v14
         id: verify-changed-files
         with:
