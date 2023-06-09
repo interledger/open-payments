@@ -1164,7 +1164,7 @@ components:
         metadata:
           type: string
           format: json
-          description: Additional metadata associated with the incoming payment, represented as a JSON string. (Optional)
+          description: Additional metadata associated with the outgoing payment, represented as a JSON string. (Optional)
         createdAt:
           type: string
           format: date-time
