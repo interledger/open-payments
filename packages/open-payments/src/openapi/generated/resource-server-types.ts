@@ -294,9 +294,9 @@ export interface components {
     };
     "page-info": {
       /** @description Cursor corresponding to the first element in the result array. */
-      startCursor?: string;
+      startCursor: string;
       /** @description Cursor corresponding to the last element in the result array. */
-      endCursor?: string;
+      endCursor: string;
       /** @description Describes whether the data set has further entries. */
       hasNextPage: boolean;
       /** @description Describes whether the data set has previous entries. */
