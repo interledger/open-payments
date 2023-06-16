@@ -198,9 +198,11 @@ paths:
                 description:
                   type: string
                   description: Human readable description of the incoming payment that will be visible to the account holder.
+                  deprecated: true
                 externalRef:
                   type: string
                   description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
+                  deprecated: true
                 metadata:
                   type: object
                   additionalProperties: true
@@ -408,9 +410,11 @@ paths:
                 description:
                   type: string
                   description: Human readable description of the outgoing payment that will be visible to the account holder and shared with the receiver.
+                  deprecated: true
                 externalRef:
                   type: string
                   description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
+                  deprecated: true
                 metadata:
                   type: object
                   additionalProperties: true
@@ -1036,9 +1040,11 @@ components:
         description:
           type: string
           description: Human readable description of the incoming payment that will be visible to the account holder.
+          deprecated: true
         externalRef:
           type: string
           description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number.
+          deprecated: true
         metadata:
           type: object
           additionalProperties: true
@@ -1210,9 +1216,11 @@ components:
         description:
           type: string
           description: Human readable description of the outgoing payment that will be visible to the account holder and shared with the receiver.
+          deprecated: true
         externalRef:
           type: string
           description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
+          deprecated: true
         metadata:
           type: object
           additionalProperties: true

@@ -188,9 +188,15 @@ export interface components {
        * @description The date and time when payments under this incoming payment will no longer be accepted.
        */
       expiresAt?: string;
-      /** @description Human readable description of the incoming payment that will be visible to the account holder. */
+      /**
+       * @deprecated
+       * @description Human readable description of the incoming payment that will be visible to the account holder.
+       */
       description?: string;
-      /** @description A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. */
+      /**
+       * @deprecated
+       * @description A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number.
+       */
       externalRef?: string;
       /** @description Additional metadata associated with the incoming payment. (Optional) */
       metadata?: { [key: string]: unknown };
@@ -253,9 +259,15 @@ export interface components {
       sendAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
       /** @description The total amount that has been sent under this outgoing payment. */
       sentAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
-      /** @description Human readable description of the outgoing payment that will be visible to the account holder and shared with the receiver. */
+      /**
+       * @deprecated
+       * @description Human readable description of the outgoing payment that will be visible to the account holder and shared with the receiver.
+       */
       description?: string;
-      /** @description A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional) */
+      /**
+       * @deprecated
+       * @description A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
+       */
       externalRef?: string;
       /** @description Additional metadata associated with the outgoing payment. (Optional) */
       metadata?: { [key: string]: unknown };
@@ -482,9 +494,15 @@ export interface operations {
            * @description The date and time when payments into the incoming payment must no longer be accepted.
            */
           expiresAt?: string;
-          /** @description Human readable description of the incoming payment that will be visible to the account holder. */
+          /**
+           * @deprecated
+           * @description Human readable description of the incoming payment that will be visible to the account holder.
+           */
           description?: string;
-          /** @description A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional) */
+          /**
+           * @deprecated
+           * @description A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
+           */
           externalRef?: string;
           /** @description Additional metadata associated with the incoming payment. (Optional) */
           metadata?: { [key: string]: unknown };
@@ -561,9 +579,15 @@ export interface operations {
            * @description The URL of the quote defining this payment's amounts.
            */
           quoteId: string;
-          /** @description Human readable description of the outgoing payment that will be visible to the account holder and shared with the receiver. */
+          /**
+           * @deprecated
+           * @description Human readable description of the outgoing payment that will be visible to the account holder and shared with the receiver.
+           */
           description?: string;
-          /** @description A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional) */
+          /**
+           * @deprecated
+           * @description A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
+           */
           externalRef?: string;
           /** @description Additional metadata associated with the outgoing payment. (Optional) */
           metadata?: { [key: string]: unknown };
