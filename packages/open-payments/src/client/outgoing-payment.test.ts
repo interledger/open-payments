@@ -260,16 +260,17 @@ describe('outgoing-payment', (): void => {
     const quoteId = `${paymentPointer}/quotes/${uuid()}`
 
     test.each`
-      description           | externalRef
-      ${'Some description'} | ${'#INV-1'}
-      ${undefined}          | ${undefined}
+      description           | externalRef  | metadata
+      ${'Some description'} | ${'#INV-1'}  | ${'{"description": "Some description", "externalRef": "#INV-1"}'}
+      ${undefined}          | ${undefined} | ${undefined}
     `(
       'creates outgoing payment',
-      async ({ description, externalRef }): Promise<void> => {
+      async ({ description, externalRef, metadata }): Promise<void> => {
         const outgoingPayment = mockOutgoingPayment({
           quoteId,
           description,
-          externalRef
+          externalRef,
+          metadata
         })
 
         const scope = nock(paymentPointer)
@@ -286,7 +287,8 @@ describe('outgoing-payment', (): void => {
           {
             quoteId,
             description,
-            externalRef
+            externalRef,
+            metadata
           }
         )
         expect(result).toEqual(outgoingPayment)
