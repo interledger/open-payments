@@ -135,7 +135,7 @@ and creates an `IncomingPayment` using the access token from the grant:
 ```ts
 const incomingPayment = await client.incomingPayment.create(
   {
-    paymentPointer: shoeShopPaymentPointer.authServer,
+    paymentPointer: shoeShopPaymentPointer.id,
     accessToken: incomingPaymentGrant.access_token.value
   },
   {
