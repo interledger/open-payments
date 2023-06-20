@@ -1,5 +1,11 @@
 # @interledger/openapi
 
+## 1.0.3
+
+### Patch Changes
+
+- 0b94331: Fixing dependencies & docs
+
 ## 1.0.2
 
 ### Patch Changes
