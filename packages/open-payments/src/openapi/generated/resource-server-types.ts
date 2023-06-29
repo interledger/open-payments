@@ -46,7 +46,7 @@ export interface paths {
      *
      * All of the input parameters are _optional_.
      *
-     * For example, the client can specify an invoice number as the `externalRef` property of the **incoming payment** and this can be shared with the account holder to assist with reconciliation.
+     * For example, the client could use the `metadata` property to store an external reference on the **incoming payment** and this can be shared with the account holder to assist with reconciliation.
      *
      * If `incomingAmount` is specified and the total received using the payment details equals or exceeds the specified `incomingAmount`, then the receiving Account Servicing Entity MUST reject any further payments and set `completed` to `true`.
      *
@@ -188,16 +188,6 @@ export interface components {
        * @description The date and time when payments under this incoming payment will no longer be accepted.
        */
       expiresAt?: string;
-      /**
-       * @deprecated
-       * @description Human readable description of the incoming payment that will be visible to the account holder.
-       */
-      description?: string;
-      /**
-       * @deprecated
-       * @description A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number.
-       */
-      externalRef?: string;
       /** @description Additional metadata associated with the incoming payment. (Optional) */
       metadata?: { [key: string]: unknown };
       /**
@@ -259,16 +249,6 @@ export interface components {
       sendAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
       /** @description The total amount that has been sent under this outgoing payment. */
       sentAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
-      /**
-       * @deprecated
-       * @description Human readable description of the outgoing payment that will be visible to the account holder and shared with the receiver.
-       */
-      description?: string;
-      /**
-       * @deprecated
-       * @description A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
-       */
-      externalRef?: string;
       /** @description Additional metadata associated with the outgoing payment. (Optional) */
       metadata?: { [key: string]: unknown };
       /**
@@ -454,7 +434,7 @@ export interface operations {
    *
    * All of the input parameters are _optional_.
    *
-   * For example, the client can specify an invoice number as the `externalRef` property of the **incoming payment** and this can be shared with the account holder to assist with reconciliation.
+   * For example, the client could use the `metadata` property to store an external reference on the **incoming payment** and this can be shared with the account holder to assist with reconciliation.
    *
    * If `incomingAmount` is specified and the total received using the payment details equals or exceeds the specified `incomingAmount`, then the receiving Account Servicing Entity MUST reject any further payments and set `completed` to `true`.
    *
@@ -494,16 +474,6 @@ export interface operations {
            * @description The date and time when payments into the incoming payment must no longer be accepted.
            */
           expiresAt?: string;
-          /**
-           * @deprecated
-           * @description Human readable description of the incoming payment that will be visible to the account holder.
-           */
-          description?: string;
-          /**
-           * @deprecated
-           * @description A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
-           */
-          externalRef?: string;
           /** @description Additional metadata associated with the incoming payment. (Optional) */
           metadata?: { [key: string]: unknown };
         };
@@ -579,16 +549,6 @@ export interface operations {
            * @description The URL of the quote defining this payment's amounts.
            */
           quoteId: string;
-          /**
-           * @deprecated
-           * @description Human readable description of the outgoing payment that will be visible to the account holder and shared with the receiver.
-           */
-          description?: string;
-          /**
-           * @deprecated
-           * @description A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
-           */
-          externalRef?: string;
           /** @description Additional metadata associated with the outgoing payment. (Optional) */
           metadata?: { [key: string]: unknown };
         };

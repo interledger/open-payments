@@ -167,7 +167,6 @@ paths:
                       assetScale: 2
                     completed: false
                     expiresAt: '2022-02-03T23:20:50.52Z'
-                    externalRef: INV2022-02-0137
                     metadata: { externalRef: 'INV2022-02-0137' }
                     ilpStreamConnection:
                       id: 'https://openpayments.guide/connections/ff394f02-7b7b-45e2-b645-51d04e7c345c'
@@ -195,14 +194,6 @@ paths:
                   description: The date and time when payments into the incoming payment must no longer be accepted.
                   format: date-time
                   writeOnly: true
-                description:
-                  type: string
-                  description: Human readable description of the incoming payment that will be visible to the account holder.
-                  deprecated: true
-                externalRef:
-                  type: string
-                  description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
-                  deprecated: true
                 metadata:
                   type: object
                   additionalProperties: true
@@ -215,7 +206,6 @@ paths:
                     value: '2500'
                     assetCode: USD
                     assetScale: 2
-                  externalRef: INV2022-02-0137
                   metadata: { externalRef: 'INV2022-02-0137' }
         description: |-
           A subset of the incoming payments schema is accepted as input to create a new incoming payment.
@@ -229,7 +219,7 @@ paths:
 
         All of the input parameters are _optional_.
 
-        For example, the client can specify an invoice number as the `externalRef` property of the **incoming payment** and this can be shared with the account holder to assist with reconciliation.
+        For example, the client could use the `metadata` property to store an external reference on the **incoming payment** and this can be shared with the account holder to assist with reconciliation.
 
         If `incomingAmount` is specified and the total received using the payment details equals or exceeds the specified `incomingAmount`, then the receiving Account Servicing Entity MUST reject any further payments and set `completed` to `true`.
 
@@ -277,8 +267,6 @@ paths:
                         expiresAt: '2022-04-12T23:20:50.52Z'
                         createdAt: '2022-03-12T23:20:50.52Z'
                         updatedAt: '2022-04-01T10:24:36.11Z'
-                        description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
-                        externalRef: Coffee w/ Mo on 10 March 22
                         metadata:
                           {
                             description: 'Hi Mo, this is for the cappuccino I bought for you the other day.',
@@ -316,7 +304,10 @@ paths:
                         expiresAt: '2022-04-12T23:20:50.52Z'
                         createdAt: '2022-03-12T23:20:50.52Z'
                         updatedAt: '2022-04-01T10:24:36.11Z'
-                        description: 'I love your website, Alice! Thanks for the great content'
+                        metadata:
+                          {
+                            description: 'I love your website, Alice! Thanks for the great content'
+                          }
                       - id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
                         paymentPointer: 'https://openpayments.guide/alice/'
                         incomingAmount:
@@ -332,8 +323,6 @@ paths:
                         expiresAt: '2022-04-12T23:20:50.52Z'
                         createdAt: '2022-03-12T23:20:50.52Z'
                         updatedAt: '2022-04-01T10:24:36.11Z'
-                        description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
-                        externalRef: Coffee w/ Mo on 10 March 22
                         metadata:
                           {
                             description: 'Hi Mo, this is for the cappuccino I bought for you the other day.',
@@ -384,7 +373,7 @@ paths:
                       value: '0'
                       assetCode: USD
                       assetScale: 2
-                    description: Thank you for the shoes.
+                      metadata: { description: Thank you for the shoes. }
                     createdAt: '2022-03-12T23:20:50.52Z'
                     updatedAt: '2022-04-01T10:24:36.11Z'
         '401':
@@ -398,7 +387,6 @@ paths:
               Create an outgoing payment based on a quote:
                 value:
                   quoteId: 'https://openpayments.guide/alice/quotes/ab03296b-0c8b-4776-b94e-7ee27d868d4d'
-                  externalRef: INV2022-02-0137
                   metadata: { externalRef: 'INV2022-02-0137' }
             schema:
               type: object
@@ -407,14 +395,6 @@ paths:
                   type: string
                   format: uri
                   description: The URL of the quote defining this payment's amounts.
-                description:
-                  type: string
-                  description: Human readable description of the outgoing payment that will be visible to the account holder and shared with the receiver.
-                  deprecated: true
-                externalRef:
-                  type: string
-                  description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
-                  deprecated: true
                 metadata:
                   type: object
                   additionalProperties: true
@@ -479,8 +459,6 @@ paths:
                           assetScale: 2
                         createdAt: '2022-03-12T23:20:50.52Z'
                         updatedAt: '2022-04-01T10:24:36.11Z'
-                        description: APlusVideo subscription
-                        externalRef: 'customer: 847458475'
                         metadata:
                           {
                             description: 'APlusVideo subscription',
@@ -504,8 +482,6 @@ paths:
                           assetScale: 2
                         createdAt: '2022-03-12T23:20:50.52Z'
                         updatedAt: '2022-04-01T10:24:36.11Z'
-                        description: Thank you for your purchase at ShoeShop!
-                        externalRef: INV2022-8943756
                         metadata:
                           {
                             description: 'Thank you for your purchase at ShoeShop!',
@@ -537,8 +513,6 @@ paths:
                           assetScale: 2
                         createdAt: '2022-03-12T23:20:50.52Z'
                         updatedAt: '2022-04-01T10:24:36.11Z'
-                        description: Thank you for your purchase at ShoeShop!
-                        externalRef: INV2022-8943756
                         metadata:
                           {
                             description: 'Thank you for your purchase at ShoeShop!',
@@ -562,8 +536,6 @@ paths:
                           assetScale: 2
                         createdAt: '2022-03-12T23:20:50.52Z'
                         updatedAt: '2022-04-01T10:24:36.11Z'
-                        description: APlusVideo subscription
-                        externalRef: 'customer: 847458475'
                         metadata:
                           {
                             description: 'APlusVideo subscription',
@@ -707,8 +679,6 @@ paths:
                     expiresAt: '2022-04-12T23:20:50.52Z'
                     createdAt: '2022-03-12T23:20:50.52Z'
                     updatedAt: '2022-04-01T10:24:36.11Z'
-                    description: Thanks for the flowers!
-                    externalRef: INV-12876
                     metadata:
                       {
                         description: 'Thanks for the flowers!',
@@ -763,8 +733,6 @@ paths:
                     expiresAt: '2022-04-12T23:20:50.52Z'
                     createdAt: '2022-03-12T23:20:50.52Z'
                     updatedAt: '2022-04-01T10:24:36.11Z'
-                    description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
-                    externalRef: Coffee w/ Mo on 10 March 22
                     metadata:
                       {
                         description: 'Hi Mo, this is for the cappuccino I bought for you the other day.',
@@ -819,8 +787,6 @@ paths:
                       assetScale: 2
                     createdAt: '2022-03-12T23:20:50.52Z'
                     updatedAt: '2022-04-01T10:24:36.11Z'
-                    description: Thanks for the flowers!
-                    externalRef: INV-12876
                     metadata:
                       {
                         description: 'Thanks for the flowers!',
@@ -992,8 +958,6 @@ components:
           expiresAt: '2022-04-12T23:20:50.52Z'
           createdAt: '2022-03-12T23:20:50.52Z'
           updatedAt: '2022-04-01T10:24:36.11Z'
-          description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
-          externalRef: Coffee w/ Mo on 10 March 22
           metadata:
             {
               description: 'Hi Mo, this is for the cappuccino I bought for you the other day.',
@@ -1037,14 +1001,6 @@ components:
           type: string
           description: The date and time when payments under this incoming payment will no longer be accepted.
           format: date-time
-        description:
-          type: string
-          description: Human readable description of the incoming payment that will be visible to the account holder.
-          deprecated: true
-        externalRef:
-          type: string
-          description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number.
-          deprecated: true
         metadata:
           type: object
           additionalProperties: true
@@ -1083,8 +1039,6 @@ components:
           expiresAt: '2022-04-12T23:20:50.52Z'
           createdAt: '2022-03-12T23:20:50.52Z'
           updatedAt: '2022-04-01T10:24:36.11Z'
-          description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
-          externalRef: Coffee w/ Mo on 10 March 22
           metadata:
             {
               description: 'Hi Mo, this is for the cappuccino I bought for you the other day.',
@@ -1153,8 +1107,6 @@ components:
             assetScale: 2
           createdAt: '2022-03-12T23:20:50.52Z'
           updatedAt: '2022-04-01T10:24:36.11Z'
-          description: APlusVideo subscription
-          externalRef: 'customer: 847458475'
           metadata:
             {
               description: 'APlusVideo subscription',
@@ -1174,8 +1126,6 @@ components:
             assetScale: 2
           createdAt: '2022-03-12T23:20:50.52Z'
           updatedAt: '2022-04-01T10:24:36.11Z'
-          description: Thank you for your purchase at ShoeShop!
-          externalRef: INV2022-8943756
           metadata:
             {
               description: 'Thank you for your purchase at ShoeShop!',
@@ -1213,14 +1163,6 @@ components:
         sentAmount:
           description: The total amount that has been sent under this outgoing payment.
           $ref: ./schemas.yaml#/components/schemas/amount
-        description:
-          type: string
-          description: Human readable description of the outgoing payment that will be visible to the account holder and shared with the receiver.
-          deprecated: true
-        externalRef:
-          type: string
-          description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
-          deprecated: true
         metadata:
           type: object
           additionalProperties: true
