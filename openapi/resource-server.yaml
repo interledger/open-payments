@@ -376,7 +376,7 @@ paths:
                       value: '0'
                       assetCode: USD
                       assetScale: 2
-                      metadata: { description: Thank you for the shoes. }
+                    metadata: { description: Thank you for the shoes. }
                     createdAt: '2022-03-12T23:20:50.52Z'
                     updatedAt: '2022-04-01T10:24:36.11Z'
         '401':
