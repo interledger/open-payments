@@ -260,41 +260,34 @@ describe('outgoing-payment', (): void => {
     const quoteId = `${paymentPointer}/quotes/${uuid()}`
 
     test.each`
-      description           | externalRef  | metadata
-      ${'Some description'} | ${'#INV-1'}  | ${'{"description": "Some description", "externalRef": "#INV-1"}'}
-      ${undefined}          | ${undefined} | ${undefined}
-    `(
-      'creates outgoing payment',
-      async ({ description, externalRef, metadata }): Promise<void> => {
-        const outgoingPayment = mockOutgoingPayment({
+      metadata
+      ${{ description: 'Some description', externalRef: '#INV-1' }}
+      ${undefined}
+    `('creates outgoing payment', async ({ metadata }): Promise<void> => {
+      const outgoingPayment = mockOutgoingPayment({
+        quoteId,
+        metadata
+      })
+
+      const scope = nock(paymentPointer)
+        .post('/outgoing-payments')
+        .reply(200, outgoingPayment)
+
+      const result = await createOutgoingPayment(
+        { axiosInstance, logger },
+        {
+          paymentPointer,
+          accessToken: 'accessToken'
+        },
+        openApiValidators.successfulValidator,
+        {
           quoteId,
-          description,
-          externalRef,
           metadata
-        })
-
-        const scope = nock(paymentPointer)
-          .post('/outgoing-payments')
-          .reply(200, outgoingPayment)
-
-        const result = await createOutgoingPayment(
-          { axiosInstance, logger },
-          {
-            paymentPointer,
-            accessToken: 'accessToken'
-          },
-          openApiValidators.successfulValidator,
-          {
-            quoteId,
-            description,
-            externalRef,
-            metadata
-          }
-        )
-        expect(result).toEqual(outgoingPayment)
-        scope.done()
-      }
-    )
+        }
+      )
+      expect(result).toEqual(outgoingPayment)
+      scope.done()
+    })
 
     test('throws if outgoing payment does not pass validation', async (): Promise<void> => {
       const outgoingPayment = mockOutgoingPayment({

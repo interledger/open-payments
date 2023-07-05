@@ -125,23 +125,15 @@ describe('incoming-payment', (): void => {
 
   describe('createIncomingPayment', (): void => {
     test.each`
-      incomingAmount                                      | expiresAt                                      | description  | externalRef  | metadata
-      ${undefined}                                        | ${undefined}                                   | ${undefined} | ${undefined} | ${undefined}
-      ${{ assetCode: 'USD', assetScale: 2, value: '10' }} | ${new Date(Date.now() + 60_000).toISOString()} | ${'Invoice'} | ${'#INV-1'}  | ${'{"description": "Invoice", "externalRef": "#INV-1"}'}
+      incomingAmount                                      | expiresAt                                      | metadata
+      ${undefined}                                        | ${undefined}                                   | ${undefined}
+      ${{ assetCode: 'USD', assetScale: 2, value: '10' }} | ${new Date(Date.now() + 60_000).toISOString()} | ${{ description: 'Invoice', externalRef: '#INV-1' }}
     `(
       'returns the incoming payment on success',
-      async ({
-        incomingAmount,
-        expiresAt,
-        description,
-        externalRef,
-        metadata
-      }): Promise<void> => {
+      async ({ incomingAmount, expiresAt, metadata }): Promise<void> => {
         const incomingPayment = mockIncomingPaymentWithConnection({
           incomingAmount,
           expiresAt,
-          description,
-          externalRef,
           metadata
         })
 
@@ -156,8 +148,6 @@ describe('incoming-payment', (): void => {
           {
             incomingAmount,
             expiresAt,
-            description,
-            externalRef,
             metadata
           }
         )
