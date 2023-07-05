@@ -1,5 +1,11 @@
 # @interledger/open-payments
 
+## 2.0.0
+
+### Major Changes
+
+- b8e3b6a: Removed externalRef and description fields from incoming and outgoing payments. metadata field should be used to store these fields instead.
+
 ## 1.1.0
 
 ### Minor Changes
