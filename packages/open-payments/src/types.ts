@@ -52,7 +52,7 @@ type QuoteArgsBase = {
   receiver: RSOperations['create-quote']['requestBody']['content']['application/json']['receiver']
 }
 type QuoteArgsWithSendAmount = QuoteArgsBase & {
-  sendAmount?: RSComponents['schemas']['quote']['sendAmount']
+  sendAmount?: RSComponents['schemas']['quote']['maxSendAmount']
   receiveAmount?: never
 }
 type QuoteArgsWithReceiveAmount = QuoteArgsBase & {

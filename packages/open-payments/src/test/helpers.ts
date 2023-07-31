@@ -154,7 +154,7 @@ export const mockOutgoingPayment = (
   id: `https://example.com/.well-known/pay/outgoing-payments/${uuid()}`,
   paymentPointer: 'https://example.com/.well-known/pay',
   failed: false,
-  sendAmount: {
+  maxSendAmount: {
     assetCode: 'USD',
     assetScale: 2,
     value: '10'
@@ -168,6 +168,18 @@ export const mockOutgoingPayment = (
     assetCode: 'USD',
     assetScale: 2,
     value: '10'
+  },
+  fees: {
+    sendFeeAmount: {
+      assetCode: 'USD',
+      assetScale: 2,
+      value: '0'
+    },
+    receiveFeeAmount: {
+      assetCode: 'USD',
+      assetScale: 2,
+      value: '0'
+    }
   },
   quoteId: uuid(),
   receiver: uuid(),
@@ -286,7 +298,7 @@ export const mockQuote = (overrides?: Partial<Quote>): Quote => ({
   id: `https://example.com/.well-known/pay/quotes/${uuid()}`,
   receiver: 'https://example.com/.well-known/peer',
   paymentPointer: 'https://example.com/.well-known/pay',
-  sendAmount: {
+  maxSendAmount: {
     value: '100',
     assetCode: 'USD',
     assetScale: 2
@@ -295,6 +307,18 @@ export const mockQuote = (overrides?: Partial<Quote>): Quote => ({
     value: '90',
     assetCode: 'USD',
     assetScale: 2
+  },
+  fees: {
+    sendFeeAmount: {
+      assetCode: 'USD',
+      assetScale: 2,
+      value: '0'
+    },
+    receiveFeeAmount: {
+      assetCode: 'USD',
+      assetScale: 2,
+      value: '0'
+    }
   },
   createdAt: new Date().toISOString(),
   expiresAt: new Date(Date.now() + 60_000).toISOString(),
