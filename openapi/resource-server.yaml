@@ -1332,7 +1332,7 @@ components:
           description: The total amount that should be received by the receiver when the corresponding outgoing payment has been paid.
         maxSendAmount:
           $ref: ./schemas.yaml#/components/schemas/amount
-          description: 'The total amount that should be deducted from the sender''s account when the corresponding outgoing payment has been paid. '
+          description: "The total amount that should be deducted from the sender's account when the corresponding outgoing payment has been paid. "
         fees:
           $ref: '#/components/schemas/fees'
           description: Fee structure
