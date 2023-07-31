@@ -62,7 +62,7 @@ describe('outgoing-payment', (): void => {
 
     test('throws if outgoing payment does not pass validation', async (): Promise<void> => {
       const outgoingPayment = mockOutgoingPayment({
-        sendAmount: {
+        maxSendAmount: {
           assetCode: 'USD',
           assetScale: 3,
           value: '5'
@@ -194,7 +194,7 @@ describe('outgoing-payment', (): void => {
 
     test('throws if an outgoing payment does not pass validation', async (): Promise<void> => {
       const invalidOutgoingPayment = mockOutgoingPayment({
-        sendAmount: {
+        maxSendAmount: {
           assetCode: 'CAD',
           assetScale: 2,
           value: '5'
@@ -291,7 +291,7 @@ describe('outgoing-payment', (): void => {
 
     test('throws if outgoing payment does not pass validation', async (): Promise<void> => {
       const outgoingPayment = mockOutgoingPayment({
-        sendAmount: {
+        maxSendAmount: {
           assetCode: 'USD',
           assetScale: 3,
           value: '5'
@@ -361,7 +361,7 @@ describe('outgoing-payment', (): void => {
 
     test('throws if send amount and sent amount asset scales are different', async (): Promise<void> => {
       const outgoingPayment = mockOutgoingPayment({
-        sendAmount: {
+        maxSendAmount: {
           assetCode: 'USD',
           assetScale: 3,
           value: '5'
@@ -380,7 +380,7 @@ describe('outgoing-payment', (): void => {
 
     test('throws if send amount and sent amount asset codes are different', async (): Promise<void> => {
       const outgoingPayment = mockOutgoingPayment({
-        sendAmount: {
+        maxSendAmount: {
           assetCode: 'CAD',
           assetScale: 2,
           value: '5'
@@ -399,7 +399,7 @@ describe('outgoing-payment', (): void => {
 
     test('throws if sent amount is larger than send amount', async (): Promise<void> => {
       const outgoingPayment = mockOutgoingPayment({
-        sendAmount: {
+        maxSendAmount: {
           assetCode: 'USD',
           assetScale: 2,
           value: '5'
@@ -418,7 +418,7 @@ describe('outgoing-payment', (): void => {
 
     test('throws if sent amount equals send amount, but payment has failed', async (): Promise<void> => {
       const outgoingPayment = mockOutgoingPayment({
-        sendAmount: {
+        maxSendAmount: {
           assetCode: 'USD',
           assetScale: 2,
           value: '5'
