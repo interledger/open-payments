@@ -723,10 +723,7 @@ export interface external {
     paths: {};
     components: {
       schemas: {
-        /**
-         * amount
-         * @description All amounts are maxima, i.e. multiple payments can be created under a grant as long as the total amounts of these payments do not exceed the maximum amount per interval as specified in the grant.
-         */
+        /** amount */
         amount: {
           /**
            * Format: uint64
