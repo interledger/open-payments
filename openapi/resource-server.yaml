@@ -199,9 +199,6 @@ paths:
                 metadata:
                   type: object
                   description: Additional metadata associated with the incoming payment. (Optional)
-                feeStructure:
-                  type: boolean
-                  description: Request receiving fee structure
             examples:
               Create incoming payment for $25 to pay invoice INV2022-02-0137:
                 value:
@@ -211,7 +208,6 @@ paths:
                     assetScale: 2
                   metadata:
                     externalRef: INV2022-02-0137
-                  feeStructure: true
         description: |-
           A subset of the incoming payments schema is accepted as input to create a new incoming payment.
 
@@ -361,7 +357,7 @@ paths:
                     paymentPointer: 'https://openpayments.guide/alice/'
                     failed: false
                     receiver: 'https://openpayments.guide/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2'
-                    maxSendAmount:
+                    debitAmount:
                       value: '2600'
                       assetCode: USD
                       assetScale: 2
@@ -373,15 +369,6 @@ paths:
                       value: '0'
                       assetCode: USD
                       assetScale: 2
-                    fees:
-                      sendFeeAmount:
-                        value: '100'
-                        assetCode: USD
-                        assetScale: 2
-                      receiveFeeAmount:
-                        value: '0'
-                        assetCode: USD
-                        assetScale: 2
                     metadata:
                       description: Thank you for the shoes.
                     createdAt: '2022-03-12T23:20:50.52Z'
@@ -460,7 +447,7 @@ paths:
                           value: '2500'
                           assetCode: USD
                           assetScale: 2
-                        maxSendAmount:
+                        debitAmount:
                           value: '2600'
                           assetCode: USD
                           assetScale: 2
@@ -468,15 +455,6 @@ paths:
                           value: '2500'
                           assetCode: USD
                           assetScale: 2
-                        fees:
-                          sendFeeAmount:
-                            value: '100'
-                            assetCode: USD
-                            assetScale: 2
-                          receiveFeeAmount:
-                            value: '0'
-                            assetCode: USD
-                            assetScale: 2
                         createdAt: '2022-03-12T23:20:50.52Z'
                         updatedAt: '2022-04-01T10:24:36.11Z'
                         metadata:
@@ -486,7 +464,7 @@ paths:
                         paymentPointer: 'https://openpayments.guide/alice/'
                         failed: false
                         receiver: 'https://openpayments.guide/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
-                        maxSendAmount:
+                        debitAmount:
                           value: '7126'
                           assetCode: USD
                           assetScale: 2
@@ -498,15 +476,6 @@ paths:
                           value: '7026'
                           assetCode: USD
                           assetScale: 2
-                        fees:
-                          sendFeeAmount:
-                            value: '100'
-                            assetCode: USD
-                            assetScale: 2
-                          receiveFeeAmount:
-                            value: '0'
-                            assetCode: USD
-                            assetScale: 2
                         createdAt: '2022-03-12T23:20:50.52Z'
                         updatedAt: '2022-04-01T10:24:36.11Z'
                         metadata:
@@ -524,7 +493,7 @@ paths:
                         paymentPointer: 'https://openpayments.guide/alice/'
                         failed: false
                         receiver: 'https://openpayments.guide/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
-                        maxSendAmount:
+                        debitAmount:
                           value: '7126'
                           assetCode: USD
                           assetScale: 2
@@ -536,15 +505,6 @@ paths:
                           value: '7026'
                           assetCode: USD
                           assetScale: 2
-                        fees:
-                          sendFeeAmount:
-                            value: '100'
-                            assetCode: USD
-                            assetScale: 2
-                          receiveFeeAmount:
-                            value: '0'
-                            assetCode: USD
-                            assetScale: 2
                         createdAt: '2022-03-12T23:20:50.52Z'
                         updatedAt: '2022-04-01T10:24:36.11Z'
                         metadata:
@@ -558,7 +518,7 @@ paths:
                           value: '2500'
                           assetCode: USD
                           assetScale: 2
-                        maxSendAmount:
+                        debitAmount:
                           value: '2600'
                           assetCode: USD
                           assetScale: 2
@@ -566,15 +526,6 @@ paths:
                           value: '2500'
                           assetCode: USD
                           assetScale: 2
-                        fees:
-                          sendFeeAmount:
-                            value: '100'
-                            assetCode: USD
-                            assetScale: 2
-                          receiveFeeAmount:
-                            value: '0'
-                            assetCode: USD
-                            assetScale: 2
                         createdAt: '2022-03-12T23:20:50.52Z'
                         updatedAt: '2022-04-01T10:24:36.11Z'
                         metadata:
@@ -612,7 +563,7 @@ paths:
                     id: 'https://openpayments.guide/alice/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
                     paymentPointer: 'https://openpayments.guide/alice/'
                     receiver: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
-                    maxSendAmount:
+                    debitAmount:
                       value: '2500'
                       assetCode: USD
                       assetScale: 2
@@ -620,15 +571,6 @@ paths:
                       value: '2198'
                       assetCode: EUR
                       assetScale: 2
-                    fees:
-                      sendFeeAmount:
-                        value: '100'
-                        assetCode: USD
-                        assetScale: 2
-                      receiveFeeAmount:
-                        value: '0'
-                        assetCode: USD
-                        assetScale: 2
                     createdAt: '2022-03-12T23:20:50.52Z'
                     expiresAt: '2022-04-12T23:20:50.52Z'
         '400':
@@ -816,7 +758,7 @@ paths:
                     paymentPointer: 'https://openpayments.guide/bob/'
                     failed: false
                     receiver: 'https://openpayments.guide/alice/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
-                    maxSendAmount:
+                    debitAmount:
                       value: '2500'
                       assetCode: USD
                       assetScale: 2
@@ -828,15 +770,6 @@ paths:
                       value: '1205'
                       assetCode: USD
                       assetScale: 2
-                    fees:
-                      sendFeeAmount:
-                        value: '100'
-                        assetCode: USD
-                        assetScale: 2
-                      receiveFeeAmount:
-                        value: '0'
-                        assetCode: USD
-                        assetScale: 2
                     createdAt: '2022-03-12T23:20:50.52Z'
                     updatedAt: '2022-04-01T10:24:36.11Z'
                     metadata:
@@ -873,7 +806,7 @@ paths:
                     id: 'https://openpayments.guide/bob/quotes/3859b39e-4666-4ce5-8745-72f1864c5371'
                     paymentPointer: 'https://openpayments.guide/bob/'
                     receiver: 'https://openpayments.guide/alice/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
-                    maxSendAmount:
+                    debitAmount:
                       value: '2500'
                       assetCode: USD
                       assetScale: 2
@@ -881,15 +814,6 @@ paths:
                       value: '2198'
                       assetCode: EUR
                       assetScale: 2
-                    fees:
-                      sendFeeAmount:
-                        value: '100'
-                        assetCode: USD
-                        assetScale: 2
-                      receiveFeeAmount:
-                        value: '0'
-                        assetCode: USD
-                        assetScale: 2
                     createdAt: '2022-03-12T23:20:50.52Z'
                     expiresAt: '2022-04-12T23:20:50.52Z'
         '401':
@@ -1061,9 +985,6 @@ components:
         metadata:
           type: object
           description: Additional metadata associated with the incoming payment. (Optional)
-        feeStructure:
-          $ref: '#/components/schemas/feeStructure'
-          description: Fixed and variable receiving Account Servicing Entity fees.
         createdAt:
           type: string
           format: date-time
@@ -1154,7 +1075,7 @@ components:
             value: '2500'
             assetCode: USD
             assetScale: 2
-          maxSendAmount:
+          debitAmount:
             value: '2600'
             assetCode: USD
             assetScale: 2
@@ -1162,15 +1083,6 @@ components:
             value: '2500'
             assetCode: USD
             assetScale: 2
-          fees:
-            sendFeeAmount:
-              value: '100'
-              assetCode: USD
-              assetScale: 2
-            receiveFeeAmount:
-              value: '0'
-              assetCode: USD
-              assetScale: 2
           createdAt: '2022-03-12T23:20:50.52Z'
           updatedAt: '2022-04-01T10:24:36.11Z'
           metadata:
@@ -1180,7 +1092,7 @@ components:
           paymentPointer: 'https://openpayments.guide/alice/'
           failed: false
           receiver: 'https://openpayments.guide/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
-          maxSendAmount:
+          debitAmount:
             value: '7126'
             assetCode: USD
             assetScale: 2
@@ -1188,15 +1100,6 @@ components:
             value: '7026'
             assetCode: USD
             assetScale: 2
-          fees:
-            sendFeeAmount:
-              value: '100'
-              assetCode: USD
-              assetScale: 2
-            receiveFeeAmount:
-              value: '0'
-              assetCode: USD
-              assetScale: 2
           createdAt: '2022-03-12T23:20:50.52Z'
           updatedAt: '2022-04-01T10:24:36.11Z'
           metadata:
@@ -1229,7 +1132,7 @@ components:
         receiveAmount:
           $ref: ./schemas.yaml#/components/schemas/amount
           description: The total amount that should be received by the receiver when this outgoing payment has been paid.
-        maxSendAmount:
+        debitAmount:
           $ref: ./schemas.yaml#/components/schemas/amount
           description: The total amount that should be deducted from the sender's account when this outgoing payment has been paid.
         sentAmount:
@@ -1238,9 +1141,6 @@ components:
         metadata:
           type: object
           description: Additional metadata associated with the outgoing payment. (Optional)
-        fees:
-          $ref: '#/components/schemas/fees'
-          description: Fee structure
         createdAt:
           type: string
           format: date-time
@@ -1254,9 +1154,8 @@ components:
         - paymentPointer
         - receiver
         - receiveAmount
-        - maxSendAmount
+        - debitAmount
         - sentAmount
-        - fees
         - createdAt
         - updatedAt
     quote:
@@ -1271,7 +1170,7 @@ components:
             value: '2500'
             assetCode: USD
             assetScale: 2
-          maxSendAmount:
+          debitAmount:
             value: '2600'
             assetCode: USD
             assetScale: 2
@@ -1279,21 +1178,12 @@ components:
             value: '2500'
             assetCode: USD
             assetScale: 2
-          fees:
-            sendFeeAmount:
-              value: '100'
-              assetCode: USD
-              assetScale: 2
-            receiveFeeAmount:
-              value: '0'
-              assetCode: USD
-              assetScale: 2
           createdAt: '2022-03-12T23:20:50.52Z'
           expiresAt: '2022-04-12T23:20:50.52Z'
         - id: 'https://openpayments.guide/alice/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
           paymentPointer: 'https://openpayments.guide/alice/'
           receiver: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
-          maxSendAmount:
+          debitAmount:
             value: '7126'
             assetCode: USD
             assetScale: 2
@@ -1301,15 +1191,6 @@ components:
             value: '7026'
             assetCode: USD
             assetScale: 2
-          fees:
-            sendFeeAmount:
-              value: '100'
-              assetCode: USD
-              assetScale: 2
-            receiveFeeAmount:
-              value: '0'
-              assetCode: USD
-              assetScale: 2
           createdAt: '2022-03-12T23:20:50.52Z'
           expiresAt: '2022-04-12T23:20:50.52Z'
       additionalProperties: false
@@ -1330,12 +1211,9 @@ components:
         receiveAmount:
           $ref: ./schemas.yaml#/components/schemas/amount
           description: The total amount that should be received by the receiver when the corresponding outgoing payment has been paid.
-        maxSendAmount:
+        debitAmount:
           $ref: ./schemas.yaml#/components/schemas/amount
           description: "The total amount that should be deducted from the sender's account when the corresponding outgoing payment has been paid. "
-        fees:
-          $ref: '#/components/schemas/fees'
-          description: Fee structure
         expiresAt:
           type: string
           description: The date and time when the calculated `sendAmount` is no longer valid.
@@ -1349,8 +1227,7 @@ components:
         - paymentPointer
         - receiver
         - receiveAmount
-        - maxSendAmount
-        - fees
+        - debitAmount
         - createdAt
     page-info:
       description: ''
@@ -1424,27 +1301,6 @@ components:
           kty: OKP
           crv: Ed25519
           x: oy0L_vTygNE4IogRyn_F5GmHXdqYVjIXkWs2jky7zsI
-    feeStructure:
-      title: feeStructure
-      type: object
-      properties:
-        fixed:
-          $ref: ./schemas.yaml#/components/schemas/amount
-        percentage:
-          type: string
-    fees:
-      title: fees
-      type: object
-      properties:
-        sendFeeAmount:
-          $ref: ./schemas.yaml#/components/schemas/amount
-          description: Sending Accoung Servicing Entity's fees + ILP network fees
-        receiveFeeAmount:
-          $ref: ./schemas.yaml#/components/schemas/amount
-          description: Receiving Account Servicing Entity's fees. They are zero if sender does not pay receiving fees.
-      required:
-        - sendFeeAmount
-        - receiveFeeAmount
   securitySchemes:
     GNAP:
       name: Authorization

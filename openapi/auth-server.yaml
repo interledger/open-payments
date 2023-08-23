@@ -112,7 +112,7 @@ paths:
                         limits:
                           receiver: 'https://openpayments.guide/connections/45a0d0ee-26dc-4c66-89e0-01fbf93156f7'
                           interval: 'R12/2019-08-24T14:15:22Z/P1M'
-                          sendAmount:
+                          debitAmount:
                             value: '500'
                             assetCode: USD
                             assetScale: 2
@@ -180,7 +180,7 @@ paths:
                           limits:
                             receiver: 'https://openpayments.guide/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2'
                             interval: 'R12/2019-08-24T14:15:22Z/P1M'
-                            sendAmount:
+                            debitAmount:
                               value: '500'
                               assetCode: USD
                               assetScale: 2
@@ -275,7 +275,7 @@ paths:
                           limits:
                             interval: 'R12/2019-08-24T14:15:22Z/P1M'
                             receiver: 'https://openpayments.guide/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2'
-                            sendAmount:
+                            debitAmount:
                               value: '500'
                               assetCode: USD
                               assetScale: 2
@@ -515,7 +515,7 @@ components:
       properties:
         receiver:
           $ref: './schemas.yaml#/components/schemas/receiver'
-        sendAmount:
+        debitAmount:
           $ref: './schemas.yaml#/components/schemas/amount'
         receiveAmount:
           $ref: './schemas.yaml#/components/schemas/amount'
@@ -526,7 +526,7 @@ components:
             required:
               - interval
         - required:
-            - sendAmount
+            - debitAmount
         - required:
             - receiveAmount
   securitySchemes:

@@ -166,7 +166,7 @@ export interface components {
      */
     "limits-outgoing": Partial<unknown> & {
       receiver?: external["schemas.yaml"]["components"]["schemas"]["receiver"];
-      sendAmount?: external["schemas.yaml"]["components"]["schemas"]["amount"];
+      debitAmount?: external["schemas.yaml"]["components"]["schemas"]["amount"];
       receiveAmount?: external["schemas.yaml"]["components"]["schemas"]["amount"];
       interval?: components["schemas"]["interval"];
     };

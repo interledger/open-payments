@@ -190,8 +190,6 @@ export interface components {
       expiresAt?: string;
       /** @description Additional metadata associated with the incoming payment. (Optional) */
       metadata?: { [key: string]: unknown };
-      /** @description Fixed and variable receiving Account Servicing Entity fees. */
-      feeStructure?: components["schemas"]["feeStructure"];
       /**
        * Format: date-time
        * @description The date and time when the incoming payment was created.
@@ -248,13 +246,11 @@ export interface components {
       /** @description The total amount that should be received by the receiver when this outgoing payment has been paid. */
       receiveAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
       /** @description The total amount that should be deducted from the sender's account when this outgoing payment has been paid. */
-      maxSendAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
+      debitAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
       /** @description The total amount that has been sent under this outgoing payment. */
       sentAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
       /** @description Additional metadata associated with the outgoing payment. (Optional) */
       metadata?: { [key: string]: unknown };
-      /** @description Fee structure */
-      fees: components["schemas"]["fees"];
       /**
        * Format: date-time
        * @description The date and time when the outgoing payment was created.
@@ -286,9 +282,7 @@ export interface components {
       /** @description The total amount that should be received by the receiver when the corresponding outgoing payment has been paid. */
       receiveAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
       /** @description The total amount that should be deducted from the sender's account when the corresponding outgoing payment has been paid. */
-      maxSendAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
-      /** @description Fee structure */
-      fees: components["schemas"]["fees"];
+      debitAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
       /** @description The date and time when the calculated `sendAmount` is no longer valid. */
       expiresAt?: string;
       /**
@@ -320,18 +314,6 @@ export interface components {
       crv: "Ed25519";
       /** @description The base64 url-encoded public key. */
       x: string;
-    };
-    /** feeStructure */
-    feeStructure: {
-      fixed?: external["schemas.yaml"]["components"]["schemas"]["amount"];
-      percentage?: string;
-    };
-    /** fees */
-    fees: {
-      /** @description Sending Accoung Servicing Entity's fees + ILP network fees */
-      sendFeeAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
-      /** @description Receiving Account Servicing Entity's fees. They are zero if sender does not pay receiving fees. */
-      receiveFeeAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
     };
   };
   responses: {
@@ -497,8 +479,6 @@ export interface operations {
           expiresAt?: string;
           /** @description Additional metadata associated with the incoming payment. (Optional) */
           metadata?: { [key: string]: unknown };
-          /** @description Request receiving fee structure */
-          feeStructure?: boolean;
         };
       };
     };
