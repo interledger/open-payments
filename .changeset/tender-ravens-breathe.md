@@ -1,5 +1,5 @@
 ---
-'@interledger/open-payments': minor
+'@interledger/open-payments': major
 ---
 
 Adding properties for new quoting mechanism
