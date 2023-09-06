@@ -283,7 +283,7 @@ export interface components {
       receiveAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
       /** @description The total amount that should be deducted from the sender's account when the corresponding outgoing payment has been paid. */
       debitAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
-      /** @description The date and time when the calculated `sendAmount` is no longer valid. */
+      /** @description The date and time when the calculated `debitAmount` is no longer valid. */
       expiresAt?: string;
       /**
        * Format: date-time
@@ -542,7 +542,7 @@ export interface operations {
     /**
      * A subset of the outgoing payments schema is accepted as input to create a new outgoing payment.
      *
-     * The `sendAmount` must use the same `assetCode` and `assetScale` as the payment pointer.
+     * The `debitAmount` must use the same `assetCode` and `assetScale` as the payment pointer.
      */
     requestBody: {
       content: {
@@ -583,7 +583,7 @@ export interface operations {
     /**
      * A subset of the quotes schema is accepted as input to create a new quote.
      *
-     * The quote must be created with a (`sendAmount` xor `receiveAmount`) unless the `receiver` is an Incoming Payment which has an `incomingAmount`.
+     * The quote must be created with a (`debitAmount` xor `receiveAmount`) unless the `receiver` is an Incoming Payment which has an `incomingAmount`.
      */
     requestBody: {
       content: {
@@ -599,7 +599,7 @@ export interface operations {
           | {
               receiver: external["schemas.yaml"]["components"]["schemas"]["receiver"];
               /** @description The fixed amount that would be sent from the sending payment pointer given a successful outgoing payment. */
-              sendAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
+              debitAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
             };
       };
     };
