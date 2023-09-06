@@ -36,12 +36,12 @@ servers:
     description: 'Server for when Payment Pointer has a pathname  (ie https://openpayments.guide/alice)'
     variables:
       paymentPointer:
-        default: openpayments.guide/alice
+        default: https://openpayments.guide/alice
   - url: '{paymentPointer}/.well-known/pay'
     description: 'Server for when Payment Pointer has no pathname (ie https://openpayments.guide)'
     variables:
       paymentPointer:
-        default: openpayments.guide
+        default: https://openpayments.guide
 tags:
   - name: payment-pointer
     description: payment pointer operations
