@@ -40,4 +40,4 @@ Or dial: (DE) +49 30 300195061 and enter this PIN: 105 520 503#
 
 More phone numbers: https://tel.meet/htd-eefo-ovn?hs=5
 
-[Add to Google Calendar](https://calendar.google.com/calendar/event?action=TEMPLATE&tmeid=MTdkZTEwYThhNjliNDUxOGJmNTc0ZWE2NjgxZWViZjlfMjAyMzA4MjhUMTEwMDAwWiBzYWJpbmVAaW50ZXJsZWRnZXIub3Jn&tmsrc=sabine%40interledger.org&scp=ALL)
+[Add to Google Calendar](https://calendar.google.com/calendar/event?action=TEMPLATE&tmeid=MTdkZTEwYThhNjliNDUxOGJmNTc0ZWE2NjgxZWViZjlfMjAyMzA5MDRUMTEwMDAwWiBzYWJpbmVAaW50ZXJsZWRnZXIub3Jn&tmsrc=sabine%40interledger.org&scp=ALL)
