@@ -1,5 +1,11 @@
 # @interledger/open-payments
 
+## 3.0.0
+
+### Major Changes
+
+- dd193c7: Adding properties for new quoting mechanism
+
 ## 2.0.0
 
 ### Major Changes
