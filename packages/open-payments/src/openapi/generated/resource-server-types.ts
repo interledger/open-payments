@@ -245,8 +245,8 @@ export interface components {
       receiver: external["schemas.yaml"]["components"]["schemas"]["receiver"];
       /** @description The total amount that should be received by the receiver when this outgoing payment has been paid. */
       receiveAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
-      /** @description The total amount that should be sent when this outgoing payment has been paid. */
-      sendAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
+      /** @description The total amount that should be deducted from the sender's account when this outgoing payment has been paid. */
+      debitAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
       /** @description The total amount that has been sent under this outgoing payment. */
       sentAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
       /** @description Additional metadata associated with the outgoing payment. (Optional) */
@@ -277,10 +277,13 @@ export interface components {
        * @description The URL of the payment pointer from which this quote's payment would be sent.
        */
       paymentPointer: string;
+      /** @description The URL of the incoming payment or ILP STREAM Connection that the quote is created for. */
       receiver: external["schemas.yaml"]["components"]["schemas"]["receiver"];
+      /** @description The total amount that should be received by the receiver when the corresponding outgoing payment has been paid. */
       receiveAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
-      sendAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
-      /** @description The date and time when the calculated `sendAmount` is no longer valid. */
+      /** @description The total amount that should be deducted from the sender's account when the corresponding outgoing payment has been paid. */
+      debitAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
+      /** @description The date and time when the calculated `debitAmount` is no longer valid. */
       expiresAt?: string;
       /**
        * Format: date-time
@@ -539,7 +542,7 @@ export interface operations {
     /**
      * A subset of the outgoing payments schema is accepted as input to create a new outgoing payment.
      *
-     * The `sendAmount` must use the same `assetCode` and `assetScale` as the payment pointer.
+     * The `debitAmount` must use the same `assetCode` and `assetScale` as the payment pointer.
      */
     requestBody: {
       content: {
@@ -580,7 +583,7 @@ export interface operations {
     /**
      * A subset of the quotes schema is accepted as input to create a new quote.
      *
-     * The quote must be created with a (`sendAmount` xor `receiveAmount`) unless the `receiver` is an Incoming Payment which has an `incomingAmount`.
+     * The quote must be created with a (`debitAmount` xor `receiveAmount`) unless the `receiver` is an Incoming Payment which has an `incomingAmount`.
      */
     requestBody: {
       content: {
@@ -596,7 +599,7 @@ export interface operations {
           | {
               receiver: external["schemas.yaml"]["components"]["schemas"]["receiver"];
               /** @description The fixed amount that would be sent from the sending payment pointer given a successful outgoing payment. */
-              sendAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
+              debitAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
             };
       };
     };
@@ -720,10 +723,7 @@ export interface external {
     paths: {};
     components: {
       schemas: {
-        /**
-         * amount
-         * @description All amounts are maxima, i.e. multiple payments can be created under a grant as long as the total amounts of these payments do not exceed the maximum amount per interval as specified in the grant.
-         */
+        /** amount */
         amount: {
           /**
            * Format: uint64

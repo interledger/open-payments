@@ -166,7 +166,9 @@ export interface components {
      */
     "limits-outgoing": Partial<unknown> & {
       receiver?: external["schemas.yaml"]["components"]["schemas"]["receiver"];
-      sendAmount?: external["schemas.yaml"]["components"]["schemas"]["amount"];
+      /** @description All amounts are maxima, i.e. multiple payments can be created under a grant as long as the total amounts of these payments do not exceed the maximum amount per interval as specified in the grant. */
+      debitAmount?: external["schemas.yaml"]["components"]["schemas"]["amount"];
+      /** @description All amounts are maxima, i.e. multiple payments can be created under a grant as long as the total amounts of these payments do not exceed the maximum amount per interval as specified in the grant. */
       receiveAmount?: external["schemas.yaml"]["components"]["schemas"]["amount"];
       interval?: components["schemas"]["interval"];
     };
@@ -312,10 +314,7 @@ export interface external {
     paths: {};
     components: {
       schemas: {
-        /**
-         * amount
-         * @description All amounts are maxima, i.e. multiple payments can be created under a grant as long as the total amounts of these payments do not exceed the maximum amount per interval as specified in the grant.
-         */
+        /** amount */
         amount: {
           /**
            * Format: uint64

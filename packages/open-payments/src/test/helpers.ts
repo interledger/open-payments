@@ -154,7 +154,7 @@ export const mockOutgoingPayment = (
   id: `https://example.com/.well-known/pay/outgoing-payments/${uuid()}`,
   paymentPointer: 'https://example.com/.well-known/pay',
   failed: false,
-  sendAmount: {
+  debitAmount: {
     assetCode: 'USD',
     assetScale: 2,
     value: '10'
@@ -286,7 +286,7 @@ export const mockQuote = (overrides?: Partial<Quote>): Quote => ({
   id: `https://example.com/.well-known/pay/quotes/${uuid()}`,
   receiver: 'https://example.com/.well-known/peer',
   paymentPointer: 'https://example.com/.well-known/pay',
-  sendAmount: {
+  debitAmount: {
     value: '100',
     assetCode: 'USD',
     assetScale: 2

@@ -176,19 +176,19 @@ export const listOutgoingPayments = async (
 export const validateOutgoingPayment = (
   payment: OutgoingPayment
 ): OutgoingPayment => {
-  const { sendAmount, sentAmount } = payment
+  const { debitAmount, sentAmount } = payment
   if (
-    sendAmount.assetCode !== sentAmount.assetCode ||
-    sendAmount.assetScale !== sentAmount.assetScale
+    debitAmount.assetCode !== sentAmount.assetCode ||
+    debitAmount.assetScale !== sentAmount.assetScale
   ) {
     throw new Error(
       'Asset code or asset scale of sending amount does not match sent amount'
     )
   }
-  if (BigInt(sendAmount.value) < BigInt(sentAmount.value)) {
+  if (BigInt(debitAmount.value) < BigInt(sentAmount.value)) {
     throw new Error('Amount sent is larger than maximum amount to send')
   }
-  if (sendAmount.value === sentAmount.value && payment.failed) {
+  if (debitAmount.value === sentAmount.value && payment.failed) {
     throw new Error('Amount to send matches sent amount but payment failed')
   }
 

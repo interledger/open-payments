@@ -51,16 +51,16 @@ export type Quote = RSComponents['schemas']['quote']
 type QuoteArgsBase = {
   receiver: RSOperations['create-quote']['requestBody']['content']['application/json']['receiver']
 }
-type QuoteArgsWithSendAmount = QuoteArgsBase & {
-  sendAmount?: RSComponents['schemas']['quote']['sendAmount']
+type QuoteArgsWithDebitAmount = QuoteArgsBase & {
+  debitAmount?: RSComponents['schemas']['quote']['debitAmount']
   receiveAmount?: never
 }
 type QuoteArgsWithReceiveAmount = QuoteArgsBase & {
-  sendAmount?: never
+  debitAmount?: never
   receiveAmount?: RSComponents['schemas']['quote']['receiveAmount']
 }
 export type CreateQuoteArgs =
-  | QuoteArgsWithSendAmount
+  | QuoteArgsWithDebitAmount
   | QuoteArgsWithReceiveAmount
 
 export const getASPath = <P extends keyof ASPaths>(path: P): string =>

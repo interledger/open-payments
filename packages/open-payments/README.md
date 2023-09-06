@@ -179,7 +179,7 @@ const quote = await client.quote.create(
   { receiver: incomingPayment.id }
 )
 
-// quote.sendAmount.value = '5200'
+// quote.debitAmount.value = '5200'
 ```
 
 5. Create `OutgoingPayment` grant & start interaction flow:
