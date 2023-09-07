@@ -1,5 +1,12 @@
 # @interledger/open-payments
 
+## 3.0.1
+
+### Patch Changes
+
+- Updated dependencies [805d6dd]
+  - @interledger/http-signature-utils@1.0.4
+
 ## 3.0.0
 
 ### Major Changes
