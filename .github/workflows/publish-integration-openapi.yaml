@@ -1,0 +1,14 @@
+name: OpenAPI Integration Publisher
+
+on:
+  push:
+    branches:
+      - integration
+
+jobs:
+  publish-integration:
+    uses: ./.github/workflows/publish-openapi.yaml
+    secrets:
+      README_RESOURCE_API_ID: ${{ secrets.README_INTEGRATION_RESOURCE_API_ID }}
+      README_AUTH_API_ID: ${{ secrets.README_INTEGRATION_AUTH_API_ID }}
+      README_API_KEY: ${{ secrets.README_INTEGRATION_API_KEY }}

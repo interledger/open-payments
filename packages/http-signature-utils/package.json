@@ -1,0 +1,37 @@
+{
+  "name": "@interledger/http-signature-utils",
+  "version": "1.0.4",
+  "description": "Provides utilities for working with HTTP signatures",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/interledger/open-payments.git",
+    "directory": "packages/http-signature-utils"
+  },
+  "homepage": "https://github.com/interledger/open-payments/tree/main/packages/http-signature-utils#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "Interledger Tech Team <tech@interledger.org>",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "build": "pnpm clean && tsc --build tsconfig.json",
+    "clean": "rm -fr dist/",
+    "test": "jest --passWithNoTests --maxWorkers=50%",
+    "prepack": "pnpm build"
+  },
+  "dependencies": {
+    "http-message-signatures": "^0.1.2",
+    "httpbis-digest-headers": "^1.0.0",
+    "jose": "^4.13.1",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.7.12",
+    "@types/uuid": "^9.0.0",
+    "typescript": "^4.9.5"
+  }
+}

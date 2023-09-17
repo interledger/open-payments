@@ -1,6 +1,5 @@
 {
-  "name": "open-payments",
-  "version": "0.1.0",
+  "name": "open-payments-landing-page",
   "private": true,
   "scripts": {
     "dev": "next dev",

@@ -1,0 +1,17 @@
+name: OpenAPI Prod Publisher
+
+on:
+  workflow_run:
+    workflows: ['OpenAPI Validator']
+    branches: [main]
+    types:
+      - completed
+
+jobs:
+  publish-prod:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    uses: ./.github/workflows/publish-openapi.yaml
+    secrets:
+      README_RESOURCE_API_ID: ${{ secrets.README_OP_API_ID }}
+      README_AUTH_API_ID: ${{ secrets.README_AUTH_API_ID }}
+      README_API_KEY: ${{ secrets.README_API_KEY }}

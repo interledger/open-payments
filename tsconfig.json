@@ -1,0 +1,15 @@
+{
+  "references": [
+    {
+      "path": "packages/http-signature-utils"
+    },
+    {
+      "path": "packages/openapi"
+    },
+    {
+      "path": "packages/open-payments"
+    }
+  ],
+  "files": [],
+  "include": []
+}

@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Open Payments
-  version: '1.0'
+  version: '1.2'
   license:
     name: Apache 2.0
     identifier: Apache-2.0
@@ -14,7 +14,7 @@ info:
 
     An outgoing payment is an instruction to make a payment out of the payment pointer.
 
-    A quote is a commitment from the account provider to deliver a particular amount to a receiver when sending a particular amount from the payment pointer. It is only valid for a limited time.
+    A quote is a commitment from the Account Servicing Entity to deliver a particular amount to a receiver when sending a particular amount from the payment pointer. It is only valid for a limited time.
 
     For privacy reasons a connection resource is not a sub-resource of a payment pointer.
 
@@ -36,12 +36,12 @@ servers:
     description: 'Server for when Payment Pointer has a pathname  (ie https://openpayments.guide/alice)'
     variables:
       paymentPointer:
-        default: openpayments.guide/alice
+        default: https://openpayments.guide/alice
   - url: '{paymentPointer}/.well-known/pay'
     description: 'Server for when Payment Pointer has no pathname (ie https://openpayments.guide)'
     variables:
       paymentPointer:
-        default: openpayments.guide
+        default: https://openpayments.guide
 tags:
   - name: payment-pointer
     description: payment pointer operations
@@ -131,12 +131,14 @@ paths:
                       assetScale: 2
                     completed: false
                     expiresAt: '2022-02-03T23:20:50.52Z'
-                    externalRef: INV2022-02-0137
+                    metadata:
+                      externalRef: INV2022-02-0137
                     methods:
-                      stream:
+                      ilp:
                         id: 'https://openpayments.guide/connections/ff394f02-7b7b-45e2-b645-51d04e7c345c'
                         ilpAddress: g.ilp.iwuyge987y.98y08y
                         sharedSecret: 1c7eaXa4rd2fFOBl1iydvCT1tV5TbM3RW1WLCafu_JA
+                      assetScale: 2
                     createdAt: '2022-03-12T23:20:50.52Z'
                     updatedAt: '2022-04-01T10:24:36.11Z'
         '401':
@@ -148,22 +150,19 @@ paths:
           application/json:
             schema:
               type: object
+              additionalProperties: false
               properties:
                 incomingAmount:
-                  description: The maximum amount that should be paid into the payment pointer under this incoming payment.
                   $ref: ./schemas.yaml#/components/schemas/amount
+                  description: The maximum amount that should be paid into the payment pointer under this incoming payment.
                 expiresAt:
                   type: string
                   description: The date and time when payments into the incoming payment must no longer be accepted.
                   format: date-time
                   writeOnly: true
-                description:
-                  type: string
-                  description: Human readable description of the incoming payment that will be visible to the account holder.
-                externalRef:
-                  type: string
-                  description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
-              additionalProperties: false
+                metadata:
+                  type: object
+                  description: Additional metadata associated with the incoming payment. (Optional)
             examples:
               Create incoming payment for $25 to pay invoice INV2022-02-0137:
                 value:
@@ -171,7 +170,8 @@ paths:
                     value: '2500'
                     assetCode: USD
                     assetScale: 2
-                  externalRef: INV2022-02-0137
+                  metadata:
+                    externalRef: INV2022-02-0137
         description: |-
           A subset of the incoming payments schema is accepted as input to create a new incoming payment.
 
@@ -180,7 +180,15 @@ paths:
       description: |-
         A client MUST create an **incoming payment** resource before it is possible to send any payments to the payment pointer.
 
+        When a client creates an **incoming payment** the receiving Account Servicing Entity generates unique payment details that can be used to address payments to the account and returns these details to the client as properties of the new **incoming payment**. Any payments received using those details are then associated with the **incoming payment**.
+
         All of the input parameters are _optional_.
+
+        For example, the client could use the `metadata` property to store an external reference on the **incoming payment** and this can be shared with the account holder to assist with reconciliation.
+
+        If `incomingAmount` is specified and the total received using the payment details equals or exceeds the specified `incomingAmount`, then the receiving Account Servicing Entity MUST reject any further payments and set `completed` to `true`.
+
+        If an `expiresAt` value is defined, and the current date and time on the receiving Account Servicing Entity's systems exceeds that value, the receiving Account Servicing Entity MUST reject any further payments.
       parameters:
         - $ref: '#/components/parameters/signature-input'
         - $ref: '#/components/parameters/signature'
@@ -223,8 +231,9 @@ paths:
                         expiresAt: '2022-04-12T23:20:50.52Z'
                         createdAt: '2022-03-12T23:20:50.52Z'
                         updatedAt: '2022-04-01T10:24:36.11Z'
-                        description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
-                        externalRef: Coffee w/ Mo on 10 March 22
+                        metadata:
+                          description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
+                          externalRef: Coffee w/ Mo on 10 March 22
                         completed: true
                       - id: 'https://openpayments.guide/alice/incoming-payments/32abc219-3dc3-44ec-a225-790cacfca8fa'
                         paymentPointer: 'https://openpayments.guide/alice/'
@@ -235,7 +244,8 @@ paths:
                         expiresAt: '2022-04-12T23:20:50.52Z'
                         createdAt: '2022-03-12T23:20:50.52Z'
                         updatedAt: '2022-04-01T10:24:36.11Z'
-                        description: 'I love your website, Alice! Thanks for the great content'
+                        metadata:
+                          description: 'I love your website, Alice! Thanks for the great content'
                         completed: false
                 backward pagination:
                   value:
@@ -255,7 +265,8 @@ paths:
                         expiresAt: '2022-04-12T23:20:50.52Z'
                         createdAt: '2022-03-12T23:20:50.52Z'
                         updatedAt: '2022-04-01T10:24:36.11Z'
-                        description: 'I love your website, Alice! Thanks for the great content'
+                        metadata:
+                          description: 'I love your website, Alice! Thanks for the great content'
                       - id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
                         paymentPointer: 'https://openpayments.guide/alice/'
                         incomingAmount:
@@ -270,19 +281,18 @@ paths:
                         expiresAt: '2022-04-12T23:20:50.52Z'
                         createdAt: '2022-03-12T23:20:50.52Z'
                         updatedAt: '2022-04-01T10:24:36.11Z'
-                        description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
-                        externalRef: Coffee w/ Mo on 10 March 22
+                        metadata:
+                          description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
+                          externalRef: Coffee w/ Mo on 10 March 22
         '401':
           $ref: '#/components/responses/401'
         '403':
           $ref: '#/components/responses/403'
       description: List all incoming payments on the payment pointer
       parameters:
-        - schema:
-            $ref: '#/components/schemas/pagination'
-          in: query
-          name: pagination
-          description: Pagination parameters
+        - $ref: '#/components/parameters/cursor'
+        - $ref: '#/components/parameters/first'
+        - $ref: '#/components/parameters/last'
         - $ref: '#/components/parameters/signature-input'
         - $ref: '#/components/parameters/signature'
       tags:
@@ -307,8 +317,8 @@ paths:
                     paymentPointer: 'https://openpayments.guide/alice/'
                     failed: false
                     receiver: 'https://openpayments.guide/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2'
-                    sendAmount:
-                      value: '2500'
+                    debitAmount:
+                      value: '2600'
                       assetCode: USD
                       assetScale: 2
                     receiveAmount:
@@ -319,7 +329,8 @@ paths:
                       value: '0'
                       assetCode: USD
                       assetScale: 2
-                    description: Thank you for the shoes.
+                    metadata:
+                      description: Thank you for the shoes.
                     createdAt: '2022-03-12T23:20:50.52Z'
                     updatedAt: '2022-04-01T10:24:36.11Z'
         '401':
@@ -333,7 +344,8 @@ paths:
               Create an outgoing payment based on a quote:
                 value:
                   quoteId: 'https://openpayments.guide/alice/quotes/ab03296b-0c8b-4776-b94e-7ee27d868d4d'
-                  externalRef: INV2022-02-0137
+                  metadata:
+                    externalRef: INV2022-02-0137
             schema:
               type: object
               properties:
@@ -341,21 +353,22 @@ paths:
                   type: string
                   format: uri
                   description: The URL of the quote defining this payment's amounts.
-                description:
-                  type: string
-                  description: Human readable description of the outgoing payment that will be visible to the account holder and shared with the receiver.
-                externalRef:
-                  type: string
-                  description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
+                metadata:
+                  type: object
+                  additionalProperties: true
+                  description: Additional metadata associated with the outgoing payment. (Optional)
               required:
                 - quoteId
               additionalProperties: false
         description: |-
           A subset of the outgoing payments schema is accepted as input to create a new outgoing payment.
 
-          The `sendAmount` must use the same `assetCode` and `assetScale` as the payment pointer.
+          The `debitAmount` must use the same `assetCode` and `assetScale` as the payment pointer.
         required: true
-      description: An **outgoing payment** is a sub-resource of a payment pointer. It represents a payment from the payment pointer.
+      description: |-
+        An **outgoing payment** is a sub-resource of a payment pointer. It represents a payment from the payment pointer.
+
+        Once created, it is already authorized and SHOULD be processed immediately. If payment fails, the Account Servicing Entity must mark the **outgoing payment** as `failed`.
       parameters:
         - $ref: '#/components/parameters/signature-input'
         - $ref: '#/components/parameters/signature'
@@ -394,8 +407,8 @@ paths:
                           value: '2500'
                           assetCode: USD
                           assetScale: 2
-                        sendAmount:
-                          value: '2500'
+                        debitAmount:
+                          value: '2600'
                           assetCode: USD
                           assetScale: 2
                         sentAmount:
@@ -404,14 +417,15 @@ paths:
                           assetScale: 2
                         createdAt: '2022-03-12T23:20:50.52Z'
                         updatedAt: '2022-04-01T10:24:36.11Z'
-                        description: APlusVideo subscription
-                        externalRef: 'customer: 847458475'
+                        metadata:
+                          description: APlusVideo subscription
+                          externalRef: 'customer: 847458475'
                       - id: 'https://openpayments.guide/alice/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
                         paymentPointer: 'https://openpayments.guide/alice/'
                         failed: false
                         receiver: 'https://openpayments.guide/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
-                        sendAmount:
-                          value: '7026'
+                        debitAmount:
+                          value: '7126'
                           assetCode: USD
                           assetScale: 2
                         receiveAmount:
@@ -424,8 +438,9 @@ paths:
                           assetScale: 2
                         createdAt: '2022-03-12T23:20:50.52Z'
                         updatedAt: '2022-04-01T10:24:36.11Z'
-                        description: Thank you for your purchase at ShoeShop!
-                        externalRef: INV2022-8943756
+                        metadata:
+                          description: Thank you for your purchase at ShoeShop!
+                          externalRef: INV2022-8943756
                 backward pagination:
                   value:
                     pagination:
@@ -438,8 +453,8 @@ paths:
                         paymentPointer: 'https://openpayments.guide/alice/'
                         failed: false
                         receiver: 'https://openpayments.guide/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
-                        sendAmount:
-                          value: '7026'
+                        debitAmount:
+                          value: '7126'
                           assetCode: USD
                           assetScale: 2
                         receiveAmount:
@@ -452,8 +467,9 @@ paths:
                           assetScale: 2
                         createdAt: '2022-03-12T23:20:50.52Z'
                         updatedAt: '2022-04-01T10:24:36.11Z'
-                        description: Thank you for your purchase at ShoeShop!
-                        externalRef: INV2022-8943756
+                        metadata:
+                          description: Thank you for your purchase at ShoeShop!
+                          externalRef: INV2022-8943756
                       - id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
                         paymentPointer: 'https://openpayments.guide/alice/'
                         failed: false
@@ -462,8 +478,8 @@ paths:
                           value: '2500'
                           assetCode: USD
                           assetScale: 2
-                        sendAmount:
-                          value: '2500'
+                        debitAmount:
+                          value: '2600'
                           assetCode: USD
                           assetScale: 2
                         sentAmount:
@@ -472,19 +488,18 @@ paths:
                           assetScale: 2
                         createdAt: '2022-03-12T23:20:50.52Z'
                         updatedAt: '2022-04-01T10:24:36.11Z'
-                        description: APlusVideo subscription
-                        externalRef: 'customer: 847458475'
+                        metadata:
+                          description: APlusVideo subscription
+                          externalRef: 'customer: 847458475'
         '401':
           $ref: '#/components/responses/401'
         '403':
           $ref: '#/components/responses/403'
       description: List all outgoing payments on the payment pointer
       parameters:
-        - schema:
-            $ref: '#/components/schemas/pagination'
-          in: query
-          name: pagination
-          description: Pagination parameters
+        - $ref: '#/components/parameters/cursor'
+        - $ref: '#/components/parameters/first'
+        - $ref: '#/components/parameters/last'
         - $ref: '#/components/parameters/signature-input'
         - $ref: '#/components/parameters/signature'
       tags:
@@ -508,7 +523,7 @@ paths:
                     id: 'https://openpayments.guide/alice/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
                     paymentPointer: 'https://openpayments.guide/alice/'
                     receiver: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
-                    sendAmount:
+                    debitAmount:
                       value: '2500'
                       assetCode: USD
                       assetScale: 2
@@ -531,7 +546,7 @@ paths:
               Create fixed-send-amount quote for $25 to an ILP STREAM connection:
                 value:
                   receiver: 'https://openpayments.guide/connections/45a0d0ee-26dc-4c66-89e0-01fbf93156f7'
-                  sendAmount:
+                  debitAmount:
                     value: '2500'
                     assetCode: USD
                     assetScale: 2
@@ -543,21 +558,40 @@ paths:
                     assetCode: USD
                     assetScale: 2
             schema:
-              type: object
-              additionalProperties: false
-              properties:
-                receiver:
-                  $ref: ./schemas.yaml#/components/schemas/receiver
-                receiveAmount:
-                  $ref: ./schemas.yaml#/components/schemas/amount
-                sendAmount:
-                  $ref: ./schemas.yaml#/components/schemas/amount
-              required:
-                - receiver
+              oneOf:
+                - description: Create quote for an `receiver` that is an Incoming Payment with an `incomingAmount`
+                  properties:
+                    receiver:
+                      $ref: ./schemas.yaml#/components/schemas/receiver
+                  required:
+                    - receiver
+                  additionalProperties: false
+                - description: Create a quote with a fixed-receive amount
+                  properties:
+                    receiver:
+                      $ref: ./schemas.yaml#/components/schemas/receiver
+                    receiveAmount:
+                      description: The fixed amount that would be paid into the receiving payment pointer given a successful outgoing payment.
+                      $ref: ./schemas.yaml#/components/schemas/amount
+                  required:
+                    - receiver
+                    - receiveAmount
+                  additionalProperties: false
+                - description: Create a quote with a fixed send amount
+                  properties:
+                    receiver:
+                      $ref: ./schemas.yaml#/components/schemas/receiver
+                    debitAmount:
+                      description: The fixed amount that would be sent from the sending payment pointer given a successful outgoing payment.
+                      $ref: ./schemas.yaml#/components/schemas/amount
+                  required:
+                    - receiver
+                    - debitAmount
+                  additionalProperties: false
         description: |-
           A subset of the quotes schema is accepted as input to create a new quote.
 
-          The quote must be created with a (`sendAmount` xor `receiveAmount`) unless the `receiver` is an Incoming Payment which has an `incomingAmount`.
+          The quote must be created with a (`debitAmount` xor `receiveAmount`) unless the `receiver` is an Incoming Payment which has an `incomingAmount`.
         required: true
       description: A **quote** is a sub-resource of a payment pointer. It represents a quote for a payment from the payment pointer.
       parameters:
@@ -594,10 +628,11 @@ paths:
                     expiresAt: '2022-04-12T23:20:50.52Z'
                     createdAt: '2022-03-12T23:20:50.52Z'
                     updatedAt: '2022-04-01T10:24:36.11Z'
-                    description: Thanks for the flowers!
-                    externalRef: INV-12876
+                    metadata:
+                      description: Thanks for the flowers!
+                      externalRef: INV-12876
                     methods:
-                      stream:
+                      ilp:
                         id: 'https://openpayments.guide/connections/4a1b0150-db73-49e8-8713-628baa4a17ff'
                         ilpAddress: g.ilp.iwuyge987y.98y08y
                         sharedSecret: 1c7eaXa4rd2fFOBl1iydvCT1tV5TbM3RW1WLCafu_JA
@@ -644,8 +679,9 @@ paths:
                     expiresAt: '2022-04-12T23:20:50.52Z'
                     createdAt: '2022-03-12T23:20:50.52Z'
                     updatedAt: '2022-04-01T10:24:36.11Z'
-                    description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
-                    externalRef: Coffee w/ Mo on 10 March 22
+                    metadata:
+                      description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
+                      externalRef: Coffee w/ Mo on 10 March 2
         '401':
           $ref: '#/components/responses/401'
         '403':
@@ -653,9 +689,9 @@ paths:
         '404':
           description: Incoming Payment Not Found
       description: |-
-        A client with the appropriate permissions MAY mark a non-expired **incoming payment** as `completed` if it has not yet received `incomingAmount`.
+        A client with the appropriate permissions MAY mark a non-expired **incoming payment** as `completed` indicating that the client is not going to make any further payments toward this **incoming payment**, even though the full `incomingAmount` may not have been received.
 
-        This indicates to the receiving account provider that it can begin any post processing of the payment such as generating account statements or notifying the account holder of the completed payment.
+        This indicates to the receiving Account Servicing Entity that it can begin any post processing of the payment such as generating account statements or notifying the account holder of the completed payment.
       parameters:
         - $ref: '#/components/parameters/signature-input'
         - $ref: '#/components/parameters/signature'
@@ -681,7 +717,7 @@ paths:
                     paymentPointer: 'https://openpayments.guide/bob/'
                     failed: false
                     receiver: 'https://openpayments.guide/alice/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
-                    sendAmount:
+                    debitAmount:
                       value: '2500'
                       assetCode: USD
                       assetScale: 2
@@ -695,8 +731,9 @@ paths:
                       assetScale: 2
                     createdAt: '2022-03-12T23:20:50.52Z'
                     updatedAt: '2022-04-01T10:24:36.11Z'
-                    description: Thanks for the flowers!
-                    externalRef: INV-12876
+                    metadata:
+                      description: Thanks for the flowers!
+                      externalRef: INV-12876
         '401':
           $ref: '#/components/responses/401'
         '403':
@@ -728,7 +765,7 @@ paths:
                     id: 'https://openpayments.guide/bob/quotes/3859b39e-4666-4ce5-8745-72f1864c5371'
                     paymentPointer: 'https://openpayments.guide/bob/'
                     receiver: 'https://openpayments.guide/alice/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
-                    sendAmount:
+                    debitAmount:
                       value: '2500'
                       assetCode: USD
                       assetScale: 2
@@ -767,7 +804,7 @@ components:
         id:
           type: string
           format: uri
-          description: The URL identifying the incoming payment.
+          description: The URL identifying the payment pointer.
           readOnly: true
         publicName:
           type: string
@@ -803,6 +840,7 @@ components:
       examples:
         - keys:
             - kid: key-1
+              alg: EdDSA
               use: sig
               kty: OKP
               crv: Ed25519
@@ -826,8 +864,9 @@ components:
           expiresAt: '2022-04-12T23:20:50.52Z'
           createdAt: '2022-03-12T23:20:50.52Z'
           updatedAt: '2022-04-01T10:24:36.11Z'
-          description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
-          externalRef: Coffee w/ Mo on 10 March 22
+          metadata:
+            description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
+            externalRef: Coffee w/ Mo on 10 March 22
         - id: 'https://openpayments.guide/alice/incoming-payments/456da9d5-c9a4-4c80-a354-86b915a04ff8'
           paymentPointer: 'https://openpayments.guide/alice/'
           incomingAmount:
@@ -857,21 +896,18 @@ components:
           description: Describes whether the incoming payment has completed receiving fund.
           default: false
         incomingAmount:
+          $ref: ./schemas.yaml#/components/schemas/amount
           description: The maximum amount that should be paid into the payment pointer under this incoming payment.
-          $ref: ./schemas.yaml#/components/schemas/amount
         receivedAmount:
-          description: The total amount that has been paid into the payment pointer under this incoming payment.
           $ref: ./schemas.yaml#/components/schemas/amount
+          description: The total amount that has been paid into the payment pointer under this incoming payment.
         expiresAt:
           type: string
           description: The date and time when payments under this incoming payment will no longer be accepted.
           format: date-time
-        description:
-          type: string
-          description: Human readable description of the incoming payment that will be visible to the account holder.
-        externalRef:
-          type: string
-          description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number.
+        metadata:
+          type: object
+          description: Additional metadata associated with the incoming payment. (Optional)
         createdAt:
           type: string
           format: date-time
@@ -906,10 +942,11 @@ components:
           expiresAt: '2022-04-12T23:20:50.52Z'
           createdAt: '2022-03-12T23:20:50.52Z'
           updatedAt: '2022-04-01T10:24:36.11Z'
-          description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
-          externalRef: Coffee w/ Mo on 10 March 22
+          metadata:
+            description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
+            externalRef: Coffee w/ Mo on 10 March 22
           methods:
-            stream:
+            ilp:
               id: 'https://openpayments.guide/connections/032da9d5-c9a4-4c80-a354-86b915a04ff8'
               ilpAddress: g.ilp.iwuyge987y.98y08y
               sharedSecret: 1c7eaXa4rd2fFOBl1iydvCT1tV5TbM3RW1WLCafu_JA
@@ -934,8 +971,8 @@ components:
             value: '2500'
             assetCode: USD
             assetScale: 2
-          sendAmount:
-            value: '2500'
+          debitAmount:
+            value: '2600'
             assetCode: USD
             assetScale: 2
           sentAmount:
@@ -944,14 +981,15 @@ components:
             assetScale: 2
           createdAt: '2022-03-12T23:20:50.52Z'
           updatedAt: '2022-04-01T10:24:36.11Z'
-          description: APlusVideo subscription
-          externalRef: 'customer: 847458475'
+          metadata:
+            description: APlusVideo subscription
+            externalRef: 'customer: 847458475'
         - id: 'https://openpayments.guide/alice/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
           paymentPointer: 'https://openpayments.guide/alice/'
           failed: false
           receiver: 'https://openpayments.guide/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
-          sendAmount:
-            value: '7026'
+          debitAmount:
+            value: '7126'
             assetCode: USD
             assetScale: 2
           sentAmount:
@@ -960,8 +998,10 @@ components:
             assetScale: 2
           createdAt: '2022-03-12T23:20:50.52Z'
           updatedAt: '2022-04-01T10:24:36.11Z'
-          description: Thank you for your purchase at ShoeShop!
-          externalRef: INV2022-8943756
+          metadata:
+            description: Thank you for your purchase at ShoeShop!
+            externalRef: INV2022-8943756
+      additionalProperties: false
       properties:
         id:
           type: string
@@ -983,23 +1023,20 @@ components:
           description: Describes whether the payment failed to send its full amount.
           default: false
         receiver:
-          description: The URL of the incoming payment or ILP STREAM Connection that is being paid.
           $ref: ./schemas.yaml#/components/schemas/receiver
+          description: The URL of the incoming payment or ILP STREAM Connection that is being paid.
         receiveAmount:
+          $ref: ./schemas.yaml#/components/schemas/amount
           description: The total amount that should be received by the receiver when this outgoing payment has been paid.
+        debitAmount:
           $ref: ./schemas.yaml#/components/schemas/amount
-        sendAmount:
-          description: The total amount that should be sent when this outgoing payment has been paid.
-          $ref: ./schemas.yaml#/components/schemas/amount
+          description: The total amount that should be deducted from the sender's account when this outgoing payment has been paid.
         sentAmount:
-          description: The total amount that has been sent under this outgoing payment.
           $ref: ./schemas.yaml#/components/schemas/amount
-        description:
-          type: string
-          description: Human readable description of the outgoing payment that will be visible to the account holder and shared with the receiver.
-        externalRef:
-          type: string
-          description: A reference that can be used by external systems to reconcile this payment with their systems. E.g. An invoice number. (Optional)
+          description: The total amount that has been sent under this outgoing payment.
+        metadata:
+          type: object
+          description: Additional metadata associated with the outgoing payment. (Optional)
         createdAt:
           type: string
           format: date-time
@@ -1012,12 +1049,11 @@ components:
         - id
         - paymentPointer
         - receiver
-        - sendAmount
         - receiveAmount
+        - debitAmount
         - sentAmount
         - createdAt
         - updatedAt
-      additionalProperties: false
     quote:
       title: Quote
       description: A **quote** resource represents the quoted amount details with which an Outgoing Payment may be created.
@@ -1030,7 +1066,11 @@ components:
             value: '2500'
             assetCode: USD
             assetScale: 2
-          sendAmount:
+          debitAmount:
+            value: '2600'
+            assetCode: USD
+            assetScale: 2
+          sentAmount:
             value: '2500'
             assetCode: USD
             assetScale: 2
@@ -1039,13 +1079,13 @@ components:
         - id: 'https://openpayments.guide/alice/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
           paymentPointer: 'https://openpayments.guide/alice/'
           receiver: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
-          sendAmount:
-            value: '2500'
+          debitAmount:
+            value: '7126'
             assetCode: USD
             assetScale: 2
-          receiveAmount:
-            value: '2198'
-            assetCode: EUR
+          sentAmount:
+            value: '7026'
+            assetCode: USD
             assetScale: 2
           createdAt: '2022-03-12T23:20:50.52Z'
           expiresAt: '2022-04-12T23:20:50.52Z'
@@ -1063,13 +1103,16 @@ components:
           readOnly: true
         receiver:
           $ref: ./schemas.yaml#/components/schemas/receiver
+          description: The URL of the incoming payment or ILP STREAM Connection that the quote is created for.
         receiveAmount:
           $ref: ./schemas.yaml#/components/schemas/amount
-        sendAmount:
+          description: The total amount that should be received by the receiver when the corresponding outgoing payment has been paid.
+        debitAmount:
           $ref: ./schemas.yaml#/components/schemas/amount
+          description: "The total amount that should be deducted from the sender's account when the corresponding outgoing payment has been paid. "
         expiresAt:
           type: string
-          description: The date and time when the calculated `sendAmount` is no longer valid.
+          description: The date and time when the calculated `debitAmount` is no longer valid.
           readOnly: true
         createdAt:
           type: string
@@ -1080,47 +1123,8 @@ components:
         - paymentPointer
         - receiver
         - receiveAmount
-        - sendAmount
+        - debitAmount
         - createdAt
-    pagination:
-      description: Pagination parameters
-      oneOf:
-        - $ref: '#/components/schemas/forward-pagination'
-        - $ref: '#/components/schemas/backward-pagination'
-    forward-pagination:
-      description: Forward pagination parameters
-      type: object
-      examples:
-        - first: 10
-          cursor: 315581f8-9967-45a0-9cd3-87b60b6d6414
-      additionalProperties: false
-      properties:
-        first:
-          type: integer
-          minimum: 1
-          description: The number of items to return.
-        cursor:
-          type: string
-          minLength: 1
-          description: The cursor key to list from.
-    backward-pagination:
-      description: Backward pagination parameters
-      type: object
-      examples:
-        - last: 10
-          cursor: 315581f8-9967-45a0-9cd3-87b60b6d6414
-      properties:
-        last:
-          type: integer
-          minimum: 1
-          description: The number of items to return.
-        cursor:
-          type: string
-          minLength: 1
-          description: The cursor key to list from.
-      required:
-        - cursor
-      additionalProperties: false
     page-info:
       description: ''
       type: object
@@ -1145,8 +1149,6 @@ components:
           type: boolean
           description: Describes whether the data set has previous entries.
       required:
-        - startCursor
-        - endCursor
         - hasNextPage
         - hasPreviousPage
       additionalProperties: false
@@ -1155,6 +1157,11 @@ components:
       properties:
         kid:
           type: string
+        alg:
+          type: string
+          description: 'The cryptographic algorithm family used with the key. The only allowed value is `EdDSA`. '
+          enum:
+            - EdDSA
         use:
           type: string
           enum:
@@ -1173,6 +1180,7 @@ components:
           description: The base64 url-encoded public key.
       required:
         - kid
+        - alg
         - kty
         - crv
         - x
@@ -1209,6 +1217,27 @@ components:
     '403':
       description: Forbidden
   parameters:
+    cursor:
+      schema:
+        type: string
+        minLength: 1
+      name: cursor
+      in: query
+      description: The cursor key to list from.
+    first:
+      schema:
+        type: integer
+        minimum: 1
+      name: first
+      in: query
+      description: The number of items to return after the cursor.
+    last:
+      schema:
+        type: integer
+        minimum: 1
+      name: last
+      in: query
+      description: The number of items to return before the cursor.
     id:
       name: id
       in: path
