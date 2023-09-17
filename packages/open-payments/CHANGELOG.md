@@ -1,5 +1,11 @@
 # @interledger/open-payments
 
+## 3.1.0
+
+### Minor Changes
+
+- 25cf507: Making interact property optional for grant requests
+
 ## 3.0.1
 
 ### Patch Changes
