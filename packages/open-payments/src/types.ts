@@ -76,7 +76,7 @@ export type Grant = {
 export type GrantRequest = {
   access_token: ASOperations['post-request']['requestBody']['content']['application/json']['access_token']
   client: ASOperations['post-request']['requestBody']['content']['application/json']['client']
-  interact: ASOperations['post-request']['requestBody']['content']['application/json']['interact']
+  interact?: ASOperations['post-request']['requestBody']['content']['application/json']['interact']
 }
 export type GrantContinuationRequest = {
   interact_ref: ASOperations['post-continue']['requestBody']['content']['application/json']['interact_ref']
