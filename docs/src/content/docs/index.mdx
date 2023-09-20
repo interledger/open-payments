@@ -1,0 +1,31 @@
+---
+title: Open Payments
+template: splash
+hero:
+  tagline: Open Payments is an API standard that can be implemented by any digital wallet provider.
+  actions:
+    - text: Read OpenPayment docs
+      link: /introduction/overview
+      icon: open-book
+      variant: primary
+---
+
+import { Card, CardGrid } from "@astrojs/starlight/components";
+
+<CardGrid>
+  <a class="card-link" href="/apis/resource-server/">
+    <Card title="View the API reference" icon="document">
+      Consult the OpenAPI specifications
+    </Card>
+  </a>
+  <a
+    class="card-link"
+    href="https://github.com/interledger/open-payments"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <Card title="Contribute on Github" icon="external">
+      Join the community
+    </Card>
+  </a>
+</CardGrid>

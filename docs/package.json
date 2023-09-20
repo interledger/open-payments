@@ -1,0 +1,20 @@
+{
+  "name": "openpayments-docs",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "0.6.1",
+    "@interledger/docs-design-system": "^0.0.12",
+    "astro": "2.10.12",
+    "sharp": "^0.32.6",
+    "shiki": "0.14.3",
+    "starlight-openapi": "^0.1.0"
+  }
+}

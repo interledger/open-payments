@@ -1,0 +1,12 @@
+/* Site title styling */
+.site-title {
+  font-size: larger;
+  font-weight: normal;
+  color: var(--sl-color-text);
+  gap: var(--space-xs);
+}
+
+/* Splash page styling */
+.card-link {
+  text-decoration: none;
+}
