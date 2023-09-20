@@ -33,7 +33,7 @@ export default defineConfig({
       },
       sidebar: [
         {
-          label: 'Documentation',
+          label: 'Intro to Open Payments',
           autogenerate: {
             directory: 'introduction'
           }
@@ -44,9 +44,21 @@ export default defineConfig({
             directory: 'security'
           }
         },
+        {
+          label: 'Guides',
+          autogenerate: {
+            directory: 'guides'
+          }
+        },
+        {
+          label: 'API references',
+          autogenerate: {
+            directory: 'api_references'
+          }
+        },
         // Add the generated sidebar groups to the sidebar.
         {
-          label: 'Specifications',
+          label: 'API specifications',
           items: openAPISidebarGroups
         }
       ]
