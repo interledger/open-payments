@@ -64,5 +64,8 @@ export default defineConfig({
       ]
     }),
     starlightOpenAPI()
-  ]
+  ],
+  server: {
+    port: 1104
+  }
 })

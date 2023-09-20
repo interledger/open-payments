@@ -10,3 +10,67 @@
 .card-link {
   text-decoration: none;
 }
+
+/* OpenAPI specification styling */
+div.panel {
+  background-color: var(--sl-color-gray-7);
+  border-radius: var(--border-radius);
+  box-shadow: var(--sl-shadow-sm);
+  border: 1px solid var(--sl-color-hairline-light);
+}
+
+details.operation-description-urls {
+  background-color: var(--sl-color-gray-7);
+  border-radius: var(--border-radius);
+  box-shadow: var(--sl-shadow-sm);
+  border: 1px solid var(--sl-color-hairline-light);
+}
+
+details input:read-only {
+  background-color: var(--sl-color-gray-6);
+  color: var(--sl-color-gray-2);
+}
+
+div.method-path div.path {
+  margin-top: 0;
+}
+
+starlight-openapi-content-picker select {
+  background-color: var(--sl-color-black);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--sl-color-hairline-light);
+}
+
+.content div.key div pre,
+.content starlight-openapi-content-picker div pre {
+  background-color: var(--sl-color-gray-6);
+  border: 0;
+}
+
+div.key div.description,
+div.key div.tags {
+  margin-top: 0;
+}
+
+div.key div.tags {
+  margin-top: var(--space-2xs);
+}
+
+.panel b + span,
+div.description span,
+div.tags span {
+  border-color: var(--sl-color-gray-5);
+  border-radius: var(--border-radius);
+}
+
+div.description p {
+  margin-bottom: var(--space-2xs);
+}
+
+div > span.type {
+  color: var(--sl-color-text);
+}
+
+.description details {
+  border-inline-start-color: var(--sl-color-gray-5);
+}

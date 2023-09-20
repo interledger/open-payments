@@ -10,11 +10,11 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/starlight": "0.6.1",
+    "@astrojs/starlight": "0.10.1",
     "@interledger/docs-design-system": "^0.0.12",
-    "astro": "2.10.12",
+    "astro": "3.1.1",
     "sharp": "^0.32.6",
-    "shiki": "0.14.3",
-    "starlight-openapi": "^0.1.0"
+    "shiki": "0.14.4",
+    "starlight-openapi": "^0.2.0"
   }
 }
