@@ -1,4 +1,4 @@
-import { createWalletAddressRoutes } from './payment-pointer'
+import { createWalletAddressRoutes } from './wallet-address'
 import { OpenAPI, HttpMethod, createOpenAPI } from '@interledger/openapi'
 import path from 'path'
 import {
@@ -17,7 +17,7 @@ jest.mock('./requests', () => {
   }
 })
 
-describe('payment-pointer', (): void => {
+describe('wallet-address', (): void => {
   let openApi: OpenAPI
 
   beforeAll(async () => {

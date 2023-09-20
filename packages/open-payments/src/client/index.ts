@@ -10,7 +10,7 @@ import {
 import {
   createWalletAddressRoutes,
   WalletAddressRoutes
-} from './payment-pointer'
+} from './wallet-address'
 import { createAxiosInstance } from './requests'
 import { AxiosInstance } from 'axios'
 import { createGrantRoutes, GrantRoutes } from './grant'
