@@ -32,16 +32,8 @@ info:
   contact:
     email: tech@interledger.org
 servers:
-  - url: '{walletAddress}'
-    description: 'Server for when Wallet Address has a pathname  (ie https://openpayments.guide/alice)'
-    variables:
-      walletAddress:
-        default: https://openpayments.guide/alice
-  - url: '{walletAddress}/.well-known/pay'
-    description: 'Server for when Wallet Address has no pathname (ie https://openpayments.guide)'
-    variables:
-      walletAddress:
-        default: https://openpayments.guide
+  - url: '/'
+    description: 'Server for Payment Pointer subresources or Connection resources (ie https://openpayments.guide/alice)'
 tags:
   - name: wallet-address
     description: wallet address operations
