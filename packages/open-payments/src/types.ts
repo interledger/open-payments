@@ -44,7 +44,7 @@ export type BackwardPagination = Omit<
   first?: never
 }
 export type PaginationArgs = ForwardPagination | BackwardPagination
-export type PaymentPointer = RSComponents['schemas']['payment-pointer']
+export type WalletAddress = RSComponents['schemas']['payment-pointer']
 export type JWK = RSComponents['schemas']['json-web-key']
 export type JWKS = RSComponents['schemas']['json-web-key-set']
 export type Quote = RSComponents['schemas']['quote']

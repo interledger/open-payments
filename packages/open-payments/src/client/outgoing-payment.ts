@@ -110,8 +110,8 @@ export const createOutgoingPayment = async (
   createArgs: CreateOutgoingPaymentArgs
 ) => {
   const { axiosInstance, logger } = deps
-  const { paymentPointer, accessToken } = requestArgs
-  const url = `${paymentPointer}${getRSPath('/outgoing-payments')}`
+  const { walletAddress, accessToken } = requestArgs
+  const url = `${walletAddress}${getRSPath('/outgoing-payments')}`
 
   const outgoingPayment = await post(
     { axiosInstance, logger },
@@ -139,8 +139,8 @@ export const listOutgoingPayments = async (
   pagination?: PaginationArgs
 ) => {
   const { axiosInstance, logger } = deps
-  const { accessToken, paymentPointer } = requestArgs
-  const url = `${paymentPointer}${getRSPath('/outgoing-payments')}`
+  const { accessToken, walletAddress } = requestArgs
+  const url = `${walletAddress}${getRSPath('/outgoing-payments')}`
 
   const outgoingPayments = await get(
     { axiosInstance, logger },

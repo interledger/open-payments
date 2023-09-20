@@ -34,7 +34,7 @@ This package exports two clients, an `UnauthenticatedClient` and an `Authenticat
 ### `UnauthenticatedClient`
 
 This client allows making requests to access publicly available resources, without needing authentication.
-The three available resources are [Payment Pointers](https://docs.openpayments.guide/reference/get-payment-pointer), [Payment Pointer Keys](https://docs.openpayments.guide/reference/get-payment-pointer-keys), and [ILP Stream Connections](https://docs.openpayments.guide/reference/get-ilp-stream-connection).
+The three available resources are [Wallet Addresses](https://docs.openpayments.guide/reference/get-payment-pointer), [Wallet Address Keys](https://docs.openpayments.guide/reference/get-payment-pointer-keys), and [ILP Stream Connections](https://docs.openpayments.guide/reference/get-ilp-stream-connection).
 
 ```ts
 import { createUnauthenticatedClient } from '@interledger/open-payments'
@@ -44,7 +44,7 @@ const client = await createUnauthenticatedClient({
   logger: customLoggerInstance // optional, defaults to pino logger
 })
 
-const paymentPointer = await client.paymentPointer.get({
+const walletAddress = await client.walletAddress.get({
   url: 'https://cloud-nine-wallet/alice'
 })
 ```
@@ -59,17 +59,17 @@ import { createAuthenticatedClient } from '@interledger/open-payments'
 const client = await createAuthenticatedClient({
   keyId: KEY_ID,
   privateKey: PRIVATE_KEY,
-  paymentPointerUrl: PAYMENT_POINTER_URL
+  walletAddressUrl: WALLET_ADDRESS_URL
 })
 ```
 
-In order to create the client, three properties need to be provided: `keyId`, the `privateKey` and the `paymentPointerUrl`:
+In order to create the client, three properties need to be provided: `keyId`, the `privateKey` and the `walletAddressUrl`:
 
-| Variable            | Description                                                                                                                                                                                                                                                                                                                                                                                 |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `paymentPointerUrl` | The valid payment pointer with which the client making requests will identify itself. A JSON Web Key Set document that includes the public key that the client instance will use to protect requests MUST be available at the `{paymentPointerUrl}/jwks.json` url. This will be used as the `client` field during [Grant Creation](https://docs.openpayments.guide/reference/post-request). |
-| `privateKey`        | The private EdDSA-Ed25519 key bound to the payment pointer, and used to sign the authenticated requests with. As mentioned above, a public JWK document signed with this key MUST be available at the `{paymentPointerUrl}/jwks.json` url.                                                                                                                                                  |
-| `keyId`             | The key identifier of the given private key and the corresponding public JWK document.                                                                                                                                                                                                                                                                                                      |
+| Variable           | Description                                                                                                                                                                                                                                                                                                                                                                               |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `walletAddressUrl` | The valid wallet address with which the client making requests will identify itself. A JSON Web Key Set document that includes the public key that the client instance will use to protect requests MUST be available at the `{walletAddressUrl}/jwks.json` url. This will be used as the `client` field during [Grant Creation](https://docs.openpayments.guide/reference/post-request). |
+| `privateKey`       | The private EdDSA-Ed25519 key bound to the wallet address, and used to sign the authenticated requests with. As mentioned above, a public JWK document signed with this key MUST be available at the `{walletAddressUrl}/jwks.json` url.                                                                                                                                                  |
+| `keyId`            | The key identifier of the given private key and the corresponding public JWK document.                                                                                                                                                                                                                                                                                                    |
 
 > **Note**
 >
@@ -79,7 +79,7 @@ In order to create the client, three properties need to be provided: `keyId`, th
 
 As mentioned previously, Open Payments APIs can facilitate a payment between two parties.
 
-For example, say Alice wants to purchase a $50 product from a merchant called Shoe Shop on the Online Marketplace. If both parties have Open Payments enabled wallets, where Alice's payment pointer is `https://cloud-nine-wallet/alice`, and Shoe Shop's is `https://happy-life-bank/shoe-shop`, requests during checkout from Online Marketplace's backend would look like this using the client:
+For example, say Alice wants to purchase a $50 product from a merchant called Shoe Shop on the Online Marketplace. If both parties have Open Payments enabled wallets, where Alice's wallet address is `https://cloud-nine-wallet/alice`, and Shoe Shop's is `https://happy-life-bank/shoe-shop`, requests during checkout from Online Marketplace's backend would look like this using the client:
 
 1. Create an Open Payments client
 
@@ -89,23 +89,23 @@ In this case, since Online Marketplace wants to make requests that require autho
 import { createAuthenticatedClient } from '@interledger/open-payments'
 
 const client = await createAuthenticatedClient({
-  paymentPointerUrl: 'https://online-marketplace.com/usa',
+  walletAddressUrl: 'https://online-marketplace.com/usa',
   keyId: KEY_ID,
   privateKey: PRIVATE_KEY
   // The public JWK with this key (and keyId) would be available at https://online-marketplace.com/usa/jwks.json
 })
 ```
 
-2.  Get `PaymentPointers`
+2.  Get `WalletAddresses`
 
-Grab the payment pointers of the parties:
+Grab the wallet addresses of the parties:
 
 ```ts
-const shoeShopPaymentPointer = await client.paymentPointer.get({
+const shoeShopWalletAddress = await client.walletAddress.get({
   url: 'https://happy-life-bank/shoe-shop'
 })
 
-const customerPaymentPointer = await client.paymentPointer.get({
+const customerWalletAddress = await client.walletAddress.get({
   url: 'https://cloud-nine-wallet/alice'
 })
 ```
@@ -116,7 +116,7 @@ Online Marketplace's backend gets a grant to create an `IncomingPayment` on the 
 
 ```ts
 const incomingPaymentGrant = await client.grant.request(
-  { url: shoeShopPaymentPointer.authServer },
+  { url: shoeShopWalletAddress.authServer },
   {
     access_token: {
       access: [
@@ -135,7 +135,7 @@ and creates an `IncomingPayment` using the access token from the grant:
 ```ts
 const incomingPayment = await client.incomingPayment.create(
   {
-    paymentPointer: shoeShopPaymentPointer.id,
+    walletAddress: shoeShopWalletAddress.id,
     accessToken: incomingPaymentGrant.access_token.value
   },
   {
@@ -154,11 +154,11 @@ const incomingPayment = await client.incomingPayment.create(
 
 4. Create `Quote`
 
-Then, it'll get a grant to create a `Quote` on Alice's payment pointer, which will give the amount it'll cost Alice to make the payment (with the ILP fees + her wallet's fees)
+Then, it'll get a grant to create a `Quote` on Alice's wallet address, which will give the amount it'll cost Alice to make the payment (with the ILP fees + her wallet's fees)
 
 ```ts
 const quoteGrant = await client.grant.request(
-  { url: customerPaymentPointer.authServer },
+  { url: customerWalletAddress.authServer },
   {
     access_token: {
       access: [
@@ -173,7 +173,7 @@ const quoteGrant = await client.grant.request(
 
 const quote = await client.quote.create(
   {
-    paymentPointer: customerPaymentPointer.id,
+    walletAddress: customerWalletAddress.id,
     accessToken: quoteGrant.access_token.value
   },
   { receiver: incomingPayment.id }
@@ -195,7 +195,7 @@ Once the grant interaction flow has finished, and Alice has consented to the pay
 ```ts
 const outgoingPayment = await client.outgoingPayment.create(
   {
-    paymentPointer: customerPaymentPointer.id,
+    walletAddress: customerWalletAddress.id,
     accessToken: outgoingPaymentGrant.access_token.value
   },
   { quoteId: quote.id, description: 'Your purchase at Shoe Shop' }

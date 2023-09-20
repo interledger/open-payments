@@ -1,10 +1,10 @@
-import { createPaymentPointerRoutes } from './payment-pointer'
+import { createWalletAddressRoutes } from './payment-pointer'
 import { OpenAPI, HttpMethod, createOpenAPI } from '@interledger/openapi'
 import path from 'path'
 import {
   defaultAxiosInstance,
   mockJwk,
-  mockPaymentPointer,
+  mockWalletAddress,
   silentLogger
 } from '../test/helpers'
 import * as requestors from './requests'
@@ -30,7 +30,7 @@ describe('payment-pointer', (): void => {
   const logger = silentLogger
 
   describe('routes', (): void => {
-    const paymentPointer = mockPaymentPointer()
+    const walletAddress = mockWalletAddress()
 
     describe('get', (): void => {
       test('calls get method with correct validator', async (): Promise<void> => {
@@ -44,17 +44,17 @@ describe('payment-pointer', (): void => {
 
         const getSpy = jest
           .spyOn(requestors, 'get')
-          .mockResolvedValueOnce(paymentPointer)
+          .mockResolvedValueOnce(walletAddress)
 
-        await createPaymentPointerRoutes({
+        await createWalletAddressRoutes({
           openApi,
           axiosInstance,
           logger
-        }).get({ url: paymentPointer.id })
+        }).get({ url: walletAddress.id })
 
         expect(getSpy).toHaveBeenCalledWith(
           { axiosInstance, logger },
-          { url: paymentPointer.id },
+          { url: walletAddress.id },
           true
         )
       })
@@ -74,18 +74,18 @@ describe('payment-pointer', (): void => {
           .spyOn(requestors, 'get')
           .mockResolvedValueOnce([mockJwk()])
 
-        await createPaymentPointerRoutes({
+        await createWalletAddressRoutes({
           openApi,
           axiosInstance,
           logger
-        }).getKeys({ url: paymentPointer.id })
+        }).getKeys({ url: walletAddress.id })
 
         expect(getSpy).toHaveBeenCalledWith(
           {
             axiosInstance,
             logger
           },
-          { url: `${paymentPointer.id}/jwks.json` },
+          { url: `${walletAddress.id}/jwks.json` },
           true
         )
       })
