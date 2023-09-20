@@ -32,16 +32,8 @@ info:
   contact:
     email: tech@interledger.org
 servers:
-  - url: '{paymentPointer}'
-    description: 'Server for when Payment Pointer has a pathname  (ie https://openpayments.guide/alice)'
-    variables:
-      paymentPointer:
-        default: https://openpayments.guide/alice
-  - url: '{paymentPointer}/.well-known/pay'
-    description: 'Server for when Payment Pointer has no pathname (ie https://openpayments.guide)'
-    variables:
-      paymentPointer:
-        default: https://openpayments.guide
+  - url: '/'
+    description: 'Server for Payment Pointer subresources or Connection resources (ie https://openpayments.guide/alice)'
 tags:
   - name: payment-pointer
     description: payment pointer operations
