@@ -30,4 +30,6 @@ jobs:
         run: pnpm install
 
       - name: Test build website
-        run: pnpm build
+        run: |
+          cd docs
+          pnpm build
