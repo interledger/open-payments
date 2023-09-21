@@ -66,29 +66,6 @@ describe('OpenAPI Validator', (): void => {
       next = jest.fn()
     })
 
-    test.each`
-      accountId    | message                                      | description
-      ${undefined} | ${"must have required property 'accountId'"} | ${'missing'}
-      ${2}         | ${'accountId must be string'}                | ${'invalid'}
-    `(
-      'returns 400 on $description path parameter',
-      async ({ accountId, message }): Promise<void> => {
-        const ctx = createContext(
-          {
-            headers: { Accept: 'application/json' }
-          },
-          {
-            accountId
-          }
-        )
-        await expect(validateListMiddleware(ctx, next)).rejects.toMatchObject({
-          status: 400,
-          message
-        })
-        expect(next).not.toHaveBeenCalled()
-      }
-    )
-
     test('coerces query parameter type', async (): Promise<void> => {
       const first = 5
       const next = jest.fn().mockImplementation(() => {
@@ -100,9 +77,7 @@ describe('OpenAPI Validator', (): void => {
           headers: { Accept: 'application/json' },
           url: `${PATH}?first=${first}`
         },
-        {
-          accountId
-        }
+        {}
       )
       await expect(validateListMiddleware(ctx, next)).resolves.toBeUndefined()
       expect(next).toHaveBeenCalled()
@@ -114,9 +89,7 @@ describe('OpenAPI Validator', (): void => {
           headers: { Accept: 'application/json' },
           url: `${PATH}?first=NaN`
         },
-        {
-          accountId
-        }
+        {}
       )
       await expect(validateListMiddleware(ctx, next)).rejects.toMatchObject({
         status: 400,
@@ -136,9 +109,7 @@ describe('OpenAPI Validator', (): void => {
           {
             headers
           },
-          {
-            accountId
-          }
+          {}
         )
         await expect(validatePostMiddleware(ctx, next)).rejects.toMatchObject({
           status,
@@ -167,9 +138,7 @@ describe('OpenAPI Validator', (): void => {
               'Content-Type': 'application/json'
             }
           },
-          {
-            accountId
-          }
+          {}
         )
         ctx.request.body = body
         await expect(validatePostMiddleware(ctx, next)).rejects.toMatchObject({
@@ -187,9 +156,7 @@ describe('OpenAPI Validator', (): void => {
             Accept: 'application/json'
           }
         },
-        {
-          accountId
-        }
+        {}
       )
       const next = jest.fn().mockImplementation(() => {
         expect(ctx.request.query).toEqual({
@@ -228,9 +195,7 @@ describe('OpenAPI Validator', (): void => {
               'Content-Type': 'application/json'
             }
           },
-          {
-            accountId
-          }
+          {}
         )
         ctx.request.body = {}
         const next = jest.fn().mockImplementation(() => {
