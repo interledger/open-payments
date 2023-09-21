@@ -102,20 +102,24 @@ describe('Key methods', (): void => {
   })
 
   describe('loadBase64Key', (): void => {
-    let key: crypto.keyObject
-    let base64Key: string
-    beforeEach(async (): Promise<void> => {
-      key = parseOrProvisionKey(undefined)
-      const privateKey = key.export({ type: 'pkcs8', format: 'pem' })
-      base64Key = Buffer.from(privateKey).toString('base64')
-      console.log(base64Key)
-    })
-
     test('can load base64 encoded key', (): void => {
+      const key = parseOrProvisionKey(undefined)
+      const privateKey = key.export({ type: 'pkcs8', format: 'pem' })
+      const base64Key = Buffer.from(privateKey).toString('base64')
       const loadedKey = loadBase64Key(base64Key)
       expect(loadedKey.export({ format: 'jwk' })).toEqual(
         key.export({ format: 'jwk' })
       )
+    })
+
+    test('returns undefined if not Ed25519 key', (): void => {
+      const key = crypto.generateKeyPairSync('rsa', {
+        modulusLength: 2048
+      }).privateKey
+      const privateKey = key.export({ type: 'pkcs8', format: 'pem' })
+      const base64Key = Buffer.from(privateKey).toString('base64')
+      const loadedKey = loadBase64Key(base64Key)
+      expect(loadedKey).toBeUndefined()
     })
   })
 })
