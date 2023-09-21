@@ -34,7 +34,7 @@ export function createContext<T extends Koa.Context>(
   return ctx as T
 }
 
-const PATH = '/{accountId}/incoming-payments'
+const PATH = '/incoming-payments'
 const SPEC =
   'https://github.com/interledger/open-payments/raw/3930448672cfc678ec2bc02938566a316d83871c/open-api-spec.yaml'
 

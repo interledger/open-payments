@@ -147,7 +147,7 @@ paths:
               examples:
                 New Incoming Payment for $25:
                   value:
-                    id: 'https://openpayments.guide/alice/incoming-payments/08394f02-7b7b-45e2-b645-51d04e7c330c'
+                    id: 'https://openpayments.guide/incoming-payments/08394f02-7b7b-45e2-b645-51d04e7c330c'
                     paymentPointer: 'https://openpayments.guide/alice/'
                     incomingAmount:
                       value: '2500'
@@ -246,7 +246,7 @@ paths:
                       hasPreviousPage: false
                       hasNextPage: true
                     result:
-                      - id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
+                      - id: 'https://openpayments.guide/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
                         paymentPointer: 'https://openpayments.guide/alice/'
                         incomingAmount:
                           value: '250'
@@ -264,7 +264,7 @@ paths:
                           description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
                           externalRef: Coffee w/ Mo on 10 March 22
                         completed: true
-                      - id: 'https://openpayments.guide/alice/incoming-payments/32abc219-3dc3-44ec-a225-790cacfca8fa'
+                      - id: 'https://openpayments.guide/incoming-payments/32abc219-3dc3-44ec-a225-790cacfca8fa'
                         paymentPointer: 'https://openpayments.guide/alice/'
                         receivedAmount:
                           value: '100'
@@ -285,7 +285,7 @@ paths:
                       hasPreviousPage: true
                       hasNextPage: false
                     result:
-                      - id: 'https://openpayments.guide/alice/incoming-payments/32abc219-3dc3-44ec-a225-790cacfca8fa'
+                      - id: 'https://openpayments.guide/incoming-payments/32abc219-3dc3-44ec-a225-790cacfca8fa'
                         paymentPointer: 'https://openpayments.guide/alice/'
                         receivedAmount:
                           value: '100'
@@ -298,7 +298,7 @@ paths:
                         updatedAt: '2022-04-01T10:24:36.11Z'
                         metadata:
                           description: 'I love your website, Alice! Thanks for the great content'
-                      - id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
+                      - id: 'https://openpayments.guide/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
                         paymentPointer: 'https://openpayments.guide/alice/'
                         incomingAmount:
                           value: '250'
@@ -345,7 +345,7 @@ paths:
               examples:
                 New Fixed Send Outgoing Payment for $25:
                   value:
-                    id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
+                    id: 'https://openpayments.guide/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
                     paymentPointer: 'https://openpayments.guide/alice/'
                     failed: false
                     receiver: 'https://openpayments.guide/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2'
@@ -375,7 +375,7 @@ paths:
             examples:
               Create an outgoing payment based on a quote:
                 value:
-                  quoteId: 'https://openpayments.guide/alice/quotes/ab03296b-0c8b-4776-b94e-7ee27d868d4d'
+                  quoteId: 'https://openpayments.guide/quotes/ab03296b-0c8b-4776-b94e-7ee27d868d4d'
                   metadata:
                     externalRef: INV2022-02-0137
             schema:
@@ -431,7 +431,7 @@ paths:
                       hasPreviousPage: false
                       hasNextPage: true
                     result:
-                      - id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
+                      - id: 'https://openpayments.guide/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
                         paymentPointer: 'https://openpayments.guide/alice/'
                         failed: false
                         receiver: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
@@ -452,7 +452,7 @@ paths:
                         metadata:
                           description: APlusVideo subscription
                           externalRef: 'customer: 847458475'
-                      - id: 'https://openpayments.guide/alice/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
+                      - id: 'https://openpayments.guide/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
                         paymentPointer: 'https://openpayments.guide/alice/'
                         failed: false
                         receiver: 'https://openpayments.guide/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
@@ -481,7 +481,7 @@ paths:
                       hasPreviousPage: true
                       hasNextPage: false
                     result:
-                      - id: 'https://openpayments.guide/alice/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
+                      - id: 'https://openpayments.guide/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
                         paymentPointer: 'https://openpayments.guide/alice/'
                         failed: false
                         receiver: 'https://openpayments.guide/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
@@ -502,7 +502,7 @@ paths:
                         metadata:
                           description: Thank you for your purchase at ShoeShop!
                           externalRef: INV2022-8943756
-                      - id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
+                      - id: 'https://openpayments.guide/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
                         paymentPointer: 'https://openpayments.guide/alice/'
                         failed: false
                         receiver: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
@@ -552,7 +552,7 @@ paths:
               examples:
                 New Fixed Send Quote for $25:
                   value:
-                    id: 'https://openpayments.guide/alice/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
+                    id: 'https://openpayments.guide/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
                     paymentPointer: 'https://openpayments.guide/alice/'
                     receiver: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
                     debitAmount:
@@ -584,7 +584,7 @@ paths:
                     assetScale: 2
               Create fixed-receive-amount quote for $25:
                 value:
-                  receiver: 'https://openpayments.guide/alice/incoming-payments/37a0d0ee-26dc-4c66-89e0-01fbf93156f7'
+                  receiver: 'https://openpayments.guide/incoming-payments/37a0d0ee-26dc-4c66-89e0-01fbf93156f7'
                   receiveAmount:
                     value: '2500'
                     assetCode: USD
@@ -646,7 +646,7 @@ paths:
               examples:
                 Incoming Payment for $25 with $12.34 received so far:
                   value:
-                    id: 'https://openpayments.guide/alice/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
+                    id: 'https://openpayments.guide/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
                     paymentPointer: 'https://openpayments.guide/alice/'
                     incomingAmount:
                       value: '2500'
@@ -698,7 +698,7 @@ paths:
               examples:
                 Completed Incoming Payment:
                   value:
-                    id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
+                    id: 'https://openpayments.guide/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
                     paymentPointer: 'https://openpayments.guide/alice/'
                     incomingAmount:
                       value: '250'
@@ -749,7 +749,7 @@ paths:
                     id: 'https://openpayments.guide/bob/outgoing-payments/3859b39e-4666-4ce5-8745-72f1864c5371'
                     paymentPointer: 'https://openpayments.guide/bob/'
                     failed: false
-                    receiver: 'https://openpayments.guide/alice/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
+                    receiver: 'https://openpayments.guide/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
                     debitAmount:
                       value: '2500'
                       assetCode: USD
@@ -797,7 +797,7 @@ paths:
                   value:
                     id: 'https://openpayments.guide/bob/quotes/3859b39e-4666-4ce5-8745-72f1864c5371'
                     paymentPointer: 'https://openpayments.guide/bob/'
-                    receiver: 'https://openpayments.guide/alice/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
+                    receiver: 'https://openpayments.guide/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
                     debitAmount:
                       value: '2500'
                       assetCode: USD
@@ -919,7 +919,7 @@ components:
       description: 'An **incoming payment** resource represents a payment that will be, is currently being, or has been received by the account.'
       type: object
       examples:
-        - id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
+        - id: 'https://openpayments.guide/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
           paymentPointer: 'https://openpayments.guide/alice/'
           incomingAmount:
             value: '250'
@@ -936,7 +936,7 @@ components:
           metadata:
             description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
             externalRef: Coffee w/ Mo on 10 March 22
-        - id: 'https://openpayments.guide/alice/incoming-payments/456da9d5-c9a4-4c80-a354-86b915a04ff8'
+        - id: 'https://openpayments.guide/incoming-payments/456da9d5-c9a4-4c80-a354-86b915a04ff8'
           paymentPointer: 'https://openpayments.guide/alice/'
           incomingAmount:
             value: '2500'
@@ -997,7 +997,7 @@ components:
       description: An **incoming payment** resource with the Interledger STREAM Connection to use to pay into the payment pointer under this incoming payment.
       type: object
       examples:
-        - id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
+        - id: 'https://openpayments.guide/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
           paymentPointer: 'https://openpayments.guide/alice/'
           incomingAmount:
             value: '250'
@@ -1030,7 +1030,7 @@ components:
       description: An **incoming payment** resource with the url for the Interledger STREAM Connection resource to use to pay into the payment pointer under this incoming payment.
       type: object
       examples:
-        - id: 'https://openpayments.guide/alice/incoming-payments/456da9d5-c9a4-4c80-a354-86b915a04ff8'
+        - id: 'https://openpayments.guide/incoming-payments/456da9d5-c9a4-4c80-a354-86b915a04ff8'
           paymentPointer: 'https://openpayments.guide/alice/'
           incomingAmount:
             value: '2500'
@@ -1059,7 +1059,7 @@ components:
       description: 'An **outgoing payment** resource represents a payment that will be, is currently being, or has previously been, sent from the payment pointer.'
       type: object
       examples:
-        - id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
+        - id: 'https://openpayments.guide/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
           paymentPointer: 'https://openpayments.guide/alice/'
           failed: false
           receiver: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
@@ -1080,7 +1080,7 @@ components:
           metadata:
             description: APlusVideo subscription
             externalRef: 'customer: 847458475'
-        - id: 'https://openpayments.guide/alice/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
+        - id: 'https://openpayments.guide/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
           paymentPointer: 'https://openpayments.guide/alice/'
           failed: false
           receiver: 'https://openpayments.guide/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
@@ -1155,7 +1155,7 @@ components:
       description: A **quote** resource represents the quoted amount details with which an Outgoing Payment may be created.
       type: object
       examples:
-        - id: 'https://openpayments.guide/alice/quotes/ab03296b-0c8b-4776-b94e-7ee27d868d4d'
+        - id: 'https://openpayments.guide/quotes/ab03296b-0c8b-4776-b94e-7ee27d868d4d'
           paymentPointer: 'https://openpayments.guide/alice/'
           receiver: 'https://openpayments.guide/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
           receiveAmount:
@@ -1172,7 +1172,7 @@ components:
             assetScale: 2
           createdAt: '2022-03-12T23:20:50.52Z'
           expiresAt: '2022-04-12T23:20:50.52Z'
-        - id: 'https://openpayments.guide/alice/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
+        - id: 'https://openpayments.guide/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
           paymentPointer: 'https://openpayments.guide/alice/'
           receiver: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
           debitAmount:
