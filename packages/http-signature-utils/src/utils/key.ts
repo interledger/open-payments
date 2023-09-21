@@ -8,8 +8,7 @@ export function parseOrProvisionKey(
   if (keyFile) {
     try {
       const key = crypto.createPrivateKey(fs.readFileSync(keyFile))
-      const jwk = key.export({ format: 'jwk' })
-      if (jwk.crv === 'Ed25519') {
+      if (checkKey(key)) {
         console.log(`Key ${keyFile} loaded.`)
         return key
       } else {
@@ -29,4 +28,17 @@ export function parseOrProvisionKey(
     keypair.privateKey.export({ format: 'pem', type: 'pkcs8' })
   )
   return keypair.privateKey
+}
+
+export function loadBase64Key(base64Key: string): crypto.KeyObject | undefined {
+  const privateKey = Buffer.from(base64Key, 'base64').toString('utf-8')
+  const key = crypto.createPrivateKey(privateKey)
+  if (checkKey(key)) {
+    return key
+  }
+}
+
+function checkKey(key: crypto.KeyObject): boolean {
+  const jwk = key.export({ format: 'jwk' })
+  return jwk.crv === 'Ed25519'
 }

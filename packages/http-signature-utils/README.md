@@ -25,6 +25,14 @@ Load or generate a private Ed25519 key:
 const key = parseOrProvisionKey('/PATH/TO/private-key.pem')
 ```
 
+Load a base64 encoded Ed25519 private key:
+
+```ts
+const key = loadBase64Key(
+  'LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1DNENBUUF3QlFZREsyVndCQ0lFSUkvWHBwdkZPOWltNE9odWkxNytVMnpWNUNuMDJBWXBZWFpwcUlSQ1M0UFkKLS0tLS1FTkQgUFJJVkFURSBLRVktLS0tLQo='
+)
+```
+
 Create JWK from private Ed25519 key:
 
 ```ts
