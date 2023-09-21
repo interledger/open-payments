@@ -5,7 +5,7 @@ description: A thing Melissa is working on
 
 import { Disclosure } from '@interledger/docs-design-system'
 
-Overview text
+Overview text goes here
 
 Inspiration: https://developer.vonage.com/en/voice/voice-api/code-snippets/making-calls/make-an-outbound-call?source=voice&lang=javascript
 
@@ -14,14 +14,16 @@ Inspiration: https://developer.vonage.com/en/voice/voice-api/code-snippets/makin
 <Disclosure toggleText='Install the Open Payments package' client:load>
 
 This package provides the following TypeScript and Node.js tools for using Open Payments.
-* Exported TypeScript types generated directly from the Open Payments OpenAPI specifications
-* A Node.js client that exposes Open Payment APIs and:
-    * Signs requests with provided key
-    * Validates responses against OpenAPI specs
+
+- Exported TypeScript types generated directly from the Open Payments OpenAPI specifications
+- A Node.js client that exposes Open Payment APIs and:
+  - Signs requests with provided key
+  - Validates responses against OpenAPI specs
 
 ```
 npm install @interledger/open-payments
 ```
+
 </Disclosure>
 
 <Disclosure toggleText='Create an unauthenticated client' client:load>
@@ -43,6 +45,7 @@ const walletAddress = await client.walletAddress.get({
   url: '<enter wallet address URL>'
 })
 ```
+
 </Disclosure>
 
 <Disclosure toggleText='Create an authenticated client' client:load>
@@ -60,11 +63,11 @@ const client = await createAuthenticatedClient({
 
 Provide the following properties to create the client.
 
-| Property | Description |
-| --- | --- |
-| keyId | The key identifier of the given private key and the corresponding public JWK document. |
-| privateKey | The private EdDSA-Ed25519 key that’s bound to the wallet address and used by the client to sign authenticated requests A public JWK document created from and signed with the privateKey must be available at the `{walletAddressUrl}/jwks.json` URL. You can use methods from the  [@interledger/http-signature-utils](https://github.com/interledger/open-payments/tree/main/packages/http-signature-utils) package to simplify EdDSA-Ed25519 key provisioning and JWK generation. |
-| walletAddressUrl | The valid wallet address with which the client making requests will identify itself. The wallet address will be used as the value of the `client` parameter when [making a new grant request](https://docs.openpayments.guide/reference/post-request). A JWKS document that includes the public key that the client instance will use to protect requests must be available at the `{walletAddressUrl}/jwks.json` URL. |
+| Property         | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| keyId            | The key identifier of the given private key and the corresponding public JWK document.                                                                                                                                                                                                                                                                                                                                                                                               |
+| privateKey       | The private EdDSA-Ed25519 key that’s bound to the wallet address and used by the client to sign authenticated requests A public JWK document created from and signed with the privateKey must be available at the `{walletAddressUrl}/jwks.json` URL. You can use methods from the  [@interledger/http-signature-utils](https://github.com/interledger/open-payments/tree/main/packages/http-signature-utils) package to simplify EdDSA-Ed25519 key provisioning and JWK generation. |
+| walletAddressUrl | The valid wallet address with which the client making requests will identify itself. The wallet address will be used as the value of the `client` parameter when [making a new grant request](https://docs.openpayments.guide/reference/post-request). A JWKS document that includes the public key that the client instance will use to protect requests must be available at the `{walletAddressUrl}/jwks.json` URL.                                                               |
 
 </Disclosure>
 
@@ -75,7 +78,7 @@ Add the following to `filename.js`.
 Replace the following variables in the Write the Code snippet.
 
 | Thing 1 | Thing 2 |
-| --- | --- |
+| ------- | ------- |
 | Stuff 1 | Stuff 2 |
 
 ```
@@ -96,6 +99,6 @@ Code
 
 E.g., When you run the code the TO_NUMBER will be called and a text-to-speech message will be heard if the call is answered.
 
-## Further reading 
+## Further reading
 
-* [First thing](http://google.com) - Description 
+- [First thing](http://google.com) - Description
