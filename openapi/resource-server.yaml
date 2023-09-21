@@ -652,7 +652,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/optional-signature-input'
         - $ref: '#/components/parameters/optional-signature'
-      description: A client can fetch the latest state of an incoming payment to determine the amount received into the payment pointer.
+      description: A client can fetch the latest state of an incoming payment to determine the amount received into the wallet address.
     parameters:
       - $ref: '#/components/parameters/id'
   '/incoming-payments/{id}/complete':
