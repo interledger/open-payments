@@ -650,7 +650,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/incoming-payment-with-connection'
+                anyOf:
+                  - $ref: '#/components/schemas/incoming-payment-with-connection'
+                  - $ref: '#/components/schemas/public-incoming-payment'
               examples:
                 Incoming Payment for $25 with $12.34 received so far:
                   value:
@@ -684,9 +686,6 @@ paths:
         '404':
           description: Incoming Payment Not Found
       description: A client can fetch the latest state of an incoming payment to determine the amount received into the payment pointer.
-      parameters:
-        - $ref: '#/components/parameters/signature-input'
-        - $ref: '#/components/parameters/signature'
     parameters:
       - $ref: '#/components/parameters/id'
   '/incoming-payments/{id}/complete':
@@ -1062,6 +1061,20 @@ components:
               description: Endpoint that returns unique STREAM connection credentials to establish a STREAM connection to the underlying account.
               readOnly: true
       unevaluatedProperties: false
+    public-incoming-payment:
+      title: Public Incoming Payment
+      description: An **incoming payment** resource with public details.
+      type: object
+      examples:
+        - receivedAmount:
+          value: '0'
+          assetCode: USD
+          assetScale: 2
+      properties:
+        receiveAmount:
+          $ref: ./schemas.yaml#/components/schemas/amount
+      unresolvedProperites: false
+
     outgoing-payment:
       title: Outgoing Payment
       description: 'An **outgoing payment** resource represents a payment that will be, is currently being, or has previously been, sent from the payment pointer.'
