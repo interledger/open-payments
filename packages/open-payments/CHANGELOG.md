@@ -1,5 +1,19 @@
 # @interledger/open-payments
 
+## 3.2.0
+
+### Minor Changes
+
+- 2ea12f0: removed connections route endpoint from the spec and any associated functionality
+- 4423f18: Adds public-incoming-payment return type to incoming payment get request which should be returned for unauthenticated requests to this endpoint
+
+### Patch Changes
+
+- Updated dependencies [2ea12f0]
+- Updated dependencies [2bdca93]
+  - @interledger/openapi@1.1.0
+  - @interledger/http-signature-utils@1.1.0
+
 ## 3.1.0
 
 ### Minor Changes

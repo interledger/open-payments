@@ -1,5 +1,11 @@
 # @interledger/http-signature-utils
 
+## 1.1.0
+
+### Minor Changes
+
+- 2bdca93: adds loadBase64Key
+
 ## 1.0.4
 
 ### Patch Changes

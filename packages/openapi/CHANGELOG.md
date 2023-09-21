@@ -1,5 +1,11 @@
 # @interledger/openapi
 
+## 1.1.0
+
+### Minor Changes
+
+- 2ea12f0: removed connections route endpoint from the spec and any associated functionality
+
 ## 1.0.3
 
 ### Patch Changes
