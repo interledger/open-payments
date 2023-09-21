@@ -18,24 +18,6 @@ export interface paths {
     /** Retrieve the public keys of the Payment Pointer. */
     get: operations["get-payment-pointer-keys"];
   };
-  "/connections/{id}": {
-    /**
-     * *NB* Use server url specific to this path.
-     *
-     * Fetch new connection credentials for an ILP STREAM connection.
-     *
-     * A connection is an ephemeral resource that is created to accommodate new incoming payments.
-     *
-     * A new set of credential will be generated each time this API is called.
-     */
-    get: operations["get-ilp-stream-connection"];
-    parameters: {
-      path: {
-        /** Sub-resource identifier */
-        id: components["parameters"]["id"];
-      };
-    };
-  };
   "/incoming-payments": {
     /** List all incoming payments on the payment pointer */
     get: operations["list-incoming-payments"];
@@ -379,33 +361,6 @@ export interface operations {
         };
       };
       /** JWKS Document Not Found */
-      404: unknown;
-    };
-  };
-  /**
-   * *NB* Use server url specific to this path.
-   *
-   * Fetch new connection credentials for an ILP STREAM connection.
-   *
-   * A connection is an ephemeral resource that is created to accommodate new incoming payments.
-   *
-   * A new set of credential will be generated each time this API is called.
-   */
-  "get-ilp-stream-connection": {
-    parameters: {
-      path: {
-        /** Sub-resource identifier */
-        id: components["parameters"]["id"];
-      };
-    };
-    responses: {
-      /** Connection Found */
-      200: {
-        content: {
-          "application/json": components["schemas"]["ilp-stream-connection"];
-        };
-      };
-      /** Connection Not Found */
       404: unknown;
     };
   };
