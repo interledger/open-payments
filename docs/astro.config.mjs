@@ -2,6 +2,7 @@ import { defineConfig } from 'astro/config'
 import starlight from '@astrojs/starlight'
 import { generateAPI } from 'starlight-openapi'
 // import overrideIntegration from './src/overrideIntegration.mjs'
+import react from '@astrojs/react'
 
 // Generate the documentation and get the associated sidebar groups.
 const { openAPISidebarGroups, starlightOpenAPI } = await generateAPI([
@@ -21,6 +22,7 @@ const { openAPISidebarGroups, starlightOpenAPI } = await generateAPI([
 export default defineConfig({
   integrations: [
     // overrideIntegration(),
+    react(),
     starlight({
       title: 'OpenPayments',
       customCss: [

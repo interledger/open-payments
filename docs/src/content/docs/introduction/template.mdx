@@ -3,12 +3,10 @@ title: Template - Melissa
 description: A thing Melissa is working on
 ---
 
-import Disclosure from '/src/components/docs/Disclosure'
+import { Disclosure } from '@interledger/docs-design-system'
 
 Use the `<Disclosure>` component within your content like so:
 
-   ```jsx
-   <Disclosure toggleText='Show code snippets' client:load>
-      <!-- Your content, can be markup or markdown -->
-   </Disclosure>
-   ```
+<Disclosure toggleText='Show code snippets' client:load>
+  ```http GET /alice HTTP/1.1 Accept: application/json Host: wallet.example ```
+</Disclosure>
