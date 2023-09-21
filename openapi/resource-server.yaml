@@ -6,21 +6,21 @@ info:
     name: Apache 2.0
     identifier: Apache-2.0
   description: |-
-    The Open Payments API is a simple REST API with 5 resource types: **payment pointer**, **quote**, **connection**, **incoming payment** and **outgoing payment**.
+    The Open Payments API is a simple REST API with 5 resource types: **wallet address**, **quote**, **connection**, **incoming payment** and **outgoing payment**.
 
-    The *service endpoint* for the API is always the URL of the payment pointer resource and all other resources (except connections) are sub-resources of the payment pointer.
+    The *service endpoint* for the API is always the URL of the wallet address resource and all other resources (except connections) are sub-resources of the wallet address.
 
-    An incoming payment defines meta data that is automatically attached to payments made into the payment pointer under that incoming payment. This facilitates automation of processes like reconciliation of payment into the payment pointer with external systems.
+    An incoming payment defines meta data that is automatically attached to payments made into the wallet address under that incoming payment. This facilitates automation of processes like reconciliation of payment into the wallet address with external systems.
 
-    An outgoing payment is an instruction to make a payment out of the payment pointer.
+    An outgoing payment is an instruction to make a payment out of the wallet address.
 
-    A quote is a commitment from the Account Servicing Entity to deliver a particular amount to a receiver when sending a particular amount from the payment pointer. It is only valid for a limited time.
+    A quote is a commitment from the Account Servicing Entity to deliver a particular amount to a receiver when sending a particular amount from the wallet address. It is only valid for a limited time.
 
-    For privacy reasons a connection resource is not a sub-resource of a payment pointer.
+    For privacy reasons a connection resource is not a sub-resource of a wallet address.
 
     All resource and collection resource representations use JSON and the media-type `application/json`.  
 
-    The `payment pointer` resource has three collections of sub-resources:
+    The `wallet address` resource has three collections of sub-resources:
     1. `/incoming-payments` contains the **incoming payment** sub-resources  
     2. `/outgoing-payments` contains the **outgoing payment** sub-resources  
     3. `/quotes` contains the **quote** sub-resources
@@ -32,19 +32,19 @@ info:
   contact:
     email: tech@interledger.org
 servers:
-  - url: '{paymentPointer}'
-    description: 'Server for when Payment Pointer has a pathname  (ie https://openpayments.guide/alice)'
+  - url: '{walletAddress}'
+    description: 'Server for when Wallet Address has a pathname  (ie https://openpayments.guide/alice)'
     variables:
-      paymentPointer:
+      walletAddress:
         default: https://openpayments.guide/alice
-  - url: '{paymentPointer}/.well-known/pay'
-    description: 'Server for when Payment Pointer has no pathname (ie https://openpayments.guide)'
+  - url: '{walletAddress}/.well-known/pay'
+    description: 'Server for when Wallet Address has no pathname (ie https://openpayments.guide)'
     variables:
-      paymentPointer:
+      walletAddress:
         default: https://openpayments.guide
 tags:
-  - name: payment-pointer
-    description: payment pointer operations
+  - name: wallet-address
+    description: wallet address operations
   - name: incoming-payment
     description: incoming payment operations
   - name: outgoing-payment
@@ -56,18 +56,18 @@ tags:
 paths:
   /:
     get:
-      summary: Get a Payment Pointer
+      summary: Get a Wallet Address
       tags:
-        - payment-pointer
+        - wallet-address
       responses:
         '200':
-          description: Payment Pointer Found
+          description: Wallet Address Found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/payment-pointer'
+                $ref: '#/components/schemas/wallet-address'
               examples:
-                Get payment pointer for $openpayments.guide/alice:
+                Get wallet address for $openpayments.guide/alice:
                   value:
                     id: 'https://openpayments.guide/alice'
                     publicName: Alice
@@ -75,21 +75,21 @@ paths:
                     assetScale: 2
                     authServer: 'https://openpayments.guide/auth'
         '404':
-          description: Payment Pointer Not Found
-      operationId: get-payment-pointer
+          description: Wallet Address Not Found
+      operationId: get-wallet-address
       description: |-
-        Retrieve the public information of the Payment Pointer.
+        Retrieve the public information of the Wallet Address.
 
-        This end-point should be open to anonymous requests as it allows clients to verify a Payment Pointer URL and get the basic information required to construct new transactions and discover the grant request URL.
+        This end-point should be open to anonymous requests as it allows clients to verify a Wallet Address URL and get the basic information required to construct new transactions and discover the grant request URL.
 
         The content should be slow changing and cacheable for long periods. Servers SHOULD use cache control headers.
       security: []
       x-internal: false
   /jwks.json:
     get:
-      summary: Get the keys bound to a Payment Pointer
+      summary: Get the keys bound to a Wallet Address
       tags:
-        - payment-pointer
+        - wallet-address
       responses:
         '200':
           description: JWKS Document Found
@@ -100,8 +100,8 @@ paths:
               examples: {}
         '404':
           description: JWKS Document Not Found
-      operationId: get-payment-pointer-keys
-      description: Retrieve the public keys of the Payment Pointer.
+      operationId: get-wallet-address-keys
+      description: Retrieve the public keys of the Wallet Address.
       security: []
   /incoming-payments:
     post:
@@ -120,7 +120,7 @@ paths:
                 New Incoming Payment for $25:
                   value:
                     id: 'https://openpayments.guide/alice/incoming-payments/08394f02-7b7b-45e2-b645-51d04e7c330c'
-                    paymentPointer: 'https://openpayments.guide/alice/'
+                    walletAddress: 'https://openpayments.guide/alice/'
                     incomingAmount:
                       value: '2500'
                       assetCode: USD
@@ -154,7 +154,7 @@ paths:
               properties:
                 incomingAmount:
                   $ref: ./schemas.yaml#/components/schemas/amount
-                  description: The maximum amount that should be paid into the payment pointer under this incoming payment.
+                  description: The maximum amount that should be paid into the wallet address under this incoming payment.
                 expiresAt:
                   type: string
                   description: The date and time when payments into the incoming payment must no longer be accepted.
@@ -175,10 +175,10 @@ paths:
         description: |-
           A subset of the incoming payments schema is accepted as input to create a new incoming payment.
 
-          The `incomingAmount` must use the same `assetCode` and `assetScale` as the payment pointer.
+          The `incomingAmount` must use the same `assetCode` and `assetScale` as the wallet address.
         required: true
       description: |-
-        A client MUST create an **incoming payment** resource before it is possible to send any payments to the payment pointer.
+        A client MUST create an **incoming payment** resource before it is possible to send any payments to the wallet address.
 
         When a client creates an **incoming payment** the receiving Account Servicing Entity generates unique payment details that can be used to address payments to the account and returns these details to the client as properties of the new **incoming payment**. Any payments received using those details are then associated with the **incoming payment**.
 
@@ -219,7 +219,7 @@ paths:
                       hasNextPage: true
                     result:
                       - id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
-                        paymentPointer: 'https://openpayments.guide/alice/'
+                        walletAddress: 'https://openpayments.guide/alice/'
                         incomingAmount:
                           value: '250'
                           assetCode: USD
@@ -237,7 +237,7 @@ paths:
                           externalRef: Coffee w/ Mo on 10 March 22
                         completed: true
                       - id: 'https://openpayments.guide/alice/incoming-payments/32abc219-3dc3-44ec-a225-790cacfca8fa'
-                        paymentPointer: 'https://openpayments.guide/alice/'
+                        walletAddress: 'https://openpayments.guide/alice/'
                         receivedAmount:
                           value: '100'
                           assetCode: USD
@@ -258,7 +258,7 @@ paths:
                       hasNextPage: false
                     result:
                       - id: 'https://openpayments.guide/alice/incoming-payments/32abc219-3dc3-44ec-a225-790cacfca8fa'
-                        paymentPointer: 'https://openpayments.guide/alice/'
+                        walletAddress: 'https://openpayments.guide/alice/'
                         receivedAmount:
                           value: '100'
                           assetCode: USD
@@ -271,7 +271,7 @@ paths:
                         metadata:
                           description: 'I love your website, Alice! Thanks for the great content'
                       - id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
-                        paymentPointer: 'https://openpayments.guide/alice/'
+                        walletAddress: 'https://openpayments.guide/alice/'
                         incomingAmount:
                           value: '250'
                           assetCode: USD
@@ -292,7 +292,7 @@ paths:
           $ref: '#/components/responses/401'
         '403':
           $ref: '#/components/responses/403'
-      description: List all incoming payments on the payment pointer
+      description: List all incoming payments on the wallet address
       parameters:
         - $ref: '#/components/parameters/cursor'
         - $ref: '#/components/parameters/first'
@@ -318,7 +318,7 @@ paths:
                 New Fixed Send Outgoing Payment for $25:
                   value:
                     id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
-                    paymentPointer: 'https://openpayments.guide/alice/'
+                    walletAddress: 'https://openpayments.guide/alice/'
                     failed: false
                     receiver: 'https://openpayments.guide/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2'
                     debitAmount:
@@ -367,16 +367,16 @@ paths:
         description: |-
           A subset of the outgoing payments schema is accepted as input to create a new outgoing payment.
 
-          The `debitAmount` must use the same `assetCode` and `assetScale` as the payment pointer.
+          The `debitAmount` must use the same `assetCode` and `assetScale` as the wallet address.
         required: true
       description: |-
-        An **outgoing payment** is a sub-resource of a payment pointer. It represents a payment from the payment pointer.
+        An **outgoing payment** is a sub-resource of a wallet address. It represents a payment from the wallet address.
 
         Once created, it is already authorized and SHOULD be processed immediately. If payment fails, the Account Servicing Entity must mark the **outgoing payment** as `failed`.
       parameters:
         - $ref: '#/components/parameters/signature-input'
         - $ref: '#/components/parameters/signature'
-    description: Create a new outgoing payment at the payment pointer.
+    description: Create a new outgoing payment at the wallet address.
     get:
       summary: List Outgoing Payments
       operationId: list-outgoing-payments
@@ -404,7 +404,7 @@ paths:
                       hasNextPage: true
                     result:
                       - id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
-                        paymentPointer: 'https://openpayments.guide/alice/'
+                        walletAddress: 'https://openpayments.guide/alice/'
                         failed: false
                         receiver: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
                         receiveAmount:
@@ -425,7 +425,7 @@ paths:
                           description: APlusVideo subscription
                           externalRef: 'customer: 847458475'
                       - id: 'https://openpayments.guide/alice/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
-                        paymentPointer: 'https://openpayments.guide/alice/'
+                        walletAddress: 'https://openpayments.guide/alice/'
                         failed: false
                         receiver: 'https://openpayments.guide/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
                         debitAmount:
@@ -454,7 +454,7 @@ paths:
                       hasNextPage: false
                     result:
                       - id: 'https://openpayments.guide/alice/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
-                        paymentPointer: 'https://openpayments.guide/alice/'
+                        walletAddress: 'https://openpayments.guide/alice/'
                         failed: false
                         receiver: 'https://openpayments.guide/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
                         debitAmount:
@@ -475,7 +475,7 @@ paths:
                           description: Thank you for your purchase at ShoeShop!
                           externalRef: INV2022-8943756
                       - id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
-                        paymentPointer: 'https://openpayments.guide/alice/'
+                        walletAddress: 'https://openpayments.guide/alice/'
                         failed: false
                         receiver: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
                         receiveAmount:
@@ -499,7 +499,7 @@ paths:
           $ref: '#/components/responses/401'
         '403':
           $ref: '#/components/responses/403'
-      description: List all outgoing payments on the payment pointer
+      description: List all outgoing payments on the wallet address
       parameters:
         - $ref: '#/components/parameters/cursor'
         - $ref: '#/components/parameters/first'
@@ -525,7 +525,7 @@ paths:
                 New Fixed Send Quote for $25:
                   value:
                     id: 'https://openpayments.guide/alice/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
-                    paymentPointer: 'https://openpayments.guide/alice/'
+                    walletAddress: 'https://openpayments.guide/alice/'
                     receiver: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
                     debitAmount:
                       value: '2500'
@@ -575,7 +575,7 @@ paths:
                     receiver:
                       $ref: ./schemas.yaml#/components/schemas/receiver
                     receiveAmount:
-                      description: The fixed amount that would be paid into the receiving payment pointer given a successful outgoing payment.
+                      description: The fixed amount that would be paid into the receiving wallet address given a successful outgoing payment.
                       $ref: ./schemas.yaml#/components/schemas/amount
                   required:
                     - receiver
@@ -586,7 +586,7 @@ paths:
                     receiver:
                       $ref: ./schemas.yaml#/components/schemas/receiver
                     debitAmount:
-                      description: The fixed amount that would be sent from the sending payment pointer given a successful outgoing payment.
+                      description: The fixed amount that would be sent from the sending wallet address given a successful outgoing payment.
                       $ref: ./schemas.yaml#/components/schemas/amount
                   required:
                     - receiver
@@ -597,11 +597,11 @@ paths:
 
           The quote must be created with a (`debitAmount` xor `receiveAmount`) unless the `receiver` is an Incoming Payment which has an `incomingAmount`.
         required: true
-      description: A **quote** is a sub-resource of a payment pointer. It represents a quote for a payment from the payment pointer.
+      description: A **quote** is a sub-resource of a wallet address. It represents a quote for a payment from the wallet address.
       parameters:
         - $ref: '#/components/parameters/signature-input'
         - $ref: '#/components/parameters/signature'
-    description: Create a new quote at the payment pointer.
+    description: Create a new quote at the wallet address.
   '/incoming-payments/{id}':
     get:
       summary: Get an Incoming Payment
@@ -621,7 +621,7 @@ paths:
                 Incoming Payment for $25 with $12.34 received so far:
                   value:
                     id: 'https://openpayments.guide/alice/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
-                    paymentPointer: 'https://openpayments.guide/alice/'
+                    walletAddress: 'https://openpayments.guide/alice/'
                     incomingAmount:
                       value: '2500'
                       assetCode: USD
@@ -652,7 +652,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/optional-signature-input'
         - $ref: '#/components/parameters/optional-signature'
-      description: A client can fetch the latest state of an incoming payment to determine the amount received into the payment pointer.
+      description: A client can fetch the latest state of an incoming payment to determine the amount received into the wallet address.
     parameters:
       - $ref: '#/components/parameters/id'
   '/incoming-payments/{id}/complete':
@@ -673,7 +673,7 @@ paths:
                 Completed Incoming Payment:
                   value:
                     id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
-                    paymentPointer: 'https://openpayments.guide/alice/'
+                    walletAddress: 'https://openpayments.guide/alice/'
                     incomingAmount:
                       value: '250'
                       assetCode: USD
@@ -721,7 +721,7 @@ paths:
                 Outgoing Payment with a fixed send amount of $25:
                   value:
                     id: 'https://openpayments.guide/bob/outgoing-payments/3859b39e-4666-4ce5-8745-72f1864c5371'
-                    paymentPointer: 'https://openpayments.guide/bob/'
+                    walletAddress: 'https://openpayments.guide/bob/'
                     failed: false
                     receiver: 'https://openpayments.guide/alice/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
                     debitAmount:
@@ -770,7 +770,7 @@ paths:
                 Quote with a fixed send amount of $25:
                   value:
                     id: 'https://openpayments.guide/bob/quotes/3859b39e-4666-4ce5-8745-72f1864c5371'
-                    paymentPointer: 'https://openpayments.guide/bob/'
+                    walletAddress: 'https://openpayments.guide/bob/'
                     receiver: 'https://openpayments.guide/alice/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
                     debitAmount:
                       value: '2500'
@@ -796,10 +796,10 @@ paths:
       - $ref: '#/components/parameters/id'
 components:
   schemas:
-    payment-pointer:
-      title: Payment Pointer
+    wallet-address:
+      title: Wallet Address
       type: object
-      description: A **payment pointer** resource is the root of the API and contains the public details of the financial account represented by the Payment Pointer that is also the service endpoint URL.
+      description: A **wallet address** resource is the root of the API and contains the public details of the financial account represented by the Wallet Address that is also the service endpoint URL.
       additionalProperties: false
       examples:
         - id: 'https://openpayments.guide/alice'
@@ -811,7 +811,7 @@ components:
         id:
           type: string
           format: uri
-          description: The URL identifying the payment pointer.
+          description: The URL identifying the wallet address.
           readOnly: true
         publicName:
           type: string
@@ -824,7 +824,7 @@ components:
         authServer:
           type: string
           format: uri
-          description: The URL of the authorization server endpoint for getting grants and access tokens for this payment pointer.
+          description: The URL of the authorization server endpoint for getting grants and access tokens for this wallet address.
           readOnly: true
       required:
         - id
@@ -834,7 +834,7 @@ components:
     json-web-key-set:
       title: JSON Web Key Set document
       type: object
-      description: 'A JSON Web Key Set document according to [rfc7517](https://datatracker.ietf.org/doc/html/rfc7517) listing the keys associated with this payment pointer. These keys are used to sign requests made by this payment pointer.'
+      description: 'A JSON Web Key Set document according to [rfc7517](https://datatracker.ietf.org/doc/html/rfc7517) listing the keys associated with this wallet address. These keys are used to sign requests made by this wallet address.'
       additionalProperties: false
       properties:
         keys:
@@ -894,7 +894,7 @@ components:
       type: object
       examples:
         - id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
-          paymentPointer: 'https://openpayments.guide/alice/'
+          walletAddress: 'https://openpayments.guide/alice/'
           incomingAmount:
             value: '250'
             assetCode: USD
@@ -911,7 +911,7 @@ components:
             description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
             externalRef: Coffee w/ Mo on 10 March 22
         - id: 'https://openpayments.guide/alice/incoming-payments/456da9d5-c9a4-4c80-a354-86b915a04ff8'
-          paymentPointer: 'https://openpayments.guide/alice/'
+          walletAddress: 'https://openpayments.guide/alice/'
           incomingAmount:
             value: '2500'
             assetCode: USD
@@ -929,10 +929,10 @@ components:
           format: uri
           description: The URL identifying the incoming payment.
           readOnly: true
-        paymentPointer:
+        walletAddress:
           type: string
           format: uri
-          description: The URL of the payment pointer this payment is being made into.
+          description: The URL of the wallet address this payment is being made into.
           readOnly: true
         completed:
           type: boolean
@@ -940,10 +940,10 @@ components:
           default: false
         incomingAmount:
           $ref: ./schemas.yaml#/components/schemas/amount
-          description: The maximum amount that should be paid into the payment pointer under this incoming payment.
+          description: The maximum amount that should be paid into the wallet address under this incoming payment.
         receivedAmount:
           $ref: ./schemas.yaml#/components/schemas/amount
-          description: The total amount that has been paid into the payment pointer under this incoming payment.
+          description: The total amount that has been paid into the wallet address under this incoming payment.
         expiresAt:
           type: string
           description: The date and time when payments under this incoming payment will no longer be accepted.
@@ -961,18 +961,18 @@ components:
           description: The date and time when the incoming payment was updated.
       required:
         - id
-        - paymentPointer
+        - walletAddress
         - completed
         - receivedAmount
         - createdAt
         - updatedAt
     incoming-payment-with-connection:
       title: Incoming Payment with Connection
-      description: An **incoming payment** resource with the Interledger STREAM Connection to use to pay into the payment pointer under this incoming payment.
+      description: An **incoming payment** resource with the Interledger STREAM Connection to use to pay into the wallet address under this incoming payment.
       type: object
       examples:
         - id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
-          paymentPointer: 'https://openpayments.guide/alice/'
+          walletAddress: 'https://openpayments.guide/alice/'
           incomingAmount:
             value: '250'
             assetCode: USD
@@ -1001,11 +1001,11 @@ components:
       unevaluatedProperties: false
     incoming-payment-with-connection-url:
       title: Incoming Payment with Connection
-      description: An **incoming payment** resource with the url for the Interledger STREAM Connection resource to use to pay into the payment pointer under this incoming payment.
+      description: An **incoming payment** resource with the url for the Interledger STREAM Connection resource to use to pay into the wallet address under this incoming payment.
       type: object
       examples:
         - id: 'https://openpayments.guide/alice/incoming-payments/456da9d5-c9a4-4c80-a354-86b915a04ff8'
-          paymentPointer: 'https://openpayments.guide/alice/'
+          walletAddress: 'https://openpayments.guide/alice/'
           incomingAmount:
             value: '2500'
             assetCode: USD
@@ -1044,11 +1044,11 @@ components:
 
     outgoing-payment:
       title: Outgoing Payment
-      description: 'An **outgoing payment** resource represents a payment that will be, is currently being, or has previously been, sent from the payment pointer.'
+      description: 'An **outgoing payment** resource represents a payment that will be, is currently being, or has previously been, sent from the wallet address.'
       type: object
       examples:
         - id: 'https://openpayments.guide/alice/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
-          paymentPointer: 'https://openpayments.guide/alice/'
+          walletAddress: 'https://openpayments.guide/alice/'
           failed: false
           receiver: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
           receiveAmount:
@@ -1069,7 +1069,7 @@ components:
             description: APlusVideo subscription
             externalRef: 'customer: 847458475'
         - id: 'https://openpayments.guide/alice/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
-          paymentPointer: 'https://openpayments.guide/alice/'
+          walletAddress: 'https://openpayments.guide/alice/'
           failed: false
           receiver: 'https://openpayments.guide/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
           debitAmount:
@@ -1092,10 +1092,10 @@ components:
           format: uri
           description: The URL identifying the outgoing payment.
           readOnly: true
-        paymentPointer:
+        walletAddress:
           type: string
           format: uri
-          description: The URL of the payment pointer from which this payment is sent.
+          description: The URL of the wallet address from which this payment is sent.
           readOnly: true
         quoteId:
           type: string
@@ -1131,7 +1131,7 @@ components:
           description: The date and time when the outgoing payment was updated.
       required:
         - id
-        - paymentPointer
+        - walletAddress
         - receiver
         - receiveAmount
         - debitAmount
@@ -1144,7 +1144,7 @@ components:
       type: object
       examples:
         - id: 'https://openpayments.guide/alice/quotes/ab03296b-0c8b-4776-b94e-7ee27d868d4d'
-          paymentPointer: 'https://openpayments.guide/alice/'
+          walletAddress: 'https://openpayments.guide/alice/'
           receiver: 'https://openpayments.guide/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
           receiveAmount:
             value: '2500'
@@ -1161,7 +1161,7 @@ components:
           createdAt: '2022-03-12T23:20:50.52Z'
           expiresAt: '2022-04-12T23:20:50.52Z'
         - id: 'https://openpayments.guide/alice/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
-          paymentPointer: 'https://openpayments.guide/alice/'
+          walletAddress: 'https://openpayments.guide/alice/'
           receiver: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
           debitAmount:
             value: '7126'
@@ -1180,10 +1180,10 @@ components:
           format: uri
           description: The URL identifying the quote.
           readOnly: true
-        paymentPointer:
+        walletAddress:
           type: string
           format: uri
-          description: The URL of the payment pointer from which this quote's payment would be sent.
+          description: The URL of the wallet address from which this quote's payment would be sent.
           readOnly: true
         receiver:
           $ref: ./schemas.yaml#/components/schemas/receiver
@@ -1204,7 +1204,7 @@ components:
           description: The date and time when the quote was created.
       required:
         - id
-        - paymentPointer
+        - walletAddress
         - receiver
         - receiveAmount
         - debitAmount

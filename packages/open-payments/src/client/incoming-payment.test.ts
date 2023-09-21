@@ -44,7 +44,7 @@ describe('incoming-payment', (): void => {
 
   const axiosInstance = defaultAxiosInstance
   const logger = silentLogger
-  const paymentPointer = 'http://localhost:1000/.well-known/pay'
+  const walletAddress = 'http://localhost:1000/.well-known/pay'
   const accessToken = 'accessToken'
   const openApiValidators = mockOpenApiResponseValidators()
 
@@ -52,14 +52,14 @@ describe('incoming-payment', (): void => {
     test('returns incoming payment if passes validation', async (): Promise<void> => {
       const incomingPayment = mockIncomingPaymentWithConnection()
 
-      nock(paymentPointer)
+      nock(walletAddress)
         .get('/incoming-payments/1')
         .reply(200, incomingPayment)
 
       const result = await getIncomingPayment(
         { axiosInstance, logger },
         {
-          url: `${paymentPointer}/incoming-payments/1`,
+          url: `${walletAddress}/incoming-payments/1`,
           accessToken
         },
         openApiValidators.successfulValidator
@@ -81,7 +81,7 @@ describe('incoming-payment', (): void => {
         }
       })
 
-      nock(paymentPointer)
+      nock(walletAddress)
         .get('/incoming-payments/1')
         .reply(200, incomingPayment)
 
@@ -92,7 +92,7 @@ describe('incoming-payment', (): void => {
             logger
           },
           {
-            url: `${paymentPointer}/incoming-payments/1`,
+            url: `${walletAddress}/incoming-payments/1`,
             accessToken
           },
           openApiValidators.successfulValidator
@@ -103,7 +103,7 @@ describe('incoming-payment', (): void => {
     test('throws if incoming payment does not pass open api validation', async (): Promise<void> => {
       const incomingPayment = mockIncomingPaymentWithConnection()
 
-      nock(paymentPointer)
+      nock(walletAddress)
         .get('/incoming-payments/1')
         .reply(200, incomingPayment)
 
@@ -114,7 +114,7 @@ describe('incoming-payment', (): void => {
             logger
           },
           {
-            url: `${paymentPointer}/incoming-payments/1`,
+            url: `${walletAddress}/incoming-payments/1`,
             accessToken
           },
           openApiValidators.failedValidator
@@ -137,13 +137,13 @@ describe('incoming-payment', (): void => {
           metadata
         })
 
-        const scope = nock(paymentPointer)
+        const scope = nock(walletAddress)
           .post('/incoming-payments')
           .reply(200, incomingPayment)
 
         const result = await createIncomingPayment(
           { axiosInstance, logger },
-          { paymentPointer, accessToken },
+          { walletAddress, accessToken },
           openApiValidators.successfulValidator,
           {
             incomingAmount,
@@ -170,14 +170,14 @@ describe('incoming-payment', (): void => {
         completed: false
       })
 
-      const scope = nock(paymentPointer)
+      const scope = nock(walletAddress)
         .post('/incoming-payments')
         .reply(200, incomingPayment)
 
       await expect(
         createIncomingPayment(
           { axiosInstance, logger },
-          { paymentPointer, accessToken },
+          { walletAddress, accessToken },
           openApiValidators.successfulValidator,
           {}
         )
@@ -188,14 +188,14 @@ describe('incoming-payment', (): void => {
     test('throws if the created incoming payment does not pass open api validation', async (): Promise<void> => {
       const incomingPayment = mockIncomingPaymentWithConnection()
 
-      const scope = nock(paymentPointer)
+      const scope = nock(walletAddress)
         .post('/incoming-payments')
         .reply(200, incomingPayment)
 
       await expect(
         createIncomingPayment(
           { axiosInstance, logger },
-          { paymentPointer, accessToken },
+          { walletAddress, accessToken },
           openApiValidators.failedValidator,
           {}
         )
@@ -210,14 +210,14 @@ describe('incoming-payment', (): void => {
         completed: true
       })
 
-      const scope = nock(paymentPointer)
+      const scope = nock(walletAddress)
         .post(`/incoming-payments/${incomingPayment.id}/complete`)
         .reply(200, incomingPayment)
 
       const result = await completeIncomingPayment(
         { axiosInstance, logger },
         {
-          url: `${paymentPointer}/incoming-payments/${incomingPayment.id}`,
+          url: `${walletAddress}/incoming-payments/${incomingPayment.id}`,
           accessToken
         },
         openApiValidators.successfulValidator
@@ -233,7 +233,7 @@ describe('incoming-payment', (): void => {
         completed: false
       })
 
-      const scope = nock(paymentPointer)
+      const scope = nock(walletAddress)
         .post(`/incoming-payments/${incomingPayment.id}/complete`)
         .reply(200, incomingPayment)
 
@@ -241,7 +241,7 @@ describe('incoming-payment', (): void => {
         completeIncomingPayment(
           { axiosInstance, logger },
           {
-            url: `${paymentPointer}/incoming-payments/${incomingPayment.id}`,
+            url: `${walletAddress}/incoming-payments/${incomingPayment.id}`,
             accessToken
           },
           openApiValidators.successfulValidator
@@ -256,7 +256,7 @@ describe('incoming-payment', (): void => {
         completed: true
       })
 
-      const scope = nock(paymentPointer)
+      const scope = nock(walletAddress)
         .post(`/incoming-payments/${incomingPayment.id}/complete`)
         .reply(200, incomingPayment)
 
@@ -264,7 +264,7 @@ describe('incoming-payment', (): void => {
         completeIncomingPayment(
           { axiosInstance, logger },
           {
-            url: `${paymentPointer}/incoming-payments/${incomingPayment.id}`,
+            url: `${walletAddress}/incoming-payments/${incomingPayment.id}`,
             accessToken
           },
           openApiValidators.failedValidator
@@ -290,7 +290,7 @@ describe('incoming-payment', (): void => {
               result: Array(first).fill(mockIncomingPaymentWithConnectionUrl())
             })
 
-          const scope = nock(paymentPointer)
+          const scope = nock(walletAddress)
             .get('/incoming-payments')
             .query({
               ...(first ? { first } : {}),
@@ -304,7 +304,7 @@ describe('incoming-payment', (): void => {
               logger
             },
             {
-              paymentPointer,
+              walletAddress,
               accessToken
             },
             openApiValidators.successfulValidator,
@@ -333,7 +333,7 @@ describe('incoming-payment', (): void => {
               result: Array(last).fill(mockIncomingPaymentWithConnectionUrl())
             })
 
-          const scope = nock(paymentPointer)
+          const scope = nock(walletAddress)
             .get('/incoming-payments')
             .query({
               ...(last ? { last } : {}),
@@ -347,7 +347,7 @@ describe('incoming-payment', (): void => {
               logger
             },
             {
-              paymentPointer,
+              walletAddress,
               accessToken
             },
             openApiValidators.successfulValidator,
@@ -382,7 +382,7 @@ describe('incoming-payment', (): void => {
           result: [incomingPayment]
         })
 
-      const scope = nock(paymentPointer)
+      const scope = nock(walletAddress)
         .get('/incoming-payments')
         .reply(200, incomingPaymentPaginationResult)
 
@@ -393,7 +393,7 @@ describe('incoming-payment', (): void => {
             logger
           },
           {
-            paymentPointer,
+            walletAddress,
             accessToken
           },
           openApiValidators.successfulValidator
@@ -407,14 +407,14 @@ describe('incoming-payment', (): void => {
       const incomingPaymentPaginationResult =
         mockIncomingPaymentPaginationResult()
 
-      const scope = nock(paymentPointer)
+      const scope = nock(walletAddress)
         .get('/incoming-payments')
         .reply(200, incomingPaymentPaginationResult)
 
       await expect(
         listIncomingPayment(
           { axiosInstance, logger },
-          { paymentPointer, accessToken },
+          { walletAddress, accessToken },
           openApiValidators.failedValidator
         )
       ).rejects.toThrowError()
@@ -644,7 +644,7 @@ describe('incoming-payment', (): void => {
         const mockResponseValidator = ({ path, method }) =>
           path === '/incoming-payments/{id}' && method === HttpMethod.GET
 
-        const url = `${paymentPointer}/incoming-payments/1`
+        const url = `${walletAddress}/incoming-payments/1`
 
         jest
           .spyOn(openApi, 'createResponseValidator')
@@ -681,7 +681,7 @@ describe('incoming-payment', (): void => {
           mockIncomingPaymentPaginationResult({
             result: [mockIncomingPaymentWithConnectionUrl()]
           })
-        const url = `${paymentPointer}${getRSPath('/incoming-payments')}`
+        const url = `${walletAddress}${getRSPath('/incoming-payments')}`
 
         jest
           .spyOn(openApi, 'createResponseValidator')
@@ -696,7 +696,7 @@ describe('incoming-payment', (): void => {
           openApi,
           axiosInstance,
           logger
-        }).list({ paymentPointer, accessToken })
+        }).list({ walletAddress, accessToken })
 
         expect(getSpy).toHaveBeenCalledWith(
           {
@@ -714,7 +714,7 @@ describe('incoming-payment', (): void => {
         const mockResponseValidator = ({ path, method }) =>
           path === '/incoming-payments' && method === HttpMethod.POST
 
-        const url = `${paymentPointer}/incoming-payments`
+        const url = `${walletAddress}/incoming-payments`
         const incomingPaymentCreateArgs = {
           description: 'Invoice',
           incomingAmount: { assetCode: 'USD', assetScale: 2, value: '10' }
@@ -735,7 +735,7 @@ describe('incoming-payment', (): void => {
           openApi,
           axiosInstance,
           logger
-        }).create({ paymentPointer, accessToken }, incomingPaymentCreateArgs)
+        }).create({ walletAddress, accessToken }, incomingPaymentCreateArgs)
 
         expect(postSpy).toHaveBeenCalledWith(
           {
@@ -754,7 +754,7 @@ describe('incoming-payment', (): void => {
           path === '/incoming-payments/{id}/complete' &&
           method === HttpMethod.POST
 
-        const incomingPaymentUrl = `${paymentPointer}/incoming-payments/1`
+        const incomingPaymentUrl = `${walletAddress}/incoming-payments/1`
 
         jest
           .spyOn(openApi, 'createResponseValidator')

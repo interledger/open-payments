@@ -1,20 +1,20 @@
 import { HttpMethod } from '@interledger/openapi'
 import { RouteDeps, UnauthenticatedResourceRequestArgs } from '.'
-import { JWKS, PaymentPointer, getRSPath } from '../types'
+import { JWKS, WalletAddress, getRSPath } from '../types'
 import { get } from './requests'
 
-export interface PaymentPointerRoutes {
-  get(args: UnauthenticatedResourceRequestArgs): Promise<PaymentPointer>
+export interface WalletAddressRoutes {
+  get(args: UnauthenticatedResourceRequestArgs): Promise<WalletAddress>
   getKeys(args: UnauthenticatedResourceRequestArgs): Promise<JWKS>
 }
 
-export const createPaymentPointerRoutes = (
+export const createWalletAddressRoutes = (
   deps: RouteDeps
-): PaymentPointerRoutes => {
+): WalletAddressRoutes => {
   const { axiosInstance, openApi, logger } = deps
 
   const getPaymentPaymentValidator =
-    openApi.createResponseValidator<PaymentPointer>({
+    openApi.createResponseValidator<WalletAddress>({
       path: getRSPath('/'),
       method: HttpMethod.GET
     })
