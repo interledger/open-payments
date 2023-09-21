@@ -103,42 +103,6 @@ paths:
       operationId: get-payment-pointer-keys
       description: Retrieve the public keys of the Payment Pointer.
       security: []
-  '/connections/{id}':
-    servers:
-      - url: 'https://openpayments.guide'
-    get:
-      summary: Get ILP STREAM credentials for a connection
-      tags:
-        - stream-connection
-      responses:
-        '200':
-          description: Connection Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ilp-stream-connection'
-              examples:
-                Get connection:
-                  value:
-                    id: 'https://openpayments.guide/connections/016da9d5-c9a4-4c80-a354-86b915a04ff8'
-                    ilpAddress: g.ilp.iwuyge987y.98y0f34tsrt8y
-                    sharedSecret: 1c7eaXa4rd2fFOBl1iydvCT1tV5TbM3RW1WLCafu_JA
-                    assetCode: USD
-                    assetScale: 2
-        '404':
-          description: Connection Not Found
-      operationId: get-ilp-stream-connection
-      description: |-
-        *NB* Use server url specific to this path.
-
-        Fetch new connection credentials for an ILP STREAM connection.
-
-        A connection is an ephemeral resource that is created to accommodate new incoming payments.
-
-        A new set of credential will be generated each time this API is called.
-      security: []
-    parameters:
-      - $ref: '#/components/parameters/id'
   /incoming-payments:
     post:
       summary: Create an Incoming Payment

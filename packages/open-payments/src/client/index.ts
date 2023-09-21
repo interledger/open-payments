@@ -8,10 +8,6 @@ import {
   IncomingPaymentRoutes
 } from './incoming-payment'
 import {
-  createILPStreamConnectionRoutes,
-  ILPStreamConnectionRoutes
-} from './ilp-stream-connection'
-import {
   createPaymentPointerRoutes,
   PaymentPointerRoutes
 } from './payment-pointer'
@@ -110,7 +106,6 @@ export interface CreateUnauthenticatedClientArgs {
 }
 
 export interface UnauthenticatedClient {
-  ilpStreamConnection: ILPStreamConnectionRoutes
   paymentPointer: PaymentPointerRoutes
 }
 
@@ -125,11 +120,6 @@ export const createUnauthenticatedClient = async (
   )
 
   return {
-    ilpStreamConnection: createILPStreamConnectionRoutes({
-      axiosInstance,
-      openApi: resourceServerOpenApi,
-      logger
-    }),
     paymentPointer: createPaymentPointerRoutes({
       axiosInstance,
       openApi: resourceServerOpenApi,
@@ -169,11 +159,6 @@ export const createAuthenticatedClient = async (
       logger
     }),
     outgoingPayment: createOutgoingPaymentRoutes({
-      axiosInstance,
-      openApi: resourceServerOpenApi,
-      logger
-    }),
-    ilpStreamConnection: createILPStreamConnectionRoutes({
       axiosInstance,
       openApi: resourceServerOpenApi,
       logger
