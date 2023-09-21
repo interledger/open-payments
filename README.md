@@ -27,7 +27,6 @@ The code for the landing [page](https://openpayments.guide) is in `./landing`.
 
 ## Dependencies
 
-- [Wallet Addresses](https://paymentpointers.org)
 - [Interledger](https://interledger.org)
 
 ## Open Payments Catchup Call
