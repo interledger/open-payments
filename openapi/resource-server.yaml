@@ -918,6 +918,7 @@ components:
       title: Incoming Payment
       description: 'An **incoming payment** resource represents a payment that will be, is currently being, or has been received by the account.'
       type: object
+      additionalProperties: false
       examples:
         - id: 'https://openpayments.guide/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
           paymentPointer: 'https://openpayments.guide/alice/'
