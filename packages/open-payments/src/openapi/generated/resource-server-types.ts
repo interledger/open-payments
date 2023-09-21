@@ -202,6 +202,13 @@ export interface components {
       ilpStreamConnection?: string;
     };
     /**
+     * Public Incoming Payment
+     * @description An **incoming payment** resource with public details.
+     */
+    "public-incoming-payment": {
+      receiveAmount?: external["schemas.yaml"]["components"]["schemas"]["amount"];
+    };
+    /**
      * Outgoing Payment
      * @description An **outgoing payment** resource represents a payment that will be, is currently being, or has previously been, sent from the payment pointer.
      */
@@ -314,9 +321,13 @@ export interface components {
     /** @description Sub-resource identifier */
     id: string;
     /** @description The signature generated based on the Signature-Input, using the signing algorithm specified in the "alg" field of the JWK. */
-    signature: string;
+    signature: components["parameters"]["optional-signature"];
     /** @description The Signature-Input field is a Dictionary structured field containing the metadata for one or more message signatures generated from components within the HTTP message.  Each member describes a single message signature.  The member's key is the label that uniquely identifies the message signature within the context of the HTTP message.  The member's value is the serialization of the covered components Inner List plus all signature metadata parameters identified by the label.  The following components MUST be included: - "@method" - "@target-uri" - "authorization".  When the message contains a request body, the covered components MUST also include the following: - "content-digest"  The keyid parameter of the signature MUST be set to the kid value of the JWK.      See [ietf-httpbis-message-signatures](https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-message-signatures#section-4.1) for more details. */
-    "signature-input": string;
+    "signature-input": components["parameters"]["optional-signature-input"];
+    /** @description The signature generated based on the Signature-Input, using the signing algorithm specified in the "alg" field of the JWK. */
+    "optional-signature": string;
+    /** @description The Signature-Input field is a Dictionary structured field containing the metadata for one or more message signatures generated from components within the HTTP message.  Each member describes a single message signature.  The member's key is the label that uniquely identifies the message signature within the context of the HTTP message.  The member's value is the serialization of the covered components Inner List plus all signature metadata parameters identified by the label.  The following components MUST be included: - "@method" - "@target-uri" - "authorization".  When the message contains a request body, the covered components MUST also include the following: - "content-digest"  The keyid parameter of the signature MUST be set to the kid value of the JWK.      See [ietf-httpbis-message-signatures](https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-message-signatures#section-4.1) for more details. */
+    "optional-signature-input": string;
   };
 }
 
@@ -568,16 +579,19 @@ export interface operations {
       };
       header: {
         /** The Signature-Input field is a Dictionary structured field containing the metadata for one or more message signatures generated from components within the HTTP message.  Each member describes a single message signature.  The member's key is the label that uniquely identifies the message signature within the context of the HTTP message.  The member's value is the serialization of the covered components Inner List plus all signature metadata parameters identified by the label.  The following components MUST be included: - "@method" - "@target-uri" - "authorization".  When the message contains a request body, the covered components MUST also include the following: - "content-digest"  The keyid parameter of the signature MUST be set to the kid value of the JWK.      See [ietf-httpbis-message-signatures](https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-message-signatures#section-4.1) for more details. */
-        "Signature-Input": components["parameters"]["signature-input"];
+        "Signature-Input"?: components["parameters"]["optional-signature-input"];
         /** The signature generated based on the Signature-Input, using the signing algorithm specified in the "alg" field of the JWK. */
-        Signature: components["parameters"]["signature"];
+        Signature?: components["parameters"]["optional-signature"];
       };
     };
     responses: {
       /** Incoming Payment Found */
       200: {
         content: {
-          "application/json": components["schemas"]["incoming-payment-with-connection"];
+          "application/json": Partial<
+            components["schemas"]["incoming-payment-with-connection"]
+          > &
+            Partial<components["schemas"]["public-incoming-payment"]>;
         };
       };
       401: components["responses"]["401"];
