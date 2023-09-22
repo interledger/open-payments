@@ -938,8 +938,7 @@ components:
             description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
             externalRef: Coffee w/ Mo on 10 March 22
           methods:
-            ilp:
-              id: 'https://openpayments.guide/connections/032da9d5-c9a4-4c80-a354-86b915a04ff8'
+            - type: 'ilp'
               ilpAddress: g.ilp.iwuyge987y.98y08y
               sharedSecret: 1c7eaXa4rd2fFOBl1iydvCT1tV5TbM3RW1WLCafu_JA
       allOf:
