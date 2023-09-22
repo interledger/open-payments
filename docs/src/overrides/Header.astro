@@ -1,0 +1,53 @@
+---
+import Search from "@astrojs/starlight/components/Search.astro";
+import ThemeSelect from "@astrojs/starlight/components/ThemeSelect.astro";
+import SocialIcons from "@astrojs/starlight/components/SocialIcons.astro";
+import OpenPaymentsLogo from "../components/OpenPaymentsLogo.astro";
+
+const { locale } = Astro.props;
+---
+<div class="header sl-flex flex">
+  <a href="/" class="site-title">
+    <OpenPaymentsLogo />
+  </a>
+  <div class="secondary-wrap">
+    <Search {locale} />
+    <SocialIcons />
+    <div class="sl-hidden md:sl-flex hidden md:flex">
+      <ThemeSelect {locale} />
+    </div>
+  </div>
+</div>
+
+<style>
+  .header { 
+    gap: var(--sl-nav-gap);
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .site-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .site-title svg {
+    width: 11em;
+    flex: none;
+  }
+
+  .secondary-wrap {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: var(--sl-nav-gap);
+  }
+
+  @media screen and (max-width: 799px) {
+    .secondary-wrap :global(.divider) {
+      border-inline-end-color: transparent;
+    }
+  }  
+</style>
