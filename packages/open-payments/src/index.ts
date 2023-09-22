@@ -2,9 +2,6 @@ export {
   GrantRequest,
   GrantContinuationRequest,
   IncomingPayment,
-  IncomingPaymentWithConnection,
-  IncomingPaymentWithConnectionUrl,
-  ILPStreamConnection,
   Quote,
   OutgoingPayment,
   PendingGrant,
@@ -28,11 +25,8 @@ export {
 } from './client'
 
 export {
-  mockILPStreamConnection,
   mockWalletAddress,
   mockIncomingPayment,
-  mockIncomingPaymentWithConnection,
-  mockIncomingPaymentWithConnectionUrl,
   mockOutgoingPayment,
   mockIncomingPaymentPaginationResult,
   mockOutgoingPaymentPaginationResult,
