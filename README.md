@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/interledger/open-payments/master/landing/public/Open_Payments_standard_logo.svg" width="700" alt="Open Payments">
+  <img src="https://raw.githubusercontent.com/interledger/open-payments/main/docs/public/img/logo.svg" width="700" alt="Open Payments">
 </p>
 
 ---

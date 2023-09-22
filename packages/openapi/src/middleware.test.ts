@@ -4,6 +4,7 @@ import { v4 as uuid } from 'uuid'
 
 import { createOpenAPI, OpenAPI, HttpMethod } from './'
 import { createValidatorMiddleware } from './middleware'
+import * as path from 'path'
 
 declare module 'koa' {
   interface Request {
@@ -34,9 +35,8 @@ export function createContext<T extends Koa.Context>(
   return ctx as T
 }
 
-const PATH = '/{accountId}/incoming-payments'
-const SPEC =
-  'https://github.com/interledger/open-payments/raw/3930448672cfc678ec2bc02938566a316d83871c/open-api-spec.yaml'
+const PATH = '/incoming-payments'
+const SPEC = path.resolve(__dirname, '../../../openapi/resource-server.yaml')
 
 describe('OpenAPI Validator', (): void => {
   let openApi: OpenAPI
@@ -66,29 +66,6 @@ describe('OpenAPI Validator', (): void => {
       next = jest.fn()
     })
 
-    test.each`
-      accountId    | message                                      | description
-      ${undefined} | ${"must have required property 'accountId'"} | ${'missing'}
-      ${2}         | ${'accountId must be string'}                | ${'invalid'}
-    `(
-      'returns 400 on $description path parameter',
-      async ({ accountId, message }): Promise<void> => {
-        const ctx = createContext(
-          {
-            headers: { Accept: 'application/json' }
-          },
-          {
-            accountId
-          }
-        )
-        await expect(validateListMiddleware(ctx, next)).rejects.toMatchObject({
-          status: 400,
-          message
-        })
-        expect(next).not.toHaveBeenCalled()
-      }
-    )
-
     test('coerces query parameter type', async (): Promise<void> => {
       const first = 5
       const next = jest.fn().mockImplementation(() => {
@@ -100,10 +77,9 @@ describe('OpenAPI Validator', (): void => {
           headers: { Accept: 'application/json' },
           url: `${PATH}?first=${first}`
         },
-        {
-          accountId
-        }
+        {}
       )
+      addTestSignatureHeaders(ctx)
       await expect(validateListMiddleware(ctx, next)).resolves.toBeUndefined()
       expect(next).toHaveBeenCalled()
     })
@@ -114,10 +90,9 @@ describe('OpenAPI Validator', (): void => {
           headers: { Accept: 'application/json' },
           url: `${PATH}?first=NaN`
         },
-        {
-          accountId
-        }
+        {}
       )
+      addTestSignatureHeaders(ctx)
       await expect(validateListMiddleware(ctx, next)).rejects.toMatchObject({
         status: 400,
         message: 'first must be integer'
@@ -136,10 +111,9 @@ describe('OpenAPI Validator', (): void => {
           {
             headers
           },
-          {
-            accountId
-          }
+          {}
         )
+        addTestSignatureHeaders(ctx)
         await expect(validatePostMiddleware(ctx, next)).rejects.toMatchObject({
           status,
           message
@@ -167,10 +141,9 @@ describe('OpenAPI Validator', (): void => {
               'Content-Type': 'application/json'
             }
           },
-          {
-            accountId
-          }
+          {}
         )
+        addTestSignatureHeaders(ctx)
         ctx.request.body = body
         await expect(validatePostMiddleware(ctx, next)).rejects.toMatchObject({
           status: 400,
@@ -183,14 +156,11 @@ describe('OpenAPI Validator', (): void => {
     test('sets default query params and calls next on valid request', async (): Promise<void> => {
       const ctx = createContext(
         {
-          headers: {
-            Accept: 'application/json'
-          }
+          headers: { Accept: 'application/json' }
         },
-        {
-          accountId
-        }
+        {}
       )
+      addTestSignatureHeaders(ctx)
       const next = jest.fn().mockImplementation(() => {
         expect(ctx.request.query).toEqual({
           first: 10,
@@ -204,7 +174,7 @@ describe('OpenAPI Validator', (): void => {
 
     const body = {
       id: `https://${accountId}/incoming-payments/${uuid()}`,
-      accountId: `https://${accountId}`,
+      walletAddress: 'https://openpayments.guide/alice',
       receivedAmount: {
         value: '0',
         assetCode: 'USD',
@@ -216,8 +186,8 @@ describe('OpenAPI Validator', (): void => {
     test.each`
       status | body                                                                    | message                                                           | description
       ${202} | ${{}}                                                                   | ${'An unknown status code was used and no default was provided.'} | ${'status code'}
-      ${201} | ${{ ...body, invalid: 'field' }}                                        | ${'response must NOT have additional properties: invalid'}        | ${'body'}
-      ${201} | ${{ ...body, receivedAmount: { ...body.receivedAmount, value: '-1' } }} | ${'response.receivedAmount.value must match format "uint64"'}     | ${'body'}
+      ${201} | ${{ ...body, invalid: 'field' }}                                        | ${'response must NOT have additional properties: invalid'}        | ${'body with additional property'}
+      ${201} | ${{ ...body, receivedAmount: { ...body.receivedAmount, value: '-1' } }} | ${'response.receivedAmount.value must match format "uint64"'}     | ${'body with invalid type'}
     `(
       'returns 500 on invalid response $description',
       async ({ status, body, message }): Promise<void> => {
@@ -228,10 +198,9 @@ describe('OpenAPI Validator', (): void => {
               'Content-Type': 'application/json'
             }
           },
-          {
-            accountId
-          }
+          {}
         )
+        addTestSignatureHeaders(ctx)
         ctx.request.body = {}
         const next = jest.fn().mockImplementation(() => {
           ctx.status = status
@@ -246,3 +215,8 @@ describe('OpenAPI Validator', (): void => {
     )
   })
 })
+
+function addTestSignatureHeaders(ctx: Koa.Context) {
+  ctx.request.headers['Signature-Input'] = 'test signature input'
+  ctx.request.headers['Signature'] = 'test signature'
+}

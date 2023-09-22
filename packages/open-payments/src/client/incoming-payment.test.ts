@@ -11,11 +11,8 @@ import {
 import { OpenAPI, HttpMethod, createOpenAPI } from '@interledger/openapi'
 import {
   defaultAxiosInstance,
-  mockILPStreamConnection,
   mockIncomingPayment,
   mockIncomingPaymentPaginationResult,
-  mockIncomingPaymentWithConnection,
-  mockIncomingPaymentWithConnectionUrl,
   mockOpenApiResponseValidators,
   silentLogger
 } from '../test/helpers'
@@ -44,13 +41,14 @@ describe('incoming-payment', (): void => {
 
   const axiosInstance = defaultAxiosInstance
   const logger = silentLogger
-  const walletAddress = 'http://localhost:1000/.well-known/pay'
+  const walletAddress = 'http://localhost:1000/alice/.well-known/pay'
+  const serverAddress = 'http://localhost:1000'
   const accessToken = 'accessToken'
   const openApiValidators = mockOpenApiResponseValidators()
 
   describe('getIncomingPayment', (): void => {
     test('returns incoming payment if passes validation', async (): Promise<void> => {
-      const incomingPayment = mockIncomingPaymentWithConnection()
+      const incomingPayment = mockIncomingPayment()
 
       nock(walletAddress)
         .get('/incoming-payments/1')
@@ -68,7 +66,7 @@ describe('incoming-payment', (): void => {
     })
 
     test('throws if incoming payment does not pass validation', async (): Promise<void> => {
-      const incomingPayment = mockIncomingPaymentWithConnection({
+      const incomingPayment = mockIncomingPayment({
         incomingAmount: {
           assetCode: 'USD',
           assetScale: 2,
@@ -101,7 +99,7 @@ describe('incoming-payment', (): void => {
     })
 
     test('throws if incoming payment does not pass open api validation', async (): Promise<void> => {
-      const incomingPayment = mockIncomingPaymentWithConnection()
+      const incomingPayment = mockIncomingPayment()
 
       nock(walletAddress)
         .get('/incoming-payments/1')
@@ -131,7 +129,7 @@ describe('incoming-payment', (): void => {
     `(
       'returns the incoming payment on success',
       async ({ incomingAmount, expiresAt, metadata }): Promise<void> => {
-        const incomingPayment = mockIncomingPaymentWithConnection({
+        const incomingPayment = mockIncomingPayment({
           incomingAmount,
           expiresAt,
           metadata
@@ -164,7 +162,7 @@ describe('incoming-payment', (): void => {
         value: '10'
       }
 
-      const incomingPayment = mockIncomingPaymentWithConnection({
+      const incomingPayment = mockIncomingPayment({
         incomingAmount: amount,
         receivedAmount: amount,
         completed: false
@@ -186,7 +184,7 @@ describe('incoming-payment', (): void => {
     })
 
     test('throws if the created incoming payment does not pass open api validation', async (): Promise<void> => {
-      const incomingPayment = mockIncomingPaymentWithConnection()
+      const incomingPayment = mockIncomingPayment()
 
       const scope = nock(walletAddress)
         .post('/incoming-payments')
@@ -210,14 +208,14 @@ describe('incoming-payment', (): void => {
         completed: true
       })
 
-      const scope = nock(walletAddress)
+      const scope = nock(serverAddress)
         .post(`/incoming-payments/${incomingPayment.id}/complete`)
         .reply(200, incomingPayment)
 
       const result = await completeIncomingPayment(
         { axiosInstance, logger },
         {
-          url: `${walletAddress}/incoming-payments/${incomingPayment.id}`,
+          url: `${serverAddress}/incoming-payments/${incomingPayment.id}`,
           accessToken
         },
         openApiValidators.successfulValidator
@@ -287,7 +285,7 @@ describe('incoming-payment', (): void => {
         async ({ first, cursor }): Promise<void> => {
           const incomingPaymentPaginationResult =
             mockIncomingPaymentPaginationResult({
-              result: Array(first).fill(mockIncomingPaymentWithConnectionUrl())
+              result: Array(first).fill(mockIncomingPayment())
             })
 
           const scope = nock(walletAddress)
@@ -330,7 +328,7 @@ describe('incoming-payment', (): void => {
         async ({ last, cursor }): Promise<void> => {
           const incomingPaymentPaginationResult =
             mockIncomingPaymentPaginationResult({
-              result: Array(last).fill(mockIncomingPaymentWithConnectionUrl())
+              result: Array(last).fill(mockIncomingPayment())
             })
 
           const scope = nock(walletAddress)
@@ -364,7 +362,7 @@ describe('incoming-payment', (): void => {
     })
 
     test('throws if an incoming payment does not pass validation', async (): Promise<void> => {
-      const incomingPayment = mockIncomingPaymentWithConnectionUrl({
+      const incomingPayment = mockIncomingPayment({
         incomingAmount: {
           assetCode: 'USD',
           assetScale: 2,
@@ -520,55 +518,6 @@ describe('incoming-payment', (): void => {
         'Incoming amount matches received amount but payment is not completed'
       )
     })
-
-    test('throws if receiving amount asset code is different that ilp connection asset code', async (): Promise<void> => {
-      const ilpStreamConnection = mockILPStreamConnection({
-        assetCode: 'CAD'
-      })
-
-      const incomingPayment = mockIncomingPaymentWithConnection({
-        incomingAmount: {
-          assetCode: 'USD',
-          assetScale: 2,
-          value: '5'
-        },
-        receivedAmount: {
-          assetCode: 'USD',
-          assetScale: 2,
-          value: '0'
-        },
-        ilpStreamConnection
-      })
-
-      expect(() => validateIncomingPayment(incomingPayment)).toThrow(
-        'Stream connection asset information does not match incoming payment asset information'
-      )
-    })
-
-    test('throws if receiving amount asset scale is different that ilp connection asset scale', async (): Promise<void> => {
-      const ilpStreamConnection = mockILPStreamConnection({
-        assetCode: 'USD',
-        assetScale: 1
-      })
-
-      const incomingPayment = mockIncomingPaymentWithConnection({
-        incomingAmount: {
-          assetCode: 'USD',
-          assetScale: 2,
-          value: '5'
-        },
-        receivedAmount: {
-          assetCode: 'USD',
-          assetScale: 2,
-          value: '0'
-        },
-        ilpStreamConnection
-      })
-
-      expect(() => validateIncomingPayment(incomingPayment)).toThrow(
-        'Stream connection asset information does not match incoming payment asset information'
-      )
-    })
   })
 
   describe('validateCreatedIncomingPayment', (): void => {
@@ -653,7 +602,7 @@ describe('incoming-payment', (): void => {
 
         const getSpy = jest
           .spyOn(requestors, 'get')
-          .mockResolvedValueOnce(mockIncomingPaymentWithConnection())
+          .mockResolvedValueOnce(mockIncomingPayment())
 
         await createIncomingPaymentRoutes({
           openApi,
@@ -679,7 +628,7 @@ describe('incoming-payment', (): void => {
 
         const incomingPaymentPaginationResult =
           mockIncomingPaymentPaginationResult({
-            result: [mockIncomingPaymentWithConnectionUrl()]
+            result: [mockIncomingPayment()]
           })
         const url = `${walletAddress}${getRSPath('/incoming-payments')}`
 
@@ -727,9 +676,7 @@ describe('incoming-payment', (): void => {
 
         const postSpy = jest
           .spyOn(requestors, 'post')
-          .mockResolvedValueOnce(
-            mockIncomingPaymentWithConnection(incomingPaymentCreateArgs)
-          )
+          .mockResolvedValueOnce(mockIncomingPayment(incomingPaymentCreateArgs))
 
         await createIncomingPaymentRoutes({
           openApi,
