@@ -8,7 +8,7 @@ import {
   GrantContinuationRequest,
   OutgoingPayment,
   OutgoingPaymentPaginationResult,
-  PaymentPointer,
+  WalletAddress,
   JWK,
   AccessToken,
   Quote,
@@ -70,9 +70,9 @@ export const mockJwk = (overrides?: Partial<JWK>): JWK => ({
   ...overrides
 })
 
-export const mockPaymentPointer = (
-  overrides?: Partial<PaymentPointer>
-): PaymentPointer => ({
+export const mockWalletAddress = (
+  overrides?: Partial<WalletAddress>
+): WalletAddress => ({
   id: 'https://example.com/.well-known/pay',
   authServer: 'https://auth.wallet.example/authorize',
   assetScale: 2,
@@ -95,7 +95,7 @@ export const mockIncomingPayment = (
   overrides?: Partial<IncomingPayment>
 ): IncomingPayment => ({
   id: `https://example.com/.well-known/pay/incoming-payments/${uuid()}`,
-  paymentPointer: 'https://example.com/.well-known/pay',
+  walletAddress: 'https://example.com/.well-known/pay',
   completed: false,
   incomingAmount: {
     assetCode: 'USD',
@@ -152,7 +152,7 @@ export const mockOutgoingPayment = (
   overrides?: Partial<OutgoingPayment>
 ): OutgoingPayment => ({
   id: `https://example.com/.well-known/pay/outgoing-payments/${uuid()}`,
-  paymentPointer: 'https://example.com/.well-known/pay',
+  walletAddress: 'https://example.com/.well-known/pay',
   failed: false,
   debitAmount: {
     assetCode: 'USD',
@@ -285,7 +285,7 @@ export const mockAccessToken = (
 export const mockQuote = (overrides?: Partial<Quote>): Quote => ({
   id: `https://example.com/.well-known/pay/quotes/${uuid()}`,
   receiver: 'https://example.com/.well-known/peer',
-  paymentPointer: 'https://example.com/.well-known/pay',
+  walletAddress: 'https://example.com/.well-known/pay',
   debitAmount: {
     value: '100',
     assetCode: 'USD',

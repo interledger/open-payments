@@ -174,7 +174,7 @@ describe('OpenAPI Validator', (): void => {
 
     const body = {
       id: `https://${accountId}/incoming-payments/${uuid()}`,
-      paymentPointer: 'https://openpayments.guide/alice',
+      walletAddress: 'https://openpayments.guide/alice',
       receivedAmount: {
         value: '0',
         assetCode: 'USD',

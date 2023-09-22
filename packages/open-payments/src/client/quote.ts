@@ -68,8 +68,8 @@ export const createQuote = async (
   createQuoteArgs: CreateQuoteArgs
 ) => {
   const { axiosInstance, logger } = deps
-  const { accessToken, paymentPointer } = createArgs
-  const url = `${paymentPointer}${getRSPath('/quotes')}`
+  const { accessToken, walletAddress } = createArgs
+  const url = `${walletAddress}${getRSPath('/quotes')}`
 
   const quote = await post(
     { axiosInstance, logger },

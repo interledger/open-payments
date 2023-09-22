@@ -130,8 +130,8 @@ export const createIncomingPayment = async (
   createArgs: CreateIncomingPaymentArgs
 ) => {
   const { axiosInstance, logger } = deps
-  const { paymentPointer, accessToken } = requestArgs
-  const url = `${paymentPointer}${getRSPath('/incoming-payments')}`
+  const { walletAddress, accessToken } = requestArgs
+  const url = `${walletAddress}${getRSPath('/incoming-payments')}`
 
   const incomingPayment = await post(
     { axiosInstance, logger },
@@ -187,9 +187,9 @@ export const listIncomingPayment = async (
   pagination?: PaginationArgs
 ) => {
   const { axiosInstance, logger } = deps
-  const { accessToken, paymentPointer } = args
+  const { accessToken, walletAddress } = args
 
-  const url = `${paymentPointer}${getRSPath('/incoming-payments')}`
+  const url = `${walletAddress}${getRSPath('/incoming-payments')}`
 
   const incomingPayments = await get(
     { axiosInstance, logger },

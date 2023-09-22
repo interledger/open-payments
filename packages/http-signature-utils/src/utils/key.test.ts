@@ -1,20 +1,20 @@
 import * as assert from 'assert'
 import * as crypto from 'crypto'
 import * as fs from 'fs'
-import { parseOrProvisionKey } from './key'
+import { Buffer } from 'buffer'
+import { loadBase64Key, parseOrProvisionKey } from './key'
 
-describe('Config', (): void => {
+describe('Key methods', (): void => {
+  const TMP_DIR = './tmp'
+
+  beforeEach(async (): Promise<void> => {
+    fs.rmSync(TMP_DIR, { recursive: true, force: true })
+  })
+
+  afterEach(async (): Promise<void> => {
+    fs.rmSync(TMP_DIR, { recursive: true, force: true })
+  })
   describe('parseOrProvisionKey', (): void => {
-    const TMP_DIR = './tmp'
-
-    beforeEach(async (): Promise<void> => {
-      fs.rmSync(TMP_DIR, { recursive: true, force: true })
-    })
-
-    afterEach(async (): Promise<void> => {
-      fs.rmSync(TMP_DIR, { recursive: true, force: true })
-    })
-
     test.each`
       tmpDirExists
       ${false}
@@ -98,6 +98,32 @@ describe('Config', (): void => {
       expect(keyfiles.length).toEqual(2)
       expect(keyfiles.filter((f) => f.startsWith('private')).length).toEqual(1)
       expect(fs.statSync(keyfile).mtimeMs).toEqual(fileStats.mtimeMs)
+    })
+  })
+
+  describe('loadBase64Key', (): void => {
+    test('can load base64 encoded key', (): void => {
+      const key = parseOrProvisionKey(undefined)
+      const loadedKey = loadBase64Key(
+        Buffer.from(key.export({ type: 'pkcs8', format: 'pem' })).toString(
+          'base64'
+        )
+      )
+      expect(loadedKey.export({ format: 'jwk' })).toEqual(
+        key.export({ format: 'jwk' })
+      )
+    })
+
+    test('returns undefined if not Ed25519 key', (): void => {
+      const key = crypto.generateKeyPairSync('rsa', {
+        modulusLength: 2048
+      }).privateKey
+      const loadedKey = loadBase64Key(
+        Buffer.from(key.export({ type: 'pkcs8', format: 'pem' })).toString(
+          'base64'
+        )
+      )
+      expect(loadedKey).toBeUndefined()
     })
   })
 })

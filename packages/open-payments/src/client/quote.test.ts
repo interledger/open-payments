@@ -32,7 +32,7 @@ describe('quote', (): void => {
   const logger = silentLogger
   const baseUrl = 'http://localhost:1000'
   const openApiValidators = mockOpenApiResponseValidators()
-  const paymentPointer = 'http://localhost:1000/.well-known/pay'
+  const walletAddress = 'http://localhost:1000/.well-known/pay'
   const accessToken = 'accessToken'
 
   describe('getQuote', (): void => {
@@ -75,14 +75,14 @@ describe('quote', (): void => {
 
   describe('createQuote', (): void => {
     test('returns the quote if it passes open api validation', async (): Promise<void> => {
-      const scope = nock(paymentPointer).post(`/quotes`).reply(200, quote)
+      const scope = nock(walletAddress).post(`/quotes`).reply(200, quote)
       const result = await createQuote(
         {
           axiosInstance,
           logger
         },
         {
-          paymentPointer,
+          walletAddress,
           accessToken
         },
         openApiValidators.successfulValidator,
@@ -93,7 +93,7 @@ describe('quote', (): void => {
     })
 
     test('throws if quote does not pass open api validation', async (): Promise<void> => {
-      const scope = nock(paymentPointer).post(`/quotes`).reply(200, quote)
+      const scope = nock(walletAddress).post(`/quotes`).reply(200, quote)
       await expect(() =>
         createQuote(
           {
@@ -101,7 +101,7 @@ describe('quote', (): void => {
             logger
           },
           {
-            paymentPointer,
+            walletAddress,
             accessToken
           },
           openApiValidators.failedValidator,
@@ -161,7 +161,7 @@ describe('quote', (): void => {
         const postSpy = jest
           .spyOn(requestors, 'post')
           .mockResolvedValueOnce(quote)
-        const url = `${paymentPointer}${getRSPath('/quotes')}`
+        const url = `${walletAddress}${getRSPath('/quotes')}`
 
         await createQuoteRoutes({
           openApi,
@@ -169,7 +169,7 @@ describe('quote', (): void => {
           logger
         }).create(
           {
-            paymentPointer,
+            walletAddress,
             accessToken
           },
           { receiver: quote.receiver }

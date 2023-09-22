@@ -8,13 +8,9 @@ import {
   IncomingPaymentRoutes
 } from './incoming-payment'
 import {
-  createILPStreamConnectionRoutes,
-  ILPStreamConnectionRoutes
-} from './ilp-stream-connection'
-import {
-  createPaymentPointerRoutes,
-  PaymentPointerRoutes
-} from './payment-pointer'
+  createWalletAddressRoutes,
+  WalletAddressRoutes
+} from './wallet-address'
 import { createAxiosInstance } from './requests'
 import { AxiosInstance } from 'axios'
 import { createGrantRoutes, GrantRoutes } from './grant'
@@ -68,14 +64,14 @@ export interface ResourceRequestArgs
 
 export interface CollectionRequestArgs extends AuthenticatedRequestArgs {
   /**
-   * The payment pointer URL of the requested collection.
+   * The wallet address URL of the requested collection.
    *
    * Example:
    * ```
    * https://openpayments.guide/alice`
    * ```
    */
-  paymentPointer: string
+  walletAddress: string
 }
 
 const createDeps = async (
@@ -110,12 +106,11 @@ export interface CreateUnauthenticatedClientArgs {
 }
 
 export interface UnauthenticatedClient {
-  ilpStreamConnection: ILPStreamConnectionRoutes
-  paymentPointer: PaymentPointerRoutes
+  walletAddress: WalletAddressRoutes
 }
 
 /**
- * Creates an OpenPayments client that is only able to make requests to get payment pointers, payment pointer keys, and ILP connections.
+ * Creates an OpenPayments client that is only able to make requests to get wallet addresses, wallet address keys, and ILP connections.
  */
 export const createUnauthenticatedClient = async (
   args: CreateUnauthenticatedClientArgs
@@ -125,12 +120,7 @@ export const createUnauthenticatedClient = async (
   )
 
   return {
-    ilpStreamConnection: createILPStreamConnectionRoutes({
-      axiosInstance,
-      openApi: resourceServerOpenApi,
-      logger
-    }),
-    paymentPointer: createPaymentPointerRoutes({
+    walletAddress: createWalletAddressRoutes({
       axiosInstance,
       openApi: resourceServerOpenApi,
       logger
@@ -144,8 +134,8 @@ export interface CreateAuthenticatedClientArgs
   privateKey: KeyLike
   /** The key identifier referring to the private key */
   keyId: string
-  /** The payment pointer which the client will identify itself by */
-  paymentPointerUrl: string
+  /** The wallet address which the client will identify itself by */
+  walletAddressUrl: string
 }
 
 export interface AuthenticatedClient extends UnauthenticatedClient {
@@ -173,12 +163,7 @@ export const createAuthenticatedClient = async (
       openApi: resourceServerOpenApi,
       logger
     }),
-    ilpStreamConnection: createILPStreamConnectionRoutes({
-      axiosInstance,
-      openApi: resourceServerOpenApi,
-      logger
-    }),
-    paymentPointer: createPaymentPointerRoutes({
+    walletAddress: createWalletAddressRoutes({
       axiosInstance,
       openApi: resourceServerOpenApi,
       logger
@@ -187,7 +172,7 @@ export const createAuthenticatedClient = async (
       axiosInstance,
       openApi: authServerOpenApi,
       logger,
-      client: args.paymentPointerUrl
+      client: args.walletAddressUrl
     }),
     token: createTokenRoutes({
       axiosInstance,
