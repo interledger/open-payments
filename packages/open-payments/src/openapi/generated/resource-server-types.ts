@@ -128,23 +128,6 @@ export interface components {
       keys: components["schemas"]["json-web-key"][];
     };
     /**
-     * ILP Stream Connection
-     * @description An **ILP STREAM Connection** is an endpoint that returns unique STREAM connection credentials to establish a STREAM connection to the underlying account.
-     */
-    "ilp-stream-connection": {
-      /**
-       * Format: uri
-       * @description The URL identifying the endpoint.
-       */
-      id: string;
-      /** @description The ILP address to use when establishing a STREAM connection. */
-      ilpAddress: string;
-      /** @description The base64 url-encoded shared secret to use when establishing a STREAM connection. */
-      sharedSecret: string;
-      assetCode: external["schemas.yaml"]["components"]["schemas"]["assetCode"];
-      assetScale: external["schemas.yaml"]["components"]["schemas"]["assetScale"];
-    };
-    /**
      * Incoming Payment
      * @description An **incoming payment** resource represents a payment that will be, is currently being, or has been received by the account.
      */
@@ -182,24 +165,6 @@ export interface components {
        * @description The date and time when the incoming payment was updated.
        */
       updatedAt: string;
-    };
-    /**
-     * Incoming Payment with Connection
-     * @description An **incoming payment** resource with the Interledger STREAM Connection to use to pay into the wallet address under this incoming payment.
-     */
-    "incoming-payment-with-connection": components["schemas"]["incoming-payment"] & {
-      ilpStreamConnection?: components["schemas"]["ilp-stream-connection"];
-    };
-    /**
-     * Incoming Payment with Connection
-     * @description An **incoming payment** resource with the url for the Interledger STREAM Connection resource to use to pay into the wallet address under this incoming payment.
-     */
-    "incoming-payment-with-connection-url": components["schemas"]["incoming-payment"] & {
-      /**
-       * Format: uri
-       * @description Endpoint that returns unique STREAM connection credentials to establish a STREAM connection to the underlying account.
-       */
-      ilpStreamConnection?: string;
     };
     /**
      * Public Incoming Payment
@@ -388,7 +353,7 @@ export interface operations {
         content: {
           "application/json": {
             pagination?: components["schemas"]["page-info"];
-            result?: components["schemas"]["incoming-payment-with-connection-url"][];
+            result?: components["schemas"]["incoming-payment"][];
           };
         };
       };
@@ -422,7 +387,7 @@ export interface operations {
       /** Incoming Payment Created */
       201: {
         content: {
-          "application/json": components["schemas"]["incoming-payment-with-connection"];
+          "application/json": components["schemas"]["incoming-payment"];
         };
       };
       401: components["responses"]["401"];
@@ -589,7 +554,7 @@ export interface operations {
       200: {
         content: {
           "application/json": Partial<
-            components["schemas"]["incoming-payment-with-connection"]
+            components["schemas"]["incoming-payment"]
           > &
             Partial<components["schemas"]["public-incoming-payment"]>;
         };
