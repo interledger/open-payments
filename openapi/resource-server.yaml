@@ -264,7 +264,6 @@ paths:
                           description: 'I love your website, Alice! Thanks for the great content'
                       - id: 'https://openpayments.guide/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
                         walletAddress: 'https://openpayments.guide/alice/'
-                        paymentPointer: 'https://openpayments.guide/alice/'
                         incomingAmount:
                           value: '250'
                           assetCode: USD
@@ -398,7 +397,6 @@ paths:
                     result:
                       - id: 'https://openpayments.guide/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
                         walletAddress: 'https://openpayments.guide/alice/'
-                        paymentPointer: 'https://openpayments.guide/alice/'
                         failed: false
                         receiver: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
                         receiveAmount:
@@ -886,7 +884,6 @@ components:
       title: Incoming Payment
       description: 'An **incoming payment** resource represents a payment that will be, is currently being, or has been received by the account.'
       type: object
-      additionalProperties: false
       examples:
         - id: 'https://openpayments.guide/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
           walletAddress: 'https://openpayments.guide/alice/'
@@ -1064,7 +1061,7 @@ components:
           metadata:
             description: APlusVideo subscription
             externalRef: 'customer: 847458475'
-]        - id: 'https://openpayments.guide/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
+        - id: 'https://openpayments.guide/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
           walletAddress: 'https://openpayments.guide/alice/'
           failed: false
           receiver: 'https://openpayments.guide/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
@@ -1308,8 +1305,6 @@ components:
       schema:
         type: integer
         minimum: 1
-        maximum: 100
-        default: 10
       name: first
       in: query
       description: The number of items to return after the cursor.
@@ -1317,8 +1312,6 @@ components:
       schema:
         type: integer
         minimum: 1
-        maximum: 100
-        default: 10
       name: last
       in: query
       description: The number of items to return before the cursor.
