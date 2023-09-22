@@ -99,13 +99,13 @@ export interface components {
     };
     /**
      * client
-     * @description Payment pointer of the client instance that is making this request.
+     * @description Wallet address of the client instance that is making this request.
      *
      * When sending a non-continuation request to the AS, the client instance MUST identify itself by including the client field of the request and by signing the request.
      *
-     * A JSON Web Key Set document, including the public key that the client instance will use to protect this request and any continuation requests at the AS and any user-facing information about the client instance used in interactions, MUST be available at the payment pointer + `/jwks.json` url.
+     * A JSON Web Key Set document, including the public key that the client instance will use to protect this request and any continuation requests at the AS and any user-facing information about the client instance used in interactions, MUST be available at the wallet address + `/jwks.json` url.
      *
-     * If sending a grant initiation request that requires RO interaction, the payment pointer MUST serve necessary client display information.
+     * If sending a grant initiation request that requires RO interaction, the wallet address MUST serve necessary client display information.
      */
     client: string;
     /**

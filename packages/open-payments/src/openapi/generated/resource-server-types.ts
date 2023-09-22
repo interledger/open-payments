@@ -6,41 +6,23 @@
 export interface paths {
   "/": {
     /**
-     * Retrieve the public information of the Payment Pointer.
+     * Retrieve the public information of the Wallet Address.
      *
-     * This end-point should be open to anonymous requests as it allows clients to verify a Payment Pointer URL and get the basic information required to construct new transactions and discover the grant request URL.
+     * This end-point should be open to anonymous requests as it allows clients to verify a Wallet Address URL and get the basic information required to construct new transactions and discover the grant request URL.
      *
      * The content should be slow changing and cacheable for long periods. Servers SHOULD use cache control headers.
      */
-    get: operations["get-payment-pointer"];
+    get: operations["get-wallet-address"];
   };
   "/jwks.json": {
-    /** Retrieve the public keys of the Payment Pointer. */
-    get: operations["get-payment-pointer-keys"];
-  };
-  "/connections/{id}": {
-    /**
-     * *NB* Use server url specific to this path.
-     *
-     * Fetch new connection credentials for an ILP STREAM connection.
-     *
-     * A connection is an ephemeral resource that is created to accommodate new incoming payments.
-     *
-     * A new set of credential will be generated each time this API is called.
-     */
-    get: operations["get-ilp-stream-connection"];
-    parameters: {
-      path: {
-        /** Sub-resource identifier */
-        id: components["parameters"]["id"];
-      };
-    };
+    /** Retrieve the public keys of the Wallet Address. */
+    get: operations["get-wallet-address-keys"];
   };
   "/incoming-payments": {
-    /** List all incoming payments on the payment pointer */
+    /** List all incoming payments on the wallet address */
     get: operations["list-incoming-payments"];
     /**
-     * A client MUST create an **incoming payment** resource before it is possible to send any payments to the payment pointer.
+     * A client MUST create an **incoming payment** resource before it is possible to send any payments to the wallet address.
      *
      * When a client creates an **incoming payment** the receiving Account Servicing Entity generates unique payment details that can be used to address payments to the account and returns these details to the client as properties of the new **incoming payment**. Any payments received using those details are then associated with the **incoming payment**.
      *
@@ -54,24 +36,24 @@ export interface paths {
      */
     post: operations["create-incoming-payment"];
   };
-  /** Create a new outgoing payment at the payment pointer. */
+  /** Create a new outgoing payment at the wallet address. */
   "/outgoing-payments": {
-    /** List all outgoing payments on the payment pointer */
+    /** List all outgoing payments on the wallet address */
     get: operations["list-outgoing-payments"];
     /**
-     * An **outgoing payment** is a sub-resource of a payment pointer. It represents a payment from the payment pointer.
+     * An **outgoing payment** is a sub-resource of a wallet address. It represents a payment from the wallet address.
      *
      * Once created, it is already authorized and SHOULD be processed immediately. If payment fails, the Account Servicing Entity must mark the **outgoing payment** as `failed`.
      */
     post: operations["create-outgoing-payment"];
   };
-  /** Create a new quote at the payment pointer. */
+  /** Create a new quote at the wallet address. */
   "/quotes": {
-    /** A **quote** is a sub-resource of a payment pointer. It represents a quote for a payment from the payment pointer. */
+    /** A **quote** is a sub-resource of a wallet address. It represents a quote for a payment from the wallet address. */
     post: operations["create-quote"];
   };
   "/incoming-payments/{id}": {
-    /** A client can fetch the latest state of an incoming payment to determine the amount received into the payment pointer. */
+    /** A client can fetch the latest state of an incoming payment to determine the amount received into the wallet address. */
     get: operations["get-incoming-payment"];
     parameters: {
       path: {
@@ -119,13 +101,13 @@ export interface paths {
 export interface components {
   schemas: {
     /**
-     * Payment Pointer
-     * @description A **payment pointer** resource is the root of the API and contains the public details of the financial account represented by the Payment Pointer that is also the service endpoint URL.
+     * Wallet Address
+     * @description A **wallet address** resource is the root of the API and contains the public details of the financial account represented by the Wallet Address that is also the service endpoint URL.
      */
-    "payment-pointer": {
+    "wallet-address": {
       /**
        * Format: uri
-       * @description The URL identifying the payment pointer.
+       * @description The URL identifying the wallet address.
        */
       id: string;
       /** @description A public name for the account. This should be set by the account holder with their provider to provide a hint to counterparties as to the identity of the account holder. */
@@ -134,13 +116,13 @@ export interface components {
       assetScale: external["schemas.yaml"]["components"]["schemas"]["assetScale"];
       /**
        * Format: uri
-       * @description The URL of the authorization server endpoint for getting grants and access tokens for this payment pointer.
+       * @description The URL of the authorization server endpoint for getting grants and access tokens for this wallet address.
        */
       authServer: string;
     };
     /**
      * JSON Web Key Set document
-     * @description A JSON Web Key Set document according to [rfc7517](https://datatracker.ietf.org/doc/html/rfc7517) listing the keys associated with this payment pointer. These keys are used to sign requests made by this payment pointer.
+     * @description A JSON Web Key Set document according to [rfc7517](https://datatracker.ietf.org/doc/html/rfc7517) listing the keys associated with this wallet address. These keys are used to sign requests made by this wallet address.
      */
     "json-web-key-set": {
       keys: components["schemas"]["json-web-key"][];
@@ -174,14 +156,14 @@ export interface components {
       id: string;
       /**
        * Format: uri
-       * @description The URL of the payment pointer this payment is being made into.
+       * @description The URL of the wallet address this payment is being made into.
        */
-      paymentPointer: string;
+      walletAddress: string;
       /** @description Describes whether the incoming payment has completed receiving fund. */
       completed: boolean;
-      /** @description The maximum amount that should be paid into the payment pointer under this incoming payment. */
+      /** @description The maximum amount that should be paid into the wallet address under this incoming payment. */
       incomingAmount?: external["schemas.yaml"]["components"]["schemas"]["amount"];
-      /** @description The total amount that has been paid into the payment pointer under this incoming payment. */
+      /** @description The total amount that has been paid into the wallet address under this incoming payment. */
       receivedAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
       /**
        * Format: date-time
@@ -203,14 +185,14 @@ export interface components {
     };
     /**
      * Incoming Payment with Connection
-     * @description An **incoming payment** resource with the Interledger STREAM Connection to use to pay into the payment pointer under this incoming payment.
+     * @description An **incoming payment** resource with the Interledger STREAM Connection to use to pay into the wallet address under this incoming payment.
      */
     "incoming-payment-with-connection": components["schemas"]["incoming-payment"] & {
       ilpStreamConnection?: components["schemas"]["ilp-stream-connection"];
     };
     /**
      * Incoming Payment with Connection
-     * @description An **incoming payment** resource with the url for the Interledger STREAM Connection resource to use to pay into the payment pointer under this incoming payment.
+     * @description An **incoming payment** resource with the url for the Interledger STREAM Connection resource to use to pay into the wallet address under this incoming payment.
      */
     "incoming-payment-with-connection-url": components["schemas"]["incoming-payment"] & {
       /**
@@ -220,8 +202,15 @@ export interface components {
       ilpStreamConnection?: string;
     };
     /**
+     * Public Incoming Payment
+     * @description An **incoming payment** resource with public details.
+     */
+    "public-incoming-payment": {
+      receiveAmount?: external["schemas.yaml"]["components"]["schemas"]["amount"];
+    };
+    /**
      * Outgoing Payment
-     * @description An **outgoing payment** resource represents a payment that will be, is currently being, or has previously been, sent from the payment pointer.
+     * @description An **outgoing payment** resource represents a payment that will be, is currently being, or has previously been, sent from the wallet address.
      */
     "outgoing-payment": {
       /**
@@ -231,9 +220,9 @@ export interface components {
       id: string;
       /**
        * Format: uri
-       * @description The URL of the payment pointer from which this payment is sent.
+       * @description The URL of the wallet address from which this payment is sent.
        */
-      paymentPointer: string;
+      walletAddress: string;
       /**
        * Format: uri
        * @description The URL of the quote defining this payment's amounts.
@@ -274,9 +263,9 @@ export interface components {
       id: string;
       /**
        * Format: uri
-       * @description The URL of the payment pointer from which this quote's payment would be sent.
+       * @description The URL of the wallet address from which this quote's payment would be sent.
        */
-      paymentPointer: string;
+      walletAddress: string;
       /** @description The URL of the incoming payment or ILP STREAM Connection that the quote is created for. */
       receiver: external["schemas.yaml"]["components"]["schemas"]["receiver"];
       /** @description The total amount that should be received by the receiver when the corresponding outgoing payment has been paid. */
@@ -332,34 +321,38 @@ export interface components {
     /** @description Sub-resource identifier */
     id: string;
     /** @description The signature generated based on the Signature-Input, using the signing algorithm specified in the "alg" field of the JWK. */
-    signature: string;
+    signature: components["parameters"]["optional-signature"];
     /** @description The Signature-Input field is a Dictionary structured field containing the metadata for one or more message signatures generated from components within the HTTP message.  Each member describes a single message signature.  The member's key is the label that uniquely identifies the message signature within the context of the HTTP message.  The member's value is the serialization of the covered components Inner List plus all signature metadata parameters identified by the label.  The following components MUST be included: - "@method" - "@target-uri" - "authorization".  When the message contains a request body, the covered components MUST also include the following: - "content-digest"  The keyid parameter of the signature MUST be set to the kid value of the JWK.      See [ietf-httpbis-message-signatures](https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-message-signatures#section-4.1) for more details. */
-    "signature-input": string;
+    "signature-input": components["parameters"]["optional-signature-input"];
+    /** @description The signature generated based on the Signature-Input, using the signing algorithm specified in the "alg" field of the JWK. */
+    "optional-signature": string;
+    /** @description The Signature-Input field is a Dictionary structured field containing the metadata for one or more message signatures generated from components within the HTTP message.  Each member describes a single message signature.  The member's key is the label that uniquely identifies the message signature within the context of the HTTP message.  The member's value is the serialization of the covered components Inner List plus all signature metadata parameters identified by the label.  The following components MUST be included: - "@method" - "@target-uri" - "authorization".  When the message contains a request body, the covered components MUST also include the following: - "content-digest"  The keyid parameter of the signature MUST be set to the kid value of the JWK.      See [ietf-httpbis-message-signatures](https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-message-signatures#section-4.1) for more details. */
+    "optional-signature-input": string;
   };
 }
 
 export interface operations {
   /**
-   * Retrieve the public information of the Payment Pointer.
+   * Retrieve the public information of the Wallet Address.
    *
-   * This end-point should be open to anonymous requests as it allows clients to verify a Payment Pointer URL and get the basic information required to construct new transactions and discover the grant request URL.
+   * This end-point should be open to anonymous requests as it allows clients to verify a Wallet Address URL and get the basic information required to construct new transactions and discover the grant request URL.
    *
    * The content should be slow changing and cacheable for long periods. Servers SHOULD use cache control headers.
    */
-  "get-payment-pointer": {
+  "get-wallet-address": {
     responses: {
-      /** Payment Pointer Found */
+      /** Wallet Address Found */
       200: {
         content: {
-          "application/json": components["schemas"]["payment-pointer"];
+          "application/json": components["schemas"]["wallet-address"];
         };
       };
-      /** Payment Pointer Not Found */
+      /** Wallet Address Not Found */
       404: unknown;
     };
   };
-  /** Retrieve the public keys of the Payment Pointer. */
-  "get-payment-pointer-keys": {
+  /** Retrieve the public keys of the Wallet Address. */
+  "get-wallet-address-keys": {
     responses: {
       /** JWKS Document Found */
       200: {
@@ -371,34 +364,7 @@ export interface operations {
       404: unknown;
     };
   };
-  /**
-   * *NB* Use server url specific to this path.
-   *
-   * Fetch new connection credentials for an ILP STREAM connection.
-   *
-   * A connection is an ephemeral resource that is created to accommodate new incoming payments.
-   *
-   * A new set of credential will be generated each time this API is called.
-   */
-  "get-ilp-stream-connection": {
-    parameters: {
-      path: {
-        /** Sub-resource identifier */
-        id: components["parameters"]["id"];
-      };
-    };
-    responses: {
-      /** Connection Found */
-      200: {
-        content: {
-          "application/json": components["schemas"]["ilp-stream-connection"];
-        };
-      };
-      /** Connection Not Found */
-      404: unknown;
-    };
-  };
-  /** List all incoming payments on the payment pointer */
+  /** List all incoming payments on the wallet address */
   "list-incoming-payments": {
     parameters: {
       query: {
@@ -431,7 +397,7 @@ export interface operations {
     };
   };
   /**
-   * A client MUST create an **incoming payment** resource before it is possible to send any payments to the payment pointer.
+   * A client MUST create an **incoming payment** resource before it is possible to send any payments to the wallet address.
    *
    * When a client creates an **incoming payment** the receiving Account Servicing Entity generates unique payment details that can be used to address payments to the account and returns these details to the client as properties of the new **incoming payment**. Any payments received using those details are then associated with the **incoming payment**.
    *
@@ -465,12 +431,12 @@ export interface operations {
     /**
      * A subset of the incoming payments schema is accepted as input to create a new incoming payment.
      *
-     * The `incomingAmount` must use the same `assetCode` and `assetScale` as the payment pointer.
+     * The `incomingAmount` must use the same `assetCode` and `assetScale` as the wallet address.
      */
     requestBody: {
       content: {
         "application/json": {
-          /** @description The maximum amount that should be paid into the payment pointer under this incoming payment. */
+          /** @description The maximum amount that should be paid into the wallet address under this incoming payment. */
           incomingAmount?: external["schemas.yaml"]["components"]["schemas"]["amount"];
           /**
            * Format: date-time
@@ -483,7 +449,7 @@ export interface operations {
       };
     };
   };
-  /** List all outgoing payments on the payment pointer */
+  /** List all outgoing payments on the wallet address */
   "list-outgoing-payments": {
     parameters: {
       query: {
@@ -516,7 +482,7 @@ export interface operations {
     };
   };
   /**
-   * An **outgoing payment** is a sub-resource of a payment pointer. It represents a payment from the payment pointer.
+   * An **outgoing payment** is a sub-resource of a wallet address. It represents a payment from the wallet address.
    *
    * Once created, it is already authorized and SHOULD be processed immediately. If payment fails, the Account Servicing Entity must mark the **outgoing payment** as `failed`.
    */
@@ -542,7 +508,7 @@ export interface operations {
     /**
      * A subset of the outgoing payments schema is accepted as input to create a new outgoing payment.
      *
-     * The `debitAmount` must use the same `assetCode` and `assetScale` as the payment pointer.
+     * The `debitAmount` must use the same `assetCode` and `assetScale` as the wallet address.
      */
     requestBody: {
       content: {
@@ -558,7 +524,7 @@ export interface operations {
       };
     };
   };
-  /** A **quote** is a sub-resource of a payment pointer. It represents a quote for a payment from the payment pointer. */
+  /** A **quote** is a sub-resource of a wallet address. It represents a quote for a payment from the wallet address. */
   "create-quote": {
     parameters: {
       header: {
@@ -593,18 +559,18 @@ export interface operations {
             }
           | {
               receiver: external["schemas.yaml"]["components"]["schemas"]["receiver"];
-              /** @description The fixed amount that would be paid into the receiving payment pointer given a successful outgoing payment. */
+              /** @description The fixed amount that would be paid into the receiving wallet address given a successful outgoing payment. */
               receiveAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
             }
           | {
               receiver: external["schemas.yaml"]["components"]["schemas"]["receiver"];
-              /** @description The fixed amount that would be sent from the sending payment pointer given a successful outgoing payment. */
+              /** @description The fixed amount that would be sent from the sending wallet address given a successful outgoing payment. */
               debitAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
             };
       };
     };
   };
-  /** A client can fetch the latest state of an incoming payment to determine the amount received into the payment pointer. */
+  /** A client can fetch the latest state of an incoming payment to determine the amount received into the wallet address. */
   "get-incoming-payment": {
     parameters: {
       path: {
@@ -613,16 +579,19 @@ export interface operations {
       };
       header: {
         /** The Signature-Input field is a Dictionary structured field containing the metadata for one or more message signatures generated from components within the HTTP message.  Each member describes a single message signature.  The member's key is the label that uniquely identifies the message signature within the context of the HTTP message.  The member's value is the serialization of the covered components Inner List plus all signature metadata parameters identified by the label.  The following components MUST be included: - "@method" - "@target-uri" - "authorization".  When the message contains a request body, the covered components MUST also include the following: - "content-digest"  The keyid parameter of the signature MUST be set to the kid value of the JWK.      See [ietf-httpbis-message-signatures](https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-message-signatures#section-4.1) for more details. */
-        "Signature-Input": components["parameters"]["signature-input"];
+        "Signature-Input"?: components["parameters"]["optional-signature-input"];
         /** The signature generated based on the Signature-Input, using the signing algorithm specified in the "alg" field of the JWK. */
-        Signature: components["parameters"]["signature"];
+        Signature?: components["parameters"]["optional-signature"];
       };
     };
     responses: {
       /** Incoming Payment Found */
       200: {
         content: {
-          "application/json": components["schemas"]["incoming-payment-with-connection"];
+          "application/json": Partial<
+            components["schemas"]["incoming-payment-with-connection"]
+          > &
+            Partial<components["schemas"]["public-incoming-payment"]>;
         };
       };
       401: components["responses"]["401"];

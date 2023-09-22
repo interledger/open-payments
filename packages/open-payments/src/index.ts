@@ -13,7 +13,7 @@ export {
   JWK,
   JWKS,
   PaginationArgs,
-  PaymentPointer,
+  WalletAddress,
   AccessType,
   AccessAction,
   AccessToken,
@@ -29,7 +29,7 @@ export {
 
 export {
   mockILPStreamConnection,
-  mockPaymentPointer,
+  mockWalletAddress,
   mockIncomingPayment,
   mockIncomingPaymentWithConnection,
   mockIncomingPaymentWithConnectionUrl,
