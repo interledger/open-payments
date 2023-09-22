@@ -1,0 +1,50 @@
+---
+title: Create an incoming payment
+---
+
+import { Disclosure, CodeBlock } from '@interledger/docs-design-system'
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+import FullSnippet from '/src/components/FullSnippet.astro'
+import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
+import Global from '/src/partials/global-prerequisites.mdx'
+import Ts from '/src/partials/ts-prerequisites.mdx'
+
+Once an authorized client obtains the requisite grant from the recipient’s authentication server, the client must create an incoming payment resource before any payments can be sent to the recipient’s payment pointer.
+
+These code snippets create an incoming payment of $10 USD at a given payment pointer, allowing subsequent payments to be sent to that payment pointer up to $10 USD.
+
+## Before you begin
+
+<Global />
+
+## Create an incoming payment resource
+
+<Tabs>
+<TabItem label='TypeScript'>
+<Ts />
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/incoming-payment/incoming-payment-create.ts'
+  chunk='1'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/incoming-payment/incoming-payment-create.ts'
+  chunk='2'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/incoming-payment/incoming-payment-create.ts'
+  chunk='3'
+/>
+
+</TabItem>
+</Tabs>
+
+<Disclosure toggleText='View full source' client:load>
+  <FullSnippet source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/incoming-payment/incoming-payment-create.ts' />
+</Disclosure>
+
+## References
+
+- [API specification](/apis/resource-server/operations/create-incoming-payment)

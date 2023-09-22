@@ -1,0 +1,52 @@
+---
+title: Rotate an access token
+---
+
+import { Disclosure, CodeBlock } from '@interledger/docs-design-system'
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+import FullSnippet from '/src/components/FullSnippet.astro'
+import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
+import Global from '/src/partials/global-prerequisites.mdx'
+import Ts from '/src/partials/ts-prerequisites.mdx'
+
+Rotating an access token consists of the authorization server issuing a new token in place of the existing token, with the same rights and properties as the original token. If, for example, an access token expires, an authorized client can request the token be rotated.
+
+All access tokens in Open Payments have a 10-minute lifespan by default. This includes new access tokens issued as a result of a rotate request.
+
+These code snippets enable the client to call a management endpoint to rotate the specified access token.
+
+## Before you begin
+
+<Global />
+
+## Rotate an access token
+
+<Tabs>
+<TabItem label='TypeScript'>
+<Ts />
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/token/token-rotate.ts'
+  chunk='1'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/token/token-rotate.ts'
+  chunk='2'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/token/token-rotate.ts'
+  chunk='3'
+/>
+
+</TabItem>
+</Tabs>
+
+<Disclosure toggleText='View full source' client:load>
+  <FullSnippet source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/token/token-rotate.ts' />
+</Disclosure>
+
+## References
+
+- [API specification](/apis/auth-server/operations/post-token)

@@ -1,0 +1,126 @@
+---
+title: Create a grant request
+---
+
+import { Disclosure, CodeBlock } from '@interledger/docs-design-system'
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+import FullSnippet from '/src/components/FullSnippet.astro'
+import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
+import Global from '/src/partials/global-prerequisites.mdx'
+import Ts from '/src/partials/ts-prerequisites.mdx'
+
+Before a client can call the Open Payments API, it must request/receive a grant from the appropriate authorization server. The request must indicate the resource the client intends to work with and the actions the client wants to take at the resource server.
+
+These code snippets enable a client to request a grant for each supported resource (incoming-payment, quote, and outgoing-payment). Each grant request includes all valid actions the client can take for the resource at the resource server.
+
+:::note
+When constructing a transaction, the client requests a grant to create an incoming-payment resource from the recipient’s (payee) authorization server. The client requests grants for quote and outgoing-payment resources from the sender’s (payer) auth server.
+:::
+
+## Before you begin
+
+<Global />
+
+## Request an incoming payment grant
+
+<Tabs>
+<TabItem label='TypeScript'>
+<Ts />
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-incoming-payment.ts'
+  chunk='1'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-incoming-payment.ts'
+  chunk='2'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-incoming-payment.ts'
+  chunk='3'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-incoming-payment.ts'
+  chunk='4'
+/>
+
+</TabItem>
+</Tabs>
+
+<Disclosure toggleText='View full source' client:load>
+  <FullSnippet source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-incoming-payment.ts' />
+</Disclosure>
+
+## Request a quote grant
+
+<Tabs>
+<TabItem label='TypeScript'>
+<Ts />
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-quote.ts'
+  chunk='1'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-quote.ts'
+  chunk='2'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-quote.ts'
+  chunk='3'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-quote.ts'
+  chunk='4'
+/>
+
+</TabItem>
+</Tabs>
+
+<Disclosure toggleText='View full source' client:load>
+  <FullSnippet source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-quote.ts' />
+</Disclosure>
+
+## Request an outgoing payment grant
+
+<Tabs>
+<TabItem label='TypeScript'>
+<Ts />
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-outgoing-payment.ts'
+  chunk='1'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-outgoing-payment.ts'
+  chunk='2'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-outgoing-payment.ts'
+  chunk='3'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-outgoing-payment.ts'
+  chunk='4'
+/>
+
+</TabItem>
+</Tabs>
+
+<Disclosure toggleText='View full source' client:load>
+  <FullSnippet source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-outgoing-payment.ts' />
+</Disclosure>
+
+## References
+
+- [Grant negotiation and authorization](/introduction/grants)
+- [API specification](/apis/auth-server/operations/post-request)

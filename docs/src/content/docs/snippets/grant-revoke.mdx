@@ -1,0 +1,52 @@
+---
+title: Revoke a grant request
+---
+
+import { Disclosure, CodeBlock } from '@interledger/docs-design-system'
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+import FullSnippet from '/src/components/FullSnippet.astro'
+import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
+import Global from '/src/partials/global-prerequisites.mdx'
+import Ts from '/src/partials/ts-prerequisites.mdx'
+
+If an authorized client no longer needs access to protected resources, the client can revoke the corresponding grant request. These code snippets enable a client to revoke (cancel) a grant that it was previously issued. When a grant request is revoked, the request is placed into a finalized state and no further updates to the grant are allowed.
+
+## Before you begin
+
+<Disclosure toggleText='Click to expand' client:load>
+
+<Global />
+
+</Disclosure>
+
+## Revoke a grant request
+
+<Tabs>
+<TabItem label='TypeScript'>
+<Ts />
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-revoke.ts'
+  chunk='1'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-revoke.ts'
+  chunk='2'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-revoke.ts'
+  chunk='3'
+/>
+
+</TabItem>
+</Tabs>
+
+<Disclosure toggleText='View full source' client:load>
+  <FullSnippet source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-revoke.ts' />
+</Disclosure>
+
+## References
+
+- [API specification](/apis/auth-server/operations/delete-continue)

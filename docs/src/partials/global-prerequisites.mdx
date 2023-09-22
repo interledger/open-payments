@@ -1,0 +1,20 @@
+import { Disclosure } from '@interledger/docs-design-system'
+import Account from '/src/partials/testnet-account.mdx'
+import Wallet from '/src/partials/testnet-wallet-account.mdx'
+import Keys from '/src/partials/testnet-wallet-keys.mdx'
+
+<Disclosure toggleText='Click to expand' client:load>
+
+Before you begin, we recommend setting yourself up on the Interledger testnet. Doing so provides you with developer keys and test wallets funded with play money. Use the test wallets to make Interledger transactions via the Open Payments API.
+
+<Disclosure toggleText='1. Interledger testnet account' client:load>
+  <Account />
+</Disclosure>
+<Disclosure toggleText='2. Testnet wallet account' client:load>
+  <Wallet />
+</Disclosure>
+<Disclosure toggleText='3. Public key, private key, and key ID' client:load>
+  <Keys />
+</Disclosure>
+
+</Disclosure>

@@ -1,51 +1,131 @@
-# Starlight Starter Kit: Basics
+# OpenPayments API documentation
 
-```
-npm create astro@latest -- --template starlight
-```
+This repo is the code behind [openpayments.guide](https://openpayments.guide), the documentation website for the OpenPayments API.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/starlight/tree/main/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/starlight/tree/main/examples/basics)
+## Contribute
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+This website is built with [Starlight](https://starlight.astro.build/), a documentation framework based on [Astro](https://astro.build/).
 
-## 🚀 Project Structure
+### Local Development
 
-Inside of your Astro + Starlight project, you'll see the following folders and files:
+- Make sure all the dependencies for the website are installed. Because this is a monorepo, you should run the following command in the root of the project folder:
 
-```
-.
-├── public/
-├── src/
-│   ├── assets/
-│   ├── content/
-│   │   ├── docs/
-│   │   └── config.ts
-│   └── env.d.ts
-├── astro.config.mjs
-├── package.json
-└── tsconfig.json
+```sh
+$ pnpm i
 ```
 
-Starlight looks for `.md` or `.mdx` files in the `src/content/docs/` directory. Each file is exposed as a route based on its file name.
+- Run the dev server from the /docs folder:
 
-Images can be added to `src/assets/` and embedded in Markdown with a relative link.
+```sh
+$ pnpm start
+```
 
-Static assets, like favicons, can be placed in the `public/` directory.
+This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
 
-## 🧞 Commands
+- Build the site, again, this must be run from the /docs folder:
 
-All commands are run from the root of the project, from a terminal:
+```sh
+$ pnpm build
+```
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+This command generates static content into the build directory and can be served using any static contents hosting service.
 
-## 👀 Want to learn more?
+## Editing Content
 
-Check out [Starlight’s docs](https://starlight.astro.build/), read [the Astro documentation](https://docs.astro.build), or jump into the [Astro Discord server](https://astro.build/chat).
+Starlight looks for `.md` or `.mdx` files in the `src/content/docs/` directory. Each file is exposed as a route based on its file name. Due to the nature of how Starlight deals with content and their generated URLs, all docs content lives in `/src/content/docs/`. For example, the home page of the documentation lives within the `/src/content/docs/` folder and is rendered at openpayments.guide, not openpayments.guide/docs.
+
+Static assets, like favicons or images, can be placed in the `public/` directory. When referencing these assets in your markdown, you do not have to include `public/` in the file path, so an image would have a path like:
+
+```md
+![A lovely description of your beautiful image](/img/YOUR_BEAUTIFUL_IMAGE.png)
+```
+
+### Editing an existing docs page
+
+Edit docs by navigating to `/src/content/docs` and editing the corresponding document:
+
+`/src/content/docs/RELEVANT_FOLDER/doc-to-be-edited.md`
+
+```markdown
+---
+title: This Doc Needs To Be Edited
+---
+
+Edit me...
+```
+
+Refer to the Starlight documentation on [authoring content](https://starlight.astro.build/guides/authoring-content/) for more detailed guidance.
+
+### Docs components
+
+We have extracted some of the commonly repeated patterns within the documentation pages into custom docs components that can be reused. There are components which are shared across all our Starlight documentation sites and those which are specific to this project only. This will determine what the import path is.
+
+- CodeBlock (Shared)
+- Disclosure (Shared)
+- Hidden (Shared)
+- LargeImg (Shared)
+- LinkOut (Shared)
+- MermaidWrapper (Shared)
+- StylishHeader (Shared)
+- Tooltip (Shared)
+
+- [Snippet](#snippet-component) (Project-specific)
+
+For the shared components, if you are using both `CodeBlock` and `Disclosure` on the same page, you can import them both like so:
+
+```jsx
+import { CodeBlock, Disclosure } from '@interledger/docs-design-system'
+```
+
+For more information about importing things in Javascript, please refer to [import on MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import).
+
+The available shared components are documented at our [documentation style guide](https://interledger.tech).
+
+1. #### `Snippet` component
+
+   Use this component if you wish pull an entire file from a public Github repository to be displayed as code. It takes a `source` attribute, which will be displayed above the code. To use it, your docs page must be in `.mdx` format. Please change the format from `.md` to `.mdx` if necessary. All your existing markdown will still be supported without issue. Import the `Snippet` component like so:
+
+   ```jsx
+   import Snippet from '/src/components/Snippet.astro'
+   ```
+
+   Use the `<Snippet>` component within your content like so:
+
+   ```
+   <Snippet source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/incoming-payment/incoming-payment-create.ts' />
+   ```
+
+## Adding Content
+
+### Adding a new docs page to an existing sidebar
+
+1. Create the doc as a new markdown file in `/src/content/docs/docs/RELEVANT_FOLDER`, example
+   `/src/content/docs/docs/RELEVANT_FOLDER/newly-created-doc.md`:
+
+```md
+---
+title: This Doc Needs To Be Written
+---
+
+My new content here..
+```
+
+The sidebar of the documentation site is configured in the `astro.config.mjs`. Refer to the Starlight documentation on [sidebar configuration](https://starlight.astro.build/reference/configuration/#sidebar/) for more detailed guidance.
+
+### Adding custom pages
+
+Astro is a content-focused web framework that integrates with a lot of existing framework libraries, making it relatively flexible for building customised sites.
+
+Pages exist in the `/src/pages` directory, and out-of-the-box come with absolutely nothing. For the web monetization website, we have created custom layout components that form the frame of a basic HTML web page, and allow you to add content that would populate the `main` element of the page via a concept known as [slots](https://docs.astro.build/en/core-concepts/astro-components/#slots). A `<slot />` allows you to specify where individual page content should be injected.
+
+```jsx
+---
+import i18next, { t, changeLanguage } from "i18next";
+import Base from '../layouts/Base.astro';
+---
+<Base>
+  /* Page content goes here */
+</Base>
+```
+
+Refer to the Astro documentation on [pages](https://docs.astro.build/en/core-concepts/astro-pages/) for more detailed guidance.

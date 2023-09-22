@@ -1,14 +1,16 @@
-/* Site title styling */
-.site-title {
-  font-size: larger;
-  font-weight: normal;
-  color: var(--sl-color-text);
-  gap: var(--space-xs);
+/* Site logo on dark mode */
+[data-theme='dark'] .logo-text {
+  fill: white;
 }
 
 /* Splash page styling */
 .card-link {
   text-decoration: none;
+}
+
+/* Weird issues with long code comments not breaking */
+.codeblock {
+  max-width: 48rem;
 }
 
 /* OpenAPI specification styling */
@@ -73,4 +75,9 @@ div > span.type {
 
 .description details {
   border-inline-start-color: var(--sl-color-gray-5);
+}
+
+/* To remove after re-upgrade of Starlight */
+.site-title {
+  gap: var(--space-xs);
 }

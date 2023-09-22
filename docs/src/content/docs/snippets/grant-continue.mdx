@@ -1,0 +1,52 @@
+---
+title: Continue a grant request
+---
+
+import { Disclosure, CodeBlock } from '@interledger/docs-design-system'
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+import FullSnippet from '/src/components/FullSnippet.astro'
+import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
+import Global from '/src/partials/global-prerequisites.mdx'
+import Ts from '/src/partials/ts-prerequisites.mdx'
+
+An authorization server will place a grant request into a pending state if the server requires additional communication from the client to facilitate interaction. When interaction is complete, the authorization server responds to the client with an interaction reference.
+
+The client must include the reference (as the `interact_ref`) in a grant continuation request to indicate the grant request should be moved from pending to processing for reevaluation by the auth server.
+
+These code snippets enable an authorized client to issue a grant continuation request to the authorization server after a completed interaction.
+
+## Before you begin
+
+<Global />
+
+## Issue grant continuation request
+
+<Tabs>
+<TabItem label='TypeScript'>
+<Ts />
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-continuation.ts'
+  chunk='1'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-continuation.ts'
+  chunk='2'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-continuation.ts'
+  chunk='3'
+/>
+
+</TabItem>
+</Tabs>
+
+<Disclosure toggleText='View full source' client:load>
+  <FullSnippet source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-continuation.ts' />
+</Disclosure>
+
+## References
+
+- [API specification](/apis/auth-server/operations/post-continue)

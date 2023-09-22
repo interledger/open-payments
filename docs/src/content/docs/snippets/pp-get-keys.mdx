@@ -1,0 +1,52 @@
+---
+title: Get keys bound to a payment pointer
+---
+
+import { Disclosure, CodeBlock } from '@interledger/docs-design-system'
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+import FullSnippet from '/src/components/FullSnippet.astro'
+import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
+import Global from '/src/partials/global-prerequisites.mdx'
+import Ts from '/src/partials/ts-prerequisites.mdx'
+
+While most Open Payments code snippets are intended for clients, getting the keys bound to a payment pointer is primarily a function of account servicing entities.
+
+When an authorization server receives a signed grant request, the auth server makes a call to acquire the keys. When a client makes a request to a resource server, the resource server calls the auth server to ensure the signature of the request corresponds to the public JWK of the payment pointer.
+
+These code snippets get the keys associated with a specified payment pointer.
+
+## Before you begin
+
+<Global />
+
+## Retrieve a payment pointer's public keys
+
+<Tabs>
+<TabItem label='TypeScript'>
+<Ts />
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/payment-pointer/payment-pointer-get-keys.ts'
+  chunk='1'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/payment-pointer/payment-pointer-get-keys.ts'
+  chunk='2'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/payment-pointer/payment-pointer-get-keys.ts'
+  chunk='3'
+/>
+
+</TabItem>
+</Tabs>
+
+<Disclosure toggleText='View full source' client:load>
+  <FullSnippet source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/payment-pointer/payment-pointer-get-keys.ts' />
+</Disclosure>
+
+## References
+
+- [API specification](/apis/resource-server/operations/get-wallet-address-keys)

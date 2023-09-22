@@ -1,0 +1,50 @@
+---
+title: Get an incoming payment
+---
+
+import { Disclosure, CodeBlock } from '@interledger/docs-design-system'
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+import FullSnippet from '/src/components/FullSnippet.astro'
+import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
+import Global from '/src/partials/global-prerequisites.mdx'
+import Ts from '/src/partials/ts-prerequisites.mdx'
+
+An authorized client can look up the state of an incoming payment on a payment pointer. This is useful when a client must determine if an incoming payment is still active and pending payment.
+
+These code snippets return the state and details of a specific incoming payment, if found.
+
+## Before you begin
+
+<Global />
+
+## Get the state of an incoming payment
+
+<Tabs>
+<TabItem label='TypeScript'>
+<Ts />
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/incoming-payment/incoming-payment-get.ts'
+  chunk='1'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/incoming-payment/incoming-payment-get.ts'
+  chunk='2'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/incoming-payment/incoming-payment-get.ts'
+  chunk='3'
+/>
+
+</TabItem>
+</Tabs>
+
+<Disclosure toggleText='View full source' client:load>
+  <FullSnippet source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/incoming-payment/incoming-payment-get.ts' />
+</Disclosure>
+
+## References
+
+- [API specification](/apis/resource-server/operations/get-incoming-payment)

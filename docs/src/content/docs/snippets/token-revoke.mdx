@@ -1,0 +1,50 @@
+---
+title: Revoke an access token
+---
+
+import { Disclosure, CodeBlock } from '@interledger/docs-design-system'
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+import FullSnippet from '/src/components/FullSnippet.astro'
+import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
+import Global from '/src/partials/global-prerequisites.mdx'
+import Ts from '/src/partials/ts-prerequisites.mdx'
+
+Revoking an access token consists of the authorization server invalidating the token for all purposes. If, for example, a user indicates to a client that they no longer want the client to have access to something, the client can request the associated token be revoked.
+
+These code snippets enable the client to call a management endpoint to revoke the specified access token.
+
+## Before you begin
+
+<Global />
+
+## Revoke an access token
+
+<Tabs>
+<TabItem label='TypeScript'>
+<Ts />
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/token/token-revoke.ts'
+  chunk='1'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/token/token-revoke.ts'
+  chunk='2'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/token/token-revoke.ts'
+  chunk='3'
+/>
+
+</TabItem>
+</Tabs>
+
+<Disclosure toggleText='View full source' client:load>
+  <FullSnippet source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/token/token-revoke.ts' />
+</Disclosure>
+
+## References
+
+- [API specification](/apis/auth-server/operations/delete-token)

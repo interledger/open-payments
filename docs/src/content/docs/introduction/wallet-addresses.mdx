@@ -1,0 +1,51 @@
+---
+title: Wallet addresses
+---
+
+At the heart of all interactions in Open Payments (OP) is an OP-enabled account. Every OP-enabled account is identified by one or more URLs. These URLs are not only account identifiers, but also service endpoints for gaining access to the OP API. These URLs are called **wallet addresses**. Not all URLs are wallet addresses, but all wallet addresses are URLs.
+
+A URL is only a wallet address if the:
+
+- Server handling the HTTP requests to the URL supports the OP protocol
+- URL uses the `https` protocol and has no `user-info`, `port`, `query string`, or `fragment` parts
+
+The quickest way to test if a URL is a wallet address is to make an HTTP `GET` request to the URL with an `Accept` header value of `application/json`.
+
+```http
+curl --request GET \
+ 	--url https://wallet.example.com/alice \
+ 	--header 'accept: application/json'
+```
+
+If the URL is a wallet address, the response will provide details about the underlying OP-enabled account, including the URL of the grant request endpoint. The grant request endpoint can be used to get access tokens to connect to the account via the OP APIs.
+
+```http
+HTTP/1.1 200 Success
+Content-Type: application/json
+
+{
+  "id": "https://wallet.example.com/alice",
+  "publicName": "Alice",
+  "assetCode": "USD",
+  "assetScale": 2,
+  "authServer": "https://auth.wallet.example.com"
+}
+```
+
+## Privacy and security
+
+A wallet address acts as a proxy identifier (alias) for an underlying financial account. If permitted by an account servicing entity (ASE), a single account can have multiple wallet addresses. Allowing account holders to generate unique wallet addresses for every client they interact with can help prevent a single address from becoming a tracking vector.
+
+In addition to the one account-to-one wallet address and one account-to-multiple wallet addresses models, an ASE could allow a single wallet address to represent all of a user’s accounts. For example, imagine a user has three accounts with a digital wallet provider. The provider issues the user a single wallet address. When a payment is sent to the wallet address, the provider determines which one of the three accounts should receive the payment based on any number of criteria.
+
+Ultimately, it’s up to the ASE to define the supported configuration of relationships between wallet addresses and user accounts. This loose coupling allows wallet addresses to be disabled or even linked to a new account (although there are considerations that must be made before allowing this) without affecting the underlying account.
+
+For any client, a wallet address is as good as an account. Any two distinct wallet addresses should be treated as distinct accounts by clients even if the client is aware that they are proxies for the same underlying account. Permissions granted to a client for access to an account via one wallet address are not automatically usable for accessing the same account via another wallet address.
+
+## Discovery and interaction
+
+Using URLs as payment instruments solves two of the biggest issues with existing payments UX: discoverability and interaction.
+
+URLs (universal resource locators) have been used on the web for decades to allow clients to directly locate a resource and begin interacting with it via HTTP. A wallet address is both a proxy identifier and a resource locator for the underlying account, used to access the account via OP APIs and begin interactions with the account’s ASE.
+
+Using URLs as proxies is also preferable to overloading other identifiers, such as email addresses and Mobile Station International Subscriber Directory Numbers (MSISDNs), as these proxies have no standard for interaction. As a result, identifiers like an MSISDN or email require a registry that maps the identifier to an account provider and a mechanism for governing this mapping securely.

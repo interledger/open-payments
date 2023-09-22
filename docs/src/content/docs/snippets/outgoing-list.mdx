@@ -1,0 +1,50 @@
+---
+title: List outgoing payments
+---
+
+import { Disclosure, CodeBlock } from '@interledger/docs-design-system'
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+import FullSnippet from '/src/components/FullSnippet.astro'
+import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
+import Global from '/src/partials/global-prerequisites.mdx'
+import Ts from '/src/partials/ts-prerequisites.mdx'
+
+After one or more outgoing payments have been created on a payment pointer, an authorized client can look up active and pending outgoing payments on that payment pointer.
+
+These code snippets retrieve the first ten outgoing payments on the given payment pointer.
+
+## Before you begin
+
+<Global />
+
+## List all outgoing payments on a payment pointer
+
+<Tabs>
+<TabItem label='TypeScript'>
+<Ts />
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/outgoing-payment/outgoing-payment-list.ts'
+  chunk='1'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/outgoing-payment/outgoing-payment-list.ts'
+  chunk='2'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/outgoing-payment/outgoing-payment-list.ts'
+  chunk='3'
+/>
+
+</TabItem>
+</Tabs>
+
+<Disclosure toggleText='View full source' client:load>
+  <FullSnippet source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/outgoing-payment/outgoing-payment-list.ts' />
+</Disclosure>
+
+## References
+
+- [API specification](/apis/resource-server/operations/list-outgoing-payments)
