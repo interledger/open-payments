@@ -2,7 +2,6 @@ import { generateKeyPairSync } from 'crypto'
 import createLogger from 'pino'
 import { createAxiosInstance } from '../client/requests'
 import {
-  ILPStreamConnection,
   IncomingPayment,
   GrantRequest,
   GrantContinuationRequest,
@@ -13,12 +12,9 @@ import {
   AccessToken,
   Quote,
   IncomingPaymentPaginationResult,
-  IncomingPaymentWithConnection,
-  IncomingPaymentWithConnectionUrl,
   PendingGrant,
   Grant
 } from '../types'
-import base64url from 'base64url'
 import { v4 as uuid } from 'uuid'
 import { ResponseValidator } from '@interledger/openapi'
 
@@ -80,17 +76,6 @@ export const mockWalletAddress = (
   ...overrides
 })
 
-export const mockILPStreamConnection = (
-  overrides?: Partial<ILPStreamConnection>
-): ILPStreamConnection => ({
-  id: `https://example.com/.well-known/pay/connections/${uuid()}`,
-  sharedSecret: base64url('sharedSecret'),
-  ilpAddress: 'test.ilpAddress',
-  assetCode: 'USD',
-  assetScale: 2,
-  ...overrides
-})
-
 export const mockIncomingPayment = (
   overrides?: Partial<IncomingPayment>
 ): IncomingPayment => ({
@@ -109,22 +94,6 @@ export const mockIncomingPayment = (
   },
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
-  ...overrides
-})
-
-export const mockIncomingPaymentWithConnection = (
-  overrides?: Partial<IncomingPaymentWithConnection>
-): IncomingPaymentWithConnection => ({
-  ...mockIncomingPayment(),
-  ilpStreamConnection: mockILPStreamConnection(overrides?.ilpStreamConnection),
-  ...overrides
-})
-
-export const mockIncomingPaymentWithConnectionUrl = (
-  overrides?: Partial<IncomingPaymentWithConnectionUrl>
-): IncomingPaymentWithConnectionUrl => ({
-  ...mockIncomingPayment(),
-  ilpStreamConnection: mockILPStreamConnection().id,
   ...overrides
 })
 
