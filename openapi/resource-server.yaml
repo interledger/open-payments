@@ -125,10 +125,6 @@ paths:
                     expiresAt: '2022-02-03T23:20:50.52Z'
                     metadata:
                       externalRef: INV2022-02-0137
-                    methods:
-                      - type: 'ilp'
-                        ilpAddress: 'g.ilp.iwuyge987y.98y08y'
-                        sharedSecret: '1c7eaXa4rd2fFOBl1iydvCT1tV5TbM3RW1WLCafu_JA'
                     createdAt: '2022-03-12T23:20:50.52Z'
                     updatedAt: '2022-04-01T10:24:36.11Z'
         '401':
@@ -624,7 +620,7 @@ paths:
                       description: Thanks for the flowers!
                       externalRef: INV-12876
                     methods:
-                      - type: 'ilp'
+                      - type: ilp
                         ilpAddress: g.ilp.iwuyge987y.98y08y
                         sharedSecret: 1c7eaXa4rd2fFOBl1iydvCT1tV5TbM3RW1WLCafu_JA
         '401':
@@ -878,6 +874,11 @@ components:
           format: uri
           description: The URL identifying the incoming payment.
           readOnly: true
+        some-prop:
+          type: string
+          format: uri
+          description: The URL identifying the incoming payment.
+          readOnly: true
         walletAddress:
           type: string
           format: uri
@@ -938,7 +939,7 @@ components:
             description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
             externalRef: Coffee w/ Mo on 10 March 22
           methods:
-            - type: 'ilp'
+            - type: ilp
               ilpAddress: g.ilp.iwuyge987y.98y08y
               sharedSecret: 1c7eaXa4rd2fFOBl1iydvCT1tV5TbM3RW1WLCafu_JA
       allOf:
@@ -948,6 +949,7 @@ components:
             methods:
               $ref: '#/components/schemas/payment-methods'
               description: The payment methods this incoming payment supports payment into.
+              required: true
       unevaluatedProperties: false
     public-incoming-payment:
       title: Public Incoming Payment
@@ -1206,28 +1208,38 @@ components:
       items:
         anyOf:
           - $ref: '#/components/schemas/ilp-payment-method'
-    ilp-payment-method:
+    base-payment-method:
       type: object
       properties:
         type:
           enum:
-            - 'ilp'
+            - ilp
           type: string
-          description: The ILP payment method type
           readOnly: true
-        ilpAddress:
-          type: string
-          maxLength: 1023
-          pattern: '^(g|private|example|peer|self|test[1-3]?|local)([.][a-zA-Z0-9_~-]+)+$'
-          description: The ILP address to use when establishing a STREAM connection.
-          readOnly: true
-        sharedSecret:
-          type: string
-          pattern: '^[a-zA-Z0-9-_]+$'
-          description: The base64 url-encoded shared secret to use when establishing a STREAM connection.
-          readOnly: true
-      additionalProperties: false
-
+    ilp-payment-method:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/base-payment-method'
+        - type: object
+          properties:
+            type:
+              enum:
+                - ilp
+              type: string
+              description: The ILP payment method type
+              readOnly: true
+            ilpAddress:
+              type: string
+              maxLength: 1023
+              pattern: '^(g|private|example|peer|self|test[1-3]?|local)([.][a-zA-Z0-9_~-]+)+$'
+              description: The ILP address to use when establishing a STREAM connection.
+              readOnly: true
+            sharedSecret:
+              type: string
+              pattern: '^[a-zA-Z0-9-_]+$'
+              description: The base64 url-encoded shared secret to use when establishing a STREAM connection.
+              readOnly: true
+          additionalProperties: false
   securitySchemes:
     GNAP:
       name: Authorization
