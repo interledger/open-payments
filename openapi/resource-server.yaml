@@ -127,7 +127,10 @@ paths:
                       externalRef: INV2022-02-0137
                     createdAt: '2022-03-12T23:20:50.52Z'
                     updatedAt: '2022-04-01T10:24:36.11Z'
-        '401':
+                    methods:
+                      - type: ilp
+                        ilpAddress: g.ilp.iwuyge987y.98y08y
+                        sharedSecret: 1c7eaXa4rd2fFOBl1iydvCT1tV5TbM3RW1WLCafu_JA'401'
           $ref: '#/components/responses/401'
         '403':
           $ref: '#/components/responses/403'
@@ -874,11 +877,6 @@ components:
           format: uri
           description: The URL identifying the incoming payment.
           readOnly: true
-        some-prop:
-          type: string
-          format: uri
-          description: The URL identifying the incoming payment.
-          readOnly: true
         walletAddress:
           type: string
           format: uri
@@ -917,46 +915,24 @@ components:
         - createdAt
         - updatedAt
     incoming-payment-with-methods:
-      title: Incoming Payment with Payment Methods
-      description: An **incoming payment** resource with the list of methods to use to pay into the wallet address under this incoming payment.
-      type: object
-      examples:
-        - id: 'https://openpayments.guide/alice/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
-          walletAddress: 'https://openpayments.guide/alice/'
-          incomingAmount:
-            value: '250'
-            assetCode: USD
-            assetScale: 2
-          receivedAmount:
-            value: '250'
-            assetCode: USD
-            assetScale: 2
-          completed: true
-          expiresAt: '2022-04-12T23:20:50.52Z'
-          createdAt: '2022-03-12T23:20:50.52Z'
-          updatedAt: '2022-04-01T10:24:36.11Z'
-          metadata:
-            description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
-            externalRef: Coffee w/ Mo on 10 March 22
-          methods:
-            - type: ilp
-              ilpAddress: g.ilp.iwuyge987y.98y08y
-              sharedSecret: 1c7eaXa4rd2fFOBl1iydvCT1tV5TbM3RW1WLCafu_JA
       allOf:
         - $ref: '#/components/schemas/incoming-payment'
         - type: object
           properties:
             methods:
-              $ref: '#/components/schemas/payment-methods'
-              description: The payment methods this incoming payment supports payment into.
-              required: true
-      unevaluatedProperties: false
+              type: array
+              uniqueItems: true
+              minItems: 0
+              items:
+                $ref: '#/components/schemas/ilp-payment-method'
+          required:
+            - methods
     public-incoming-payment:
       title: Public Incoming Payment
       description: An **incoming payment** resource with public details.
       type: object
       examples:
-        - receivedAmount:
+        - receivedAmount: null
           value: '0'
           assetCode: USD
           assetScale: 2
@@ -1203,43 +1179,27 @@ components:
           kty: OKP
           crv: Ed25519
           x: oy0L_vTygNE4IogRyn_F5GmHXdqYVjIXkWs2jky7zsI
-    payment-methods:
-      type: array
-      items:
-        anyOf:
-          - $ref: '#/components/schemas/ilp-payment-method'
-    base-payment-method:
-      type: object
-      properties:
-        type:
-          enum:
-            - ilp
-          type: string
-          readOnly: true
     ilp-payment-method:
       type: object
-      allOf:
-        - $ref: '#/components/schemas/base-payment-method'
-        - type: object
-          properties:
-            type:
-              enum:
-                - ilp
-              type: string
-              description: The ILP payment method type
-              readOnly: true
-            ilpAddress:
-              type: string
-              maxLength: 1023
-              pattern: '^(g|private|example|peer|self|test[1-3]?|local)([.][a-zA-Z0-9_~-]+)+$'
-              description: The ILP address to use when establishing a STREAM connection.
-              readOnly: true
-            sharedSecret:
-              type: string
-              pattern: '^[a-zA-Z0-9-_]+$'
-              description: The base64 url-encoded shared secret to use when establishing a STREAM connection.
-              readOnly: true
-          additionalProperties: false
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          enum:
+            - 'ilp'
+        ilpAddress:
+          type: string
+          maxLength: 1023
+          pattern: '^(g|private|example|peer|self|test[1-3]?|local)([.][a-zA-Z0-9_~-]+)+$'
+          description: The ILP address to use when establishing a STREAM connection.
+        sharedSecret:
+          type: string
+          pattern: '^[a-zA-Z0-9-_]+$'
+          description: The base64 url-encoded shared secret to use when establishing a STREAM connection.
+      examples:
+        - type: string
+          ilpAddress: string
+          sharedSecret: string
   securitySchemes:
     GNAP:
       name: Authorization
