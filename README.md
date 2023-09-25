@@ -23,7 +23,7 @@ APIs.
 This repository hosts the Open API Specifications of the two APIs which are published along with additional documentation at
 https://docs.openpayments.guide.
 
-The code for the landing [page](https://openpayments.guide) is in `./landing`.
+The code for the landing [page](https://openpayments.guide) is in `./docs`.
 
 ## Dependencies
 
