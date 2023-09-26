@@ -137,6 +137,9 @@ paths:
               type: object
               additionalProperties: false
               properties:
+                walletAddress:
+                  type: string
+                  description: The URL of the wallet address that should receive the incoming payment.
                 incomingAmount:
                   $ref: ./schemas.yaml#/components/schemas/amount
                   description: The maximum amount that should be paid into the wallet address under this incoming payment.
@@ -334,6 +337,9 @@ paths:
             schema:
               type: object
               properties:
+                walletAddress:
+                  type: string
+                  description: The URL of the wallet address that should receive the outgoing payment.
                 quoteId:
                   type: string
                   format: uri
@@ -650,6 +656,7 @@ paths:
       description: A client can fetch the latest state of an incoming payment to determine the amount received into the wallet address.
     parameters:
       - $ref: '#/components/parameters/id'
+      - $ref: '#/components/parameters/walletAddress'
   '/incoming-payments/{id}/complete':
     post:
       summary: Complete an Incoming Payment
@@ -699,6 +706,7 @@ paths:
         - $ref: '#/components/parameters/signature'
     parameters:
       - $ref: '#/components/parameters/id'
+      - $ref: '#/components/parameters/walletAddress'
   '/outgoing-payments/{id}':
     get:
       summary: Get an Outgoing Payment
@@ -748,6 +756,7 @@ paths:
         - $ref: '#/components/parameters/signature'
     parameters:
       - $ref: '#/components/parameters/id'
+      - $ref: '#/components/parameters/walletAddress'
   '/quotes/{id}':
     get:
       summary: Get a Quote
@@ -1282,6 +1291,12 @@ components:
         type: string
       description: Sub-resource identifier
       required: true
+    walletAddress:
+      name: wallet-address
+      in: query
+      schema:
+        type: string
+      description: URL
     signature:
       name: Signature
       in: header
