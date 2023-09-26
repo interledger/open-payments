@@ -279,6 +279,7 @@ paths:
           $ref: '#/components/responses/403'
       description: List all incoming payments on the wallet address
       parameters:
+        - $ref: '#/components/parameters/wallet-address'
         - $ref: '#/components/parameters/cursor'
         - $ref: '#/components/parameters/first'
         - $ref: '#/components/parameters/last'
@@ -489,6 +490,7 @@ paths:
           $ref: '#/components/responses/403'
       description: List all outgoing payments on the wallet address
       parameters:
+        - $ref: '#/components/parameters/wallet-address'
         - $ref: '#/components/parameters/cursor'
         - $ref: '#/components/parameters/first'
         - $ref: '#/components/parameters/last'
@@ -657,7 +659,7 @@ paths:
       description: A client can fetch the latest state of an incoming payment to determine the amount received into the wallet address.
     parameters:
       - $ref: '#/components/parameters/id'
-      - $ref: '#/components/parameters/walletAddress'
+      - $ref: '#/components/parameters/wallet-address'
   '/incoming-payments/{id}/complete':
     post:
       summary: Complete an Incoming Payment
@@ -770,7 +772,7 @@ paths:
         - $ref: '#/components/parameters/signature'
     parameters:
       - $ref: '#/components/parameters/id'
-      - $ref: '#/components/parameters/walletAddress'
+      - $ref: '#/components/parameters/wallet-address'
   '/quotes/{id}':
     get:
       summary: Get a Quote
@@ -1305,7 +1307,7 @@ components:
         type: string
       description: Sub-resource identifier
       required: true
-    walletAddress:
+    wallet-address:
       name: wallet-address
       in: query
       schema:
