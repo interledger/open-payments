@@ -721,7 +721,6 @@ paths:
         - $ref: '#/components/parameters/signature'
     parameters:
       - $ref: '#/components/parameters/id'
-      - $ref: '#/components/parameters/walletAddress'
   '/outgoing-payments/{id}':
     get:
       summary: Get an Outgoing Payment
@@ -1311,7 +1310,7 @@ components:
       in: query
       schema:
         type: string
-      description: URL
+      description: 'URL of a wallet address hosted by a Rafiki instance.'
     signature:
       name: Signature
       in: header
