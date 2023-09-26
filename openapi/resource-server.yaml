@@ -154,6 +154,7 @@ paths:
             examples:
               Create incoming payment for $25 to pay invoice INV2022-02-0137:
                 value:
+                  walletAddress: 'https://openpayments.guide/alice/'
                   incomingAmount:
                     value: '2500'
                     assetCode: USD
@@ -697,6 +698,20 @@ paths:
           $ref: '#/components/responses/403'
         '404':
           description: Incoming Payment Not Found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                walletAddress:
+                  type: string
+                  description: The URL of the wallet address that should receive the incoming payment.
+            examples:
+              Complete incoming payment for https://openpayments.guide/alice:
+                value:
+                  walletAddress: 'https://openpayments.guide/alice/'
       description: |-
         A client with the appropriate permissions MAY mark a non-expired **incoming payment** as `completed` indicating that the client is not going to make any further payments toward this **incoming payment**, even though the full `incomingAmount` may not have been received.
 
