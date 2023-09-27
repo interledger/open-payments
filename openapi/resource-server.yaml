@@ -6,17 +6,15 @@ info:
     name: Apache 2.0
     identifier: Apache-2.0
   description: |-
-    The Open Payments API is a simple REST API with 5 resource types: **wallet address**, **quote**, **connection**, **incoming payment** and **outgoing payment**.
+    The Open Payments API is a simple REST API with 4 resource types: **wallet address**, **quote**, **incoming payment** and **outgoing payment**.
 
-    The *service endpoint* for the API is always the URL of the wallet address resource and all other resources (except connections) are sub-resources of the wallet address.
+    The *service endpoint* for the API is always the URL of the wallet address resource and all other resources are sub-resources of the wallet address.
 
     An incoming payment defines meta data that is automatically attached to payments made into the wallet address under that incoming payment. This facilitates automation of processes like reconciliation of payment into the wallet address with external systems.
 
     An outgoing payment is an instruction to make a payment out of the wallet address.
 
     A quote is a commitment from the Account Servicing Entity to deliver a particular amount to a receiver when sending a particular amount from the wallet address. It is only valid for a limited time.
-
-    For privacy reasons a connection resource is not a sub-resource of a wallet address.
 
     All resource and collection resource representations use JSON and the media-type `application/json`.  
 
@@ -25,15 +23,13 @@ info:
     2. `/outgoing-payments` contains the **outgoing payment** sub-resources  
     3. `/quotes` contains the **quote** sub-resources
 
-    There is no normative path for **connection** resources. In this documentation we use the path `/connections` but implementations may use any arbitrary path.
-
     Access to resources and permission to execute the methods exposed by the API is determined by the grants given to the client represented by an access token used in API requests.
   summary: An API for open access to financial accounts to send and receive payments.
   contact:
     email: tech@interledger.org
 servers:
   - url: '/'
-    description: 'Server for wallet address subresources or Connection resources (ie https://openpayments.guide/alice)'
+    description: 'Server for wallet address subresources (ie https://openpayments.guide/alice)'
 tags:
   - name: wallet-address
     description: wallet address operations
@@ -43,8 +39,6 @@ tags:
     description: outgoing payment operations
   - name: quote
     description: quote operations
-  - name: stream-connection
-    description: interledger STREAM connections
 paths:
   /:
     get:
@@ -1024,7 +1018,7 @@ components:
           default: false
         receiver:
           $ref: ./schemas.yaml#/components/schemas/receiver
-          description: The URL of the incoming payment or ILP STREAM Connection that is being paid.
+          description: The URL of the incoming payment that is being paid.
         receiveAmount:
           $ref: ./schemas.yaml#/components/schemas/amount
           description: The total amount that should be received by the receiver when this outgoing payment has been paid.
@@ -1105,7 +1099,7 @@ components:
           readOnly: true
         receiver:
           $ref: ./schemas.yaml#/components/schemas/receiver
-          description: The URL of the incoming payment or ILP STREAM Connection that the quote is created for.
+          description: The URL of the incoming payment that the quote is created for.
         receiveAmount:
           $ref: ./schemas.yaml#/components/schemas/amount
           description: The total amount that should be received by the receiver when the corresponding outgoing payment has been paid.
