@@ -1220,6 +1220,10 @@ components:
           type: string
           pattern: '^[a-zA-Z0-9-_]+$'
           description: The base64 url-encoded shared secret to use when establishing a STREAM connection.
+      required:
+        - type
+        - ilpAddress
+        - sharedSecret
       examples:
         - type: string
           ilpAddress: string
