@@ -3,7 +3,8 @@ import {
   BaseDeps,
   CollectionRequestArgs,
   ResourceRequestArgs,
-  RouteDeps
+  RouteDeps,
+  UnauthenticatedResourceRequestArgs
 } from '.'
 import {
   IncomingPayment,
@@ -89,9 +90,34 @@ export const createIncomingPaymentRoutes = (
   }
 }
 
+export interface UnauthenticatedIncomingPaymentRoutes {
+  get(args: UnauthenticatedResourceRequestArgs): Promise<IncomingPayment>
+}
+
+export const createUnauthenticatedIncomingPaymentRoutes = (
+  deps: RouteDeps
+): UnauthenticatedIncomingPaymentRoutes => {
+  const { axiosInstance, openApi, logger } = deps
+
+  const getIncomingPaymentOpenApiValidator =
+    openApi.createResponseValidator<IncomingPayment>({
+      path: getRSPath('/incoming-payments/{id}'),
+      method: HttpMethod.GET
+    })
+
+  return {
+    get: (args: UnauthenticatedResourceRequestArgs) =>
+      getIncomingPayment(
+        { axiosInstance, logger },
+        args,
+        getIncomingPaymentOpenApiValidator
+      )
+  }
+}
+
 export const getIncomingPayment = async (
   deps: BaseDeps,
-  args: ResourceRequestArgs,
+  args: ResourceRequestArgs | UnauthenticatedResourceRequestArgs,
   validateOpenApiResponse: ResponseValidator<IncomingPayment>
 ) => {
   const { axiosInstance, logger } = deps

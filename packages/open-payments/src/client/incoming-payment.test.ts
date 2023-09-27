@@ -6,7 +6,8 @@ import {
   getIncomingPayment,
   validateCompletedIncomingPayment,
   validateCreatedIncomingPayment,
-  validateIncomingPayment
+  validateIncomingPayment,
+  createUnauthenticatedIncomingPaymentRoutes
 } from './incoming-payment'
 import { OpenAPI, HttpMethod, createOpenAPI } from '@interledger/openapi'
 import {
@@ -724,6 +725,43 @@ describe('incoming-payment', (): void => {
             logger
           },
           { url: `${incomingPaymentUrl}/complete`, accessToken },
+          true
+        )
+      })
+    })
+  })
+  describe('unauthenticated routes', (): void => {
+    describe('get', (): void => {
+      test('calls get method with correct validator', async (): Promise<void> => {
+        const mockResponseValidator = ({ path, method }) =>
+          path === '/incoming-payments/{id}' && method === HttpMethod.GET
+
+        const url = `${walletAddress}/incoming-payments/1`
+
+        jest
+          .spyOn(openApi, 'createResponseValidator')
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .mockImplementation(mockResponseValidator as any)
+
+        const { receivedAmount } = mockIncomingPayment()
+        const unauthenticatedIncomingPayment = { receivedAmount }
+
+        const getSpy = jest
+          .spyOn(requestors, 'get')
+          .mockResolvedValueOnce(unauthenticatedIncomingPayment)
+
+        await createUnauthenticatedIncomingPaymentRoutes({
+          openApi,
+          axiosInstance,
+          logger
+        }).get({ url, accessToken })
+
+        expect(getSpy).toHaveBeenCalledWith(
+          {
+            axiosInstance,
+            logger
+          },
+          { url, accessToken },
           true
         )
       })

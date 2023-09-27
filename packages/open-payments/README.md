@@ -34,7 +34,7 @@ This package exports two clients, an `UnauthenticatedClient` and an `Authenticat
 ### `UnauthenticatedClient`
 
 This client allows making requests to access publicly available resources, without needing authentication.
-The three available resources are [Wallet Addresses](https://docs.openpayments.guide/reference/get-wallet-address), [Wallet Address Keys](https://docs.openpayments.guide/reference/get-wallet-address-keys), and [ILP Stream Connections](https://docs.openpayments.guide/reference/get-ilp-stream-connection).
+The three available resources are [Wallet Addresses](https://docs.openpayments.guide/reference/get-wallet-address) and the public version of [Incoming Payments](https://docs.openpayments.guide/reference/get-incoming-payment).
 
 ```ts
 import { createUnauthenticatedClient } from '@interledger/open-payments'
@@ -46,6 +46,10 @@ const client = await createUnauthenticatedClient({
 
 const walletAddress = await client.walletAddress.get({
   url: 'https://cloud-nine-wallet/alice'
+})
+
+const incomingPayment = await client.walletAddress.get({
+  url: 'https://cloud-nine-wallet/incoming-payment/'
 })
 ```
 
