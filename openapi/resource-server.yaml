@@ -933,7 +933,7 @@ components:
         - type: object
           properties:
             methods:
-              description: The list of payment methods this incoming payment supports
+              description: The list of payment methods supported by this incoming payment.
               type: array
               uniqueItems: true
               minItems: 0
