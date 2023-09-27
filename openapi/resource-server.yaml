@@ -542,7 +542,7 @@ paths:
               Create fixed-receive amount quote for $25:
                 value:
                   receiver: 'https://openpayments.guide/incoming-payments/37a0d0ee-26dc-4c66-89e0-01fbf93156f7'
-                  method: 'ilp'
+                  method: ilp
                   receiveAmount:
                     value: '2500'
                     assetCode: USD
@@ -773,7 +773,7 @@ paths:
                       value: '2198'
                       assetCode: EUR
                       assetScale: 2
-                    method: 'ilp'
+                    method: ilp
                     createdAt: '2022-03-12T23:20:50.52Z'
                     expiresAt: '2022-04-12T23:20:50.52Z'
         '401':
@@ -926,11 +926,14 @@ components:
         - createdAt
         - updatedAt
     incoming-payment-with-methods:
+      title: Incoming Payment with payment methods
+      description: An **incoming payment** resource with public details.
       allOf:
         - $ref: '#/components/schemas/incoming-payment'
         - type: object
           properties:
             methods:
+              description: The list of payment methods this incoming payment supports
               type: array
               uniqueItems: true
               minItems: 0
