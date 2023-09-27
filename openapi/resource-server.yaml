@@ -32,7 +32,7 @@ info:
   contact:
     email: tech@interledger.org
 servers:
-  - url: '/'
+  - url: 'https://openpayments.guide'
     description: 'Server for wallet address subresources or Connection resources (ie https://openpayments.guide/alice)'
 tags:
   - name: wallet-address
