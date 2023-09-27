@@ -49,7 +49,7 @@ describe('incoming-payment', (): void => {
 
   describe('getIncomingPayment', (): void => {
     test('returns incoming payment if passes validation', async (): Promise<void> => {
-      const incomingPayment = mockIncomingPayment()
+      const incomingPayment = mockIncomingPaymentWithPaymentMethods()
 
       nock(walletAddress)
         .get('/incoming-payments/1')
@@ -67,7 +67,7 @@ describe('incoming-payment', (): void => {
     })
 
     test('throws if incoming payment does not pass validation', async (): Promise<void> => {
-      const incomingPayment = mockIncomingPayment({
+      const incomingPayment = mockIncomingPaymentWithPaymentMethods({
         incomingAmount: {
           assetCode: 'USD',
           assetScale: 2,
@@ -100,7 +100,7 @@ describe('incoming-payment', (): void => {
     })
 
     test('throws if incoming payment does not pass open api validation', async (): Promise<void> => {
-      const incomingPayment = mockIncomingPayment()
+      const incomingPayment = mockIncomingPaymentWithPaymentMethods()
 
       nock(walletAddress)
         .get('/incoming-payments/1')
