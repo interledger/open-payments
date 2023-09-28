@@ -86,7 +86,7 @@ describe('quote', (): void => {
           accessToken
         },
         openApiValidators.successfulValidator,
-        { receiver: quote.receiver }
+        { receiver: quote.receiver, method: 'ilp' }
       )
       expect(result).toStrictEqual(quote)
       scope.done()
@@ -105,7 +105,7 @@ describe('quote', (): void => {
             accessToken
           },
           openApiValidators.failedValidator,
-          { receiver: quote.receiver }
+          { receiver: quote.receiver, method: 'ilp' }
         )
       ).rejects.toThrowError()
       scope.done()
@@ -172,7 +172,7 @@ describe('quote', (): void => {
             walletAddress,
             accessToken
           },
-          { receiver: quote.receiver }
+          { receiver: quote.receiver, method: 'ilp' }
         )
 
         expect(postSpy).toHaveBeenCalledWith(
@@ -180,7 +180,11 @@ describe('quote', (): void => {
             axiosInstance,
             logger
           },
-          { url, accessToken, body: { receiver: quote.receiver } },
+          {
+            url,
+            accessToken,
+            body: { receiver: quote.receiver, method: 'ilp' }
+          },
           true
         )
       })
