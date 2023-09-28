@@ -1,5 +1,11 @@
 # @interledger/openapi
 
+## 1.2.0
+
+### Minor Changes
+
+- 4e98e06: Removed payment pointer/wallet address from resource urls
+
 ## 1.1.0
 
 ### Minor Changes
