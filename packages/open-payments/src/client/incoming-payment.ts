@@ -11,7 +11,8 @@ import {
   getRSPath,
   CreateIncomingPaymentArgs,
   PaginationArgs,
-  IncomingPaymentPaginationResult
+  IncomingPaymentPaginationResult,
+  PublicIncomingPayment
 } from '../types'
 import { get, post } from './requests'
 
@@ -91,7 +92,7 @@ export const createIncomingPaymentRoutes = (
 }
 
 export interface UnauthenticatedIncomingPaymentRoutes {
-  get(args: UnauthenticatedResourceRequestArgs): Promise<IncomingPayment>
+  get(args: UnauthenticatedResourceRequestArgs): Promise<PublicIncomingPayment>
 }
 
 export const createUnauthenticatedIncomingPaymentRoutes = (
@@ -100,14 +101,14 @@ export const createUnauthenticatedIncomingPaymentRoutes = (
   const { axiosInstance, openApi, logger } = deps
 
   const getIncomingPaymentOpenApiValidator =
-    openApi.createResponseValidator<IncomingPayment>({
+    openApi.createResponseValidator<PublicIncomingPayment>({
       path: getRSPath('/incoming-payments/{id}'),
       method: HttpMethod.GET
     })
 
   return {
     get: (args: UnauthenticatedResourceRequestArgs) =>
-      getIncomingPayment(
+      getPublicIncomingPayment(
         { axiosInstance, logger },
         args,
         getIncomingPaymentOpenApiValidator
@@ -140,6 +141,15 @@ export const getIncomingPayment = async (
 
     throw new Error(errorMessage)
   }
+}
+
+export const getPublicIncomingPayment = async (
+  deps: BaseDeps,
+  args: UnauthenticatedResourceRequestArgs,
+  validateOpenApiResponse: ResponseValidator<PublicIncomingPayment>
+) => {
+  const { axiosInstance, logger } = deps
+  return await get({ axiosInstance, logger }, args, validateOpenApiResponse)
 }
 
 export const createIncomingPayment = async (
