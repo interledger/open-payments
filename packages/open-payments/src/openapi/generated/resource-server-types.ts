@@ -179,7 +179,7 @@ export interface components {
      * @description An **incoming payment** resource with public details.
      */
     "public-incoming-payment": {
-      receiveAmount?: external["schemas.yaml"]["components"]["schemas"]["amount"];
+      receivedAmount?: external["schemas.yaml"]["components"]["schemas"]["amount"];
     };
     /**
      * Outgoing Payment
