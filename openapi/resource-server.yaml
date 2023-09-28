@@ -32,8 +32,8 @@ info:
   contact:
     email: tech@interledger.org
 servers:
-  - url: 'https://openpayments/'
-    description: 'Server for wallet address subresources or Connection resources (ie https://openpayments.guide/)'
+  - url: 'https://openpayments.guide'
+    description: 'Server for wallet address subresources or Connection resources (ie https://openpayments.guide/alice)'
 tags:
   - name: wallet-address
     description: wallet address operations
@@ -59,9 +59,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/wallet-address'
               examples:
-                Get wallet address for $openpayments.guide/:
+                Get wallet address for $openpayments.guide/alice:
                   value:
-                    id: 'https://openpayments.guide/'
+                    id: 'https://openpayments.guide/alice'
                     publicName: Alice
                     assetCode: USD
                     assetScale: 2
@@ -112,7 +112,7 @@ paths:
                 New Incoming Payment for $25:
                   value:
                     id: 'https://openpayments.guide/incoming-payments/08394f02-7b7b-45e2-b645-51d04e7c330c'
-                    walletAddress: 'https://openpayments.guide/'
+                    walletAddress: 'https://openpayments.guide/alice/'
                     incomingAmount:
                       value: '2500'
                       assetCode: USD
@@ -205,7 +205,7 @@ paths:
                       hasNextPage: true
                     result:
                       - id: 'https://openpayments.guide/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
-                        walletAddress: 'https://openpayments.guide/'
+                        walletAddress: 'https://openpayments.guide/alice/'
                         incomingAmount:
                           value: '250'
                           assetCode: USD
@@ -222,7 +222,7 @@ paths:
                         updatedAt: '2022-04-01T10:24:36.11Z'
                         completed: true
                       - id: 'https://openpayments.guide/incoming-payments/32abc219-3dc3-44ec-a225-790cacfca8fa'
-                        walletAddress: 'https://openpayments.guide/'
+                        walletAddress: 'https://openpayments.guide/alice/'
                         receivedAmount:
                           value: '100'
                           assetCode: USD
@@ -242,7 +242,7 @@ paths:
                       hasNextPage: false
                     result:
                       - id: 'https://openpayments.guide/incoming-payments/32abc219-3dc3-44ec-a225-790cacfca8fa'
-                        walletAddress: 'https://openpayments.guide/'
+                        walletAddress: 'https://openpayments.guide/alice/'
                         receivedAmount:
                           value: '100'
                           assetCode: USD
@@ -254,7 +254,7 @@ paths:
                         metadata:
                           description: 'I love your website, Alice! Thanks for the great content'
                       - id: 'https://openpayments.guide/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
-                        walletAddress: 'https://openpayments.guide/'
+                        walletAddress: 'https://openpayments.guide/alice/'
                         incomingAmount:
                           value: '250'
                           assetCode: USD
@@ -300,7 +300,7 @@ paths:
                 New Fixed Send Outgoing Payment for $25:
                   value:
                     id: 'https://openpayments.guide/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
-                    walletAddress: 'https://openpayments.guide/'
+                    walletAddress: 'https://openpayments.guide/alice/'
                     failed: false
                     receiver: 'https://openpayments.guide/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2'
                     debitAmount:
@@ -386,7 +386,7 @@ paths:
                       hasNextPage: true
                     result:
                       - id: 'https://openpayments.guide/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
-                        walletAddress: 'https://openpayments.guide/'
+                        walletAddress: 'https://openpayments.guide/alice/'
                         failed: false
                         receiver: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
                         receiveAmount:
@@ -407,7 +407,7 @@ paths:
                           description: APlusVideo subscription
                           externalRef: 'customer: 847458475'
                       - id: 'https://openpayments.guide/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
-                        walletAddress: 'https://openpayments.guide/'
+                        walletAddress: 'https://openpayments.guide/alice/'
                         failed: false
                         receiver: 'https://openpayments.guide/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
                         debitAmount:
@@ -436,7 +436,7 @@ paths:
                       hasNextPage: false
                     result:
                       - id: 'https://openpayments.guide/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
-                        walletAddress: 'https://openpayments.guide/'
+                        walletAddress: 'https://openpayments.guide/alice/'
                         failed: false
                         receiver: 'https://openpayments.guide/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
                         debitAmount:
@@ -457,7 +457,7 @@ paths:
                           description: Thank you for your purchase at ShoeShop!
                           externalRef: INV2022-8943756
                       - id: 'https://openpayments.guide/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
-                        walletAddress: 'https://openpayments.guide/'
+                        walletAddress: 'https://openpayments.guide/alice/'
                         failed: false
                         receiver: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
                         receiveAmount:
@@ -507,7 +507,7 @@ paths:
                 New Fixed Send Quote for $25:
                   value:
                     id: 'https://openpayments.guide/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
-                    walletAddress: 'https://openpayments.guide/'
+                    walletAddress: 'https://openpayments.guide/alice/'
                     receiver: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
                     debitAmount:
                       value: '2500'
@@ -603,7 +603,7 @@ paths:
                 Incoming Payment for $25 with $12.34 received so far:
                   value:
                     id: 'https://openpayments.guide/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
-                    walletAddress: 'https://openpayments.guide/'
+                    walletAddress: 'https://openpayments.guide/alice/'
                     incomingAmount:
                       value: '2500'
                       assetCode: USD
@@ -649,7 +649,7 @@ paths:
                 Completed Incoming Payment:
                   value:
                     id: 'https://openpayments.guide/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
-                    walletAddress: 'https://openpayments.guide/'
+                    walletAddress: 'https://openpayments.guide/alice/'
                     incomingAmount:
                       value: '250'
                       assetCode: USD
@@ -778,7 +778,7 @@ components:
       description: A **wallet address** resource is the root of the API and contains the public details of the financial account represented by the Wallet Address that is also the service endpoint URL.
       additionalProperties: false
       examples:
-        - id: 'https://openpayments.guide/'
+        - id: 'https://openpayments.guide/alice'
           publicName: Alice
           assetCode: USD
           assetScale: 2
@@ -834,7 +834,7 @@ components:
       type: object
       examples:
         - id: 'https://openpayments.guide/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
-          walletAddress: 'https://openpayments.guide/'
+          walletAddress: 'https://openpayments.guide/alice/'
           incomingAmount:
             value: '250'
             assetCode: USD
@@ -851,7 +851,7 @@ components:
             description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
             externalRef: Coffee w/ Mo on 10 March 22
         - id: 'https://openpayments.guide/incoming-payments/456da9d5-c9a4-4c80-a354-86b915a04ff8'
-          walletAddress: 'https://openpayments.guide/'
+          walletAddress: 'https://openpayments.guide/alice/'
           incomingAmount:
             value: '2500'
             assetCode: USD
@@ -926,7 +926,7 @@ components:
       type: object
       examples:
         - id: 'https://openpayments.guide/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
-          walletAddress: 'https://openpayments.guide/'
+          walletAddress: 'https://openpayments.guide/alice/'
           failed: false
           receiver: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
           receiveAmount:
@@ -947,7 +947,7 @@ components:
             description: APlusVideo subscription
             externalRef: 'customer: 847458475'
         - id: 'https://openpayments.guide/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
-          walletAddress: 'https://openpayments.guide/'
+          walletAddress: 'https://openpayments.guide/alice/'
           failed: false
           receiver: 'https://openpayments.guide/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
           debitAmount:
@@ -1022,7 +1022,7 @@ components:
       type: object
       examples:
         - id: 'https://openpayments.guide/quotes/ab03296b-0c8b-4776-b94e-7ee27d868d4d'
-          walletAddress: 'https://openpayments.guide/'
+          walletAddress: 'https://openpayments.guide/alice/'
           receiver: 'https://openpayments.guide/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
           receiveAmount:
             value: '2500'
@@ -1039,7 +1039,7 @@ components:
           createdAt: '2022-03-12T23:20:50.52Z'
           expiresAt: '2022-04-12T23:20:50.52Z'
         - id: 'https://openpayments.guide/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
-          walletAddress: 'https://openpayments.guide/'
+          walletAddress: 'https://openpayments.guide/alice/'
           receiver: 'https://openpayments.guide/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
           debitAmount:
             value: '7126'
