@@ -13,6 +13,13 @@ export const getRSPath = <P extends keyof RSPaths>(path: P): string =>
   path as string
 
 export type IncomingPayment = RSComponents['schemas']['incoming-payment']
+
+export type IlpPaymentMethod = RSComponents['schemas']['ilp-payment-method']
+type PaymentMethods = IlpPaymentMethod
+
+export type IncomingPaymentWithPaymentMethods = IncomingPayment & {
+  methods: PaymentMethods[]
+}
 export type CreateIncomingPaymentArgs =
   RSOperations['create-incoming-payment']['requestBody']['content']['application/json']
 export type IncomingPaymentPaginationResult = PaginationResult<IncomingPayment>
@@ -43,6 +50,7 @@ export type JWKS = RSComponents['schemas']['json-web-key-set']
 export type Quote = RSComponents['schemas']['quote']
 type QuoteArgsBase = {
   receiver: RSOperations['create-quote']['requestBody']['content']['application/json']['receiver']
+  method: RSComponents['schemas']['payment-method']
 }
 type QuoteArgsWithDebitAmount = QuoteArgsBase & {
   debitAmount?: RSComponents['schemas']['quote']['debitAmount']
