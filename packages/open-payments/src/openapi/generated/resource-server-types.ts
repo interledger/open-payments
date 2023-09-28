@@ -167,6 +167,14 @@ export interface components {
       updatedAt: string;
     };
     /**
+     * Incoming Payment with payment methods
+     * @description An **incoming payment** resource with public details.
+     */
+    "incoming-payment-with-methods": components["schemas"]["incoming-payment"] & {
+      /** @description The list of payment methods supported by this incoming payment. */
+      methods: Partial<components["schemas"]["ilp-payment-method"]>[];
+    };
+    /**
      * Public Incoming Payment
      * @description An **incoming payment** resource with public details.
      */
@@ -195,7 +203,7 @@ export interface components {
       quoteId?: string;
       /** @description Describes whether the payment failed to send its full amount. */
       failed?: boolean;
-      /** @description The URL of the incoming payment or ILP STREAM Connection that is being paid. */
+      /** @description The URL of the incoming payment that is being paid. */
       receiver: external["schemas.yaml"]["components"]["schemas"]["receiver"];
       /** @description The total amount that should be received by the receiver when this outgoing payment has been paid. */
       receiveAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
@@ -231,12 +239,13 @@ export interface components {
        * @description The URL of the wallet address from which this quote's payment would be sent.
        */
       walletAddress: string;
-      /** @description The URL of the incoming payment or ILP STREAM Connection that the quote is created for. */
+      /** @description The URL of the incoming payment that the quote is created for. */
       receiver: external["schemas.yaml"]["components"]["schemas"]["receiver"];
       /** @description The total amount that should be received by the receiver when the corresponding outgoing payment has been paid. */
       receiveAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
       /** @description The total amount that should be deducted from the sender's account when the corresponding outgoing payment has been paid. */
       debitAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
+      method: components["schemas"]["payment-method"];
       /** @description The date and time when the calculated `debitAmount` is no longer valid. */
       expiresAt?: string;
       /**
@@ -268,6 +277,14 @@ export interface components {
       crv: "Ed25519";
       /** @description The base64 url-encoded public key. */
       x: string;
+    };
+    "payment-method": "ilp";
+    "ilp-payment-method": {
+      type: "ilp";
+      /** @description The ILP address to use when establishing a STREAM connection. */
+      ilpAddress: string;
+      /** @description The base64 url-encoded shared secret to use when establishing a STREAM connection. */
+      sharedSecret: string;
     };
   };
   responses: {
@@ -385,12 +402,7 @@ export interface operations {
     };
     responses: {
       /** Incoming Payment Created */
-      201: {
-        content: {
-          "application/json": components["schemas"]["incoming-payment"];
-        };
-      };
-      401: components["responses"]["401"];
+      201: components["responses"]["401"];
       403: components["responses"]["403"];
     };
     /**
@@ -521,14 +533,17 @@ export interface operations {
         "application/json":
           | {
               receiver: external["schemas.yaml"]["components"]["schemas"]["receiver"];
+              method: components["schemas"]["payment-method"];
             }
           | {
               receiver: external["schemas.yaml"]["components"]["schemas"]["receiver"];
+              method: components["schemas"]["payment-method"];
               /** @description The fixed amount that would be paid into the receiving wallet address given a successful outgoing payment. */
               receiveAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
             }
           | {
               receiver: external["schemas.yaml"]["components"]["schemas"]["receiver"];
+              method: components["schemas"]["payment-method"];
               /** @description The fixed amount that would be sent from the sending wallet address given a successful outgoing payment. */
               debitAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
             };
@@ -554,7 +569,7 @@ export interface operations {
       200: {
         content: {
           "application/json": Partial<
-            components["schemas"]["incoming-payment"]
+            components["schemas"]["incoming-payment-with-methods"]
           > &
             Partial<components["schemas"]["public-incoming-payment"]>;
         };
