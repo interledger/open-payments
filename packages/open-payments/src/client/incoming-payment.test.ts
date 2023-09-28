@@ -7,7 +7,8 @@ import {
   validateCompletedIncomingPayment,
   validateCreatedIncomingPayment,
   validateIncomingPayment,
-  createUnauthenticatedIncomingPaymentRoutes
+  createUnauthenticatedIncomingPaymentRoutes,
+  getPublicIncomingPayment
 } from './incoming-payment'
 import { OpenAPI, HttpMethod, createOpenAPI } from '@interledger/openapi'
 import {
@@ -16,6 +17,7 @@ import {
   mockIncomingPaymentPaginationResult,
   mockIncomingPaymentWithPaymentMethods,
   mockOpenApiResponseValidators,
+  mockPublicIncomingPayment,
   silentLogger
 } from '../test/helpers'
 import nock from 'nock'
@@ -116,6 +118,46 @@ describe('incoming-payment', (): void => {
           {
             url: `${walletAddress}/incoming-payments/1`,
             accessToken
+          },
+          openApiValidators.failedValidator
+        )
+      ).rejects.toThrowError()
+    })
+  })
+
+  describe('getPublicIncomingPayment', (): void => {
+    test('returns incoming payment if passes validation', async (): Promise<void> => {
+      const publicIncomingPayment = mockPublicIncomingPayment()
+
+      nock(walletAddress)
+        .get('/incoming-payments/1')
+        .reply(200, publicIncomingPayment)
+
+      const result = await getPublicIncomingPayment(
+        { axiosInstance, logger },
+        {
+          url: `${walletAddress}/incoming-payments/1`
+        },
+        openApiValidators.successfulValidator
+      )
+      expect(result).toStrictEqual(publicIncomingPayment)
+    })
+
+    test('throws if incoming payment does not pass open api validation', async (): Promise<void> => {
+      const publicIncomingPayment = mockPublicIncomingPayment()
+
+      nock(walletAddress)
+        .get('/incoming-payments/1')
+        .reply(200, publicIncomingPayment)
+
+      await expect(
+        getPublicIncomingPayment(
+          {
+            axiosInstance,
+            logger
+          },
+          {
+            url: `${walletAddress}/incoming-payments/1`
           },
           openApiValidators.failedValidator
         )
@@ -744,25 +786,24 @@ describe('incoming-payment', (): void => {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           .mockImplementation(mockResponseValidator as any)
 
-        const { receivedAmount } = mockIncomingPayment()
-        const unauthenticatedIncomingPayment = { receivedAmount }
+        const publicIncomingPayment = mockPublicIncomingPayment()
 
         const getSpy = jest
           .spyOn(requestors, 'get')
-          .mockResolvedValueOnce(unauthenticatedIncomingPayment)
+          .mockResolvedValueOnce(publicIncomingPayment)
 
         await createUnauthenticatedIncomingPaymentRoutes({
           openApi,
           axiosInstance,
           logger
-        }).get({ url, accessToken })
+        }).get({ url })
 
         expect(getSpy).toHaveBeenCalledWith(
           {
             axiosInstance,
             logger
           },
-          { url, accessToken },
+          { url },
           true
         )
       })
