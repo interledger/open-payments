@@ -2,8 +2,6 @@ export {
   GrantRequest,
   GrantContinuationRequest,
   IncomingPayment,
-  IncomingPaymentWithPaymentMethods,
-  IlpPaymentMethod,
   Quote,
   OutgoingPayment,
   PendingGrant,
@@ -29,8 +27,6 @@ export {
 export {
   mockWalletAddress,
   mockIncomingPayment,
-  mockIncomingPaymentWithPaymentMethods,
-  mockIlpPaymentMethod,
   mockOutgoingPayment,
   mockIncomingPaymentPaginationResult,
   mockOutgoingPaymentPaginationResult,

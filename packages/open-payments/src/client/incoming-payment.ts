@@ -10,19 +10,16 @@ import {
   getRSPath,
   CreateIncomingPaymentArgs,
   PaginationArgs,
-  IncomingPaymentPaginationResult,
-  IncomingPaymentWithPaymentMethods
+  IncomingPaymentPaginationResult
 } from '../types'
 import { get, post } from './requests'
 
-type AnyIncomingPayment = IncomingPayment | IncomingPaymentWithPaymentMethods
-
 export interface IncomingPaymentRoutes {
-  get(args: ResourceRequestArgs): Promise<IncomingPaymentWithPaymentMethods>
+  get(args: ResourceRequestArgs): Promise<IncomingPayment>
   create(
     args: CollectionRequestArgs,
     createArgs: CreateIncomingPaymentArgs
-  ): Promise<IncomingPaymentWithPaymentMethods>
+  ): Promise<IncomingPayment>
   complete(args: ResourceRequestArgs): Promise<IncomingPayment>
   list(
     args: CollectionRequestArgs,
@@ -36,13 +33,13 @@ export const createIncomingPaymentRoutes = (
   const { axiosInstance, openApi, logger } = deps
 
   const getIncomingPaymentOpenApiValidator =
-    openApi.createResponseValidator<IncomingPaymentWithPaymentMethods>({
+    openApi.createResponseValidator<IncomingPayment>({
       path: getRSPath('/incoming-payments/{id}'),
       method: HttpMethod.GET
     })
 
   const createIncomingPaymentOpenApiValidator =
-    openApi.createResponseValidator<IncomingPaymentWithPaymentMethods>({
+    openApi.createResponseValidator<IncomingPayment>({
       path: getRSPath('/incoming-payments'),
       method: HttpMethod.POST
     })
@@ -95,7 +92,7 @@ export const createIncomingPaymentRoutes = (
 export const getIncomingPayment = async (
   deps: BaseDeps,
   args: ResourceRequestArgs,
-  validateOpenApiResponse: ResponseValidator<IncomingPaymentWithPaymentMethods>
+  validateOpenApiResponse: ResponseValidator<IncomingPayment>
 ) => {
   const { axiosInstance, logger } = deps
   const { url } = args
@@ -122,7 +119,7 @@ export const getIncomingPayment = async (
 export const createIncomingPayment = async (
   deps: BaseDeps,
   requestArgs: CollectionRequestArgs,
-  validateOpenApiResponse: ResponseValidator<IncomingPaymentWithPaymentMethods>,
+  validateOpenApiResponse: ResponseValidator<IncomingPayment>,
   createArgs: CreateIncomingPaymentArgs
 ) => {
   const { axiosInstance, logger } = deps
@@ -218,9 +215,9 @@ export const listIncomingPayment = async (
   return incomingPayments
 }
 
-export const validateIncomingPayment = <T extends AnyIncomingPayment>(
-  payment: T
-): T => {
+export const validateIncomingPayment = (
+  payment: IncomingPayment
+): IncomingPayment => {
   if (payment.incomingAmount) {
     const { incomingAmount, receivedAmount } = payment
     if (
@@ -245,8 +242,8 @@ export const validateIncomingPayment = <T extends AnyIncomingPayment>(
 }
 
 export const validateCreatedIncomingPayment = (
-  payment: IncomingPaymentWithPaymentMethods
-): IncomingPaymentWithPaymentMethods => {
+  payment: IncomingPayment
+): IncomingPayment => {
   const { receivedAmount, completed } = payment
 
   if (BigInt(receivedAmount.value) !== BigInt(0)) {
