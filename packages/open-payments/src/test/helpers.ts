@@ -13,10 +13,13 @@ import {
   Quote,
   IncomingPaymentPaginationResult,
   PendingGrant,
-  Grant
+  Grant,
+  IncomingPaymentWithPaymentMethods,
+  IlpPaymentMethod
 } from '../types'
 import { v4 as uuid } from 'uuid'
 import { ResponseValidator } from '@interledger/openapi'
+import base64url from 'base64url'
 
 export const silentLogger = createLogger({
   level: 'silent'
@@ -94,6 +97,37 @@ export const mockIncomingPayment = (
   },
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
+  ...overrides
+})
+
+export const mockIncomingPaymentWithPaymentMethods = (
+  overrides?: Partial<IncomingPaymentWithPaymentMethods>
+): IncomingPaymentWithPaymentMethods => ({
+  id: `https://example.com/.well-known/pay/incoming-payments/${uuid()}`,
+  walletAddress: 'https://example.com/.well-known/pay',
+  completed: false,
+  incomingAmount: {
+    assetCode: 'USD',
+    assetScale: 2,
+    value: '10'
+  },
+  receivedAmount: {
+    assetCode: 'USD',
+    assetScale: 2,
+    value: '0'
+  },
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+  methods: [mockIlpPaymentMethod()],
+  ...overrides
+})
+
+export const mockIlpPaymentMethod = (
+  overrides?: Partial<IlpPaymentMethod>
+): IlpPaymentMethod => ({
+  type: 'ilp',
+  sharedSecret: base64url('sharedSecret'),
+  ilpAddress: 'test.ilpAddress',
   ...overrides
 })
 
@@ -267,5 +301,6 @@ export const mockQuote = (overrides?: Partial<Quote>): Quote => ({
   },
   createdAt: new Date().toISOString(),
   expiresAt: new Date(Date.now() + 60_000).toISOString(),
+  method: 'ilp',
   ...overrides
 })

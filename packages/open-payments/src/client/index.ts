@@ -110,7 +110,7 @@ export interface UnauthenticatedClient {
 }
 
 /**
- * Creates an OpenPayments client that is only able to make requests to get wallet addresses, wallet address keys, and ILP connections.
+ * Creates an OpenPayments client that is only able to make requests to get wallet addresses, and wallet address keys.
  */
 export const createUnauthenticatedClient = async (
   args: CreateUnauthenticatedClientArgs

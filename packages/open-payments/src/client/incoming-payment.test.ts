@@ -13,6 +13,7 @@ import {
   defaultAxiosInstance,
   mockIncomingPayment,
   mockIncomingPaymentPaginationResult,
+  mockIncomingPaymentWithPaymentMethods,
   mockOpenApiResponseValidators,
   silentLogger
 } from '../test/helpers'
@@ -48,7 +49,7 @@ describe('incoming-payment', (): void => {
 
   describe('getIncomingPayment', (): void => {
     test('returns incoming payment if passes validation', async (): Promise<void> => {
-      const incomingPayment = mockIncomingPayment()
+      const incomingPayment = mockIncomingPaymentWithPaymentMethods()
 
       nock(walletAddress)
         .get('/incoming-payments/1')
@@ -66,7 +67,7 @@ describe('incoming-payment', (): void => {
     })
 
     test('throws if incoming payment does not pass validation', async (): Promise<void> => {
-      const incomingPayment = mockIncomingPayment({
+      const incomingPayment = mockIncomingPaymentWithPaymentMethods({
         incomingAmount: {
           assetCode: 'USD',
           assetScale: 2,
@@ -99,7 +100,7 @@ describe('incoming-payment', (): void => {
     })
 
     test('throws if incoming payment does not pass open api validation', async (): Promise<void> => {
-      const incomingPayment = mockIncomingPayment()
+      const incomingPayment = mockIncomingPaymentWithPaymentMethods()
 
       nock(walletAddress)
         .get('/incoming-payments/1')
@@ -129,7 +130,7 @@ describe('incoming-payment', (): void => {
     `(
       'returns the incoming payment on success',
       async ({ incomingAmount, expiresAt, metadata }): Promise<void> => {
-        const incomingPayment = mockIncomingPayment({
+        const incomingPayment = mockIncomingPaymentWithPaymentMethods({
           incomingAmount,
           expiresAt,
           metadata
@@ -162,7 +163,7 @@ describe('incoming-payment', (): void => {
         value: '10'
       }
 
-      const incomingPayment = mockIncomingPayment({
+      const incomingPayment = mockIncomingPaymentWithPaymentMethods({
         incomingAmount: amount,
         receivedAmount: amount,
         completed: false
@@ -184,7 +185,7 @@ describe('incoming-payment', (): void => {
     })
 
     test('throws if the created incoming payment does not pass open api validation', async (): Promise<void> => {
-      const incomingPayment = mockIncomingPayment()
+      const incomingPayment = mockIncomingPaymentWithPaymentMethods()
 
       const scope = nock(walletAddress)
         .post('/incoming-payments')
@@ -522,7 +523,7 @@ describe('incoming-payment', (): void => {
 
   describe('validateCreatedIncomingPayment', (): void => {
     test('returns the created incoming payment if it passes validation', async (): Promise<void> => {
-      const incomingPayment = mockIncomingPayment({
+      const incomingPayment = mockIncomingPaymentWithPaymentMethods({
         incomingAmount: {
           assetCode: 'USD',
           assetScale: 2,
@@ -541,7 +542,7 @@ describe('incoming-payment', (): void => {
     })
 
     test('throws if received amount is a non-zero value for a newly created incoming payment', async (): Promise<void> => {
-      const incomingPayment = mockIncomingPayment({
+      const incomingPayment = mockIncomingPaymentWithPaymentMethods({
         receivedAmount: {
           assetCode: 'USD',
           assetScale: 2,
@@ -555,7 +556,7 @@ describe('incoming-payment', (): void => {
     })
 
     test('throws if the created incoming payment is completed', async (): Promise<void> => {
-      const incomingPayment = mockIncomingPayment({
+      const incomingPayment = mockIncomingPaymentWithPaymentMethods({
         completed: true
       })
 
