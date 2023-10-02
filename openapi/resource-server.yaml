@@ -28,10 +28,10 @@ info:
   contact:
     email: tech@interledger.org
 servers:
-  - url: 'https://rafiki.money'
-    description: 'Server for wallet address subresources (ie https://rafiki.money/alice)'
-  - url: 'https://rafiki.money/.well-known/pay'
-    description: 'Server for when Payment Pointer has no pathname (ie https://rafiki.money)'
+  - url: 'https://ilp.rafiki.money'
+    description: 'Server for wallet address subresources (ie https://ilp.rafiki.money/alice)'
+  - url: 'https://ilp.rafiki.money/.well-known/pay'
+    description: 'Server for when Payment Pointer has no pathname (ie https://ilp.rafiki.money)'
 tags:
   - name: wallet-address
     description: wallet address operations
@@ -55,13 +55,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/wallet-address'
               examples:
-                Get wallet address for $rafiki.money/alice:
+                Get wallet address for $ilp.rafiki.money/alice:
                   value:
-                    id: 'https://rafiki.money/alice'
+                    id: 'https://ilp.rafiki.money/alice'
                     publicName: Alice
                     assetCode: USD
                     assetScale: 2
-                    authServer: 'https://rafiki.money/auth'
+                    authServer: 'https://auth.rafiki.money'
         '404':
           description: Wallet Address Not Found
       operationId: get-wallet-address
@@ -107,8 +107,8 @@ paths:
               examples:
                 New Incoming Payment for $25:
                   value:
-                    id: 'https://rafiki.money/incoming-payments/08394f02-7b7b-45e2-b645-51d04e7c330c'
-                    walletAddress: 'https://rafiki.money/alice/'
+                    id: 'https://ilp.rafiki.money/incoming-payments/08394f02-7b7b-45e2-b645-51d04e7c330c'
+                    walletAddress: 'https://ilp.rafiki.money/alice/'
                     incomingAmount:
                       value: '2500'
                       assetCode: USD
@@ -203,8 +203,8 @@ paths:
                       hasPreviousPage: false
                       hasNextPage: true
                     result:
-                      - id: 'https://rafiki.money/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
-                        walletAddress: 'https://rafiki.money/alice/'
+                      - id: 'https://ilp.rafiki.money/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
+                        walletAddress: 'https://ilp.rafiki.money/alice/'
                         incomingAmount:
                           value: '250'
                           assetCode: USD
@@ -220,8 +220,8 @@ paths:
                         createdAt: '2022-03-12T23:20:50.52Z'
                         updatedAt: '2022-04-01T10:24:36.11Z'
                         completed: true
-                      - id: 'https://rafiki.money/incoming-payments/32abc219-3dc3-44ec-a225-790cacfca8fa'
-                        walletAddress: 'https://rafiki.money/alice/'
+                      - id: 'https://ilp.rafiki.money/incoming-payments/32abc219-3dc3-44ec-a225-790cacfca8fa'
+                        walletAddress: 'https://ilp.rafiki.money/alice/'
                         receivedAmount:
                           value: '100'
                           assetCode: USD
@@ -240,8 +240,8 @@ paths:
                       hasPreviousPage: true
                       hasNextPage: false
                     result:
-                      - id: 'https://rafiki.money/incoming-payments/32abc219-3dc3-44ec-a225-790cacfca8fa'
-                        walletAddress: 'https://rafiki.money/alice/'
+                      - id: 'https://ilp.rafiki.money/incoming-payments/32abc219-3dc3-44ec-a225-790cacfca8fa'
+                        walletAddress: 'https://ilp.rafiki.money/alice/'
                         receivedAmount:
                           value: '100'
                           assetCode: USD
@@ -252,8 +252,8 @@ paths:
                         updatedAt: '2022-04-01T10:24:36.11Z'
                         metadata:
                           description: 'I love your website, Alice! Thanks for the great content'
-                      - id: 'https://rafiki.money/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
-                        walletAddress: 'https://rafiki.money/alice/'
+                      - id: 'https://ilp.rafiki.money/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
+                        walletAddress: 'https://ilp.rafiki.money/alice/'
                         incomingAmount:
                           value: '250'
                           assetCode: USD
@@ -298,10 +298,10 @@ paths:
               examples:
                 New Fixed Send Outgoing Payment for $25:
                   value:
-                    id: 'https://rafiki.money/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
-                    walletAddress: 'https://rafiki.money/alice/'
+                    id: 'https://ilp.rafiki.money/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
+                    walletAddress: 'https://ilp.rafiki.money/alice/'
                     failed: false
-                    receiver: 'https://rafiki.money/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2'
+                    receiver: 'https://ilp.rafiki.money/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2'
                     debitAmount:
                       value: '2600'
                       assetCode: USD
@@ -328,7 +328,7 @@ paths:
             examples:
               Create an outgoing payment based on a quote:
                 value:
-                  quoteId: 'https://rafiki.money/quotes/ab03296b-0c8b-4776-b94e-7ee27d868d4d'
+                  quoteId: 'https://ilp.rafiki.money/quotes/ab03296b-0c8b-4776-b94e-7ee27d868d4d'
                   metadata:
                     externalRef: INV2022-02-0137
             schema:
@@ -384,10 +384,10 @@ paths:
                       hasPreviousPage: false
                       hasNextPage: true
                     result:
-                      - id: 'https://rafiki.money/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
-                        walletAddress: 'https://rafiki.money/alice/'
+                      - id: 'https://ilp.rafiki.money/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
+                        walletAddress: 'https://ilp.rafiki.money/alice/'
                         failed: false
-                        receiver: 'https://rafiki.money/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
+                        receiver: 'https://ilp.rafiki.money/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
                         receiveAmount:
                           value: '2500'
                           assetCode: USD
@@ -405,10 +405,10 @@ paths:
                         metadata:
                           description: APlusVideo subscription
                           externalRef: 'customer: 847458475'
-                      - id: 'https://rafiki.money/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
-                        walletAddress: 'https://rafiki.money/alice/'
+                      - id: 'https://ilp.rafiki.money/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
+                        walletAddress: 'https://ilp.rafiki.money/alice/'
                         failed: false
-                        receiver: 'https://rafiki.money/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
+                        receiver: 'https://ilp.rafiki.money/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
                         debitAmount:
                           value: '7126'
                           assetCode: USD
@@ -434,10 +434,10 @@ paths:
                       hasPreviousPage: true
                       hasNextPage: false
                     result:
-                      - id: 'https://rafiki.money/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
-                        walletAddress: 'https://rafiki.money/alice/'
+                      - id: 'https://ilp.rafiki.money/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
+                        walletAddress: 'https://ilp.rafiki.money/alice/'
                         failed: false
-                        receiver: 'https://rafiki.money/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
+                        receiver: 'https://ilp.rafiki.money/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
                         debitAmount:
                           value: '7126'
                           assetCode: USD
@@ -455,10 +455,10 @@ paths:
                         metadata:
                           description: Thank you for your purchase at ShoeShop!
                           externalRef: INV2022-8943756
-                      - id: 'https://rafiki.money/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
-                        walletAddress: 'https://rafiki.money/alice/'
+                      - id: 'https://ilp.rafiki.money/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
+                        walletAddress: 'https://ilp.rafiki.money/alice/'
                         failed: false
-                        receiver: 'https://rafiki.money/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
+                        receiver: 'https://ilp.rafiki.money/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
                         receiveAmount:
                           value: '2500'
                           assetCode: USD
@@ -505,9 +505,9 @@ paths:
               examples:
                 New Fixed Send Quote for $25:
                   value:
-                    id: 'https://rafiki.money/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
-                    walletAddress: 'https://rafiki.money/alice/'
-                    receiver: 'https://rafiki.money/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
+                    id: 'https://ilp.rafiki.money/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
+                    walletAddress: 'https://ilp.rafiki.money/alice/'
+                    receiver: 'https://ilp.rafiki.money/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
                     debitAmount:
                       value: '2500'
                       assetCode: USD
@@ -531,11 +531,11 @@ paths:
             examples:
               Create quote for an `receiver` that is an Incoming Payment with an `incomingAmount`:
                 value:
-                  receiver: 'https://rafiki.money/incoming-payments/37a0d0ee-26dc-4c66-89e0-01fbf93156f7'
+                  receiver: 'https://ilp.rafiki.money/incoming-payments/37a0d0ee-26dc-4c66-89e0-01fbf93156f7'
                   method: ilp
               Create fixed-send amount quote for $25:
                 value:
-                  receiver: 'https://rafiki.money/incoming-payments/37a0d0ee-26dc-4c66-89e0-01fbf93156f7'
+                  receiver: 'https://ilp.rafiki.money/incoming-payments/37a0d0ee-26dc-4c66-89e0-01fbf93156f7'
                   method: ilp
                   debitAmount:
                     value: '2500'
@@ -543,7 +543,7 @@ paths:
                     assetScale: 2
               Create fixed-receive amount quote for $25:
                 value:
-                  receiver: 'https://rafiki.money/incoming-payments/37a0d0ee-26dc-4c66-89e0-01fbf93156f7'
+                  receiver: 'https://ilp.rafiki.money/incoming-payments/37a0d0ee-26dc-4c66-89e0-01fbf93156f7'
                   method: ilp
                   receiveAmount:
                     value: '2500'
@@ -617,8 +617,8 @@ paths:
               examples:
                 Incoming Payment for $25 with $12.34 received so far:
                   value:
-                    id: 'https://rafiki.money/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
-                    walletAddress: 'https://rafiki.money/alice/'
+                    id: 'https://ilp.rafiki.money/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
+                    walletAddress: 'https://ilp.rafiki.money/alice/'
                     incomingAmount:
                       value: '2500'
                       assetCode: USD
@@ -667,8 +667,8 @@ paths:
               examples:
                 Completed Incoming Payment:
                   value:
-                    id: 'https://rafiki.money/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
-                    walletAddress: 'https://rafiki.money/alice/'
+                    id: 'https://ilp.rafiki.money/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
+                    walletAddress: 'https://ilp.rafiki.money/alice/'
                     incomingAmount:
                       value: '250'
                       assetCode: USD
@@ -715,10 +715,10 @@ paths:
               examples:
                 Outgoing Payment with a fixed send amount of $25:
                   value:
-                    id: 'https://rafiki.money/bob/outgoing-payments/3859b39e-4666-4ce5-8745-72f1864c5371'
-                    walletAddress: 'https://rafiki.money/bob/'
+                    id: 'https://ilp.rafiki.money/bob/outgoing-payments/3859b39e-4666-4ce5-8745-72f1864c5371'
+                    walletAddress: 'https://ilp.rafiki.money/bob/'
                     failed: false
-                    receiver: 'https://rafiki.money/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
+                    receiver: 'https://ilp.rafiki.money/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
                     debitAmount:
                       value: '2500'
                       assetCode: USD
@@ -764,9 +764,9 @@ paths:
               examples:
                 Quote with a fixed send amount of $25:
                   value:
-                    id: 'https://rafiki.money/bob/quotes/3859b39e-4666-4ce5-8745-72f1864c5371'
-                    walletAddress: 'https://rafiki.money/bob/'
-                    receiver: 'https://rafiki.money/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
+                    id: 'https://ilp.rafiki.money/bob/quotes/3859b39e-4666-4ce5-8745-72f1864c5371'
+                    walletAddress: 'https://ilp.rafiki.money/bob/'
+                    receiver: 'https://ilp.rafiki.money/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
                     debitAmount:
                       value: '2500'
                       assetCode: USD
@@ -798,11 +798,11 @@ components:
       description: A **wallet address** resource is the root of the API and contains the public details of the financial account represented by the Wallet Address that is also the service endpoint URL.
       additionalProperties: false
       examples:
-        - id: 'https://rafiki.money/alice'
+        - id: 'https://ilp.rafiki.money/alice'
           publicName: Alice
           assetCode: USD
           assetScale: 2
-          authServer: 'https://rafiki.money/auth'
+          authServer: 'https://auth.rafiki.money'
       properties:
         id:
           type: string
@@ -853,8 +853,8 @@ components:
       description: 'An **incoming payment** resource represents a payment that will be, is currently being, or has been received by the account.'
       type: object
       examples:
-        - id: 'https://rafiki.money/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
-          walletAddress: 'https://rafiki.money/alice/'
+        - id: 'https://ilp.rafiki.money/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
+          walletAddress: 'https://ilp.rafiki.money/alice/'
           incomingAmount:
             value: '250'
             assetCode: USD
@@ -870,8 +870,8 @@ components:
           metadata:
             description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
             externalRef: Coffee w/ Mo on 10 March 22
-        - id: 'https://rafiki.money/incoming-payments/456da9d5-c9a4-4c80-a354-86b915a04ff8'
-          walletAddress: 'https://rafiki.money/alice/'
+        - id: 'https://ilp.rafiki.money/incoming-payments/456da9d5-c9a4-4c80-a354-86b915a04ff8'
+          walletAddress: 'https://ilp.rafiki.money/alice/'
           incomingAmount:
             value: '2500'
             assetCode: USD
@@ -962,10 +962,10 @@ components:
       description: 'An **outgoing payment** resource represents a payment that will be, is currently being, or has previously been, sent from the wallet address.'
       type: object
       examples:
-        - id: 'https://rafiki.money/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
-          walletAddress: 'https://rafiki.money/alice/'
+        - id: 'https://ilp.rafiki.money/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
+          walletAddress: 'https://ilp.rafiki.money/alice/'
           failed: false
-          receiver: 'https://rafiki.money/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
+          receiver: 'https://ilp.rafiki.money/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
           receiveAmount:
             value: '2500'
             assetCode: USD
@@ -983,10 +983,10 @@ components:
           metadata:
             description: APlusVideo subscription
             externalRef: 'customer: 847458475'
-        - id: 'https://rafiki.money/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
-          walletAddress: 'https://rafiki.money/alice/'
+        - id: 'https://ilp.rafiki.money/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
+          walletAddress: 'https://ilp.rafiki.money/alice/'
           failed: false
-          receiver: 'https://rafiki.money/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
+          receiver: 'https://ilp.rafiki.money/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
           debitAmount:
             value: '7126'
             assetCode: USD
@@ -1058,9 +1058,9 @@ components:
       description: A **quote** resource represents the quoted amount details with which an Outgoing Payment may be created.
       type: object
       examples:
-        - id: 'https://rafiki.money/quotes/ab03296b-0c8b-4776-b94e-7ee27d868d4d'
-          walletAddress: 'https://rafiki.money/alice/'
-          receiver: 'https://rafiki.money/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
+        - id: 'https://ilp.rafiki.money/quotes/ab03296b-0c8b-4776-b94e-7ee27d868d4d'
+          walletAddress: 'https://ilp.rafiki.money/alice/'
+          receiver: 'https://ilp.rafiki.money/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
           receiveAmount:
             value: '2500'
             assetCode: USD
@@ -1076,9 +1076,9 @@ components:
           method: ilp
           createdAt: '2022-03-12T23:20:50.52Z'
           expiresAt: '2022-04-12T23:20:50.52Z'
-        - id: 'https://rafiki.money/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
-          walletAddress: 'https://rafiki.money/alice/'
-          receiver: 'https://rafiki.money/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
+        - id: 'https://ilp.rafiki.money/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
+          walletAddress: 'https://ilp.rafiki.money/alice/'
+          receiver: 'https://ilp.rafiki.money/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
           debitAmount:
             value: '7126'
             assetCode: USD
