@@ -30,6 +30,8 @@ info:
 servers:
   - url: 'https://rafiki.money'
     description: 'Server for wallet address subresources (ie https://rafiki.money/alice)'
+  - url: 'https://rafiki.money/.well-known/pay'
+    description: 'Server for when Payment Pointer has no pathname (ie https://rafiki.money)'
 tags:
   - name: wallet-address
     description: wallet address operations
