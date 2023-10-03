@@ -10,7 +10,7 @@ info:
   contact:
     email: tech@interledger.org
 servers:
-  - url: 'https://rafiki.money/auth'
+  - url: 'https://auth.rafiki.money'
 tags:
   - name: grant
     description: Grant operations
@@ -49,29 +49,29 @@ paths:
                 Interaction instructions:
                   value:
                     interact:
-                      redirect: 'https://rafiki.money/auth/4CF492MLVMSW9MKMXKHQ'
+                      redirect: 'https://auth.rafiki.money/4CF492MLVMSW9MKMXKHQ'
                       finish: 4105340a-05eb-4290-8739-f9e2b463bfa7
                     continue:
                       access_token:
                         value: 33OMUKMKSKU80UPRY5NM
-                      uri: 'https://rafiki.money/auth/continue/4CF492MLVMSW9MKMXKHQ'
+                      uri: 'https://auth.rafiki.money/continue/4CF492MLVMSW9MKMXKHQ'
                       wait: 30
                 Grant:
                   value:
                     access_token:
                       value: OS9M2PMHKUR64TB8N6BW7OZB8CDFONP219RP1LT0
-                      manage: 'https://rafiki.money/auth/token/dd17a202-9982-4ed9-ae31-564947fb6379'
+                      manage: 'https://auth.rafiki.money/token/dd17a202-9982-4ed9-ae31-564947fb6379'
                       expires_in: 3600
                       access:
                         - type: incoming-payment
                           actions:
                             - create
                             - read
-                          identifier: 'https://rafiki.money/bob'
+                          identifier: 'https://ilp.rafiki.money/bob'
                     continue:
                       access_token:
                         value: 33OMUKMKSKU80UPRY5NM
-                      uri: 'https://rafiki.money/auth/continue/4CF492MLVMSW9MKMXKHQ'
+                      uri: 'https://auth.rafiki.money/continue/4CF492MLVMSW9MKMXKHQ'
         '400':
           description: Bad Request
         '401':
@@ -108,9 +108,9 @@ paths:
                         actions:
                           - create
                           - read
-                        identifier: 'https://rafiki.money/alice'
+                        identifier: 'https://ilp.rafiki.money/alice'
                         limits:
-                          receiver: 'https://rafiki.money/connections/45a0d0ee-26dc-4c66-89e0-01fbf93156f7'
+                          receiver: 'https://ilp.rafiki.money/connections/45a0d0ee-26dc-4c66-89e0-01fbf93156f7'
                           interval: 'R12/2019-08-24T14:15:22Z/P1M'
                           debitAmount:
                             value: '500'
@@ -132,7 +132,7 @@ paths:
                         actions:
                           - create
                           - read
-                        identifier: 'http://rafiki.money/bob'
+                        identifier: 'http://ilp.rafiki.money/bob'
                   client: 'https://webmonize.com/.well-known/pay'
         description: ''
       description: Make a new grant request
@@ -169,16 +169,16 @@ paths:
                   value:
                     access_token:
                       value: OS9M2PMHKUR64TB8N6BW7OZB8CDFONP219RP1LT0
-                      manage: 'https://rafiki.money/auth/token/dd17a202-9982-4ed9-ae31-564947fb6379'
+                      manage: 'https://auth.rafiki.money/token/dd17a202-9982-4ed9-ae31-564947fb6379'
                       expires_in: 3600
                       access:
                         - type: outgoing-payment
                           actions:
                             - create
                             - read
-                          identifier: 'https://rafiki.money/alice'
+                          identifier: 'https://ilp.rafiki.money/alice'
                           limits:
-                            receiver: 'https://rafiki.money/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2'
+                            receiver: 'https://ilp.rafiki.money/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2'
                             interval: 'R12/2019-08-24T14:15:22Z/P1M'
                             debitAmount:
                               value: '500'
@@ -187,14 +187,14 @@ paths:
                     continue:
                       access_token:
                         value: 33OMUKMKSKU80UPRY5NM
-                      uri: 'https://rafiki.money/auth/continue/4CF492MLVMSW9MKMXKHQ'
+                      uri: 'https://auth.rafiki.money/continue/4CF492MLVMSW9MKMXKHQ'
                       wait: 30
                 Continuing During Pending Interaction:
                   value:
                     continue:
                       access_token:
                         value: 33OMUKMKSKU80UPRY5NM
-                      uri: 'https://rafiki.money/auth/continue/4CF492MLVMSW9MKMXKHQ'
+                      uri: 'https://auth.rafiki.money/continue/4CF492MLVMSW9MKMXKHQ'
                       wait: 30
         '400':
           description: Bad Request
@@ -264,17 +264,17 @@ paths:
                   value:
                     access_token:
                       value: OZB8CDFONP219RP1LT0OS9M2PMHKUR64TB8N6BW7
-                      manage: 'https://rafiki.money/auth/token/8f69de01-5bf9-4603-91ed-eeca101081f1'
+                      manage: 'https://auth.rafiki.money/token/8f69de01-5bf9-4603-91ed-eeca101081f1'
                       expires_in: 3600
                       access:
                         - type: outgoing-payment
                           actions:
                             - create
                             - read
-                          identifier: 'https://rafiki.money/alice'
+                          identifier: 'https://ilp.rafiki.money/alice'
                           limits:
                             interval: 'R12/2019-08-24T14:15:22Z/P1M'
-                            receiver: 'https://rafiki.money/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2'
+                            receiver: 'https://ilp.rafiki.money/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2'
                             debitAmount:
                               value: '500'
                               assetCode: USD
