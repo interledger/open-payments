@@ -76,6 +76,7 @@ export const createIncomingPaymentRoutes = (
         getIncomingPaymentOpenApiValidator
       ),
     getPublic: (args: ResourceRequestArgs) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { accessToken, ...argsWithoutAccessToken } = args
       return getPublicIncomingPayment(
         { axiosInstance, logger },
