@@ -21,6 +21,7 @@ type AnyIncomingPayment = IncomingPayment | IncomingPaymentWithPaymentMethods
 
 export interface IncomingPaymentRoutes {
   get(args: ResourceRequestArgs): Promise<IncomingPaymentWithPaymentMethods>
+  getPublic(args: ResourceRequestArgs): Promise<PublicIncomingPayment>
   create(
     args: CollectionRequestArgs,
     createArgs: CreateIncomingPaymentArgs
@@ -39,6 +40,12 @@ export const createIncomingPaymentRoutes = (
 
   const getIncomingPaymentOpenApiValidator =
     openApi.createResponseValidator<IncomingPaymentWithPaymentMethods>({
+      path: getRSPath('/incoming-payments/{id}'),
+      method: HttpMethod.GET
+    })
+
+  const getPublicIncomingPaymentOpenApiValidator =
+    openApi.createResponseValidator<PublicIncomingPayment>({
       path: getRSPath('/incoming-payments/{id}'),
       method: HttpMethod.GET
     })
@@ -68,6 +75,14 @@ export const createIncomingPaymentRoutes = (
         args,
         getIncomingPaymentOpenApiValidator
       ),
+    getPublic: (args: ResourceRequestArgs) => {
+      const { accessToken, ...argsWithoutAccessToken } = args
+      return getPublicIncomingPayment(
+        { axiosInstance, logger },
+        argsWithoutAccessToken,
+        getPublicIncomingPaymentOpenApiValidator
+      )
+    },
     create: (
       requestArgs: CollectionRequestArgs,
       createArgs: CreateIncomingPaymentArgs
@@ -103,7 +118,7 @@ export const createUnauthenticatedIncomingPaymentRoutes = (
 ): UnauthenticatedIncomingPaymentRoutes => {
   const { axiosInstance, openApi, logger } = deps
 
-  const getIncomingPaymentOpenApiValidator =
+  const getPublicIncomingPaymentOpenApiValidator =
     openApi.createResponseValidator<PublicIncomingPayment>({
       path: getRSPath('/incoming-payments/{id}'),
       method: HttpMethod.GET
@@ -114,7 +129,7 @@ export const createUnauthenticatedIncomingPaymentRoutes = (
       getPublicIncomingPayment(
         { axiosInstance, logger },
         args,
-        getIncomingPaymentOpenApiValidator
+        getPublicIncomingPaymentOpenApiValidator
       )
   }
 }

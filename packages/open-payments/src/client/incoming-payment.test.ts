@@ -665,6 +665,41 @@ describe('incoming-payment', (): void => {
       })
     })
 
+    describe('getPublic', (): void => {
+      test('calls getPublic method with correct validator', async (): Promise<void> => {
+        const mockResponseValidator = ({ path, method }) =>
+          path === '/incoming-payments/{id}' && method === HttpMethod.GET
+
+        const url = `${walletAddress}/incoming-payments/1`
+
+        jest
+          .spyOn(openApi, 'createResponseValidator')
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .mockImplementation(mockResponseValidator as any)
+
+        const publicIncomingPayment = mockPublicIncomingPayment()
+
+        const getSpy = jest
+          .spyOn(requestors, 'get')
+          .mockResolvedValueOnce(publicIncomingPayment)
+
+        await createIncomingPaymentRoutes({
+          openApi,
+          axiosInstance,
+          logger
+        }).getPublic({ accessToken, url })
+
+        expect(getSpy).toHaveBeenCalledWith(
+          {
+            axiosInstance,
+            logger
+          },
+          { url },
+          true
+        )
+      })
+    })
+
     describe('list', (): void => {
       test('calls get method with correct validator', async (): Promise<void> => {
         const mockResponseValidator = ({ path, method }) =>
