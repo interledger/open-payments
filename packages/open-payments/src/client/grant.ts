@@ -1,8 +1,8 @@
 import { HttpMethod } from '@interledger/openapi'
 import {
-  ResourceRequestArgs,
+  GrantOrTokenRequestArgs,
   RouteDeps,
-  UnauthenticatedResourceRequestArgs
+  UnauthenticatedRequestArgs
 } from '.'
 import {
   getASPath,
@@ -19,14 +19,14 @@ export interface GrantRouteDeps extends RouteDeps {
 
 export interface GrantRoutes {
   request(
-    postArgs: UnauthenticatedResourceRequestArgs,
+    postArgs: UnauthenticatedRequestArgs,
     args: Omit<GrantRequest, 'client'>
   ): Promise<PendingGrant | Grant>
   continue(
-    postArgs: ResourceRequestArgs,
+    postArgs: GrantOrTokenRequestArgs,
     args: GrantContinuationRequest
   ): Promise<Grant>
-  cancel(postArgs: ResourceRequestArgs): Promise<void>
+  cancel(postArgs: GrantOrTokenRequestArgs): Promise<void>
 }
 
 export const createGrantRoutes = (deps: GrantRouteDeps): GrantRoutes => {
@@ -47,7 +47,7 @@ export const createGrantRoutes = (deps: GrantRouteDeps): GrantRoutes => {
 
   return {
     request: (
-      { url }: UnauthenticatedResourceRequestArgs,
+      { url }: UnauthenticatedRequestArgs,
       args: Omit<GrantRequest, 'client'>
     ) =>
       post(
@@ -62,7 +62,7 @@ export const createGrantRoutes = (deps: GrantRouteDeps): GrantRoutes => {
         requestGrantValidator
       ),
     continue: (
-      { url, accessToken }: ResourceRequestArgs,
+      { url, accessToken }: GrantOrTokenRequestArgs,
       args: GrantContinuationRequest
     ) =>
       post(
@@ -74,7 +74,7 @@ export const createGrantRoutes = (deps: GrantRouteDeps): GrantRoutes => {
         },
         continueGrantValidator
       ),
-    cancel: ({ url, accessToken }: ResourceRequestArgs) =>
+    cancel: ({ url, accessToken }: GrantOrTokenRequestArgs) =>
       deleteRequest(
         deps,
         {

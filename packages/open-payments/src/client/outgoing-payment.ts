@@ -1,10 +1,5 @@
 import { HttpMethod, ResponseValidator } from '@interledger/openapi'
-import {
-  BaseDeps,
-  CollectionRequestArgs,
-  ResourceRequestArgs,
-  RouteDeps
-} from '.'
+import { BaseDeps, ResourceOrCollectionRequestArgs, RouteDeps } from '.'
 import {
   CreateOutgoingPaymentArgs,
   getRSPath,
@@ -15,13 +10,13 @@ import {
 import { get, post } from './requests'
 
 export interface OutgoingPaymentRoutes {
-  get(args: ResourceRequestArgs): Promise<OutgoingPayment>
+  get(args: ResourceOrCollectionRequestArgs): Promise<OutgoingPayment>
   list(
-    args: CollectionRequestArgs,
+    args: ResourceOrCollectionRequestArgs,
     pagination?: PaginationArgs
   ): Promise<OutgoingPaymentPaginationResult>
   create(
-    requestArgs: CollectionRequestArgs,
+    requestArgs: ResourceOrCollectionRequestArgs,
     createArgs: CreateOutgoingPaymentArgs
   ): Promise<OutgoingPayment>
 }
@@ -50,13 +45,16 @@ export const createOutgoingPaymentRoutes = (
     })
 
   return {
-    get: (requestArgs: ResourceRequestArgs) =>
+    get: (requestArgs: ResourceOrCollectionRequestArgs) =>
       getOutgoingPayment(
         { axiosInstance, logger },
         requestArgs,
         getOutgoingPaymentOpenApiValidator
       ),
-    list: (requestArgs: CollectionRequestArgs, pagination?: PaginationArgs) =>
+    list: (
+      requestArgs: ResourceOrCollectionRequestArgs,
+      pagination?: PaginationArgs
+    ) =>
       listOutgoingPayments(
         { axiosInstance, logger },
         requestArgs,
@@ -64,7 +62,7 @@ export const createOutgoingPaymentRoutes = (
         pagination
       ),
     create: (
-      requestArgs: CollectionRequestArgs,
+      requestArgs: ResourceOrCollectionRequestArgs,
       createArgs: CreateOutgoingPaymentArgs
     ) =>
       createOutgoingPayment(
@@ -78,15 +76,21 @@ export const createOutgoingPaymentRoutes = (
 
 export const getOutgoingPayment = async (
   deps: BaseDeps,
-  requestArgs: ResourceRequestArgs,
+  requestArgs: ResourceOrCollectionRequestArgs,
   validateOpenApiResponse: ResponseValidator<OutgoingPayment>
 ) => {
   const { axiosInstance, logger } = deps
-  const { url, accessToken } = requestArgs
+  const { url, walletAddress, accessToken } = requestArgs
 
   const outgoingPayment = await get(
     { axiosInstance, logger },
-    { url, accessToken },
+    {
+      url,
+      accessToken,
+      queryParams: {
+        'wallet-address': walletAddress
+      }
+    },
     validateOpenApiResponse
   )
 
@@ -105,13 +109,13 @@ export const getOutgoingPayment = async (
 
 export const createOutgoingPayment = async (
   deps: BaseDeps,
-  requestArgs: CollectionRequestArgs,
+  requestArgs: ResourceOrCollectionRequestArgs,
   validateOpenApiResponse: ResponseValidator<OutgoingPayment>,
   createArgs: CreateOutgoingPaymentArgs
 ) => {
   const { axiosInstance, logger } = deps
-  const { walletAddress, accessToken } = requestArgs
-  const url = `${walletAddress}${getRSPath('/outgoing-payments')}`
+  const { url: baseUrl, accessToken } = requestArgs
+  const url = `${baseUrl}${getRSPath('/outgoing-payments')}`
 
   const outgoingPayment = await post(
     { axiosInstance, logger },
@@ -134,20 +138,22 @@ export const createOutgoingPayment = async (
 
 export const listOutgoingPayments = async (
   deps: BaseDeps,
-  requestArgs: CollectionRequestArgs,
+  requestArgs: ResourceOrCollectionRequestArgs,
   validateOpenApiResponse: ResponseValidator<OutgoingPaymentPaginationResult>,
   pagination?: PaginationArgs
 ) => {
   const { axiosInstance, logger } = deps
-  const { accessToken, walletAddress } = requestArgs
-  const url = `${walletAddress}${getRSPath('/outgoing-payments')}`
+  const { url: baseUrl, accessToken, walletAddress } = requestArgs
+  const url = `${baseUrl}${getRSPath('/outgoing-payments')}`
 
   const outgoingPayments = await get(
     { axiosInstance, logger },
     {
       url,
       accessToken,
-      ...(pagination ? { queryParams: { ...pagination } } : {})
+      ...(pagination
+        ? { queryParams: { ...pagination, 'wallet-address': walletAddress } }
+        : { queryParams: { 'wallet-address': walletAddress } })
     },
     validateOpenApiResponse
   )

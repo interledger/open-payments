@@ -39,13 +39,13 @@ export interface RouteDeps extends BaseDeps {
   logger: Logger
 }
 
-export interface UnauthenticatedResourceRequestArgs {
+export interface UnauthenticatedRequestArgs {
   /**
    * The full URL of the requested resource.
    *
    * For example, if the requested resource is an incoming payment:
    * ```
-   * https://openpayments.guide/alice/incoming-payments/08394f02-7b7b-45e2-b645-51d04e7c330c`
+   * https://openpayments.guide/incoming-payments/08394f02-7b7b-45e2-b645-51d04e7c330c`
    * ```
    */
   url: string
@@ -60,11 +60,14 @@ interface AuthenticatedRequestArgs {
    */
   accessToken: string
 }
-export interface ResourceRequestArgs
-  extends UnauthenticatedResourceRequestArgs,
+
+export interface GrantOrTokenRequestArgs
+  extends UnauthenticatedRequestArgs,
     AuthenticatedRequestArgs {}
 
-export interface CollectionRequestArgs extends AuthenticatedRequestArgs {
+export interface ResourceOrCollectionRequestArgs
+  extends UnauthenticatedRequestArgs,
+    AuthenticatedRequestArgs {
   /**
    * The wallet address URL of the requested collection.
    *

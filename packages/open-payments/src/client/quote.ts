@@ -1,17 +1,12 @@
 import { HttpMethod, ResponseValidator } from '@interledger/openapi'
-import {
-  ResourceRequestArgs,
-  CollectionRequestArgs,
-  BaseDeps,
-  RouteDeps
-} from '.'
+import { ResourceOrCollectionRequestArgs, BaseDeps, RouteDeps } from '.'
 import { CreateQuoteArgs, getRSPath, Quote } from '../types'
 import { get, post } from './requests'
 
 export interface QuoteRoutes {
-  get(args: ResourceRequestArgs): Promise<Quote>
+  get(args: ResourceOrCollectionRequestArgs): Promise<Quote>
   create(
-    createArgs: CollectionRequestArgs,
+    createArgs: ResourceOrCollectionRequestArgs,
     createQuoteArgs: CreateQuoteArgs
   ): Promise<Quote>
 }
@@ -30,10 +25,10 @@ export const createQuoteRoutes = (deps: RouteDeps): QuoteRoutes => {
   })
 
   return {
-    get: (args: ResourceRequestArgs) =>
+    get: (args: ResourceOrCollectionRequestArgs) =>
       getQuote({ axiosInstance, logger }, args, getQuoteOpenApiValidator),
     create: (
-      createArgs: CollectionRequestArgs,
+      createArgs: ResourceOrCollectionRequestArgs,
       createQuoteArgs: CreateQuoteArgs
     ) =>
       createQuote(
@@ -47,7 +42,7 @@ export const createQuoteRoutes = (deps: RouteDeps): QuoteRoutes => {
 
 export const getQuote = async (
   deps: BaseDeps,
-  args: ResourceRequestArgs,
+  args: ResourceOrCollectionRequestArgs,
   validateOpenApiResponse: ResponseValidator<Quote>
 ) => {
   const { axiosInstance, logger } = deps
@@ -63,7 +58,7 @@ export const getQuote = async (
 
 export const createQuote = async (
   deps: BaseDeps,
-  createArgs: CollectionRequestArgs,
+  createArgs: ResourceOrCollectionRequestArgs,
   validateOpenApiResponse: ResponseValidator<Quote>,
   createQuoteArgs: CreateQuoteArgs
 ) => {

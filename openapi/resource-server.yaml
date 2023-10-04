@@ -138,8 +138,8 @@ paths:
               additionalProperties: false
               properties:
                 walletAddress:
-                  type: string
-                  description: The URL of the wallet address that should receive the incoming payment.
+                  $ref: ./schemas.yaml#/components/schemas/walletAddress
+                  required: true
                 incomingAmount:
                   $ref: ./schemas.yaml#/components/schemas/amount
                   description: The maximum amount that should be paid into the wallet address under this incoming payment.
@@ -340,8 +340,8 @@ paths:
               type: object
               properties:
                 walletAddress:
-                  type: string
-                  description: The URL of the wallet address that should receive the outgoing payment.
+                  $ref: ./schemas.yaml#/components/schemas/walletAddress
+                  required: true
                 quoteId:
                   type: string
                   format: uri
@@ -540,10 +540,12 @@ paths:
             examples:
               Create quote for an `receiver` that is an Incoming Payment with an `incomingAmount`:
                 value:
+                  walletAddress: 'https://ilp.rafiki.money/alice'
                   receiver: 'https://ilp.rafiki.money/incoming-payments/37a0d0ee-26dc-4c66-89e0-01fbf93156f7'
                   method: ilp
               Create fixed-send amount quote for $25:
                 value:
+                  walletAddress: 'https://ilp.rafiki.money/alice'
                   receiver: 'https://ilp.rafiki.money/incoming-payments/37a0d0ee-26dc-4c66-89e0-01fbf93156f7'
                   method: ilp
                   debitAmount:
@@ -552,6 +554,7 @@ paths:
                     assetScale: 2
               Create fixed-receive amount quote for $25:
                 value:
+                  walletAddress: 'https://ilp.rafiki.money/alice'
                   receiver: 'https://ilp.rafiki.money/incoming-payments/37a0d0ee-26dc-4c66-89e0-01fbf93156f7'
                   method: ilp
                   receiveAmount:
@@ -562,16 +565,21 @@ paths:
               oneOf:
                 - description: Create quote for an `receiver` that is an Incoming Payment with an `incomingAmount`
                   properties:
+                    walletAddress:
+                      $ref: ./schemas.yaml#/components/schemas/walletAddress
                     receiver:
                       $ref: ./schemas.yaml#/components/schemas/receiver
                     method:
                       $ref: '#/components/schemas/payment-method'
                   required:
+                    - walletAddress
                     - receiver
                     - method
                   additionalProperties: false
                 - description: Create a quote with a fixed-receive amount
                   properties:
+                    walletAddress:
+                      $ref: ./schemas.yaml#/components/schemas/walletAddress
                     receiver:
                       $ref: ./schemas.yaml#/components/schemas/receiver
                     method:
@@ -580,12 +588,15 @@ paths:
                       description: The fixed amount that would be paid into the receiving wallet address given a successful outgoing payment.
                       $ref: ./schemas.yaml#/components/schemas/amount
                   required:
+                    - walletAddress
                     - receiver
                     - method
                     - receiveAmount
                   additionalProperties: false
                 - description: Create a quote with a fixed-send amount
                   properties:
+                    walletAddress:
+                      $ref: ./schemas.yaml#/components/schemas/walletAddress
                     receiver:
                       $ref: ./schemas.yaml#/components/schemas/receiver
                     method:
@@ -594,6 +605,7 @@ paths:
                       description: The fixed amount that would be sent from the sending wallet address given a successful outgoing payment.
                       $ref: ./schemas.yaml#/components/schemas/amount
                   required:
+                    - walletAddress
                     - receiver
                     - method
                     - debitAmount
@@ -708,8 +720,8 @@ paths:
               additionalProperties: false
               properties:
                 walletAddress:
-                  type: string
-                  description: The URL of the wallet address that should receive the incoming payment.
+                  $ref: ./schemas.yaml#/components/schemas/walletAddress
+                  required: true
             examples:
               Complete incoming payment for https://openpayments.guide/alice:
                 value:
@@ -1313,6 +1325,7 @@ components:
       schema:
         type: string
       description: 'URL of a wallet address hosted by a Rafiki instance.'
+      required: true
     signature:
       name: Signature
       in: header
