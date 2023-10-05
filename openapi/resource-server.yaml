@@ -139,7 +139,6 @@ paths:
               properties:
                 walletAddress:
                   $ref: ./schemas.yaml#/components/schemas/walletAddress
-                  required: true
                 incomingAmount:
                   $ref: ./schemas.yaml#/components/schemas/amount
                   description: The maximum amount that should be paid into the wallet address under this incoming payment.
@@ -333,6 +332,7 @@ paths:
             examples:
               Create an outgoing payment based on a quote:
                 value:
+                  walletAddress: 'https://ilp.rafiki.money/alice/'
                   quoteId: 'https://ilp.rafiki.money/quotes/ab03296b-0c8b-4776-b94e-7ee27d868d4d'
                   metadata:
                     externalRef: INV2022-02-0137
@@ -341,7 +341,6 @@ paths:
               properties:
                 walletAddress:
                   $ref: ./schemas.yaml#/components/schemas/walletAddress
-                  required: true
                 quoteId:
                   type: string
                   format: uri
@@ -352,6 +351,7 @@ paths:
                   description: Additional metadata associated with the outgoing payment. (Optional)
               required:
                 - quoteId
+                - walletAddress
               additionalProperties: false
         description: |-
           A subset of the outgoing payments schema is accepted as input to create a new outgoing payment.
@@ -721,7 +721,8 @@ paths:
               properties:
                 walletAddress:
                   $ref: ./schemas.yaml#/components/schemas/walletAddress
-                  required: true
+              required:
+                - walletAddress
             examples:
               Complete incoming payment for https://openpayments.guide/alice:
                 value:

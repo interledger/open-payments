@@ -505,7 +505,7 @@ export interface operations {
     requestBody: {
       content: {
         "application/json": {
-          walletAddress?: external["schemas.yaml"]["components"]["schemas"]["walletAddress"];
+          walletAddress: external["schemas.yaml"]["components"]["schemas"]["walletAddress"];
           /**
            * Format: uri
            * @description The URL of the quote defining this payment's amounts.
@@ -636,7 +636,7 @@ export interface operations {
     requestBody: {
       content: {
         "application/json": {
-          walletAddress?: external["schemas.yaml"]["components"]["schemas"]["walletAddress"];
+          walletAddress: external["schemas.yaml"]["components"]["schemas"]["walletAddress"];
         };
       };
     };
