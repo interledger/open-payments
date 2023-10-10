@@ -54,6 +54,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/wallet-address'
+                additionalProperties: true
               examples:
                 Get wallet address for $ilp.rafiki.money/alice:
                   value:
