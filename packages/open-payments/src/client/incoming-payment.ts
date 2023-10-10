@@ -3,7 +3,8 @@ import {
   BaseDeps,
   CollectionRequestArgs,
   ResourceRequestArgs,
-  RouteDeps
+  RouteDeps,
+  UnauthenticatedResourceRequestArgs
 } from '.'
 import {
   IncomingPayment,
@@ -11,6 +12,7 @@ import {
   CreateIncomingPaymentArgs,
   PaginationArgs,
   IncomingPaymentPaginationResult,
+  PublicIncomingPayment,
   IncomingPaymentWithPaymentMethods
 } from '../types'
 import { get, post } from './requests'
@@ -19,6 +21,7 @@ type AnyIncomingPayment = IncomingPayment | IncomingPaymentWithPaymentMethods
 
 export interface IncomingPaymentRoutes {
   get(args: ResourceRequestArgs): Promise<IncomingPaymentWithPaymentMethods>
+  getPublic(args: ResourceRequestArgs): Promise<PublicIncomingPayment>
   create(
     args: CollectionRequestArgs,
     createArgs: CreateIncomingPaymentArgs
@@ -37,6 +40,12 @@ export const createIncomingPaymentRoutes = (
 
   const getIncomingPaymentOpenApiValidator =
     openApi.createResponseValidator<IncomingPaymentWithPaymentMethods>({
+      path: getRSPath('/incoming-payments/{id}'),
+      method: HttpMethod.GET
+    })
+
+  const getPublicIncomingPaymentOpenApiValidator =
+    openApi.createResponseValidator<PublicIncomingPayment>({
       path: getRSPath('/incoming-payments/{id}'),
       method: HttpMethod.GET
     })
@@ -66,6 +75,15 @@ export const createIncomingPaymentRoutes = (
         args,
         getIncomingPaymentOpenApiValidator
       ),
+    getPublic: (args: ResourceRequestArgs) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { accessToken, ...argsWithoutAccessToken } = args
+      return getPublicIncomingPayment(
+        { axiosInstance, logger },
+        argsWithoutAccessToken,
+        getPublicIncomingPaymentOpenApiValidator
+      )
+    },
     create: (
       requestArgs: CollectionRequestArgs,
       createArgs: CreateIncomingPaymentArgs
@@ -88,6 +106,31 @@ export const createIncomingPaymentRoutes = (
         args,
         listIncomingPaymentOpenApiValidator,
         pagination
+      )
+  }
+}
+
+export interface UnauthenticatedIncomingPaymentRoutes {
+  get(args: UnauthenticatedResourceRequestArgs): Promise<PublicIncomingPayment>
+}
+
+export const createUnauthenticatedIncomingPaymentRoutes = (
+  deps: RouteDeps
+): UnauthenticatedIncomingPaymentRoutes => {
+  const { axiosInstance, openApi, logger } = deps
+
+  const getPublicIncomingPaymentOpenApiValidator =
+    openApi.createResponseValidator<PublicIncomingPayment>({
+      path: getRSPath('/incoming-payments/{id}'),
+      method: HttpMethod.GET
+    })
+
+  return {
+    get: (args: UnauthenticatedResourceRequestArgs) =>
+      getPublicIncomingPayment(
+        { axiosInstance, logger },
+        args,
+        getPublicIncomingPaymentOpenApiValidator
       )
   }
 }
@@ -117,6 +160,15 @@ export const getIncomingPayment = async (
 
     throw new Error(errorMessage)
   }
+}
+
+export const getPublicIncomingPayment = async (
+  deps: BaseDeps,
+  args: UnauthenticatedResourceRequestArgs,
+  validateOpenApiResponse: ResponseValidator<PublicIncomingPayment>
+) => {
+  const { axiosInstance, logger } = deps
+  return await get({ axiosInstance, logger }, args, validateOpenApiResponse)
 }
 
 export const createIncomingPayment = async (

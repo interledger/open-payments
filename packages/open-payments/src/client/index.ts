@@ -5,7 +5,9 @@ import createLogger, { Logger } from 'pino'
 import config from '../config'
 import {
   createIncomingPaymentRoutes,
-  IncomingPaymentRoutes
+  createUnauthenticatedIncomingPaymentRoutes,
+  IncomingPaymentRoutes,
+  UnauthenticatedIncomingPaymentRoutes
 } from './incoming-payment'
 import {
   createWalletAddressRoutes,
@@ -107,6 +109,7 @@ export interface CreateUnauthenticatedClientArgs {
 
 export interface UnauthenticatedClient {
   walletAddress: WalletAddressRoutes
+  incomingPayment: UnauthenticatedIncomingPaymentRoutes
 }
 
 /**
@@ -121,6 +124,11 @@ export const createUnauthenticatedClient = async (
 
   return {
     walletAddress: createWalletAddressRoutes({
+      axiosInstance,
+      openApi: resourceServerOpenApi,
+      logger
+    }),
+    incomingPayment: createUnauthenticatedIncomingPaymentRoutes({
       axiosInstance,
       openApi: resourceServerOpenApi,
       logger

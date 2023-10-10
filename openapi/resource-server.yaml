@@ -954,7 +954,7 @@ components:
             assetCode: USD
             assetScale: 2
       properties:
-        receiveAmount:
+        receivedAmount:
           $ref: ./schemas.yaml#/components/schemas/amount
       unresolvedProperites: false
     outgoing-payment:

@@ -13,6 +13,8 @@ export const getRSPath = <P extends keyof RSPaths>(path: P): string =>
   path as string
 
 export type IncomingPayment = RSComponents['schemas']['incoming-payment']
+export type PublicIncomingPayment =
+  RSComponents['schemas']['public-incoming-payment']
 
 export type IlpPaymentMethod = RSComponents['schemas']['ilp-payment-method']
 type PaymentMethods = IlpPaymentMethod

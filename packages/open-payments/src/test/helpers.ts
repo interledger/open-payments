@@ -15,7 +15,8 @@ import {
   PendingGrant,
   Grant,
   IncomingPaymentWithPaymentMethods,
-  IlpPaymentMethod
+  IlpPaymentMethod,
+  PublicIncomingPayment
 } from '../types'
 import { v4 as uuid } from 'uuid'
 import { ResponseValidator } from '@interledger/openapi'
@@ -119,6 +120,17 @@ export const mockIncomingPaymentWithPaymentMethods = (
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
   methods: [mockIlpPaymentMethod()],
+  ...overrides
+})
+
+export const mockPublicIncomingPayment = (
+  overrides?: Partial<PublicIncomingPayment>
+): PublicIncomingPayment => ({
+  receivedAmount: {
+    assetCode: 'USD',
+    assetScale: 2,
+    value: '0'
+  },
   ...overrides
 })
 
