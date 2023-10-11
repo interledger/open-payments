@@ -60,10 +60,6 @@ export interface paths {
         /** Sub-resource identifier */
         id: components["parameters"]["id"];
       };
-      query: {
-        /** URL of a wallet address hosted by a Rafiki instance. */
-        "wallet-address": components["parameters"]["wallet-address"];
-      };
     };
   };
   "/incoming-payments/{id}/complete": {
@@ -87,10 +83,6 @@ export interface paths {
       path: {
         /** Sub-resource identifier */
         id: components["parameters"]["id"];
-      };
-      query: {
-        /** URL of a wallet address hosted by a Rafiki instance. */
-        "wallet-address": components["parameters"]["wallet-address"];
       };
     };
   };
@@ -576,10 +568,6 @@ export interface operations {
         /** Sub-resource identifier */
         id: components["parameters"]["id"];
       };
-      query: {
-        /** URL of a wallet address hosted by a Rafiki instance. */
-        "wallet-address": components["parameters"]["wallet-address"];
-      };
       header: {
         /** The Signature-Input field is a Dictionary structured field containing the metadata for one or more message signatures generated from components within the HTTP message.  Each member describes a single message signature.  The member's key is the label that uniquely identifies the message signature within the context of the HTTP message.  The member's value is the serialization of the covered components Inner List plus all signature metadata parameters identified by the label.  The following components MUST be included: - "@method" - "@target-uri" - "authorization".  When the message contains a request body, the covered components MUST also include the following: - "content-digest"  The keyid parameter of the signature MUST be set to the kid value of the JWK.      See [ietf-httpbis-message-signatures](https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-message-signatures#section-4.1) for more details. */
         "Signature-Input"?: components["parameters"]["optional-signature-input"];
@@ -633,13 +621,6 @@ export interface operations {
       /** Incoming Payment Not Found */
       404: unknown;
     };
-    requestBody: {
-      content: {
-        "application/json": {
-          walletAddress: external["schemas.yaml"]["components"]["schemas"]["walletAddress"];
-        };
-      };
-    };
   };
   /** A client can fetch the latest state of an outgoing payment. */
   "get-outgoing-payment": {
@@ -647,10 +628,6 @@ export interface operations {
       path: {
         /** Sub-resource identifier */
         id: components["parameters"]["id"];
-      };
-      query: {
-        /** URL of a wallet address hosted by a Rafiki instance. */
-        "wallet-address": components["parameters"]["wallet-address"];
       };
       header: {
         /** The Signature-Input field is a Dictionary structured field containing the metadata for one or more message signatures generated from components within the HTTP message.  Each member describes a single message signature.  The member's key is the label that uniquely identifies the message signature within the context of the HTTP message.  The member's value is the serialization of the covered components Inner List plus all signature metadata parameters identified by the label.  The following components MUST be included: - "@method" - "@target-uri" - "authorization".  When the message contains a request body, the covered components MUST also include the following: - "content-digest"  The keyid parameter of the signature MUST be set to the kid value of the JWK.      See [ietf-httpbis-message-signatures](https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-message-signatures#section-4.1) for more details. */

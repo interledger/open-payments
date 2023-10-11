@@ -39,7 +39,7 @@ export interface RouteDeps extends BaseDeps {
   logger: Logger
 }
 
-export interface UnauthenticatedRequestArgs {
+export interface UnauthenticatedResourceRequestArgs {
   /**
    * The full URL of the requested resource.
    *
@@ -62,11 +62,15 @@ interface AuthenticatedRequestArgs {
 }
 
 export interface GrantOrTokenRequestArgs
-  extends UnauthenticatedRequestArgs,
+  extends UnauthenticatedResourceRequestArgs,
     AuthenticatedRequestArgs {}
 
-export interface ResourceOrCollectionRequestArgs
-  extends UnauthenticatedRequestArgs,
+export interface ResourceRequestArgs
+  extends UnauthenticatedResourceRequestArgs,
+    AuthenticatedRequestArgs {}
+
+export interface CollectionRequestArgs
+  extends UnauthenticatedResourceRequestArgs,
     AuthenticatedRequestArgs {
   /**
    * The wallet address URL of the requested collection.

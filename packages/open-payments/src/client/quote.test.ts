@@ -75,25 +75,25 @@ describe('quote', (): void => {
 
   describe('createQuote', (): void => {
     test('returns the quote if it passes open api validation', async (): Promise<void> => {
-      const scope = nock(walletAddress).post(`/quotes`).reply(200, quote)
+      const scope = nock(baseUrl).post(`/quotes`).reply(200, quote)
       const result = await createQuote(
         {
           axiosInstance,
           logger
         },
         {
-          walletAddress,
+          url: baseUrl,
           accessToken
         },
         openApiValidators.successfulValidator,
-        { receiver: quote.receiver, method: 'ilp' }
+        { receiver: quote.receiver, method: 'ilp', walletAddress }
       )
       expect(result).toStrictEqual(quote)
       scope.done()
     })
 
     test('throws if quote does not pass open api validation', async (): Promise<void> => {
-      const scope = nock(walletAddress).post(`/quotes`).reply(200, quote)
+      const scope = nock(baseUrl).post(`/quotes`).reply(200, quote)
       await expect(() =>
         createQuote(
           {
@@ -101,11 +101,11 @@ describe('quote', (): void => {
             logger
           },
           {
-            walletAddress,
+            url: baseUrl,
             accessToken
           },
           openApiValidators.failedValidator,
-          { receiver: quote.receiver, method: 'ilp' }
+          { receiver: quote.receiver, method: 'ilp', walletAddress }
         )
       ).rejects.toThrowError()
       scope.done()
@@ -161,7 +161,7 @@ describe('quote', (): void => {
         const postSpy = jest
           .spyOn(requestors, 'post')
           .mockResolvedValueOnce(quote)
-        const url = `${walletAddress}${getRSPath('/quotes')}`
+        const url = `${baseUrl}${getRSPath('/quotes')}`
 
         await createQuoteRoutes({
           openApi,
@@ -169,10 +169,10 @@ describe('quote', (): void => {
           logger
         }).create(
           {
-            walletAddress,
+            url: baseUrl,
             accessToken
           },
-          { receiver: quote.receiver, method: 'ilp' }
+          { receiver: quote.receiver, method: 'ilp', walletAddress }
         )
 
         expect(postSpy).toHaveBeenCalledWith(
@@ -183,7 +183,7 @@ describe('quote', (): void => {
           {
             url,
             accessToken,
-            body: { receiver: quote.receiver, method: 'ilp' }
+            body: { receiver: quote.receiver, method: 'ilp', walletAddress }
           },
           true
         )

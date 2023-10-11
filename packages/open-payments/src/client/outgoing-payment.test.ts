@@ -47,15 +47,13 @@ describe('outgoing-payment', (): void => {
 
       const scope = nock(serverAddress)
         .get('/outgoing-payments/1')
-        .query({ 'wallet-address': walletAddress })
         .reply(200, outgoingPayment)
 
       const result = await getOutgoingPayment(
         { axiosInstance, logger },
         {
           url: `${serverAddress}/outgoing-payments/1`,
-          accessToken: 'accessToken',
-          walletAddress
+          accessToken: 'accessToken'
         },
         openApiValidators.successfulValidator
       )
@@ -79,7 +77,6 @@ describe('outgoing-payment', (): void => {
 
       const scope = nock(serverAddress)
         .get('/outgoing-payments/1')
-        .query({ 'wallet-address': walletAddress })
         .reply(200, outgoingPayment)
 
       await expect(
@@ -87,8 +84,7 @@ describe('outgoing-payment', (): void => {
           { axiosInstance, logger },
           {
             url: `${serverAddress}/outgoing-payments/1`,
-            accessToken: 'accessToken',
-            walletAddress
+            accessToken: 'accessToken'
           },
           openApiValidators.successfulValidator
         )
@@ -101,7 +97,6 @@ describe('outgoing-payment', (): void => {
 
       const scope = nock(serverAddress)
         .get('/outgoing-payments/1')
-        .query({ 'wallet-address': walletAddress })
         .reply(200, outgoingPayment)
 
       await expect(
@@ -109,8 +104,7 @@ describe('outgoing-payment', (): void => {
           { axiosInstance, logger },
           {
             url: `${serverAddress}/outgoing-payments/1`,
-            accessToken: 'accessToken',
-            walletAddress
+            accessToken: 'accessToken'
           },
           openApiValidators.failedValidator
         )
@@ -297,13 +291,13 @@ describe('outgoing-payment', (): void => {
         { axiosInstance, logger },
         {
           url: serverAddress,
-          walletAddress,
           accessToken: 'accessToken'
         },
         openApiValidators.successfulValidator,
         {
           quoteId,
-          metadata
+          metadata,
+          walletAddress
         }
       )
       expect(result).toEqual(outgoingPayment)
@@ -333,12 +327,12 @@ describe('outgoing-payment', (): void => {
           { axiosInstance, logger },
           {
             url: serverAddress,
-            walletAddress,
             accessToken: 'accessToken'
           },
           openApiValidators.successfulValidator,
           {
-            quoteId: uuid()
+            quoteId: uuid(),
+            walletAddress
           }
         )
       ).rejects.toThrowError()
@@ -360,12 +354,12 @@ describe('outgoing-payment', (): void => {
           },
           {
             url: serverAddress,
-            walletAddress,
             accessToken: 'accessToken'
           },
           openApiValidators.failedValidator,
           {
-            quoteId: uuid()
+            quoteId: uuid(),
+            walletAddress
           }
         )
       ).rejects.toThrowError()
@@ -481,7 +475,7 @@ describe('outgoing-payment', (): void => {
           openApi,
           axiosInstance,
           logger
-        }).get({ url, accessToken: 'accessToken', walletAddress })
+        }).get({ url, accessToken: 'accessToken' })
 
         expect(getSpy).toHaveBeenCalledWith(
           {
@@ -490,10 +484,7 @@ describe('outgoing-payment', (): void => {
           },
           {
             url,
-            accessToken: 'accessToken',
-            queryParams: {
-              'wallet-address': walletAddress
-            }
+            accessToken: 'accessToken'
           },
           true
         )
@@ -554,7 +545,8 @@ describe('outgoing-payment', (): void => {
 
         const url = `${serverAddress}/outgoing-payments`
         const outgoingPaymentCreateArgs = {
-          quoteId: uuid()
+          quoteId: uuid(),
+          walletAddress
         }
 
         jest
@@ -571,7 +563,7 @@ describe('outgoing-payment', (): void => {
           axiosInstance,
           logger
         }).create(
-          { url: serverAddress, walletAddress, accessToken: 'accessToken' },
+          { url: serverAddress, accessToken: 'accessToken' },
           outgoingPaymentCreateArgs
         )
 

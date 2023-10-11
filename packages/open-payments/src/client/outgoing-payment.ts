@@ -1,5 +1,10 @@
 import { HttpMethod, ResponseValidator } from '@interledger/openapi'
-import { BaseDeps, ResourceOrCollectionRequestArgs, RouteDeps } from '.'
+import {
+  BaseDeps,
+  ResourceRequestArgs,
+  CollectionRequestArgs,
+  RouteDeps
+} from '.'
 import {
   CreateOutgoingPaymentArgs,
   getRSPath,
@@ -10,13 +15,13 @@ import {
 import { get, post } from './requests'
 
 export interface OutgoingPaymentRoutes {
-  get(args: ResourceOrCollectionRequestArgs): Promise<OutgoingPayment>
+  get(args: ResourceRequestArgs): Promise<OutgoingPayment>
   list(
-    args: ResourceOrCollectionRequestArgs,
+    args: CollectionRequestArgs,
     pagination?: PaginationArgs
   ): Promise<OutgoingPaymentPaginationResult>
   create(
-    requestArgs: ResourceOrCollectionRequestArgs,
+    requestArgs: ResourceRequestArgs,
     createArgs: CreateOutgoingPaymentArgs
   ): Promise<OutgoingPayment>
 }
@@ -45,16 +50,13 @@ export const createOutgoingPaymentRoutes = (
     })
 
   return {
-    get: (requestArgs: ResourceOrCollectionRequestArgs) =>
+    get: (requestArgs: ResourceRequestArgs) =>
       getOutgoingPayment(
         { axiosInstance, logger },
         requestArgs,
         getOutgoingPaymentOpenApiValidator
       ),
-    list: (
-      requestArgs: ResourceOrCollectionRequestArgs,
-      pagination?: PaginationArgs
-    ) =>
+    list: (requestArgs: CollectionRequestArgs, pagination?: PaginationArgs) =>
       listOutgoingPayments(
         { axiosInstance, logger },
         requestArgs,
@@ -62,7 +64,7 @@ export const createOutgoingPaymentRoutes = (
         pagination
       ),
     create: (
-      requestArgs: ResourceOrCollectionRequestArgs,
+      requestArgs: ResourceRequestArgs,
       createArgs: CreateOutgoingPaymentArgs
     ) =>
       createOutgoingPayment(
@@ -76,20 +78,17 @@ export const createOutgoingPaymentRoutes = (
 
 export const getOutgoingPayment = async (
   deps: BaseDeps,
-  requestArgs: ResourceOrCollectionRequestArgs,
+  requestArgs: ResourceRequestArgs,
   validateOpenApiResponse: ResponseValidator<OutgoingPayment>
 ) => {
   const { axiosInstance, logger } = deps
-  const { url, walletAddress, accessToken } = requestArgs
+  const { url, accessToken } = requestArgs
 
   const outgoingPayment = await get(
     { axiosInstance, logger },
     {
       url,
-      accessToken,
-      queryParams: {
-        'wallet-address': walletAddress
-      }
+      accessToken
     },
     validateOpenApiResponse
   )
@@ -109,7 +108,7 @@ export const getOutgoingPayment = async (
 
 export const createOutgoingPayment = async (
   deps: BaseDeps,
-  requestArgs: ResourceOrCollectionRequestArgs,
+  requestArgs: ResourceRequestArgs,
   validateOpenApiResponse: ResponseValidator<OutgoingPayment>,
   createArgs: CreateOutgoingPaymentArgs
 ) => {
@@ -138,7 +137,7 @@ export const createOutgoingPayment = async (
 
 export const listOutgoingPayments = async (
   deps: BaseDeps,
-  requestArgs: ResourceOrCollectionRequestArgs,
+  requestArgs: CollectionRequestArgs,
   validateOpenApiResponse: ResponseValidator<OutgoingPaymentPaginationResult>,
   pagination?: PaginationArgs
 ) => {

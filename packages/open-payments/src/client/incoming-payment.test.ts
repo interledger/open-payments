@@ -56,15 +56,13 @@ describe('incoming-payment', (): void => {
 
       nock(serverAddress)
         .get('/incoming-payments/1')
-        .query({ 'wallet-address': walletAddress })
         .reply(200, incomingPayment)
 
       const result = await getIncomingPayment(
         { axiosInstance, logger },
         {
           url: `${serverAddress}/incoming-payments/1`,
-          accessToken,
-          walletAddress
+          accessToken
         },
         openApiValidators.successfulValidator
       )
@@ -87,7 +85,6 @@ describe('incoming-payment', (): void => {
 
       nock(serverAddress)
         .get('/incoming-payments/1')
-        .query({ 'wallet-address': walletAddress })
         .reply(200, incomingPayment)
 
       await expect(
@@ -98,8 +95,7 @@ describe('incoming-payment', (): void => {
           },
           {
             url: `${serverAddress}/incoming-payments/1`,
-            accessToken,
-            walletAddress
+            accessToken
           },
           openApiValidators.successfulValidator
         )
@@ -122,8 +118,7 @@ describe('incoming-payment', (): void => {
           },
           {
             url: `${serverAddress}/incoming-payments/1`,
-            accessToken,
-            walletAddress
+            accessToken
           },
           openApiValidators.failedValidator
         )
@@ -191,9 +186,10 @@ describe('incoming-payment', (): void => {
 
         const result = await createIncomingPayment(
           { axiosInstance, logger },
-          { url: serverAddress, walletAddress, accessToken },
+          { url: serverAddress, accessToken },
           openApiValidators.successfulValidator,
           {
+            walletAddress,
             incomingAmount,
             expiresAt,
             metadata
@@ -225,9 +221,9 @@ describe('incoming-payment', (): void => {
       await expect(
         createIncomingPayment(
           { axiosInstance, logger },
-          { url: serverAddress, walletAddress, accessToken },
+          { url: serverAddress, accessToken },
           openApiValidators.successfulValidator,
-          {}
+          { walletAddress }
         )
       ).rejects.toThrowError()
       scope.done()
@@ -243,9 +239,9 @@ describe('incoming-payment', (): void => {
       await expect(
         createIncomingPayment(
           { axiosInstance, logger },
-          { url: serverAddress, walletAddress, accessToken },
+          { url: serverAddress, accessToken },
           openApiValidators.failedValidator,
-          {}
+          { walletAddress }
         )
       ).rejects.toThrowError()
       scope.done()
@@ -266,8 +262,7 @@ describe('incoming-payment', (): void => {
         { axiosInstance, logger },
         {
           url: `${serverAddress}/incoming-payments/${incomingPayment.id}`,
-          accessToken,
-          walletAddress
+          accessToken
         },
         openApiValidators.successfulValidator
       )
@@ -291,8 +286,7 @@ describe('incoming-payment', (): void => {
           { axiosInstance, logger },
           {
             url: `${serverAddress}/incoming-payments/${incomingPayment.id}`,
-            accessToken,
-            walletAddress
+            accessToken
           },
           openApiValidators.successfulValidator
         )
@@ -315,8 +309,7 @@ describe('incoming-payment', (): void => {
           { axiosInstance, logger },
           {
             url: `${serverAddress}/incoming-payments/${incomingPayment.id}`,
-            accessToken,
-            walletAddress
+            accessToken
           },
           openApiValidators.failedValidator
         )
@@ -670,7 +663,7 @@ describe('incoming-payment', (): void => {
           openApi,
           axiosInstance,
           logger
-        }).get({ url, accessToken, walletAddress })
+        }).get({ url, accessToken })
 
         expect(getSpy).toHaveBeenCalledWith(
           {
@@ -679,11 +672,7 @@ describe('incoming-payment', (): void => {
           },
           {
             url,
-            accessToken,
-            walletAddress,
-            queryParams: {
-              'wallet-address': walletAddress
-            }
+            accessToken
           },
           true
         )
@@ -695,7 +684,7 @@ describe('incoming-payment', (): void => {
         const mockResponseValidator = ({ path, method }) =>
           path === '/incoming-payments/{id}' && method === HttpMethod.GET
 
-        const url = `${walletAddress}/incoming-payments/1`
+        const url = `${serverAddress}/incoming-payments/1`
 
         jest
           .spyOn(openApi, 'createResponseValidator')
@@ -712,7 +701,7 @@ describe('incoming-payment', (): void => {
           openApi,
           axiosInstance,
           logger
-        }).getPublic({ accessToken, url })
+        }).getPublic({ url })
 
         expect(getSpy).toHaveBeenCalledWith(
           {
@@ -775,6 +764,7 @@ describe('incoming-payment', (): void => {
 
         const url = `${serverAddress}/incoming-payments`
         const incomingPaymentCreateArgs = {
+          walletAddress,
           description: 'Invoice',
           incomingAmount: { assetCode: 'USD', assetScale: 2, value: '10' }
         }
@@ -793,7 +783,7 @@ describe('incoming-payment', (): void => {
           axiosInstance,
           logger
         }).create(
-          { url: serverAddress, walletAddress, accessToken },
+          { url: serverAddress, accessToken },
           incomingPaymentCreateArgs
         )
 
@@ -829,7 +819,7 @@ describe('incoming-payment', (): void => {
           openApi,
           axiosInstance,
           logger
-        }).complete({ url: incomingPaymentUrl, accessToken, walletAddress })
+        }).complete({ url: incomingPaymentUrl, accessToken })
 
         expect(postSpy).toHaveBeenCalledWith(
           {
@@ -838,10 +828,7 @@ describe('incoming-payment', (): void => {
           },
           {
             url: `${incomingPaymentUrl}/complete`,
-            accessToken,
-            body: {
-              walletAddress
-            }
+            accessToken
           },
           true
         )
@@ -854,7 +841,7 @@ describe('incoming-payment', (): void => {
         const mockResponseValidator = ({ path, method }) =>
           path === '/incoming-payments/{id}' && method === HttpMethod.GET
 
-        const url = `${walletAddress}/incoming-payments/1`
+        const url = `${serverAddress}/incoming-payments/1`
 
         jest
           .spyOn(openApi, 'createResponseValidator')

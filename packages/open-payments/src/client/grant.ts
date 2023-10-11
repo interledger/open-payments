@@ -2,7 +2,7 @@ import { HttpMethod } from '@interledger/openapi'
 import {
   GrantOrTokenRequestArgs,
   RouteDeps,
-  UnauthenticatedRequestArgs
+  UnauthenticatedResourceRequestArgs
 } from '.'
 import {
   getASPath,
@@ -19,7 +19,7 @@ export interface GrantRouteDeps extends RouteDeps {
 
 export interface GrantRoutes {
   request(
-    postArgs: UnauthenticatedRequestArgs,
+    postArgs: UnauthenticatedResourceRequestArgs,
     args: Omit<GrantRequest, 'client'>
   ): Promise<PendingGrant | Grant>
   continue(
@@ -47,7 +47,7 @@ export const createGrantRoutes = (deps: GrantRouteDeps): GrantRoutes => {
 
   return {
     request: (
-      { url }: UnauthenticatedRequestArgs,
+      { url }: UnauthenticatedResourceRequestArgs,
       args: Omit<GrantRequest, 'client'>
     ) =>
       post(

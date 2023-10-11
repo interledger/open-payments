@@ -671,7 +671,6 @@ paths:
       description: A client can fetch the latest state of an incoming payment to determine the amount received into the wallet address.
     parameters:
       - $ref: '#/components/parameters/id'
-      - $ref: '#/components/parameters/wallet-address'
   '/incoming-payments/{id}/complete':
     post:
       summary: Complete an Incoming Payment
@@ -712,21 +711,6 @@ paths:
           $ref: '#/components/responses/403'
         '404':
           description: Incoming Payment Not Found
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              additionalProperties: false
-              properties:
-                walletAddress:
-                  $ref: ./schemas.yaml#/components/schemas/walletAddress
-              required:
-                - walletAddress
-            examples:
-              Complete incoming payment for https://openpayments.guide/alice:
-                value:
-                  walletAddress: 'https://openpayments.guide/alice/'
       description: |-
         A client with the appropriate permissions MAY mark a non-expired **incoming payment** as `completed` indicating that the client is not going to make any further payments toward this **incoming payment**, even though the full `incomingAmount` may not have been received.
 
@@ -785,7 +769,6 @@ paths:
         - $ref: '#/components/parameters/signature'
     parameters:
       - $ref: '#/components/parameters/id'
-      - $ref: '#/components/parameters/wallet-address'
   '/quotes/{id}':
     get:
       summary: Get a Quote

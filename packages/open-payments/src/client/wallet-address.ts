@@ -1,11 +1,11 @@
 import { HttpMethod } from '@interledger/openapi'
-import { RouteDeps, UnauthenticatedRequestArgs } from '.'
+import { RouteDeps, UnauthenticatedResourceRequestArgs } from '.'
 import { JWKS, WalletAddress, getRSPath } from '../types'
 import { get } from './requests'
 
 export interface WalletAddressRoutes {
-  get(args: UnauthenticatedRequestArgs): Promise<WalletAddress>
-  getKeys(args: UnauthenticatedRequestArgs): Promise<JWKS>
+  get(args: UnauthenticatedResourceRequestArgs): Promise<WalletAddress>
+  getKeys(args: UnauthenticatedResourceRequestArgs): Promise<JWKS>
 }
 
 export const createWalletAddressRoutes = (
@@ -25,9 +25,9 @@ export const createWalletAddressRoutes = (
   })
 
   return {
-    get: (args: UnauthenticatedRequestArgs) =>
+    get: (args: UnauthenticatedResourceRequestArgs) =>
       get({ axiosInstance, logger }, args, getPaymentPaymentValidator),
-    getKeys: (args: UnauthenticatedRequestArgs) =>
+    getKeys: (args: UnauthenticatedResourceRequestArgs) =>
       get(
         { axiosInstance, logger },
         {
