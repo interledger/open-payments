@@ -1,5 +1,11 @@
 # @interledger/open-payments
 
+## 5.1.0
+
+### Minor Changes
+
+- f756fed: Adds incomingPayment get method to unauthenticated client
+
 ## 5.0.0
 
 ### Major Changes
