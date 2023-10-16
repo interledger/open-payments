@@ -883,6 +883,7 @@ components:
           expiresAt: '2022-04-12T23:20:50.52Z'
           createdAt: '2022-03-12T23:20:50.52Z'
           updatedAt: '2022-03-12T23:20:50.52Z'
+      unevaluatedProperties: false
       properties:
         id:
           type: string

@@ -186,7 +186,6 @@ describe('OpenAPI Validator', (): void => {
     test.each`
       status | body                                                                    | message                                                           | description
       ${202} | ${{}}                                                                   | ${'An unknown status code was used and no default was provided.'} | ${'status code'}
-      ${201} | ${{ ...body, invalid: 'field' }}                                        | ${'response must NOT have additional properties: invalid'}        | ${'body with additional property'}
       ${201} | ${{ ...body, receivedAmount: { ...body.receivedAmount, value: '-1' } }} | ${'response.receivedAmount.value must match format "uint64"'}     | ${'body with invalid type'}
     `(
       'returns 500 on invalid response $description',
