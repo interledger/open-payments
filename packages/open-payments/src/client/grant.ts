@@ -1,6 +1,6 @@
 import { HttpMethod } from '@interledger/openapi'
 import {
-  ResourceRequestArgs,
+  GrantOrTokenRequestArgs,
   RouteDeps,
   UnauthenticatedResourceRequestArgs
 } from '.'
@@ -23,10 +23,10 @@ export interface GrantRoutes {
     args: Omit<GrantRequest, 'client'>
   ): Promise<PendingGrant | Grant>
   continue(
-    postArgs: ResourceRequestArgs,
+    postArgs: GrantOrTokenRequestArgs,
     args: GrantContinuationRequest
   ): Promise<Grant>
-  cancel(postArgs: ResourceRequestArgs): Promise<void>
+  cancel(postArgs: GrantOrTokenRequestArgs): Promise<void>
 }
 
 export const createGrantRoutes = (deps: GrantRouteDeps): GrantRoutes => {
@@ -62,7 +62,7 @@ export const createGrantRoutes = (deps: GrantRouteDeps): GrantRoutes => {
         requestGrantValidator
       ),
     continue: (
-      { url, accessToken }: ResourceRequestArgs,
+      { url, accessToken }: GrantOrTokenRequestArgs,
       args: GrantContinuationRequest
     ) =>
       post(
@@ -74,7 +74,7 @@ export const createGrantRoutes = (deps: GrantRouteDeps): GrantRoutes => {
         },
         continueGrantValidator
       ),
-    cancel: ({ url, accessToken }: ResourceRequestArgs) =>
+    cancel: ({ url, accessToken }: GrantOrTokenRequestArgs) =>
       deleteRequest(
         deps,
         {

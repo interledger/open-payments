@@ -46,3 +46,8 @@ components:
       examples:
         - 'https://ilp.rafiki.money/incoming-payments/08394f02-7b7b-45e2-b645-51d04e7c330c'
         - 'https://ilp.rafiki.money/connections/016da9d5-c9a4-4c80-a354-86b915a04ff8'
+    walletAddress:
+      title: Wallet Address
+      type: string
+      description: 'URL of a wallet address hosted by a Rafiki instance.'
+      format: uri

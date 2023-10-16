@@ -1,17 +1,12 @@
 import { HttpMethod, ResponseValidator } from '@interledger/openapi'
-import {
-  ResourceRequestArgs,
-  CollectionRequestArgs,
-  BaseDeps,
-  RouteDeps
-} from '.'
+import { ResourceRequestArgs, BaseDeps, RouteDeps } from '.'
 import { CreateQuoteArgs, getRSPath, Quote } from '../types'
 import { get, post } from './requests'
 
 export interface QuoteRoutes {
   get(args: ResourceRequestArgs): Promise<Quote>
   create(
-    createArgs: CollectionRequestArgs,
+    createArgs: ResourceRequestArgs,
     createQuoteArgs: CreateQuoteArgs
   ): Promise<Quote>
 }
@@ -33,7 +28,7 @@ export const createQuoteRoutes = (deps: RouteDeps): QuoteRoutes => {
     get: (args: ResourceRequestArgs) =>
       getQuote({ axiosInstance, logger }, args, getQuoteOpenApiValidator),
     create: (
-      createArgs: CollectionRequestArgs,
+      createArgs: ResourceRequestArgs,
       createQuoteArgs: CreateQuoteArgs
     ) =>
       createQuote(
@@ -63,13 +58,13 @@ export const getQuote = async (
 
 export const createQuote = async (
   deps: BaseDeps,
-  createArgs: CollectionRequestArgs,
+  createArgs: ResourceRequestArgs,
   validateOpenApiResponse: ResponseValidator<Quote>,
   createQuoteArgs: CreateQuoteArgs
 ) => {
   const { axiosInstance, logger } = deps
-  const { accessToken, walletAddress } = createArgs
-  const url = `${walletAddress}${getRSPath('/quotes')}`
+  const { accessToken, url: baseUrl } = createArgs
+  const url = `${baseUrl}${getRSPath('/quotes')}`
 
   const quote = await post(
     { axiosInstance, logger },

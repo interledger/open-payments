@@ -340,6 +340,12 @@ export interface external {
          * @description The URL of the incoming payment or ILP STREAM connection that is being paid.
          */
         receiver: string;
+        /**
+         * Wallet Address
+         * Format: uri
+         * @description URL of a wallet address hosted by a Rafiki instance.
+         */
+        walletAddress: string;
       };
     };
     operations: {};
