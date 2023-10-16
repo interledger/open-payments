@@ -1,5 +1,11 @@
 # @interledger/open-payments
 
+## 5.2.0
+
+### Minor Changes
+
+- 5809202: Added "walletAddress" field to resource POST request bodies, added "wallet-address" query parameter to resource GET requests.
+
 ## 5.1.0
 
 ### Minor Changes

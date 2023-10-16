@@ -1,16 +1,16 @@
 import { HttpMethod, ResponseValidator } from '@interledger/openapi'
-import { ResourceRequestArgs, RouteDeps } from '.'
+import { GrantOrTokenRequestArgs, RouteDeps } from '.'
 import { getASPath, AccessToken } from '../types'
 import { deleteRequest, post } from './requests'
 
 export interface TokenRoutes {
-  rotate(args: ResourceRequestArgs): Promise<AccessToken>
-  revoke(args: ResourceRequestArgs): Promise<void>
+  rotate(args: GrantOrTokenRequestArgs): Promise<AccessToken>
+  revoke(args: GrantOrTokenRequestArgs): Promise<void>
 }
 
 export const rotateToken = async (
   deps: RouteDeps,
-  args: ResourceRequestArgs,
+  args: GrantOrTokenRequestArgs,
   validateOpenApiResponse: ResponseValidator<AccessToken>
 ) => {
   const { axiosInstance, logger } = deps
@@ -31,7 +31,7 @@ export const rotateToken = async (
 
 export const revokeToken = async (
   deps: RouteDeps,
-  args: ResourceRequestArgs,
+  args: GrantOrTokenRequestArgs,
   validateOpenApiResponse: ResponseValidator<void>
 ) => {
   const { axiosInstance, logger } = deps
@@ -63,9 +63,9 @@ export const createTokenRoutes = (deps: RouteDeps): TokenRoutes => {
   })
 
   return {
-    rotate: (args: ResourceRequestArgs) =>
+    rotate: (args: GrantOrTokenRequestArgs) =>
       rotateToken(deps, args, rotateTokenValidator),
-    revoke: (args: ResourceRequestArgs) =>
+    revoke: (args: GrantOrTokenRequestArgs) =>
       revokeToken(deps, args, revokeTokenValidator)
   }
 }

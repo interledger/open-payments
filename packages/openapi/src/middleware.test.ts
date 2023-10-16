@@ -37,6 +37,7 @@ export function createContext<T extends Koa.Context>(
 
 const PATH = '/incoming-payments'
 const SPEC = path.resolve(__dirname, '../../../openapi/resource-server.yaml')
+const WALLET_ADDRESS = 'https://openpayments.guide/alice'
 
 describe('OpenAPI Validator', (): void => {
   let openApi: OpenAPI
@@ -75,7 +76,7 @@ describe('OpenAPI Validator', (): void => {
       const ctx = createContext(
         {
           headers: { Accept: 'application/json' },
-          url: `${PATH}?first=${first}`
+          url: `${PATH}?first=${first}&wallet-address=${WALLET_ADDRESS}`
         },
         {}
       )
@@ -88,7 +89,7 @@ describe('OpenAPI Validator', (): void => {
       const ctx = createContext(
         {
           headers: { Accept: 'application/json' },
-          url: `${PATH}?first=NaN`
+          url: `${PATH}?first=NaN&wallet-address=${WALLET_ADDRESS}`
         },
         {}
       )
@@ -145,6 +146,8 @@ describe('OpenAPI Validator', (): void => {
         )
         addTestSignatureHeaders(ctx)
         ctx.request.body = body
+          ? { ...body, walletAddress: WALLET_ADDRESS }
+          : body
         await expect(validatePostMiddleware(ctx, next)).rejects.toMatchObject({
           status: 400,
           message
@@ -161,10 +164,12 @@ describe('OpenAPI Validator', (): void => {
         {}
       )
       addTestSignatureHeaders(ctx)
+      ctx.request.query = { 'wallet-address': WALLET_ADDRESS }
       const next = jest.fn().mockImplementation(() => {
         expect(ctx.request.query).toEqual({
           first: 10,
-          last: 10
+          last: 10,
+          'wallet-address': WALLET_ADDRESS
         })
         ctx.response.body = {}
       })

@@ -1,8 +1,8 @@
 import { HttpMethod, ResponseValidator } from '@interledger/openapi'
 import {
   BaseDeps,
-  CollectionRequestArgs,
   ResourceRequestArgs,
+  CollectionRequestArgs,
   RouteDeps
 } from '.'
 import {
@@ -21,7 +21,7 @@ export interface OutgoingPaymentRoutes {
     pagination?: PaginationArgs
   ): Promise<OutgoingPaymentPaginationResult>
   create(
-    requestArgs: CollectionRequestArgs,
+    requestArgs: ResourceRequestArgs,
     createArgs: CreateOutgoingPaymentArgs
   ): Promise<OutgoingPayment>
 }
@@ -64,7 +64,7 @@ export const createOutgoingPaymentRoutes = (
         pagination
       ),
     create: (
-      requestArgs: CollectionRequestArgs,
+      requestArgs: ResourceRequestArgs,
       createArgs: CreateOutgoingPaymentArgs
     ) =>
       createOutgoingPayment(
@@ -86,7 +86,10 @@ export const getOutgoingPayment = async (
 
   const outgoingPayment = await get(
     { axiosInstance, logger },
-    { url, accessToken },
+    {
+      url,
+      accessToken
+    },
     validateOpenApiResponse
   )
 
@@ -105,13 +108,13 @@ export const getOutgoingPayment = async (
 
 export const createOutgoingPayment = async (
   deps: BaseDeps,
-  requestArgs: CollectionRequestArgs,
+  requestArgs: ResourceRequestArgs,
   validateOpenApiResponse: ResponseValidator<OutgoingPayment>,
   createArgs: CreateOutgoingPaymentArgs
 ) => {
   const { axiosInstance, logger } = deps
-  const { walletAddress, accessToken } = requestArgs
-  const url = `${walletAddress}${getRSPath('/outgoing-payments')}`
+  const { url: baseUrl, accessToken } = requestArgs
+  const url = `${baseUrl}${getRSPath('/outgoing-payments')}`
 
   const outgoingPayment = await post(
     { axiosInstance, logger },
@@ -139,15 +142,17 @@ export const listOutgoingPayments = async (
   pagination?: PaginationArgs
 ) => {
   const { axiosInstance, logger } = deps
-  const { accessToken, walletAddress } = requestArgs
-  const url = `${walletAddress}${getRSPath('/outgoing-payments')}`
+  const { url: baseUrl, accessToken, walletAddress } = requestArgs
+  const url = `${baseUrl}${getRSPath('/outgoing-payments')}`
 
   const outgoingPayments = await get(
     { axiosInstance, logger },
     {
       url,
       accessToken,
-      ...(pagination ? { queryParams: { ...pagination } } : {})
+      ...(pagination
+        ? { queryParams: { ...pagination, 'wallet-address': walletAddress } }
+        : { queryParams: { 'wallet-address': walletAddress } })
     },
     validateOpenApiResponse
   )

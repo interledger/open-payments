@@ -45,7 +45,7 @@ export interface UnauthenticatedResourceRequestArgs {
    *
    * For example, if the requested resource is an incoming payment:
    * ```
-   * https://openpayments.guide/alice/incoming-payments/08394f02-7b7b-45e2-b645-51d04e7c330c`
+   * https://openpayments.guide/incoming-payments/08394f02-7b7b-45e2-b645-51d04e7c330c`
    * ```
    */
   url: string
@@ -60,11 +60,18 @@ interface AuthenticatedRequestArgs {
    */
   accessToken: string
 }
+
+export interface GrantOrTokenRequestArgs
+  extends UnauthenticatedResourceRequestArgs,
+    AuthenticatedRequestArgs {}
+
 export interface ResourceRequestArgs
   extends UnauthenticatedResourceRequestArgs,
     AuthenticatedRequestArgs {}
 
-export interface CollectionRequestArgs extends AuthenticatedRequestArgs {
+export interface CollectionRequestArgs
+  extends UnauthenticatedResourceRequestArgs,
+    AuthenticatedRequestArgs {
   /**
    * The wallet address URL of the requested collection.
    *
