@@ -172,6 +172,41 @@ describe('OpenAPI Validator', (): void => {
       expect(next).toHaveBeenCalled()
     })
 
+    test('returns 500 with additional properties', async (): Promise<void> => {
+      const ctx = createContext(
+        {
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+          }
+        },
+        {}
+      )
+      addTestSignatureHeaders(ctx)
+      const next = jest.fn().mockImplementation(() => {
+        ctx.response.body = {
+          pagination: { hasNextPage: false, hasPreviousPage: false },
+          result: [
+            {
+              id: uuid(),
+              walletAddress: `https:ilp.rafiki.money/${uuid()}`,
+              completed: false,
+              receivedAmount: { value: '0', assetCode: 'USD', assetScale: 2 },
+              createdAt: '2022-03-12T23:20:50.52Z',
+              updatedAt: '2022-04-01T10:24:36.11Z',
+              additionalProp: 'disallowed'
+            }
+          ]
+        }
+      })
+      await expect(validateListMiddleware(ctx, next)).rejects.toMatchObject({
+        status: 500,
+        message:
+          'response.result.0 must NOT have additional properties: additionalProp'
+      })
+      expect(next).toHaveBeenCalled()
+    })
+
     const body = {
       id: `https://${accountId}/incoming-payments/${uuid()}`,
       walletAddress: 'https://openpayments.guide/alice',
@@ -180,6 +215,13 @@ describe('OpenAPI Validator', (): void => {
         assetCode: 'USD',
         assetScale: 2
       },
+      methods: [
+        {
+          type: 'ilp',
+          ilpAddress: 'g.ilp.iwuyge987y.98y08y',
+          sharedSecret: '1c7eaXa4rd2fFOBl1iydvCT1tV5TbM3RW1WLCafu_JA'
+        }
+      ],
       createdAt: '2022-03-12T23:20:50.52Z',
       updatedAt: '2022-04-01T10:24:36.11Z'
     }
