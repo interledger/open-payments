@@ -1,5 +1,11 @@
 # @interledger/open-payments
 
+## 5.2.1
+
+### Patch Changes
+
+- b80f231: moves additionalProperties: false from incoming-payment type to GET /incoming-payments response
+
 ## 5.2.0
 
 ### Minor Changes
