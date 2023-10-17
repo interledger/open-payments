@@ -180,21 +180,20 @@ describe('OpenAPI Validator', (): void => {
     test('returns 500 with additional properties', async (): Promise<void> => {
       const ctx = createContext(
         {
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json'
-          }
+          headers: { Accept: 'application/json' }
         },
         {}
       )
       addTestSignatureHeaders(ctx)
+      ctx.request.query = { 'wallet-address': WALLET_ADDRESS }
+
       const next = jest.fn().mockImplementation(() => {
         ctx.response.body = {
           pagination: { hasNextPage: false, hasPreviousPage: false },
           result: [
             {
               id: uuid(),
-              walletAddress: `https:ilp.rafiki.money/${uuid()}`,
+              walletAddress: WALLET_ADDRESS,
               completed: false,
               receivedAmount: { value: '0', assetCode: 'USD', assetScale: 2 },
               createdAt: '2022-03-12T23:20:50.52Z',
