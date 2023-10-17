@@ -197,6 +197,7 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/incoming-payment'
+                      additionalProperties: false
               examples:
                 forward pagination:
                   value:
@@ -904,7 +905,6 @@ components:
           expiresAt: '2022-04-12T23:20:50.52Z'
           createdAt: '2022-03-12T23:20:50.52Z'
           updatedAt: '2022-03-12T23:20:50.52Z'
-      additionalProperties: false
       properties:
         id:
           type: string
