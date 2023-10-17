@@ -2,4 +2,4 @@
 '@interledger/open-payments': patch
 ---
 
-removed additionalProperties: false from incoming-payment and added unevaluatedProperties: false
+moves additionalProperties: false from incoming-payment type to GET /incoming-payments response
