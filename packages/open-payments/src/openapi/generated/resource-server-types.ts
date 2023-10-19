@@ -119,7 +119,7 @@ export interface components {
        * @description The URL of the authorization server endpoint for getting grants and access tokens for this wallet address.
        */
       authServer: string;
-    };
+    } & { [key: string]: unknown };
     /**
      * JSON Web Key Set document
      * @description A JSON Web Key Set document according to [rfc7517](https://datatracker.ietf.org/doc/html/rfc7517) listing the keys associated with this wallet address. These keys are used to sign requests made by this wallet address.

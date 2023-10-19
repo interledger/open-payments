@@ -818,7 +818,7 @@ components:
       title: Wallet Address
       type: object
       description: A **wallet address** resource is the root of the API and contains the public details of the financial account represented by the Wallet Address that is also the service endpoint URL.
-      additionalProperties: false
+      additionalProperties: true
       examples:
         - id: 'https://ilp.rafiki.money/alice'
           publicName: Alice
