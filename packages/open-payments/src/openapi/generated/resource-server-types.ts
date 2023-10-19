@@ -406,7 +406,12 @@ export interface operations {
     };
     responses: {
       /** Incoming Payment Created */
-      201: components["responses"]["401"];
+      201: {
+        content: {
+          "application/json": components["schemas"]["incoming-payment-with-methods"];
+        };
+      };
+      401: components["responses"]["401"];
       403: components["responses"]["403"];
     };
     /**
