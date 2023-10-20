@@ -33,16 +33,16 @@ type PaginationResult<T> = {
   result: T[]
 }
 export type OutgoingPaymentPaginationResult = PaginationResult<OutgoingPayment>
-export type ForwardPagination = Omit<
+
+type BasePaginationArgs = Pick<
   RSOperations['list-incoming-payments']['parameters']['query'],
-  'last'
-> & {
+  'first' | 'last' | 'cursor'
+>
+
+export type ForwardPagination = Omit<BasePaginationArgs, 'last'> & {
   last?: never
 }
-export type BackwardPagination = Omit<
-  RSOperations['list-incoming-payments']['parameters']['query'],
-  'first'
-> & {
+export type BackwardPagination = Omit<BasePaginationArgs, 'first'> & {
   first?: never
 }
 export type PaginationArgs = ForwardPagination | BackwardPagination
