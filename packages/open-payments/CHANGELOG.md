@@ -1,5 +1,12 @@
 # @interledger/open-payments
 
+## 5.2.2
+
+### Patch Changes
+
+- 2c5b9d5: Corrects PaginationArgs to only include relevant properties from query parameters. Was previously including wallet-address as well.
+- 2458bb9: Fix POST incoming payment response types.
+
 ## 5.2.1
 
 ### Patch Changes
