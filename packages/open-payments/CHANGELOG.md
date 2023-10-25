@@ -1,5 +1,16 @@
 # @interledger/open-payments
 
+## 5.3.0
+
+### Minor Changes
+
+- 2de13ee: Adds authSever to the return type of public incoming payments.
+
+### Patch Changes
+
+- Updated dependencies [8c8d58c]
+  - @interledger/openapi@1.2.1
+
 ## 5.2.2
 
 ### Patch Changes
