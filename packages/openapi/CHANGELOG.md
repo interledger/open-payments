@@ -1,5 +1,11 @@
 # @interledger/openapi
 
+## 1.2.1
+
+### Patch Changes
+
+- 8c8d58c: removes defaults from first and last page parameters
+
 ## 1.2.0
 
 ### Minor Changes

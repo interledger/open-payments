@@ -112,7 +112,7 @@ importers:
         specifier: workspace:1.1.0
         version: link:../http-signature-utils
       '@interledger/openapi':
-        specifier: workspace:1.2.0
+        specifier: workspace:1.2.1
         version: link:../openapi
       axios:
         specifier: ^1.3.4
