@@ -167,8 +167,6 @@ describe('OpenAPI Validator', (): void => {
       ctx.request.query = { 'wallet-address': WALLET_ADDRESS }
       const next = jest.fn().mockImplementation(() => {
         expect(ctx.request.query).toEqual({
-          first: 10,
-          last: 10,
           'wallet-address': WALLET_ADDRESS
         })
         ctx.response.body = {}
