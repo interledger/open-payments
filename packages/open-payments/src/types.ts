@@ -52,6 +52,7 @@ export type JWKS = RSComponents['schemas']['json-web-key-set']
 export type Quote = RSComponents['schemas']['quote']
 type QuoteArgsBase = {
   walletAddress: RSOperations['create-quote']['requestBody']['content']['application/json']['walletAddress']
+  receiverWalletAddress: RSOperations['create-quote']['requestBody']['content']['application/json']['receiverWalletAddress']
   receiver: RSOperations['create-quote']['requestBody']['content']['application/json']['receiver']
   method: RSComponents['schemas']['payment-method']
 }

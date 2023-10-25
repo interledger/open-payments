@@ -546,11 +546,13 @@ export interface operations {
         "application/json":
           | {
               walletAddress: external["schemas.yaml"]["components"]["schemas"]["walletAddress"];
+              receiverWalletAddress: external["schemas.yaml"]["components"]["schemas"]["walletAddress"];
               receiver: external["schemas.yaml"]["components"]["schemas"]["receiver"];
               method: components["schemas"]["payment-method"];
             }
           | {
               walletAddress: external["schemas.yaml"]["components"]["schemas"]["walletAddress"];
+              receiverWalletAddress: external["schemas.yaml"]["components"]["schemas"]["walletAddress"];
               receiver: external["schemas.yaml"]["components"]["schemas"]["receiver"];
               method: components["schemas"]["payment-method"];
               /** @description The fixed amount that would be paid into the receiving wallet address given a successful outgoing payment. */
@@ -558,6 +560,7 @@ export interface operations {
             }
           | {
               walletAddress: external["schemas.yaml"]["components"]["schemas"]["walletAddress"];
+              receiverWalletAddress: external["schemas.yaml"]["components"]["schemas"]["walletAddress"];
               receiver: external["schemas.yaml"]["components"]["schemas"]["receiver"];
               method: components["schemas"]["payment-method"];
               /** @description The fixed amount that would be sent from the sending wallet address given a successful outgoing payment. */

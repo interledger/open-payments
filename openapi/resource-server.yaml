@@ -543,11 +543,13 @@ paths:
               Create quote for an `receiver` that is an Incoming Payment with an `incomingAmount`:
                 value:
                   walletAddress: 'https://ilp.rafiki.money/alice'
+                  receiverWalletAddress: 'https://ilp.rafiki.money/bob'
                   receiver: 'https://ilp.rafiki.money/incoming-payments/37a0d0ee-26dc-4c66-89e0-01fbf93156f7'
                   method: ilp
               Create fixed-send amount quote for $25:
                 value:
                   walletAddress: 'https://ilp.rafiki.money/alice'
+                  receiverWalletAddress: 'https://ilp.rafiki.money/bob'
                   receiver: 'https://ilp.rafiki.money/incoming-payments/37a0d0ee-26dc-4c66-89e0-01fbf93156f7'
                   method: ilp
                   debitAmount:
@@ -557,6 +559,7 @@ paths:
               Create fixed-receive amount quote for $25:
                 value:
                   walletAddress: 'https://ilp.rafiki.money/alice'
+                  receiverWalletAddress: 'https://ilp.rafiki.money/bob'
                   receiver: 'https://ilp.rafiki.money/incoming-payments/37a0d0ee-26dc-4c66-89e0-01fbf93156f7'
                   method: ilp
                   receiveAmount:
@@ -569,18 +572,23 @@ paths:
                   properties:
                     walletAddress:
                       $ref: ./schemas.yaml#/components/schemas/walletAddress
+                    receiverWalletAddress:
+                      $ref: ./schemas.yaml#/components/schemas/walletAddress
                     receiver:
                       $ref: ./schemas.yaml#/components/schemas/receiver
                     method:
                       $ref: '#/components/schemas/payment-method'
                   required:
                     - walletAddress
+                    - receiverWalletAddress
                     - receiver
                     - method
                   additionalProperties: false
                 - description: Create a quote with a fixed-receive amount
                   properties:
                     walletAddress:
+                      $ref: ./schemas.yaml#/components/schemas/walletAddress
+                    receiverWalletAddress:
                       $ref: ./schemas.yaml#/components/schemas/walletAddress
                     receiver:
                       $ref: ./schemas.yaml#/components/schemas/receiver
@@ -591,6 +599,7 @@ paths:
                       $ref: ./schemas.yaml#/components/schemas/amount
                   required:
                     - walletAddress
+                    - receiverWalletAddress
                     - receiver
                     - method
                     - receiveAmount
@@ -598,6 +607,8 @@ paths:
                 - description: Create a quote with a fixed-send amount
                   properties:
                     walletAddress:
+                      $ref: ./schemas.yaml#/components/schemas/walletAddress
+                    receiverWalletAddress:
                       $ref: ./schemas.yaml#/components/schemas/walletAddress
                     receiver:
                       $ref: ./schemas.yaml#/components/schemas/receiver
@@ -608,6 +619,7 @@ paths:
                       $ref: ./schemas.yaml#/components/schemas/amount
                   required:
                     - walletAddress
+                    - receiverWalletAddress
                     - receiver
                     - method
                     - debitAmount
