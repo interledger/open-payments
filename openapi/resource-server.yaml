@@ -975,9 +975,16 @@ components:
             value: '0'
             assetCode: USD
             assetScale: 2
+        - authServer: 'https://auth.rafiki.money'
       properties:
         receivedAmount:
           $ref: ./schemas.yaml#/components/schemas/amount
+        authServer:
+          type: string
+          format: uri
+          description: The URL of the authorization server endpoint for getting grants and access tokens for this wallet address.
+      required:
+        - authServer
       unresolvedProperites: false
     outgoing-payment:
       title: Outgoing Payment
