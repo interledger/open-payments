@@ -120,7 +120,7 @@ export interface UnauthenticatedClient {
 }
 
 /**
- * Creates an OpenPayments client that is only able to make requests to get wallet addresses, and wallet address keys.
+ * Creates an OpenPayments client that is only able to make requests for public fields.
  */
 export const createUnauthenticatedClient = async (
   args: CreateUnauthenticatedClientArgs
@@ -153,7 +153,8 @@ export interface CreateAuthenticatedClientArgs
   walletAddressUrl: string
 }
 
-export interface AuthenticatedClient extends UnauthenticatedClient {
+export interface AuthenticatedClient
+  extends Omit<UnauthenticatedClient, 'incomingPayment'> {
   incomingPayment: IncomingPaymentRoutes
   outgoingPayment: OutgoingPaymentRoutes
   grant: GrantRoutes

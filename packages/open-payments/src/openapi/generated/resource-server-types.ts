@@ -180,6 +180,11 @@ export interface components {
      */
     "public-incoming-payment": {
       receivedAmount?: external["schemas.yaml"]["components"]["schemas"]["amount"];
+      /**
+       * Format: uri
+       * @description The URL of the authorization server endpoint for getting grants and access tokens for this wallet address.
+       */
+      authServer: string;
     };
     /**
      * Outgoing Payment

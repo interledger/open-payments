@@ -131,6 +131,7 @@ export const mockPublicIncomingPayment = (
     assetScale: 2,
     value: '0'
   },
+  authServer: 'https://auth.wallet.example/authorize',
   ...overrides
 })
 
