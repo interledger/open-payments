@@ -29,6 +29,7 @@ export {
 export {
   mockWalletAddress,
   mockIncomingPayment,
+  mockPublicIncomingPayment,
   mockIncomingPaymentWithPaymentMethods,
   mockIlpPaymentMethod,
   mockOutgoingPayment,
