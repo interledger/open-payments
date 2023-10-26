@@ -47,10 +47,10 @@ export default defineConfig({
           label: 'Intro to Open Payments',
           items: [
             { label: 'Overview', link: '/introduction/overview/' },
-            {
-              label: 'Open Payments concepts',
-              link: '/introduction/op-concepts'
-            },
+            // {
+            //   label: 'Open Payments concepts',
+            //   link: '/introduction/op-concepts'
+            // },
             { label: 'Open Payments flow', link: '/introduction/op-flow/' },
             {
               label: 'Wallet addresses',
@@ -176,32 +176,32 @@ export default defineConfig({
             }
           ]
         },
-        {
-          label: 'Guides',
-          collapsed: true,
-          items: [
-            {
-              label: 'Create an interactive grant request',
-              link: '/guides/create-interactive-grant/'
-            },
-            {
-              label: 'Make a one-time payment',
-              link: '/guides/make-onetime-payment/'
-            },
-            {
-              label: 'Make a recurring payment',
-              link: '/guides/make-recurring-payment/'
-            }
-          ]
-        },
+        // {
+        //   label: 'Guides',
+        //   collapsed: true,
+        //   items: [
+        //     {
+        //       label: 'Create an interactive grant request',
+        //       link: '/guides/create-interactive-grant/'
+        //     },
+        //     {
+        //       label: 'Make a one-time payment',
+        //       link: '/guides/make-onetime-payment/'
+        //     },
+        //     {
+        //       label: 'Make a recurring payment',
+        //       link: '/guides/make-recurring-payment/'
+        //     }
+        //   ]
+        // },
         {
           label: 'Resources',
           collapsed: true,
           items: [
-            {
-              label: 'Glossary',
-              link: '/resources/glossary/'
-            },
+            // {
+            //   label: 'Glossary',
+            //   link: '/resources/glossary/'
+            // },
             {
               label: 'Open Payments-enabled wallets',
               link: '/resources/op-wallets/'
