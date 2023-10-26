@@ -1,5 +1,11 @@
 # @interledger/open-payments
 
+## 5.3.1
+
+### Patch Changes
+
+- e2325ea: exports mockPublicIncomingPayment and PublicIncomingPayment
+
 ## 5.3.0
 
 ### Minor Changes
