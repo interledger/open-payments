@@ -2,4 +2,4 @@
 '@interledger/open-payments': patch
 ---
 
-exports mockPublicIncomingPayment
+exports mockPublicIncomingPayment and PublicIncomingPayment

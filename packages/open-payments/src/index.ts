@@ -2,6 +2,7 @@ export {
   GrantRequest,
   GrantContinuationRequest,
   IncomingPayment,
+  PublicIncomingPayment,
   IncomingPaymentWithPaymentMethods,
   IlpPaymentMethod,
   Quote,
