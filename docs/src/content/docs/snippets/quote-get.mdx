@@ -1,0 +1,52 @@
+---
+title: Get a quote
+---
+
+import { Disclosure, CodeBlock } from '@interledger/docs-design-system'
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+import FullSnippet from '/src/components/FullSnippet.astro'
+import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
+import Global from '/src/partials/global-prerequisites.mdx'
+import Ts from '/src/partials/ts-prerequisites.mdx'
+
+A quote is a commitment from an account servicing entity to deliver a particular amount to a payee when sending a particular amount from a payer. The quote is only valid for a limited time.
+
+An authorized client can get a quote to check the quote’s state (e.g., is the quote valid or expired), as well as other payment details, such as the total amount that should be received by the payee and the total amount that should be sent by the payer.
+
+These code snippets return the state and details of a specific quote, if found.
+
+## Before you begin
+
+<Global />
+
+## Get the state of a quote
+
+<Tabs>
+<TabItem label='TypeScript'>
+<Ts />
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/quote/quote-get.ts'
+  chunk='1'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/quote/quote-get.ts'
+  chunk='2'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/quote/quote-get.ts'
+  chunk='3'
+/>
+
+</TabItem>
+</Tabs>
+
+<Disclosure toggleText='View full source' client:load>
+  <FullSnippet source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/quote/quote-get.ts' />
+</Disclosure>
+
+## References
+
+- [API specification](/apis/resource-server/operations/get-quote)

@@ -1,0 +1,50 @@
+---
+title: Create an outgoing payment
+---
+
+import { Disclosure, CodeBlock } from '@interledger/docs-design-system'
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+import FullSnippet from '/src/components/FullSnippet.astro'
+import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
+import Global from '/src/partials/global-prerequisites.mdx'
+import Ts from '/src/partials/ts-prerequisites.mdx'
+
+After a quote is accepted and the authorized client obtains the requisite grant from the payer’s authorization server, the client can create an outgoing payment resource against the payer’s payment pointer.
+
+These code snippets create an outgoing payment to a given payment pointer. The amount of the outgoing payment is based on the amounts in the associated quote.
+
+## Before you begin
+
+<Global />
+
+## Create an outgoing payment resource
+
+<Tabs>
+<TabItem label='TypeScript'>
+<Ts />
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/outgoing-payment/outgoing-payment-create.ts'
+  chunk='1'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/outgoing-payment/outgoing-payment-create.ts'
+  chunk='2'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/outgoing-payment/outgoing-payment-create.ts'
+  chunk='3'
+/>
+
+</TabItem>
+</Tabs>
+
+<Disclosure toggleText='View full source' client:load>
+  <FullSnippet source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/outgoing-payment/outgoing-payment-create.ts' />
+</Disclosure>
+
+## References
+
+- [API specification](/apis/resource-server/operations/create-outgoing-payment)

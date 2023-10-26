@@ -1,0 +1,50 @@
+---
+title: Create a quote
+---
+
+import { Disclosure, CodeBlock } from '@interledger/docs-design-system'
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+import FullSnippet from '/src/components/FullSnippet.astro'
+import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
+import Global from '/src/partials/global-prerequisites.mdx'
+import Ts from '/src/partials/ts-prerequisites.mdx'
+
+A quote is a commitment from an account servicing entity to deliver a particular amount to a payee when sending a particular amount from a payer. Once an authorized client obtains the requisite grant from the payer’s authorization server, the client can create a quote resource against the payer’s payment pointer. The quote indicates how much it will cost the payer to proceed with the transaction.
+
+These code snippets create a quote with a fixed receive amount of $10 USD, meaning the payee (recipient) should receive $10 USD after any applicable fees. The debit amount, which is the amount to be deducted from the payer’s account, is also $10 USD, indicating there are no fees associated with this quote.
+
+## Before you begin
+
+<Global />
+
+## Create a fixed-send amount quote
+
+<Tabs>
+<TabItem label='TypeScript'>
+<Ts />
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/quote/quote-create.ts'
+  chunk='1'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/quote/quote-create.ts'
+  chunk='2'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/quote/quote-create.ts'
+  chunk='3'
+/>
+
+</TabItem>
+</Tabs>
+
+<Disclosure toggleText='View full source' client:load>
+  <FullSnippet source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/quote/quote-create.ts' />
+</Disclosure>
+
+## References
+
+- [API specification](/apis/resource-server/operations/create-quote)

@@ -1,0 +1,89 @@
+---
+title: Client keys
+---
+
+import { CodeBlock, LinkOut } from '@interledger/docs-design-system'
+
+All client requests in Open Payments are signed using a unique key that identifies the client to the authorization and resource servers. All requests, except for new grant requests, also carry an access token that is bound to the key.
+
+## Key registry
+
+A key registry is a registry of all keys stored by an ASE for their users. A key is [generated](#key-structure) and added to the registry by the client that requires access to Open Payments resources that are protected by an authorization server.
+
+The client is represented by a wallet address. The keys specifically for the client are contained within a `jwks.json` and exposed publicly at `WALLET_ADDRESS/jwks.json`. For example, `https://wallet.example.com/alice/jwks.json`.
+
+The key registry and public `jwks.json` allows servers to verify that a client is who they say they are.
+
+## Acquisition of a client's key set
+
+Because a grant request is completed over multiple signed HTTP requests, it’s important for a client to provide a way to consistently identify itself across these requests.
+
+The client generates an asymmetric key pair and the ASE assigns a key ID identifying the pair. When the client makes a grant request to the authorization server, the client must include a:
+
+- signature in the header that's signed by the private key
+- `signature-input` header that includes the key ID of the public key associated with the private key used to sign the signature.
+
+Review the [HTTP message signatures](/introduction/http-signatures) page for more information about signature headers.
+
+When the authorization server receives a signed grant request, the server makes a `GET` request to the client’s `jwks.json` endpoint to acquire the key set. The wallet address of the client is acquired by the authorization server during this initial grant request, after which the server binds the wallet address to the grant and uses it to acquire the key set for subsequent grant requests.
+
+After the authorization server acquires the client’s key set, the server searches for the public key with a key ID that matches the one included in the `signature-input` header. Once the server finds the public key, the key will be used to verify the signature, allowing the server to proceed with the grant request.
+
+## Key structure
+
+In Open Payments, the key registry must expose public keys in the form of a JWK. Keys must be generated using the <LinkOut href='https://datatracker.ietf.org/doc/html/rfc8032'>ed25519 algorithm</LinkOut>, and the resulting JWK must have fields with the following values:
+
+```
+{
+  alg: 'EdDSA',
+  kty: 'OKP',
+  crv: 'Ed25519'
+}
+```
+
+Additionally, the JWK must contain the `x` field and the public key `kid` field to identify it in a signature.
+
+The key material must be available within a JSON Web Key Set (JWKS) document located at `WALLET_ADDRESS/jwks.json`.
+
+<CodeBlock title="Example: https://wallet.example.com/alice/jwks.json">
+```json
+{
+  "keys": [
+    {
+      "kid": "3724c845-829d-425a-9a0d-194d6f12c336",
+      "x": "_Eg6UcC8G-O4TY2cxGnZyG_lMn0aWF1rVV-Bqn9NmhE",
+      "alg": "EdDSA",
+      "kty": "OKP",
+      "crv": "Ed25519"
+    }
+  ]
+}
+```
+</CodeBlock>
+
+## Key proofing method
+
+The security of client requests follows a profile of the mechanism defined in the <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol#name-securing-requests-from-the-'>GNAP specification</LinkOut>.
+
+:::note
+Open Payments **does not** support bearer tokens.
+:::
+
+Open Payments uses the <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol#name-http-message-signatures'>HTTP message signatures</LinkOut> key proofing method. Clients typically secure their requests to the authorization and resource servers by presenting an access token and proof of a key it possesses. The exception is for calls to the authorization server to initiate a grant. In this case, a key proof is used with no access token and is a non-authorized signed request.
+
+The `httpsig` proofing method must be declared as part of the key material when directly using a key to request a grant. The key material below is for illustrative purposes. In Open Payments, it's expected that the wallet address be used in the grant request.
+
+```json
+"key": {
+    "proof": "httpsig",
+    "jwk": {
+        "kid": "3724c845-829d-425a-9a0d-194d6f12c336",
+        "x": "_Eg6UcC8G-O4TY2cxGnZyG_lMn0aWF1rVV-Bqn9NmhE",
+        "alg": "EdDSA",
+        "kty": "OKP",
+        "crv": "Ed25519"
+    }
+}
+```
+
+When using `httpsig`, the signer creates an HTTP Message Signature as described in the <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-message-signatures'>HTTP Message Signatures specification</LinkOut>. Review the [HTTP message signatures](/introduction/http-signatures) page for more information about signatures as they relate to Open Payments.

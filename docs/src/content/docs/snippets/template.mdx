@@ -1,0 +1,49 @@
+---
+title: Change this title
+---
+
+import { Disclosure, CodeBlock } from '@interledger/docs-design-system'
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+import FullSnippet from '/src/components/FullSnippet.astro'
+import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
+import Global from '/src/partials/global-prerequisites.mdx'
+import Ts from '/src/partials/ts-prerequisites.mdx'
+
+<p>
+  <mark>Overview paragraph(s)</mark>
+</p>
+
+## Before you begin
+
+<Global />
+
+## H2
+
+<Tabs>
+<TabItem label='TypeScript'>
+<Ts />
+
+```html
+<ChunkedSnippet source="/path-to-raw/source-file" chunk="1" />
+```
+
+</TabItem>
+</Tabs>
+
+<Disclosure toggleText='View full source' client:load>
+
+Delete the contents of this disclosure and replace it with a link to the raw source
+file like so:
+
+```html
+<FullSnippet
+  source="https://raw.githubusercontent.com/interledger/open-payments-snippets/main/token/token-rotate.ts"
+/>
+```
+
+</Disclosure>
+
+## References
+
+- [Link to concept page(s)]()
+- [API specification]()

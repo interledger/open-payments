@@ -1,0 +1,80 @@
+---
+import prettier from 'prettier';
+import { Code } from 'astro:components';
+import { CodeBlock } from '@interledger/docs-design-system'
+const {source, chunk} = Astro.props;
+
+// Retrieve code snippet from GitHub as text
+const getApiData = async () => {
+  const data = await fetch(source).then((response) => response.text());
+  return data;
+};
+const code = await getApiData();
+
+// Split the text into an array of lines
+const lines = code.split('\n');
+
+// Initialize an array to store the delimiter objects
+const delimiterArray = [];
+
+// Iterate through the lines, extract "//@!" lines and format them into objects
+let startLine = null;
+for (let i = 0; i < lines.length; i++) {
+  if (lines[i].trim().startsWith("//@!")) {
+    if (startLine !== null) {
+      // Extract the entire "start_line" and the "title"
+      const startLineMatch = startLine.match(/\/\/@!(.*?)\s+\|\s+title=(.*)/);
+      if (startLineMatch) {
+        const entireStartLine = startLineMatch[0];
+        const title = startLineMatch[2];
+        
+        // Create an object with "start_line," "title," and "end_line" keys
+        const delimiterObject = {
+          start_line: entireStartLine,
+          title: title,
+          end_line: lines[i]
+        };
+        delimiterArray.push(delimiterObject);
+      }
+      startLine = null;
+    } else {
+      startLine = lines[i];
+    }
+  }
+}
+
+// Initialize an array to store the extracted chunks
+const codeChunkArray = [];
+
+// Iterate through the delimiterArray and extract code chunks and titles
+for (const delimiter of delimiterArray) {
+  const startLine = delimiter.start_line;
+  const endLine = delimiter.end_line;
+  
+  // Find the indices of the start and end lines in your longer text file
+  const startIndex = code.indexOf(startLine);
+  const endIndex = code.indexOf(endLine);
+
+  if (startIndex !== -1 && endIndex !== -1) {
+    const codeChunk = code.slice(startIndex + startLine.length, endIndex).trim();
+    
+    codeChunkArray.push({
+      code_chunk: codeChunk,
+      title: delimiter.title
+    });
+  }
+}
+
+// Handle zero-index situation and format code nicely
+const chunkNumber = parseInt(chunk) - 1;
+const rawOutput = codeChunkArray[chunkNumber].code_chunk;
+const output = await prettier.format(rawOutput, {
+  parser: 'typescript',
+  tabWidth: 2,
+});
+const codeBlockTitle = codeChunkArray[chunkNumber].title;
+---
+
+<CodeBlock title={codeBlockTitle}>
+  <Code code={output} lang="ts" theme="css-variables" />
+</CodeBlock>

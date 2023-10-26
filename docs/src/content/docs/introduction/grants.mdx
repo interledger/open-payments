@@ -1,0 +1,40 @@
+---
+title: Grant negotiation and authorization
+---
+
+import { CodeBlock, LinkOut } from '@interledger/docs-design-system'
+
+Before a client can issue payment instructions for incoming payments, quotes, or outgoing payments, it must obtain a grant. Open Payments leverages the <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol'>Grant Negotiation and Authorization Protocol (GNAP)</LinkOut> to define a standard mechanism for clients to obtain grants. GNAP is a protocol being developed by the Internet Engineering Task Force (IETF) as the successor to OAuth 2.0, designed to fill many of the gaps discovered through the use of OAuth in Open Banking and other financial use cases.
+
+## Grants
+
+GNAP allows a client instance to request delegated authorization to protected resources from a party other than the end user. This delegation is facilitated by an authorization server, which exposes APIs compliant with the GNAP standard. The process by which the delegation occurs is known as a grant.
+
+### Grant requests
+
+An authorization server is uniquely identified by its grant endpoint URI, which is an absolute URI that a client calls to initiate a grant request.
+
+In Open Payments, the grant for an [incoming payment](/apis/resource-server/operations/create-incoming-payment) is requested from the receiver’s wallet. The grant(s) for a [quote](/apis/resource-server/operations/create-quote) and [outgoing payment](/apis/resource-server/operations/create-outgoing-payment) are requested from the sender’s wallet. Review the [HTTP message signatures](/introduction/http-signatures) page for additional information.
+
+The grant request flow can take one of the paths below, with the first being the most common.
+
+- Grant -> incoming payment -> grant -> quote -> grant -> outgoing payment
+- Grant -> incoming payment -> grant -> quote -> outgoing payment
+
+A client can request one grant to create multiple incoming payments for different wallet accounts as long as each wallet account is with the same ASE. The same is true for quotes. However, an outgoing payment is specific to a wallet account and requires user interaction. This means each outgoing payment needs its own grant.
+
+A successfully issued grant results in the client receiving an access token. The access token:
+
+- Represents the rights granted to the client
+- Acts as credentials when calling a resource server’s Open Payments API
+- Allows the client to access protected resources (primarily OP-enabled accounts) on an ASE’s resource server and perform operations on these resources
+
+:::note
+An open-source implementation of an Open Payments resource server, called <LinkOut href='https://rafiki.dev'>Rafiki</LinkOut>, is currently in development.
+:::
+
+The authorization of access to an OP-enabled account can be separated from the ASE if desired. The authorization service can even be fulfilled by multiple federated providers if a use case requires this in the future.
+
+### Grant continuation and cancellation
+
+The client can issue a [grant continuation request](/apis/auth-server/operations/post-continue) if a grant needs to be modified or continued. For example, a client may initially need read access to a resource, but later require write access. The client can request to [cancel a grant](/apis/auth-server/operations/delete-continue) if it no longer needs access to protected resources on the resource server.
