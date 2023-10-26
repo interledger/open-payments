@@ -1,4 +1,4 @@
-import { KeyLike } from 'crypto'
+import { parseKey } from '@interledger/http-signature-utils'
 import { createOpenAPI, OpenAPI } from '@interledger/openapi'
 import path from 'path'
 import createLogger, { Logger } from 'pino'
@@ -22,6 +22,7 @@ import {
 } from './outgoing-payment'
 import { createTokenRoutes, TokenRoutes } from './token'
 import { createQuoteRoutes, QuoteRoutes } from './quote'
+import { KeyLike } from 'crypto'
 
 export interface BaseDeps {
   axiosInstance: AxiosInstance
@@ -86,8 +87,28 @@ export interface CollectionRequestArgs
 const createDeps = async (
   args: Partial<CreateAuthenticatedClientArgs>
 ): Promise<ClientDeps> => {
+  const logger = args?.logger ?? createLogger({ name: 'Open Payments Client' })
+
+  let privateKey: KeyLike | undefined
+
+  try {
+    if (args.privateKeyFilePath) {
+      privateKey = parseKey(
+        path.resolve(process.cwd(), args.privateKeyFilePath)
+      )
+    }
+  } catch (error) {
+    const errorMessage = `Could not load private key. ${
+      error instanceof Error ? error.message : 'Unknown error'
+    }`
+
+    logger.error(errorMessage)
+
+    throw new Error(errorMessage)
+  }
+
   const axiosInstance = createAxiosInstance({
-    privateKey: args.privateKey,
+    privateKey,
     keyId: args.keyId,
     requestTimeoutMs:
       args?.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS
@@ -98,7 +119,7 @@ const createDeps = async (
   const authServerOpenApi = await createOpenAPI(
     path.resolve(__dirname, '../openapi/auth-server.yaml')
   )
-  const logger = args?.logger ?? createLogger()
+
   return {
     axiosInstance,
     resourceServerOpenApi,
@@ -145,8 +166,8 @@ export const createUnauthenticatedClient = async (
 
 export interface CreateAuthenticatedClientArgs
   extends CreateUnauthenticatedClientArgs {
-  /** The private EdDSA-Ed25519 key with which requests will be signed */
-  privateKey: KeyLike
+  /** The path to the file containing the EdDSA-Ed25519 key with which requests will be signed */
+  privateKeyFilePath: string
   /** The key identifier referring to the private key */
   keyId: string
   /** The wallet address which the client will identify itself by */

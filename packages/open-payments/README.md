@@ -62,18 +62,18 @@ import { createAuthenticatedClient } from '@interledger/open-payments'
 
 const client = await createAuthenticatedClient({
   keyId: KEY_ID,
-  privateKey: PRIVATE_KEY,
+  privateKeyFilePath: PATH_TO_PRIVATE_KEY_FILE,
   walletAddressUrl: WALLET_ADDRESS_URL
 })
 ```
 
-In order to create the client, three properties need to be provided: `keyId`, the `privateKey` and the `walletAddressUrl`:
+In order to create the client, three properties need to be provided: `keyId`, the `privateKeyFilePath` and the `walletAddressUrl`:
 
-| Variable           | Description                                                                                                                                                                                                                                                                                                                                                                               |
-| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `walletAddressUrl` | The valid wallet address with which the client making requests will identify itself. A JSON Web Key Set document that includes the public key that the client instance will use to protect requests MUST be available at the `{walletAddressUrl}/jwks.json` url. This will be used as the `client` field during [Grant Creation](https://docs.openpayments.guide/reference/post-request). |
-| `privateKey`       | The private EdDSA-Ed25519 key bound to the wallet address, and used to sign the authenticated requests with. As mentioned above, a public JWK document signed with this key MUST be available at the `{walletAddressUrl}/jwks.json` url.                                                                                                                                                  |
-| `keyId`            | The key identifier of the given private key and the corresponding public JWK document.                                                                                                                                                                                                                                                                                                    |
+| Variable             | Description                                                                                                                                                                                                                                                                                                                                                                               |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `walletAddressUrl`   | The valid wallet address with which the client making requests will identify itself. A JSON Web Key Set document that includes the public key that the client instance will use to protect requests MUST be available at the `{walletAddressUrl}/jwks.json` url. This will be used as the `client` field during [Grant Creation](https://docs.openpayments.guide/reference/post-request). |
+| `privateKeyFilePath` | The relative or absolute path to the private EdDSA-Ed25519 key bound to the wallet address, and used to sign the authenticated requests with. As mentioned above, a public JWK document signed with this key MUST be available at the `{walletAddressUrl}/jwks.json` url.                                                                                                                 |
+| `keyId`              | The key identifier of the given private key and the corresponding public JWK document.                                                                                                                                                                                                                                                                                                    |
 
 > **Note**
 >
@@ -95,7 +95,7 @@ import { createAuthenticatedClient } from '@interledger/open-payments'
 const client = await createAuthenticatedClient({
   walletAddressUrl: 'https://online-marketplace.com/usa',
   keyId: KEY_ID,
-  privateKey: PRIVATE_KEY
+  privateKeyFilePath: PATH_TO_PRIVATE_KEY_FILE
   // The public JWK with this key (and keyId) would be available at https://online-marketplace.com/usa/jwks.json
 })
 ```
