@@ -1,5 +1,5 @@
 ---
-'@interledger/open-payments': minor
+'@interledger/open-payments': major
 ---
 
 - `createAuthenticatedClient` can now also load a key using a path to the private key file as an argument to `privateKey`
