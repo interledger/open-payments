@@ -69,7 +69,8 @@ We have extracted some of the commonly repeated patterns within the documentatio
 - StylishHeader (Shared)
 - Tooltip (Shared)
 
-- [Snippet](#snippet-component) (Project-specific)
+- [FullSnippet](#fullsnippet-component) (Project-specific)
+- [ChunkedSnippet](#chunkedsnippet-component) (Project-specific)
 
 For the shared components, if you are using both `CodeBlock` and `Disclosure` on the same page, you can import them both like so:
 
@@ -81,26 +82,45 @@ For more information about importing things in Javascript, please refer to [impo
 
 The available shared components are documented at our [documentation style guide](https://interledger.tech).
 
-1. #### `Snippet` component
+1. #### `FullSnippet` component
 
-   Use this component if you wish pull an entire file from a public Github repository to be displayed as code. It takes a `source` attribute, which will be displayed above the code. To use it, your docs page must be in `.mdx` format. Please change the format from `.md` to `.mdx` if necessary. All your existing markdown will still be supported without issue. Import the `Snippet` component like so:
+   Use this component if you wish pull an entire file from a public Github repository to be displayed as code. It takes a `source` attribute which must be from the `raw.githubsercontent.com` API. To use it, your docs page must be in `.mdx` format. Please change the format from `.md` to `.mdx` if necessary. All your existing markdown will still be supported without issue. Import the `FullSnippet` component like so:
 
    ```jsx
-   import Snippet from '/src/components/Snippet.astro'
+   import FullSnippet from '/src/components/FullSnippet.astro'
    ```
 
-   Use the `<Snippet>` component within your content like so:
+   Use the `<FullSnippet>` component within your content like so:
 
    ```
-   <Snippet source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/incoming-payment/incoming-payment-create.ts' />
+   <FullSnippet source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/incoming-payment/incoming-payment-create.ts' />
+   ```
+
+1. #### `ChunkedSnippet` component
+
+   Use this component on specially formatted code snippet files from a public Github repository to be displayed as code. The code files must have "chunking comments" to allow the component to work correctly without borking out the whole site.
+
+   It takes a `source` attribute which must be a raw Github link, and a `chunk` attribute which specifies which chunk you want to display. To use it, your docs page must be in `.mdx` format. Please change the format from `.md` to `.mdx` if necessary. All your existing markdown will still be supported without issue. Import the `ChunkedSnippet` component like so:
+
+   ```jsx
+   import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
+   ```
+
+   Use the `<ChunkedSnippet>` component within your content like so:
+
+   ```
+   <ChunkedSnippet
+     source='https://raw.githubusercontent.com/huijing/filerepo/gh-pages/incoming-grant.ts'
+     chunk='1'
+   />
    ```
 
 ## Adding Content
 
 ### Adding a new docs page to an existing sidebar
 
-1. Create the doc as a new markdown file in `/src/content/docs/docs/RELEVANT_FOLDER`, example
-   `/src/content/docs/docs/RELEVANT_FOLDER/newly-created-doc.md`:
+Create the doc as a new markdown file in `/src/content/docs/docs/RELEVANT_FOLDER`, example
+`/src/content/docs/docs/RELEVANT_FOLDER/newly-created-doc.md`:
 
 ```md
 ---
