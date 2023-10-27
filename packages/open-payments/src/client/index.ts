@@ -192,7 +192,7 @@ export const createUnauthenticatedClient = async (
 
 export interface CreateAuthenticatedClientArgs
   extends CreateUnauthenticatedClientArgs {
-  /** The path to the file containing the EdDSA-Ed25519 key with which requests will be signed */
+  /** The private EdDSA-Ed25519 key (or the relative or absolute path to the key) with which requests will be signed */
   privateKey: string | KeyLike
   /** The key identifier referring to the private key */
   keyId: string
