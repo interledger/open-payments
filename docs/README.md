@@ -96,7 +96,6 @@ The available shared components are documented at our [documentation style guide
    <FullSnippet source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/incoming-payment/incoming-payment-create.ts' />
    ```
 
-
 1. #### `ChunkedSnippet` component
 
    Use this component on specially formatted code snippet files from a public Github repository to be displayed as code. The code files must have "chunking comments" to allow the component to work correctly without borking out the whole site.
@@ -121,7 +120,7 @@ The available shared components are documented at our [documentation style guide
 ### Adding a new docs page to an existing sidebar
 
 Create the doc as a new markdown file in `/src/content/docs/docs/RELEVANT_FOLDER`, example
-   `/src/content/docs/docs/RELEVANT_FOLDER/newly-created-doc.md`:
+`/src/content/docs/docs/RELEVANT_FOLDER/newly-created-doc.md`:
 
 ```md
 ---
