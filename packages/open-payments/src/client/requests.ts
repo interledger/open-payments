@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios'
-import { KeyLike } from 'crypto'
+import { KeyObject } from 'crypto'
 import { ResponseValidator } from '@interledger/openapi'
 import { BaseDeps } from '.'
 import { createHeaders } from '@interledger/http-signature-utils'
@@ -187,7 +187,7 @@ export const deleteRequest = async <TResponse>(
 
 export const createAxiosInstance = (args: {
   requestTimeoutMs: number
-  privateKey?: KeyLike
+  privateKey?: KeyObject
   keyId?: string
 }): AxiosInstance => {
   const axiosInstance = axios.create({

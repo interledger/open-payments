@@ -1,5 +1,6 @@
 ---
-'@interledger/open-payments': major
+'@interledger/open-payments': minor
 ---
 
-Breaking: `createAuthenticatedClient` now takes in a path to the private key file (`privateKeyFilePath: string`) instead of the key itself (`privateKey: KeyLike`)
+- `createAuthenticatedClient` can now also load a key using a path to the private key file as an argument to `privateKey`
+- `walletAddress` is required in the incoming payment creation request

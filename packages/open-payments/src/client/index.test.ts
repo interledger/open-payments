@@ -2,6 +2,7 @@ import { createAuthenticatedClient } from '.'
 import fs from 'fs'
 import assert from 'assert'
 import { generateKeyPairSync } from 'crypto'
+import { silentLogger } from '../test/helpers'
 
 describe('Client', (): void => {
   const TMP_DIR = './tmp'
@@ -15,33 +16,76 @@ describe('Client', (): void => {
   })
 
   describe('createAuthenticatedClient', (): void => {
-    test('properly loads key', async (): Promise<void> => {
+    test('properly loads key with privateKey as file path', async (): Promise<void> => {
       const keypair = generateKeyPairSync('ed25519')
-      const keyfile = `${TMP_DIR}/test-private-key.pem`
+      const keyFilePath = `${TMP_DIR}/test-private-key.pem`
       fs.mkdirSync(TMP_DIR)
       fs.writeFileSync(
-        keyfile,
+        keyFilePath,
         keypair.privateKey.export({ format: 'pem', type: 'pkcs8' })
       )
-      assert.ok(fs.existsSync(keyfile))
+      assert.ok(fs.existsSync(keyFilePath))
 
       await expect(
         createAuthenticatedClient({
           keyId: 'keyid-1',
           walletAddressUrl: 'http://localhost:1000/.well-known/pay',
-          privateKeyFilePath: keyfile
+          privateKey: keyFilePath,
+          logger: silentLogger
         })
       ).resolves.toBeDefined()
+    })
+
+    test('properly loads key with privateKey as KeyObject', async (): Promise<void> => {
+      const keypair = generateKeyPairSync('ed25519')
+
+      await expect(
+        createAuthenticatedClient({
+          logger: silentLogger,
+          keyId: 'keyid-1',
+          walletAddressUrl: 'http://localhost:1000/.well-known/pay',
+          privateKey: keypair.privateKey
+        })
+      ).resolves.toBeDefined()
+    })
+
+    test('properly loads key with privateKey as Buffer', async (): Promise<void> => {
+      const keypair = generateKeyPairSync('ed25519')
+
+      await expect(
+        createAuthenticatedClient({
+          logger: silentLogger,
+          keyId: 'keyid-1',
+          walletAddressUrl: 'http://localhost:1000/.well-known/pay',
+          privateKey: Buffer.from(
+            keypair.privateKey.export({ format: 'pem', type: 'pkcs8' })
+          )
+        })
+      ).resolves.toBeDefined()
+    })
+
+    test('throws error if could not load private key as Buffer', async (): Promise<void> => {
+      await expect(() =>
+        createAuthenticatedClient({
+          logger: silentLogger,
+          keyId: 'keyid-1',
+          walletAddressUrl: 'http://localhost:1000/.well-known/pay',
+          privateKey: Buffer.from('')
+        })
+      ).rejects.toThrow('Could not load private key. Key is not a valid file')
     })
 
     test('throws error if could not load private key', async (): Promise<void> => {
       await expect(() =>
         createAuthenticatedClient({
+          logger: silentLogger,
           keyId: 'keyid-1',
           walletAddressUrl: 'http://localhost:1000/.well-known/pay',
-          privateKeyFilePath: '/incorrect/path/'
+          privateKey: '/incorrect/path/'
         })
-      ).rejects.toThrow()
+      ).rejects.toThrow(
+        'Could not load private key. Key is not a valid path or file'
+      )
     })
   })
 })
