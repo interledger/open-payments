@@ -31,7 +31,7 @@ servers:
   - url: 'https://ilp.rafiki.money'
     description: 'Server for wallet address subresources (ie https://ilp.rafiki.money/alice)'
   - url: 'https://ilp.rafiki.money/.well-known/pay'
-    description: 'Server for when Payment Pointer has no pathname (ie https://ilp.rafiki.money)'
+    description: 'Server for when the wallet address has no pathname (ie https://ilp.rafiki.money)'
 tags:
   - name: wallet-address
     description: wallet address operations
@@ -151,6 +151,8 @@ paths:
                 metadata:
                   type: object
                   description: Additional metadata associated with the incoming payment. (Optional)
+              required:
+                - walletAddress
             examples:
               Create incoming payment for $25 to pay invoice INV2022-02-0137:
                 value:
