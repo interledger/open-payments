@@ -2,12 +2,7 @@ import * as assert from 'assert'
 import * as crypto from 'crypto'
 import * as fs from 'fs'
 import { Buffer } from 'buffer'
-import {
-  loadBase64Key,
-  parseKey,
-  parseOrProvisionKey,
-  provisionKey
-} from './key'
+import { loadBase64Key, loadKey, loadOrGenerateKey, generateKey } from './key'
 
 describe('Key methods', (): void => {
   const TMP_DIR = './tmp'
@@ -19,7 +14,7 @@ describe('Key methods', (): void => {
   afterEach(async (): Promise<void> => {
     fs.rmSync(TMP_DIR, { recursive: true, force: true })
   })
-  describe('parseOrProvisionKey', (): void => {
+  describe('loadOrGenerateKey', (): void => {
     test.each`
       tmpDirExists
       ${false}
@@ -31,7 +26,7 @@ describe('Key methods', (): void => {
           fs.mkdirSync(TMP_DIR)
         }
         expect(fs.existsSync(TMP_DIR)).toBe(tmpDirExists)
-        const key = parseOrProvisionKey()
+        const key = loadOrGenerateKey()
         expect(key).toMatchObject({
           asymmetricKeyType: 'ed25519',
           type: 'private'
@@ -51,7 +46,7 @@ describe('Key methods', (): void => {
     )
 
     test('generates new key if parsing error', async (): Promise<void> => {
-      const key = parseOrProvisionKey('/some/wrong/file')
+      const key = loadOrGenerateKey('/some/wrong/file')
       expect(key).toBeInstanceOf(crypto.KeyObject)
       expect(key.export({ format: 'jwk' })).toMatchObject({
         crv: 'Ed25519',
@@ -76,7 +71,7 @@ describe('Key methods', (): void => {
       )
       assert.ok(fs.existsSync(keyfile))
       const fileStats = fs.statSync(keyfile)
-      const key = parseOrProvisionKey(keyfile)
+      const key = loadOrGenerateKey(keyfile)
       expect(key).toBeInstanceOf(crypto.KeyObject)
       expect(key.export({ format: 'jwk' })).toEqual({
         crv: 'Ed25519',
@@ -92,7 +87,7 @@ describe('Key methods', (): void => {
     })
   })
 
-  describe('parseKey', (): void => {
+  describe('loadKey', (): void => {
     test('can parse key', async (): Promise<void> => {
       const keypair = crypto.generateKeyPairSync('ed25519')
       const keyfile = `${TMP_DIR}/test-private-key.pem`
@@ -103,7 +98,7 @@ describe('Key methods', (): void => {
       )
       assert.ok(fs.existsSync(keyfile))
       const fileStats = fs.statSync(keyfile)
-      const key = parseKey(keyfile)
+      const key = loadKey(keyfile)
       expect(key).toBeInstanceOf(crypto.KeyObject)
       expect(key.export({ format: 'jwk' })).toEqual({
         crv: 'Ed25519',
@@ -122,7 +117,7 @@ describe('Key methods', (): void => {
       const fileName = `${TMP_DIR}/private-key.pem`
 
       expect(() => {
-        parseKey(fileName)
+        loadKey(fileName)
       }).toThrow(`Could not load file: ${fileName}`)
     })
 
@@ -131,7 +126,7 @@ describe('Key methods', (): void => {
       fs.mkdirSync(TMP_DIR)
       fs.writeFileSync(keyfile, 'not a private key')
       assert.ok(fs.existsSync(keyfile))
-      expect(() => parseKey(keyfile)).toThrow(
+      expect(() => loadKey(keyfile)).toThrow(
         'File was loaded, but private key was invalid'
       )
     })
@@ -145,13 +140,13 @@ describe('Key methods', (): void => {
         keypair.privateKey.export({ format: 'pem', type: 'pkcs8' })
       )
       assert.ok(fs.existsSync(keyfile))
-      expect(() => parseKey(keyfile)).toThrow(
+      expect(() => loadKey(keyfile)).toThrow(
         'Private key did not have Ed25519 curve'
       )
     })
   })
 
-  describe('provisionKey', (): void => {
+  describe('generateKey', (): void => {
     test.each`
       tmpDirExists
       ${false}
@@ -163,7 +158,7 @@ describe('Key methods', (): void => {
           fs.mkdirSync(TMP_DIR)
         }
         expect(fs.existsSync(TMP_DIR)).toBe(tmpDirExists)
-        const key = provisionKey(TMP_DIR)
+        const key = generateKey(TMP_DIR)
         expect(key).toMatchObject({
           asymmetricKeyType: 'ed25519',
           type: 'private'
@@ -185,7 +180,7 @@ describe('Key methods', (): void => {
 
   describe('loadBase64Key', (): void => {
     test('can load base64 encoded key', (): void => {
-      const key = parseOrProvisionKey(undefined)
+      const key = loadOrGenerateKey(undefined)
       const loadedKey = loadBase64Key(
         Buffer.from(key.export({ type: 'pkcs8', format: 'pem' })).toString(
           'base64'

@@ -1,7 +1,7 @@
 import * as crypto from 'crypto'
 import * as fs from 'fs'
 
-export function parseKey(keyFilePath: string): crypto.KeyObject {
+export function loadKey(keyFilePath: string): crypto.KeyObject {
   let fileBuffer
   try {
     fileBuffer = fs.readFileSync(keyFilePath)
@@ -23,7 +23,7 @@ export function parseKey(keyFilePath: string): crypto.KeyObject {
   return key
 }
 
-export function provisionKey(dir: string): crypto.KeyObject {
+export function generateKey(dir: string): crypto.KeyObject {
   const keypair = crypto.generateKeyPairSync('ed25519')
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir)
@@ -35,21 +35,17 @@ export function provisionKey(dir: string): crypto.KeyObject {
   return keypair.privateKey
 }
 
-export function parseOrProvisionKey(keyFile?: string): crypto.KeyObject {
+export function loadOrGenerateKey(keyFile?: string): crypto.KeyObject {
   if (keyFile) {
     try {
-      return parseKey(keyFile)
-    } catch (error) {
-      console.warn(
-        `parseOrProvisionKey: could not parse key (${
-          error instanceof Error ? error.message : 'unknown error'
-        }). Generating new key.`
-      )
+      return loadKey(keyFile)
+    } catch {
+      /* Could not load key, generating new one */
     }
   }
 
   const TMP_DIR = './tmp'
-  return provisionKey(TMP_DIR)
+  return generateKey(TMP_DIR)
 }
 
 export function loadBase64Key(base64Key: string): crypto.KeyObject | undefined {

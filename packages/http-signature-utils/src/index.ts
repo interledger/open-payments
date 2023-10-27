@@ -1,9 +1,9 @@
 export { createHeaders, getKeyId, Headers } from './utils/headers'
 export { generateJwk, JWK } from './utils/jwk'
 export {
-  parseKey,
-  provisionKey,
-  parseOrProvisionKey,
+  loadKey,
+  generateKey,
+  loadOrGenerateKey,
   loadBase64Key
 } from './utils/key'
 export { createSignatureHeaders } from './utils/signatures'

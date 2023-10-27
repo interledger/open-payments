@@ -1,5 +1,7 @@
 ---
-'@interledger/http-signature-utils': minor
+'@interledger/http-signature-utils': major
 ---
 
-Adding and exporting two additional methods: `parseKey` `provisionKey`
+Adding and exporting two additional methods: `loadKey` `generateKey`
+
+Renaming methods: `parseOrProvisionKey` -> `loadOrGenerateKey`
