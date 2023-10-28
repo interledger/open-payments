@@ -1,0 +1,35 @@
+name: 📄 Documentation issue
+description: Found an issue in the documentation? You can use this one!
+title: "[Docs]:"
+labels: ["documentation"]
+body:
+- type: textarea
+  id: description
+  attributes:
+    label: Description
+    description: A brief description of the question or issue, also include what you tried and what didn't work
+  validations:
+    required: true
+- type: textarea
+  id: screenshots
+  attributes:
+    label: Screenshots
+    description: Please add screenshots if applicable
+  validations:
+    required: false
+- type: textarea
+  id: extra-info
+  attributes:
+    label: Additional information
+    description: Is there anything else we should know about this issue?
+  validations:
+    required: false
+- type: checkboxes
+  id: terms
+  attributes:
+    label: 'Record'
+    options:
+      - label: I agree to follow this project's Code of Conduct
+        required: true
+      - label: I'm a GSSoC'23 contributor
+      - label: I want to work on this issue
