@@ -1,0 +1,40 @@
+name: 🐛 Bug Report
+description: Report a bug report
+title: '[Bug]: '
+labels: ['🔧 goal: fix']
+body:
+- type: textarea
+  id: what-happened
+  attributes:
+    label: What bug you encountered?
+    placeholder: Describe the issue in detail
+  validations:
+    required: true
+- type: textarea
+  id: screenshots
+  attributes:
+    label: Show us the trouble with screenshots
+    placeholder: Attach screenshots to demonstrate the issue
+  validations:
+    required: true
+- type: dropdown
+  id: browsers
+  attributes:
+    label: Which browsers are affected?
+    multiple: true
+    options:
+    - Firefox
+    - Chrome
+    - Safari
+    - Microsoft Edge
+    - Brave
+    - Other
+- type: checkboxes
+  id: terms
+  attributes:
+    label: 'Record'
+    options:
+      - label: I agree to follow this project's Code of Conduct
+        required: true
+      - label: I'm a GSSoC'23 contributor
+      - label: I want to work on this issue
