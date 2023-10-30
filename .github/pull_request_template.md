@@ -1,5 +1,5 @@
 <!--
-If updating the specs in /openapi, you can test the changes by merging your branch into integration, and navigating to https://open-payments-integration.readme.io
+If updating the specs in /openapi, you can test the changes by opening a PR and checking the Netlify deploy preview
 -->
 
 ## Changes proposed in this pull request
