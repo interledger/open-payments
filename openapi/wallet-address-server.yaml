@@ -13,7 +13,7 @@ servers:
   - url: 'https://rafiki.money/alice'
     description: 'Server for Alice\'s wallet address (ie https://rafiki.money/alice)'
   - url: 'https://rafiki.money/alice'
-    description: 'Server for Bob\'s wallet address subresources (ie https://rafiki.money/alice)'
+    description: 'Server for Bob\'s wallet address (ie https://rafiki.money/alice)'
 tags:
   - name: wallet-address
     description: wallet address operations
@@ -84,13 +84,14 @@ components:
       title: Wallet Address
       type: object
       description: A **wallet address** resource is the root of the API and contains the public details of the financial account represented by the Wallet Address that is also the service endpoint URL.
-      additionalProperties: false
+      additionalProperties: true
       examples:
         - id: 'https://rafiki.money/alice'
           publicName: Alice
           assetCode: USD
           assetScale: 2
           authServer: 'https://rafiki.money/auth'
+          resourceServer: 'https://rafiki.money/op'
       properties:
         id:
           type: string
@@ -110,11 +111,17 @@ components:
           format: uri
           description: The URL of the authorization server endpoint for getting grants and access tokens for this wallet address.
           readOnly: true
+        resourceServer:
+          type: string
+          format: uri
+          description: The URL of the resource server endpoint for performing Open Payments with this wallet address.
+          readOnly: true
       required:
         - id
         - assetCode
         - assetScale
         - authServer
+        - resourceServer
     json-web-key-set:
       title: JSON Web Key Set document
       type: object
