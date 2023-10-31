@@ -244,7 +244,7 @@ describe('OpenAPI Validator', (): void => {
           {}
         )
         addTestSignatureHeaders(ctx)
-        ctx.request.body = {}
+        ctx.request.body = { walletAddress: WALLET_ADDRESS }
         const next = jest.fn().mockImplementation(() => {
           ctx.status = status
           ctx.response.body = body

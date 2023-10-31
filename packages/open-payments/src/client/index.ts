@@ -1,4 +1,5 @@
-import { KeyLike } from 'crypto'
+import { loadKey } from '@interledger/http-signature-utils'
+import fs from 'fs'
 import { createOpenAPI, OpenAPI } from '@interledger/openapi'
 import path from 'path'
 import createLogger, { Logger } from 'pino'
@@ -22,6 +23,7 @@ import {
 } from './outgoing-payment'
 import { createTokenRoutes, TokenRoutes } from './token'
 import { createQuoteRoutes, QuoteRoutes } from './quote'
+import { KeyLike, KeyObject, createPrivateKey } from 'crypto'
 
 export interface BaseDeps {
   axiosInstance: AxiosInstance
@@ -83,11 +85,56 @@ export interface CollectionRequestArgs
   walletAddress: string
 }
 
+const parseKey = (
+  args: Partial<CreateAuthenticatedClientArgs>
+): KeyObject | undefined => {
+  if (!args.privateKey) {
+    return undefined
+  }
+
+  if (args.privateKey instanceof KeyObject) {
+    return args.privateKey
+  }
+
+  if (args.privateKey instanceof Buffer) {
+    try {
+      return createPrivateKey(args.privateKey)
+    } catch {
+      throw new Error('Key is not a valid file')
+    }
+  }
+
+  if (fs.existsSync(path.resolve(process.cwd(), args.privateKey))) {
+    return loadKey(path.resolve(process.cwd(), args.privateKey))
+  }
+
+  try {
+    return createPrivateKey(args.privateKey)
+  } catch {
+    throw new Error('Key is not a valid path or file')
+  }
+}
+
 const createDeps = async (
   args: Partial<CreateAuthenticatedClientArgs>
 ): Promise<ClientDeps> => {
+  const logger = args?.logger ?? createLogger({ name: 'Open Payments Client' })
+
+  let privateKey: KeyObject | undefined
+  try {
+    privateKey = parseKey(args)
+  } catch (error) {
+    const errorMessage = `Could not load private key. ${
+      error instanceof Error ? error.message : 'Unknown error'
+    }`
+
+    logger.error(errorMessage)
+
+    throw new Error(errorMessage)
+  }
+
   const axiosInstance = createAxiosInstance({
-    privateKey: args.privateKey,
+    privateKey,
     keyId: args.keyId,
     requestTimeoutMs:
       args?.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS
@@ -98,7 +145,7 @@ const createDeps = async (
   const authServerOpenApi = await createOpenAPI(
     path.resolve(__dirname, '../openapi/auth-server.yaml')
   )
-  const logger = args?.logger ?? createLogger()
+
   return {
     axiosInstance,
     resourceServerOpenApi,
@@ -145,8 +192,8 @@ export const createUnauthenticatedClient = async (
 
 export interface CreateAuthenticatedClientArgs
   extends CreateUnauthenticatedClientArgs {
-  /** The private EdDSA-Ed25519 key with which requests will be signed */
-  privateKey: KeyLike
+  /** The private EdDSA-Ed25519 key (or the relative or absolute path to the key) with which requests will be signed */
+  privateKey: string | KeyLike
   /** The key identifier referring to the private key */
   keyId: string
   /** The wallet address which the client will identify itself by */
