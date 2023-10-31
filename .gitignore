@@ -41,3 +41,4 @@ dist
 **/.terraform
 
 tmp
+.spectral.json
