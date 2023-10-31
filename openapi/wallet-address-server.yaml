@@ -11,9 +11,9 @@ info:
     email: tech@interledger.org
 servers:
   - url: 'https://rafiki.money/alice'
-    description: 'Server for Alice\'s wallet address (ie https://rafiki.money/alice)'
-  - url: 'https://rafiki.money/alice'
-    description: 'Server for Bob\'s wallet address (ie https://rafiki.money/alice)'
+    description: "Server for Alice's wallet address"
+  - url: 'https://rafiki.money/bob'
+    description: "Server for Bob's wallet address"
 tags:
   - name: wallet-address
     description: wallet address operations
@@ -38,6 +38,7 @@ paths:
                     assetCode: USD
                     assetScale: 2
                     authServer: 'https://rafiki.money/auth'
+                    resourceServer: 'https://rafiki.money/op'
         '404':
           description: Wallet Address Not Found
       operationId: get-wallet-address
@@ -73,6 +74,13 @@ paths:
       tags:
         - wallet-address
       responses:
+        '200':
+          description: DID Document Found
+          content:
+            application/json:
+              schema:
+                type: object
+              examples: {}
         '500':
           description: DID Document not yet implemented
       operationId: get-wallet-address-did-document
@@ -143,3 +151,48 @@ components:
               kty: OKP
               crv: Ed25519
               x: 11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo
+    json-web-key:
+      type: object
+      properties:
+        kid:
+          type: string
+        alg:
+          type: string
+          description: 'The cryptographic algorithm family used with the key. The only allowed value is `EdDSA`. '
+          enum:
+            - EdDSA
+        use:
+          type: string
+          enum:
+            - sig
+        kty:
+          type: string
+          enum:
+            - OKP
+        crv:
+          type: string
+          enum:
+            - Ed25519
+        x:
+          type: string
+          pattern: '^[a-zA-Z0-9-_]+$'
+          description: The base64 url-encoded public key.
+      required:
+        - kid
+        - alg
+        - kty
+        - crv
+        - x
+      title: Ed25519 Public Key
+      description: A JWK representation of an Ed25519 Public Key
+      examples:
+        - kid: key-1
+          use: sig
+          kty: OKP
+          crv: Ed25519
+          x: 11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo
+        - kid: '2022-09-02'
+          use: sig
+          kty: OKP
+          crv: Ed25519
+          x: oy0L_vTygNE4IogRyn_F5GmHXdqYVjIXkWs2jky7zsI
