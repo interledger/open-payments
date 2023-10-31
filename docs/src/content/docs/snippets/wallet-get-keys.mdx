@@ -1,0 +1,54 @@
+---
+title: Get keys bound to a wallet address
+---
+
+import { Disclosure, CodeBlock, LinkOut } from '@interledger/docs-design-system'
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
+import Global from '/src/partials/global-prerequisites.mdx'
+import Ts from '/src/partials/ts-prerequisites.mdx'
+
+While most Open Payments code snippets are intended for clients, getting the keys bound to a wallet address is primarily a function of account servicing entities.
+
+When an authorization server receives a signed grant request, the auth server makes a call to acquire the keys. When a client makes a request to a resource server, the resource server calls the auth server to ensure the signature of the request corresponds to the public JWK of the wallet address.
+
+These code snippets get the keys associated with the specified wallet address.
+
+## Before you begin
+
+<Global />
+
+## Retrieve the public keys for a wallet address
+
+<Tabs>
+<TabItem label='TypeScript'>
+<Ts />
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/wallet-address/wallet-address-get-keys.ts'
+  chunk='1'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/wallet-address/wallet-address-get-keys.ts'
+  chunk='2'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/wallet-address/wallet-address-get-keys.ts'
+  chunk='3'
+/>
+
+</TabItem>
+</Tabs>
+
+<p>
+  <LinkOut href='https://github.com/interledger/open-payments-snippets/blob/main/wallet-address/wallet-address-get-keys.ts'>
+    View full source
+  </LinkOut>
+</p>
+
+## References
+
+- [API specification](/apis/resource-server/operations/get-wallet-address-keys)
+- [Wallet addresses](/introduction/wallet-addresses)

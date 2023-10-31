@@ -10,7 +10,7 @@ All client requests in Open Payments are signed using a unique key that identifi
 
 A key registry is a registry of all keys stored by an ASE for their users. A key is [generated](#key-structure) and added to the registry by the client that requires access to Open Payments resources that are protected by an authorization server.
 
-The client is represented by a wallet address. The keys specifically for the client are contained within a `jwks.json` and exposed publicly at `WALLET_ADDRESS/jwks.json`. For example, `https://wallet.example.com/alice/jwks.json`.
+The client is represented by a [wallet address](/introduction/wallet-addresses). The keys specifically for the client are contained within a `jwks.json` and exposed publicly at `WALLET_ADDRESS/jwks.json`. For example, `https://wallet.example.com/alice/jwks.json`.
 
 The key registry and public `jwks.json` allows servers to verify that a client is who they say they are.
 
@@ -23,7 +23,7 @@ The client generates an asymmetric key pair and the ASE assigns a key ID identif
 - signature in the header that's signed by the private key
 - `signature-input` header that includes the key ID of the public key associated with the private key used to sign the signature.
 
-Review the [HTTP message signatures](/introduction/http-signatures) page for more information about signature headers.
+Refer to the [HTTP message signatures](/introduction/http-signatures) page for more information about signature headers.
 
 When the authorization server receives a signed grant request, the server makes a `GET` request to the client’s `jwks.json` endpoint to acquire the key set. The wallet address of the client is acquired by the authorization server during this initial grant request, after which the server binds the wallet address to the grant and uses it to acquire the key set for subsequent grant requests.
 
