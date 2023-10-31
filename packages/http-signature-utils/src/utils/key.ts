@@ -30,35 +30,50 @@ export function loadKey(keyFilePath: string): crypto.KeyObject {
   return key
 }
 
+interface GenerateKeyArgs {
+  /** The directory where to save the key */
+  dir?: string
+  /** The fileName of the saved key, without the file extension. `args.dir` must be provided for the fileName to register. */
+  fileName?: string
+}
+
 /**
- * Generates a EdDSA-Ed25519 private key, and saves it in the given directory.
+ * Generates a EdDSA-Ed25519 private key, and optionally saves it in the given directory.
  *
- * @param dir - The directory to use for saving the key
+ * @param args - The arguments used to specify where to optionally save the generated key
  * @returns The KeyObject that was generated
  *
  */
-export function generateKey(dir: string): crypto.KeyObject {
+export function generateKey(args?: GenerateKeyArgs): crypto.KeyObject {
   const keypair = crypto.generateKeyPairSync('ed25519')
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir)
+  if (args && args.dir) {
+    if (!fs.existsSync(args.dir)) {
+      fs.mkdirSync(args.dir)
+    }
+    fs.writeFileSync(
+      `${args.dir}/${
+        args.fileName || `private-key-${new Date().getTime()}`
+      }.pem`,
+      keypair.privateKey.export({ format: 'pem', type: 'pkcs8' })
+    )
   }
-  fs.writeFileSync(
-    `${dir}/private-key-${new Date().getTime()}.pem`,
-    keypair.privateKey.export({ format: 'pem', type: 'pkcs8' })
-  )
   return keypair.privateKey
 }
 
 /**
  * Loads a EdDSA-Ed25519 private key. If a path to the key was not provided,
  * or if there were any errors when trying to load the given key, a new key is generated and
- * saved in a file.
+ * optionally saved in a file.
  *
  * @param keyFilePath - The file path of the private key.
+ * @param generateKeyArgs - The arguments used to specify where to optionally save the generated key
  * @returns The KeyObject of the loaded or generated private key
  *
  */
-export function loadOrGenerateKey(keyFilePath?: string): crypto.KeyObject {
+export function loadOrGenerateKey(
+  keyFilePath?: string,
+  generateKeyArgs?: GenerateKeyArgs
+): crypto.KeyObject {
   if (keyFilePath) {
     try {
       return loadKey(keyFilePath)
@@ -67,8 +82,7 @@ export function loadOrGenerateKey(keyFilePath?: string): crypto.KeyObject {
     }
   }
 
-  const TMP_DIR = './tmp'
-  return generateKey(TMP_DIR)
+  return generateKey(generateKeyArgs)
 }
 
 /**

@@ -20,13 +20,13 @@ describe('Key methods', (): void => {
       ${false}
       ${true}
     `(
-      'can provision key - tmp dir exists: $tmpDirExists',
+      'generates key and saves file - tmp dir exists: $tmpDirExists',
       async ({ tmpDirExists }): Promise<void> => {
         if (tmpDirExists) {
           fs.mkdirSync(TMP_DIR)
         }
         expect(fs.existsSync(TMP_DIR)).toBe(tmpDirExists)
-        const key = loadOrGenerateKey()
+        const key = loadOrGenerateKey(undefined, { dir: TMP_DIR })
         expect(key).toMatchObject({
           asymmetricKeyType: 'ed25519',
           type: 'private'
@@ -54,11 +54,6 @@ describe('Key methods', (): void => {
         d: expect.any(String),
         x: expect.any(String)
       })
-      const keyfiles = fs.readdirSync(TMP_DIR)
-      expect(keyfiles.length).toBe(1)
-      expect(fs.readFileSync(`${TMP_DIR}/${keyfiles[0]}`, 'utf8')).toEqual(
-        key.export({ format: 'pem', type: 'pkcs8' })
-      )
     })
 
     test('can parse key', async (): Promise<void> => {
@@ -147,18 +142,32 @@ describe('Key methods', (): void => {
   })
 
   describe('generateKey', (): void => {
+    test('generates key', (): void => {
+      const key = generateKey()
+      expect(key).toMatchObject({
+        asymmetricKeyType: 'ed25519',
+        type: 'private'
+      })
+      expect(key.export({ format: 'jwk' })).toEqual({
+        crv: 'Ed25519',
+        kty: 'OKP',
+        d: expect.any(String),
+        x: expect.any(String)
+      })
+    })
+
     test.each`
       tmpDirExists
       ${false}
       ${true}
     `(
-      'can provision key - tmp dir exists: $tmpDirExists',
+      'generates key and saves file - tmp dir exists: $tmpDirExists',
       async ({ tmpDirExists }): Promise<void> => {
         if (tmpDirExists) {
           fs.mkdirSync(TMP_DIR)
         }
         expect(fs.existsSync(TMP_DIR)).toBe(tmpDirExists)
-        const key = generateKey(TMP_DIR)
+        const key = generateKey({ dir: TMP_DIR })
         expect(key).toMatchObject({
           asymmetricKeyType: 'ed25519',
           type: 'private'
@@ -176,6 +185,27 @@ describe('Key methods', (): void => {
         )
       }
     )
+
+    test('generates key and saves with provided filename', (): void => {
+      const fileName = 'private-key'
+      const key = generateKey({ dir: TMP_DIR, fileName })
+      expect(key).toMatchObject({
+        asymmetricKeyType: 'ed25519',
+        type: 'private'
+      })
+      expect(key.export({ format: 'jwk' })).toEqual({
+        crv: 'Ed25519',
+        kty: 'OKP',
+        d: expect.any(String),
+        x: expect.any(String)
+      })
+      const keyfiles = fs.readdirSync(TMP_DIR)
+      expect(keyfiles.length).toBe(1)
+      expect(keyfiles[0]).toBe(`${fileName}.pem`)
+      expect(fs.readFileSync(`${TMP_DIR}/${keyfiles[0]}`, 'utf8')).toEqual(
+        key.export({ format: 'pem', type: 'pkcs8' })
+      )
+    })
   })
 
   describe('loadBase64Key', (): void => {
