@@ -75,16 +75,16 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
-              label: 'Payment pointers',
+              label: 'Wallet addresses',
               collapsed: true,
               items: [
                 {
-                  label: 'Get payment pointer info',
-                  link: '/snippets/pp-get-info'
+                  label: 'Get wallet address info',
+                  link: '/snippets/wallet-get-info'
                 },
                 {
-                  label: 'Get keys bound to a payment pointer',
-                  link: '/snippets/pp-get-keys'
+                  label: 'Get keys bound to a wallet address',
+                  link: '/snippets/wallet-get-keys'
                 }
               ]
             },

@@ -427,7 +427,7 @@ export interface operations {
     requestBody: {
       content: {
         "application/json": {
-          walletAddress?: external["schemas.yaml"]["components"]["schemas"]["walletAddress"];
+          walletAddress: external["schemas.yaml"]["components"]["schemas"]["walletAddress"];
           /** @description The maximum amount that should be paid into the wallet address under this incoming payment. */
           incomingAmount?: external["schemas.yaml"]["components"]["schemas"]["amount"];
           /**

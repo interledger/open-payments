@@ -19,10 +19,22 @@ npm install @interledger/http-signature-utils
 
 ## Usage
 
+Load a private Ed25519 key:
+
+```ts
+const key = loadKey('/PATH/TO/private-key.pem')
+```
+
+Generate a private Ed25519 key:
+
+```ts
+const key = generateKey('/PATH_TO_SAVE_KEY_IN')
+```
+
 Load or generate a private Ed25519 key:
 
 ```ts
-const key = parseOrProvisionKey('/PATH/TO/private-key.pem')
+const key = loadOrGenerateKey('/PATH/TO/private-key.pem')
 ```
 
 Load a base64 encoded Ed25519 private key:

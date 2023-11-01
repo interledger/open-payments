@@ -1,5 +1,13 @@
 # @interledger/http-signature-utils
 
+## 2.0.0
+
+### Major Changes
+
+- 737cdaa: Adding and exporting two additional methods: `loadKey` `generateKey`
+
+  Renaming methods: `parseOrProvisionKey` -> `loadOrGenerateKey`
+
 ## 1.1.0
 
 ### Minor Changes

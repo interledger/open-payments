@@ -1,5 +1,17 @@
 # @interledger/open-payments
 
+## 6.0.0
+
+### Major Changes
+
+- 737cdaa: - `createAuthenticatedClient` can now also load a key using a path to the private key file as an argument to `privateKey`
+  - `walletAddress` is required in the incoming payment creation request
+
+### Patch Changes
+
+- Updated dependencies [737cdaa]
+  - @interledger/http-signature-utils@2.0.0
+
 ## 5.3.1
 
 ### Patch Changes
