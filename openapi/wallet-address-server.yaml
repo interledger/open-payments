@@ -79,8 +79,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-              examples: {}
+                $ref: '#/components/schemas/did-document'
         '500':
           description: DID Document not yet implemented
       operationId: get-wallet-address-did-document
@@ -196,3 +195,7 @@ components:
           kty: OKP
           crv: Ed25519
           x: oy0L_vTygNE4IogRyn_F5GmHXdqYVjIXkWs2jky7zsI
+    did-document:
+      type: object
+      title: DID Document
+      description: A DID Document using JSON encoding

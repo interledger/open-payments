@@ -62,6 +62,7 @@ export const mockWalletAddress = (
 ): WalletAddress => ({
   id: 'https://example.com/.well-known/pay',
   authServer: 'https://auth.wallet.example/authorize',
+  resourceServer: 'https://wallet.example/op',
   assetScale: 2,
   assetCode: 'USD',
   ...overrides

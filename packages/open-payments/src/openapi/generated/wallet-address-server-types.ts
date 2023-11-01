@@ -72,6 +72,11 @@ export interface components {
       /** @description The base64 url-encoded public key. */
       x: string;
     };
+    /**
+     * DID Document
+     * @description A DID Document using JSON encoding
+     */
+    "did-document": { [key: string]: unknown };
   };
 }
 
@@ -114,7 +119,7 @@ export interface operations {
       /** DID Document Found */
       200: {
         content: {
-          "application/json": { [key: string]: unknown };
+          "application/json": components["schemas"]["did-document"];
         };
       };
       /** DID Document not yet implemented */
