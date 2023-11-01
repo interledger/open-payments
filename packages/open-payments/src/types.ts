@@ -9,11 +9,10 @@ import {
   operations as ASOperations
 } from './openapi/generated/auth-server-types'
 import {
-    components as WAComponents,
-    paths as WAPaths,
-    operations as WAOperations
-  } from './openapi/generated/wallet-address-server-types'
-  
+  components as WAComponents,
+  paths as WAPaths
+} from './openapi/generated/wallet-address-server-types'
+
 export const getWAPath = <P extends keyof WAPaths>(path: P): string =>
   path as string
 
