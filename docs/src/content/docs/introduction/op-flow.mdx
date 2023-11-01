@@ -24,11 +24,11 @@ R1->>+A1: token introspection
 A1->>-R1: token valid + grant details
 R1->>-Cl: incoming payment
 rect rgba(0, 0, 255, .1)
-Cl->>+Cu: request payment pointer
-Cu->>Cl: payment pointer
+Cl->>+Cu: request wallet address
+Cu->>Cl: wallet address
 end
-Cl->>+R2: query customer's payment pointer
-R2->>-Cl: payment pointer details including auth server endpoint
+Cl->>+R2: query customer's wallet address
+R2->>-Cl: wallet address details including auth server endpoint
 Cl->>+A2: quote grant request
 A2->>-Cl: grant + access token
 Cl->>+R2: quote creation request
