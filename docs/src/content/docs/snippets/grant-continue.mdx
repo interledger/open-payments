@@ -8,11 +8,11 @@ import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Global from '/src/partials/global-prerequisites.mdx'
 import Ts from '/src/partials/ts-prerequisites.mdx'
 
-An authorization server will place a grant request into a pending state if the server requires additional communication from the client to facilitate interaction. When interaction is complete, the authorization server responds to the client with an interaction reference.
+During a grant request flow, an authorization server can require an individual (typically a client's end user) to approve the grant by interacting directly with the server. For example, by tapping an Approve button on a web page provided by the auth server.
 
-The client must include the reference (as the `interact_ref`) in a grant continuation request to indicate the grant request should be moved from pending to processing for reevaluation by the auth server.
+After the individual approves the grant, the auth server sends the client an interaction reference. The client must send a continuation request containing the reference back to the authorization server to obtain an access token.
 
-These code snippets enable an authorized client to issue a grant continuation request to the authorization server after a completed interaction.
+These code snippets enable an authorized client to send a grant continuation request to the authorization server.
 
 ## Before you begin
 
@@ -50,3 +50,5 @@ These code snippets enable an authorized client to issue a grant continuation re
 ## References
 
 - [API specification](/apis/auth-server/operations/post-continue)
+- [Grant negotiation and authorization](/introduction/grants)
+- [Create an interactive grant](/guides/create-interactive-grant)

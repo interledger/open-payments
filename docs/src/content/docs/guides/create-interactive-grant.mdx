@@ -1,0 +1,110 @@
+---
+title: Create an interactive grant
+---
+
+import { CodeBlock, LinkOut } from '@interledger/docs-design-system'
+
+This guide describes how to create an interactive grant. An interactive grant is a type of grant that requires interaction from a user, typically your client’s end-user, before the grant can be issued.
+
+Open Payments requires an interactive grant before your client can issue a request to create an outgoing payment. This is because the outgoing payment account holder (typically your client’s end-user) must explicitly consent to the creation of the outgoing payment.
+
+Although grants for creating incoming payments and quotes are non-interactive by default, you can choose to make one or both interactive to fit your implementation needs.
+
+### Prerequisites
+
+- Node 18
+- TypeScript
+- NPM
+
+### Dependencies
+
+- <LinkOut href='https://github.com/interledger/open-payments/tree/main/packages/open-payments'>
+    Open Payments SDK
+  </LinkOut>
+
+### Endpoints
+
+- <LinkOut href='https://openpayments.guide/apis/auth-server/operations/post-request/'>
+    Grant Request
+  </LinkOut>
+- <LinkOut href='https://openpayments.guide/apis/auth-server/operations/post-continue/'>
+    Continuation Request
+  </LinkOut>
+
+## Steps
+
+### 1. Specify a redirect start mode
+
+Indicate your client is capable of directing the end-user to a URI to start an interaction.
+
+1. Add the `interact` object to your [grant request](/apis/auth-server/operations/post-request/#request-body).
+2. Specify `redirect` as the `start` mode. Open Payments only supports `redirect`.
+
+The URI will be provided by the authorization server in its response.
+
+```ts
+interact: {
+    start: ["redirect"],
+},
+```
+
+### 2. Specify a redirect finish mode
+
+Indicate your client can receive a signal from the authorization server when the interaction has finished.
+
+1. Add the `finish` object within the existing `interact` object.
+2. Specify `redirect` as the `method`. Open Payments only supports `redirect`.
+3. Specify the `uri` that the authorization server will send the end-user back to when the interaction has finished.
+4. Create a `nonce` for your client to use to verify the authorization server is the same entity throughout the entire process. The nonce can be any random, hard-to-guess string.
+
+<CodeBlock title="Example">
+
+```ts
+interact: {
+    start: ["redirect"],
+    finish: {
+        method: "redirect",
+        uri: "https://example.wallet.com/return/876FGRD8VC",
+        nonce: 4edb2194-dbdf-46bb-9397-d5fd57b7c8a7,
+    },
+},
+```
+
+</CodeBlock>
+
+### 3. Interact with the end user
+
+#### Start interaction
+
+Once your client receives the [authorization server’s response](/apis/auth-server/operations/post-request/#responses), it must send the end-user to the `interact redirect` URI contained in the response. This initiates the interaction flow.
+
+Open Payments only supports the `redirect` method. The means by which your client activates the URI is out of scope, but common redirect methods include HTTP redirect and launching a browser on the end-user’s device.
+
+#### Finish interaction
+
+The end-user interacts with the authorization server through the server’s interface and approves or denies the grant.
+
+Provided the end-user approves the grant, the authorization server:
+
+- Sends the end-user to your client’s previously defined `finish uri`. The means by which the server sends the end-user to the URI is out of scope, but common options include redirecting the end-user from a web page and launching the system browser with the target URI.
+- Secures the redirect by adding a unique hash, allowing your client to validate the `finish` call, and an interaction reference as query parameters to the URI.
+
+### 4. Request a grant continuation
+
+Add the authorization server’s interaction reference, as the `interact_ref` value, to the body of your [continuation request](/apis/auth-server/operations/post-continue/#request-body).
+
+<CodeBlock title="Example">
+
+```ts
+{
+    interact_ref: ad82597c-bbfa-4eb0-b72e-328e005b8689,
+},
+```
+
+</CodeBlock>
+
+Issue the request to the `continue uri` supplied in the authorization server’s initial grant response. For example:
+
+`POST https://auth.rafiki.money/continue/49fb4a97-f880-449c-b0e9-d3ac1c947b10`
+
+A successful [continuation response](/apis/auth-server/operations/post-continue/#responses) from the authorization server provides your client with an access token and other information necessary to continue the transaction.
