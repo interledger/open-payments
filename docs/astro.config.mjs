@@ -176,24 +176,16 @@ export default defineConfig({
             }
           ]
         },
-        // {
-        //   label: 'Guides',
-        //   collapsed: true,
-        //   items: [
-        //     {
-        //       label: 'Create an interactive grant request',
-        //       link: '/guides/create-interactive-grant/'
-        //     },
-        //     {
-        //       label: 'Make a one-time payment',
-        //       link: '/guides/make-onetime-payment/'
-        //     },
-        //     {
-        //       label: 'Make a recurring payment',
-        //       link: '/guides/make-recurring-payment/'
-        //     }
-        //   ]
-        // },
+        {
+          label: 'Guides',
+          collapsed: true,
+          items: [
+            {
+              label: 'Create an interactive grant',
+              link: '/guides/create-interactive-grant/'
+            }
+          ]
+        },
         {
           label: 'Resources',
           collapsed: true,

@@ -8,13 +8,12 @@ import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Global from '/src/partials/global-prerequisites.mdx'
 import Ts from '/src/partials/ts-prerequisites.mdx'
 
-Before a client can call the Open Payments API, it must request/receive a grant from the appropriate authorization server. The request must indicate the resource the client intends to work with and the actions the client wants to take at the resource server.
+Before a client can call the Open Payments API, it must request/receive a grant from the appropriate authorization server. The request must indicate the resource type the client intends to work with and the actions the client wants to take at the resource server.
 
-These code snippets enable a client to request a grant for each supported resource (`incoming-payment`, `quote`, an
-d `outgoing-payment`). Each grant request includes all valid actions the client can take for the resource at the resource server.
+These code snippets enable a client to request a grant for the `incoming-payment`, `quote`, and `outgoing-payment` resource types. Each request includes all valid actions the client can take for the resource type.
 
 :::note
-When constructing a transaction, the client first requests a grant from the recipient's (payee's) authorization server to create an `incoming-payment` resource. The client then requests grants to create the `quote` and `outgoing-payment` resources from the sender's (payer's) authorization server.
+When setting up a payment, the client first requests a grant from the recipient's (payee's) authorization server to create an `incoming-payment` resource. The client then requests grants to create the `quote` and `outgoing-payment` resources from the sender's (payer's) authorization server.
 :::
 
 ## Before you begin
@@ -103,6 +102,8 @@ When constructing a transaction, the client first requests a grant from the reci
 
 ## Request an outgoing payment grant
 
+In Open Payments, an outgoing payment grant must be interactive. An interactive grant requires interaction from a user, typically a client's end-user, before the grant can be issued.
+
 <Tabs>
 <TabItem label='TypeScript'>
 <Ts />
@@ -143,5 +144,6 @@ When constructing a transaction, the client first requests a grant from the reci
 
 ## References
 
-- [Grant negotiation and authorization](/introduction/grants)
 - [API specification](/apis/auth-server/operations/post-request)
+- [Grant negotiation and authorization](/introduction/grants)
+- [Create an interactive grant](/guides/create-interactive-grant)
