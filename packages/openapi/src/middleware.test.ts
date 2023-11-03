@@ -145,7 +145,7 @@ describe('OpenAPI Validator', (): void => {
           {}
         )
         addTestSignatureHeaders(ctx)
-        ctx.request.body = body
+        ctx.request['body'] = body
           ? { ...body, walletAddress: WALLET_ADDRESS }
           : body
         await expect(validatePostMiddleware(ctx, next)).rejects.toMatchObject({
@@ -244,7 +244,7 @@ describe('OpenAPI Validator', (): void => {
           {}
         )
         addTestSignatureHeaders(ctx)
-        ctx.request.body = { walletAddress: WALLET_ADDRESS }
+        ctx.request['body'] = { walletAddress: WALLET_ADDRESS }
         const next = jest.fn().mockImplementation(() => {
           ctx.status = status
           ctx.response.body = body

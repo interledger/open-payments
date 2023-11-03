@@ -36,7 +36,7 @@ export type OutgoingPaymentPaginationResult = PaginationResult<OutgoingPayment>
 
 type BasePaginationArgs = Pick<
   RSOperations['list-incoming-payments']['parameters']['query'],
-  'first' | 'last' | 'cursor'
+  'first' | 'last' | 'cursor' | 'wallet-address'
 >
 
 export type ForwardPagination = Omit<BasePaginationArgs, 'last'> & {
