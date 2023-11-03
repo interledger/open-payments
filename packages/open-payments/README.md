@@ -33,25 +33,28 @@ This package exports two clients, an `UnauthenticatedClient` and an `Authenticat
 
 ### `UnauthenticatedClient`
 
-This client allows making requests to access publicly available resources, without needing authentication.
+This client allows making requests to access publicly available resources, without needing to provide a private key (authentication).
 The available resources are [Wallet Addresses](https://docs.openpayments.guide/reference/get-wallet-address), [Wallet Address Keys](https://docs.openpayments.guide/reference/get-wallet-address-keys), and the public version of [Incoming Payments](https://docs.openpayments.guide/reference/get-incoming-payment).
 
 ```ts
 import { createUnauthenticatedClient } from '@interledger/open-payments'
 
-const client = await createUnauthenticatedClient({
-  requestTimeoutMs: 1000, // optional, defaults to 5000
-  logger: customLoggerInstance // optional, defaults to pino logger
-})
+const client = await createUnauthenticatedClient()
 
 const walletAddress = await client.walletAddress.get({
-  url: 'https://cloud-nine-wallet/alice'
+  url: 'https://cloud-nine-wallet.com/alice'
 })
 
 const incomingPayment = await client.walletAddress.get({
   url: 'https://cloud-nine-wallet/incoming-payment/'
 })
 ```
+
+| Variable           | Description                                                                      |
+| ------------------ | -------------------------------------------------------------------------------- |
+| `requestTimeoutMs` | (optional) The timeout in ms for each request by the client. Defaults to 5000.   |
+| `logger`           | (optional) The custom logger to provide for the client. Defaults to pino logger. |
+| `logLevel`         | (optional) The log level for the client. Defaults to `info`                      |
 
 ### `AuthenticatedClient`
 
@@ -111,7 +114,7 @@ try {
 
 As mentioned previously, Open Payments APIs can facilitate a payment between two parties.
 
-For example, say Alice wants to purchase a $50 product from a merchant called Shoe Shop on the Online Marketplace. If both parties have Open Payments enabled wallets, where Alice's wallet address is `https://cloud-nine-wallet/alice`, and Shoe Shop's is `https://happy-life-bank/shoe-shop`, requests during checkout from Online Marketplace's backend would look like this using the client:
+For example, say Alice wants to purchase a $50 product from a merchant called Shoe Shop on the Online Marketplace. If both parties have Open Payments enabled wallets, where Alice's wallet address is `https://cloud-nine-wallet.com/alice`, and Shoe Shop's is `https://happy-life-bank.com/shoe-shop`, requests during checkout from Online Marketplace's backend would look like this using the client:
 
 1. Create an Open Payments client
 
@@ -134,11 +137,11 @@ Grab the wallet addresses of the parties:
 
 ```ts
 const shoeShopWalletAddress = await client.walletAddress.get({
-  url: 'https://happy-life-bank/shoe-shop'
+  url: 'https://happy-life-bank.com/shoe-shop'
 })
 
 const customerWalletAddress = await client.walletAddress.get({
-  url: 'https://cloud-nine-wallet/alice'
+  url: 'https://cloud-nine-wallet.com/alice'
 })
 ```
 
@@ -167,10 +170,11 @@ and creates an `IncomingPayment` using the access token from the grant:
 ```ts
 const incomingPayment = await client.incomingPayment.create(
   {
-    walletAddress: shoeShopWalletAddress.id,
+    url: new URL(shoeShopWalletAddress.id).origin,
     accessToken: incomingPaymentGrant.access_token.value
   },
   {
+    walletAddress: shoeShopWalletAddress.id,
     incomingAmount: {
       assetCode: 'USD',
       assetScale: 2,
@@ -186,7 +190,7 @@ const incomingPayment = await client.incomingPayment.create(
 
 4. Create `Quote`
 
-Then, it'll get a grant to create a `Quote` on Alice's wallet address, which will give the amount it'll cost Alice to make the payment (with the ILP fees + her wallet's fees)
+Then, it'll get a grant to create a `Quote` on Alice's wallet address, which will give the amount it'll cost Alice to make the payment. This quote will be done over the ILP network, which is the only payment method available (for now) in Open Payments.
 
 ```ts
 const quoteGrant = await client.grant.request(
@@ -205,10 +209,14 @@ const quoteGrant = await client.grant.request(
 
 const quote = await client.quote.create(
   {
-    walletAddress: customerWalletAddress.id,
+    url: new URL(customerWalletAddress.id).origin,
     accessToken: quoteGrant.access_token.value
   },
-  { receiver: incomingPayment.id }
+  {
+    walletAddress: customerWalletAddress.id,
+    receiver: incomingPayment.id,
+    method: 'ilp'
+  }
 )
 
 // quote.debitAmount.value = '5200'
@@ -216,22 +224,90 @@ const quote = await client.quote.create(
 
 5. Create `OutgoingPayment` grant & start interaction flow:
 
-The final step for Online Marketplace's backend system will be to create an `OutgoingPayment` on Alice's wallet. Before this, however, Online Marketplace will need to create an outgoing payment grant, which typically requires some sort of interaction with Alice. Online Marketplace will need to facilitate this interaction with Alice (e.g. redirect her to a webpage with a dialog) to get her consent for creating an `OutgoingPayment` on her account.
+The final step for Online Marketplace's backend system will be to create an `OutgoingPayment` on Alice's wallet. Before this, however, Online Marketplace will need to create an outgoing payment grant, which typically requires some sort of interaction with Alice. Online Marketplace will need to facilitate this interaction with Alice (e.g. redirect her to a webpage with a dialog) to get her consent for creating an `OutgoingPayment` on her account at Cloud Nine Wallet.
 
-To see a detailed sequence and an example implementation for how this is achieved, see https://github.com/interledger/rafiki.
+```ts
+const outgoingPaymentGrant = await client.grant.request(
+  { url: customerWalletAddress.authServer },
+  {
+    access_token: {
+      access: [
+        {
+          type: 'outgoing-payment',
+          actions: ['read', 'create', 'list'],
+          identifier: customerWalletAddress.id,
+          limits: {
+            debitAmount: quote.debitAmount, // to authorize an amount up to the quoted amount
+            receiveAmount: quote.receiveAmount
+          }
+        }
+      ]
+    },
+    interact: {
+      start: ['redirect'],
+      finish: {
+        method: 'redirect',
+        uri: 'https://online-marketplace.com/complete-payment', // where to redirect the customer after the interaction is completed
+        nonce: uuid()
+      }
+    }
+  }
+)
+```
 
-6. Create `OutgoingPayment`:
+This request will return a response as such:
+
+```ts
+// response
+{
+  interact: {
+    redirect: 'https://cloud-nine-wallet.com/interact/8bb1d236-835d-45b6-8336-430ce084f678/60E93BB0A6C643C6?clientName=Online+Marketplace&clientUri=https%3A%2F%2Fonline-marketplace.com%usa',
+    finish: '60E93BB0A6C643C6'
+  },
+  continue: {
+    access_token: { value: '607B1ECEA91D4A40F75F' },
+    uri: 'https://gcclfu-ip-83-82-252-168.tunnelmole.net/continue/6352216e-ce5b-4e29-ac37-00d1d0094738',
+    wait: 5
+  }
+}
+```
+
+Alice would be then redirected to the URL specified at `interact.redirect`, where she can approve or reject the grant request.
+
+> **Note**
+>
+> To see a detailed sequence and an example implementation for how this is achieved, see https://github.com/interledger/rafiki.
+
+6. Continue grant
+
+Once Alice approves the grant request at Cloud Nine Wallet (or the Identity Provider that Cloud Nine Wallet has configured), she will be redirected to the URL specified in the original outgoing payment grant request, with an `interact_ref` in the URL. This `interact_ref` can be used to finalize the outgoing payment grant request:
+
+```ts
+const finalizedOutgoingPaymentGrant = await client.grant.continue(
+  {
+    accessToken: outgoingPaymentGrant.access_token.value,
+    url: outgoingPaymentGrant.continue.uri
+  },
+  { interact_ref: INTERACT_REF_FROM_URL }
+)
+```
+
+7. Create `OutgoingPayment`:
 
 Once the grant interaction flow has finished, and Alice has consented to the payment, Online Marketplace can create the `OutgoingPayment` on her account:
 
 ```ts
 const outgoingPayment = await client.outgoingPayment.create(
   {
-    walletAddress: customerWalletAddress.id,
-    accessToken: outgoingPaymentGrant.access_token.value
+    url: new URL(customerWalletAddress.id).origin,
+    accessToken: finalizedOutgoingPaymentGrant.access_token.value
   },
-  { quoteId: quote.id, description: 'Your purchase at Shoe Shop' }
+  {
+    walletAddress: customerWalletAddress.id,
+    quoteId: quote.id,
+    metadata: { description: 'Your purchase at Shoe Shop' }
+  }
 )
 ```
 
-At this point, the Online Marketplace can show to Alice that the payment to Shoe Shop has been completed.
+At this point, the Online Marketplace can show to Alice that the payment to Shoe Shop has been completed, and money will be moved between Alice's wallet address and the Shoe Shops in the specified payment method.
