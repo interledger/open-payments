@@ -1,0 +1,74 @@
+---
+title: Open Payments concepts
+---
+
+The Open Payments (OP) standard helps to facilitate the setup of payments between OP-enabled payment accounts.
+
+When setting up a payment, the client must obtain the wallet addresses for both the payer's (typically the client's end-user) and payee's OP-enabled accounts. The client can choose to collect and store the payer's wallet address during onboarding, for example.
+
+After the requisite wallet addresses are known, the client can begin obtaining grants to set up one or more payments. The grants allow the client to access the Open Payments API for the purpose of creating and accessing resources for incoming payments, quotes, and outgoing payments.
+
+## Wallet address
+
+Every OP-enabled account is identified by one or more wallet addresses. A wallet address is a publicly shareable account identifier and a service endpoint for gaining access to the Open Payments API. The payer and payee must both have a wallet address to transact using Open Payments.
+
+For more information, visit the [wallet addresses](/introduction/wallet-addresses) page.
+
+## Authorization server
+
+An authorization server grants permission for a client to access the Open Payments API and the `incoming-payment`, `quote`, and `outgoing-payment` resources. Open Payments leverages GNAP as the mechanism for delegating authorization.
+
+Refer to the [Grant negotiation and authorization](/introduction/grants) page for more information.
+
+## Resource server
+
+The Open Payments API is served by a resource server. Operations on the API require the client to have a valid access token issued by a trusted authorization server.
+
+### Resource types
+
+The Open Payments API is a simple REST API with four resource types:
+
+- wallet address, discussed [above](#wallet-address)
+- [incoming-payment](#incoming-payment)
+- [quote](#quote)
+- [outgoing payment](#outgoing-payment)
+
+#### Incoming-payment
+
+The first resource to be created when setting up a payment is the `incoming-payment` resource, created on the payee’s account. When created, the payee’s ASE returns unique payment details to the client that can be used to address payments to the account. Any payments received using these details are then associated with the `incoming-payment` resource.
+
+It’s possible for an `incoming-payment` resource to be created without specifying an `incomingAmount`. When this occurs, the client can issue a request to manually complete the incoming payment to indicate no further payments will be sent.
+
+A client can also issue requests to get an incoming payment’s specific details and list all incoming payments in order to, for example, provide the end-user with transaction details and history.
+
+Manually completing an incoming payment
+
+The optional `incomingAmount` object in a [Create Incoming Payment](/apis/resource-server/operations/create-incoming-payment) request is used to specify the maximum amount to pay into the wallet address under the incoming payment.
+
+Streaming Web Monetization (WM) payments is one use case for _not_ specifying an `incomingAmount`. In streaming WM payments, the maximum amount to be paid is unknown to the payee’s ASE. Payments continue to stream until the WM agent ends the session. At this point, the WM agent can request to mark the incoming payment as [complete](/apis/resource-server/operations/complete-incoming-payment). This enables the payee’s ASE to be notified as soon as possible that no further payments will be sent and to credit the payee’s account.
+
+#### Quote
+
+After an `incoming-payment` resource is created on the payee’s account, a `quote` resource must be created on the payer’s account. A quote is only valid for a limited time.
+
+The purpose of a quote is to indicate how much it will cost, including any applicable fees, to make the payment. The quote serves as a commitment from the payer’s ASE to deliver a particular amount to the payee’s ASE.
+
+There are three types of quotes.
+
+- **Fixed-send quote** - A fixed amount will be paid from the _payer’s_ account. A `debitAmount` is required for this type.
+- **Fixed-receive quote** - A fixed amount will be paid into the _payee’s_ account. A `receiveAmount` is required for this type.
+- **Receiver quote** - The incoming payment already has a defined `incomingAmount`. For this type, the `receiver` is the URL of the `incoming-payment` resource that will be paid into, indicated by `/incoming-payments` being part of the URL.
+
+A successfully created `quote` resource results in the generation of a quote `id` in the form of a URL.
+
+#### Outgoing-payment
+
+After a quote resource is created, it’s almost time to create the outgoing-payment resource on the payer’s account. The purpose of the outgoing-payment resource is to serve as an instruction to make a payment from the payer’s account.
+
+Open Payments requires the payee to explicitly consent to the creation of the resource before the client can issue the create request. Consent is obtained through an [interactive grant](/introduction/grants/#outgoing-payment-grant).
+
+Within the request to create the outgoing-payment resource is the payee’s wallet address, so the payer’s ASE knows where to send the payment, and the quote resource’s id, where the payment amounts are defined.
+
+After the outgoing-payment resource is created, the incoming payment can complete, either automatically or manually, to end the Open Payments flow. Now it’s up to the payer’s ASE to settle with the payee’s ASE over a shared payment rail.
+
+An outgoing-payment resource can represent a payment that will be, is currently being, or has previously been sent from the payer’s account. A client can issue requests to get an outgoing payment’s specific details and list all outgoing payments in order to, for example, provide the end-user with transaction details and history.
