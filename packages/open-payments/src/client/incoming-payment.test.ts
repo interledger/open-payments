@@ -25,6 +25,8 @@ import path from 'path'
 import { v4 as uuid } from 'uuid'
 import * as requestors from './requests'
 import { getRSPath } from '../types'
+import { OpenPaymentsClientError } from './error'
+import assert from 'assert'
 
 jest.mock('./requests', () => {
   return {
@@ -218,14 +220,22 @@ describe('incoming-payment', (): void => {
         .post('/incoming-payments')
         .reply(200, incomingPayment)
 
-      await expect(
-        createIncomingPayment(
+      try {
+        await createIncomingPayment(
           { axiosInstance, logger },
           { url: serverAddress, accessToken },
           openApiValidators.successfulValidator,
           { walletAddress }
         )
-      ).rejects.toThrowError()
+      } catch (error) {
+        assert.ok(error instanceof OpenPaymentsClientError)
+        expect(error.message).toBe('Could not create incoming payment')
+        expect(error.description).toBe('Received amount is a non-zero value')
+        expect(error.validationErrors).toEqual([
+          'Received amount is a non-zero value'
+        ])
+      }
+
       scope.done()
     })
 
@@ -281,8 +291,8 @@ describe('incoming-payment', (): void => {
         .post(`/incoming-payments/${incomingPayment.id}/complete`)
         .reply(200, incomingPayment)
 
-      await expect(
-        completeIncomingPayment(
+      try {
+        await completeIncomingPayment(
           { axiosInstance, logger },
           {
             url: `${serverAddress}/incoming-payments/${incomingPayment.id}`,
@@ -290,7 +300,16 @@ describe('incoming-payment', (): void => {
           },
           openApiValidators.successfulValidator
         )
-      ).rejects.toThrowError()
+      } catch (error) {
+        assert.ok(error instanceof OpenPaymentsClientError)
+        expect(error.message).toBe('Could not complete incoming payment')
+        expect(error.description).toBe(
+          'Incoming payment could not be completed'
+        )
+        expect(error.validationErrors).toEqual([
+          'Incoming payment could not be completed'
+        ])
+      }
 
       scope.done()
     })
@@ -313,7 +332,7 @@ describe('incoming-payment', (): void => {
           },
           openApiValidators.failedValidator
         )
-      ).rejects.toThrowError()
+      ).rejects.toThrowError(OpenPaymentsClientError)
 
       scope.done()
     })
@@ -437,8 +456,8 @@ describe('incoming-payment', (): void => {
         .query({ 'wallet-address': walletAddress })
         .reply(200, incomingPaymentPaginationResult)
 
-      await expect(
-        listIncomingPayment(
+      try {
+        await listIncomingPayment(
           {
             axiosInstance,
             logger
@@ -450,7 +469,16 @@ describe('incoming-payment', (): void => {
           },
           openApiValidators.successfulValidator
         )
-      ).rejects.toThrow('Could not validate incoming payment')
+      } catch (error) {
+        assert.ok(error instanceof OpenPaymentsClientError)
+        expect(error.message).toBe('Could not validate an incoming payment')
+        expect(error.description).toBe(
+          'Incoming amount asset code or asset scale does not match up received amount'
+        )
+        expect(error.validationErrors).toEqual([
+          'Incoming amount asset code or asset scale does not match up received amount'
+        ])
+      }
 
       scope.done()
     })
@@ -470,7 +498,7 @@ describe('incoming-payment', (): void => {
           { url: serverAddress, walletAddress, accessToken },
           openApiValidators.failedValidator
         )
-      ).rejects.toThrowError()
+      ).rejects.toThrowError(OpenPaymentsClientError)
 
       scope.done()
     })
@@ -605,7 +633,7 @@ describe('incoming-payment', (): void => {
       })
 
       expect(() => validateCreatedIncomingPayment(incomingPayment)).toThrow(
-        'Received amount is a non-zero value.'
+        'Received amount is a non-zero value'
       )
     })
 
@@ -615,7 +643,7 @@ describe('incoming-payment', (): void => {
       })
 
       expect(() => validateCreatedIncomingPayment(incomingPayment)).toThrow(
-        'Can not create a completed incoming payment.'
+        'Can not create a completed incoming payment'
       )
     })
   })
@@ -637,7 +665,7 @@ describe('incoming-payment', (): void => {
       })
 
       expect(() => validateCompletedIncomingPayment(incomingPayment)).toThrow(
-        'Incoming payment could not be completed.'
+        'Incoming payment could not be completed'
       )
     })
   })
@@ -835,6 +863,7 @@ describe('incoming-payment', (): void => {
       })
     })
   })
+
   describe('unauthenticated routes', (): void => {
     describe('get', (): void => {
       test('calls get method with correct validator', async (): Promise<void> => {

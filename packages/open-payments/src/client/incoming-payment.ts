@@ -4,7 +4,8 @@ import {
   ResourceRequestArgs,
   CollectionRequestArgs,
   RouteDeps,
-  UnauthenticatedResourceRequestArgs
+  UnauthenticatedResourceRequestArgs,
+  OpenPaymentsClientError
 } from '.'
 import {
   IncomingPayment,
@@ -155,13 +156,12 @@ export const getIncomingPayment = async (
   try {
     return validateIncomingPayment(incomingPayment)
   } catch (error) {
-    const errorMessage = 'Could not validate incoming payment'
-    logger.error(
-      { url, validateError: error && error['message'] },
-      errorMessage
+    return handleValidationError(
+      deps,
+      error,
+      url,
+      'Could not validate incoming payment'
     )
-
-    throw new Error(errorMessage)
   }
 }
 
@@ -193,14 +193,29 @@ export const createIncomingPayment = async (
   try {
     return validateCreatedIncomingPayment(incomingPayment)
   } catch (error) {
-    const errorMessage = 'Could not validate incoming Payment'
-    logger.error(
-      { url, validateError: error && error['message'] },
-      errorMessage
+    return handleValidationError(
+      deps,
+      error,
+      url,
+      'Could not create incoming payment'
     )
-
-    throw new Error(errorMessage)
   }
+}
+
+const handleValidationError = (
+  deps: BaseDeps,
+  error: unknown,
+  url: string,
+  errorMessage: string
+): never => {
+  const validationError =
+    error instanceof Error ? error.message : 'Unknown error'
+  deps.logger.error({ url, validationError }, errorMessage)
+
+  throw new OpenPaymentsClientError(errorMessage, {
+    description: validationError,
+    validationErrors: [validationError]
+  })
 }
 
 export const completeIncomingPayment = async (
@@ -221,13 +236,12 @@ export const completeIncomingPayment = async (
   try {
     return validateCompletedIncomingPayment(incomingPayment)
   } catch (error) {
-    const errorMessage = 'Could not validate incoming payment'
-    logger.error(
-      { url, validateError: error && error['message'] },
-      errorMessage
+    return handleValidationError(
+      deps,
+      error,
+      url,
+      'Could not complete incoming payment'
     )
-
-    throw new Error(errorMessage)
   }
 }
 
@@ -258,17 +272,12 @@ export const listIncomingPayment = async (
     try {
       validateIncomingPayment(incomingPayment)
     } catch (error) {
-      const errorMessage = 'Could not validate incoming payment'
-      logger.error(
-        {
-          url,
-          validateError: error && error['message'],
-          incomingPaymentId: incomingPayment.id
-        },
-        errorMessage
+      return handleValidationError(
+        deps,
+        error,
+        url,
+        'Could not validate an incoming payment'
       )
-
-      throw new Error(errorMessage)
     }
   }
 
@@ -307,11 +316,11 @@ export const validateCreatedIncomingPayment = (
   const { receivedAmount, completed } = payment
 
   if (BigInt(receivedAmount.value) !== BigInt(0)) {
-    throw new Error('Received amount is a non-zero value.')
+    throw new Error('Received amount is a non-zero value')
   }
 
   if (completed) {
-    throw new Error('Can not create a completed incoming payment.')
+    throw new Error('Can not create a completed incoming payment')
   }
 
   return validateIncomingPayment(payment)
@@ -323,7 +332,7 @@ export const validateCompletedIncomingPayment = (
   const { completed } = payment
 
   if (!completed) {
-    throw new Error('Incoming payment could not be completed.')
+    throw new Error('Incoming payment could not be completed')
   }
 
   return validateIncomingPayment(payment)

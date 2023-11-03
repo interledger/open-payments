@@ -17,6 +17,8 @@ import nock from 'nock'
 import path from 'path'
 import { v4 as uuid } from 'uuid'
 import * as requestors from './requests'
+import { OpenPaymentsClientError } from './error'
+import assert from 'assert'
 
 jest.mock('./requests', () => {
   return {
@@ -79,8 +81,8 @@ describe('outgoing-payment', (): void => {
         .get('/outgoing-payments/1')
         .reply(200, outgoingPayment)
 
-      await expect(
-        getOutgoingPayment(
+      try {
+        await getOutgoingPayment(
           { axiosInstance, logger },
           {
             url: `${serverAddress}/outgoing-payments/1`,
@@ -88,7 +90,17 @@ describe('outgoing-payment', (): void => {
           },
           openApiValidators.successfulValidator
         )
-      ).rejects.toThrowError()
+      } catch (error) {
+        assert.ok(error instanceof OpenPaymentsClientError)
+        expect(error.message).toBe('Could not validate outgoing payment')
+        expect(error.description).toBe(
+          'Asset code or asset scale of sending amount does not match sent amount'
+        )
+        expect(error.validationErrors).toEqual([
+          'Asset code or asset scale of sending amount does not match sent amount'
+        ])
+      }
+
       scope.done()
     })
 
@@ -108,7 +120,7 @@ describe('outgoing-payment', (): void => {
           },
           openApiValidators.failedValidator
         )
-      ).rejects.toThrowError()
+      ).rejects.toThrowError(OpenPaymentsClientError)
       scope.done()
     })
   })
@@ -226,8 +238,8 @@ describe('outgoing-payment', (): void => {
         .query({ 'wallet-address': walletAddress })
         .reply(200, outgoingPaymentPaginationResult)
 
-      await expect(
-        listOutgoingPayments(
+      try {
+        await listOutgoingPayments(
           {
             axiosInstance,
             logger
@@ -239,7 +251,17 @@ describe('outgoing-payment', (): void => {
           },
           openApiValidators.successfulValidator
         )
-      ).rejects.toThrowError(/Could not validate outgoing payment/)
+      } catch (error) {
+        assert.ok(error instanceof OpenPaymentsClientError)
+        expect(error.message).toBe('Could not validate an outgoing payment')
+        expect(error.description).toBe(
+          'Asset code or asset scale of sending amount does not match sent amount'
+        )
+        expect(error.validationErrors).toEqual([
+          'Asset code or asset scale of sending amount does not match sent amount'
+        ])
+      }
+
       scope.done()
     })
 
@@ -322,8 +344,8 @@ describe('outgoing-payment', (): void => {
         .post('/outgoing-payments')
         .reply(200, outgoingPayment)
 
-      await expect(
-        createOutgoingPayment(
+      try {
+        await createOutgoingPayment(
           { axiosInstance, logger },
           {
             url: serverAddress,
@@ -335,7 +357,17 @@ describe('outgoing-payment', (): void => {
             walletAddress
           }
         )
-      ).rejects.toThrowError()
+      } catch (error) {
+        assert.ok(error instanceof OpenPaymentsClientError)
+        expect(error.message).toBe('Could not create outgoing payment')
+        expect(error.description).toBe(
+          'Asset code or asset scale of sending amount does not match sent amount'
+        )
+        expect(error.validationErrors).toEqual([
+          'Asset code or asset scale of sending amount does not match sent amount'
+        ])
+      }
+
       scope.done()
     })
 
@@ -362,7 +394,7 @@ describe('outgoing-payment', (): void => {
             walletAddress
           }
         )
-      ).rejects.toThrowError()
+      ).rejects.toThrowError(OpenPaymentsClientError)
       scope.done()
     })
   })

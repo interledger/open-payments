@@ -34,29 +34,15 @@ export const defaultAxiosInstance = createAxiosInstance({
   privateKey: generateKeyPairSync('ed25519').privateKey
 })
 
-export const withEnvVariableOverride = (
-  override: Record<string, string>,
-  testCallback: () => Promise<void>
-): (() => Promise<void>) => {
-  return async () => {
-    const savedEnvVars = Object.assign({}, process.env)
-
-    Object.assign(process.env, override)
-
-    try {
-      await testCallback()
-    } finally {
-      process.env = savedEnvVars
-    }
-  }
-}
-
 export const mockOpenApiResponseValidators = () => ({
   successfulValidator: ((data: unknown): data is unknown =>
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     true) as ResponseValidator<any>,
   failedValidator: ((data: unknown): data is unknown => {
-    throw new Error('Failed to validate response')
+    throw {
+      errors: ['Failed to validate response'],
+      message: 'Failed to validate response'
+    } // to mock validationError
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   }) as ResponseValidator<any>
 })

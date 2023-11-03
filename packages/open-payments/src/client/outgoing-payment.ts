@@ -3,7 +3,8 @@ import {
   BaseDeps,
   ResourceRequestArgs,
   CollectionRequestArgs,
-  RouteDeps
+  RouteDeps,
+  OpenPaymentsClientError
 } from '.'
 import {
   CreateOutgoingPaymentArgs,
@@ -96,13 +97,12 @@ export const getOutgoingPayment = async (
   try {
     return validateOutgoingPayment(outgoingPayment)
   } catch (error) {
-    const errorMessage = 'Could not validate outgoing payment'
-    logger.error(
-      { url, validateError: error && error['message'] },
-      errorMessage
+    return handleValidationError(
+      deps,
+      error,
+      url,
+      'Could not validate outgoing payment'
     )
-
-    throw new Error(errorMessage)
   }
 }
 
@@ -125,13 +125,12 @@ export const createOutgoingPayment = async (
   try {
     return validateOutgoingPayment(outgoingPayment)
   } catch (error) {
-    const errorMessage = 'Could not validate outgoing payment'
-    logger.error(
-      { url, validateError: error && error['message'] },
-      errorMessage
+    return handleValidationError(
+      deps,
+      error,
+      url,
+      'Could not create outgoing payment'
     )
-
-    throw new Error(errorMessage)
   }
 }
 
@@ -161,21 +160,32 @@ export const listOutgoingPayments = async (
     try {
       validateOutgoingPayment(outgoingPayment)
     } catch (error) {
-      const errorMessage = 'Could not validate outgoing payment'
-      logger.error(
-        {
-          url,
-          validateError: error && error['message'],
-          outgoingPaymentId: outgoingPayment.id
-        },
-        errorMessage
+      return handleValidationError(
+        deps,
+        error,
+        url,
+        'Could not validate an outgoing payment'
       )
-
-      throw new Error(errorMessage)
     }
   }
 
   return outgoingPayments
+}
+
+const handleValidationError = (
+  deps: BaseDeps,
+  error: unknown,
+  url: string,
+  errorMessage: string
+): never => {
+  const validationError =
+    error instanceof Error ? error.message : 'Unknown error'
+  deps.logger.error({ url, validationError }, errorMessage)
+
+  throw new OpenPaymentsClientError(errorMessage, {
+    description: validationError,
+    validationErrors: [validationError]
+  })
 }
 
 export const validateOutgoingPayment = (

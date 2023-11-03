@@ -77,7 +77,35 @@ In order to create the client, three properties need to be provided: `keyId`, th
 
 > **Note**
 >
-> To simplify EdDSA-Ed25519 key provisioning and JWK generation, you can use methods from the [`@interledger/http-signature-utils`](https://github.com/interledger/open-payments/tree/main/packages/http-signature-utils)) package.
+> To simplify EdDSA-Ed25519 key provisioning and JWK generation, you can use methods from the [`@interledger/http-signature-utils`](https://github.com/interledger/open-payments/tree/main/packages/http-signature-utils) package.
+
+## Error handling
+
+if an error occurs when making requests with the Open Payments client, an `OpenPaymentsClientError` will be thrown with several properties.
+
+```ts
+import {
+  createUnauthenticatedClient,
+  OpenPaymentsClientError
+} from '@interledger/open-payments'
+
+const client = await createUnauthenticatedClient()
+
+try {
+  const incomingPayment = await client.incomingPayment.getPublic({
+    url: 'https://happy-life-bank.com/incoming-payment/9d14328f-8aeb-4440-b1e3-c78b084cb4ca'
+  })
+} catch (error) {
+  if (error instanceof OpenPaymentsClientError) {
+    console.log(error.description)
+    console.log(error.message)
+    console.log(error.status) // the status of the request, if an HTTP request failure
+    console.log(error.validationErrors) // an array of validation errors. Populated if the response of the request failed OpenAPI specfication validation, or other validation checks.
+  } else {
+    console.log(error)
+  }
+}
+```
 
 ## Example
 

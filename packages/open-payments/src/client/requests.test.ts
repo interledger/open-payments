@@ -2,11 +2,9 @@
 import { createAxiosInstance, deleteRequest, get, post } from './requests'
 import { generateKeyPairSync } from 'crypto'
 import nock from 'nock'
-import {
-  mockOpenApiResponseValidators,
-  silentLogger,
-  withEnvVariableOverride
-} from '../test/helpers'
+import { mockOpenApiResponseValidators, silentLogger } from '../test/helpers'
+import { OpenPaymentsClientError } from './error'
+import assert from 'assert'
 
 describe('requests', (): void => {
   const logger = silentLogger
@@ -191,64 +189,78 @@ describe('requests', (): void => {
       })
     })
 
+    test('throws if failed request', async (): Promise<void> => {
+      nock(baseUrl).get('/incoming-payments').reply(400, 'Bad Request')
+
+      try {
+        await get(
+          { axiosInstance, logger },
+          {
+            url: `${baseUrl}/incoming-payments`
+          },
+          responseValidators.successfulValidator
+        )
+      } catch (error) {
+        assert.ok(error instanceof OpenPaymentsClientError)
+        expect(error.message).toBe('Error making Open Payments GET request')
+        expect(error.description).toBe('Bad Request')
+        expect(error.status).toBe(400)
+        expect(error.validationErrors).toBeUndefined()
+      }
+    })
+
     test('throws if response validator function fails', async (): Promise<void> => {
       nock(baseUrl).get('/incoming-payments').reply(200)
 
-      await expect(
-        get(
+      try {
+        await get(
           { axiosInstance, logger },
           {
             url: `${baseUrl}/incoming-payments`
           },
           responseValidators.failedValidator
         )
-      ).rejects.toThrow(/Failed to validate OpenApi response/)
+      } catch (error) {
+        assert.ok(error instanceof OpenPaymentsClientError)
+        expect(error.message).toBe('Error making Open Payments GET request')
+        expect(error.description).toBe('Could not validate OpenAPI response')
+        expect(error.status).toBeUndefined()
+        expect(error.validationErrors).toEqual(['Failed to validate response'])
+      }
     })
 
-    test(
-      'keeps https protocol for request if non-development environment',
-      withEnvVariableOverride(
-        { NODE_ENV: 'production' },
-        async (): Promise<void> => {
-          const httpsUrl = 'https://localhost:1000/'
-          const scope = nock(httpsUrl).get('/').reply(200)
+    test('keeps https protocol for request if non-development environment', async (): Promise<void> => {
+      const httpsUrl = 'https://localhost:1000/'
+      const scope = nock(httpsUrl).get('/').reply(200)
 
-          await get(
-            { axiosInstance, logger },
-            { url: httpsUrl },
-            responseValidators.successfulValidator
-          )
-
-          expect(axiosInstance.get).toHaveBeenCalledWith(httpsUrl, {
-            headers: {}
-          })
-          scope.done()
-        }
+      await get(
+        { axiosInstance, logger, useHttp: false },
+        { url: httpsUrl },
+        responseValidators.successfulValidator
       )
-    )
 
-    test(
-      'uses http protocol for request if development environment',
-      withEnvVariableOverride(
-        { NODE_ENV: 'development' },
-        async (): Promise<void> => {
-          const httpsUrl = 'https://localhost:1000/'
-          const httpUrl = httpsUrl.replace('https', 'http')
-          const scope = nock(httpUrl).get('/').reply(200)
+      expect(axiosInstance.get).toHaveBeenCalledWith(httpsUrl, {
+        headers: {}
+      })
+      scope.done()
+    })
 
-          await get(
-            { axiosInstance, logger },
-            { url: httpsUrl },
-            responseValidators.successfulValidator
-          )
+    test('uses http protocol for request if development environment', async (): Promise<void> => {
+      const httpsUrl = 'https://localhost:1000/'
+      const httpUrl = httpsUrl.replace('https', 'http')
+      const scope = nock(httpUrl).get('/').reply(200)
 
-          expect(axiosInstance.get).toHaveBeenCalledWith(httpUrl, {
-            headers: {}
-          })
-          scope.done()
-        }
+      await get(
+        { axiosInstance, logger, useHttp: true },
+        { url: httpsUrl },
+        responseValidators.successfulValidator
       )
-    )
+
+      expect(axiosInstance.get).toHaveBeenCalledWith(httpUrl, {
+        headers: {}
+      })
+      scope.done()
+    })
   })
 
   describe('post', (): void => {
@@ -403,6 +415,30 @@ describe('requests', (): void => {
       })
     })
 
+    test('throws if failed request', async (): Promise<void> => {
+      const body = {
+        id: 'id'
+      }
+      nock(baseUrl).post('/grant', body).reply(400, 'Bad Request')
+
+      try {
+        await post(
+          { axiosInstance, logger },
+          {
+            url: `${baseUrl}/grant`,
+            body
+          },
+          responseValidators.successfulValidator
+        )
+      } catch (error) {
+        assert.ok(error instanceof OpenPaymentsClientError)
+        expect(error.message).toBe('Error making Open Payments POST request')
+        expect(error.description).toBe('Bad Request')
+        expect(error.status).toBe(400)
+        expect(error.validationErrors).toBeUndefined()
+      }
+    })
+
     test('throws if response validator function fails', async (): Promise<void> => {
       const status = 200
       const body = {
@@ -410,8 +446,8 @@ describe('requests', (): void => {
       }
       nock(baseUrl).post('/grant', body).reply(status, body)
 
-      await expect(
-        post(
+      try {
+        await post(
           { axiosInstance, logger },
           {
             url: `${baseUrl}/grant`,
@@ -419,53 +455,47 @@ describe('requests', (): void => {
           },
           responseValidators.failedValidator
         )
-      ).rejects.toThrow(/Failed to validate OpenApi response/)
+      } catch (error) {
+        assert.ok(error instanceof OpenPaymentsClientError)
+        expect(error.message).toBe('Error making Open Payments POST request')
+        expect(error.description).toBe('Could not validate OpenAPI response')
+        expect(error.status).toBeUndefined()
+        expect(error.validationErrors).toEqual(['Failed to validate response'])
+      }
     })
 
-    test(
-      'keeps https protocol for request if non-development environment',
-      withEnvVariableOverride(
-        { NODE_ENV: 'production' },
-        async (): Promise<void> => {
-          const httpsUrl = 'https://localhost:1000/'
-          const scope = nock(httpsUrl).post('/').reply(200)
+    test('keeps https protocol for request if non-development environment', async (): Promise<void> => {
+      const httpsUrl = 'https://localhost:1000/'
+      const scope = nock(httpsUrl).post('/').reply(200)
 
-          await post(
-            { axiosInstance, logger },
-            { url: httpsUrl },
-            responseValidators.successfulValidator
-          )
-
-          expect(axiosInstance.post).toHaveBeenCalledWith(httpsUrl, undefined, {
-            headers: {}
-          })
-          scope.done()
-        }
+      await post(
+        { axiosInstance, logger },
+        { url: httpsUrl },
+        responseValidators.successfulValidator
       )
-    )
 
-    test(
-      'uses http protocol for request if development environment',
-      withEnvVariableOverride(
-        { NODE_ENV: 'development' },
-        async (): Promise<void> => {
-          const httpsUrl = 'https://localhost:1000/'
-          const httpUrl = httpsUrl.replace('https', 'http')
-          const scope = nock(httpUrl).post('/').reply(200)
+      expect(axiosInstance.post).toHaveBeenCalledWith(httpsUrl, undefined, {
+        headers: {}
+      })
+      scope.done()
+    })
 
-          await post(
-            { axiosInstance, logger },
-            { url: httpsUrl },
-            responseValidators.successfulValidator
-          )
+    test('uses http protocol for request if development environment', async (): Promise<void> => {
+      const httpsUrl = 'https://localhost:1000/'
+      const httpUrl = httpsUrl.replace('https', 'http')
+      const scope = nock(httpUrl).post('/').reply(200)
 
-          expect(axiosInstance.post).toHaveBeenCalledWith(httpUrl, undefined, {
-            headers: {}
-          })
-          scope.done()
-        }
+      await post(
+        { axiosInstance, logger, useHttp: true },
+        { url: httpsUrl },
+        responseValidators.successfulValidator
       )
-    )
+
+      expect(axiosInstance.post).toHaveBeenCalledWith(httpUrl, undefined, {
+        headers: {}
+      })
+      scope.done()
+    })
   })
 
   describe('delete', (): void => {
@@ -537,21 +567,6 @@ describe('requests', (): void => {
       })
     })
 
-    test('throws if non-successful status', async (): Promise<void> => {
-      const status = 404
-      nock(baseUrl).delete('/grant').reply(status)
-
-      await expect(
-        deleteRequest(
-          { axiosInstance, logger },
-          {
-            url: `${baseUrl}/grant`
-          },
-          responseValidators.failedValidator
-        )
-      ).rejects.toThrow(/Error when making Open Payments DELETE request/)
-    })
-
     test.each`
       title                              | response
       ${'when response is defined'}      | ${{ some: 'value' }}
@@ -589,64 +604,78 @@ describe('requests', (): void => {
       }
     )
 
+    test('throws if failed request', async (): Promise<void> => {
+      nock(baseUrl).delete('/grant').reply(400, 'Bad Request')
+
+      try {
+        await deleteRequest(
+          { axiosInstance, logger },
+          {
+            url: `${baseUrl}/grant`
+          },
+          responseValidators.successfulValidator
+        )
+      } catch (error) {
+        assert.ok(error instanceof OpenPaymentsClientError)
+        expect(error.message).toBe('Error making Open Payments DELETE request')
+        expect(error.description).toBe('Bad Request')
+        expect(error.status).toBe(400)
+        expect(error.validationErrors).toBeUndefined()
+      }
+    })
+
     test('throws if response validator function fails', async (): Promise<void> => {
       const status = 299
       nock(baseUrl).delete('/grant').reply(status)
 
-      await expect(
-        deleteRequest(
+      try {
+        await deleteRequest(
           { axiosInstance, logger },
           {
             url: `${baseUrl}/grant`
           },
           responseValidators.failedValidator
         )
-      ).rejects.toThrow(/Failed to validate OpenApi response/)
+      } catch (error) {
+        assert.ok(error instanceof OpenPaymentsClientError)
+        expect(error.message).toBe('Error making Open Payments DELETE request')
+        expect(error.description).toBe('Could not validate OpenAPI response')
+        expect(error.status).toBeUndefined()
+        expect(error.validationErrors).toEqual(['Failed to validate response'])
+      }
     })
 
-    test(
-      'keeps https protocol for request if non-development environment',
-      withEnvVariableOverride(
-        { NODE_ENV: 'production' },
-        async (): Promise<void> => {
-          const httpsUrl = 'https://localhost:1000/'
-          const scope = nock(httpsUrl).delete('/').reply(200)
+    test('keeps https protocol for request if non-development environment', async (): Promise<void> => {
+      const httpsUrl = 'https://localhost:1000/'
+      const scope = nock(httpsUrl).delete('/').reply(200)
 
-          await deleteRequest(
-            { axiosInstance, logger },
-            { url: httpsUrl },
-            responseValidators.successfulValidator
-          )
-
-          expect(axiosInstance.delete).toHaveBeenCalledWith(httpsUrl, {
-            headers: {}
-          })
-          scope.done()
-        }
+      await deleteRequest(
+        { axiosInstance, logger },
+        { url: httpsUrl },
+        responseValidators.successfulValidator
       )
-    )
 
-    test(
-      'uses http protocol for request if development environment',
-      withEnvVariableOverride(
-        { NODE_ENV: 'development' },
-        async (): Promise<void> => {
-          const httpsUrl = 'https://localhost:1000/'
-          const httpUrl = httpsUrl.replace('https', 'http')
-          const scope = nock(httpUrl).delete('/').reply(200)
+      expect(axiosInstance.delete).toHaveBeenCalledWith(httpsUrl, {
+        headers: {}
+      })
+      scope.done()
+    })
 
-          await deleteRequest(
-            { axiosInstance, logger },
-            { url: httpsUrl },
-            responseValidators.successfulValidator
-          )
+    test('uses http protocol for request if development environment', async (): Promise<void> => {
+      const httpsUrl = 'https://localhost:1000/'
+      const httpUrl = httpsUrl.replace('https', 'http')
+      const scope = nock(httpUrl).delete('/').reply(200)
 
-          expect(axiosInstance.delete).toHaveBeenCalledWith(httpUrl, {
-            headers: {}
-          })
-          scope.done()
-        }
+      await deleteRequest(
+        { axiosInstance, logger, useHttp: true },
+        { url: httpsUrl },
+        responseValidators.successfulValidator
       )
-    )
+
+      expect(axiosInstance.delete).toHaveBeenCalledWith(httpUrl, {
+        headers: {}
+      })
+      scope.done()
+    })
   })
 })

@@ -26,7 +26,11 @@ export const createWalletAddressRoutes = (
 
   return {
     get: (args: UnauthenticatedResourceRequestArgs) =>
-      get({ axiosInstance, logger }, args, getPaymentPaymentValidator),
+      get(
+        { axiosInstance, logger },
+        { url: args.url },
+        getPaymentPaymentValidator
+      ),
     getKeys: (args: UnauthenticatedResourceRequestArgs) =>
       get(
         { axiosInstance, logger },

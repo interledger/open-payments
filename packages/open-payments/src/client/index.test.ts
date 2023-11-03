@@ -1,4 +1,4 @@
-import { createAuthenticatedClient } from '.'
+import { createAuthenticatedClient, OpenPaymentsClientError } from '.'
 import fs from 'fs'
 import assert from 'assert'
 import { generateKeyPairSync } from 'crypto'
@@ -65,27 +65,37 @@ describe('Client', (): void => {
     })
 
     test('throws error if could not load private key as Buffer', async (): Promise<void> => {
-      await expect(() =>
-        createAuthenticatedClient({
+      try {
+        await createAuthenticatedClient({
           logger: silentLogger,
           keyId: 'keyid-1',
           walletAddressUrl: 'http://localhost:1000/.well-known/pay',
           privateKey: Buffer.from('')
         })
-      ).rejects.toThrow('Could not load private key. Key is not a valid file')
+      } catch (error) {
+        assert.ok(error instanceof OpenPaymentsClientError)
+        expect(error.message).toBe(
+          'Could not load private key when creating Open Payments client'
+        )
+        expect(error.description).toBe('Key is not a valid file')
+      }
     })
 
     test('throws error if could not load private key', async (): Promise<void> => {
-      await expect(() =>
-        createAuthenticatedClient({
+      try {
+        await createAuthenticatedClient({
           logger: silentLogger,
           keyId: 'keyid-1',
           walletAddressUrl: 'http://localhost:1000/.well-known/pay',
           privateKey: '/incorrect/path/'
         })
-      ).rejects.toThrow(
-        'Could not load private key. Key is not a valid path or file'
-      )
+      } catch (error) {
+        assert.ok(error instanceof OpenPaymentsClientError)
+        expect(error.message).toBe(
+          'Could not load private key when creating Open Payments client'
+        )
+        expect(error.description).toBe('Key is not a valid path or file')
+      }
     })
   })
 })
