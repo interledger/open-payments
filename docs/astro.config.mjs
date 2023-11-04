@@ -47,10 +47,10 @@ export default defineConfig({
           label: 'Intro to Open Payments',
           items: [
             { label: 'Overview', link: '/introduction/overview/' },
-            // {
-            //   label: 'Open Payments concepts',
-            //   link: '/introduction/op-concepts'
-            // },
+            {
+              label: 'Open Payments concepts',
+              link: '/introduction/op-concepts'
+            },
             { label: 'Open Payments flow', link: '/introduction/op-flow/' },
             {
               label: 'Wallet addresses',

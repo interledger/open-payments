@@ -12,6 +12,8 @@ When an ASE implements Open Payments, their customers’ financial accounts beco
 
 For example, an application developer can build payments functionality into their app such that a user with an OP-enabled account can use the app to send funds to another OP-enabled account regardless of whether the recipient uses the same ASE. The app should be able to connect to any ASE that implements the Open Payments standard without the need for custom integrations.
 
+Refer to the [Open Payments concepts](/introduction/op-concepts) and [Open Payments flow](/introduction/op-flow) pages for additional details.
+
 ## Payments
 
 Open Payments does not execute payments or touch funds in any way. Instead, the API allows clients to issue payment instructions to ASEs.
@@ -24,7 +26,7 @@ By separating payment instructions from execution/settlement, client developers 
 
 Every OP-enabled account is identified by one or more URLs. These URLs not only identify the account, but are also OP service endpoints that provide the entry point for the API. These URLs are called [wallet addresses](/introduction/wallet-addresses).
 
-## Grant Negotiation and Authorization
+## Grant negotiation and authorization
 
 Clients must receive grants before issuing payment instructions. Grants give clients the authorization, via access tokens, to perform one or more operations. Grants represent the rights that are given to the client, such as the right to create an incoming payment request.
 
