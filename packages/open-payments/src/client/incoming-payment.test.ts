@@ -79,9 +79,9 @@ describe('incoming-payment', (): void => {
           value: '5'
         },
         receivedAmount: {
-          assetCode: 'USD',
+          assetCode: 'EUR',
           assetScale: 2,
-          value: '10'
+          value: '5'
         }
       })
 
@@ -560,25 +560,6 @@ describe('incoming-payment', (): void => {
 
       expect(() => validateIncomingPayment(incomingPayment)).toThrow(
         'Incoming amount asset code or asset scale does not match up received amount'
-      )
-    })
-
-    test('throws if receiving amount is larger than incoming amount', async (): Promise<void> => {
-      const incomingPayment = mockIncomingPayment({
-        incomingAmount: {
-          assetCode: 'USD',
-          assetScale: 2,
-          value: '5'
-        },
-        receivedAmount: {
-          assetCode: 'USD',
-          assetScale: 2,
-          value: '10'
-        }
-      })
-
-      expect(() => validateIncomingPayment(incomingPayment)).toThrow(
-        'Received amount is larger than incoming amount'
       )
     })
 
