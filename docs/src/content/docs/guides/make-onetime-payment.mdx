@@ -4,11 +4,9 @@ title: Make a one-time payment
 
 import { CodeBlock, LinkOut } from '@interledger/docs-design-system'
 
-The Open Payments (OP) API facilitates multiple uses cases for payments to and from different OP-enabled wallets.  In this guide we look at the steps for making a one time payment.  
+The Open Payments (OP) API facilitates multiple uses cases for payments to and from different OP-enabled wallets. In this guide we look at the steps for making a one time payment.
 
-Examples of use cases for a one-time payment might be an e-commerce or a money transmitter application.  
-
-
+Examples of use cases for a one-time payment might be an e-commerce or a money transmitter application.
 
 ### Prerequisites
 
@@ -21,7 +19,7 @@ Examples of use cases for a one-time payment might be an e-commerce or a money t
 - <LinkOut href='https://github.com/interledger/open-payments/tree/main/packages/open-payments'>
     Open Payments SDK
   </LinkOut>
-<p></p>
+  <p></p>
   ### Endpoints
 
 - <LinkOut href='https://openpayments.guide/apis/auth-server/operations/post-request/'>
@@ -42,23 +40,22 @@ Examples of use cases for a one-time payment might be an e-commerce or a money t
 
 ## Steps
 
-### 1. Import dependencies 
+### 1. Import dependencies
 
 Import `createAuthenticatedClient` from the Open Payments SDK package.
 
 ```ts
 import { createAuthenticatedClient } from '@interledger/open-payments'
-
 ```
 
-### 2. Create an authenticated Open Payments client 
+### 2. Create an authenticated Open Payments client
 
 Create an OP authenticated client by providing the following parameters:
 
 - `walletAddressURL` is your OP-enabled wallet address that your client will use to authenticate itself to one or more Authorization Servers (AS).
-- `privateKey` is the EdDSA-Ed25519 key or preferably the absolute or relative file path to the key that is bound to your wallet address.   A public key signed with this private 
-key must be made available as a public JWK docuement at `{walletAddressUrl}/jwks.json` url.
-- `keyId` is the identifier of the private key and the corresponding public key. 
+- `privateKey` is the EdDSA-Ed25519 key or preferably the absolute or relative file path to the key that is bound to your wallet address. A public key signed with this private
+  key must be made available as a public JWK docuement at `{walletAddressUrl}/jwks.json` url.
+- `keyId` is the identifier of the private key and the corresponding public key.
 
 <CodeBlock title="Example">
 ```ts
@@ -68,7 +65,7 @@ const client = await createAuthenticatedClient({
   keyId: KEY_ID,
 });
 
-```
+````
 </CodeBlock>
 
 
@@ -86,14 +83,13 @@ const payerWalletAddress = await client.walletAddress.get({
   url: 'https://bank_of_payer/payer'
 })
 
-```
+````
 
 </CodeBlock>
 
-
 ### 4. Request an Incoming Payment grant
 
-Request an ``incomingPayment`` grant from the payee wallet's AS 
+Request an `incomingPayment` grant from the payee wallet's AS
 
 <CodeBlock title="Example">
 
@@ -112,11 +108,12 @@ const incomingPaymentGrant = await client.grant.request(
   }
 )
 ```
+
 </CodeBlock>
 
-### 5.  Create an Incoming Payment
+### 5. Create an Incoming Payment
 
-Create an ``incomingPayment`` on the payee wallet's Resource Server (RS) using the access token returned by the AS in the grant request.  
+Create an `incomingPayment` on the payee wallet's Resource Server (RS) using the access token returned by the AS in the grant request.
 
 <CodeBlock title="Example">
 ```ts
@@ -132,7 +129,7 @@ const incomingPayment = await client.incomingPayment.create(
       value: '10000'
     },
     metadata: {
-      externalRef: '#Example-invoice-number',
+      externalRef: '#An-example-invoice-number',
       description: 'One-time payment example'
     }
   }
@@ -142,7 +139,7 @@ const incomingPayment = await client.incomingPayment.create(
 
 ### 6. Request a Quote grant
 
-Request a ``quote`` grant from the payer wallet's AS.   
+Request a `quote` grant from the payer wallet's AS.
 
 <CodeBlock title="Example">
 ```ts
@@ -162,9 +159,9 @@ const quoteGrant = await client.grant.request(
 ```
 </CodeBlock>
 
-### 7. Create a Quote 
+### 7. Create a Quote
 
-Create a ``quote`` on the payer wallet's RS using the access token returned by the AS in the grant request.
+Create a `quote` on the payer wallet's RS using the access token returned by the AS in the grant request.
 
 <CodeBlock title="Example">
 ```ts
@@ -180,12 +177,12 @@ const quote = await client.quote.create(
 
 ### 8. Request an Outgoing Payment grant
 
-Request an ``outgoingPayment`` grant from the payer wallet's AS.  
+Request an `outgoingPayment` grant from the payer wallet's AS.
 
-**Note:** This request requires an interactive grant as the payer will need to consent before an ``outgoingPayment`` is made against their wallet.  
+**Note:** This request requires an interactive grant as the payer will need to consent before an `outgoingPayment` is made against their wallet.
 
 For details on how to facilitate an interactive grant please see the <LinkOut href='https://openpayments.guide/guides/create-interactive-grant/'>
-   Create an Interactive Grant guide. </LinkOut>
+Create an Interactive Grant guide. </LinkOut>
 
 <CodeBlock title="Example">
 ```ts
@@ -222,7 +219,7 @@ const grant = await client.grant.request(
 
 ### 9. Create an Outgoing Payment
 
-Create an ``outgoingPayment`` on the payer wallet's RS using the access token returned by the AS in the grant request. 
+Create an `outgoingPayment` on the payer wallet's RS using the access token returned by the AS in the grant request.
 
 <CodeBlock title="Example">
 ```ts
