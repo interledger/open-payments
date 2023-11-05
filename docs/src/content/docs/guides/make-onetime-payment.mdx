@@ -1,0 +1,237 @@
+---
+title: Make a one-time payment
+---
+
+import { CodeBlock, LinkOut } from '@interledger/docs-design-system'
+
+The Open Payments (OP) API facilitates multiple uses cases for payments to and from different OP-enabled wallets.  In this guide we look at the steps for making a one time payment.  
+
+Examples of use cases for a one-time payment might be an e-commerce or a money transmitter application.  
+
+
+
+### Prerequisites
+
+- Node 18
+- TypeScript
+- NPM
+
+### Dependencies
+
+- <LinkOut href='https://github.com/interledger/open-payments/tree/main/packages/open-payments'>
+    Open Payments SDK
+  </LinkOut>
+<p></p>
+  ### Endpoints
+
+- <LinkOut href='https://openpayments.guide/apis/auth-server/operations/post-request/'>
+    Grant Request
+  </LinkOut>
+- <LinkOut href='https://openpayments.guide/apis/resource-server/operations/get-wallet-address/'>
+    Get a Wallet address
+  </LinkOut>
+- <LinkOut href='https://openpayments.guide/apis/resource-server/operations/create-incoming-payment/'>
+    Create an Incoming Payment
+  </LinkOut>
+- <LinkOut href='https://openpayments.guide/apis/resource-server/operations/create-quote/'>
+    Create a Quote
+  </LinkOut>
+- <LinkOut href='https://openpayments.guide/apis/resource-server/operations/create-outgoing-payment/'>
+    Create an Outgoing Payment
+  </LinkOut>
+
+## Steps
+
+### 1. Import dependencies 
+
+Import `createAuthenticatedClient` from the Open Payments SDK package.
+
+```ts
+import { createAuthenticatedClient } from '@interledger/open-payments'
+
+```
+
+### 2. Create an authenticated Open Payments client 
+
+Create an OP authenticated client by providing the following parameters:
+
+- `walletAddressURL` is your OP-enabled wallet address that your client will use to authenticate itself to one or more Authorization Servers (AS).
+- `privateKey` is the EdDSA-Ed25519 key or preferably the absolute or relative file path to the key that is bound to your wallet address.   A public key signed with this private 
+key must be made available as a public JWK docuement at `{walletAddressUrl}/jwks.json` url.
+- `keyId` is the identifier of the private key and the corresponding public key. 
+
+<CodeBlock title="Example">
+```ts
+const client = await createAuthenticatedClient({
+  walletAddressUrl: WALLET_ADDRESS,
+  privateKey: PRIVATE_KEY_PATH,
+  keyId: KEY_ID,
+});
+
+```
+</CodeBlock>
+
+
+### 3. Get the walletAddresses of payee and payer
+
+Fetch the ``walletAddress`` of the wallet you want to send a payment to and the ``walletAddress`` of the wallet you want to send the payment from.
+
+<CodeBlock title="Example">
+
+```ts
+const payeeWalletAddress = await client.walletAddress.get({
+  url: 'https://bank_of_payee/payee'
+})
+const payerWalletAddress = await client.walletAddress.get({
+  url: 'https://bank_of_payer/payer'
+})
+
+```
+
+</CodeBlock>
+
+
+### 4. Request an Incoming Payment grant
+
+Request an ``incomingPayment`` grant from the payee wallet's AS 
+
+<CodeBlock title="Example">
+
+```ts
+const incomingPaymentGrant = await client.grant.request(
+  { url: payeeWalletAddress.authServer },
+  {
+    access_token: {
+      access: [
+        {
+          type: 'incoming-payment',
+          actions: ['read-all', 'create']
+        }
+      ]
+    }
+  }
+)
+```
+</CodeBlock>
+
+### 5.  Create an Incoming Payment
+
+Create an ``incomingPayment`` on the payee wallet's Resource Server (RS) using the access token returned by the AS in the grant request.  
+
+<CodeBlock title="Example">
+```ts
+const incomingPayment = await client.incomingPayment.create(
+  {
+    walletAddress: payeeWalletAddress.id,
+    accessToken: incomingPaymentGrant.access_token.value
+  },
+  {
+    incomingAmount: {
+      assetCode: 'USD',
+      assetScale: 2,
+      value: '10000'
+    },
+    metadata: {
+      externalRef: '#Example-invoice-number',
+      description: 'One-time payment example'
+    }
+  }
+)
+```
+</CodeBlock>
+
+### 6. Request a Quote grant
+
+Request a ``quote`` grant from the payer wallet's AS.   
+
+<CodeBlock title="Example">
+```ts
+const quoteGrant = await client.grant.request(
+  { url: payerWalletAddress.authServer },
+  {
+    access_token: {
+      access: [
+        {
+          type: 'quote',
+          actions: ['create', 'read']
+        }
+      ]
+    }
+  }
+)
+```
+</CodeBlock>
+
+### 7. Create a Quote 
+
+Create a ``quote`` on the payer wallet's RS using the access token returned by the AS in the grant request.
+
+<CodeBlock title="Example">
+```ts
+const quote = await client.quote.create(
+  {
+    walletAddress: payerWalletAddress.id,
+    accessToken: quoteGrant.access_token.value
+  },
+  { receiver: incomingPayment.id }
+)
+```
+</CodeBlock>
+
+### 8. Request an Outgoing Payment grant
+
+Request an ``outgoingPayment`` grant from the payer wallet's AS.  
+
+**Note:** This request requires an interactive grant as the payer will need to consent before an ``outgoingPayment`` is made against their wallet.  
+
+For details on how to facilitate an interactive grant please see the <LinkOut href='https://openpayments.guide/guides/create-interactive-grant/'>
+   Create an Interactive Grant guide. </LinkOut>
+
+<CodeBlock title="Example">
+```ts
+const grant = await client.grant.request(
+    {
+        url: payerWalletAddress.authServer,
+    },
+    {
+        access_token: {
+            access: [
+                {
+                    identifier: walletAddress.id,
+                    type: "outgoing-payment",
+                    actions: ["list", "list-all", "read", "read-all", "create"],
+                    limits: {
+                        debitAmount: DEBIT_AMOUNT,
+                        receiveAmount: RECEIVE_AMOUNT,
+                    },
+                },
+            ],
+        },
+        interact: {
+            start: ["redirect"],
+            finish: {
+                method: "redirect",
+                uri: "http://localhost:3344",
+                nonce: NONCE,
+            },
+        },
+    },
+);
+```
+</CodeBlock>
+
+### 9. Create an Outgoing Payment
+
+Create an ``outgoingPayment`` on the payer wallet's RS using the access token returned by the AS in the grant request. 
+
+<CodeBlock title="Example">
+```ts
+const outgoingPayment = await client.outgoingPayment.create(
+  {
+    walletAddress: payerWalletAddress.id,
+    accessToken: outgoingPaymentGrant.access_token.value
+  },
+  { quoteId: quote.id, description: 'Your payment to the payee has been made' }
+)
+```
+</CodeBlock>
