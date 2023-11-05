@@ -562,26 +562,6 @@ describe('incoming-payment', (): void => {
         'Incoming amount asset code or asset scale does not match up received amount'
       )
     })
-
-    test('throws if receiving amount is the same as incoming amount but payment status is incomplete', async (): Promise<void> => {
-      const incomingPayment = mockIncomingPayment({
-        incomingAmount: {
-          assetCode: 'USD',
-          assetScale: 2,
-          value: '10'
-        },
-        receivedAmount: {
-          assetCode: 'USD',
-          assetScale: 2,
-          value: '10'
-        },
-        completed: false
-      })
-
-      expect(() => validateIncomingPayment(incomingPayment)).toThrow(
-        'Incoming amount matches received amount but payment is not completed'
-      )
-    })
   })
 
   describe('validateCreatedIncomingPayment', (): void => {

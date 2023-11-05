@@ -297,11 +297,6 @@ export const validateIncomingPayment = <T extends AnyIncomingPayment>(
         'Incoming amount asset code or asset scale does not match up received amount'
       )
     }
-    if (incomingAmount.value === receivedAmount.value && !payment.completed) {
-      throw new Error(
-        'Incoming amount matches received amount but payment is not completed'
-      )
-    }
   }
 
   return payment
