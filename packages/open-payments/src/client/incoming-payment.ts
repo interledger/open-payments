@@ -4,8 +4,7 @@ import {
   ResourceRequestArgs,
   CollectionRequestArgs,
   RouteDeps,
-  UnauthenticatedResourceRequestArgs,
-  OpenPaymentsClientError
+  UnauthenticatedResourceRequestArgs
 } from '.'
 import {
   IncomingPayment,
@@ -17,6 +16,7 @@ import {
   IncomingPaymentWithPaymentMethods
 } from '../types'
 import { get, post } from './requests'
+import { handleValidationError } from './validation-error'
 
 type AnyIncomingPayment = IncomingPayment | IncomingPaymentWithPaymentMethods
 
@@ -200,22 +200,6 @@ export const createIncomingPayment = async (
       'Could not create incoming payment'
     )
   }
-}
-
-const handleValidationError = (
-  deps: BaseDeps,
-  error: unknown,
-  url: string,
-  errorMessage: string
-): never => {
-  const validationError =
-    error instanceof Error ? error.message : 'Unknown error'
-  deps.logger.error({ url, validationError }, errorMessage)
-
-  throw new OpenPaymentsClientError(errorMessage, {
-    description: validationError,
-    validationErrors: [validationError]
-  })
 }
 
 export const completeIncomingPayment = async (

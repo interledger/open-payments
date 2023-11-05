@@ -134,7 +134,7 @@ const createDeps = async (
       'Could not load private key when creating Open Payments client'
     const description = error instanceof Error ? error.message : 'Unknown error'
 
-    logger.error(description)
+    logger.error({ description }, errorMessage)
 
     throw new OpenPaymentsClientError(errorMessage, {
       description

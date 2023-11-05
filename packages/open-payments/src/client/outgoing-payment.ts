@@ -3,8 +3,7 @@ import {
   BaseDeps,
   ResourceRequestArgs,
   CollectionRequestArgs,
-  RouteDeps,
-  OpenPaymentsClientError
+  RouteDeps
 } from '.'
 import {
   CreateOutgoingPaymentArgs,
@@ -14,6 +13,7 @@ import {
   PaginationArgs
 } from '../types'
 import { get, post } from './requests'
+import { handleValidationError } from './validation-error'
 
 export interface OutgoingPaymentRoutes {
   get(args: ResourceRequestArgs): Promise<OutgoingPayment>
@@ -170,22 +170,6 @@ export const listOutgoingPayments = async (
   }
 
   return outgoingPayments
-}
-
-const handleValidationError = (
-  deps: BaseDeps,
-  error: unknown,
-  url: string,
-  errorMessage: string
-): never => {
-  const validationError =
-    error instanceof Error ? error.message : 'Unknown error'
-  deps.logger.error({ url, validationError }, errorMessage)
-
-  throw new OpenPaymentsClientError(errorMessage, {
-    description: validationError,
-    validationErrors: [validationError]
-  })
 }
 
 export const validateOutgoingPayment = (
