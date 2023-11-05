@@ -183,6 +183,10 @@ export default defineConfig({
             {
               label: 'Create an interactive grant',
               link: '/guides/create-interactive-grant/'
+            },
+            {
+              label: 'Make a one-time payment',
+              link: '/guides/make-onetime-payment/'
             }
           ]
         },
