@@ -46,9 +46,11 @@ const walletAddress = await client.walletAddress.get({
 })
 
 const incomingPayment = await client.walletAddress.get({
-  url: 'https://cloud-nine-wallet/incoming-payment/'
+  url: 'https://cloud-nine-wallet.com/incoming-payment/ef56a2cf-e60f-48ab-a7e8-de6af004c9a0'
 })
 ```
+
+#### Optional client initiation parameters
 
 | Variable           | Description                                                                      |
 | ------------------ | -------------------------------------------------------------------------------- |
@@ -84,7 +86,7 @@ In order to create the client, three properties need to be provided: `keyId`, th
 
 ## Error handling
 
-if an error occurs when making requests with the Open Payments client, an `OpenPaymentsClientError` will be thrown with several properties.
+If an error occurs when making requests with the Open Payments client, an `OpenPaymentsClientError` will be thrown with several properties.
 
 ```ts
 import {
@@ -100,9 +102,9 @@ try {
   })
 } catch (error) {
   if (error instanceof OpenPaymentsClientError) {
-    console.log(error.description)
     console.log(error.message)
-    console.log(error.status) // the status of the request, if an HTTP request failure
+    console.log(error.description) // additional description of the error
+    console.log(error.status) // the HTTP status of the request, if a request failure
     console.log(error.validationErrors) // an array of validation errors. Populated if the response of the request failed OpenAPI specfication validation, or other validation checks.
   } else {
     console.log(error)
@@ -310,4 +312,4 @@ const outgoingPayment = await client.outgoingPayment.create(
 )
 ```
 
-At this point, the Online Marketplace can show to Alice that the payment to Shoe Shop has been completed, and money will be moved between Alice's wallet address and the Shoe Shops in the specified payment method.
+At this point, the Online Marketplace can show to Alice that the payment to Shoe Shop has been completed, and money will be moved between Alice's wallet address and the Shoe Shop's using the specified payment method.
