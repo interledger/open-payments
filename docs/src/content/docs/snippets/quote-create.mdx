@@ -10,7 +10,9 @@ import Ts from '/src/partials/ts-prerequisites.mdx'
 
 A quote is a commitment from an account servicing entity to deliver a particular amount to a payee when sending a particular amount from a payer. Once an authorized client obtains the requisite grant from the payer’s authorization server, the client can create a quote resource against the payer’s wallet address. The quote indicates how much it will cost the payer to proceed with the transaction.
 
-These code snippets create a quote with a fixed receive amount of $5 USD, meaning the payee (recipient) should receive $5 USD after any applicable fees. The debit amount, which is the amount to be deducted from the payer’s account, is also $5 USD, indicating there are no fees associated with this quote.
+These code snippets allow a client to create a quote with a fixed-send amount when the `incomingAmount` field is specified in `INCOMING_PAYMENT_URL`.
+
+When the `incomingAmount` field is not specified in the `INCOMING_PAYMENT_URL`, a quote can be created either with a `debitAmount`, which specifies the amount that will be deducted from the payer's wallet, or with a `receiveAmount`, which specifies the amount that the payee's wallet will receive.
 
 ## Before you begin
 
@@ -37,6 +39,11 @@ These code snippets create a quote with a fixed receive amount of $5 USD, meanin
 <ChunkedSnippet
   source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/quote/quote-create.ts'
   chunk='3'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/quote/quote-create.ts'
+  chunk='4'
 />
 
 {/* prettier-ignore */}
