@@ -2,7 +2,7 @@ import { loadKey } from '@interledger/http-signature-utils'
 import fs from 'fs'
 import { createOpenAPI, OpenAPI } from '@interledger/openapi'
 import path from 'path'
-import createLogger, { Logger } from 'pino'
+import createLogger, { LevelWithSilent, Logger } from 'pino'
 import config from '../config'
 import {
   createIncomingPaymentRoutes,
@@ -24,10 +24,13 @@ import {
 import { createTokenRoutes, TokenRoutes } from './token'
 import { createQuoteRoutes, QuoteRoutes } from './quote'
 import { KeyLike, KeyObject, createPrivateKey } from 'crypto'
+import { OpenPaymentsClientError } from './error'
+export * from './error'
 
 export interface BaseDeps {
   axiosInstance: AxiosInstance
   logger: Logger
+  useHttp?: boolean
 }
 
 interface ClientDeps extends BaseDeps {
@@ -119,18 +122,23 @@ const createDeps = async (
   args: Partial<CreateAuthenticatedClientArgs>
 ): Promise<ClientDeps> => {
   const logger = args?.logger ?? createLogger({ name: 'Open Payments Client' })
+  if (args.logLevel) {
+    logger.level = args.logLevel
+  }
 
   let privateKey: KeyObject | undefined
   try {
     privateKey = parseKey(args)
   } catch (error) {
-    const errorMessage = `Could not load private key. ${
-      error instanceof Error ? error.message : 'Unknown error'
-    }`
+    const errorMessage =
+      'Could not load private key when creating Open Payments client'
+    const description = error instanceof Error ? error.message : 'Unknown error'
 
-    logger.error(errorMessage)
+    logger.error({ description }, errorMessage)
 
-    throw new Error(errorMessage)
+    throw new OpenPaymentsClientError(errorMessage, {
+      description
+    })
   }
 
   const axiosInstance = createAxiosInstance({
@@ -159,6 +167,10 @@ export interface CreateUnauthenticatedClientArgs {
   requestTimeoutMs?: number
   /** The custom logger instance to use. This defaults to the pino logger. */
   logger?: Logger
+  /** The desired logging level  */
+  logLevel?: LevelWithSilent
+  /** If enabled, all requests will use http as protocol. Use in development mode only. */
+  useHttp?: boolean
 }
 
 export interface UnauthenticatedClient {

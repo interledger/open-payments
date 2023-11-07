@@ -13,6 +13,7 @@ import {
   PaginationArgs
 } from '../types'
 import { get, post } from './requests'
+import { handleValidationError } from './validation-error'
 
 export interface OutgoingPaymentRoutes {
   get(args: ResourceRequestArgs): Promise<OutgoingPayment>
@@ -96,13 +97,12 @@ export const getOutgoingPayment = async (
   try {
     return validateOutgoingPayment(outgoingPayment)
   } catch (error) {
-    const errorMessage = 'Could not validate outgoing payment'
-    logger.error(
-      { url, validateError: error && error['message'] },
-      errorMessage
+    return handleValidationError(
+      deps,
+      error,
+      url,
+      'Could not validate outgoing payment'
     )
-
-    throw new Error(errorMessage)
   }
 }
 
@@ -125,13 +125,12 @@ export const createOutgoingPayment = async (
   try {
     return validateOutgoingPayment(outgoingPayment)
   } catch (error) {
-    const errorMessage = 'Could not validate outgoing payment'
-    logger.error(
-      { url, validateError: error && error['message'] },
-      errorMessage
+    return handleValidationError(
+      deps,
+      error,
+      url,
+      'Could not create outgoing payment'
     )
-
-    throw new Error(errorMessage)
   }
 }
 
@@ -161,17 +160,12 @@ export const listOutgoingPayments = async (
     try {
       validateOutgoingPayment(outgoingPayment)
     } catch (error) {
-      const errorMessage = 'Could not validate outgoing payment'
-      logger.error(
-        {
-          url,
-          validateError: error && error['message'],
-          outgoingPaymentId: outgoingPayment.id
-        },
-        errorMessage
+      return handleValidationError(
+        deps,
+        error,
+        url,
+        'Could not validate an outgoing payment'
       )
-
-      throw new Error(errorMessage)
     }
   }
 

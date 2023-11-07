@@ -1,8 +1,14 @@
-import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios'
+import axios, {
+  AxiosInstance,
+  InternalAxiosRequestConfig,
+  isAxiosError
+} from 'axios'
 import { KeyObject } from 'crypto'
 import { ResponseValidator } from '@interledger/openapi'
 import { BaseDeps } from '.'
 import { createHeaders } from '@interledger/http-signature-utils'
+import { OpenPaymentsClientError } from './error'
+import { isValidationError } from '@interledger/openapi'
 
 interface GetArgs {
   url: string
@@ -29,15 +35,10 @@ export const get = async <T>(
   args: GetArgs,
   openApiResponseValidator: ResponseValidator<T>
 ): Promise<T> => {
-  const { axiosInstance, logger } = deps
+  const { axiosInstance } = deps
   const { accessToken } = args
 
-  const requestUrl = new URL(args.url)
-  if (process.env.NODE_ENV === 'development') {
-    requestUrl.protocol = 'http'
-  }
-
-  const url = requestUrl.href
+  const url = checkUrlProtocol(deps, args.url)
 
   try {
     const { data, status } = await axiosInstance.get(url, {
@@ -49,33 +50,14 @@ export const get = async <T>(
       params: args.queryParams ? removeEmptyValues(args.queryParams) : undefined
     })
 
-    try {
-      openApiResponseValidator({
-        status,
-        body: data
-      })
-    } catch (error) {
-      const errorMessage = 'Failed to validate OpenApi response'
-      logger.error(
-        {
-          data: JSON.stringify(data),
-          url,
-          validationError: error && error['message']
-        },
-        errorMessage
-      )
-
-      throw new Error(errorMessage)
-    }
+    openApiResponseValidator({
+      status,
+      body: data
+    })
 
     return data
   } catch (error) {
-    const errorMessage = `Error when making Open Payments GET request: ${
-      error && error['message'] ? error['message'] : 'Unknown error'
-    }`
-    logger.error({ url }, errorMessage)
-
-    throw new Error(errorMessage)
+    return handleError(deps, error, 'GET')
   }
 }
 
@@ -84,15 +66,10 @@ export const post = async <TRequest, TResponse>(
   args: PostArgs<TRequest>,
   openApiResponseValidator: ResponseValidator<TResponse>
 ): Promise<TResponse> => {
-  const { axiosInstance, logger } = deps
+  const { axiosInstance } = deps
   const { body, accessToken } = args
 
-  const requestUrl = new URL(args.url)
-  if (process.env.NODE_ENV === 'development') {
-    requestUrl.protocol = 'http'
-  }
-
-  const url = requestUrl.href
+  const url = checkUrlProtocol(deps, args.url)
 
   try {
     const { data, status } = await axiosInstance.post<TResponse>(url, body, {
@@ -103,33 +80,14 @@ export const post = async <TRequest, TResponse>(
         : {}
     })
 
-    try {
-      openApiResponseValidator({
-        status,
-        body: data
-      })
-    } catch (error) {
-      const errorMessage = 'Failed to validate OpenApi response'
-      logger.error(
-        {
-          data: JSON.stringify(data),
-          url,
-          validationError: error && error['message']
-        },
-        errorMessage
-      )
-
-      throw new Error(errorMessage)
-    }
+    openApiResponseValidator({
+      status,
+      body: data
+    })
 
     return data
   } catch (error) {
-    const errorMessage = `Error when making Open Payments POST request: ${
-      error && error['message'] ? error['message'] : 'Unknown error'
-    }`
-    logger.error({ url }, errorMessage)
-
-    throw new Error(errorMessage)
+    return handleError(deps, error, 'POST')
   }
 }
 
@@ -138,15 +96,10 @@ export const deleteRequest = async <TResponse>(
   args: DeleteArgs,
   openApiResponseValidator: ResponseValidator<TResponse>
 ): Promise<void> => {
-  const { axiosInstance, logger } = deps
+  const { axiosInstance } = deps
   const { accessToken } = args
 
-  const requestUrl = new URL(args.url)
-  if (process.env.NODE_ENV === 'development') {
-    requestUrl.protocol = 'http'
-  }
-
-  const url = requestUrl.href
+  const url = checkUrlProtocol(deps, args.url)
 
   try {
     const { data, status } = await axiosInstance.delete<TResponse>(url, {
@@ -157,32 +110,52 @@ export const deleteRequest = async <TResponse>(
         : {}
     })
 
-    try {
-      openApiResponseValidator({
-        status,
-        body: data || undefined
-      })
-    } catch (error) {
-      const errorMessage = 'Failed to validate OpenApi response'
-      logger.error(
-        {
-          status,
-          url,
-          validationError: error && error['message']
-        },
-        errorMessage
-      )
-
-      throw new Error(errorMessage)
-    }
+    openApiResponseValidator({
+      status,
+      body: data || undefined
+    })
   } catch (error) {
-    const errorMessage = `Error when making Open Payments DELETE request: ${
-      error && error['message'] ? error['message'] : 'Unknown error'
-    }`
-    logger.error({ url }, errorMessage)
-
-    throw new Error(errorMessage)
+    return handleError(deps, error, 'DELETE')
   }
+}
+
+const handleError = (
+  deps: BaseDeps,
+  error: unknown,
+  requestType: 'POST' | 'DELETE' | 'GET'
+): never => {
+  let errorDescription
+  let errorStatus
+  let validationErrors
+
+  if (isAxiosError(error)) {
+    errorDescription = error.response?.data || error.message
+    errorStatus = error.response?.status
+  } else if (isValidationError(error)) {
+    errorDescription = 'Could not validate OpenAPI response'
+    validationErrors = error.errors
+    errorStatus = error.status
+  } else if (error instanceof Error) {
+    errorDescription = error.message
+  }
+
+  const errorMessage = `Error making Open Payments ${requestType} request`
+  deps.logger.error({ status: errorStatus, errorDescription }, errorMessage)
+
+  throw new OpenPaymentsClientError(errorMessage, {
+    description: errorDescription,
+    validationErrors,
+    status: errorStatus
+  })
+}
+
+const checkUrlProtocol = (deps: BaseDeps, url: string): string => {
+  const requestUrl = new URL(url)
+  if (deps.useHttp) {
+    requestUrl.protocol = 'http'
+  }
+
+  return requestUrl.href
 }
 
 export const createAxiosInstance = (args: {

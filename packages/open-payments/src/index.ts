@@ -24,7 +24,8 @@ export {
   createAuthenticatedClient,
   createUnauthenticatedClient,
   AuthenticatedClient,
-  UnauthenticatedClient
+  UnauthenticatedClient,
+  OpenPaymentsClientError
 } from './client'
 
 export {

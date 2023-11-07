@@ -25,6 +25,12 @@ APIs.
 This repository hosts the Open API Specifications of the two APIs which are published along with additional documentation at
 https://openpayments.guide.
 
+Additionally, this repository also contains three published libraries:
+
+- [`@interledger/open-payments`](https://github.com/interledger/open-payments/tree/main/packages/open-payments) contains a NodeJS Open Payments SDK to make requests via the Open Payments API, as well as TypeScript types for the API.
+- [`@interledger/http-signature-utils`](https://github.com/interledger/open-payments/tree/main/packages/http-signature-utils) provides tools for working with [HTTP Message Signatures](https://datatracker.ietf.org/doc/draft-ietf-httpbis-message-signatures).
+- [`@interledger/openapi`](https://github.com/interledger/open-payments/tree/main/packages/openapi) exposes functionality to validate requests and responses according to a given OpenAPI 3.1 schema.
+
 The code for the landing [page](https://openpayments.guide) is in `./docs`.
 
 ## Dependencies
