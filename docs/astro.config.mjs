@@ -187,6 +187,10 @@ export default defineConfig({
             {
               label: 'Make a one-time payment',
               link: '/guides/make-onetime-payment/'
+            },
+            {
+              label: 'Make recurring payments',
+              link: '/guides/make-recurring-payments/'
             }
           ]
         },
