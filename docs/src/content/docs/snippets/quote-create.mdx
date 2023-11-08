@@ -10,13 +10,13 @@ import Ts from '/src/partials/ts-prerequisites.mdx'
 
 A quote is a commitment from an account servicing entity to deliver a particular amount to a payee when sending a particular amount from a payer. Once an authorized client obtains the requisite grant from the payer’s authorization server, the client can create a quote resource against the payer’s wallet address. The quote indicates how much it will cost the payer to proceed with the transaction.
 
-These code snippets create a quote with a fixed receive amount of $10 USD, meaning the payee (recipient) should receive $10 USD after any applicable fees. The debit amount, which is the amount to be deducted from the payer’s account, is also $10 USD, indicating there are no fees associated with this quote.
-
 ## Before you begin
 
 <Global />
 
-## Create a fixed-send amount quote
+## Create a quote with an incomingAmount
+
+This code snippet allows a client to create a quote with an `incomingAmount` when it is specified in the `INCOMING_PAYMENT_URL`.
 
 <Tabs>
 <TabItem label='TypeScript'>
@@ -39,9 +39,82 @@ These code snippets create a quote with a fixed receive amount of $10 USD, meani
   chunk='3'
 />
 
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/quote/quote-create.ts'
+  chunk='4'
+/>
+
 {/* prettier-ignore */}
 <p>
-  <LinkOut href='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/quote/quote-create.ts'>View full source</LinkOut>
+  <LinkOut href='https://github.com/interledger/open-payments-snippets/blob/main/quote/quote-create.ts'>View full source</LinkOut>
+</p>
+
+## Create a quote with a debit amount
+
+This code snippet allows a client to create a quote with a `debitAmount`, which specifies the amount that will be deducted from the payer's wallet.
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/quote/quote-create-debit-amount.ts'
+  chunk='1'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/quote/quote-create-debit-amount.ts'
+  chunk='2'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/quote/quote-create-debit-amount.ts'
+  chunk='3'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/quote/quote-create-debit-amount.ts'
+  chunk='4'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/quote/quote-create-debit-amount.ts'
+  chunk='5'
+/>
+
+{/* prettier-ignore */}
+<p>
+  <LinkOut href='https://github.com/interledger/open-payments-snippets/blob/main/quote/quote-create-debit-amount.ts'>View full source</LinkOut>
+</p>
+
+## Create a quote with a receive amount
+
+This code snippet allows a client to create a quote with a `receiveAmount`, which specifies the amount that the payee's wallet will receive.
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/quote/quote-create-receive-amount.ts'
+  chunk='1'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/quote/quote-create-receive-amount.ts'
+  chunk='2'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/quote/quote-create-receive-amount.ts'
+  chunk='3'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/quote/quote-create-receive-amount.ts'
+  chunk='4'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/quote/quote-create-receive-amount.ts'
+  chunk='5'
+/>
+
+{/* prettier-ignore */}
+<p>
+  <LinkOut href='https://github.com/interledger/open-payments-snippets/blob/main/quote/quote-create-receive-amount.ts'>View full source</LinkOut>
 </p>
 
 </TabItem>
