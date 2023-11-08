@@ -212,11 +212,137 @@ export default defineConfig({
             }
           ]
         },
-        // Add the generated sidebar groups to the sidebar.
         {
-          label: 'API specification',
+          label: 'API Specifications',
           collapsed: true,
-          items: openAPISidebarGroups
+          items: [
+            {
+              label: 'Open Payments endpoints',
+              items: [
+                {
+                  label: 'Wallet address',
+                  collapsed: true,
+                  items: [
+                    {
+                      label: 'Get wallet address',
+                      link: '/apis/resource-server/operations/get-wallet-address',
+                      badge: { text: 'GET', variant: 'success' }
+                    },
+                    {
+                      label: 'Get keys bound to wallet address',
+                      link: '/apis/resource-server/operations/get-wallet-address-keys',
+                      badge: { text: 'GET', variant: 'success' }
+                    }
+                  ]
+                },
+                {
+                  label: 'Incoming payment',
+                  collapsed: true,
+                  items: [
+                    {
+                      label: 'Create incoming payment',
+                      link: '/apis/resource-server/operations/create-incoming-payment',
+                      badge: { text: 'POST', variant: 'note' }
+                    },
+                    {
+                      label: 'List incoming payments',
+                      link: '/apis/resource-server/operations/list-incoming-payments',
+                      badge: { text: 'GET', variant: 'success' }
+                    },
+                    {
+                      label: 'Get an incoming payment',
+                      link: '/apis/resource-server/operations/get-incoming-payment',
+                      badge: { text: 'GET', variant: 'success' }
+                    },
+                    {
+                      label: 'Complete an incoming payment',
+                      link: '/apis/resource-server/operations/complete-incoming-payment',
+                      badge: { text: 'POST', variant: 'note' }
+                    }
+                  ]
+                },
+                {
+                  label: 'Outgoing payment',
+                  collapsed: true,
+                  items: [
+                    {
+                      label: 'Create outgoing payment',
+                      link: '/apis/resource-server/operations/create-outgoing-payment',
+                      badge: { text: 'POST', variant: 'note' }
+                    },
+                    {
+                      label: 'List outgoing payments',
+                      link: '/apis/resource-server/operations/list-outgoing-payments',
+                      badge: { text: 'GET', variant: 'success' }
+                    },
+                    {
+                      label: 'Get an outgoing payment',
+                      link: '/apis/resource-server/operations/get-outgoing-payment',
+                      badge: { text: 'GET', variant: 'success' }
+                    }
+                  ]
+                },
+                {
+                  label: 'Quote',
+                  collapsed: true,
+                  items: [
+                    {
+                      label: 'Create quote',
+                      link: '/apis/resource-server/operations/create-quote',
+                      badge: { text: 'POST', variant: 'note' }
+                    },
+                    {
+                      label: 'Get a quote',
+                      link: '/apis/resource-server/operations/get-quote',
+                      badge: { text: 'GET', variant: 'success' }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              label: 'Open Payments auth server endpoints',
+              items: [
+                {
+                  label: 'Grants',
+                  collapsed: true,
+                  items: [
+                    {
+                      label: 'Grant request',
+                      link: '/apis/auth-server/operations/post-request',
+                      badge: { text: 'POST', variant: 'note' }
+                    },
+                    {
+                      label: 'Grant continuation request',
+                      link: '/apis/auth-server/operations/post-continue',
+                      badge: { text: 'POST', variant: 'note' }
+                    },
+                    {
+                      label: 'Cancel grant',
+                      link: '/apis/auth-server/operations/delete-continue',
+                      badge: { text: 'DELETE', variant: 'danger' }
+                    }
+                  ]
+                },
+                {
+                  label: 'Access token',
+                  collapsed: true,
+                  items: [
+                    {
+                      label: 'Rotate access token',
+                      link: '/apis/auth-server/operations/post-token',
+                      badge: { text: 'POST', variant: 'note' }
+                    },
+                    {
+                      label: 'Revoke access token',
+                      link: '/apis/auth-server/operations/delete-token',
+                      badge: { text: 'DELETE', variant: 'danger' }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ]
     }),
