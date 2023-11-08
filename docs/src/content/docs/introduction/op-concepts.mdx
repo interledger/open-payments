@@ -57,7 +57,7 @@ There are three types of quotes.
 
 - **Fixed-send quote** - A fixed amount will be paid from the _payer’s_ account. A `debitAmount` is required for this type.
 - **Fixed-receive quote** - A fixed amount will be paid into the _payee’s_ account. A `receiveAmount` is required for this type.
-- **Receiver quote** - The incoming payment already has a defined `incomingAmount`. For this type, the `receiver` is the URL of the `incoming-payment` resource that will be paid into, indicated by `/incoming-payments` being part of the URL.
+- **Quote with incomingAmount** - The incoming payment already has a defined `incomingAmount`. For this type, the `receiver` is the URL of the `incoming-payment` resource that will be paid into, indicated by `/incoming-payments` being part of the URL.
 
 A successfully created `quote` resource results in the generation of a quote `id` in the form of a URL.
 
