@@ -75,6 +75,10 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
+              label: 'Before you begin',
+              link: '/snippets/before-you-begin'
+            },
+            {
               label: 'Wallet addresses',
               collapsed: true,
               items: [
