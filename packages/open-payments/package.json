@@ -38,7 +38,7 @@
   "dependencies": {
     "@interledger/http-signature-utils": "workspace:2.0.0",
     "@interledger/openapi": "workspace:1.2.1",
-    "axios": "^1.3.4",
+    "axios": "^1.6.0",
     "base64url": "^3.0.1",
     "http-message-signatures": "^0.1.2",
     "pino": "^8.11.0",
