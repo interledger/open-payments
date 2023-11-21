@@ -28,6 +28,7 @@ describe('token', (): void => {
     )
   })
 
+  const useHttp = false
   const axiosInstance = defaultAxiosInstance
   const logger = silentLogger
   const openApiValidators = mockOpenApiResponseValidators()
@@ -49,14 +50,15 @@ describe('token', (): void => {
         .spyOn(requestors, 'post')
         .mockResolvedValueOnce(mockedAccessToken)
 
-      createTokenRoutes({ axiosInstance, openApi, logger }).rotate({
+      createTokenRoutes({ axiosInstance, openApi, logger, useHttp }).rotate({
         url,
         accessToken
       })
       expect(postSpy).toHaveBeenCalledWith(
         {
           axiosInstance,
-          logger
+          logger,
+          useHttp
         },
         { url, accessToken },
         true
@@ -75,14 +77,15 @@ describe('token', (): void => {
         .spyOn(requestors, 'deleteRequest')
         .mockResolvedValueOnce()
 
-      createTokenRoutes({ axiosInstance, openApi, logger }).revoke({
+      createTokenRoutes({ axiosInstance, openApi, logger, useHttp }).revoke({
         url,
         accessToken
       })
       expect(deleteSpy).toHaveBeenCalledWith(
         {
           axiosInstance,
-          logger
+          logger,
+          useHttp
         },
         { url, accessToken },
         true
@@ -103,7 +106,8 @@ describe('token', (): void => {
         {
           axiosInstance,
           openApi,
-          logger
+          logger,
+          useHttp
         },
         {
           url: accessToken.access_token.manage,
@@ -128,7 +132,8 @@ describe('token', (): void => {
           {
             axiosInstance,
             openApi,
-            logger
+            logger,
+            useHttp
           },
           {
             url: accessToken.access_token.manage,
@@ -152,7 +157,8 @@ describe('token', (): void => {
         {
           axiosInstance,
           openApi,
-          logger
+          logger,
+          useHttp
         },
         {
           url: accessToken.access_token.manage,
@@ -177,7 +183,8 @@ describe('token', (): void => {
           {
             axiosInstance,
             openApi,
-            logger
+            logger,
+            useHttp
           },
           {
             url: accessToken.access_token.manage,

@@ -29,7 +29,8 @@ describe('grant', (): void => {
   const deps = {
     axiosInstance: defaultAxiosInstance,
     logger: silentLogger,
-    client: 'https://example.com/.well-known/pay'
+    client: 'https://example.com/.well-known/pay',
+    useHttp: false
   }
 
   describe('routes', () => {

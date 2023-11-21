@@ -30,7 +30,7 @@ export * from './error'
 export interface BaseDeps {
   axiosInstance: AxiosInstance
   logger: Logger
-  useHttp?: boolean
+  useHttp: boolean
 }
 
 interface ClientDeps extends BaseDeps {
@@ -118,9 +118,10 @@ const parseKey = (
   }
 }
 
-const createDeps = async (
-  args: Partial<CreateAuthenticatedClientArgs>
-): Promise<ClientDeps> => {
+const createDeps = async ({
+  useHttp = false,
+  ...args
+}: Partial<CreateAuthenticatedClientArgs> = {}): Promise<ClientDeps> => {
   const logger = args?.logger ?? createLogger({ name: 'Open Payments Client' })
   if (args.logLevel) {
     logger.level = args.logLevel
@@ -158,7 +159,8 @@ const createDeps = async (
     axiosInstance,
     resourceServerOpenApi,
     authServerOpenApi,
-    logger
+    logger,
+    useHttp: useHttp
   }
 }
 
@@ -184,20 +186,21 @@ export interface UnauthenticatedClient {
 export const createUnauthenticatedClient = async (
   args: CreateUnauthenticatedClientArgs
 ): Promise<UnauthenticatedClient> => {
-  const { axiosInstance, resourceServerOpenApi, logger } = await createDeps(
-    args
-  )
+  const { axiosInstance, resourceServerOpenApi, logger, useHttp } =
+    await createDeps(args)
 
   return {
     walletAddress: createWalletAddressRoutes({
       axiosInstance,
       openApi: resourceServerOpenApi,
-      logger
+      logger,
+      useHttp
     }),
     incomingPayment: createUnauthenticatedIncomingPaymentRoutes({
       axiosInstance,
       openApi: resourceServerOpenApi,
-      logger
+      logger,
+      useHttp
     })
   }
 }
@@ -224,40 +227,51 @@ export interface AuthenticatedClient
 export const createAuthenticatedClient = async (
   args: CreateAuthenticatedClientArgs
 ): Promise<AuthenticatedClient> => {
-  const { axiosInstance, resourceServerOpenApi, authServerOpenApi, logger } =
-    await createDeps(args)
+  const {
+    axiosInstance,
+    resourceServerOpenApi,
+    authServerOpenApi,
+    logger,
+    useHttp
+  } = await createDeps(args)
 
   return {
     incomingPayment: createIncomingPaymentRoutes({
       axiosInstance,
       openApi: resourceServerOpenApi,
-      logger
+      logger,
+      useHttp
     }),
     outgoingPayment: createOutgoingPaymentRoutes({
       axiosInstance,
       openApi: resourceServerOpenApi,
-      logger
+      logger,
+      useHttp
     }),
     walletAddress: createWalletAddressRoutes({
       axiosInstance,
       openApi: resourceServerOpenApi,
-      logger
+      logger,
+      useHttp
     }),
     grant: createGrantRoutes({
       axiosInstance,
       openApi: authServerOpenApi,
       logger,
-      client: args.walletAddressUrl
+      client: args.walletAddressUrl,
+      useHttp
     }),
     token: createTokenRoutes({
       axiosInstance,
       openApi: authServerOpenApi,
-      logger
+      logger,
+      useHttp
     }),
     quote: createQuoteRoutes({
       axiosInstance,
       openApi: resourceServerOpenApi,
-      logger
+      logger,
+      useHttp
     })
   }
 }

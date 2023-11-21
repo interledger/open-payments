@@ -30,6 +30,7 @@ describe('quote', (): void => {
   const quote = mockQuote()
   const axiosInstance = defaultAxiosInstance
   const logger = silentLogger
+  const useHttp = false
   const baseUrl = 'http://localhost:1000'
   const openApiValidators = mockOpenApiResponseValidators()
   const walletAddress = 'http://localhost:1000/.well-known/pay'
@@ -41,7 +42,8 @@ describe('quote', (): void => {
       const result = await getQuote(
         {
           axiosInstance,
-          logger
+          logger,
+          useHttp
         },
         {
           url: `${baseUrl}/quotes/${quote.id}`,
@@ -60,7 +62,8 @@ describe('quote', (): void => {
         getQuote(
           {
             axiosInstance,
-            logger
+            logger,
+            useHttp
           },
           {
             url: `${baseUrl}/quotes/${quote.id}`,
@@ -79,7 +82,8 @@ describe('quote', (): void => {
       const result = await createQuote(
         {
           axiosInstance,
-          logger
+          logger,
+          useHttp
         },
         {
           url: baseUrl,
@@ -98,7 +102,8 @@ describe('quote', (): void => {
         createQuote(
           {
             axiosInstance,
-            logger
+            logger,
+            useHttp
           },
           {
             url: baseUrl,
@@ -131,7 +136,8 @@ describe('quote', (): void => {
         await createQuoteRoutes({
           openApi,
           axiosInstance,
-          logger
+          logger,
+          useHttp
         }).get({
           url,
           accessToken
@@ -140,7 +146,8 @@ describe('quote', (): void => {
         expect(getSpy).toHaveBeenCalledWith(
           {
             axiosInstance,
-            logger
+            logger,
+            useHttp
           },
           { url, accessToken },
           true
@@ -166,7 +173,8 @@ describe('quote', (): void => {
         await createQuoteRoutes({
           openApi,
           axiosInstance,
-          logger
+          logger,
+          useHttp
         }).create(
           {
             url: baseUrl,
@@ -178,7 +186,8 @@ describe('quote', (): void => {
         expect(postSpy).toHaveBeenCalledWith(
           {
             axiosInstance,
-            logger
+            logger,
+            useHttp
           },
           {
             url,

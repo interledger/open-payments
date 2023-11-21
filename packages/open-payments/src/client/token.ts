@@ -13,13 +13,14 @@ export const rotateToken = async (
   args: GrantOrTokenRequestArgs,
   validateOpenApiResponse: ResponseValidator<AccessToken>
 ) => {
-  const { axiosInstance, logger } = deps
+  const { axiosInstance, logger, useHttp } = deps
   const { url, accessToken } = args
 
   return post(
     {
       axiosInstance,
-      logger
+      logger,
+      useHttp
     },
     {
       url,
@@ -34,13 +35,14 @@ export const revokeToken = async (
   args: GrantOrTokenRequestArgs,
   validateOpenApiResponse: ResponseValidator<void>
 ) => {
-  const { axiosInstance, logger } = deps
+  const { axiosInstance, logger, useHttp } = deps
   const { url, accessToken } = args
 
   return deleteRequest(
     {
       axiosInstance,
-      logger
+      logger,
+      useHttp
     },
     {
       url,

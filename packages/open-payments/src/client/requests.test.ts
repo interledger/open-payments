@@ -7,6 +7,7 @@ import { OpenPaymentsClientError } from './error'
 import assert from 'assert'
 
 describe('requests', (): void => {
+  const useHttp = false
   const logger = silentLogger
   const privateKey = generateKeyPairSync('ed25519').privateKey
   const keyId = 'myId'
@@ -78,7 +79,7 @@ describe('requests', (): void => {
         .reply(200)
 
       await get(
-        { axiosInstance, logger },
+        { axiosInstance, logger, useHttp },
         {
           url: `${baseUrl}/incoming-payments`,
           accessToken: 'accessToken'
@@ -106,7 +107,7 @@ describe('requests', (): void => {
         .reply(200)
 
       await get(
-        { axiosInstance, logger },
+        { axiosInstance, logger, useHttp },
         {
           url: `${baseUrl}/incoming-payments`
         },
@@ -143,7 +144,7 @@ describe('requests', (): void => {
           .reply(200)
 
         await get(
-          { axiosInstance, logger },
+          { axiosInstance, logger, useHttp },
           {
             url: `${baseUrl}/incoming-payments`,
             queryParams
@@ -176,7 +177,7 @@ describe('requests', (): void => {
       )
 
       await get(
-        { axiosInstance, logger },
+        { axiosInstance, logger, useHttp },
         {
           url: `${baseUrl}/incoming-payments`
         },
@@ -194,7 +195,7 @@ describe('requests', (): void => {
 
       try {
         await get(
-          { axiosInstance, logger },
+          { axiosInstance, logger, useHttp },
           {
             url: `${baseUrl}/incoming-payments`
           },
@@ -214,7 +215,7 @@ describe('requests', (): void => {
 
       try {
         await get(
-          { axiosInstance, logger },
+          { axiosInstance, logger, useHttp },
           {
             url: `${baseUrl}/incoming-payments`
           },
@@ -314,7 +315,7 @@ describe('requests', (): void => {
         .reply(status, body)
 
       await post(
-        { axiosInstance, logger },
+        { axiosInstance, logger, useHttp },
         {
           url: `${baseUrl}/grant`,
           body
@@ -370,7 +371,7 @@ describe('requests', (): void => {
         .reply(status, body)
 
       await post(
-        { axiosInstance, logger },
+        { axiosInstance, logger, useHttp },
         {
           url: `${baseUrl}/grant`,
           body,
@@ -401,7 +402,7 @@ describe('requests', (): void => {
       )
 
       await post(
-        { axiosInstance, logger },
+        { axiosInstance, logger, useHttp },
         {
           url: `${baseUrl}/grant`,
           body
@@ -423,7 +424,7 @@ describe('requests', (): void => {
 
       try {
         await post(
-          { axiosInstance, logger },
+          { axiosInstance, logger, useHttp },
           {
             url: `${baseUrl}/grant`,
             body
@@ -448,7 +449,7 @@ describe('requests', (): void => {
 
       try {
         await post(
-          { axiosInstance, logger },
+          { axiosInstance, logger, useHttp },
           {
             url: `${baseUrl}/grant`,
             body
@@ -469,7 +470,7 @@ describe('requests', (): void => {
       const scope = nock(httpsUrl).post('/').reply(200)
 
       await post(
-        { axiosInstance, logger },
+        { axiosInstance, logger, useHttp },
         { url: httpsUrl },
         responseValidators.successfulValidator
       )
@@ -520,7 +521,7 @@ describe('requests', (): void => {
         .reply(status)
 
       await deleteRequest(
-        { axiosInstance, logger },
+        { axiosInstance, logger, useHttp },
         {
           url: `${baseUrl}/grant`
         },
@@ -551,7 +552,7 @@ describe('requests', (): void => {
         .reply(status)
 
       await deleteRequest(
-        { axiosInstance, logger },
+        { axiosInstance, logger, useHttp },
         {
           url: `${baseUrl}/grant/`,
           accessToken
@@ -589,7 +590,7 @@ describe('requests', (): void => {
         )
 
         await deleteRequest(
-          { axiosInstance, logger },
+          { axiosInstance, logger, useHttp },
           {
             url: `${baseUrl}/grant`
           },
@@ -609,7 +610,7 @@ describe('requests', (): void => {
 
       try {
         await deleteRequest(
-          { axiosInstance, logger },
+          { axiosInstance, logger, useHttp },
           {
             url: `${baseUrl}/grant`
           },
@@ -630,7 +631,7 @@ describe('requests', (): void => {
 
       try {
         await deleteRequest(
-          { axiosInstance, logger },
+          { axiosInstance, logger, useHttp },
           {
             url: `${baseUrl}/grant`
           },
@@ -650,7 +651,7 @@ describe('requests', (): void => {
       const scope = nock(httpsUrl).delete('/').reply(200)
 
       await deleteRequest(
-        { axiosInstance, logger },
+        { axiosInstance, logger, useHttp },
         { url: httpsUrl },
         responseValidators.successfulValidator
       )

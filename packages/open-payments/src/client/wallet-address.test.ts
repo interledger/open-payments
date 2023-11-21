@@ -26,6 +26,7 @@ describe('wallet-address', (): void => {
     )
   })
 
+  const useHttp = false
   const axiosInstance = defaultAxiosInstance
   const logger = silentLogger
 
@@ -49,11 +50,12 @@ describe('wallet-address', (): void => {
         await createWalletAddressRoutes({
           openApi,
           axiosInstance,
-          logger
+          logger,
+          useHttp
         }).get({ url: walletAddress.id })
 
         expect(getSpy).toHaveBeenCalledWith(
-          { axiosInstance, logger },
+          { axiosInstance, logger, useHttp },
           { url: walletAddress.id },
           true
         )
@@ -77,13 +79,15 @@ describe('wallet-address', (): void => {
         await createWalletAddressRoutes({
           openApi,
           axiosInstance,
-          logger
+          logger,
+          useHttp
         }).getKeys({ url: walletAddress.id })
 
         expect(getSpy).toHaveBeenCalledWith(
           {
             axiosInstance,
-            logger
+            logger,
+            useHttp
           },
           { url: `${walletAddress.id}/jwks.json` },
           true
