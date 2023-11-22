@@ -498,7 +498,7 @@ describe('requests', (): void => {
     const responseValidators = mockOpenApiResponseValidators()
 
     beforeAll(() => {
-      jest.spyOn(deps.axiosInstance, 'delete')
+      jest.spyOn(axiosInstance, 'delete')
     })
 
     test('properly makes DELETE request', async (): Promise<void> => {
@@ -518,12 +518,9 @@ describe('requests', (): void => {
       )
       scope.done()
 
-      expect(deps.axiosInstance.delete).toHaveBeenCalledWith(
-        `${baseUrl}/grant`,
-        {
-          headers: {}
-        }
-      )
+      expect(axiosInstance.delete).toHaveBeenCalledWith(`${baseUrl}/grant`, {
+        headers: {}
+      })
     })
 
     test('properly makes DELETE request with accessToken', async (): Promise<void> => {
