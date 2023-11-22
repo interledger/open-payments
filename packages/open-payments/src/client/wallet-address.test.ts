@@ -1,12 +1,7 @@
 import { createWalletAddressRoutes } from './wallet-address'
 import { OpenAPI, HttpMethod, createOpenAPI } from '@interledger/openapi'
 import path from 'path'
-import {
-  defaultAxiosInstance,
-  mockJwk,
-  mockWalletAddress,
-  silentLogger
-} from '../test/helpers'
+import { createTestDeps, mockJwk, mockWalletAddress } from '../test/helpers'
 import * as requestors from './requests'
 
 jest.mock('./requests', () => {
@@ -26,8 +21,7 @@ describe('wallet-address', (): void => {
     )
   })
 
-  const axiosInstance = defaultAxiosInstance
-  const logger = silentLogger
+  const deps = createTestDeps()
 
   describe('routes', (): void => {
     const walletAddress = mockWalletAddress()
@@ -48,12 +42,11 @@ describe('wallet-address', (): void => {
 
         await createWalletAddressRoutes({
           openApi,
-          axiosInstance,
-          logger
+          ...deps
         }).get({ url: walletAddress.id })
 
         expect(getSpy).toHaveBeenCalledWith(
-          { axiosInstance, logger },
+          deps,
           { url: walletAddress.id },
           true
         )
@@ -76,15 +69,11 @@ describe('wallet-address', (): void => {
 
         await createWalletAddressRoutes({
           openApi,
-          axiosInstance,
-          logger
+          ...deps
         }).getKeys({ url: walletAddress.id })
 
         expect(getSpy).toHaveBeenCalledWith(
-          {
-            axiosInstance,
-            logger
-          },
+          deps,
           { url: `${walletAddress.id}/jwks.json` },
           true
         )

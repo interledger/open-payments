@@ -7,11 +7,10 @@ import {
 } from './outgoing-payment'
 import { OpenAPI, HttpMethod, createOpenAPI } from '@interledger/openapi'
 import {
-  defaultAxiosInstance,
   mockOutgoingPayment,
   mockOpenApiResponseValidators,
-  silentLogger,
-  mockOutgoingPaymentPaginationResult
+  mockOutgoingPaymentPaginationResult,
+  createTestDeps
 } from '../test/helpers'
 import nock from 'nock'
 import path from 'path'
@@ -37,8 +36,7 @@ describe('outgoing-payment', (): void => {
     )
   })
 
-  const axiosInstance = defaultAxiosInstance
-  const logger = silentLogger
+  const deps = createTestDeps()
   const walletAddress = `http://localhost:1000/.well-known/pay`
   const serverAddress = 'http://localhost:1000'
   const openApiValidators = mockOpenApiResponseValidators()
@@ -52,7 +50,7 @@ describe('outgoing-payment', (): void => {
         .reply(200, outgoingPayment)
 
       const result = await getOutgoingPayment(
-        { axiosInstance, logger },
+        deps,
         {
           url: `${serverAddress}/outgoing-payments/1`,
           accessToken: 'accessToken'
@@ -83,7 +81,7 @@ describe('outgoing-payment', (): void => {
 
       try {
         await getOutgoingPayment(
-          { axiosInstance, logger },
+          deps,
           {
             url: `${serverAddress}/outgoing-payments/1`,
             accessToken: 'accessToken'
@@ -113,7 +111,7 @@ describe('outgoing-payment', (): void => {
 
       await expect(
         getOutgoingPayment(
-          { axiosInstance, logger },
+          deps,
           {
             url: `${serverAddress}/outgoing-payments/1`,
             accessToken: 'accessToken'
@@ -150,7 +148,7 @@ describe('outgoing-payment', (): void => {
             .reply(200, outgoingPaymentPaginationResult)
 
           const result = await listOutgoingPayments(
-            { axiosInstance, logger },
+            deps,
             {
               url: serverAddress,
               walletAddress,
@@ -192,10 +190,7 @@ describe('outgoing-payment', (): void => {
             .reply(200, outgoingPaymentPaginationResult)
 
           const result = await listOutgoingPayments(
-            {
-              axiosInstance,
-              logger
-            },
+            deps,
             {
               url: serverAddress,
               walletAddress,
@@ -240,10 +235,7 @@ describe('outgoing-payment', (): void => {
 
       try {
         await listOutgoingPayments(
-          {
-            axiosInstance,
-            logger
-          },
+          deps,
           {
             url: serverAddress,
             walletAddress,
@@ -276,10 +268,7 @@ describe('outgoing-payment', (): void => {
 
       await expect(
         listOutgoingPayments(
-          {
-            axiosInstance,
-            logger
-          },
+          deps,
           {
             url: serverAddress,
             walletAddress,
@@ -310,7 +299,7 @@ describe('outgoing-payment', (): void => {
         .reply(200, outgoingPayment)
 
       const result = await createOutgoingPayment(
-        { axiosInstance, logger },
+        deps,
         {
           url: serverAddress,
           accessToken: 'accessToken'
@@ -346,7 +335,7 @@ describe('outgoing-payment', (): void => {
 
       try {
         await createOutgoingPayment(
-          { axiosInstance, logger },
+          deps,
           {
             url: serverAddress,
             accessToken: 'accessToken'
@@ -380,10 +369,7 @@ describe('outgoing-payment', (): void => {
 
       await expect(
         createOutgoingPayment(
-          {
-            axiosInstance,
-            logger
-          },
+          deps,
           {
             url: serverAddress,
             accessToken: 'accessToken'
@@ -505,15 +491,11 @@ describe('outgoing-payment', (): void => {
 
         await createOutgoingPaymentRoutes({
           openApi,
-          axiosInstance,
-          logger
+          ...deps
         }).get({ url, accessToken: 'accessToken' })
 
         expect(getSpy).toHaveBeenCalledWith(
-          {
-            axiosInstance,
-            logger
-          },
+          deps,
           {
             url,
             accessToken: 'accessToken'
@@ -545,8 +527,7 @@ describe('outgoing-payment', (): void => {
 
         await createOutgoingPaymentRoutes({
           openApi,
-          axiosInstance,
-          logger
+          ...deps
         }).list({
           url: serverAddress,
           walletAddress,
@@ -554,10 +535,7 @@ describe('outgoing-payment', (): void => {
         })
 
         expect(getSpy).toHaveBeenCalledWith(
-          {
-            axiosInstance,
-            logger
-          },
+          deps,
           {
             url,
             accessToken: 'accessToken',
@@ -592,18 +570,14 @@ describe('outgoing-payment', (): void => {
 
         await createOutgoingPaymentRoutes({
           openApi,
-          axiosInstance,
-          logger
+          ...deps
         }).create(
           { url: serverAddress, accessToken: 'accessToken' },
           outgoingPaymentCreateArgs
         )
 
         expect(postSpy).toHaveBeenCalledWith(
-          {
-            axiosInstance,
-            logger
-          },
+          deps,
           { url, accessToken: 'accessToken', body: outgoingPaymentCreateArgs },
           true
         )

@@ -21,6 +21,7 @@ import {
 import { v4 as uuid } from 'uuid'
 import { ResponseValidator } from '@interledger/openapi'
 import base64url from 'base64url'
+import { BaseDeps } from '../client'
 
 export const silentLogger = createLogger({
   level: 'silent'
@@ -301,5 +302,12 @@ export const mockQuote = (overrides?: Partial<Quote>): Quote => ({
   createdAt: new Date().toISOString(),
   expiresAt: new Date(Date.now() + 60_000).toISOString(),
   method: 'ilp',
+  ...overrides
+})
+
+export const createTestDeps = (overrides?: Partial<BaseDeps>): BaseDeps => ({
+  axiosInstance: defaultAxiosInstance,
+  logger: silentLogger,
+  useHttp: false,
   ...overrides
 })

@@ -2,10 +2,9 @@ import { createQuoteRoutes, getQuote, createQuote } from './quote'
 import { OpenAPI, HttpMethod, createOpenAPI } from '@interledger/openapi'
 import path from 'path'
 import {
-  defaultAxiosInstance,
+  createTestDeps,
   mockOpenApiResponseValidators,
-  mockQuote,
-  silentLogger
+  mockQuote
 } from '../test/helpers'
 import nock from 'nock'
 import * as requestors from './requests'
@@ -27,9 +26,8 @@ describe('quote', (): void => {
     )
   })
 
+  const deps = createTestDeps()
   const quote = mockQuote()
-  const axiosInstance = defaultAxiosInstance
-  const logger = silentLogger
   const baseUrl = 'http://localhost:1000'
   const openApiValidators = mockOpenApiResponseValidators()
   const walletAddress = 'http://localhost:1000/.well-known/pay'
@@ -39,10 +37,7 @@ describe('quote', (): void => {
     test('returns the quote if it passes open api validation', async (): Promise<void> => {
       const scope = nock(baseUrl).get(`/quotes/${quote.id}`).reply(200, quote)
       const result = await getQuote(
-        {
-          axiosInstance,
-          logger
-        },
+        deps,
         {
           url: `${baseUrl}/quotes/${quote.id}`,
           accessToken
@@ -58,10 +53,7 @@ describe('quote', (): void => {
 
       await expect(() =>
         getQuote(
-          {
-            axiosInstance,
-            logger
-          },
+          deps,
           {
             url: `${baseUrl}/quotes/${quote.id}`,
             accessToken
@@ -77,10 +69,7 @@ describe('quote', (): void => {
     test('returns the quote if it passes open api validation', async (): Promise<void> => {
       const scope = nock(baseUrl).post(`/quotes`).reply(200, quote)
       const result = await createQuote(
-        {
-          axiosInstance,
-          logger
-        },
+        deps,
         {
           url: baseUrl,
           accessToken
@@ -96,10 +85,7 @@ describe('quote', (): void => {
       const scope = nock(baseUrl).post(`/quotes`).reply(200, quote)
       await expect(() =>
         createQuote(
-          {
-            axiosInstance,
-            logger
-          },
+          deps,
           {
             url: baseUrl,
             accessToken
@@ -130,21 +116,13 @@ describe('quote', (): void => {
 
         await createQuoteRoutes({
           openApi,
-          axiosInstance,
-          logger
+          ...deps
         }).get({
           url,
           accessToken
         })
 
-        expect(getSpy).toHaveBeenCalledWith(
-          {
-            axiosInstance,
-            logger
-          },
-          { url, accessToken },
-          true
-        )
+        expect(getSpy).toHaveBeenCalledWith(deps, { url, accessToken }, true)
       })
     })
 
@@ -165,8 +143,7 @@ describe('quote', (): void => {
 
         await createQuoteRoutes({
           openApi,
-          axiosInstance,
-          logger
+          ...deps
         }).create(
           {
             url: baseUrl,
@@ -176,10 +153,7 @@ describe('quote', (): void => {
         )
 
         expect(postSpy).toHaveBeenCalledWith(
-          {
-            axiosInstance,
-            logger
-          },
+          deps,
           {
             url,
             accessToken,
