@@ -2,11 +2,7 @@
 import { createGrantRoutes } from './grant'
 import { OpenAPI, HttpMethod, createOpenAPI } from '@interledger/openapi'
 import path from 'path'
-import {
-  defaultAxiosInstance,
-  mockGrantRequest,
-  silentLogger
-} from '../test/helpers'
+import { createTestDeps, mockGrantRequest } from '../test/helpers'
 import * as requestors from './requests'
 import { v4 as uuid } from 'uuid'
 
@@ -26,12 +22,8 @@ describe('grant', (): void => {
     )
   })
 
-  const deps = {
-    axiosInstance: defaultAxiosInstance,
-    logger: silentLogger,
-    client: 'https://example.com/.well-known/pay',
-    useHttp: false
-  }
+  const deps = createTestDeps()
+  const client = 'https://example.com/.well-known/pay'
 
   describe('routes', () => {
     const url = 'http://localhost:1000'
@@ -49,18 +41,18 @@ describe('grant', (): void => {
         const postSpy = jest.spyOn(requestors, 'post')
         const grantRequest = mockGrantRequest()
 
-        await createGrantRoutes({ openApi, ...deps }).request(
+        await createGrantRoutes({ openApi, client, ...deps }).request(
           { url },
           grantRequest
         )
 
         expect(postSpy).toHaveBeenCalledWith(
-          { openApi, ...deps },
+          deps,
           {
             url,
             body: {
               ...grantRequest,
-              client: deps.client
+              client
             }
           },
           true
@@ -81,16 +73,12 @@ describe('grant', (): void => {
           .spyOn(requestors, 'deleteRequest')
           .mockResolvedValueOnce()
 
-        await createGrantRoutes({ openApi, ...deps }).cancel({
+        await createGrantRoutes({ openApi, client, ...deps }).cancel({
           url,
           accessToken
         })
 
-        expect(deleteSpy).toHaveBeenCalledWith(
-          { openApi, ...deps },
-          { url, accessToken },
-          true
-        )
+        expect(deleteSpy).toHaveBeenCalledWith(deps, { url, accessToken }, true)
       })
     })
 
@@ -106,7 +94,7 @@ describe('grant', (): void => {
         const postSpy = jest.spyOn(requestors, 'post')
         const interact_ref = uuid()
 
-        await createGrantRoutes({ openApi, ...deps }).continue(
+        await createGrantRoutes({ openApi, client, ...deps }).continue(
           {
             url,
             accessToken
@@ -115,7 +103,7 @@ describe('grant', (): void => {
         )
 
         expect(postSpy).toHaveBeenCalledWith(
-          { openApi, ...deps },
+          deps,
           { url, accessToken, body: { interact_ref } },
           true
         )

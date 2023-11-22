@@ -1,5 +1,5 @@
 import { HttpMethod, ResponseValidator } from '@interledger/openapi'
-import { GrantOrTokenRequestArgs, RouteDeps } from '.'
+import { GrantOrTokenRequestArgs, BaseDeps, RouteDeps } from '.'
 import { getASPath, AccessToken } from '../types'
 import { deleteRequest, post } from './requests'
 
@@ -9,19 +9,14 @@ export interface TokenRoutes {
 }
 
 export const rotateToken = async (
-  deps: RouteDeps,
+  deps: BaseDeps,
   args: GrantOrTokenRequestArgs,
   validateOpenApiResponse: ResponseValidator<AccessToken>
 ) => {
-  const { axiosInstance, logger, useHttp } = deps
   const { url, accessToken } = args
 
   return post(
-    {
-      axiosInstance,
-      logger,
-      useHttp
-    },
+    deps,
     {
       url,
       accessToken
@@ -31,19 +26,14 @@ export const rotateToken = async (
 }
 
 export const revokeToken = async (
-  deps: RouteDeps,
+  deps: BaseDeps,
   args: GrantOrTokenRequestArgs,
   validateOpenApiResponse: ResponseValidator<void>
 ) => {
-  const { axiosInstance, logger, useHttp } = deps
   const { url, accessToken } = args
 
   return deleteRequest(
-    {
-      axiosInstance,
-      logger,
-      useHttp
-    },
+    deps,
     {
       url,
       accessToken
@@ -53,21 +43,21 @@ export const revokeToken = async (
 }
 
 export const createTokenRoutes = (deps: RouteDeps): TokenRoutes => {
-  const rotateTokenValidator =
-    deps.openApi.createResponseValidator<AccessToken>({
-      path: getASPath('/token/{id}'),
-      method: HttpMethod.POST
-    })
+  const { openApi, ...baseDeps } = deps
+  const rotateTokenValidator = openApi.createResponseValidator<AccessToken>({
+    path: getASPath('/token/{id}'),
+    method: HttpMethod.POST
+  })
 
-  const revokeTokenValidator = deps.openApi.createResponseValidator<void>({
+  const revokeTokenValidator = openApi.createResponseValidator<void>({
     path: getASPath('/token/{id}'),
     method: HttpMethod.DELETE
   })
 
   return {
     rotate: (args: GrantOrTokenRequestArgs) =>
-      rotateToken(deps, args, rotateTokenValidator),
+      rotateToken(baseDeps, args, rotateTokenValidator),
     revoke: (args: GrantOrTokenRequestArgs) =>
-      revokeToken(deps, args, revokeTokenValidator)
+      revokeToken(baseDeps, args, revokeTokenValidator)
   }
 }

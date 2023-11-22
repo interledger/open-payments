@@ -12,7 +12,7 @@ export interface QuoteRoutes {
 }
 
 export const createQuoteRoutes = (deps: RouteDeps): QuoteRoutes => {
-  const { axiosInstance, openApi, logger, useHttp } = deps
+  const { openApi, ...baseDeps } = deps
 
   const getQuoteOpenApiValidator = openApi.createResponseValidator<Quote>({
     path: getRSPath('/quotes/{id}'),
@@ -26,17 +26,13 @@ export const createQuoteRoutes = (deps: RouteDeps): QuoteRoutes => {
 
   return {
     get: (args: ResourceRequestArgs) =>
-      getQuote(
-        { axiosInstance, logger, useHttp },
-        args,
-        getQuoteOpenApiValidator
-      ),
+      getQuote(baseDeps, args, getQuoteOpenApiValidator),
     create: (
       createArgs: ResourceRequestArgs,
       createQuoteArgs: CreateQuoteArgs
     ) =>
       createQuote(
-        { axiosInstance, logger, useHttp },
+        baseDeps,
         createArgs,
         createQuoteOpenApiValidator,
         createQuoteArgs
@@ -49,13 +45,7 @@ export const getQuote = async (
   args: ResourceRequestArgs,
   validateOpenApiResponse: ResponseValidator<Quote>
 ) => {
-  const { axiosInstance, logger, useHttp } = deps
-
-  const quote = await get(
-    { axiosInstance, logger, useHttp },
-    args,
-    validateOpenApiResponse
-  )
+  const quote = await get(deps, args, validateOpenApiResponse)
 
   return quote
 }
@@ -66,12 +56,11 @@ export const createQuote = async (
   validateOpenApiResponse: ResponseValidator<Quote>,
   createQuoteArgs: CreateQuoteArgs
 ) => {
-  const { axiosInstance, logger, useHttp } = deps
   const { accessToken, url: baseUrl } = createArgs
   const url = `${baseUrl}${getRSPath('/quotes')}`
 
   const quote = await post(
-    { axiosInstance, logger, useHttp },
+    deps,
     { url, accessToken, body: createQuoteArgs },
     validateOpenApiResponse
   )

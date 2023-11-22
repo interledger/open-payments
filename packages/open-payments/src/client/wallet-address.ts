@@ -11,7 +11,7 @@ export interface WalletAddressRoutes {
 export const createWalletAddressRoutes = (
   deps: RouteDeps
 ): WalletAddressRoutes => {
-  const { axiosInstance, openApi, logger, useHttp } = deps
+  const { openApi, ...baseDeps } = deps
 
   const getPaymentPaymentValidator =
     openApi.createResponseValidator<WalletAddress>({
@@ -26,14 +26,10 @@ export const createWalletAddressRoutes = (
 
   return {
     get: (args: UnauthenticatedResourceRequestArgs) =>
-      get(
-        { axiosInstance, logger, useHttp },
-        { url: args.url },
-        getPaymentPaymentValidator
-      ),
+      get(baseDeps, { url: args.url }, getPaymentPaymentValidator),
     getKeys: (args: UnauthenticatedResourceRequestArgs) =>
       get(
-        { axiosInstance, logger, useHttp },
+        baseDeps,
         {
           url: `${args.url}/jwks.json`
         },

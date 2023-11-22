@@ -4,10 +4,9 @@ import { OpenAPI, HttpMethod, createOpenAPI } from '@interledger/openapi'
 import path from 'path'
 import nock from 'nock'
 import {
-  defaultAxiosInstance,
+  createTestDeps,
   mockAccessToken,
-  mockOpenApiResponseValidators,
-  silentLogger
+  mockOpenApiResponseValidators
 } from '../test/helpers'
 import * as requestors from './requests'
 
@@ -28,9 +27,7 @@ describe('token', (): void => {
     )
   })
 
-  const useHttp = false
-  const axiosInstance = defaultAxiosInstance
-  const logger = silentLogger
+  const deps = createTestDeps()
   const openApiValidators = mockOpenApiResponseValidators()
 
   describe('createTokenRoutes', (): void => {
@@ -50,19 +47,11 @@ describe('token', (): void => {
         .spyOn(requestors, 'post')
         .mockResolvedValueOnce(mockedAccessToken)
 
-      createTokenRoutes({ axiosInstance, openApi, logger, useHttp }).rotate({
+      createTokenRoutes({ openApi, ...deps }).rotate({
         url,
         accessToken
       })
-      expect(postSpy).toHaveBeenCalledWith(
-        {
-          axiosInstance,
-          logger,
-          useHttp
-        },
-        { url, accessToken },
-        true
-      )
+      expect(postSpy).toHaveBeenCalledWith(deps, { url, accessToken }, true)
     })
 
     test('creates revokeTokenValidator properly', async (): Promise<void> => {
@@ -77,19 +66,11 @@ describe('token', (): void => {
         .spyOn(requestors, 'deleteRequest')
         .mockResolvedValueOnce()
 
-      createTokenRoutes({ axiosInstance, openApi, logger, useHttp }).revoke({
+      createTokenRoutes({ openApi, ...deps }).revoke({
         url,
         accessToken
       })
-      expect(deleteSpy).toHaveBeenCalledWith(
-        {
-          axiosInstance,
-          logger,
-          useHttp
-        },
-        { url, accessToken },
-        true
-      )
+      expect(deleteSpy).toHaveBeenCalledWith(deps, { url, accessToken }, true)
     })
   })
 
@@ -103,12 +84,7 @@ describe('token', (): void => {
         .reply(200, accessToken)
 
       const result = await rotateToken(
-        {
-          axiosInstance,
-          openApi,
-          logger,
-          useHttp
-        },
+        deps,
         {
           url: accessToken.access_token.manage,
           accessToken: 'accessToken'
@@ -129,12 +105,7 @@ describe('token', (): void => {
 
       await expect(() =>
         rotateToken(
-          {
-            axiosInstance,
-            openApi,
-            logger,
-            useHttp
-          },
+          deps,
           {
             url: accessToken.access_token.manage,
             accessToken: 'accessToken'
@@ -154,12 +125,7 @@ describe('token', (): void => {
       const scope = nock(manageUrl.origin).delete(manageUrl.pathname).reply(204)
 
       const result = await revokeToken(
-        {
-          axiosInstance,
-          openApi,
-          logger,
-          useHttp
-        },
+        deps,
         {
           url: accessToken.access_token.manage,
           accessToken: 'accessToken'
@@ -180,12 +146,7 @@ describe('token', (): void => {
 
       await expect(() =>
         revokeToken(
-          {
-            axiosInstance,
-            openApi,
-            logger,
-            useHttp
-          },
+          deps,
           {
             url: accessToken.access_token.manage,
             accessToken: 'accessToken'
