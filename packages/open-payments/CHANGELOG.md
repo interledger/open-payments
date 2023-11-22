@@ -1,5 +1,11 @@
 # @interledger/open-payments
 
+## 6.1.1
+
+### Patch Changes
+
+- 28adb01: The `useHttp` option, when initializing an authenticated or unauthenticated client, was not being passed to resource route factories and request functions. This release addresses and resolves this issue.
+
 ## 6.1.0
 
 ### Minor Changes
