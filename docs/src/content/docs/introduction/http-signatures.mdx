@@ -41,20 +41,33 @@ The benefits of using Ed25519 include:
 
 For more information about the EdDSA and its variants, refer to <LinkOut href='https://datatracker.ietf.org/doc/html/rfc8032'>RFC8032</LinkOut>.
 
+### Message signature creation
+
+The [RFC8032](https://www.rfc-editor.org/rfc/rfc8032) specification permits the use of different components of an HTTP message to generate a uniquely labelled message signature. There can be multiple signatures within each HTTP message, each one generated using a different signature algorithm.
+
+The Open Payments API implements the specification to create a signature, starting with the original HTTP message (note: for simplicity, this illustration uses HTTP 1.1):
+
+![An HTTP message, before signature](/img/http-sig/1-original_msg.png)
+
+Select the fields of the message header to use to create the signature. 
+Also specify the other signature parameters, the signing algorithm, and the public key identifier:
+
+![The message components & other signature parameters](/img/http-sig/2-select_rest_of_sig_params.png)
+
+The signature base then gets created, with its final sub-field being an ordered list of the signature parameters, in structured HTTP format: 
+
+![The signature base](/img/http-sig/3-sig_base.png)
+
+Bringing the signature creation process together:
+
+![The signature base](/img/http-sig/4-sig_creation.png)
+
+The output is a signed HTTP message with a header that includes the labelled signature value, along with its associated signature input field:
+
+![The signed HTTP message](/img/http-sig/5-signed_msg.png)
+
 {/* prettier-ignore */}
-{/* ### Message signature creation
-
-:::caution
-This section is WIP
-:::
-
-### Bringing it all together
-
-:::caution
-This section is WIP
-:::
-
-## Use the HTTP signature Lambda function
+{/* # Use the HTTP signature Lambda function
 
 :::caution
 This section is WIP
