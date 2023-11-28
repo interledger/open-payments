@@ -45,24 +45,29 @@ For more information about the EdDSA and its variants, refer to <LinkOut href='h
 
 The [RFC8032](https://www.rfc-editor.org/rfc/rfc8032) specification permits the use of different components of an HTTP message to generate a uniquely labelled message signature. There can be multiple signatures within each HTTP message, each one generated using a different signature algorithm.
 
-The Open Payments API implements the specification to create a signature, starting with the original HTTP message (note: for simplicity, this illustration uses HTTP 1.1):
+The Open Payments API implements the specification to create a signature, starting with the original HTTP message.  
+This is illustrated using HTTP 1.1, for simplicity:
 
 ![An HTTP message, before signature](/img/http-sig/1-original_msg.png)
 
-Select the fields of the message header to use to create the signature. 
-Also specify the other signature parameters, the signing algorithm, and the public key identifier:
+Next in the process, the following are specified:
+
+- Fields of the message header that will be covered when creating the signature.
+- Additional signature parameters.
+- The signing algorithm.
+- An identifier for the signer's public key, which will later be used for signature verification.
 
 ![The message components & other signature parameters](/img/http-sig/2-select_rest_of_sig_params.png)
 
-The signature base then gets created, with its final sub-field being an ordered list of the signature parameters, in structured HTTP format: 
+Based on the above, a signature base gets created.
 
 ![The signature base](/img/http-sig/3-sig_base.png)
 
-Bringing the signature creation process together:
+The signature base gets hashed using SHA-256. The resulting digest gets signed with the signer's private key, producing the signature as a byte string. The output signature gets Base64 encoded, producing a signature value that is ready to be added to the header of the original message.
 
 ![The signature base](/img/http-sig/4-sig_creation.png)
 
-The output is a signed HTTP message with a header that includes the labelled signature value, along with its associated signature input field:
+The output is a signed HTTP message with a header that includes a labelled signature value, with its associated signature input field:
 
 ![The signed HTTP message](/img/http-sig/5-signed_msg.png)
 
