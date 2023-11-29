@@ -33,6 +33,12 @@ export default defineConfig({
         './node_modules/@interledger/docs-design-system/src/styles/ilf-docs.css',
         './src/styles/openpayments.css'
       ],
+      expressiveCode: {
+        styleOverrides: {
+          borderColor: 'transparent',
+          borderRadius: 'var(--border-radius)'
+        }
+      },
       logo: {
         src: './public/favicon.svg'
       },

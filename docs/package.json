@@ -10,9 +10,9 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/starlight": "^0.13.0",
-    "@interledger/docs-design-system": "^0.1.2",
-    "astro": "3.6.0",
+    "@astrojs/starlight": "^0.13.1",
+    "@interledger/docs-design-system": "^0.1.3",
+    "astro": "3.6.3",
     "remark-mermaidjs": "^6.0.0",
     "sharp": "^0.32.6",
     "shiki": "0.14.5",
