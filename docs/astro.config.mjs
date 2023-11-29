@@ -4,7 +4,7 @@ import { generateAPI } from 'starlight-openapi'
 import remarkMermaid from 'remark-mermaidjs'
 
 // Generate the documentation and get the associated sidebar groups.
-const { openAPISidebarGroups, starlightOpenAPI } = await generateAPI([
+const { starlightOpenAPI } = await generateAPI([
   {
     base: 'apis/resource-server',
     label: 'Open Payments',

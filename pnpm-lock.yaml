@@ -54,14 +54,14 @@ importers:
   docs:
     dependencies:
       '@astrojs/starlight':
-        specifier: ^0.13.0
-        version: 0.13.0(astro@3.6.0)
+        specifier: ^0.13.1
+        version: 0.13.1(astro@3.6.3)
       '@interledger/docs-design-system':
-        specifier: ^0.1.2
-        version: 0.1.2
+        specifier: ^0.1.3
+        version: 0.1.3
       astro:
-        specifier: 3.6.0
-        version: 3.6.0(@types/node@18.15.3)(typescript@4.9.5)
+        specifier: 3.6.3
+        version: 3.6.3(@types/node@18.15.3)(typescript@4.9.5)
       remark-mermaidjs:
         specifier: ^6.0.0
         version: 6.0.0
@@ -73,7 +73,7 @@ importers:
         version: 0.14.5
       starlight-openapi:
         specifier: ^0.3.1
-        version: 0.3.1(@astrojs/markdown-remark@3.3.0)(@astrojs/starlight@0.13.0)(astro@3.6.0)(openapi-types@12.1.0)
+        version: 0.3.1(@astrojs/markdown-remark@3.5.0)(@astrojs/starlight@0.13.1)(astro@3.6.3)(openapi-types@12.1.0)
     devDependencies:
       prettier:
         specifier: 3.1.0
@@ -230,13 +230,13 @@ packages:
     resolution: {integrity: sha512-06DD2ZnItMwUnH81LBLco3tWjcZ1lGU9rLCCBaeUCGYe9cI0wKyY2W3kDyoW1I6GmcWgt1fu+D1CTvz+FIKf8A==}
     dev: false
 
-  /@astrojs/markdown-remark@3.2.0(astro@3.6.0):
+  /@astrojs/markdown-remark@3.2.0(astro@3.6.3):
     resolution: {integrity: sha512-jigyLfefUZPKgVmmraCkVpdUuFH1R3SrpgQO13axsgwLDBgkggaQpNR5Ag4O9PDualeBtbdt30aYSfvnBKx9Hg==}
     peerDependencies:
       astro: ^3.1.0
     dependencies:
       '@astrojs/prism': 3.0.0
-      astro: 3.6.0(@types/node@18.15.3)(typescript@4.9.5)
+      astro: 3.6.3(@types/node@18.15.3)(typescript@4.9.5)
       github-slugger: 2.0.0
       import-meta-resolve: 3.0.0
       mdast-util-definitions: 6.0.0
@@ -254,37 +254,13 @@ packages:
       - supports-color
     dev: false
 
-  /@astrojs/markdown-remark@3.3.0(astro@3.6.0):
-    resolution: {integrity: sha512-ezFzEiZygc/ASe2Eul9v1yrTbNGqSbR348UGNXQ4Dtkx8MYRwfiBfmPm6VnEdfIGkW+bi5qIUReKfc7mPVUkIg==}
-    peerDependencies:
-      astro: ^3.3.0
-    dependencies:
-      '@astrojs/prism': 3.0.0
-      astro: 3.6.0(@types/node@18.15.3)(typescript@4.9.5)
-      github-slugger: 2.0.0
-      import-meta-resolve: 3.0.0
-      mdast-util-definitions: 6.0.0
-      rehype-raw: 6.1.1
-      rehype-stringify: 9.0.4
-      remark-gfm: 3.0.1
-      remark-parse: 10.0.2
-      remark-rehype: 10.1.0
-      remark-smartypants: 2.0.0
-      shikiji: 0.6.10
-      unified: 10.1.2
-      unist-util-visit: 4.1.2
-      vfile: 5.3.7
-    transitivePeerDependencies:
-      - supports-color
-    dev: false
-
-  /@astrojs/markdown-remark@3.5.0(astro@3.6.0):
+  /@astrojs/markdown-remark@3.5.0(astro@3.6.3):
     resolution: {integrity: sha512-q7vdIqzYhxpsfghg2YmkmSXCfp4w7lBTYP+SSHw89wVhC5Riltr3u8w2otBRxNLSByNi+ht/gGkFC23Shetytw==}
     peerDependencies:
       astro: ^3.0.0
     dependencies:
       '@astrojs/prism': 3.0.0
-      astro: 3.6.0(@types/node@18.15.3)(typescript@4.9.5)
+      astro: 3.6.3(@types/node@18.15.3)(typescript@4.9.5)
       github-slugger: 2.0.0
       import-meta-resolve: 3.0.0
       mdast-util-definitions: 6.0.0
@@ -302,16 +278,16 @@ packages:
       - supports-color
     dev: false
 
-  /@astrojs/mdx@1.1.0(astro@3.6.0):
+  /@astrojs/mdx@1.1.0(astro@3.6.3):
     resolution: {integrity: sha512-rmLZBw3CUCkp+5blBJloV2EqJGRaJTraJygWMfCvrLcCA3vzhwzACnVQKdUDlts8EEr6V6+HXYVqi46AVEfobg==}
     engines: {node: '>=18.14.1'}
     peerDependencies:
       astro: ^3.1.0
     dependencies:
-      '@astrojs/markdown-remark': 3.2.0(astro@3.6.0)
+      '@astrojs/markdown-remark': 3.2.0(astro@3.6.3)
       '@mdx-js/mdx': 2.3.0
       acorn: 8.10.0
-      astro: 3.6.0(@types/node@18.15.3)(typescript@4.9.5)
+      astro: 3.6.3(@types/node@18.15.3)(typescript@4.9.5)
       es-module-lexer: 1.3.1
       estree-util-visit: 1.2.1
       github-slugger: 2.0.0
@@ -335,24 +311,24 @@ packages:
       prismjs: 1.29.0
     dev: false
 
-  /@astrojs/sitemap@3.0.0:
-    resolution: {integrity: sha512-qm7npHuUW4q3OOmulqhJ1g69jEQu0Sdc6P8NbOzqIoosj/L+3v4i8dtKBnp6n1UQ4Sx8H8Vdi3Z/On7i9/ZJhw==}
+  /@astrojs/sitemap@3.0.3:
+    resolution: {integrity: sha512-+GRKp1yho9dpHBcMcU6JpbL41k0yYZghOkNsMRb8QIRflbGHvd787tdv9oIZ5NJj0SqAuOlqp2UpqLkJXuAe2A==}
     dependencies:
       sitemap: 7.1.1
-      zod: 3.21.1
+      zod: 3.22.4
     dev: false
 
-  /@astrojs/starlight@0.13.0(astro@3.6.0):
-    resolution: {integrity: sha512-3SVWGP9Qze3UkM5Wozpx+5v9dh75ZFPSHRqzeuXNtctn5nHjlzvOgIIQnuyyNhIEQMfml1lo83jL3Vsf7Qk7Iw==}
+  /@astrojs/starlight@0.13.1(astro@3.6.3):
+    resolution: {integrity: sha512-cJ3WQcX3KAedH1uRApxp6usacCcRd76jsWT1V2j4rqWU817PBFrhF7xAsvm4aQaWPryqmsFOmBwSg+iOLsGNew==}
     peerDependencies:
       astro: ^3.2.0
     dependencies:
-      '@astrojs/mdx': 1.1.0(astro@3.6.0)
-      '@astrojs/sitemap': 3.0.0
+      '@astrojs/mdx': 1.1.0(astro@3.6.3)
+      '@astrojs/sitemap': 3.0.3
       '@pagefind/default-ui': 1.0.3
       '@types/mdast': 3.0.12
-      astro: 3.6.0(@types/node@18.15.3)(typescript@4.9.5)
-      astro-expressive-code: 0.29.1(astro@3.6.0)
+      astro: 3.6.3(@types/node@18.15.3)(typescript@4.9.5)
+      astro-expressive-code: 0.29.1(astro@3.6.3)
       bcp-47: 2.1.0
       execa: 8.0.1
       hast-util-select: 5.0.5
@@ -1809,8 +1785,8 @@ packages:
     resolution: {integrity: sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==}
     dev: true
 
-  /@interledger/docs-design-system@0.1.2:
-    resolution: {integrity: sha512-u0FI3HFwZlk1Uqv67yYHQAsaAciZrbwOdaAWpp6OgCOb5CPIEUX9mKfABoZsJHauWa7RfdbyVNPy+cJFJgaItg==}
+  /@interledger/docs-design-system@0.1.3:
+    resolution: {integrity: sha512-hgZ3DjVP8YrFm5DQVKOZBwVYE1cOMy1zFoGWo5LABJya1Cw4b3RYr0mQaAKhLb2dPnzw35jA3ZzyRPyM3sjvXw==}
     dev: false
 
   /@istanbuljs/load-nyc-config@1.1.0:
@@ -3086,23 +3062,23 @@ packages:
     hasBin: true
     dev: false
 
-  /astro-expressive-code@0.29.1(astro@3.6.0):
+  /astro-expressive-code@0.29.1(astro@3.6.3):
     resolution: {integrity: sha512-hvu8kDMr3KD3vqAyJj6KdTDLuebsgnFQdw6V8myJRj464BUMiqPgmufvkuxLrqDCTJvfARJdwf/Q/H3Rqu3mhQ==}
     peerDependencies:
       astro: ^3.0.0-beta
     dependencies:
-      astro: 3.6.0(@types/node@18.15.3)(typescript@4.9.5)
+      astro: 3.6.3(@types/node@18.15.3)(typescript@4.9.5)
       remark-expressive-code: 0.29.1
     dev: false
 
-  /astro@3.6.0(@types/node@18.15.3)(typescript@4.9.5):
-    resolution: {integrity: sha512-mRDzWXsaSBaN+juvunO4Ukq8HQ1WqrULlcZfKzaKEZEXvxiWmMKN9tH0onQH0EaQ7+f4nNR4VN9kYTM26uMrXQ==}
+  /astro@3.6.3(@types/node@18.15.3)(typescript@4.9.5):
+    resolution: {integrity: sha512-oEkYfXTk38MulcM0lgonGxDO+si4XbPyaf82YK+STLbEFtRggJYiQTyM0zGXnpLEiXX0DOjSvWLhFw3iVcZY1w==}
     engines: {node: '>=18.14.1', npm: '>=6.14.0'}
     hasBin: true
     dependencies:
       '@astrojs/compiler': 2.3.2
       '@astrojs/internal-helpers': 0.2.1
-      '@astrojs/markdown-remark': 3.5.0(astro@3.6.0)
+      '@astrojs/markdown-remark': 3.5.0(astro@3.6.3)
       '@astrojs/telemetry': 3.0.4
       '@babel/core': 7.22.20
       '@babel/generator': 7.22.15
@@ -8824,17 +8800,17 @@ packages:
       escape-string-regexp: 2.0.0
     dev: true
 
-  /starlight-openapi@0.3.1(@astrojs/markdown-remark@3.3.0)(@astrojs/starlight@0.13.0)(astro@3.6.0)(openapi-types@12.1.0):
+  /starlight-openapi@0.3.1(@astrojs/markdown-remark@3.5.0)(@astrojs/starlight@0.13.1)(astro@3.6.3)(openapi-types@12.1.0):
     resolution: {integrity: sha512-meGeXB+nTgB+hGGaRdaJfqhkCpr9kMjcg0AZmo78gi2OejzIU4Cb8liw/F/BOUwG/GkW0oaKEML0VYgjzZ/3+Q==}
     engines: {node: '>=18.14.1'}
     peerDependencies:
       '@astrojs/starlight': '>=0.11.0'
       astro: '>=3.2.0'
     dependencies:
-      '@astrojs/starlight': 0.13.0(astro@3.6.0)
-      '@astropub/md': '@gitpkg.now.sh/astro-community/md/packages/md?124d0f2f4301836d94dfcd5ae77c8f03bbb20c1c(@astrojs/markdown-remark@3.3.0)'
+      '@astrojs/starlight': 0.13.1(astro@3.6.3)
+      '@astropub/md': '@gitpkg.now.sh/astro-community/md/packages/md?124d0f2f4301836d94dfcd5ae77c8f03bbb20c1c(@astrojs/markdown-remark@3.5.0)'
       '@readme/openapi-parser': 2.5.0(openapi-types@12.1.0)
-      astro: 3.6.0(@types/node@18.15.3)(typescript@4.9.5)
+      astro: 3.6.3(@types/node@18.15.3)(typescript@4.9.5)
       github-slugger: 2.0.0
       kleur: 4.1.5
     transitivePeerDependencies:
@@ -9922,10 +9898,6 @@ packages:
     engines: {node: '>=12.20'}
     dev: false
 
-  /zod@3.21.1:
-    resolution: {integrity: sha512-+dTu2m6gmCbO9Ahm4ZBDapx2O6ZY9QSPXst2WXjcznPMwf2YNpn3RevLx4KkZp1OPW/ouFcoBtBzFz/LeY69oA==}
-    dev: false
-
   /zod@3.22.4:
     resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
     dev: false
@@ -9934,7 +9906,7 @@ packages:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
     dev: false
 
-  '@gitpkg.now.sh/astro-community/md/packages/md?124d0f2f4301836d94dfcd5ae77c8f03bbb20c1c(@astrojs/markdown-remark@3.3.0)':
+  '@gitpkg.now.sh/astro-community/md/packages/md?124d0f2f4301836d94dfcd5ae77c8f03bbb20c1c(@astrojs/markdown-remark@3.5.0)':
     resolution: {tarball: https://gitpkg.now.sh/astro-community/md/packages/md?124d0f2f4301836d94dfcd5ae77c8f03bbb20c1c}
     id: '@gitpkg.now.sh/astro-community/md/packages/md?124d0f2f4301836d94dfcd5ae77c8f03bbb20c1c'
     name: '@astropub/md'
@@ -9942,5 +9914,5 @@ packages:
     peerDependencies:
       '@astrojs/markdown-remark': ^3
     dependencies:
-      '@astrojs/markdown-remark': 3.3.0(astro@3.6.0)
+      '@astrojs/markdown-remark': 3.5.0(astro@3.6.3)
     dev: false
