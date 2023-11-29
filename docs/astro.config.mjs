@@ -1,7 +1,6 @@
 import { defineConfig } from 'astro/config'
 import starlight from '@astrojs/starlight'
 import { generateAPI } from 'starlight-openapi'
-import remarkMermaid from 'remark-mermaidjs'
 
 // Generate the documentation and get the associated sidebar groups.
 const { starlightOpenAPI } = await generateAPI([
@@ -20,9 +19,6 @@ const { starlightOpenAPI } = await generateAPI([
 // https://astro.build/config
 export default defineConfig({
   site: 'https://openpayments.guide',
-  markdown: {
-    remarkPlugins: [remarkMermaid]
-  },
   integrations: [
     starlight({
       title: 'Open Payments',

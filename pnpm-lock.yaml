@@ -57,14 +57,14 @@ importers:
         specifier: ^0.13.1
         version: 0.13.1(astro@3.6.3)
       '@interledger/docs-design-system':
-        specifier: ^0.1.3
-        version: 0.1.3
+        specifier: ^0.2.1
+        version: 0.2.1
       astro:
         specifier: 3.6.3
         version: 3.6.3(@types/node@18.15.3)(typescript@4.9.5)
-      remark-mermaidjs:
-        specifier: ^6.0.0
-        version: 6.0.0
+      mermaid:
+        specifier: ^10.6.1
+        version: 10.6.1
       sharp:
         specifier: ^0.32.6
         version: 0.32.6
@@ -1754,12 +1754,6 @@ packages:
       unist-util-visit-parents: 5.1.3
     dev: false
 
-  /@fortawesome/fontawesome-free@6.4.2:
-    resolution: {integrity: sha512-m5cPn3e2+FDCOgi1mz0RexTUvvQibBebOUlUlW0+YrMjDTPkiJ6VTKukA1GRsvRw+12KyJndNjj0O4AgTxm2Pg==}
-    engines: {node: '>=6'}
-    requiresBuild: true
-    dev: false
-
   /@humanwhocodes/config-array@0.11.8:
     resolution: {integrity: sha512-UybHIJzJnR5Qc/MsD9Kr+RpO2h+/P1GhOwdiLPXK5TWk5sgTdu88bTD9UP+CKbPPh5Rni1u0GjAdYQLemG8g+g==}
     engines: {node: '>=10.10.0'}
@@ -1785,8 +1779,12 @@ packages:
     resolution: {integrity: sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==}
     dev: true
 
-  /@interledger/docs-design-system@0.1.3:
-    resolution: {integrity: sha512-hgZ3DjVP8YrFm5DQVKOZBwVYE1cOMy1zFoGWo5LABJya1Cw4b3RYr0mQaAKhLb2dPnzw35jA3ZzyRPyM3sjvXw==}
+  /@interledger/docs-design-system@0.2.1:
+    resolution: {integrity: sha512-7a7nDqhm69Ufeo2IUlK8IfhI4LCP/Z2v8AyeDKDYwwYavFxgAoIfiZ3MeKAos4NkQNJacEjeUfsxY/KcNZi+lA==}
+    dependencies:
+      mermaid: 10.6.1
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /@istanbuljs/load-nyc-config@1.1.0:
@@ -5179,34 +5177,6 @@ packages:
     dependencies:
       function-bind: 1.1.1
 
-  /hast-util-from-dom@5.0.0:
-    resolution: {integrity: sha512-d6235voAp/XR3Hh5uy7aGLbM3S4KamdW0WEgOaU1YoewnuYw4HXb5eRtv9g65m/RFGEfUY1Mw4UqCc5Y8L4Stg==}
-    dependencies:
-      '@types/hast': 3.0.1
-      hastscript: 8.0.0
-      web-namespaces: 2.0.1
-    dev: false
-
-  /hast-util-from-html-isomorphic@2.0.0:
-    resolution: {integrity: sha512-zJfpXq44yff2hmE0XmwEOzdWin5xwH+QIhMLOScpX91e/NSGPsAzNCvLQDIEPyO2TXi+lBmU6hjLIhV8MwP2kw==}
-    dependencies:
-      '@types/hast': 3.0.1
-      hast-util-from-dom: 5.0.0
-      hast-util-from-html: 2.0.1
-      unist-util-remove-position: 5.0.0
-    dev: false
-
-  /hast-util-from-html@2.0.1:
-    resolution: {integrity: sha512-RXQBLMl9kjKVNkJTIO6bZyb2n+cUH8LFaSSzo82jiLT6Tfc+Pt7VQCS+/h3YwG4jaNE2TA2sdJisGWR+aJrp0g==}
-    dependencies:
-      '@types/hast': 3.0.1
-      devlop: 1.1.0
-      hast-util-from-parse5: 8.0.1
-      parse5: 7.1.2
-      vfile: 6.0.1
-      vfile-message: 4.0.2
-    dev: false
-
   /hast-util-from-parse5@7.1.2:
     resolution: {integrity: sha512-Nz7FfPBuljzsN3tCQ4kCBKqdNhQE2l0Tn+X1ubgKBPRoiDIu1mL08Cfw4k7q71+Duyaw7DXDN+VTAp4Vh3oCOw==}
     dependencies:
@@ -6965,18 +6935,8 @@ packages:
     resolution: {integrity: sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==}
     engines: {node: '>= 8'}
 
-  /mermaid-isomorphic@2.1.1:
-    resolution: {integrity: sha512-iShQaYYfGYakKs6fbwVjaTAaTVYm02aIvq8QZJFZMEJ18it2YMhW7QF23jLc1SgXHfVLbeWVoQ27jar2X8KP9g==}
-    dependencies:
-      '@fortawesome/fontawesome-free': 6.4.2
-      mermaid: 10.6.0
-      playwright-core: 1.39.0
-    transitivePeerDependencies:
-      - supports-color
-    dev: false
-
-  /mermaid@10.6.0:
-    resolution: {integrity: sha512-Hcti+Q2NiWnb2ZCijSX89Bn2i7TCUwosBdIn/d+u63Sz7y40XU6EKMctT4UX4qZuZGfKGZpfOeim2/KTrdR7aQ==}
+  /mermaid@10.6.1:
+    resolution: {integrity: sha512-Hky0/RpOw/1il9X8AvzOEChfJtVvmXm+y7JML5C//ePYMy0/9jCEmW1E1g86x9oDfW9+iVEdTV/i+M6KWRNs4A==}
     dependencies:
       '@braintree/sanitize-url': 6.0.4
       '@types/d3-scale': 4.0.6
@@ -7984,12 +7944,6 @@ packages:
     dependencies:
       find-up: 4.1.0
 
-  /playwright-core@1.39.0:
-    resolution: {integrity: sha512-+k4pdZgs1qiM+OUkSjx96YiKsXsmb59evFoqv8SKO067qBA+Z2s/dCzJij/ZhdQcs2zlTAgRKfeiiLm8PQ2qvw==}
-    engines: {node: '>=16'}
-    hasBin: true
-    dev: false
-
   /postcss-nested@6.0.1(postcss@8.4.30):
     resolution: {integrity: sha512-mEp4xPMi5bSWiMbsgoPfcP74lsWLHkQbZc3sY+jWYd65CUwXrUaTp0fmNpa01ZcETKlIgUdFN/MpS2xZtqL9dQ==}
     engines: {node: '>=12.0'}
@@ -8332,19 +8286,6 @@ packages:
     dependencies:
       mdast-util-mdx: 2.0.1
       micromark-extension-mdxjs: 1.0.1
-    transitivePeerDependencies:
-      - supports-color
-    dev: false
-
-  /remark-mermaidjs@6.0.0:
-    resolution: {integrity: sha512-U7nJ8oJGhLPHfMvlmE+8bw57qp++hEygwSdANOHGmqg3V4uGUz8nnOwa1oWf6kwOrG7jf9gXllD+rWvf5mHzBw==}
-    dependencies:
-      '@types/mdast': 4.0.0
-      hast-util-from-html-isomorphic: 2.0.0
-      mermaid-isomorphic: 2.1.1
-      unified: 11.0.3
-      unist-util-visit-parents: 6.0.1
-      vfile: 6.0.1
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -9364,18 +9305,6 @@ packages:
       vfile: 5.3.7
     dev: false
 
-  /unified@11.0.3:
-    resolution: {integrity: sha512-jlCV402P+YDcFcB2VcN/n8JasOddqIiaxv118wNBoZXEhOn+lYG7BR4Bfg2BwxvlK58dwbuH2w7GX2esAjL6Mg==}
-    dependencies:
-      '@types/unist': 3.0.0
-      bail: 2.0.2
-      devlop: 1.1.0
-      extend: 3.0.2
-      is-plain-obj: 4.1.0
-      trough: 2.1.0
-      vfile: 6.0.1
-    dev: false
-
   /unist-util-generated@2.0.1:
     resolution: {integrity: sha512-qF72kLmPxAw0oN2fwpWIqbXAVyEqUzDHMsbtPvOudIlUzXYFIeQIuxXQCRCFh22B7cixvU0MG7m3MW8FTq/S+A==}
     dev: false
@@ -9422,13 +9351,6 @@ packages:
     dependencies:
       '@types/unist': 2.0.8
       unist-util-visit: 4.1.2
-    dev: false
-
-  /unist-util-remove-position@5.0.0:
-    resolution: {integrity: sha512-Hp5Kh3wLxv0PHj9m2yZhhLt58KzPtEYKQQ4yxfYFEO7EvHwzyDYnduhHnY1mDxoqr7VUwVuHXk9RXKIiYS1N8Q==}
-    dependencies:
-      '@types/unist': 3.0.0
-      unist-util-visit: 5.0.0
     dev: false
 
   /unist-util-remove@3.1.1:
