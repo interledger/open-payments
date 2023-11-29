@@ -2,7 +2,7 @@
 title: Open Payments flow
 ---
 
-import { MermaidWrapper } from '@interledger/docs-design-system'
+import { MermaidWrapper, Mermaid } from '@interledger/docs-design-system'
 
 This page describes the Open Payments flow at a high level. The sequence diagrams are for illustrative purposes and are not an exact representation of the flow.
 
@@ -14,15 +14,16 @@ In this flow, assume the client's end-user is the payer and that the client alre
 
 <MermaidWrapper client:load>
 
-```mermaid
-sequenceDiagram
+<Mermaid
+  graph={`sequenceDiagram
+    participant C as Client
+    participant PAW as Payee's wallet address
 
-participant C as Client
-participant PAW as Payee's wallet address
+    C->>PAW: GET wallet address
+    PAW->>C: 200 Wallet address found, returns public info incl. auth server
 
-C->>PAW: GET wallet address
-PAW->>C: 200 Wallet address found, returns public info incl. auth server
-```
+`}
+/>
 
 </MermaidWrapper>
 
@@ -30,18 +31,19 @@ PAW->>C: 200 Wallet address found, returns public info incl. auth server
 
 <MermaidWrapper client:load>
 
-```mermaid
-sequenceDiagram
+<Mermaid
+  graph={`sequenceDiagram
+    participant C as Client
+    participant AS as Authorization server
+    participant RS as Resource server
 
-participant C as Client
-participant AS as Authorization server
-participant RS as Resource server
+    C->>AS: Grant request (POST) with type=incoming-payment
+    AS->>C: 200 OK, returns access token
+    C->>RS: Create incoming payment resource (POST)
+    RS->>C: 201 Incoming payment created
 
-C->>AS: Grant request (POST) with type=incoming-payment
-AS->>C: 200 OK, returns access token
-C->>RS: Create incoming payment resource (POST)
-RS->>C: 201 Incoming payment created
-```
+`}
+/>
 
 </MermaidWrapper>
 
@@ -49,18 +51,19 @@ RS->>C: 201 Incoming payment created
 
 <MermaidWrapper client:load>
 
-```mermaid
-sequenceDiagram
+<Mermaid
+  graph={`sequenceDiagram
+    participant C as Client
+    participant AS as Authorization server
+    participant RS as Resource server
 
-participant C as Client
-participant AS as Authorization server
-participant RS as Resource server
+    C->>AS: Grant request (POST) with type=quote
+    AS->>C: 200 OK, returns access token
+    C->>RS: Create quote resource (POST)
+    RS->>C: 201 Quote created
 
-C->>AS: Grant request (POST) with type=quote
-AS->>C: 200 OK, returns access token
-C->>RS: Create quote resource (POST)
-RS->>C: 201 Quote created
-```
+`}
+/>
 
 </MermaidWrapper>
 
@@ -68,17 +71,17 @@ RS->>C: 201 Quote created
 
 <MermaidWrapper client:load>
 
-```mermaid
-sequenceDiagram
+<Mermaid
+  graph={`sequenceDiagram
+    participant C as Client
+    participant AS as Authorization server
 
-participant C as Client
-participant AS as Authorization server
+    C->>AS: Grant request (POST) with type=outgoing-payment, interact object
+    AS->>C: 200 OK, returns interaction instructions
+    C->>AS: Sends end-user to redirect URI to initiate interaction flow
 
-C->>AS: Grant request (POST) with type=outgoing-payment, interact object
-AS->>C: 200 OK, returns interaction instructions
-C->>AS: Sends end-user to redirect URI to initiate interaction flow
-
-```
+`}
+/>
 
 </MermaidWrapper>
 
@@ -86,19 +89,20 @@ C->>AS: Sends end-user to redirect URI to initiate interaction flow
 
 <MermaidWrapper client:load>
 
-```mermaid
-sequenceDiagram
+<Mermaid
+  graph={`sequenceDiagram
 
-participant C as Client
-participant AS as Authorization server
+    participant C as Client
+    participant AS as Authorization server
 
-AS->>AS: End-user interacts with authorization server and approves the grant
-AS->>C: Redirects end-user to client's finish URI, includes hash and interaction reference
-C->>C: Verifies hash
-C->>AS: Grant continuation request (POST) with interaction reference
-AS->>C: 200 Success with access_token
+    AS->>AS: End-user interacts with authorization server and approves the grant
+    AS->>C: Redirects end-user to client's finish URI, includes hash and interaction reference
+    C->>C: Verifies hash
+    C->>AS: Grant continuation request (POST) with interaction reference
+    AS->>C: 200 Success with access_token
 
-```
+`}
+/>
 
 </MermaidWrapper>
 
@@ -106,50 +110,51 @@ AS->>C: 200 Success with access_token
 
 <MermaidWrapper client:load>
 
-```mermaid
-sequenceDiagram
+<Mermaid
+  graph={`sequenceDiagram
+    participant Cu as Customer
+    participant A2 as Auth Server B
+    participant R2 as Backend B
+    participant R1 as Backend A
+    participant A1 as Auth Server A
+    participant Cl as Merchant
 
-participant Cu as Customer
-participant A2 as Auth Server B
-participant R2 as Backend B
-participant R1 as Backend A
-participant A1 as Auth Server A
-participant Cl as Merchant
+    activate Cl
+    Cl->>+A1: incoming payment grant request
+    A1->>-Cl: grant + access token
+    Cl->>+R1: incoming payment creation request
+    R1->>+A1: token introspection
+    A1->>-R1: token valid + grant details
+    R1->>-Cl: incoming payment
+    rect rgba(0, 0, 255, .1)
+    Cl->>+Cu: request wallet address
+    Cu->>Cl: wallet address
+    end
+    Cl->>+R2: query customer's wallet address
+    R2->>-Cl: wallet address details including auth server endpoint
+    Cl->>+A2: quote grant request
+    A2->>-Cl: grant + access token
+    Cl->>+R2: quote creation request
+    R2->>+A2: token introspection
+    A2->>-R2: token valid + grant details
+    R2->>-Cl: quote
+    Cl->>+A2: outgoing payment grant request
+    A2->>-Cl: IdP redirect info
+    rect rgba(0, 0, 255, .1)
+    Cl->>Cu: redirect to IdP
+    Cu->>Cu: consent to grant request
+    Cu->>-Cl: interaction finished
+    end
+    Cl->>+A2: continue grant request
+    A2->>-Cl: grant + access token
+    Cl->>+R2: outgoing payment creation request
+    R2->>+A2: token introspection
+    A2->>-R2: token valid + grant details
+    R2->>R2: grant accounting
+    R2->>-Cl: outgoing payment
+    deactivate Cl
 
-activate Cl
-Cl->>+A1: incoming payment grant request
-A1->>-Cl: grant + access token
-Cl->>+R1: incoming payment creation request
-R1->>+A1: token introspection
-A1->>-R1: token valid + grant details
-R1->>-Cl: incoming payment
-rect rgba(0, 0, 255, .1)
-Cl->>+Cu: request wallet address
-Cu->>Cl: wallet address
-end
-Cl->>+R2: query customer's wallet address
-R2->>-Cl: wallet address details including auth server endpoint
-Cl->>+A2: quote grant request
-A2->>-Cl: grant + access token
-Cl->>+R2: quote creation request
-R2->>+A2: token introspection
-A2->>-R2: token valid + grant details
-R2->>-Cl: quote
-Cl->>+A2: outgoing payment grant request
-A2->>-Cl: IdP redirect info
-rect rgba(0, 0, 255, .1)
-Cl->>Cu: redirect to IdP
-Cu->>Cu: consent to grant request
-Cu->>-Cl: interaction finished
-end
-Cl->>+A2: continue grant request
-A2->>-Cl: grant + access token
-Cl->>+R2: outgoing payment creation request
-R2->>+A2: token introspection
-A2->>-R2: token valid + grant details
-R2->>R2: grant accounting
-R2->>-Cl: outgoing payment
-deactivate Cl
-```
+`}
+/>
 
 </MermaidWrapper>

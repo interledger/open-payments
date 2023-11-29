@@ -1,10 +1,9 @@
 import { defineConfig } from 'astro/config'
 import starlight from '@astrojs/starlight'
 import { generateAPI } from 'starlight-openapi'
-import remarkMermaid from 'remark-mermaidjs'
 
 // Generate the documentation and get the associated sidebar groups.
-const { openAPISidebarGroups, starlightOpenAPI } = await generateAPI([
+const { starlightOpenAPI } = await generateAPI([
   {
     base: 'apis/resource-server',
     label: 'Open Payments',
@@ -20,9 +19,6 @@ const { openAPISidebarGroups, starlightOpenAPI } = await generateAPI([
 // https://astro.build/config
 export default defineConfig({
   site: 'https://openpayments.guide',
-  markdown: {
-    remarkPlugins: [remarkMermaid]
-  },
   integrations: [
     starlight({
       title: 'Open Payments',
@@ -33,6 +29,12 @@ export default defineConfig({
         './node_modules/@interledger/docs-design-system/src/styles/ilf-docs.css',
         './src/styles/openpayments.css'
       ],
+      expressiveCode: {
+        styleOverrides: {
+          borderColor: 'transparent',
+          borderRadius: 'var(--border-radius)'
+        }
+      },
       logo: {
         src: './public/favicon.svg'
       },
@@ -74,6 +76,10 @@ export default defineConfig({
           label: 'Code snippets',
           collapsed: true,
           items: [
+            {
+              label: 'Before you begin',
+              link: '/snippets/before-you-begin'
+            },
             {
               label: 'Wallet addresses',
               collapsed: true,

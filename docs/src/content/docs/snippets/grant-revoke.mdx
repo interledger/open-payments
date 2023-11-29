@@ -5,7 +5,7 @@ title: Revoke a grant request
 import { Disclosure, CodeBlock, LinkOut } from '@interledger/docs-design-system'
 import { Tabs, TabItem } from '@astrojs/starlight/components'
 import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
-import Global from '/src/partials/global-prerequisites.mdx'
+import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-prerequisites.mdx'
 
 If an authorized client no longer needs access to protected resources, the client can revoke the corresponding grant request.
@@ -14,11 +14,7 @@ These code snippets enable a client to revoke (cancel) a grant that it was previ
 
 ## Before you begin
 
-<Disclosure toggleText='Click to expand' client:load>
-
-<Global />
-
-</Disclosure>
+<Begin />
 
 ## Revoke a grant request
 
