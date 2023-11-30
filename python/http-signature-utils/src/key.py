@@ -37,8 +37,6 @@ def load_or_generate_key(key_file_path: Optional[str] = None, generate_key_args:
     if key_file_path:
         try:
             return load_key(key_file_path)
-        except FileNotFoundError:
-            pass
         except Exception:
             pass
 
