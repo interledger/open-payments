@@ -41,3 +41,7 @@ dist
 **/.terraform
 
 tmp
+
+# python
+venv
+__pycache__
