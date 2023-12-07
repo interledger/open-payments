@@ -189,6 +189,13 @@ paths:
                         value: 33OMUKMKSKU80UPRY5NM
                       uri: 'https://auth.rafiki.money/continue/4CF492MLVMSW9MKMXKHQ'
                       wait: 30
+                Continuing During Pending Interaction:
+                  value:
+                    continue:
+                      access_token:
+                        value: 33OMUKMKSKU80UPRY5NM
+                      uri: 'https://auth.rafiki.money/continue/4CF492MLVMSW9MKMXKHQ'
+                      wait: 30
         '400':
           description: Bad Request
         '401':
