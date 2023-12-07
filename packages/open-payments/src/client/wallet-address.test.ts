@@ -1,11 +1,11 @@
 import { createWalletAddressRoutes } from './wallet-address'
 import { OpenAPI, HttpMethod, createOpenAPI } from '@interledger/openapi'
 import path from 'path'
-import { 
-    createTestDeps, 
-    mockDIDDocument,
-    mockJwk, 
-    mockWalletAddress,
+import {
+  createTestDeps,
+  mockDIDDocument,
+  mockJwk,
+  mockWalletAddress
 } from '../test/helpers'
 import * as requestors from './requests'
 
@@ -105,9 +105,7 @@ describe('wallet-address', (): void => {
         }).getDIDDocument({ url: walletAddress.id })
 
         expect(getSpy).toHaveBeenCalledWith(
-          {
-            deps,
-          },
+          deps,
           { url: `${walletAddress.id}/did.json` },
           true
         )

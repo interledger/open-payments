@@ -13,7 +13,7 @@ export interface WalletAddressRoutes {
 export const createWalletAddressRoutes = (
   deps: RouteDeps
 ): WalletAddressRoutes => {
-  const { axiosInstance, openApi, logger } = deps
+  const { openApi, ...baseDeps } = deps
 
   const getWalletAddressValidator =
     openApi.createResponseValidator<WalletAddress>({
@@ -33,10 +33,10 @@ export const createWalletAddressRoutes = (
 
   return {
     get: (args: UnauthenticatedResourceRequestArgs) =>
-      get({ axiosInstance, logger }, args, getWalletAddressValidator),
+      get(baseDeps, args, getWalletAddressValidator),
     getKeys: (args: UnauthenticatedResourceRequestArgs) =>
       get(
-        { axiosInstance, logger },
+        baseDeps,
         {
           url: `${args.url}/jwks.json`
         },
@@ -44,7 +44,7 @@ export const createWalletAddressRoutes = (
       ),
     getDIDDocument: (args: UnauthenticatedResourceRequestArgs) =>
       get(
-        { axiosInstance, logger },
+        baseDeps,
         {
           url: `${args.url}/did.json`
         },

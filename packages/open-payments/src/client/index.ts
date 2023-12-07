@@ -261,8 +261,12 @@ export interface AuthenticatedClient
 export const createAuthenticatedClient = async (
   args: CreateAuthenticatedClientArgs
 ): Promise<AuthenticatedClient> => {
-  const { resourceServerOpenApi, authServerOpenApi, walletAddressServerOpenApi, ...baseDeps } =
-    await createAuthenticatedClientDeps(args)
+  const {
+    resourceServerOpenApi,
+    authServerOpenApi,
+    walletAddressServerOpenApi,
+    ...baseDeps
+  } = await createAuthenticatedClientDeps(args)
 
   return {
     incomingPayment: createIncomingPaymentRoutes({
