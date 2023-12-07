@@ -5,7 +5,7 @@ title: Rotate an access token
 import { Disclosure, CodeBlock, LinkOut } from '@interledger/docs-design-system'
 import { Tabs, TabItem } from '@astrojs/starlight/components'
 import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
-import Global from '/src/partials/global-prerequisites.mdx'
+import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-prerequisites.mdx'
 
 Rotating an access token consists of the authorization server issuing a new token in place of the existing token, with the same rights and properties as the original token. If, for example, an access token expires, an authorized client can request the token be rotated.
@@ -16,7 +16,7 @@ These code snippets enable the client to call a management endpoint to rotate th
 
 ## Before you begin
 
-<Global />
+<Begin />
 
 ## Rotate an access token
 
