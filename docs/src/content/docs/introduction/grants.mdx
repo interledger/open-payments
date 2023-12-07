@@ -2,55 +2,123 @@
 title: Grant negotiation and authorization
 ---
 
-import { CodeBlock, LinkOut } from '@interledger/docs-design-system'
+import {
+  CodeBlock,
+  LinkOut,
+  Tooltip,
+  Mermaid,
+  MermaidWrapper
+} from '@interledger/docs-design-system'
 
-Before a client can issue instructions for an incoming payment, quote, or outgoing payment, it must obtain the requisite grant(s). Open Payments leverages the <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol'>Grant Negotiation and Authorization Protocol (GNAP)</LinkOut> to define a standard mechanism for clients to obtain grants. GNAP is a protocol being developed by the Internet Engineering Task Force (IETF) as the successor to OAuth 2.0, designed to fill many of the gaps discovered through the use of OAuth in Open Banking and other financial use cases.
+In Open Payments, a grant indicates a transfer, or delegation, of authorization from a resource owner (RO) to a piece of software. An RO can be a physical person, such as the software’s end user, or a process, such as predefined organizational rules. By delegating authorization, the RO allows the software to access and perform operations on protected resources on the RO’s behalf.
 
-## Grants
+Open Payments leverages the <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol'>Grant Negotiation and Authorization Protocol (GNAP)</LinkOut> as the mechanism by which the piece of software, known as a client instance (or client for short), is delegated authorization to use the Open Payments API to interface with supported accounts.
 
-GNAP allows a client instance to request delegated authorization to protected resources from a party other than the end user. This delegation is facilitated by an authorization server, which exposes APIs compliant with the GNAP standard. The process by which the delegation occurs is known as a grant.
+## GNAP vs OAuth 2.0
+
+GNAP is being developed as the successor to OAuth 2.0 and is designed to fill many of the gaps discovered through the use of OAuth in Open Banking and other financial use cases. <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol#name-compared-to-oauth-20'>Appendix B</LinkOut> in the GNAP specification outlines ways in which the protocol’s design differs from OAuth 2.0. Some examples include:
+
+| GNAP                                                                                                                                                                                                    | OAuth 2.0                                                                                                                                                                  |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The client declares the different ways it can start and finish an interaction, and these can be mixed together as needed for different use cases; interactions can use a web browser, but don’t have to | The type of interaction available is fixed and dictated by the grant type; assumes the end-user has access to a web browser                                                |
+| Allows the entity requesting access to protected resources to be different from the resource owner, but still works in the optimized cased of them being the same party                                 | Assumes the end-user is the same user that will interact with the authorization server to approve access; assumes the resource owner is the person who requested the grant |
+| Allows the client to present an unknown key to the authorization server and use that key to protect the ongoing request                                                                                 | Requires all clients to be registered at the authorization server and use a `client_id` known to the authorization server                                                  |
+| Always starts at the same endpoint at the authorization server                                                                                                                                          | Different grant types start at different endpoints                                                                                                                         |
+| A client can ask for multiple access tokens in a single grant request                                                                                                                                   | A client can only ask for a single access token in a single request                                                                                                        |
+
+## Grant authorization servers
+
+An authorization server (AS) grants delegated privileges to a client in the form of access tokens. Access tokens represent a set of access rights and/or attributes granted to the client. With the requisite access token(s), the client can access a resource server’s (RS) Open Payments API and perform allowed operations, such as creating incoming payments and listing outgoing payments, on behalf of the resource owner.
+
+An AS is uniquely identified by its grant endpoint URI, which is an absolute URI that a client calls to initiate a grant request.
+
+### Key registries
+
+A key registry is a list of keys associated with clients requiring access to protected Open Payments resources. Key registries are publicly exposed via a `jwks.json` endpoint and allows an AS to verify that a client is who it says it is.
+
+A client must generate and add its key to its key registry before requesting a grant for the first time. For more information on key generation and registration, as well as how key registries work with authorization servers, refer to the [Client keys](/introduction/client-keys) page.
 
 ## Grant requests
 
-An authorization server is uniquely identified by its grant endpoint URI, which is an absolute URI that a client calls to initiate a grant request.
+Before a client can access the Open Payments API, it must send a grant request to the AS. The request must contain the type of resource it wants to work with and the action(s) it wants to take on the resource. Resource types include `incoming-payment`, `quote`, and `outgoing-payment`. The available actions depend on type, but examples include `create` and `read`. A successful grant request results in the AS returning one or more access tokens.
 
-The grant request flow can take one of the paths below, with the first being the most common.
+The sequence of requests a client makes when setting up a payment can follow one of the paths below.
 
-- Grant &rarr; incoming payment &rarr; grant &rarr; quote &rarr; grant &rarr; outgoing payment
-- Grant &rarr; incoming payment &rarr; grant &rarr; quote &rarr; outgoing payment
+#### Path 1 (most common)
 
-A successfully issued grant results in the client receiving an access token. The access token:
+1. Request an `incoming-payment` grant from the payee's AS
+2. Send request to create an incoming payment resource to the payee's RS
+3. Request a `quote` grant from the payer's AS
+4. Send request to create a quote resource to the payer's RS
+5. Request an interactive `outgoing-payment` grant from the payer's AS
+6. Send request to create an outgoing payment resource to the payer's RS
 
-- Represents the rights granted to the client
-- Acts as credentials when calling a resource server’s Open Payments API
-- Allows the client to access protected resources (primarily OP-enabled accounts) on an ASE’s resource server and perform operations on these resources
+#### Path 2
+
+1. Request an `incoming-payment` grant from the payee's AS
+2. Send request to create an incoming payment resource to the payee's RS
+3. Request a single interactive grant for both `quote` and `outgoing-payment` from the payer's AS
+4. Send request to create a quote resource to the payer's RS
+5. Send request to create an outgoing payment resource to the payer's RS
+
+## Grant types
+
+### incoming-payment
+
+A client begins the Open Payments flow by requesting an incoming payment grant from the AS on the _payee_ side. The client can request a single grant to create multiple incoming payments for different OP-enabled accounts as long as each account belongs to the same <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip>.
+
+Incoming payment grants are non-interactive by default, meaning interaction by an individual (typically the client’s end-user) is not required for the AS to issue an access token.
+
+### quote
+
+After the client receives an incoming payment grant and an incoming payment resource is created on the payee’s account, the client requests a quote grant from the AS on the _payer_ side. The client can request a single grant to create multiple quotes for different OP-enabled accounts as long as each account belongs to the same <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip>.
+
+Quote grants are non-interactive by default, meaning interaction by an individual (typically the client’s end-user) is not required for the AS to issue an access token.
+
+### outgoing-payment
+
+Having progressed through the incoming payment and quote portions of the Open Payments flow, the client is ready to request an outgoing payment grant from the AS on the _payer_ side.
+
+Open Payments requires outgoing payment grant requests to be interactive. When a grant request is interactive, it means explicit interaction by an individual (typically the client’s end user) is a required step in the delegation process.
+
+After a successful interaction, the client must issue a [grant continuation request](/apis/auth-server/operations/post-continue) so the AS knows to issue an access token.
+
+## Open Payments resource servers
+
+A resource server (RS) provides the Open Payments API through which resources can be created or accessed on the server. GNAP doesn’t presume or require a tight coupling between an RS and an AS and it’s increasingly common for the servers to be run and managed separately.
+
+Operations on the API by a client require the client to have a valid access token issued by a <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol-16#name-trust-relationships'>trusted AS</LinkOut>. When the client uses its access token to call the RS, the RS examines the token to determine if the token is sufficient for the request. The means by which an RS makes this determination are outside of the scope of Open Payments. If the token is sufficient, the client is given the right to access the operation(s) and resource tied to the token.
 
 :::note
 An open-source implementation of an Open Payments resource server, called <LinkOut href='https://rafiki.dev'>Rafiki</LinkOut>, is currently in development.
 :::
 
-The authorization of access to an OP-enabled account can be separated from the ASE if desired. The authorization service can even be fulfilled by multiple federated providers if a use case requires this in the future.
+## Identity providers
 
-### Incoming payment grant
+Open Payments requires the use of an identity provider (IdP) during an <Tooltip content="A grant requiring explicit interaction/consent from the RO before an access token can be issued" client:load><span>interactive grant</span></Tooltip> flow. An IdP is a system or service that manages user authentication, identity information, and consent.
 
-A client requests an [incoming payment grant](/apis/resource-server/operations/create-incoming-payment) from the authorization server on the _payee_ side. The client can request one grant to create multiple incoming payments for different OP-enabled accounts as long as each account belongs to the same ASE.
+<MermaidWrapper client:load>
 
-Incoming payment grants are non-interactive by default, meaning interaction by an individual (typically the client's end-user) is not required for the authorization server to issue an access token.
+{/* prettier-ignore */}
+<Mermaid
+  graph={`sequenceDiagram
+    Client instance->>Authorization server (AS): Sends interactive grant request
+    Authorization server (AS)-->>Client instance: 200 returns interact redirect uri and continue uri
+    Client instance->>Authorization server (AS): Navigates to interact redirect uri
+    Authorization server (AS)->>Authorization server (AS): Starts interaction and sets session
+    Authorization server (AS)-->>Client instance: 302 temporary redirect to identity provider <br>uri with grant info in query string
+    Client instance->>Identity provider (IdP): Redirects to identity provider
+    Identity provider (IdP)->>Identity provider (IdP): Resource owner (e.g. client end-user) <br>accepts interaction
+    Identity provider (IdP)->>Authorization server (AS): Sends interaction choice
+    Authorization server (AS) -->>Identity provider (IdP): 202 choice accepted
+    Identity provider (IdP)->>Authorization server (AS): Requests to finish interaction
+    Authorization server (AS)->>Authorization server (AS): Ends session
+    Authorization server (AS)-->>Identity provider (IdP): 302 temporary redirect to finish url <br>(in outgoing-payment grant request) <br>secured with unique hash and <br>interact_ref in query string
+    Identity provider (IdP)->>Client instance: Follows redirect
+    Client instance->>Client instance: Verifies hash
+    Client instance->>Authorization server (AS): Sends continuation grant request with <br>interact_ref in body to continue uri
+    Authorization server (AS)->>Client instance: 200 returns grant access token
+`}
+/>
 
-### Quote grant
-
-A client requests a [quote](/apis/resource-server/operations/create-quote) from the authorization server on the _payer_ side. The client can request one grant to create multiple quotes for different OP-enabled accounts as long as each account belongs to the same ASE.
-
-Quote grants are non-interactive by default, meaning interaction by an individual (typically the client's end-user) is not required for the authorization server to issue an access token.
-
-### Outgoing payment grant
-
-A client requests an [outgoing payment grant](/apis/resource-server/operations/create-outgoing-payment) from the authorization server on the _payer_ side. Open Payments requires outgoing payment grants to be interactive, meaning interaction by an individual (typically the client's end-user) is required. After interaction is finished, the client must issue a [grant continuation request](/apis/auth-server/operations/post-continue).
-
-For more information, refer to the [create an interactive grant](/guides/create-interactive-grant) guide.
-
-## Grant continuation and cancellation
-
-A client can issue a [grant continuation request](/apis/auth-server/operations/post-continue) when a grant needs to be modified or continued. For example, a client may initially need read access to a resource, but later require write access.
-
-A client can request to [cancel a grant](/apis/auth-server/operations/delete-continue) if it no longer needs access to protected resources on the resource server.
+</MermaidWrapper>

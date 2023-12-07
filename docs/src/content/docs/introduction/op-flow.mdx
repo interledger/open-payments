@@ -27,7 +27,7 @@ In this flow, assume the client's end-user is the payer and that the client alre
 
 </MermaidWrapper>
 
-2. The client requests/receives a grant from the payee's authorization server to create an `incoming-payment` resource on the payee’s account. The client then sends a request to the resource server to create the resource. When created, the resource server returns unique payment details the client will use to address one or more payments to the payee.
+2. The client requests/receives a grant from the payee's authorization server to create an `incoming-payment` resource. The client then sends a request to the payee-side resource server to create the resource. When created, the resource server returns unique payment details the client will use to address one or more payments to the payee.
 
 <MermaidWrapper client:load>
 
@@ -47,7 +47,7 @@ In this flow, assume the client's end-user is the payer and that the client alre
 
 </MermaidWrapper>
 
-3. The client requests/receives a grant from the end-user's authorization server to create a `quote` resource on the user's account. The client then sends a request to the user's resource server to create the resource. When created, the resource server returns, among other things, a quote `id` and the amount it will cost to make the payment.
+3. The client requests/receives a grant from the end-user's authorization server to create a `quote` resource. The client then sends a request to the end-user's resource server to create the resource. When created, the resource server returns, among other things, a quote `id` and the amount it will cost to make the payment.
 
 <MermaidWrapper client:load>
 
@@ -67,7 +67,7 @@ In this flow, assume the client's end-user is the payer and that the client alre
 
 </MermaidWrapper>
 
-4. The client issues an [interactive grant request](/introduction/grants/#outgoing-payment-grant) to the end-user's authorization server to obtain the user's explicit consent to send a payment of X amount. While the client must facilitate the interaction, the authorization server is responsible for the interface and collecting consent.
+4. The client requests an interactive grant from the end-user's authorization server to create an `outgoing-payment` resource. An interactive grant requires that explicit consent from the end-user be collected before an access token is issued. While the client must facilitate the interaction, the end-user's authorization server and [identity provider](/introduction/grants/#identity-providers) are responsible for the interface and collecting consent.
 
 <MermaidWrapper client:load>
 
@@ -85,7 +85,7 @@ In this flow, assume the client's end-user is the payer and that the client alre
 
 </MermaidWrapper>
 
-5. After consent is obtained, the client requests/receives permission to continue the grant request and create an `outgoing-payment` resource on the end-user's payment account. When created, the setup of the payment is complete and the Open Payments flow ends.
+5. After consent is obtained, the client requests/receives permission to continue the grant request and create the `outgoing-payment` resource. When created, the setup of the payment is complete and the Open Payments flow ends.
 
 <MermaidWrapper client:load>
 
@@ -94,12 +94,12 @@ In this flow, assume the client's end-user is the payer and that the client alre
 
     participant C as Client
     participant AS as Authorization server
+    participant IDP as Identity provider
 
-    AS->>AS: End-user interacts with authorization server and approves the grant
-    AS->>C: Redirects end-user to client's finish URI, includes hash and interaction reference
-    C->>C: Verifies hash
-    C->>AS: Grant continuation request (POST) with interaction reference
-    AS->>C: 200 Success with access_token
+    C->>AS: Grant continuation request (POST)
+    AS->>C: 200 Success with access token
+    C->>AS: Create outgoing payment (POST)
+    AS->>C: 201 Outgoing payment created
 
 `}
 />
