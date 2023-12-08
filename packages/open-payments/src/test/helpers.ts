@@ -16,7 +16,8 @@ import {
   Grant,
   IncomingPaymentWithPaymentMethods,
   IlpPaymentMethod,
-  PublicIncomingPayment
+  PublicIncomingPayment,
+  DIDDocument
 } from '../types'
 import { v4 as uuid } from 'uuid'
 import { ResponseValidator } from '@interledger/openapi'
@@ -57,11 +58,19 @@ export const mockJwk = (overrides?: Partial<JWK>): JWK => ({
   ...overrides
 })
 
+export const mockDIDDocument = (
+  overrides?: Partial<DIDDocument>
+): DIDDocument => ({
+  // TODO - Flesh this out when we have a more detailed DID Document spec
+  ...overrides
+})
+
 export const mockWalletAddress = (
   overrides?: Partial<WalletAddress>
 ): WalletAddress => ({
   id: 'https://example.com/.well-known/pay',
   authServer: 'https://auth.wallet.example/authorize',
+  resourceServer: 'https://wallet.example/op',
   assetScale: 2,
   assetCode: 'USD',
   ...overrides

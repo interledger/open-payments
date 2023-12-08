@@ -34,6 +34,7 @@ export interface BaseDeps {
 }
 
 interface UnauthenticatedClientDeps extends BaseDeps {
+  walletAddressServerOpenApi: OpenAPI
   resourceServerOpenApi: OpenAPI
 }
 
@@ -135,12 +136,16 @@ const createUnauthenticatedDeps = async ({
       args?.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS
   })
 
+  const walletAddressServerOpenApi = await createOpenAPI(
+    path.resolve(__dirname, '../openapi/wallet-address-server.yaml')
+  )
   const resourceServerOpenApi = await createOpenAPI(
     path.resolve(__dirname, '../openapi/resource-server.yaml')
   )
 
   return {
     axiosInstance,
+    walletAddressServerOpenApi,
     resourceServerOpenApi,
     logger,
     useHttp
@@ -177,6 +182,9 @@ const createAuthenticatedClientDeps = async ({
     requestTimeoutMs:
       args?.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS
   })
+  const walletAddressServerOpenApi = await createOpenAPI(
+    path.resolve(__dirname, '../openapi/wallet-address-server.yaml')
+  )
   const resourceServerOpenApi = await createOpenAPI(
     path.resolve(__dirname, '../openapi/resource-server.yaml')
   )
@@ -186,6 +194,7 @@ const createAuthenticatedClientDeps = async ({
 
   return {
     axiosInstance,
+    walletAddressServerOpenApi,
     resourceServerOpenApi,
     authServerOpenApi,
     logger,
@@ -252,8 +261,12 @@ export interface AuthenticatedClient
 export const createAuthenticatedClient = async (
   args: CreateAuthenticatedClientArgs
 ): Promise<AuthenticatedClient> => {
-  const { resourceServerOpenApi, authServerOpenApi, ...baseDeps } =
-    await createAuthenticatedClientDeps(args)
+  const {
+    resourceServerOpenApi,
+    authServerOpenApi,
+    walletAddressServerOpenApi,
+    ...baseDeps
+  } = await createAuthenticatedClientDeps(args)
 
   return {
     incomingPayment: createIncomingPaymentRoutes({
@@ -266,7 +279,7 @@ export const createAuthenticatedClient = async (
     }),
     walletAddress: createWalletAddressRoutes({
       ...baseDeps,
-      openApi: resourceServerOpenApi
+      openApi: walletAddressServerOpenApi
     }),
     grant: createGrantRoutes({
       ...baseDeps,

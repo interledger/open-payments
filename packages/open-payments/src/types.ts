@@ -8,6 +8,18 @@ import {
   paths as ASPaths,
   operations as ASOperations
 } from './openapi/generated/auth-server-types'
+import {
+  components as WAComponents,
+  paths as WAPaths
+} from './openapi/generated/wallet-address-server-types'
+
+export const getWAPath = <P extends keyof WAPaths>(path: P): string =>
+  path as string
+
+export type WalletAddress = WAComponents['schemas']['wallet-address']
+export type JWK = WAComponents['schemas']['json-web-key']
+export type JWKS = WAComponents['schemas']['json-web-key-set']
+export type DIDDocument = WAComponents['schemas']['did-document']
 
 export const getRSPath = <P extends keyof RSPaths>(path: P): string =>
   path as string
@@ -46,9 +58,7 @@ export type BackwardPagination = Omit<BasePaginationArgs, 'first'> & {
   first?: never
 }
 export type PaginationArgs = ForwardPagination | BackwardPagination
-export type WalletAddress = RSComponents['schemas']['wallet-address']
-export type JWK = RSComponents['schemas']['json-web-key']
-export type JWKS = RSComponents['schemas']['json-web-key-set']
+
 export type Quote = RSComponents['schemas']['quote']
 type QuoteArgsBase = {
   walletAddress: RSOperations['create-quote']['requestBody']['content']['application/json']['walletAddress']

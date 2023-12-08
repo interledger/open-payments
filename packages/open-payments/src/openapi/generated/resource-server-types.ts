@@ -4,20 +4,6 @@
  */
 
 export interface paths {
-  "/": {
-    /**
-     * Retrieve the public information of the Wallet Address.
-     *
-     * This end-point should be open to anonymous requests as it allows clients to verify a Wallet Address URL and get the basic information required to construct new transactions and discover the grant request URL.
-     *
-     * The content should be slow changing and cacheable for long periods. Servers SHOULD use cache control headers.
-     */
-    get: operations["get-wallet-address"];
-  };
-  "/jwks.json": {
-    /** Retrieve the public keys of the Wallet Address. */
-    get: operations["get-wallet-address-keys"];
-  };
   "/incoming-payments": {
     /** List all incoming payments on the wallet address */
     get: operations["list-incoming-payments"];
@@ -100,33 +86,6 @@ export interface paths {
 
 export interface components {
   schemas: {
-    /**
-     * Wallet Address
-     * @description A **wallet address** resource is the root of the API and contains the public details of the financial account represented by the Wallet Address that is also the service endpoint URL.
-     */
-    "wallet-address": {
-      /**
-       * Format: uri
-       * @description The URL identifying the wallet address.
-       */
-      id: string;
-      /** @description A public name for the account. This should be set by the account holder with their provider to provide a hint to counterparties as to the identity of the account holder. */
-      publicName?: string;
-      assetCode: external["schemas.yaml"]["components"]["schemas"]["assetCode"];
-      assetScale: external["schemas.yaml"]["components"]["schemas"]["assetScale"];
-      /**
-       * Format: uri
-       * @description The URL of the authorization server endpoint for getting grants and access tokens for this wallet address.
-       */
-      authServer: string;
-    } & { [key: string]: unknown };
-    /**
-     * JSON Web Key Set document
-     * @description A JSON Web Key Set document according to [rfc7517](https://datatracker.ietf.org/doc/html/rfc7517) listing the keys associated with this wallet address. These keys are used to sign requests made by this wallet address.
-     */
-    "json-web-key-set": {
-      keys: components["schemas"]["json-web-key"][];
-    };
     /**
      * Incoming Payment
      * @description An **incoming payment** resource represents a payment that will be, is currently being, or has been received by the account.
@@ -269,20 +228,6 @@ export interface components {
       /** @description Describes whether the data set has previous entries. */
       hasPreviousPage: boolean;
     };
-    /**
-     * Ed25519 Public Key
-     * @description A JWK representation of an Ed25519 Public Key
-     */
-    "json-web-key": {
-      kid: string;
-      /** @description The cryptographic algorithm family used with the key. The only allowed value is `EdDSA`. */
-      alg: "EdDSA";
-      use?: "sig";
-      kty: "OKP";
-      crv: "Ed25519";
-      /** @description The base64 url-encoded public key. */
-      x: string;
-    };
     "payment-method": "ilp";
     "ilp-payment-method": {
       type: "ilp";
@@ -321,38 +266,6 @@ export interface components {
 }
 
 export interface operations {
-  /**
-   * Retrieve the public information of the Wallet Address.
-   *
-   * This end-point should be open to anonymous requests as it allows clients to verify a Wallet Address URL and get the basic information required to construct new transactions and discover the grant request URL.
-   *
-   * The content should be slow changing and cacheable for long periods. Servers SHOULD use cache control headers.
-   */
-  "get-wallet-address": {
-    responses: {
-      /** Wallet Address Found */
-      200: {
-        content: {
-          "application/json": components["schemas"]["wallet-address"];
-        };
-      };
-      /** Wallet Address Not Found */
-      404: unknown;
-    };
-  };
-  /** Retrieve the public keys of the Wallet Address. */
-  "get-wallet-address-keys": {
-    responses: {
-      /** JWKS Document Found */
-      200: {
-        content: {
-          "application/json": components["schemas"]["json-web-key-set"];
-        };
-      };
-      /** JWKS Document Not Found */
-      404: unknown;
-    };
-  };
   /** List all incoming payments on the wallet address */
   "list-incoming-payments": {
     parameters: {
