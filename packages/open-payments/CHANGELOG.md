@@ -1,5 +1,11 @@
 # @interledger/open-payments
 
+## 6.2.0
+
+### Minor Changes
+
+- ec04a61: Mapped wallet address and jwks get to new stand along Open API spec
+
 ## 6.1.1
 
 ### Patch Changes
