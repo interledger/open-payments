@@ -99,6 +99,10 @@ export const isPendingGrant = (
   grant: PendingGrant | Grant
 ): grant is PendingGrant => !!(grant as PendingGrant).interact
 
+export const isFinalizedGrant = (
+  grant: GrantContinuation | Grant
+): grant is Grant => !!(grant as Grant).access_token
+
 export type AccessIncomingActions =
   ASComponents['schemas']['access-incoming']['actions']
 export type AccessOutgoingActions =
