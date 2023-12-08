@@ -87,6 +87,9 @@ export type Grant = {
   access_token: ASComponents['schemas']['access_token']
   continue: ASComponents['schemas']['continue']
 }
+export type GrantContinuation = {
+  continue: ASComponents['schemas']['continue']
+}
 export type GrantRequest = {
   access_token: ASOperations['post-request']['requestBody']['content']['application/json']['access_token']
   client: ASOperations['post-request']['requestBody']['content']['application/json']['client']
@@ -105,6 +108,10 @@ export type AccessToken = {
 export const isPendingGrant = (
   grant: PendingGrant | Grant
 ): grant is PendingGrant => !!(grant as PendingGrant).interact
+
+export const isFinalizedGrant = (
+  grant: GrantContinuation | Grant
+): grant is Grant => !!(grant as Grant).access_token
 
 export type AccessIncomingActions =
   ASComponents['schemas']['access-incoming']['actions']

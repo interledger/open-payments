@@ -8,6 +8,7 @@ import {
   getASPath,
   PendingGrant,
   Grant,
+  GrantContinuation,
   GrantRequest,
   GrantContinuationRequest
 } from '../types'
@@ -25,7 +26,7 @@ export interface GrantRoutes {
   continue(
     postArgs: GrantOrTokenRequestArgs,
     args: GrantContinuationRequest
-  ): Promise<Grant>
+  ): Promise<Grant | GrantContinuation>
   cancel(postArgs: GrantOrTokenRequestArgs): Promise<void>
 }
 
