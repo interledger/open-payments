@@ -228,24 +228,24 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
-              label: 'Open Payments endpoints',
+              label: 'Wallet address server',
+              collapsed: true,
               items: [
                 {
-                  label: 'Wallet address',
-                  collapsed: true,
-                  items: [
-                    {
-                      label: 'Get wallet address',
-                      link: '/apis/resource-server/operations/get-wallet-address',
-                      badge: { text: 'GET', variant: 'success' }
-                    },
-                    {
-                      label: 'Get keys bound to wallet address',
-                      link: '/apis/resource-server/operations/get-wallet-address-keys',
-                      badge: { text: 'GET', variant: 'success' }
-                    }
-                  ]
+                  label: 'Get wallet address',
+                  link: '/apis/wallet-address-server/operations/get-wallet-address',
+                  badge: { text: 'GET', variant: 'success' }
                 },
+                {
+                  label: 'Get keys bound to wallet address',
+                  link: '/apis/wallet-address-server/operations/get-wallet-address-keys',
+                  badge: { text: 'GET', variant: 'success' }
+                }
+              ]
+            },
+            {
+              label: 'Resource server',
+              items: [
                 {
                   label: 'Incoming payment',
                   collapsed: true,
@@ -312,7 +312,7 @@ export default defineConfig({
               ]
             },
             {
-              label: 'Open Payments auth server endpoints',
+              label: 'Auth server',
               items: [
                 {
                   label: 'Grants',
