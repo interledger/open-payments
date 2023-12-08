@@ -1,5 +1,11 @@
 # @interledger/open-payments
 
+## 6.3.0
+
+### Minor Changes
+
+- dde4639: Made "access_token" optional for grant continuation responses
+
 ## 6.2.0
 
 ### Minor Changes
