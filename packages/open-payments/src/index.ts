@@ -11,6 +11,7 @@ export {
   PendingGrant,
   Grant,
   isPendingGrant,
+  isFinalizedGrant,
   JWK,
   JWKS,
   PaginationArgs,
