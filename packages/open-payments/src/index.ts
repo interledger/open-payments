@@ -1,5 +1,6 @@
 export {
   GrantRequest,
+  GrantContinuation,
   GrantContinuationRequest,
   IncomingPayment,
   PublicIncomingPayment,
