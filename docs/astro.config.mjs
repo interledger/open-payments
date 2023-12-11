@@ -245,6 +245,7 @@ export default defineConfig({
             },
             {
               label: 'Resource server',
+              collapsed: true,
               items: [
                 {
                   label: 'Incoming payment',
@@ -313,6 +314,7 @@ export default defineConfig({
             },
             {
               label: 'Auth server',
+              collapsed: true,
               items: [
                 {
                   label: 'Grants',
