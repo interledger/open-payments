@@ -1,5 +1,11 @@
 # @interledger/open-payments
 
+## 6.4.0
+
+### Minor Changes
+
+- 870347b: Exposes the grant continuation type
+
 ## 6.3.0
 
 ### Minor Changes
