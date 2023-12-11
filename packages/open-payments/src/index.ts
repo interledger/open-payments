@@ -1,5 +1,6 @@
 export {
   GrantRequest,
+  GrantContinuation,
   GrantContinuationRequest,
   IncomingPayment,
   PublicIncomingPayment,
@@ -10,6 +11,7 @@ export {
   PendingGrant,
   Grant,
   isPendingGrant,
+  isFinalizedGrant,
   JWK,
   JWKS,
   PaginationArgs,
