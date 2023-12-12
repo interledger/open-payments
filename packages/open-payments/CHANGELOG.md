@@ -1,5 +1,12 @@
 # @interledger/open-payments
 
+## 6.5.0
+
+### Minor Changes
+
+- fe2c0d0: - Pulls in correct OpenAPI spec when wallet address validators are created in the SDK.
+  - Updates the types returned by Grant continue route.
+
 ## 6.4.0
 
 ### Minor Changes
