@@ -224,13 +224,13 @@ export interface UnauthenticatedClient {
 export const createUnauthenticatedClient = async (
   args: CreateUnauthenticatedClientArgs
 ): Promise<UnauthenticatedClient> => {
-  const { resourceServerOpenApi, ...baseDeps } =
+  const { resourceServerOpenApi, walletAddressServerOpenApi, ...baseDeps } =
     await createUnauthenticatedDeps(args)
 
   return {
     walletAddress: createWalletAddressRoutes({
       ...baseDeps,
-      openApi: resourceServerOpenApi
+      openApi: walletAddressServerOpenApi
     }),
     incomingPayment: createUnauthenticatedIncomingPaymentRoutes({
       ...baseDeps,
