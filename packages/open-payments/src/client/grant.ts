@@ -39,7 +39,9 @@ export const createGrantRoutes = (deps: GrantRouteDeps): GrantRoutes => {
     path: getASPath('/'),
     method: HttpMethod.POST
   })
-  const continueGrantValidator = openApi.createResponseValidator<Grant>({
+  const continueGrantValidator = openApi.createResponseValidator<
+    GrantContinuation | Grant
+  >({
     path: getASPath('/continue/{id}'),
     method: HttpMethod.POST
   })
