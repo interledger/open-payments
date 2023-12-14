@@ -60,12 +60,12 @@ HTTP Message Signatures protect the integrity of Open Payments API requests. The
 Indicate your client is capable of directing the end-user to a URI to start an interaction. We’ll use an outgoing payment grant as an example.
 
 1. Add the `interact` object to your grant request.
-2. Specify `redirect` as the `start` mode. Open Payments only supports `redirect`. The redirect URI will be provided by the authorization server in its response.
+2. Specify `redirect` as the `start` mode. Open Payments only supports `redirect` at this time. The redirect URI will be provided by the authorization server in its response.
 
 Now, indicate your client can receive a signal from the authorization server when the interaction has finished.
 
 1. Add the `finish` object within the `interact` object.
-2. Specify `redirect` as the `method`. Open Payments only supports `redirect`.
+2. Specify `redirect` as the `method`. Open Payments only supports `redirect` at this time.
 3. Specify the `uri` that the authorization server will send the end-user back to when the interaction has finished.
 4. Create a `nonce` for your client to use to verify the authorization server is the same entity throughout the entire process. The nonce can be any random, hard-to-guess string.
 
@@ -81,10 +81,28 @@ Now, indicate your client can receive a signal from the authorization server whe
 
 #### Start interaction with the end user
 
-Once your client receives the authorization server’s response, it must send the end-user to the `interact redirect` URI contained in the response. This starts the interaction flow.
+Once your client receives the authorization server’s response, it must send the end-user to the `interact.redirect` URI contained in the response. This starts the interaction flow.
+
+<CodeBlock title="Example response">
+```json
+{
+  "interact": {
+    "redirect": "https://auth.rafiki.money/4CF492MLVMSW9MKMXKHQ",
+    "finish": "4105340a-05eb-4290-8739-f9e2b463bfa7"
+  },
+  "continue": {
+    "access_token": {
+      "value": "33OMUKMKSKU80UPRY5NM"
+    },
+    "uri": "https://auth.rafiki.money/continue/4CF492MLVMSW9MKMXKHQ",
+    "wait": 30
+  }
+}
+```
+</CodeBlock>
 
 :::note
-Open Payments only supports the `redirect` method. The means by which your client activates the URI is out of scope, but common redirect methods include HTTP redirect and launching a browser on the end-user’s device.
+Open Payments only supports the `redirect` method at this time. The means by which your client activates the URI is out of scope, but common redirect methods include HTTP redirect and launching a browser on the end-user’s device.
 :::
 
 #### Finish interaction with the end user
@@ -107,9 +125,50 @@ Add the authorization server’s interaction reference, as the `interact_ref` va
 
 Issue the request to the `continue uri` supplied in the authorization server’s initial grant response. For example:
 
-`POST https://auth.rafiki.money/continue/49fb4a97-f880-449c-b0e9-d3ac1c947b10`
+`POST https://auth.rafiki.money/continue/4CF492MLVMSW9MKMXKHQ`
 
 A successful continuation response from the authorization server provides your client with an access token and other information necessary to continue the transaction.
+
+<CodeBlock title="Example response">
+```json
+{
+  "access_token": {
+    "value": "OS9M2PMHKUR64TB8N6BW7OZB8CDFONP219RP1LT0",
+    "manage": "https://auth.rafiki.money/token/dd17a202-9982-4ed9-ae31-564947fb6379",
+    "expires_in": 3600,
+    "access": [
+      {
+        "type": "outgoing-payment",
+        "actions": [
+          "create",
+          "read",
+          "read-all",
+          "list",
+          "list-all"
+        ],
+        "identifier": "https://ilp.rafiki.money/alice",
+        "limits": {
+          "receiver": "https://ilp.rafiki.money/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2",
+          "interval": "R12/2019-08-24T14:15:22Z/P1M",
+          "debitAmount": {
+            "value": "500",
+            "assetCode": "USD",
+            "assetScale": 2
+          }
+        }
+      }
+    ]
+  },
+  "continue": {
+    "access_token": {
+      "value": "33OMUKMKSKU80UPRY5NM"
+    },
+    "uri": "https://auth.rafiki.money/continue/4CF492MLVMSW9MKMXKHQ",
+    "wait": 30
+  }
+}
+```
+</CodeBlock>
 
 </TabItem>
 </Tabs>
