@@ -1,18 +1,20 @@
 ---
 title: Open Payments concepts
+tableOfContents:
+  maxHeadingLevel: 4
 ---
 
 The Open Payments (OP) standard helps to facilitate the setup of payments between OP-enabled payment accounts.
 
-When setting up a payment, the client must obtain the wallet addresses for both the payer's (typically the client's end-user) and payee's OP-enabled accounts. The client can choose to collect and store the payer's wallet address during onboarding, for example.
+When setting up a payment, the client must obtain the wallet address for both the payer's and payee's OP-enabled account. The payer is typically the client's end-user, and the client can choose to collect and store the payer's wallet address during onboarding, for example.
 
 After the requisite wallet addresses are known, the client can begin obtaining grants to set up one or more payments. The grants allow the client to access the Open Payments API for the purpose of creating and accessing resources for incoming payments, quotes, and outgoing payments.
 
-## Wallet address
+## Wallet address server
 
 Every OP-enabled account is identified by one or more wallet addresses. A wallet address is a publicly shareable account identifier and a service endpoint for gaining access to the Open Payments API. The payer and payee must both have a wallet address to transact using Open Payments.
 
-For more information, visit the [wallet addresses](/introduction/wallet-addresses) page.
+A wallet address server provides basic details about a wallet address. For more information, visit the [wallet addresses](/introduction/wallet-addresses) page.
 
 ## Authorization server
 
@@ -26,28 +28,33 @@ The Open Payments API is served by a resource server. Operations on the API requ
 
 ### Resource types
 
-The Open Payments API is a simple REST API with four resource types:
+The Open Payments API is a simple REST API with three resource types: `incoming-payment`, `quote`, and `outgoing-payment`.
 
-- wallet address, discussed [above](#wallet-address)
-- [incoming-payment](#incoming-payment)
-- [quote](#quote)
-- [outgoing payment](#outgoing-payment)
-
-#### Incoming-payment
+#### incoming-payment
 
 The first resource to be created when setting up a payment is the `incoming-payment` resource, created on the payee’s account. When created, the payee’s ASE returns unique payment details to the client that can be used to address payments to the account. Any payments received using these details are then associated with the `incoming-payment` resource.
 
-It’s possible for an `incoming-payment` resource to be created without specifying an `incomingAmount`. When this occurs, the client can issue a request to manually complete the incoming payment to indicate no further payments will be sent.
+A client can issue requests to get an incoming payment’s specific details, as well as list all incoming payments in order to, for example, provide the end-user with transaction details and history.
 
-A client can also issue requests to get an incoming payment’s specific details and list all incoming payments in order to, for example, provide the end-user with transaction details and history.
+**Create an incoming payment without specifying an `incomingAmount`**
 
-Manually completing an incoming payment
+When a request to create an `incoming-payment` resource includes an `incomingAmount`, the `incomingAmount` is the maximum amount to pay into the payee's account. In other words, it's the amount that the payee should receive.
 
-The optional `incomingAmount` object in a [Create Incoming Payment](/apis/resource-server/operations/create-incoming-payment) request is used to specify the maximum amount to pay into the wallet address under the incoming payment.
+Instead of specifying the amount to be received, you can specify how much you want to send by:
 
-Streaming Web Monetization (WM) payments is one use case for _not_ specifying an `incomingAmount`. In streaming WM payments, the maximum amount to be paid is unknown to the payee’s ASE. Payments continue to stream until the WM agent ends the session. At this point, the WM agent can request to mark the incoming payment as [complete](/apis/resource-server/operations/complete-incoming-payment). This enables the payee’s ASE to be notified as soon as possible that no further payments will be sent and to credit the payee’s account.
+1. Excluding the `incomingAmount` in the request
+2. Including a `debitAmount` of the amount you want to send within a [Create Quote](#quote) request (referred to as a fixed-send quote)
+3. Creating an outgoing payment request that includes the `quoteId` of the above quote
 
-#### Quote
+The outgoing payment is created and funds are sent to the `incoming-payment` resource. However, the `incomingAmount` was never set, so there's no indicator on the payee's side for how much to expect. The payee's ASE won't know when the payment has completed.
+
+Instead of waiting for the payment session to expire, the client can issue an explicit request to manually [complete the incoming payment](/apis/resource-server/operations/complete-incoming-payment) to indicate no further payments will be sent.
+
+:::tip[Use case: streaming Web Monetization (WM) payments]
+In streaming WM payments, the maximum amount to be paid is unknown to the payee’s ASE. Payments continue to stream until the WM agent ends the session. At this point, the WM agent can request to mark the incoming payment as complete. This enables the payee’s ASE to be notified as soon as possible that no further payments will be sent and to credit the payee’s account.
+:::
+
+#### quote
 
 After an `incoming-payment` resource is created on the payee’s account, a `quote` resource must be created on the payer’s account. A quote is only valid for a limited time.
 
@@ -61,7 +68,7 @@ There are three types of quotes.
 
 A successfully created `quote` resource results in the generation of a quote `id` in the form of a URL.
 
-#### Outgoing-payment
+#### outgoing-payment
 
 After a quote resource is created, it’s almost time to create the outgoing-payment resource on the payer’s account. The purpose of the outgoing-payment resource is to serve as an instruction to make a payment from the payer’s account.
 
