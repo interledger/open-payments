@@ -93,7 +93,7 @@ The end-user interacts with the authorization server through the server’s inte
 
 Provided the end-user approves the grant, the authorization server:
 
-- Sends the end-user to your client’s previously defined `finish uri`. The means by which the server sends the end-user to the URI is out of scope, but common options include redirecting the end-user from a web page and launching the system browser with the target URI.
+- Sends the end-user to your client’s previously defined `finish.uri`. The means by which the server sends the end-user to the URI is out of scope, but common options include redirecting the end-user from a web page and launching the system browser with the target URI.
 - Secures the redirect by adding a unique hash, allowing your client to validate the `finish` call, and an interaction reference as query parameters to the URI.
 
 #### Request a grant continuation
