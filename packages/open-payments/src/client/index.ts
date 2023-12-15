@@ -65,7 +65,7 @@ interface AuthenticatedRequestArgs {
    * The access token required to access the resource.
    * This token is provided when a grant is created.
    *
-   * @see [Open Payments - Grant Request](https://docs.openpayments.guide/reference/post-request)
+   * @see [Open Payments - Grant Request](https://openpayments.guide/apis/auth-server/operations/post-request/)
    */
   accessToken: string
 }
