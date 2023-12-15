@@ -81,7 +81,7 @@ Having progressed through the incoming payment and quote portions of the Open Pa
 
 Open Payments requires outgoing payment grant requests to be interactive. When a grant request is interactive, it means explicit interaction by an individual (typically the client’s end user) is a required step in the delegation process.
 
-After a successful interaction, the client must issue a [grant continuation request](/apis/auth-server/operations/post-continue) so the AS knows to issue an access token.
+After a successful interaction, the client must issue a [Grant Continuation request](/apis/auth-server/operations/post-continue) so the AS knows to issue an access token.
 
 ## Open Payments resource servers
 
@@ -96,6 +96,8 @@ An open-source implementation of an Open Payments resource server, called <LinkO
 ## Identity providers
 
 Open Payments requires the use of an identity provider (IdP) during an <Tooltip content="A grant requiring explicit interaction/consent from the RO before an access token can be issued" client:load><span>interactive grant</span></Tooltip> flow. An IdP is a system or service that manages user authentication, identity information, and consent.
+
+After an interactive grant request is initiated and the AS sets the session, the AS provides the client with the IdP URI to redirect the end-user to. The IdP handles end-user authentication and consent and communicates the details to the AS.
 
 <MermaidWrapper client:load>
 
@@ -113,10 +115,10 @@ Open Payments requires the use of an identity provider (IdP) during an <Tooltip 
     Authorization server (AS) -->>Identity provider (IdP): 202 choice accepted
     Identity provider (IdP)->>Authorization server (AS): Requests to finish interaction
     Authorization server (AS)->>Authorization server (AS): Ends session
-    Authorization server (AS)-->>Identity provider (IdP): 302 temporary redirect to finish url <br>(in outgoing-payment grant request) <br>secured with unique hash and <br>interact_ref in query string
+    Authorization server (AS)-->>Identity provider (IdP): 302 temporary redirect to finish url <br>(defined in initial grant request) <br>secured with unique hash and <br>interact_ref in query string
     Identity provider (IdP)->>Client instance: Follows redirect
     Client instance->>Client instance: Verifies hash
-    Client instance->>Authorization server (AS): Sends continuation grant request with <br>interact_ref in body to continue uri
+    Client instance->>Authorization server (AS): Sends grant continuation request with <br>interact_ref in body to continue uri
     Authorization server (AS)->>Client instance: 200 returns grant access token
 `}
 />
