@@ -37,7 +37,7 @@ jobs:
       - name: Generate open-payments types
         run: pnpm --filter open-payments generate:types
       - name: Check for newly generated open-payments types
-        uses: tj-actions/verify-changed-files@v14
+        uses: tj-actions/verify-changed-files@v17
         id: verify-changed-files
         with:
           files: |
