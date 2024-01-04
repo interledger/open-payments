@@ -97,8 +97,19 @@ An open-source implementation of an Open Payments resource server, called <LinkO
 
 ## Identity providers
 
-Open Payments requires the use of an identity provider (IdP) during an <Tooltip content="A grant requiring explicit interaction/consent from the RO before an access token can be issued" client:load><span>interactive grant</span></Tooltip> flow. An IdP is a system or service that manages user authentication, identity information, and consent.
+An identity provider (IdP) is a system or service that manages user authentication, identity information, and consent. Open Payments requires any AS that issues <Tooltip content="A grant requiring explicit interaction/consent from the resource owner before an access token can be issued" client:load><span>interactive grants</span></Tooltip> be integrated with an IdP.
 
-After an interactive grant request is initiated and the AS sets the session, the AS provides the client with the IdP URI to redirect the end-user to. The IdP handles end-user authentication and consent and communicates the details to the AS.
+After an interactive grant request is initiated and the AS sets the session, the AS provides the client with the IdP URI to redirect the end-user to.
 
 <Interactive />
+
+:::tip[Reference implementation]
+
+<LinkOut href='https://rafiki.dev/concepts/open-payments/grant-interaction/'>
+  Rafiki
+</LinkOut> provides a reference <LinkOut href='https://github.com/interledger/rafiki/tree/main/packages/auth'>
+  authorization service
+</LinkOut> implementation that includes support for integration with an <LinkOut href='https://github.com/interledger/rafiki/blob/8fb69da214ae253eb380e78a61b80ae394a62fe7/packages/auth/src/openapi/id-provider.yaml'>
+  IdP
+</LinkOut>
+. :::

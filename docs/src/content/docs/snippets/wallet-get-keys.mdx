@@ -10,7 +10,7 @@ import Ts from '/src/partials/ts-prerequisites.mdx'
 
 While most Open Payments code snippets are intended for clients, getting the keys bound to a wallet address is primarily a function of account servicing entities.
 
-When an authorization server receives a signed grant request, the auth server makes a call to acquire the keys. When a client makes a request to a resource server, the resource server calls the auth server to ensure the signature of the request corresponds to the public JWK of the wallet address.
+When an authorization server receives a signed grant request, the server can make a call to acquire the public keys bound to the wallet address. Then, when a client makes a request to a resource server, the resource server calls the auth server to ensure the signature of the request corresponds to the public JWK of the wallet address. This enables the server to ensure the client is who it says it is.
 
 These code snippets get the keys associated with the specified wallet address.
 
