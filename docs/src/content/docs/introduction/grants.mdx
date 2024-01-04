@@ -2,8 +2,6 @@
 title: Grant negotiation and authorization
 ---
 
-import Interactive from '/src/partials/diagram-interactive-grant.mdx'
-
 import {
   CodeBlock,
   LinkOut,
@@ -11,6 +9,7 @@ import {
   Mermaid,
   MermaidWrapper
 } from '@interledger/docs-design-system'
+import Interactive from '/src/partials/diagram-interactive-grant.mdx'
 
 In Open Payments, a grant indicates a transfer, or delegation, of authorization from a resource owner (RO) to a piece of software. An RO can be a physical person, such as the software’s end user, or a process, such as predefined organizational rules. By delegating authorization, the RO allows the software to access and perform operations on protected resources on the RO’s behalf.
 
@@ -97,8 +96,12 @@ An open-source implementation of an Open Payments resource server, called <LinkO
 
 ## Identity providers
 
-Open Payments requires the use of an identity provider (IdP) during an <Tooltip content="A grant requiring explicit interaction/consent from the RO before an access token can be issued" client:load><span>interactive grant</span></Tooltip> flow. An IdP is a system or service that manages user authentication, identity information, and consent.
+An identity provider (IdP) is a system or service that manages user authentication, identity information, and consent. Open Payments requires any AS that issues <Tooltip content="A grant requiring explicit interaction/consent from the resource owner before an access token can be issued" client:load><span>interactive grants</span></Tooltip> be integrated with an IdP.
 
-After an interactive grant request is initiated and the AS sets the session, the AS provides the client with the IdP URI to redirect the end-user to. The IdP handles end-user authentication and consent and communicates the details to the AS.
+After an interactive grant request is initiated and the AS sets the session, the AS provides the client with the IdP URI to redirect the end-user to.
 
 <Interactive />
+
+:::tip[Reference implementation]
+Rafiki provides a reference <LinkOut href='https://github.com/interledger/rafiki/tree/main/packages/auth'>authorization service</LinkOut> implementation that includes support for integration with an IdP.
+:::
