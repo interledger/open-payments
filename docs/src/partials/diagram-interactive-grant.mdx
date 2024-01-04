@@ -1,0 +1,27 @@
+import { MermaidWrapper, Mermaid } from '@interledger/docs-design-system'
+
+<MermaidWrapper client:load>
+
+{/* prettier-ignore */}
+<Mermaid
+  graph={`sequenceDiagram
+    Client instance->>Authorization server (AS): Sends interactive grant request
+    Authorization server (AS)-->>Client instance: 200 returns interact redirect uri and continue uri
+    Client instance->>Authorization server (AS): Navigates to interact redirect uri
+    Authorization server (AS)->>Authorization server (AS): Starts interaction and sets session
+    Authorization server (AS)-->>Client instance: 302 temporary redirect to identity provider <br>uri with grant info in query string
+    Client instance->>Identity provider (IdP): Redirects to identity provider
+    Identity provider (IdP)->>Identity provider (IdP): Resource owner (e.g. client end-user) <br>accepts interaction
+    Identity provider (IdP)->>Authorization server (AS): Sends interaction choice
+    Authorization server (AS) -->>Identity provider (IdP): 202 choice accepted
+    Identity provider (IdP)->>Authorization server (AS): Requests to finish interaction
+    Authorization server (AS)->>Authorization server (AS): Ends session
+    Authorization server (AS)-->>Identity provider (IdP): 302 temporary redirect to finish url <br>(defined in initial grant request) <br>secured with unique hash and <br>interact_ref in query string
+    Identity provider (IdP)->>Client instance: Follows redirect
+    Client instance->>Client instance: Verifies hash
+    Client instance->>Authorization server (AS): Sends grant continuation request with <br>interact_ref in body to continue uri
+    Authorization server (AS)->>Client instance: 200 returns grant access token
+`}
+/>
+
+</MermaidWrapper>
