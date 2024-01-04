@@ -2,8 +2,6 @@
 title: Grant negotiation and authorization
 ---
 
-import Interactive from '/src/partials/diagram-interactive-grant.mdx'
-
 import {
   CodeBlock,
   LinkOut,
@@ -11,6 +9,7 @@ import {
   Mermaid,
   MermaidWrapper
 } from '@interledger/docs-design-system'
+import Interactive from '/src/partials/diagram-interactive-grant.mdx'
 
 In Open Payments, a grant indicates a transfer, or delegation, of authorization from a resource owner (RO) to a piece of software. An RO can be a physical person, such as the software’s end user, or a process, such as predefined organizational rules. By delegating authorization, the RO allows the software to access and perform operations on protected resources on the RO’s behalf.
 
@@ -101,8 +100,6 @@ An identity provider (IdP) is a system or service that manages user authenticati
 
 After an interactive grant request is initiated and the AS sets the session, the AS provides the client with the IdP URI to redirect the end-user to.
 
-<Interactive />
-
 <LinkOut href='https://rafiki.dev/concepts/open-payments/grant-interaction/'>
   Rafiki
 </LinkOut> provides a reference <LinkOut href='https://github.com/interledger/rafiki/tree/main/packages/auth'>
@@ -111,3 +108,5 @@ After an interactive grant request is initiated and the AS sets the session, the
   IdP
 </LinkOut>
 .
+
+<Interactive />
