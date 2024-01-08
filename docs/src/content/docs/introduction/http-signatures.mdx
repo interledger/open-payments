@@ -2,7 +2,7 @@
 title: HTTP message signatures
 ---
 
-import { CodeBlock, LinkOut } from "@interledger/docs-design-system";
+import { CodeBlock, LinkOut } from '@interledger/docs-design-system'
 
 HTTP message signatures are cryptographic digital signatures used by the Open Payments API to secure HTTP messages exchanged between sender, receiver, or third-party initiating payment systems.
 
@@ -10,7 +10,7 @@ The Open Payments API implements the <LinkOut href='https://datatracker.ietf.org
 
 ## Purpose
 
-The goal is to address the following aspects of message security:
+The use of digital signatures allow the Open Payments API to address two key aspects of message security:
 
 - **Authenticity** of any system that requests access to specific resources.
 - **Integrity** of specific message fields to guard against message tampering.
@@ -19,20 +19,21 @@ Part of how Open Payments-enabled systems control access to protected resources 
 
 ## Signature algorithms
 
-Various digital signature algorithms can be used to generate HTTP message signatures. 
-The Open Payments API implements the **Ed25519** variant of the EdDSA (Edwards-curve Digital Signature Algorithm), an elliptic curve cryptographic algorithm.
+To generate message signatures, the Open Payments API implements the **Ed25519** variant of the EdDSA (Edwards-curve Digital Signature Algorithm).
+EdDSA is an elliptic curve cryptographic algorithm that offers advantages over previous generations of public key cryptography algorithms.
 
- Advantages for using EdDSA over previous generations of public key cryptography algorithms include:
+The main advantages for using this digital signature algorithm include:
 
 - Good hash function collision resilience.
 - Speed and efficiency for signature generation and verification.
-- Relatively efficient security offered with smaller key sizes. Earlier public-key cryptographic algorithms, such as RSA, offer comparable security with notably larger key sizes.
 - Guarding against the risk of an encryption key downgrade attack.
+- Relatively efficient security offered with smaller key sizes. Earlier public-key cryptographic algorithms, such as RSA, offer comparable security with notably larger key sizes.
 
 For more information about the EdDSA and its variants, refer to <LinkOut href='https://datatracker.ietf.org/doc/html/rfc8032'>RFC8032</LinkOut>.
 
 ## Signature creation
-Below is an example of creating the signature, starting with the original HTTP message.
+
+The example below illustrates creating the signature, starting with the original HTTP message.
 
 <CodeBlock title="Example: message before signature">
 
@@ -48,18 +49,24 @@ Authorization: GNAP 123454321
     "hello";"world"
 }
 ```
+
 </CodeBlock>
+
+![Create the http signature](/img/http-sig/4-sig_creation.png)
 
 ### Signature Base
 
-The signature creation process begins with identifying the fields of the original message to use use when creating the signature. 
-These are called the covered components of the message. The covered components make up the signature base, together with the signing algorithm, and an identifier for the signer's public key.  
+The signature creation process begins with identifying the fields of the original message to use when creating the signature.
+These are called the covered components of the message. The covered components make up the signature base, together with the signing algorithm, and an identifier for the signer's public key.
 
 The final sub-field of the signature base is an HTTP structured field called signature params, an ordered list of components that make up the signature base.
 
-{/* 
-    Note: contents of codeblock example below were generated using: https://httpsig.org
- */}
+{/* prettier-ignore */}
+{/*
+
+# fyi: contents of codeblock example below were generated using: https://httpsig.org
+
+\*/}
 
 <CodeBlock title="Example: signature base">
 
@@ -73,16 +80,16 @@ The final sub-field of the signature base is an HTTP structured field called sig
 "@signature-params": ("content-type" "content-digest" "content-length" "authorization" "@method" "@target-uri");alg="ed25519";keyid="eddsa_key_1";created=1704722601
 
 ```
+
 </CodeBlock>
 
 ### Generate Signature
 
-To generate the http signature:  
-- The signature base gets hashed (using SHA-512), producing a digest.
-- The digest gets signed with the signer's private key, producing the signature as a byte string.   
-- The byte string gets Base64 encoded, and this results in the final signature value.
+To generate the http signature:
 
-![Create the http signature](/img/http-sig/4-sig_creation.png)
+- The signature base gets hashed (using SHA-512), producing a digest.
+- The digest gets signed with the signer's private key, producing the signature as a byte string.
+- The byte string gets Base64 encoded, and this results in the final signature value.
 
 ### Signed HTTP Message
 
@@ -103,10 +110,11 @@ Signature: sig1=:EiCdZMbyXj6pN59g+mh3mY/Q6DlSBrCL7CJM4OZ550+d2MZhfdDKrOJU/ugeRdw
     "hello";"world"
 }
 ```
+
 </CodeBlock>
 
 :::note
-HTTP messages can have multiple signatures, with each signature uniquely labelled.
+HTTP messages can hold multiple signatures, with each signature uniquely labelled.  
 If required, different signatures can be generated using different signature algorithms.
 :::
 
