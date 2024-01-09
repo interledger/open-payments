@@ -12,13 +12,12 @@ import {
 } from './incoming-payment'
 import { OpenAPI, HttpMethod, createOpenAPI } from '@interledger/openapi'
 import {
-  defaultAxiosInstance,
+  createTestDeps,
   mockIncomingPayment,
   mockIncomingPaymentPaginationResult,
   mockIncomingPaymentWithPaymentMethods,
   mockOpenApiResponseValidators,
-  mockPublicIncomingPayment,
-  silentLogger
+  mockPublicIncomingPayment
 } from '../test/helpers'
 import nock from 'nock'
 import path from 'path'
@@ -45,8 +44,7 @@ describe('incoming-payment', (): void => {
     )
   })
 
-  const axiosInstance = defaultAxiosInstance
-  const logger = silentLogger
+  const deps = createTestDeps()
   const walletAddress = 'http://localhost:1000/alice/.well-known/pay'
   const serverAddress = 'http://localhost:1000'
   const accessToken = 'accessToken'
@@ -61,7 +59,7 @@ describe('incoming-payment', (): void => {
         .reply(200, incomingPayment)
 
       const result = await getIncomingPayment(
-        { axiosInstance, logger },
+        deps,
         {
           url: `${serverAddress}/incoming-payments/1`,
           accessToken
@@ -91,10 +89,7 @@ describe('incoming-payment', (): void => {
 
       await expect(
         getIncomingPayment(
-          {
-            axiosInstance,
-            logger
-          },
+          deps,
           {
             url: `${serverAddress}/incoming-payments/1`,
             accessToken
@@ -114,10 +109,7 @@ describe('incoming-payment', (): void => {
 
       await expect(
         getIncomingPayment(
-          {
-            axiosInstance,
-            logger
-          },
+          deps,
           {
             url: `${serverAddress}/incoming-payments/1`,
             accessToken
@@ -137,7 +129,7 @@ describe('incoming-payment', (): void => {
         .reply(200, publicIncomingPayment)
 
       const result = await getPublicIncomingPayment(
-        { axiosInstance, logger },
+        deps,
         {
           url: `${walletAddress}/incoming-payments/1`
         },
@@ -155,10 +147,7 @@ describe('incoming-payment', (): void => {
 
       await expect(
         getPublicIncomingPayment(
-          {
-            axiosInstance,
-            logger
-          },
+          deps,
           {
             url: `${walletAddress}/incoming-payments/1`
           },
@@ -187,7 +176,7 @@ describe('incoming-payment', (): void => {
           .reply(200, incomingPayment)
 
         const result = await createIncomingPayment(
-          { axiosInstance, logger },
+          deps,
           { url: serverAddress, accessToken },
           openApiValidators.successfulValidator,
           {
@@ -222,7 +211,7 @@ describe('incoming-payment', (): void => {
 
       try {
         await createIncomingPayment(
-          { axiosInstance, logger },
+          deps,
           { url: serverAddress, accessToken },
           openApiValidators.successfulValidator,
           { walletAddress }
@@ -248,7 +237,7 @@ describe('incoming-payment', (): void => {
 
       await expect(
         createIncomingPayment(
-          { axiosInstance, logger },
+          deps,
           { url: serverAddress, accessToken },
           openApiValidators.failedValidator,
           { walletAddress }
@@ -269,7 +258,7 @@ describe('incoming-payment', (): void => {
         .reply(200, incomingPayment)
 
       const result = await completeIncomingPayment(
-        { axiosInstance, logger },
+        deps,
         {
           url: `${serverAddress}/incoming-payments/${incomingPayment.id}`,
           accessToken
@@ -293,7 +282,7 @@ describe('incoming-payment', (): void => {
 
       try {
         await completeIncomingPayment(
-          { axiosInstance, logger },
+          deps,
           {
             url: `${serverAddress}/incoming-payments/${incomingPayment.id}`,
             accessToken
@@ -325,7 +314,7 @@ describe('incoming-payment', (): void => {
 
       await expect(
         completeIncomingPayment(
-          { axiosInstance, logger },
+          deps,
           {
             url: `${serverAddress}/incoming-payments/${incomingPayment.id}`,
             accessToken
@@ -363,10 +352,7 @@ describe('incoming-payment', (): void => {
             .reply(200, incomingPaymentPaginationResult)
 
           const result = await listIncomingPayment(
-            {
-              axiosInstance,
-              logger
-            },
+            deps,
             {
               url: serverAddress,
               walletAddress,
@@ -409,10 +395,7 @@ describe('incoming-payment', (): void => {
             .reply(200, incomingPaymentPaginationResult)
 
           const result = await listIncomingPayment(
-            {
-              axiosInstance,
-              logger
-            },
+            deps,
             {
               url: serverAddress,
               walletAddress,
@@ -458,10 +441,7 @@ describe('incoming-payment', (): void => {
 
       try {
         await listIncomingPayment(
-          {
-            axiosInstance,
-            logger
-          },
+          deps,
           {
             url: serverAddress,
             walletAddress,
@@ -494,7 +474,7 @@ describe('incoming-payment', (): void => {
 
       await expect(
         listIncomingPayment(
-          { axiosInstance, logger },
+          deps,
           { url: serverAddress, walletAddress, accessToken },
           openApiValidators.failedValidator
         )
@@ -650,15 +630,11 @@ describe('incoming-payment', (): void => {
 
         await createIncomingPaymentRoutes({
           openApi,
-          axiosInstance,
-          logger
+          ...deps
         }).get({ url, accessToken })
 
         expect(getSpy).toHaveBeenCalledWith(
-          {
-            axiosInstance,
-            logger
-          },
+          deps,
           {
             url,
             accessToken
@@ -688,18 +664,10 @@ describe('incoming-payment', (): void => {
 
         await createIncomingPaymentRoutes({
           openApi,
-          axiosInstance,
-          logger
+          ...deps
         }).getPublic({ url })
 
-        expect(getSpy).toHaveBeenCalledWith(
-          {
-            axiosInstance,
-            logger
-          },
-          { url },
-          true
-        )
+        expect(getSpy).toHaveBeenCalledWith(deps, { url }, true)
       })
     })
 
@@ -725,15 +693,11 @@ describe('incoming-payment', (): void => {
 
         await createIncomingPaymentRoutes({
           openApi,
-          axiosInstance,
-          logger
+          ...deps
         }).list({ url: serverAddress, walletAddress, accessToken })
 
         expect(getSpy).toHaveBeenCalledWith(
-          {
-            axiosInstance,
-            logger
-          },
+          deps,
           {
             url,
             accessToken,
@@ -769,18 +733,14 @@ describe('incoming-payment', (): void => {
 
         await createIncomingPaymentRoutes({
           openApi,
-          axiosInstance,
-          logger
+          ...deps
         }).create(
           { url: serverAddress, accessToken },
           incomingPaymentCreateArgs
         )
 
         expect(postSpy).toHaveBeenCalledWith(
-          {
-            axiosInstance,
-            logger
-          },
+          deps,
           { url, accessToken, body: incomingPaymentCreateArgs },
           true
         )
@@ -806,15 +766,11 @@ describe('incoming-payment', (): void => {
 
         await createIncomingPaymentRoutes({
           openApi,
-          axiosInstance,
-          logger
+          ...deps
         }).complete({ url: incomingPaymentUrl, accessToken })
 
         expect(postSpy).toHaveBeenCalledWith(
-          {
-            axiosInstance,
-            logger
-          },
+          deps,
           {
             url: `${incomingPaymentUrl}/complete`,
             accessToken
@@ -846,18 +802,10 @@ describe('incoming-payment', (): void => {
 
         await createUnauthenticatedIncomingPaymentRoutes({
           openApi,
-          axiosInstance,
-          logger
+          ...deps
         }).get({ url })
 
-        expect(getSpy).toHaveBeenCalledWith(
-          {
-            axiosInstance,
-            logger
-          },
-          { url },
-          true
-        )
+        expect(getSpy).toHaveBeenCalledWith(deps, { url }, true)
       })
     })
   })

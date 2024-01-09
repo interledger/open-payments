@@ -1,5 +1,36 @@
 # @interledger/open-payments
 
+## 6.5.0
+
+### Minor Changes
+
+- fe2c0d0: - Pulls in correct OpenAPI spec when wallet address validators are created in the SDK.
+  - Updates the types returned by Grant continue route.
+
+## 6.4.0
+
+### Minor Changes
+
+- 870347b: Exposes the grant continuation type
+
+## 6.3.0
+
+### Minor Changes
+
+- dde4639: Made "access_token" optional for grant continuation responses
+
+## 6.2.0
+
+### Minor Changes
+
+- ec04a61: Mapped wallet address and jwks get to new stand along Open API spec
+
+## 6.1.1
+
+### Patch Changes
+
+- 28adb01: The `useHttp` option, when initializing an authenticated or unauthenticated client, was not being passed to resource route factories and request functions. This release addresses and resolves this issue.
+
 ## 6.1.0
 
 ### Minor Changes

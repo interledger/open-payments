@@ -7,7 +7,7 @@ This library provides tools for working with [HTTP Message Signatures](https://d
 - Creating HTTP Signature headers & digests
 - Validating and verifying HTTP Signature headers
 
-HTTP Message Signatures are used for protecting the integrity of [Open Payments](https://docs.openpayments.guide/) API requests.
+HTTP Message Signatures are used for protecting the integrity of [Open Payments](https://openpayments.guide/introduction/http-signatures/) API requests.
 
 ## Installation
 

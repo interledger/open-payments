@@ -2,14 +2,21 @@
 import { createAxiosInstance, deleteRequest, get, post } from './requests'
 import { generateKeyPairSync } from 'crypto'
 import nock from 'nock'
-import { mockOpenApiResponseValidators, silentLogger } from '../test/helpers'
+import { createTestDeps, mockOpenApiResponseValidators } from '../test/helpers'
 import { OpenPaymentsClientError } from './error'
 import assert from 'assert'
 
 describe('requests', (): void => {
-  const logger = silentLogger
   const privateKey = generateKeyPairSync('ed25519').privateKey
   const keyId = 'myId'
+  const axiosInstance = createAxiosInstance({
+    requestTimeoutMs: 0,
+    privateKey,
+    keyId
+  })
+  const deps = createTestDeps({
+    axiosInstance
+  })
 
   describe('createAxiosInstance', (): void => {
     test('sets timeout properly', async (): Promise<void> => {
@@ -33,11 +40,6 @@ describe('requests', (): void => {
   })
 
   describe('get', (): void => {
-    const axiosInstance = createAxiosInstance({
-      requestTimeoutMs: 0,
-      privateKey,
-      keyId
-    })
     const baseUrl = 'http://localhost:1000'
     const responseValidators = mockOpenApiResponseValidators()
 
@@ -78,7 +80,7 @@ describe('requests', (): void => {
         .reply(200)
 
       await get(
-        { axiosInstance, logger },
+        deps,
         {
           url: `${baseUrl}/incoming-payments`,
           accessToken: 'accessToken'
@@ -106,7 +108,7 @@ describe('requests', (): void => {
         .reply(200)
 
       await get(
-        { axiosInstance, logger },
+        deps,
         {
           url: `${baseUrl}/incoming-payments`
         },
@@ -143,7 +145,7 @@ describe('requests', (): void => {
           .reply(200)
 
         await get(
-          { axiosInstance, logger },
+          deps,
           {
             url: `${baseUrl}/incoming-payments`,
             queryParams
@@ -176,7 +178,7 @@ describe('requests', (): void => {
       )
 
       await get(
-        { axiosInstance, logger },
+        deps,
         {
           url: `${baseUrl}/incoming-payments`
         },
@@ -194,7 +196,7 @@ describe('requests', (): void => {
 
       try {
         await get(
-          { axiosInstance, logger },
+          deps,
           {
             url: `${baseUrl}/incoming-payments`
           },
@@ -214,7 +216,7 @@ describe('requests', (): void => {
 
       try {
         await get(
-          { axiosInstance, logger },
+          deps,
           {
             url: `${baseUrl}/incoming-payments`
           },
@@ -233,11 +235,7 @@ describe('requests', (): void => {
       const httpsUrl = 'https://localhost:1000/'
       const scope = nock(httpsUrl).get('/').reply(200)
 
-      await get(
-        { axiosInstance, logger, useHttp: false },
-        { url: httpsUrl },
-        responseValidators.successfulValidator
-      )
+      await get(deps, { url: httpsUrl }, responseValidators.successfulValidator)
 
       expect(axiosInstance.get).toHaveBeenCalledWith(httpsUrl, {
         headers: {}
@@ -246,12 +244,13 @@ describe('requests', (): void => {
     })
 
     test('uses http protocol for request if development environment', async (): Promise<void> => {
+      const tmpDeps = createTestDeps({ axiosInstance, useHttp: true })
       const httpsUrl = 'https://localhost:1000/'
       const httpUrl = httpsUrl.replace('https', 'http')
       const scope = nock(httpUrl).get('/').reply(200)
 
       await get(
-        { axiosInstance, logger, useHttp: true },
+        tmpDeps,
         { url: httpsUrl },
         responseValidators.successfulValidator
       )
@@ -264,11 +263,6 @@ describe('requests', (): void => {
   })
 
   describe('post', (): void => {
-    const axiosInstance = createAxiosInstance({
-      requestTimeoutMs: 0,
-      privateKey,
-      keyId
-    })
     const baseUrl = 'http://localhost:1000'
     const responseValidators = mockOpenApiResponseValidators()
 
@@ -314,7 +308,7 @@ describe('requests', (): void => {
         .reply(status, body)
 
       await post(
-        { axiosInstance, logger },
+        deps,
         {
           url: `${baseUrl}/grant`,
           body
@@ -370,7 +364,7 @@ describe('requests', (): void => {
         .reply(status, body)
 
       await post(
-        { axiosInstance, logger },
+        deps,
         {
           url: `${baseUrl}/grant`,
           body,
@@ -401,7 +395,7 @@ describe('requests', (): void => {
       )
 
       await post(
-        { axiosInstance, logger },
+        deps,
         {
           url: `${baseUrl}/grant`,
           body
@@ -423,7 +417,7 @@ describe('requests', (): void => {
 
       try {
         await post(
-          { axiosInstance, logger },
+          deps,
           {
             url: `${baseUrl}/grant`,
             body
@@ -448,7 +442,7 @@ describe('requests', (): void => {
 
       try {
         await post(
-          { axiosInstance, logger },
+          deps,
           {
             url: `${baseUrl}/grant`,
             body
@@ -469,7 +463,7 @@ describe('requests', (): void => {
       const scope = nock(httpsUrl).post('/').reply(200)
 
       await post(
-        { axiosInstance, logger },
+        deps,
         { url: httpsUrl },
         responseValidators.successfulValidator
       )
@@ -481,12 +475,13 @@ describe('requests', (): void => {
     })
 
     test('uses http protocol for request if development environment', async (): Promise<void> => {
+      const tmpDeps = createTestDeps({ axiosInstance, useHttp: true })
       const httpsUrl = 'https://localhost:1000/'
       const httpUrl = httpsUrl.replace('https', 'http')
       const scope = nock(httpUrl).post('/').reply(200)
 
       await post(
-        { axiosInstance, logger, useHttp: true },
+        tmpDeps,
         { url: httpsUrl },
         responseValidators.successfulValidator
       )
@@ -499,11 +494,6 @@ describe('requests', (): void => {
   })
 
   describe('delete', (): void => {
-    const axiosInstance = createAxiosInstance({
-      requestTimeoutMs: 0,
-      privateKey,
-      keyId
-    })
     const baseUrl = 'http://localhost:1000'
     const responseValidators = mockOpenApiResponseValidators()
 
@@ -520,7 +510,7 @@ describe('requests', (): void => {
         .reply(status)
 
       await deleteRequest(
-        { axiosInstance, logger },
+        deps,
         {
           url: `${baseUrl}/grant`
         },
@@ -551,7 +541,7 @@ describe('requests', (): void => {
         .reply(status)
 
       await deleteRequest(
-        { axiosInstance, logger },
+        deps,
         {
           url: `${baseUrl}/grant/`,
           accessToken
@@ -589,7 +579,7 @@ describe('requests', (): void => {
         )
 
         await deleteRequest(
-          { axiosInstance, logger },
+          deps,
           {
             url: `${baseUrl}/grant`
           },
@@ -609,7 +599,7 @@ describe('requests', (): void => {
 
       try {
         await deleteRequest(
-          { axiosInstance, logger },
+          deps,
           {
             url: `${baseUrl}/grant`
           },
@@ -630,7 +620,7 @@ describe('requests', (): void => {
 
       try {
         await deleteRequest(
-          { axiosInstance, logger },
+          deps,
           {
             url: `${baseUrl}/grant`
           },
@@ -650,7 +640,7 @@ describe('requests', (): void => {
       const scope = nock(httpsUrl).delete('/').reply(200)
 
       await deleteRequest(
-        { axiosInstance, logger },
+        deps,
         { url: httpsUrl },
         responseValidators.successfulValidator
       )
@@ -662,12 +652,13 @@ describe('requests', (): void => {
     })
 
     test('uses http protocol for request if development environment', async (): Promise<void> => {
+      const tmpDeps = createTestDeps({ axiosInstance, useHttp: true })
       const httpsUrl = 'https://localhost:1000/'
       const httpUrl = httpsUrl.replace('https', 'http')
       const scope = nock(httpUrl).delete('/').reply(200)
 
       await deleteRequest(
-        { axiosInstance, logger, useHttp: true },
+        tmpDeps,
         { url: httpsUrl },
         responseValidators.successfulValidator
       )

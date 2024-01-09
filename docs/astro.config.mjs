@@ -1,14 +1,18 @@
 import { defineConfig } from 'astro/config'
 import starlight from '@astrojs/starlight'
 import { generateAPI } from 'starlight-openapi'
-import remarkMermaid from 'remark-mermaidjs'
 
 // Generate the documentation and get the associated sidebar groups.
-const { openAPISidebarGroups, starlightOpenAPI } = await generateAPI([
+const { starlightOpenAPI } = await generateAPI([
   {
     base: 'apis/resource-server',
     label: 'Open Payments',
     schema: '../openapi/resource-server.yaml'
+  },
+  {
+    base: 'apis/wallet-address-server',
+    label: 'Wallet Addresses',
+    schema: '../openapi/wallet-address-server.yaml'
   },
   {
     base: 'apis/auth-server',
@@ -20,9 +24,6 @@ const { openAPISidebarGroups, starlightOpenAPI } = await generateAPI([
 // https://astro.build/config
 export default defineConfig({
   site: 'https://openpayments.guide',
-  markdown: {
-    remarkPlugins: [remarkMermaid]
-  },
   integrations: [
     starlight({
       title: 'Open Payments',
@@ -33,6 +34,12 @@ export default defineConfig({
         './node_modules/@interledger/docs-design-system/src/styles/ilf-docs.css',
         './src/styles/openpayments.css'
       ],
+      expressiveCode: {
+        styleOverrides: {
+          borderColor: 'transparent',
+          borderRadius: 'var(--border-radius)'
+        }
+      },
       logo: {
         src: './public/favicon.svg'
       },
@@ -74,6 +81,10 @@ export default defineConfig({
           label: 'Code snippets',
           collapsed: true,
           items: [
+            {
+              label: 'Before you begin',
+              link: '/snippets/before-you-begin'
+            },
             {
               label: 'Wallet addresses',
               collapsed: true,
@@ -217,24 +228,25 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
-              label: 'Open Payments endpoints',
+              label: 'Wallet address server',
+              collapsed: true,
               items: [
                 {
-                  label: 'Wallet address',
-                  collapsed: true,
-                  items: [
-                    {
-                      label: 'Get wallet address',
-                      link: '/apis/resource-server/operations/get-wallet-address',
-                      badge: { text: 'GET', variant: 'success' }
-                    },
-                    {
-                      label: 'Get keys bound to wallet address',
-                      link: '/apis/resource-server/operations/get-wallet-address-keys',
-                      badge: { text: 'GET', variant: 'success' }
-                    }
-                  ]
+                  label: 'Get wallet address',
+                  link: '/apis/wallet-address-server/operations/get-wallet-address',
+                  badge: { text: 'GET', variant: 'success' }
                 },
+                {
+                  label: 'Get keys bound to wallet address',
+                  link: '/apis/wallet-address-server/operations/get-wallet-address-keys',
+                  badge: { text: 'GET', variant: 'success' }
+                }
+              ]
+            },
+            {
+              label: 'Resource server',
+              collapsed: true,
+              items: [
                 {
                   label: 'Incoming payment',
                   collapsed: true,
@@ -301,7 +313,8 @@ export default defineConfig({
               ]
             },
             {
-              label: 'Open Payments auth server endpoints',
+              label: 'Auth server',
+              collapsed: true,
               items: [
                 {
                   label: 'Grants',

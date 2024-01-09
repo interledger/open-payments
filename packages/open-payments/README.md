@@ -1,8 +1,8 @@
 # Open Payments
 
-[Open Payments](https://docs.openpayments.guide/) is an API standard that allows third-parties (with the account holder's consent) to initiate payments and to view the transaction history on the account holder's account.
+[Open Payments](https://openpayments.guide/) is an API standard that allows third-parties (with the account holder's consent) to initiate payments and to view the transaction history on the account holder's account.
 
-Open Payments consists of two OpenAPI specifications, a **resource server** which exposes APIs for performing functions against the underlying accounts and an **authorization server** which exposes APIs compliant with the [GNAP](https://docs.openpayments.guide/docs/security) standard for getting grants to access the resource server APIs.
+Open Payments consists of two OpenAPI specifications, a **resource server** which exposes APIs for performing functions against the underlying accounts and an **authorization server** which exposes APIs compliant with the [GNAP](https://openpayments.guide/introduction/grants/) standard for getting grants to access the resource server APIs.
 
 This package provides TypeScript & NodeJS tools for using Open Payments:
 
@@ -34,7 +34,7 @@ This package exports two clients, an `UnauthenticatedClient` and an `Authenticat
 ### `UnauthenticatedClient`
 
 This client allows making requests to access publicly available resources, without needing to provide a private key (authentication).
-The available resources are [Wallet Addresses](https://docs.openpayments.guide/reference/get-wallet-address), [Wallet Address Keys](https://docs.openpayments.guide/reference/get-wallet-address-keys), and the public version of [Incoming Payments](https://docs.openpayments.guide/reference/get-incoming-payment).
+The available resources are [Wallet Addresses](https://openpayments.guide/apis/wallet-address-server/operations/get-wallet-address/), [Wallet Address Keys](https://openpayments.guide/apis/wallet-address-server/operations/get-wallet-address-keys/), and the public version of [Incoming Payments](https://openpayments.guide/apis/resource-server/operations/get-incoming-payment/).
 
 ```ts
 import { createUnauthenticatedClient } from '@interledger/open-payments'
@@ -74,11 +74,11 @@ const client = await createAuthenticatedClient({
 
 In order to create the client, three properties need to be provided: `keyId`, the `privateKey` and the `walletAddressUrl`:
 
-| Variable           | Description                                                                                                                                                                                                                                                                                                                                                                               |
-| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `walletAddressUrl` | The valid wallet address with which the client making requests will identify itself. A JSON Web Key Set document that includes the public key that the client instance will use to protect requests MUST be available at the `{walletAddressUrl}/jwks.json` url. This will be used as the `client` field during [Grant Creation](https://docs.openpayments.guide/reference/post-request). |
-| `privateKey`       | The private EdDSA-Ed25519 key (or the relative or absolute path to the key) bound to the wallet address, and used to sign the authenticated requests with. As mentioned above, a public JWK document signed with this key MUST be available at the `{walletAddressUrl}/jwks.json` url.                                                                                                    |
-| `keyId`            | The key identifier of the given private key and the corresponding public JWK document.                                                                                                                                                                                                                                                                                                    |
+| Variable           | Description                                                                                                                                                                                                                                                                                                                                                                                             |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `walletAddressUrl` | The valid wallet address with which the client making requests will identify itself. A JSON Web Key Set document that includes the public key that the client instance will use to protect requests MUST be available at the `{walletAddressUrl}/jwks.json` url. This will be used as the `client` field during [Grant Creation](https://openpayments.guide/apis/auth-server/operations/post-request/). |
+| `privateKey`       | The private EdDSA-Ed25519 key (or the relative or absolute path to the key) bound to the wallet address, and used to sign the authenticated requests with. As mentioned above, a public JWK document signed with this key MUST be available at the `{walletAddressUrl}/jwks.json` url.                                                                                                                  |
+| `keyId`            | The key identifier of the given private key and the corresponding public JWK document.                                                                                                                                                                                                                                                                                                                  |
 
 > **Note**
 >
@@ -113,6 +113,10 @@ try {
 ```
 
 ## Example
+
+> **Note**
+>
+> A high level Open Payments flow with diagrams can be found [here](https://openpayments.guide/introduction/op-flow/).
 
 As mentioned previously, Open Payments APIs can facilitate a payment between two parties.
 

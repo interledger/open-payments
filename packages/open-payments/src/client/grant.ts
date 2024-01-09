@@ -8,6 +8,7 @@ import {
   getASPath,
   PendingGrant,
   Grant,
+  GrantContinuation,
   GrantRequest,
   GrantContinuationRequest
 } from '../types'
@@ -25,22 +26,26 @@ export interface GrantRoutes {
   continue(
     postArgs: GrantOrTokenRequestArgs,
     args: GrantContinuationRequest
-  ): Promise<Grant>
+  ): Promise<Grant | GrantContinuation>
   cancel(postArgs: GrantOrTokenRequestArgs): Promise<void>
 }
 
 export const createGrantRoutes = (deps: GrantRouteDeps): GrantRoutes => {
-  const requestGrantValidator = deps.openApi.createResponseValidator<
+  const { openApi, client, ...baseDeps } = deps
+
+  const requestGrantValidator = openApi.createResponseValidator<
     PendingGrant | Grant
   >({
     path: getASPath('/'),
     method: HttpMethod.POST
   })
-  const continueGrantValidator = deps.openApi.createResponseValidator<Grant>({
+  const continueGrantValidator = openApi.createResponseValidator<
+    GrantContinuation | Grant
+  >({
     path: getASPath('/continue/{id}'),
     method: HttpMethod.POST
   })
-  const cancelGrantValidator = deps.openApi.createResponseValidator({
+  const cancelGrantValidator = openApi.createResponseValidator({
     path: getASPath('/continue/{id}'),
     method: HttpMethod.DELETE
   })
@@ -51,12 +56,12 @@ export const createGrantRoutes = (deps: GrantRouteDeps): GrantRoutes => {
       args: Omit<GrantRequest, 'client'>
     ) =>
       post(
-        deps,
+        baseDeps,
         {
           url,
           body: {
             ...args,
-            client: deps.client
+            client
           }
         },
         requestGrantValidator
@@ -66,7 +71,7 @@ export const createGrantRoutes = (deps: GrantRouteDeps): GrantRoutes => {
       args: GrantContinuationRequest
     ) =>
       post(
-        deps,
+        baseDeps,
         {
           url,
           accessToken,
@@ -76,7 +81,7 @@ export const createGrantRoutes = (deps: GrantRouteDeps): GrantRoutes => {
       ),
     cancel: ({ url, accessToken }: GrantOrTokenRequestArgs) =>
       deleteRequest(
-        deps,
+        baseDeps,
         {
           url,
           accessToken

@@ -2,10 +2,10 @@ import { createWalletAddressRoutes } from './wallet-address'
 import { OpenAPI, HttpMethod, createOpenAPI } from '@interledger/openapi'
 import path from 'path'
 import {
-  defaultAxiosInstance,
+  createTestDeps,
+  mockDIDDocument,
   mockJwk,
-  mockWalletAddress,
-  silentLogger
+  mockWalletAddress
 } from '../test/helpers'
 import * as requestors from './requests'
 
@@ -26,8 +26,7 @@ describe('wallet-address', (): void => {
     )
   })
 
-  const axiosInstance = defaultAxiosInstance
-  const logger = silentLogger
+  const deps = createTestDeps()
 
   describe('routes', (): void => {
     const walletAddress = mockWalletAddress()
@@ -48,12 +47,11 @@ describe('wallet-address', (): void => {
 
         await createWalletAddressRoutes({
           openApi,
-          axiosInstance,
-          logger
+          ...deps
         }).get({ url: walletAddress.id })
 
         expect(getSpy).toHaveBeenCalledWith(
-          { axiosInstance, logger },
+          deps,
           { url: walletAddress.id },
           true
         )
@@ -76,16 +74,39 @@ describe('wallet-address', (): void => {
 
         await createWalletAddressRoutes({
           openApi,
-          axiosInstance,
-          logger
+          ...deps
         }).getKeys({ url: walletAddress.id })
 
         expect(getSpy).toHaveBeenCalledWith(
-          {
-            axiosInstance,
-            logger
-          },
+          deps,
           { url: `${walletAddress.id}/jwks.json` },
+          true
+        )
+      })
+    })
+
+    describe('getDIDDocument', (): void => {
+      test('calls get method with correct validator', async (): Promise<void> => {
+        const mockResponseValidator = ({ path, method }) =>
+          path === '/did.json' && method === HttpMethod.GET
+
+        jest
+          .spyOn(openApi, 'createResponseValidator')
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .mockImplementation(mockResponseValidator as any)
+
+        const getSpy = jest
+          .spyOn(requestors, 'get')
+          .mockResolvedValueOnce([mockDIDDocument()])
+
+        await createWalletAddressRoutes({
+          openApi,
+          ...deps
+        }).getDIDDocument({ url: walletAddress.id })
+
+        expect(getSpy).toHaveBeenCalledWith(
+          deps,
+          { url: `${walletAddress.id}/did.json` },
           true
         )
       })

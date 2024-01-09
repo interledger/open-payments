@@ -28,7 +28,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-      - run: pnpm dlx playwright install --with-deps chromium
 
       - name: Test build website
         run: |
