@@ -1,6 +1,6 @@
 {
   "name": "@interledger/open-payments",
-  "version": "6.5.0",
+  "version": "6.5.1",
   "description": "Tools for interacting with the Open Payments API",
   "author": "Interledger Tech Team <tech@interledger.org>",
   "repository": {
@@ -37,7 +37,7 @@
     "typescript": "^4.9.5"
   },
   "dependencies": {
-    "@interledger/http-signature-utils": "workspace:2.0.0",
+    "@interledger/http-signature-utils": "workspace:2.0.1",
     "@interledger/openapi": "workspace:1.2.1",
     "axios": "^1.6.0",
     "base64url": "^3.0.1",

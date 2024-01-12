@@ -1,5 +1,13 @@
 # @interledger/open-payments
 
+## 6.5.1
+
+### Patch Changes
+
+- 32737bd: Updating README and comments to have updated links to new site
+- Updated dependencies [32737bd]
+  - @interledger/http-signature-utils@2.0.1
+
 ## 6.5.0
 
 ### Minor Changes
