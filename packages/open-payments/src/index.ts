@@ -25,6 +25,7 @@ export {
 export {
   createAuthenticatedClient,
   createUnauthenticatedClient,
+  createMonetizationClient,
   AuthenticatedClient,
   UnauthenticatedClient,
   OpenPaymentsClientError

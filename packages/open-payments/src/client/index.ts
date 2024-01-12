@@ -15,7 +15,7 @@ import {
   WalletAddressRoutes
 } from './wallet-address'
 import { createAxiosInstance } from './requests'
-import { AxiosInstance } from 'axios'
+import { AxiosInstance, InternalAxiosRequestConfig } from 'axios'
 import { createGrantRoutes, GrantRoutes } from './grant'
 import {
   createOutgoingPaymentRoutes,
@@ -152,6 +152,41 @@ const createUnauthenticatedDeps = async ({
   }
 }
 
+const createMonetizationClientDeps = async ({
+  useHttp = false,
+  ...args
+}: CreateMonetizationClientDeps) => {
+  const logger = args?.logger ?? createLogger({ name: 'Open Payments Client' })
+  if (args.logLevel) {
+    logger.level = args.logLevel
+  }
+
+  const axiosInstance = createAxiosInstance({
+    requestTimeoutMs:
+      args?.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS,
+    requestInterceptor: args.requestInterceptor
+  })
+
+  const walletAddressServerOpenApi = await createOpenAPI(
+    path.resolve(__dirname, '../openapi/wallet-address-server.yaml')
+  )
+  const resourceServerOpenApi = await createOpenAPI(
+    path.resolve(__dirname, '../openapi/resource-server.yaml')
+  )
+  const authServerOpenApi = await createOpenAPI(
+    path.resolve(__dirname, '../openapi/auth-server.yaml')
+  )
+
+  return {
+    axiosInstance,
+    walletAddressServerOpenApi,
+    resourceServerOpenApi,
+    authServerOpenApi,
+    logger,
+    useHttp
+  }
+}
+
 const createAuthenticatedClientDeps = async ({
   useHttp = false,
   ...args
@@ -249,6 +284,14 @@ export interface CreateAuthenticatedClientArgs
   walletAddressUrl: string
 }
 
+export interface CreateMonetizationClientDeps
+  extends CreateUnauthenticatedClientArgs {
+  walletAddressUrl: string
+  requestInterceptor: (
+    value: InternalAxiosRequestConfig
+  ) => InternalAxiosRequestConfig | Promise<InternalAxiosRequestConfig>
+}
+
 export interface AuthenticatedClient
   extends Omit<UnauthenticatedClient, 'incomingPayment'> {
   incomingPayment: IncomingPaymentRoutes
@@ -267,6 +310,45 @@ export const createAuthenticatedClient = async (
     walletAddressServerOpenApi,
     ...baseDeps
   } = await createAuthenticatedClientDeps(args)
+
+  return {
+    incomingPayment: createIncomingPaymentRoutes({
+      ...baseDeps,
+      openApi: resourceServerOpenApi
+    }),
+    outgoingPayment: createOutgoingPaymentRoutes({
+      ...baseDeps,
+      openApi: resourceServerOpenApi
+    }),
+    walletAddress: createWalletAddressRoutes({
+      ...baseDeps,
+      openApi: walletAddressServerOpenApi
+    }),
+    grant: createGrantRoutes({
+      ...baseDeps,
+      openApi: authServerOpenApi,
+      client: args.walletAddressUrl
+    }),
+    token: createTokenRoutes({
+      ...baseDeps,
+      openApi: authServerOpenApi
+    }),
+    quote: createQuoteRoutes({
+      ...baseDeps,
+      openApi: resourceServerOpenApi
+    })
+  }
+}
+
+export const createMonetizationClient = async (
+  args: CreateMonetizationClientDeps
+): Promise<AuthenticatedClient> => {
+  const {
+    resourceServerOpenApi,
+    authServerOpenApi,
+    walletAddressServerOpenApi,
+    ...baseDeps
+  } = await createMonetizationClientDeps(args)
 
   return {
     incomingPayment: createIncomingPaymentRoutes({

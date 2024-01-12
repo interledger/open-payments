@@ -1,5 +1,6 @@
 import axios, {
   AxiosInstance,
+  AxiosInterceptorOptions,
   InternalAxiosRequestConfig,
   isAxiosError
 } from 'axios'
@@ -158,11 +159,38 @@ const checkUrlProtocol = (deps: BaseDeps, url: string): string => {
   return requestUrl.href
 }
 
-export const createAxiosInstance = (args: {
+export type InterceptorFn = (
+  config: InternalAxiosRequestConfig
+) => InternalAxiosRequestConfig | Promise<InternalAxiosRequestConfig>
+
+interface BaseAxiosInstanceArgs {
   requestTimeoutMs: number
+}
+
+interface CreateBaseAxiosInstanceArgs extends BaseAxiosInstanceArgs {
   privateKey?: KeyObject
   keyId?: string
-}): AxiosInstance => {
+}
+
+interface CreateMonetizationAxiosInstanceArgs extends BaseAxiosInstanceArgs {
+  requestInterceptor: InterceptorFn
+}
+
+const isMonetizationArgs = (
+  args: any
+): args is CreateMonetizationAxiosInstanceArgs => {
+  return typeof args.requestInterceptor === 'function'
+}
+
+export function createAxiosInstance(
+  args: CreateBaseAxiosInstanceArgs
+): AxiosInstance
+export function createAxiosInstance(
+  args: CreateMonetizationAxiosInstanceArgs
+): AxiosInstance
+export function createAxiosInstance(
+  args: any
+): AxiosInstance {
   const axiosInstance = axios.create({
     headers: {
       common: {
@@ -173,7 +201,19 @@ export const createAxiosInstance = (args: {
     timeout: args.requestTimeoutMs
   })
 
-  if (args.privateKey !== undefined && args.keyId !== undefined) {
+  const interceptorOptions: AxiosInterceptorOptions = {
+    runWhen: (config: InternalAxiosRequestConfig) =>
+      config.method?.toLowerCase() === 'post' ||
+      !!(config.headers && config.headers['Authorization'])
+  }
+
+  if (isMonetizationArgs(args)) {
+    axiosInstance.interceptors.request.use(
+      args.requestInterceptor,
+      undefined,
+      interceptorOptions
+    )
+  } else if (args.privateKey !== undefined && args.keyId !== undefined) {
     const privateKey = args.privateKey
     const keyId = args.keyId
     axiosInstance.interceptors.request.use(
@@ -204,13 +244,8 @@ export const createAxiosInstance = (args: {
         return config
       },
       undefined,
-      {
-        runWhen: (config: InternalAxiosRequestConfig) =>
-          config.method?.toLowerCase() === 'post' ||
-          !!(config.headers && config.headers['Authorization'])
-      }
+      interceptorOptions
     )
   }
-
   return axiosInstance
 }
