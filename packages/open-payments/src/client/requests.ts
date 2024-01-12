@@ -176,7 +176,12 @@ interface CreateMonetizationAxiosInstanceArgs extends BaseAxiosInstanceArgs {
   requestInterceptor: InterceptorFn
 }
 
+type CreateAxiosInstanceArgs =
+  | CreateBaseAxiosInstanceArgs
+  | CreateMonetizationAxiosInstanceArgs
+
 const isMonetizationArgs = (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   args: any
 ): args is CreateMonetizationAxiosInstanceArgs => {
   return typeof args.requestInterceptor === 'function'
@@ -189,7 +194,7 @@ export function createAxiosInstance(
   args: CreateMonetizationAxiosInstanceArgs
 ): AxiosInstance
 export function createAxiosInstance(
-  args: any
+  args: CreateAxiosInstanceArgs
 ): AxiosInstance {
   const axiosInstance = axios.create({
     headers: {
