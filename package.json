@@ -3,7 +3,7 @@
   "license": "Apache-2.0",
   "repository": "https://github.com/interledger/open-payments",
   "engines": {
-    "node": "18"
+    "node": "20"
   },
   "scripts": {
     "preinstall": "npx only-allow pnpm",
