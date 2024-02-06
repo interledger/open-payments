@@ -19,6 +19,15 @@ npm install @interledger/http-signature-utils
 
 ## Usage
 
+> [!IMPORTANT]  
+> Using Node.js 18 or earlier, requires polyfilling `globalThis.crypto`:
+>
+> ```ts
+> import { webcrypto } from "node:crypto";
+>
+> if (!globalThis.crypto) globalThis.crypto = webcrypto
+> ```
+
 Load a private Ed25519 key:
 
 ```ts
