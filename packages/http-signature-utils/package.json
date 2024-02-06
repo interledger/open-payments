@@ -24,12 +24,16 @@
     "prepack": "pnpm build"
   },
   "dependencies": {
+    "@lapo/asn1js": "^1.2.4",
+    "@noble/ed25519": "^2.0.0",
+    "@noble/hashes": "^1.3.3",
     "http-message-signatures": "^0.1.2",
     "httpbis-digest-headers": "^1.0.0",
     "jose": "^4.13.1",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@types/lapo__asn1js": "^1.2.5",
     "@types/node": "^18.7.12",
     "@types/uuid": "^9.0.0",
     "typescript": "^4.9.5"

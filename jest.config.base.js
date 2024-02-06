@@ -2,9 +2,8 @@
 
 module.exports = {
   transform: {
-    '^.+\\.tsx?$': ['@swc/jest']
+    '^.+\\.(j|t)sx?$': ['@swc/jest']
   },
-  testEnvironment: 'node',
   moduleDirectories: ['node_modules', './'],
   modulePaths: ['node_modules', './']
 }
