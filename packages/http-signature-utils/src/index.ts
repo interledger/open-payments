@@ -6,6 +6,7 @@ export {
   loadOrGenerateKey,
   loadBase64Key
 } from './utils/key'
+export { generateEd25519KeyPair } from './utils/crypto';
 export { createSignatureHeaders } from './utils/signatures'
 export { validateSignatureHeaders, validateSignature } from './utils/validation'
 export { generateTestKeys, TestKeys } from './test-utils/keys'

@@ -1,4 +1,3 @@
-import crypto from 'crypto'
 import { generateEd25519KeyPair, exportPKCS8, exportJWK } from './crypto'
 
 describe('crypto', (): void => {
@@ -12,7 +11,7 @@ describe('crypto', (): void => {
   })
 
   describe('exportPCKS8', (): void => {
-    test('exports private key as PKCS8 [PEM - noble]', async (): Promise<void> => {
+    test('exports private key as PKCS8 in PEM format',async (): Promise<void> => {
       const { privateKey } = generateEd25519KeyPair()
       const pem = exportPKCS8(privateKey)
       const [, body] = pem.split('\n')
@@ -21,19 +20,9 @@ describe('crypto', (): void => {
       expect(pem).toContain('-----END PRIVATE KEY-----')
       expect(Buffer.from(body, 'base64').toString('base64')).toStrictEqual(body)
     })
-
-    test('exports private key as PKCS8 [PEM - node crypto]', async (): Promise<void> => {
-      const { privateKey } = crypto.generateKeyPairSync('ed25519')
-      const pem = privateKey.export({ format: 'pem', type: 'pkcs8' }) as string
-      const [, body] = pem.split('\n')
-
-      expect(pem).toContain('-----BEGIN PRIVATE KEY-----')
-      expect(pem).toContain('-----END PRIVATE KEY-----')
-      expect(Buffer.from(body, 'base64').toString('base64')).toStrictEqual(body)
-    })
   })
 
-  test('compatibility', async (): Promise<void> => {
+  test('compatibility - noble, subtle crypto', async (): Promise<void> => {
     const { publicKey, privateKey } = generateEd25519KeyPair()
     const importedPublicKey = await crypto.subtle.importKey(
       'raw',
@@ -62,6 +51,7 @@ describe('crypto', (): void => {
     )
 
     expect(customPublicKeyExport.x).toStrictEqual(subtlePublicKeyExport.x)
+    expect(customPrivateKeyExport.x).toStrictEqual(subtlePrivateKeyExport.x)
     expect(customPrivateKeyExport.d).toStrictEqual(subtlePrivateKeyExport.d)
   })
 })

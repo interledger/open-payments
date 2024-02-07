@@ -12,10 +12,10 @@ export function stringToUint8Array(str: string) {
 export function binaryToBase64url(value: string): string {
   let base64: string | undefined
   if (typeof Buffer !== 'undefined') {
-    base64 = Buffer.from(value, 'binary').toString('base64')
+    base64 = Buffer.from(value, 'binary').toString('base64url')
   } else {
-    base64 = btoa(value)
+    base64 = btoa(value).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
   }
 
-  return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+  return base64;
 }

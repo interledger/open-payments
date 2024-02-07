@@ -8,7 +8,6 @@ export function pemToUint8Array(pem: string): Uint8Array {
   const footer = '-----END PRIVATE KEY-----'
   const body = pem.substring(header.length, pem.length - footer.length - 1)
 
-  // TODO: utility function to use Buffer or btoa
   const key =
     typeof Buffer !== 'undefined'
       ? new Uint8Array(Buffer.from(body, 'base64'))
@@ -140,7 +139,7 @@ export function isKeyEd25519(key: Uint8Array): boolean {
   // Algorithm length: 5
   if (algorithmSequence.length + algorithmSequence.header !== 7) return false
   // Sequence containing 1 element (algorithm identifier)
-  if (!algorithmSequence.sub) throw new Error('Invalid algorithm sequence.')
+  if (!algorithmSequence.sub) return false
   if (algorithmSequence.sub.length !== 1) return false
 
   const algorithm = algorithmSequence.sub[0].content()
