@@ -70,9 +70,9 @@ More phone numbers: https://tel.meet/htd-eefo-ovn?hs=5
 ### Environment Setup
 
 ```sh
-# install node 18
-nvm install lts/hydrogen
-nvm use lts/hydrogen
+# install node 20
+nvm install lts/iron
+nvm use lts/iron
 
 # install pnpm
 corepack enable
