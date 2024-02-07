@@ -11,9 +11,7 @@ module.exports = {
   testRegex: `(packages/${packageName}/.*/__tests__/.*|\\.(test|spec))\\.tsx?$`,
   moduleDirectories: [`node_modules`, `packages/${packageName}/node_modules`],
   modulePaths: [`<rootDir>/packages/${packageName}/src/`],
-  transformIgnorePatterns: [
-    'node_modules/(?!@noble/ed25519|(?!deck.gl)|ng-dynamic)'
-  ],
+  transformIgnorePatterns: ['node_modules/(?!@noble/ed25519)'],
   id: packageName,
   displayName: packageName,
   rootDir: '../..'
