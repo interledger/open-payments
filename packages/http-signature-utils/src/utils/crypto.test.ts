@@ -11,7 +11,7 @@ describe('crypto', (): void => {
   })
 
   describe('exportPCKS8', (): void => {
-    test('exports private key as PKCS8 in PEM format',async (): Promise<void> => {
+    test('exports private key as PKCS8 in PEM format', async (): Promise<void> => {
       const { privateKey } = generateEd25519KeyPair()
       const pem = exportPKCS8(privateKey)
       const [, body] = pem.split('\n')

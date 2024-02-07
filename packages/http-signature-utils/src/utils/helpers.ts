@@ -14,8 +14,11 @@ export function binaryToBase64url(value: string): string {
   if (typeof Buffer !== 'undefined') {
     base64 = Buffer.from(value, 'binary').toString('base64url')
   } else {
-    base64 = btoa(value).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+    base64 = btoa(value)
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '')
   }
 
-  return base64;
+  return base64
 }
