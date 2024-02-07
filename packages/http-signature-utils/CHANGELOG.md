@@ -1,5 +1,11 @@
 # @interledger/http-signature-utils
 
+## 2.0.1
+
+### Patch Changes
+
+- 32737bd: Updating README with updated links to new site
+
 ## 2.0.0
 
 ### Major Changes
