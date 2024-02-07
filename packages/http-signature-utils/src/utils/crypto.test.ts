@@ -1,14 +1,12 @@
 import crypto from 'crypto'
 import { generateEd25519KeyPair, exportPKCS8, exportJWK } from './crypto'
-import { generateKey, loadKey, isKeyEd25519 } from './key'
-import fs from 'fs'
 
 describe('crypto', (): void => {
   describe('generateEd25519KeyPair', (): void => {
     test('generates key pair using the 25519 curve', async (): Promise<void> => {
       const { privateKey, publicKey } = generateEd25519KeyPair()
 
-      expect(privateKey).toHaveLength(32)
+      expect(privateKey).toHaveLength(48)
       expect(publicKey).toHaveLength(32)
     })
   })
@@ -35,18 +33,8 @@ describe('crypto', (): void => {
     })
   })
 
-  test('testing - 1', (): void => {
-    const TMP_DIR = './tmp-crypto'
-    generateKey({ dir: TMP_DIR, fileName: 'test-private-key' })
-    const privateKey = loadKey(`${TMP_DIR}/test-private-key.pem`)
-    fs.rmSync(TMP_DIR, { recursive: true, force: true })
-
-    expect(isKeyEd25519(privateKey)).toBe(true)
-  })
-
-  test('testing - 2', async (): Promise<void> => {
+  test('compatibility', async (): Promise<void> => {
     const { publicKey, privateKey } = generateEd25519KeyPair()
-
     const importedPublicKey = await crypto.subtle.importKey(
       'raw',
       publicKey,
@@ -54,28 +42,26 @@ describe('crypto', (): void => {
       true,
       ['verify']
     )
-
     const importedPrivateKey = await crypto.subtle.importKey(
-      'raw',
+      'pkcs8',
       privateKey,
       'Ed25519',
       true,
-      []
+      ['sign']
     )
 
     const customPublicKeyExport = exportJWK(publicKey)
+    const customPrivateKeyExport = exportJWK(privateKey)
     const subtlePublicKeyExport = await crypto.subtle.exportKey(
       'jwk',
       importedPublicKey
     )
-
-    const customPrivateKeyExport = exportJWK(privateKey)
     const subtlePrivateKeyExport = await crypto.subtle.exportKey(
       'jwk',
       importedPrivateKey
     )
 
     expect(customPublicKeyExport.x).toStrictEqual(subtlePublicKeyExport.x)
-    expect(customPrivateKeyExport.x).toStrictEqual(subtlePrivateKeyExport.x)
+    expect(customPrivateKeyExport.d).toStrictEqual(subtlePrivateKeyExport.d)
   })
 })

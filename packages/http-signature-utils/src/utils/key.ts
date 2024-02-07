@@ -3,6 +3,20 @@ import { exportPKCS8, generateEd25519KeyPair } from './crypto'
 import ASN1 from '@lapo/asn1js'
 import { stringToUint8Array } from './helpers'
 
+export function pemToUint8Array(pem: string): Uint8Array {
+  const header = '-----BEGIN PRIVATE KEY-----'
+  const footer = '-----END PRIVATE KEY-----'
+  const body = pem.substring(header.length, pem.length - footer.length - 1)
+
+  // TODO: utility function to use Buffer or btoa
+  const key =
+    typeof Buffer !== 'undefined'
+      ? new Uint8Array(Buffer.from(body, 'base64'))
+      : stringToUint8Array(atob(body))
+
+  return key
+}
+
 /**
  * Loads a EdDSA-Ed25519 private key from a file.
  * - Node.js only
@@ -19,23 +33,7 @@ export function loadKey(keyFilePath: string): Uint8Array {
     throw new Error(`Could not load file: ${keyFilePath}`)
   }
 
-  let key: Uint8Array | undefined
-  try {
-    const header = '-----BEGIN PRIVATE KEY-----'
-    const footer = '-----END PRIVATE KEY-----'
-    const body = fileBuffer.substring(
-      header.length,
-      fileBuffer.length - footer.length - 1
-    )
-
-    // TODO: utility function to use Buffer or btoa
-    key =
-      typeof Buffer !== 'undefined'
-        ? new Uint8Array(Buffer.from(body, 'base64'))
-        : stringToUint8Array(atob(body))
-  } catch (error) {
-    throw new Error('File was loaded, but private key was invalid')
-  }
+  const key = pemToUint8Array(fileBuffer)
 
   if (!isKeyEd25519(key)) {
     throw new Error('Private key did not have Ed25519 curve')
@@ -107,10 +105,10 @@ export function loadOrGenerateKey(
  *
  */
 export function loadBase64Key(base64Key: string): Uint8Array | undefined {
-  const key =
-    typeof Buffer !== 'undefined'
-      ? new Uint8Array(Buffer.from(base64Key, 'base64'))
-      : stringToUint8Array(atob(base64Key))
+  const pem = Buffer.from(base64Key, 'base64').toString('utf-8').trim()
+
+  const key = pemToUint8Array(pem)
+
   if (isKeyEd25519(key)) {
     return key
   }
@@ -120,34 +118,34 @@ export function isKeyEd25519(key: Uint8Array): boolean {
   // https://www.ibm.com/docs/en/linux-on-systems?topic=formats-ecc-key-token#l0wskc02_ecckt__ecc_edward_curves
   const OID = '1.3.101.112'
   const CURVE = 'curveEd25519'
-  const pkcs8Sequence = ASN1.decode(key)
+
+  let pkcs8Sequence: ASN1
+
+  try {
+    pkcs8Sequence = ASN1.decode(key)
+  } catch {
+    return false
+  }
 
   // Header length: 2
   // PKCS8 sequence length: 46
-  if (pkcs8Sequence.length + pkcs8Sequence.header !== 48)
-    throw new Error('Invalid PKCS8 key length.')
-
-  if (!pkcs8Sequence.sub) throw new Error('Invalid PKCS8 key sequence.')
-
+  if (pkcs8Sequence.length + pkcs8Sequence.header !== 48) return false
+  if (!pkcs8Sequence.sub) return false
   // Sequence containing 3 elements (version, algorithm, and private key)
-  if (pkcs8Sequence.sub.length !== 3)
-    throw new Error('Invalid PKCS8 sequence length.')
+  if (pkcs8Sequence.sub.length !== 3) return false
 
   const [, algorithmSequence] = pkcs8Sequence.sub
-  console.log(algorithmSequence)
+
   // Header length: 2
   // Algorithm length: 5
-  if (algorithmSequence.length + algorithmSequence.header !== 7)
-    throw new Error('Invalid algorithm sequence length.')
-
+  if (algorithmSequence.length + algorithmSequence.header !== 7) return false
   // Sequence containing 1 element (algorithm identifier)
   if (!algorithmSequence.sub) throw new Error('Invalid algorithm sequence.')
-  if (algorithmSequence.sub.length !== 1)
-    throw new Error('Invalid algorithm sequence length.')
+  if (algorithmSequence.sub.length !== 1) return false
 
   const algorithm = algorithmSequence.sub[0].content()
 
-  if (!algorithm) throw new Error('Could not extract algorithm identifier')
+  if (!algorithm) return false
 
   const [oid, curve] = algorithm.split('\n')
 

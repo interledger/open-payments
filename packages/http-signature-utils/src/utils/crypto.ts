@@ -1,5 +1,7 @@
 import * as ed from '@noble/ed25519'
 import { sha512 } from '@noble/hashes/sha512'
+import { type JWK } from './jwk'
+import { binaryToBase64url } from './helpers'
 
 ed.etc.sha512Sync = (...m) => sha512(ed.etc.concatBytes(...m))
 
@@ -18,56 +20,58 @@ export function generateEd25519KeyPair() {
   const privateKey = ed.utils.randomPrivateKey()
   const publicKey = ed.getPublicKey(privateKey)
 
-  return { privateKey, publicKey }
+  return {
+    privateKey: new Uint8Array([...PCKS8_SEQUENCE_PARTS, ...privateKey]),
+    publicKey
+  }
 }
 
-// TODO: Do we need to export the private key as JWK as well?
-export function exportPKCS8(privateKey: Uint8Array, format: 'pem' = 'pem') {
-  if (format !== 'pem') throw new Error('Unsupported format')
-
+export function exportPKCS8(privateKey: Uint8Array) {
   const header = '-----BEGIN PRIVATE KEY-----'
   const footer = '-----END PRIVATE KEY-----'
 
-  // TODO: add concat utility
-  const pkcs8PrivateKey = new Uint8Array([
-    ...PCKS8_SEQUENCE_PARTS,
-    ...privateKey
-  ])
-
-  // `btoa` and `atob` are marked as deprecated in Node.js
   const body =
     typeof Buffer !== 'undefined'
-      ? Buffer.from(pkcs8PrivateKey).toString('base64')
-      : btoa(new TextDecoder().decode(pkcs8PrivateKey))
+      ? Buffer.from(privateKey).toString('base64')
+      : btoa(String.fromCharCode(...privateKey))
 
   return `${header}\n${body}\n${footer}`
 }
 
-export function exportJWK(key: Uint8Array) {
+export function exportJWK(key: Uint8Array): Omit<JWK, 'kid' | 'alg'> {
+  if (![32, 48].includes(key.length)) throw new Error('Invalid key length.')
+
   let binary = ''
+  const isPrivateKey = key.length === 48
+
+  if (isPrivateKey) {
+    let publicKeyBinary = ''
+    const privateKey = key.subarray(16, 48)
+    const publicKey = ed.getPublicKey(privateKey)
+    privateKey.forEach((byte) => {
+      binary += String.fromCharCode(byte)
+    })
+    publicKey.forEach((byte) => {
+      publicKeyBinary += String.fromCharCode(byte)
+    })
+
+    return {
+      kty: 'OKP',
+      crv: 'Ed25519',
+      x: binaryToBase64url(publicKeyBinary),
+      d: binaryToBase64url(binary)
+    }
+  }
 
   key.forEach((byte) => {
     binary += String.fromCharCode(byte)
   })
 
-  const base64PublicKey =
-    typeof Buffer !== 'undefined'
-      ? Buffer.from(binary, 'binary').toString('base64')
-      : btoa(binary)
-
-  const base64UrlPublicKey = base64PublicKey
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '')
-
-  const jwk = {
-    crv: 'Ed25519',
-    alg: 'EdDSA',
+  return {
     kty: 'OKP',
-    x: base64UrlPublicKey
+    crv: 'Ed25519',
+    x: binaryToBase64url(binary)
   }
-
-  return jwk
 }
 
 export { ed }

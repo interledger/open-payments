@@ -7,6 +7,7 @@ export interface JWK {
   kty: 'OKP'
   crv: 'Ed25519'
   x: string
+  d?: string
 }
 
 export const generateJwk = ({
