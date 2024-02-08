@@ -1,5 +1,5 @@
 import * as crypto from 'crypto'
-import { RequestLike } from 'http-message-signatures'
+import { RequestLike } from './signatures'
 import { verifyContentDigest } from 'httpbis-digest-headers'
 import { importJWK } from 'jose'
 import { JWK } from './jwk'
