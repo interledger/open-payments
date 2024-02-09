@@ -64,6 +64,16 @@ describe('Client', (): void => {
       ).resolves.toBeDefined()
     })
 
+    test('properly creates the client if a custom request interceptor is passed', async (): Promise<void> => {
+      await expect(
+        createAuthenticatedClient({
+          logger: silentLogger,
+          walletAddressUrl: 'http://localhost:1000/.well-known/pay',
+          requestInterceptor: (config) => config
+        })
+      ).resolves.toBeDefined()
+    })
+
     test('throws error if could not load private key as Buffer', async (): Promise<void> => {
       try {
         await createAuthenticatedClient({
@@ -95,6 +105,44 @@ describe('Client', (): void => {
           'Could not load private key when creating Open Payments client'
         )
         expect(error.description).toBe('Key is not a valid path or file')
+      }
+    })
+
+    test('throws an error if both requestInterceptor and privateKey/keyId are provided', async (): Promise<void> => {
+      const keypair = generateKeyPairSync('ed25519')
+      try {
+        //@ts-expect-error - testing invalid arguments
+        await createAuthenticatedClient({
+          logger: silentLogger,
+          keyId: 'keyid-1',
+          walletAddressUrl: 'http://localhost:1000/.well-known/pay',
+          privateKey: keypair.privateKey,
+          requestInterceptor: (config) => config
+        })
+
+        //@ts-expect-error - testing invalid arguments
+        await createAuthenticatedClient({
+          logger: silentLogger,
+          walletAddressUrl: 'http://localhost:1000/.well-known/pay',
+          privateKey: keypair.privateKey,
+          requestInterceptor: (config) => config
+        })
+
+        //@ts-expect-error - testing invalid arguments
+        await createAuthenticatedClient({
+          logger: silentLogger,
+          walletAddressUrl: 'http://localhost:1000/.well-known/pay',
+          keyId: 'kid',
+          requestInterceptor: (config) => config
+        })
+      } catch (error) {
+        assert.ok(error instanceof OpenPaymentsClientError)
+        expect(error.message).toBe(
+          'Invalid arguments when creating authenticated client.'
+        )
+        expect(error.description).toBe(
+          'Both `requestInterceptor` and `privateKey`/`keyId` were provided. Please use only one of these options.'
+        )
       }
     })
   })
