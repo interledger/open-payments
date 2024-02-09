@@ -2,7 +2,7 @@ import { createAuthenticatedClient, OpenPaymentsClientError } from '.'
 import fs from 'fs'
 import assert from 'assert'
 import { generateKeyPairSync } from 'crypto'
-import { keyId, silentLogger } from '../test/helpers'
+import { silentLogger } from '../test/helpers'
 
 describe('Client', (): void => {
   const TMP_DIR = './tmp'
