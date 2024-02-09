@@ -14,7 +14,11 @@ import {
   createWalletAddressRoutes,
   WalletAddressRoutes
 } from './wallet-address'
-import { createAxiosInstance } from './requests'
+import {
+  createAxiosInstance,
+  createCustomAxiosInstance,
+  InterceptorFn
+} from './requests'
 import { AxiosInstance } from 'axios'
 import { createGrantRoutes, GrantRoutes } from './grant'
 import {
@@ -176,12 +180,23 @@ const createAuthenticatedClientDeps = async ({
     })
   }
 
-  const axiosInstance = createAxiosInstance({
-    privateKey,
-    keyId: args.keyId,
-    requestTimeoutMs:
-      args?.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS
-  })
+  let axiosInstance: AxiosInstance | undefined
+
+  if (args.requestInterceptor) {
+    axiosInstance = createCustomAxiosInstance({
+      requestTimeoutMs:
+        args?.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS,
+      requestInterceptor: args.requestInterceptor
+    })
+  } else {
+    axiosInstance = createAxiosInstance({
+      privateKey,
+      keyId: args.keyId,
+      requestTimeoutMs:
+        args?.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS
+    })
+  }
+
   const walletAddressServerOpenApi = await createOpenAPI(
     path.resolve(__dirname, '../openapi/wallet-address-server.yaml')
   )
@@ -239,15 +254,28 @@ export const createUnauthenticatedClient = async (
   }
 }
 
-export interface CreateAuthenticatedClientArgs
-  extends CreateUnauthenticatedClientArgs {
+interface BaseAuthenticatedClientArgs extends CreateUnauthenticatedClientArgs {
+  /** The wallet address which the client will identify itself by */
+  walletAddressUrl: string
+}
+
+interface PrivateKeyConfig {
   /** The private EdDSA-Ed25519 key (or the relative or absolute path to the key) with which requests will be signed */
   privateKey: string | KeyLike
   /** The key identifier referring to the private key */
   keyId: string
-  /** The wallet address which the client will identify itself by */
-  walletAddressUrl: string
+  requestInterceptor?: never
 }
+
+interface InterceptorConfig {
+  privateKey?: never
+  keyId?: never
+  /** The custom request interceptor to use. */
+  requestInterceptor: InterceptorFn
+}
+
+export type CreateAuthenticatedClientArgs = BaseAuthenticatedClientArgs &
+  (PrivateKeyConfig | InterceptorConfig)
 
 export interface AuthenticatedClient
   extends Omit<UnauthenticatedClient, 'incomingPayment'> {
@@ -258,9 +286,23 @@ export interface AuthenticatedClient
   quote: QuoteRoutes
 }
 
-export const createAuthenticatedClient = async (
+/**
+ * @experimental The `requestInterceptor` feature is currently experimental and might be removed in upcoming versions. Use at your own risk! It offers the capability to add a custom method for generating HTTP signatures. It is recommended to create the authenticated client with the `privateKey` and `keyId` arguments. If both `requestInterceptor` and `privateKey`/`keyId` are provided, an error will be thrown.
+ * @throws OpenPaymentsClientError
+ */
+export async function createAuthenticatedClient(
   args: CreateAuthenticatedClientArgs
-): Promise<AuthenticatedClient> => {
+): Promise<AuthenticatedClient> {
+  if (args.requestInterceptor && (args.privateKey || args.keyId)) {
+    throw new OpenPaymentsClientError(
+      'Invalid arguments when creating authenticated client.',
+      {
+        description:
+          'Both `requestInterceptor` and `privateKey`/`keyId` were provided. Please use only one of these options.'
+      }
+    )
+  }
+
   const {
     resourceServerOpenApi,
     authServerOpenApi,
