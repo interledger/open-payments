@@ -4,58 +4,115 @@ title: HTTP message signatures
 
 import { CodeBlock, LinkOut } from '@interledger/docs-design-system'
 
-HTTP message signatures are cryptographic digital signatures used by the Open Payments API to secure the HTTP messages transferred between sender, receiver, and third-party initiating payment systems.
+HTTP message signatures are cryptographic digital signatures used by the Open Payments API to secure HTTP messages exchanged between sender, receiver, or third-party initiating payment systems.
 
-The creation and verification of these digital signatures enables an authorization server to control access to protected resources in the process of orchestrating transactions.
+The Open Payments API implements the <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol-16#section-7.3.1'> HTTP Signatures </LinkOut> section of the GNAP (Grant Negotiation and Authorization Protocol) specification.
 
 ## Purpose
 
-When exchanging HTTP messages, Open Payments-enabled systems verify the following aspects of message security:
+The use of digital signatures allow the Open Payments API to address two key aspects of message security:
 
-- **Authenticity** of the system requesting permissions to access specific resources.
-- **Integrity** of some or all of the message fields to guard against the risk of message tampering.
+- **Authenticity** of any system that requests access to specific resources
+- **Integrity** of specific message fields to guard against message tampering
 
-## Understanding HTTP signatures
+Part of how Open Payments-enabled systems control access to protected resources is by generating or verifying the digital signature of each HTTP message.
 
-### Specification
+## Signature algorithms
 
-The Open Payments API adheres to the <LinkOut href='https://datatracker.ietf.org/doc/draft-ietf-httpbis-message-signatures/'>HTTP Message Signature specification</LinkOut> which has been drafted by the HTTP Workgroup of the Internet Engineering Task Force (IETF).
+To generate message signatures, the Open Payments API implements the **Ed25519** variant of the EdDSA (Edwards-curve Digital Signature Algorithm).
+EdDSA is an elliptic curve cryptographic algorithm that offers advantages over previous generations of public key cryptography algorithms.
 
-{/* prettier-ignore */}
-{/* ### Cryptography and keys
+The main advantages for using this digital signature algorithm include:
 
-:::caution
-This section is WIP
-::: \*/}
-
-### Signature algorithms
-
-Various digital signature algorithms can be used to generate HTTP message signatures. The Open Payments API implements the **Ed25519** variant of the EdDSA (Edwards-curve Digital Signature Algorithm), an elliptic curve cryptographic algorithm that offers advantages over earlier generations of public key cryptography algorithms.
-
-The benefits of using Ed25519 include:
-
-- Relatively efficient security offered with smaller key sizes. Earlier generation public-key cryptographic algorithms, such as RSA, offer comparable security with notably larger key sizes.
 - Good hash function collision resilience.
 - Speed and efficiency for signature generation and verification.
 - Guarding against the risk of an encryption key downgrade attack.
+- Relatively efficient security offered with smaller key sizes. Earlier public-key cryptographic algorithms, such as RSA, offer comparable security with notably larger key sizes.
 
 For more information about the EdDSA and its variants, refer to <LinkOut href='https://datatracker.ietf.org/doc/html/rfc8032'>RFC8032</LinkOut>.
 
+## Signature creation
+
+The example below illustrates creating the signature, starting with the original HTTP message.
+
+<CodeBlock title="Example: message before signature">
+
+```http
+POST HTTP/1.1
+Host: example.com
+Content-Type: application/json
+Content-Digest: sha-512=:X48E9qOokqqrvdts8nOJRJN3OWDUoyWxBf7kbu9DBPE=:
+Content-Length: 18
+Authorization: GNAP 123454321
+
+{
+    "hello";"world"
+}
+```
+
+</CodeBlock>
+
+![Create the http signature](/img/4-sig-creation.png)
+
+### Signature base
+
+The signature creation process begins with identifying the fields of the original message to use when creating the signature.
+These are called the covered components of the message. The covered components make up the signature base, together with the signing algorithm, and an identifier for the signer's public key.
+
+The final sub-field of the signature base is an HTTP structured field called signature params, an ordered list of components that make up the signature base.
+
 {/* prettier-ignore */}
-{/* ### Message signature creation
+{/*
 
-:::caution
-This section is WIP
+# fyi: contents of codeblock example below were generated using: https://httpsig.org
+
+\*/}
+
+<CodeBlock title="Example: signature base">
+
+```http
+"content-type": application/json
+"content-digest": sha-512=:X48E9qOokqqrvdts8nOJRJN3OWDUoyWxBf7kbu9DBPE=:
+"content-length": 18
+"authorization": GNAP 123454321
+"@method": POST
+"@target-uri": https://example.com/
+"@signature-params": ("content-type" "content-digest" "content-length" "authorization" "@method" "@target-uri");alg="ed25519";keyid="eddsa_key_1";created=1704722601
+
+```
+
+</CodeBlock>
+
+### Generate signature
+
+To generate the http signature:
+
+1. The signature base gets hashed (using SHA-512), producing a digest.
+2. The digest gets signed with the signer's private key, producing the signature as a byte string.
+3. The byte string gets Base64 encoded, and this results in the final signature value.
+
+### Signed HTTP message
+
+The original message gets signed by adding uniquely labelled signature headers to the original message: `Signature-Input` and `Signature`.
+
+<CodeBlock title="Example: signed message">
+
+```http
+POST HTTP/1.1
+Host: https://example.com
+Content-Type: application/json
+Content-Length: 18
+Authorization: "GNAP 123454321"
+Signature-Input: sig1=("content-type" "content-digest" "content-length" "authorization" "@method" "@target-uri");alg="ed25519";keyid="eddsa_key_1";created=1704722601
+Signature: sig1=:EiCdZMbyXj6pN59g+mh3mY/Q6DlSBrCL7CJM4OZ550+d2MZhfdDKrOJU/ugeRdwd1KYyd1wA/VA7J2fi9YehCA==:
+
+{
+    "hello";"world"
+}
+```
+
+</CodeBlock>
+
+:::note
+HTTP messages can hold multiple signatures, with each signature uniquely labelled. If required, different signatures can be generated using different signature algorithms.
 :::
-
-### Bringing it all together
-
-:::caution
-This section is WIP
-:::
-
-## Use the HTTP signature Lambda function
-
-:::caution
-This section is WIP
-::: \*/}
