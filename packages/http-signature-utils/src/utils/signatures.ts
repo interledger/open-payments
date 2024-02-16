@@ -38,7 +38,11 @@ export const createSignatureHeaders = async ({
       params: ['alg', 'keyid', 'created'],
       fields: components
     },
-    request
+    {
+      method: request.method,
+      url: request.url,
+      headers: request.headers
+    }
   )
 
   return {
