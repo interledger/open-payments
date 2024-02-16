@@ -1,6 +1,5 @@
 import { generateTestKeys, TestKeys } from '../test-utils/keys'
 import { createSignatureHeaders, RequestLike } from './signatures'
-import { httpbis } from 'http-message-signatures'
 
 describe('Signature Generation', (): void => {
   let testKeys: TestKeys
