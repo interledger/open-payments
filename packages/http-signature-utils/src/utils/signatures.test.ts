@@ -29,7 +29,6 @@ describe('Signature Generation', (): void => {
         return key
       })
 
-    expect(signatureParameters).toContain('alg')
     expect(signatureParameters).toContain('keyid')
     expect(signatureParameters).toContain('created')
   })

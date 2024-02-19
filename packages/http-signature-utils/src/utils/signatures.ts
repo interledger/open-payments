@@ -35,7 +35,7 @@ export const createSignatureHeaders = async ({
     {
       key: signingKey,
       name: 'sig1',
-      params: ['alg', 'keyid', 'created'],
+      params: ['keyid', 'created'],
       fields: components
     },
     {
