@@ -1,10 +1,9 @@
-import { sign, KeyLike, BinaryLike } from 'crypto'
-import {
-  httpis as httpsig,
-  Algorithm,
-  RequestLike,
-  Signer
-} from 'http-message-signatures'
+import { type KeyLike } from 'crypto'
+import { httpbis, createSigner, Request } from 'http-message-signatures'
+
+export interface RequestLike extends Request {
+  body?: string
+}
 
 export interface SignOptions {
   request: RequestLike
@@ -15,13 +14,6 @@ export interface SignOptions {
 export interface SignatureHeaders {
   Signature: string
   'Signature-Input': string
-}
-
-const createSigner = (privateKey: KeyLike): Signer => {
-  const signer = async (data: BinaryLike) =>
-    sign(null, data as Buffer, privateKey)
-  signer.alg = 'ed25519' as Algorithm
-  return signer
 }
 
 export const createSignatureHeaders = async ({
@@ -36,15 +28,23 @@ export const createSignatureHeaders = async ({
   if (request.body) {
     components.push('content-digest', 'content-length', 'content-type')
   }
-  const { headers } = await httpsig.sign(request, {
-    components,
-    parameters: {
-      created: Math.floor(Date.now() / 1000)
+
+  const signingKey = createSigner(privateKey, 'ed25519', keyId)
+
+  const { headers } = await httpbis.signMessage(
+    {
+      key: signingKey,
+      name: 'sig1',
+      params: ['keyid', 'created'],
+      fields: components
     },
-    keyId,
-    signer: createSigner(privateKey),
-    format: 'httpbis'
-  })
+    {
+      method: request.method,
+      url: request.url,
+      headers: request.headers
+    }
+  )
+
   return {
     Signature: headers['Signature'] as string,
     'Signature-Input': headers['Signature-Input'] as string

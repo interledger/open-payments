@@ -1,6 +1,6 @@
 import { validateSignatureHeaders, validateSignature } from './validation'
 import { createHeaders } from './headers'
-import { RequestLike } from 'http-message-signatures'
+import { RequestLike } from './signatures'
 import { TestKeys, generateTestKeys } from '../test-utils/keys'
 import { createContentDigestHeader } from 'httpbis-digest-headers'
 

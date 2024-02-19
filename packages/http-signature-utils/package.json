@@ -24,7 +24,7 @@
     "prepack": "pnpm build"
   },
   "dependencies": {
-    "http-message-signatures": "^0.1.2",
+    "http-message-signatures": "^1.0.4",
     "httpbis-digest-headers": "^1.0.0",
     "jose": "^4.13.1",
     "uuid": "^9.0.0"

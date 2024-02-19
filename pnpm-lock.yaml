@@ -82,8 +82,8 @@ importers:
   packages/http-signature-utils:
     dependencies:
       http-message-signatures:
-        specifier: ^0.1.2
-        version: 0.1.2
+        specifier: ^1.0.4
+        version: 1.0.4
       httpbis-digest-headers:
         specifier: ^1.0.0
         version: 1.0.0
@@ -5646,6 +5646,12 @@ packages:
     resolution: {integrity: sha512-gjJYDgFBy+xnlAs2G0gIWpiorCv9Xi7pIlOnnd91zHAK7BtkLxonmm/JAtd5e6CakOuW03IwEuJzj2YMy8lfWQ==}
     dev: false
 
+  /http-message-signatures@1.0.4:
+    resolution: {integrity: sha512-gavCQWnxHFg0BVlKs6CmYK7hNSH1o0x0mHTC68yBAHYOYuTVXPv52mEE7QuT5TenfiagTdOa/zPJzen4lEX7Rg==}
+    dependencies:
+      structured-headers: 1.0.1
+    dev: false
+
   /httpbis-digest-headers@1.0.0:
     resolution: {integrity: sha512-RpaFuZD3tG8wtsvjDv1u7O8wAvfpAxS20F3CrFPZOMn+IBb7E7yiqlN5Tks4E5tBEnTdpMOD151rJsUv03sAIg==}
     dependencies:
@@ -9361,6 +9367,11 @@ packages:
 
   /structured-headers@0.5.0:
     resolution: {integrity: sha512-oLnmXSsjhud+LxRJpvokwP8ImEB2wTg8sg30buwfVViKMuluTv3BlOJHUX9VW9pJ2nQOxmx87Z0kB86O4cphag==}
+    dev: false
+
+  /structured-headers@1.0.1:
+    resolution: {integrity: sha512-QYBxdBtA4Tl5rFPuqmbmdrS9kbtren74RTJTcs0VSQNVV5iRhJD4QlYTLD0+81SBwUQctjEQzjTRI3WG4DzICA==}
+    engines: {node: '>= 14', npm: '>=6'}
     dev: false
 
   /style-to-object@0.4.2:
