@@ -159,7 +159,9 @@ const createUnauthenticatedDeps = async ({
 const createAuthenticatedClientDeps = async ({
   useHttp = false,
   ...args
-}: Partial<CreateAuthenticatedClientArgs> = {}): Promise<AuthenticatedClientDeps> => {
+}:
+  | CreateAuthenticatedClientArgs
+  | CreateExperimentalAuthenticatedClientArgs): Promise<AuthenticatedClientDeps> => {
   const logger = args?.logger ?? createLogger({ name: 'Open Payments Client' })
   if (args.logLevel) {
     logger.level = args.logLevel
@@ -182,7 +184,7 @@ const createAuthenticatedClientDeps = async ({
 
   let axiosInstance: AxiosInstance | undefined
 
-  if (args.requestInterceptor) {
+  if ('requestInterceptor' in args) {
     axiosInstance = createCustomAxiosInstance({
       requestTimeoutMs:
         args?.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS,
@@ -264,18 +266,18 @@ interface PrivateKeyConfig {
   privateKey: string | KeyLike
   /** The key identifier referring to the private key */
   keyId: string
-  requestInterceptor?: never
 }
 
 interface InterceptorConfig {
-  privateKey?: never
-  keyId?: never
   /** The custom request interceptor to use. */
   requestInterceptor: InterceptorFn
 }
 
 export type CreateAuthenticatedClientArgs = BaseAuthenticatedClientArgs &
-  (PrivateKeyConfig | InterceptorConfig)
+  PrivateKeyConfig
+
+export type CreateExperimentalAuthenticatedClientArgs =
+  BaseAuthenticatedClientArgs & InterceptorConfig
 
 export interface AuthenticatedClient
   extends Omit<UnauthenticatedClient, 'incomingPayment'> {
@@ -291,9 +293,24 @@ export interface AuthenticatedClient
  * @throws OpenPaymentsClientError
  */
 export async function createAuthenticatedClient(
+  args: CreateExperimentalAuthenticatedClientArgs
+): Promise<AuthenticatedClient>
+/**
+ * JSDoc comment here
+ * @throws OpenPaymentsClientError
+ */
+export async function createAuthenticatedClient(
   args: CreateAuthenticatedClientArgs
+): Promise<AuthenticatedClient>
+export async function createAuthenticatedClient(
+  args:
+    | CreateAuthenticatedClientArgs
+    | CreateExperimentalAuthenticatedClientArgs
 ): Promise<AuthenticatedClient> {
-  if (args.requestInterceptor && (args.privateKey || args.keyId)) {
+  if (
+    'requestInterceptor' in args &&
+    ('privateKey' in args || 'keyId' in args)
+  ) {
     throw new OpenPaymentsClientError(
       'Invalid arguments when creating authenticated client.',
       {
@@ -302,7 +319,6 @@ export async function createAuthenticatedClient(
       }
     )
   }
-
   const {
     resourceServerOpenApi,
     authServerOpenApi,
