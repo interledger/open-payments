@@ -71,7 +71,7 @@ describe('requests', (): void => {
         .matchHeader('Signature', /sig1=:([a-zA-Z0-9+/]){86}==:/)
         .matchHeader(
           'Signature-Input',
-          `sig1=("@method" "@target-uri" "authorization");alg="ed25519";keyid="${keyId}";created=${Math.floor(
+          `sig1=("@method" "@target-uri" "authorization");keyid="${keyId}";created=${Math.floor(
             Date.now() / 1000
           )}`
         )
@@ -295,7 +295,7 @@ describe('requests', (): void => {
         .matchHeader('Signature', /sig1=:([a-zA-Z0-9+/]){86}==:/)
         .matchHeader(
           'Signature-Input',
-          `sig1=("@method" "@target-uri" "content-digest" "content-length" "content-type");alg="ed25519";keyid="${keyId}";created=${Math.floor(
+          `sig1=("@method" "@target-uri" "content-digest" "content-length" "content-type");keyid="${keyId}";created=${Math.floor(
             Date.now() / 1000
           )}`
         )
@@ -350,7 +350,7 @@ describe('requests', (): void => {
         .matchHeader('Signature', /sig1=:([a-zA-Z0-9+/]){86}==:/)
         .matchHeader(
           'Signature-Input',
-          `sig1=("@method" "@target-uri" "authorization" "content-digest" "content-length" "content-type");alg="ed25519";keyid="${keyId}";created=${Math.floor(
+          `sig1=("@method" "@target-uri" "authorization" "content-digest" "content-length" "content-type");keyid="${keyId}";created=${Math.floor(
             Date.now() / 1000
           )}`
         )
@@ -531,7 +531,7 @@ describe('requests', (): void => {
         .matchHeader('Signature', /sig1=:([a-zA-Z0-9+/]){86}==:/)
         .matchHeader(
           'Signature-Input',
-          `sig1=("@method" "@target-uri" "authorization");alg="ed25519";keyid="${keyId}";created=${Math.floor(
+          `sig1=("@method" "@target-uri" "authorization");keyid="${keyId}";created=${Math.floor(
             Date.now() / 1000
           )}`
         )
