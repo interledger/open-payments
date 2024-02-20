@@ -1,5 +1,11 @@
 # @interledger/http-signature-utils
 
+## 2.0.2
+
+### Patch Changes
+
+- 2658685: Upgrade the `http-message-signatures` package to the most recent version.
+
 ## 2.0.1
 
 ### Patch Changes

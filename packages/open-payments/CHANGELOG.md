@@ -1,5 +1,16 @@
 # @interledger/open-payments
 
+## 6.6.0
+
+### Minor Changes
+
+- 8d4ccc3: (EXPERIMENTAL) Allow a custom request interceptor for the authenticated client instead of providing the private key and key ID. The request interceptor should be responsible for HTTP signature generation and it will replace the built-in interceptor.
+
+### Patch Changes
+
+- Updated dependencies [2658685]
+  - @interledger/http-signature-utils@2.0.2
+
 ## 6.5.1
 
 ### Patch Changes
