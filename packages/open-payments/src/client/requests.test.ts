@@ -71,9 +71,9 @@ describe('requests', (): void => {
         .matchHeader('Signature', /sig1=:([a-zA-Z0-9+/]){86}==:/)
         .matchHeader(
           'Signature-Input',
-          `sig1=("@method" "@target-uri" "authorization");created=${Math.floor(
+          `sig1=("@method" "@target-uri" "authorization");keyid="${keyId}";created=${Math.floor(
             Date.now() / 1000
-          )};keyid="${keyId}";alg="ed25519"`
+          )}`
         )
         .get('/incoming-payments')
         // TODO: verify signature
@@ -295,9 +295,9 @@ describe('requests', (): void => {
         .matchHeader('Signature', /sig1=:([a-zA-Z0-9+/]){86}==:/)
         .matchHeader(
           'Signature-Input',
-          `sig1=("@method" "@target-uri" "content-digest" "content-length" "content-type");created=${Math.floor(
+          `sig1=("@method" "@target-uri" "content-digest" "content-length" "content-type");keyid="${keyId}";created=${Math.floor(
             Date.now() / 1000
-          )};keyid="${keyId}";alg="ed25519"`
+          )}`
         )
         .matchHeader('Accept', 'application/json')
         .matchHeader('Content-Digest', /sha-512=:([a-zA-Z0-9+/]){86}==:/)
@@ -350,9 +350,9 @@ describe('requests', (): void => {
         .matchHeader('Signature', /sig1=:([a-zA-Z0-9+/]){86}==:/)
         .matchHeader(
           'Signature-Input',
-          `sig1=("@method" "@target-uri" "authorization" "content-digest" "content-length" "content-type");created=${Math.floor(
+          `sig1=("@method" "@target-uri" "authorization" "content-digest" "content-length" "content-type");keyid="${keyId}";created=${Math.floor(
             Date.now() / 1000
-          )};keyid="${keyId}";alg="ed25519"`
+          )}`
         )
         .matchHeader('Accept', 'application/json')
         .matchHeader('Authorization', `GNAP ${accessToken}`)
@@ -531,9 +531,9 @@ describe('requests', (): void => {
         .matchHeader('Signature', /sig1=:([a-zA-Z0-9+/]){86}==:/)
         .matchHeader(
           'Signature-Input',
-          `sig1=("@method" "@target-uri" "authorization");created=${Math.floor(
+          `sig1=("@method" "@target-uri" "authorization");keyid="${keyId}";created=${Math.floor(
             Date.now() / 1000
-          )};keyid="${keyId}";alg="ed25519"`
+          )}`
         )
         .matchHeader('Authorization', `GNAP ${accessToken}`)
         .delete(`/grant/`)

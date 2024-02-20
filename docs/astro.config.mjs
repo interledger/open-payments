@@ -1,25 +1,6 @@
 import { defineConfig } from 'astro/config'
 import starlight from '@astrojs/starlight'
-import { generateAPI } from 'starlight-openapi'
-
-// Generate the documentation and get the associated sidebar groups.
-const { starlightOpenAPI } = await generateAPI([
-  {
-    base: 'apis/resource-server',
-    label: 'Open Payments',
-    schema: '../openapi/resource-server.yaml'
-  },
-  {
-    base: 'apis/wallet-address-server',
-    label: 'Wallet Addresses',
-    schema: '../openapi/wallet-address-server.yaml'
-  },
-  {
-    base: 'apis/auth-server',
-    label: 'Open Payments Authorization Server',
-    schema: '../openapi/auth-server.yaml'
-  }
-])
+import starlightOpenAPI from 'starlight-openapi'
 
 // https://astro.build/config
 export default defineConfig({
@@ -29,8 +10,11 @@ export default defineConfig({
       title: 'Open Payments',
       description:
         'An API for open access to financial accounts to send and receive payments.',
+      components: {
+        Header: './src/components/Header.astro'
+      },
       customCss: [
-        './node_modules/@interledger/docs-design-system/src/styles/green-theme.css',
+        './node_modules/@interledger/docs-design-system/src/styles/teal-theme.css',
         './node_modules/@interledger/docs-design-system/src/styles/ilf-docs.css',
         './src/styles/openpayments.css'
       ],
@@ -43,12 +27,26 @@ export default defineConfig({
       logo: {
         src: './public/favicon.svg'
       },
-      components: {
-        Header: './src/components/Header.astro'
-      },
-      social: {
-        github: 'https://github.com/interledger/open-payments'
-      },
+      plugins: [
+        // Generate the OpenAPI documentation pages.
+        starlightOpenAPI([
+          {
+            base: 'apis/resource-server',
+            label: 'Open Payments',
+            schema: '../openapi/resource-server.yaml'
+          },
+          {
+            base: 'apis/wallet-address-server',
+            label: 'Wallet Addresses',
+            schema: '../openapi/wallet-address-server.yaml'
+          },
+          {
+            base: 'apis/auth-server',
+            label: 'Open Payments Authorization Server',
+            schema: '../openapi/auth-server.yaml'
+          }
+        ])
+      ],
       sidebar: [
         {
           label: 'Intro to Open Payments',
@@ -357,7 +355,10 @@ export default defineConfig({
             }
           ]
         }
-      ]
+      ],
+      social: {
+        github: 'https://github.com/interledger/open-payments'
+      }
     }),
     starlightOpenAPI()
   ],
