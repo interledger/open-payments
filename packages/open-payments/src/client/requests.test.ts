@@ -1,5 +1,11 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { createAxiosInstance, deleteRequest, get, post } from './requests'
+import {
+  createAxiosInstance,
+  createCustomAxiosInstance,
+  deleteRequest,
+  get,
+  post
+} from './requests'
 import { generateKeyPairSync } from 'crypto'
 import nock from 'nock'
 import { createTestDeps, mockOpenApiResponseValidators } from '../test/helpers'
@@ -36,6 +42,24 @@ describe('requests', (): void => {
         createAxiosInstance({ requestTimeoutMs: 0, privateKey, keyId }).defaults
           .headers.common['Content-Type']
       ).toBe('application/json')
+    })
+  })
+
+  describe('createCustomAxiosInstance', (): void => {
+    test('sets authenticated request interceptor', async (): Promise<void> => {
+      const customAxiosInstance = createCustomAxiosInstance({
+        requestTimeoutMs: 0,
+        authenticatedRequestInterceptor: (config) => config
+      })
+      expect(
+        customAxiosInstance.interceptors.request['handlers'][0]
+      ).toBeDefined()
+      expect(
+        customAxiosInstance.interceptors.request['handlers'][0].fulfilled
+      ).toBeDefined()
+      expect(
+        customAxiosInstance.interceptors.request['handlers'][0].fulfilled
+      ).toEqual(expect.any(Function))
     })
   })
 
