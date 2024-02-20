@@ -161,7 +161,7 @@ const createAuthenticatedClientDeps = async ({
   ...args
 }:
   | CreateAuthenticatedClientArgs
-  | CreateExperimentalAuthenticatedClientArgs): Promise<AuthenticatedClientDeps> => {
+  | CreateAuthenticatedClientWithReqInterceptorArgs): Promise<AuthenticatedClientDeps> => {
   const logger = args?.logger ?? createLogger({ name: 'Open Payments Client' })
   if (args.logLevel) {
     logger.level = args.logLevel
@@ -184,11 +184,11 @@ const createAuthenticatedClientDeps = async ({
 
   let axiosInstance: AxiosInstance | undefined
 
-  if ('requestInterceptor' in args) {
+  if ('authenticatedRequestInterceptor' in args) {
     axiosInstance = createCustomAxiosInstance({
       requestTimeoutMs:
         args?.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS,
-      requestInterceptor: args.requestInterceptor
+      authenticatedRequestInterceptor: args.authenticatedRequestInterceptor
     })
   } else {
     axiosInstance = createAxiosInstance({
@@ -269,14 +269,14 @@ interface PrivateKeyConfig {
 }
 
 interface InterceptorConfig {
-  /** The custom request interceptor to use. */
-  requestInterceptor: InterceptorFn
+  /** The custom authenticated request interceptor to use. */
+  authenticatedRequestInterceptor: InterceptorFn
 }
 
 export type CreateAuthenticatedClientArgs = BaseAuthenticatedClientArgs &
   PrivateKeyConfig
 
-export type CreateExperimentalAuthenticatedClientArgs =
+export type CreateAuthenticatedClientWithReqInterceptorArgs =
   BaseAuthenticatedClientArgs & InterceptorConfig
 
 export interface AuthenticatedClient
@@ -289,33 +289,36 @@ export interface AuthenticatedClient
 }
 
 /**
- * @experimental The `requestInterceptor` feature is currently experimental and might be removed in upcoming versions. Use at your own risk! It offers the capability to add a custom method for generating HTTP signatures. It is recommended to create the authenticated client with the `privateKey` and `keyId` arguments. If both `requestInterceptor` and `privateKey`/`keyId` are provided, an error will be thrown.
- * @throws OpenPaymentsClientError
- */
-export async function createAuthenticatedClient(
-  args: CreateExperimentalAuthenticatedClientArgs
-): Promise<AuthenticatedClient>
-/**
- * JSDoc comment here
- * @throws OpenPaymentsClientError
+ * Creates an Open Payments client that exposes methods to call all of the Open Payments APIs.
+ * Each request requiring authentication will be signed with the given private key.
  */
 export async function createAuthenticatedClient(
   args: CreateAuthenticatedClientArgs
 ): Promise<AuthenticatedClient>
+/**
+ * @experimental The `authenticatedRequestInterceptor` feature is currently experimental and might be removed
+ * in upcoming versions. Use at your own risk! It offers the capability to add a custom method for
+ * generating HTTP signatures. It is recommended to create the authenticated client with the `privateKey`
+ * and `keyId` arguments. If both `authenticatedRequestInterceptor` and `privateKey`/`keyId` are provided, an error will be thrown.
+ * @throws OpenPaymentsClientError
+ */
+export async function createAuthenticatedClient(
+  args: CreateAuthenticatedClientWithReqInterceptorArgs
+): Promise<AuthenticatedClient>
 export async function createAuthenticatedClient(
   args:
     | CreateAuthenticatedClientArgs
-    | CreateExperimentalAuthenticatedClientArgs
+    | CreateAuthenticatedClientWithReqInterceptorArgs
 ): Promise<AuthenticatedClient> {
   if (
-    'requestInterceptor' in args &&
+    'authenticatedRequestInterceptor' in args &&
     ('privateKey' in args || 'keyId' in args)
   ) {
     throw new OpenPaymentsClientError(
       'Invalid arguments when creating authenticated client.',
       {
         description:
-          'Both `requestInterceptor` and `privateKey`/`keyId` were provided. Please use only one of these options.'
+          'Both `authenticatedRequestInterceptor` and `privateKey`/`keyId` were provided. Please use only one of these options.'
       }
     )
   }

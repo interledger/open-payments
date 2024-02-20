@@ -221,7 +221,7 @@ export type InterceptorFn = (
 
 export const createCustomAxiosInstance = (args: {
   requestTimeoutMs: number
-  requestInterceptor: InterceptorFn
+  authenticatedRequestInterceptor: InterceptorFn
 }): AxiosInstance => {
   const axiosInstance = axios.create({
     headers: {
@@ -233,11 +233,15 @@ export const createCustomAxiosInstance = (args: {
     timeout: args.requestTimeoutMs
   })
 
-  axiosInstance.interceptors.request.use(args.requestInterceptor, undefined, {
-    runWhen: (config: InternalAxiosRequestConfig) =>
-      config.method?.toLowerCase() === 'post' ||
-      !!(config.headers && config.headers['Authorization'])
-  })
+  axiosInstance.interceptors.request.use(
+    args.authenticatedRequestInterceptor,
+    undefined,
+    {
+      runWhen: (config: InternalAxiosRequestConfig) =>
+        config.method?.toLowerCase() === 'post' ||
+        !!(config.headers && config.headers['Authorization'])
+    }
+  )
 
   return axiosInstance
 }
