@@ -14,7 +14,11 @@ import {
   createWalletAddressRoutes,
   WalletAddressRoutes
 } from './wallet-address'
-import { createAxiosInstance } from './requests'
+import {
+  createAxiosInstance,
+  createCustomAxiosInstance,
+  InterceptorFn
+} from './requests'
 import { AxiosInstance } from 'axios'
 import { createGrantRoutes, GrantRoutes } from './grant'
 import {
@@ -155,7 +159,9 @@ const createUnauthenticatedDeps = async ({
 const createAuthenticatedClientDeps = async ({
   useHttp = false,
   ...args
-}: Partial<CreateAuthenticatedClientArgs> = {}): Promise<AuthenticatedClientDeps> => {
+}:
+  | CreateAuthenticatedClientArgs
+  | CreateAuthenticatedClientWithReqInterceptorArgs): Promise<AuthenticatedClientDeps> => {
   const logger = args?.logger ?? createLogger({ name: 'Open Payments Client' })
   if (args.logLevel) {
     logger.level = args.logLevel
@@ -176,12 +182,23 @@ const createAuthenticatedClientDeps = async ({
     })
   }
 
-  const axiosInstance = createAxiosInstance({
-    privateKey,
-    keyId: args.keyId,
-    requestTimeoutMs:
-      args?.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS
-  })
+  let axiosInstance: AxiosInstance | undefined
+
+  if ('authenticatedRequestInterceptor' in args) {
+    axiosInstance = createCustomAxiosInstance({
+      requestTimeoutMs:
+        args?.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS,
+      authenticatedRequestInterceptor: args.authenticatedRequestInterceptor
+    })
+  } else {
+    axiosInstance = createAxiosInstance({
+      privateKey,
+      keyId: args.keyId,
+      requestTimeoutMs:
+        args?.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS
+    })
+  }
+
   const walletAddressServerOpenApi = await createOpenAPI(
     path.resolve(__dirname, '../openapi/wallet-address-server.yaml')
   )
@@ -239,15 +256,28 @@ export const createUnauthenticatedClient = async (
   }
 }
 
-export interface CreateAuthenticatedClientArgs
-  extends CreateUnauthenticatedClientArgs {
+interface BaseAuthenticatedClientArgs extends CreateUnauthenticatedClientArgs {
+  /** The wallet address which the client will identify itself by */
+  walletAddressUrl: string
+}
+
+interface PrivateKeyConfig {
   /** The private EdDSA-Ed25519 key (or the relative or absolute path to the key) with which requests will be signed */
   privateKey: string | KeyLike
   /** The key identifier referring to the private key */
   keyId: string
-  /** The wallet address which the client will identify itself by */
-  walletAddressUrl: string
 }
+
+interface InterceptorConfig {
+  /** The custom authenticated request interceptor to use. */
+  authenticatedRequestInterceptor: InterceptorFn
+}
+
+export type CreateAuthenticatedClientArgs = BaseAuthenticatedClientArgs &
+  PrivateKeyConfig
+
+export type CreateAuthenticatedClientWithReqInterceptorArgs =
+  BaseAuthenticatedClientArgs & InterceptorConfig
 
 export interface AuthenticatedClient
   extends Omit<UnauthenticatedClient, 'incomingPayment'> {
@@ -258,9 +288,40 @@ export interface AuthenticatedClient
   quote: QuoteRoutes
 }
 
-export const createAuthenticatedClient = async (
+/**
+ * Creates an Open Payments client that exposes methods to call all of the Open Payments APIs.
+ * Each request requiring authentication will be signed with the given private key.
+ */
+export async function createAuthenticatedClient(
   args: CreateAuthenticatedClientArgs
-): Promise<AuthenticatedClient> => {
+): Promise<AuthenticatedClient>
+/**
+ * @experimental The `authenticatedRequestInterceptor` feature is currently experimental and might be removed
+ * in upcoming versions. Use at your own risk! It offers the capability to add a custom method for
+ * generating HTTP signatures. It is recommended to create the authenticated client with the `privateKey`
+ * and `keyId` arguments. If both `authenticatedRequestInterceptor` and `privateKey`/`keyId` are provided, an error will be thrown.
+ * @throws OpenPaymentsClientError
+ */
+export async function createAuthenticatedClient(
+  args: CreateAuthenticatedClientWithReqInterceptorArgs
+): Promise<AuthenticatedClient>
+export async function createAuthenticatedClient(
+  args:
+    | CreateAuthenticatedClientArgs
+    | CreateAuthenticatedClientWithReqInterceptorArgs
+): Promise<AuthenticatedClient> {
+  if (
+    'authenticatedRequestInterceptor' in args &&
+    ('privateKey' in args || 'keyId' in args)
+  ) {
+    throw new OpenPaymentsClientError(
+      'Invalid arguments when creating authenticated client.',
+      {
+        description:
+          'Both `authenticatedRequestInterceptor` and `privateKey`/`keyId` were provided. Please use only one of these options.'
+      }
+    )
+  }
   const {
     resourceServerOpenApi,
     authServerOpenApi,

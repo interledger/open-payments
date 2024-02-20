@@ -214,3 +214,34 @@ export const createAxiosInstance = (args: {
 
   return axiosInstance
 }
+
+export type InterceptorFn = (
+  config: InternalAxiosRequestConfig
+) => InternalAxiosRequestConfig | Promise<InternalAxiosRequestConfig>
+
+export const createCustomAxiosInstance = (args: {
+  requestTimeoutMs: number
+  authenticatedRequestInterceptor: InterceptorFn
+}): AxiosInstance => {
+  const axiosInstance = axios.create({
+    headers: {
+      common: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      }
+    },
+    timeout: args.requestTimeoutMs
+  })
+
+  axiosInstance.interceptors.request.use(
+    args.authenticatedRequestInterceptor,
+    undefined,
+    {
+      runWhen: (config: InternalAxiosRequestConfig) =>
+        config.method?.toLowerCase() === 'post' ||
+        !!(config.headers && config.headers['Authorization'])
+    }
+  )
+
+  return axiosInstance
+}

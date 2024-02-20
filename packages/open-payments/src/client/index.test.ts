@@ -64,6 +64,16 @@ describe('Client', (): void => {
       ).resolves.toBeDefined()
     })
 
+    test('properly creates the client if a custom authenticated request interceptor is passed', async (): Promise<void> => {
+      await expect(
+        createAuthenticatedClient({
+          logger: silentLogger,
+          walletAddressUrl: 'http://localhost:1000/.well-known/pay',
+          authenticatedRequestInterceptor: (config) => config
+        })
+      ).resolves.toBeDefined()
+    })
+
     test('throws error if could not load private key as Buffer', async (): Promise<void> => {
       try {
         await createAuthenticatedClient({
@@ -97,5 +107,34 @@ describe('Client', (): void => {
         expect(error.description).toBe('Key is not a valid path or file')
       }
     })
+
+    test.each`
+      keyId          | privateKey
+      ${'my-key-id'} | ${'my-private-key'}
+      ${'my-key-id'} | ${undefined}
+      ${undefined}   | ${'my-private-key'}
+    `(
+      'throws an error if both authenticatedRequestInterceptor and privateKey or keyId are provided',
+      async ({ keyId, privateKey }) => {
+        try {
+          // @ts-expect-error Invalid args
+          await createAuthenticatedClient({
+            logger: silentLogger,
+            keyId: keyId,
+            walletAddressUrl: 'http://localhost:1000/.well-known/pay',
+            privateKey: privateKey,
+            authenticatedRequestInterceptor: (config) => config
+          })
+        } catch (error) {
+          assert.ok(error instanceof OpenPaymentsClientError)
+          expect(error.message).toBe(
+            'Invalid arguments when creating authenticated client.'
+          )
+          expect(error.description).toBe(
+            'Both `authenticatedRequestInterceptor` and `privateKey`/`keyId` were provided. Please use only one of these options.'
+          )
+        }
+      }
+    )
   })
 })
