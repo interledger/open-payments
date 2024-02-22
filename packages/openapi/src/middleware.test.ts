@@ -256,6 +256,49 @@ describe('OpenAPI Validator', (): void => {
         expect(next).toHaveBeenCalled()
       }
     )
+
+    describe('Quote', (): void => {
+      test.each`
+        body                                                                                     | message                                                                              | description
+        ${{ receiver: 'ht999tp://something.com/incoming-payments' }}                             | ${'body.receiver must match pattern "^(https|http):..(.+).incoming-payments.(.+)$"'} | ${'invalid receiver, unknown protocol'}
+        ${{ receiver: 'http://something.com/incoming-payments' }}                                | ${'body.receiver must match pattern "^(https|http):..(.+).incoming-payments.(.+)$"'} | ${'invalid receiver, missing incoming payment id'}
+        ${{ receiver: 'http://something.com/connections/c3a0d182-b221-4612-a500-07ad106b5f5d' }} | ${'body.receiver must match pattern "^(https|http):..(.+).incoming-payments.(.+)$"'} | ${'invalid receiver, wrong path'}
+      `(
+        'returns 400 on invalid quote body ($description)',
+        async ({ body, message }): Promise<void> => {
+          const validateQuotePostMiddleware = createValidatorMiddleware(
+            openApi,
+            {
+              path: '/quotes',
+              method: HttpMethod.POST
+            }
+          )
+
+          const ctx = createContext(
+            {
+              headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+              }
+            },
+            {}
+          )
+          addTestSignatureHeaders(ctx)
+          ctx.request.body = {
+            ...body,
+            walletAddress: WALLET_ADDRESS,
+            method: 'ilp'
+          }
+          await expect(
+            validateQuotePostMiddleware(ctx, next)
+          ).rejects.toMatchObject({
+            status: 400,
+            message
+          })
+          expect(next).not.toHaveBeenCalled()
+        }
+      )
+    })
   })
 })
 
