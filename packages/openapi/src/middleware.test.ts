@@ -258,22 +258,23 @@ describe('OpenAPI Validator', (): void => {
     )
 
     describe('Quote', (): void => {
+      let validateQuotePostMiddleware: AppMiddleware
+
+      beforeAll((): void => {
+        validateQuotePostMiddleware = createValidatorMiddleware(openApi, {
+          path: '/quotes',
+          method: HttpMethod.POST
+        })
+      })
+
       test.each`
-        body                                                                                     | message                                                                              | description
-        ${{ receiver: 'ht999tp://something.com/incoming-payments' }}                             | ${'body.receiver must match pattern "^(https|http):..(.+).incoming-payments.(.+)$"'} | ${'invalid receiver, unknown protocol'}
-        ${{ receiver: 'http://something.com/incoming-payments' }}                                | ${'body.receiver must match pattern "^(https|http):..(.+).incoming-payments.(.+)$"'} | ${'invalid receiver, missing incoming payment id'}
-        ${{ receiver: 'http://something.com/connections/c3a0d182-b221-4612-a500-07ad106b5f5d' }} | ${'body.receiver must match pattern "^(https|http):..(.+).incoming-payments.(.+)$"'} | ${'invalid receiver, wrong path'}
+        body                                                                                     | description
+        ${{ receiver: 'ht999tp://something.com/incoming-payments' }}                             | ${'invalid receiver, unknown protocol'}
+        ${{ receiver: 'http://something.com/incoming-payments' }}                                | ${'invalid receiver, missing incoming payment id'}
+        ${{ receiver: 'http://something.com/connections/c3a0d182-b221-4612-a500-07ad106b5f5d' }} | ${'invalid receiver, wrong path'}
       `(
         'returns 400 on invalid quote body ($description)',
-        async ({ body, message }): Promise<void> => {
-          const validateQuotePostMiddleware = createValidatorMiddleware(
-            openApi,
-            {
-              path: '/quotes',
-              method: HttpMethod.POST
-            }
-          )
-
+        async ({ body }): Promise<void> => {
           const ctx = createContext(
             {
               headers: {
@@ -293,9 +294,63 @@ describe('OpenAPI Validator', (): void => {
             validateQuotePostMiddleware(ctx, next)
           ).rejects.toMatchObject({
             status: 400,
-            message
+            message:
+              'body.receiver must match pattern "^(https|http):..(.+).incoming-payments.(.+)$"'
           })
           expect(next).not.toHaveBeenCalled()
+        }
+      )
+      test.each`
+        receiver                                                                         | description
+        ${'http://something.com/incoming-payments/c3a0d182-b221-4612-a500-07ad106b5f5d'} | ${'accepts http and uuid'}
+        ${'https://something.com/incoming-payments/123'}                                 | ${'accepts http and non uuid id format'}
+      `(
+        'calls next on valid request: ($description)',
+        async ({ receiver }): Promise<void> => {
+          const ctx = createContext(
+            {
+              headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+              },
+              url: '/quotes'
+            },
+            {}
+          )
+          addTestSignatureHeaders(ctx)
+          ctx.request.body = {
+            receiver,
+            walletAddress: WALLET_ADDRESS,
+            method: 'ilp'
+          }
+          const next = jest.fn().mockImplementation(() => {
+            expect(ctx.request.body.receiver).toEqual(receiver)
+            ctx.status = 201
+            ctx.response.body = {
+              id: 'https://something-else/quotes/3b461206-daae-4d97-88b0-abffbcaa6f96',
+              walletAddress: 'https://something-else/accounts/someone',
+              receiveAmount: {
+                value: '100',
+                assetCode: 'USD',
+                assetScale: 2
+              },
+              debitAmount: {
+                value: '205',
+                assetCode: 'USD',
+                assetScale: 2
+              },
+              receiver,
+              expiresAt: '2024-02-28T16:26:32.444Z',
+              createdAt: '2024-02-28T16:21:32.444Z',
+              method: 'ilp'
+            }
+          })
+
+          await expect(
+            validateQuotePostMiddleware(ctx, next)
+          ).resolves.toBeUndefined()
+
+          expect(next).toHaveBeenCalled()
         }
       )
     })
