@@ -40,7 +40,7 @@ components:
     receiver:
       title: Receiver
       type: string
-      description: The URL of the incoming payment or ILP STREAM connection that is being paid.
+      description: The URL of the incoming payment that is being paid.
       format: uri
       pattern: '^(https|http)://(.+)/incoming-payments/(.+)$'
       examples:
