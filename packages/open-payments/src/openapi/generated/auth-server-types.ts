@@ -337,7 +337,7 @@ export interface external {
         /**
          * Receiver
          * Format: uri
-         * @description The URL of the incoming payment or ILP STREAM connection that is being paid.
+         * @description The URL of the incoming payment that is being paid.
          */
         receiver: string;
         /**

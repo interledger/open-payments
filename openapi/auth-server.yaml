@@ -110,7 +110,7 @@ paths:
                           - read
                         identifier: 'https://ilp.rafiki.money/alice'
                         limits:
-                          receiver: 'https://ilp.rafiki.money/connections/45a0d0ee-26dc-4c66-89e0-01fbf93156f7'
+                          receiver: 'https://ilp.rafiki.money/incoming-payments/45a0d0ee-26dc-4c66-89e0-01fbf93156f7'
                           interval: 'R12/2019-08-24T14:15:22Z/P1M'
                           debitAmount:
                             value: '500'
