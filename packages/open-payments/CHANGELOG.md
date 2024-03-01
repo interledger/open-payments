@@ -1,5 +1,11 @@
 # @interledger/open-payments
 
+## 6.7.0
+
+### Minor Changes
+
+- fe18cd0: Widened receiver regex to accept http and any id format. Removed previously deprecated 'connections' path.
+
 ## 6.6.0
 
 ### Minor Changes
