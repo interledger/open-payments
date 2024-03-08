@@ -244,7 +244,7 @@ export interface operations {
            * @description The interaction reference generated for this
            * interaction by the AS.
            */
-          interact_ref: string;
+          interact_ref?: string;
         };
       };
     };
