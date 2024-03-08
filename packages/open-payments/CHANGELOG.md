@@ -1,5 +1,11 @@
 # @interledger/open-payments
 
+## 6.7.1
+
+### Patch Changes
+
+- c42451c: updating types
+
 ## 6.7.0
 
 ### Minor Changes
