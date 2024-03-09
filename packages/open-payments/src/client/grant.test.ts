@@ -83,30 +83,68 @@ describe('grant', (): void => {
     })
 
     describe('continue', () => {
-      test('calls post method with correct validator', async (): Promise<void> => {
+      describe('calls post method with correct validator', (): void => {
         const mockResponseValidator = ({ path, method }) =>
           path === '/continue/{id}' && method === HttpMethod.POST
 
-        jest
-          .spyOn(openApi, 'createResponseValidator')
-          .mockImplementation(mockResponseValidator as any)
+        test('with interact_ref', async (): Promise<void> => {
+          jest
+            .spyOn(openApi, 'createResponseValidator')
+            .mockImplementation(mockResponseValidator as any)
 
-        const postSpy = jest.spyOn(requestors, 'post')
-        const interact_ref = uuid()
+          const postSpy = jest.spyOn(requestors, 'post')
+          const interact_ref = uuid()
 
-        await createGrantRoutes({ openApi, client, ...deps }).continue(
-          {
+          await createGrantRoutes({ openApi, client, ...deps }).continue(
+            {
+              url,
+              accessToken
+            },
+            { interact_ref }
+          )
+
+          expect(postSpy).toHaveBeenCalledWith(
+            deps,
+            { url, accessToken, body: { interact_ref } },
+            true
+          )
+        })
+        test('without interact_ref', async (): Promise<void> => {
+          jest
+            .spyOn(openApi, 'createResponseValidator')
+            .mockImplementation(mockResponseValidator as any)
+
+          const postSpy = jest.spyOn(requestors, 'post')
+          const body = {}
+
+          await createGrantRoutes({ openApi, client, ...deps }).continue(
+            {
+              url,
+              accessToken
+            },
+            body
+          )
+
+          expect(postSpy).toHaveBeenCalledWith(
+            deps,
+            { url, accessToken, body },
+            true
+          )
+        })
+        test('without body', async (): Promise<void> => {
+          jest
+            .spyOn(openApi, 'createResponseValidator')
+            .mockImplementation(mockResponseValidator as any)
+
+          const postSpy = jest.spyOn(requestors, 'post')
+
+          await createGrantRoutes({ openApi, client, ...deps }).continue({
             url,
             accessToken
-          },
-          { interact_ref }
-        )
+          })
 
-        expect(postSpy).toHaveBeenCalledWith(
-          deps,
-          { url, accessToken, body: { interact_ref } },
-          true
-        )
+          expect(postSpy).toHaveBeenCalledWith(deps, { url, accessToken }, true)
+        })
       })
     })
   })
