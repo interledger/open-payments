@@ -1,5 +1,11 @@
 # @interledger/open-payments
 
+## 6.8.0
+
+### Minor Changes
+
+- 1797345: Add and export functions that allow fetching the OpenAPI objects for the Open Payments specs
+
 ## 6.7.2
 
 ### Patch Changes
