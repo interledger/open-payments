@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createGrantRoutes } from './grant'
-import { OpenAPI, HttpMethod, createOpenAPI } from '@interledger/openapi'
-import path from 'path'
+import { OpenAPI, HttpMethod } from '@interledger/openapi'
 import { createTestDeps, mockGrantRequest } from '../test/helpers'
 import * as requestors from './requests'
 import { v4 as uuid } from 'uuid'
+import { getAuthServerOpenAPI } from '../openapi'
 
 jest.mock('./requests', () => ({
   ...jest.requireActual('./requests.ts'),
@@ -17,9 +17,7 @@ describe('grant', (): void => {
   let openApi: OpenAPI
 
   beforeAll(async () => {
-    openApi = await createOpenAPI(
-      path.resolve(__dirname, '../openapi/auth-server.yaml')
-    )
+    openApi = await getAuthServerOpenAPI()
   })
 
   const deps = createTestDeps()

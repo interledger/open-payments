@@ -1,6 +1,6 @@
 import { loadKey } from '@interledger/http-signature-utils'
 import fs from 'fs'
-import { createOpenAPI, OpenAPI } from '@interledger/openapi'
+import { OpenAPI } from '@interledger/openapi'
 import path from 'path'
 import createLogger, { LevelWithSilent, Logger } from 'pino'
 import config from '../config'
@@ -29,6 +29,11 @@ import { createTokenRoutes, TokenRoutes } from './token'
 import { createQuoteRoutes, QuoteRoutes } from './quote'
 import { KeyLike, KeyObject, createPrivateKey } from 'crypto'
 import { OpenPaymentsClientError } from './error'
+import {
+  getResourceServerOpenAPI,
+  getWalletAddressServerOpenAPI,
+  getAuthServerOpenAPI
+} from '../openapi'
 export * from './error'
 
 export interface BaseDeps {
@@ -140,12 +145,8 @@ const createUnauthenticatedDeps = async ({
       args?.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS
   })
 
-  const walletAddressServerOpenApi = await createOpenAPI(
-    path.resolve(__dirname, '../openapi/wallet-address-server.yaml')
-  )
-  const resourceServerOpenApi = await createOpenAPI(
-    path.resolve(__dirname, '../openapi/resource-server.yaml')
-  )
+  const walletAddressServerOpenApi = await getWalletAddressServerOpenAPI()
+  const resourceServerOpenApi = await getResourceServerOpenAPI()
 
   return {
     axiosInstance,
@@ -199,15 +200,9 @@ const createAuthenticatedClientDeps = async ({
     })
   }
 
-  const walletAddressServerOpenApi = await createOpenAPI(
-    path.resolve(__dirname, '../openapi/wallet-address-server.yaml')
-  )
-  const resourceServerOpenApi = await createOpenAPI(
-    path.resolve(__dirname, '../openapi/resource-server.yaml')
-  )
-  const authServerOpenApi = await createOpenAPI(
-    path.resolve(__dirname, '../openapi/auth-server.yaml')
-  )
+  const walletAddressServerOpenApi = await getWalletAddressServerOpenAPI()
+  const resourceServerOpenApi = await getResourceServerOpenAPI()
+  const authServerOpenApi = await getAuthServerOpenAPI()
 
   return {
     axiosInstance,

@@ -1,6 +1,5 @@
 import { createQuoteRoutes, getQuote, createQuote } from './quote'
-import { OpenAPI, HttpMethod, createOpenAPI } from '@interledger/openapi'
-import path from 'path'
+import { OpenAPI, HttpMethod } from '@interledger/openapi'
 import {
   createTestDeps,
   mockOpenApiResponseValidators,
@@ -9,6 +8,7 @@ import {
 import nock from 'nock'
 import * as requestors from './requests'
 import { getRSPath } from '../types'
+import { getResourceServerOpenAPI } from '../openapi'
 
 jest.mock('./requests', () => {
   return {
@@ -21,9 +21,7 @@ describe('quote', (): void => {
   let openApi: OpenAPI
 
   beforeAll(async () => {
-    openApi = await createOpenAPI(
-      path.resolve(__dirname, '../openapi/resource-server.yaml')
-    )
+    openApi = await getResourceServerOpenAPI()
   })
 
   const deps = createTestDeps()
