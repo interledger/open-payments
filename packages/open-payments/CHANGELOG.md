@@ -1,5 +1,11 @@
 # @interledger/open-payments
 
+## 6.7.2
+
+### Patch Changes
+
+- b3a5d3b: Makes body and interact_ref optional on continuation route
+
 ## 6.7.1
 
 ### Patch Changes
