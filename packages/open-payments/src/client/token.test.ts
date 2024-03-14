@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createTokenRoutes, revokeToken, rotateToken } from './token'
-import { OpenAPI, HttpMethod, createOpenAPI } from '@interledger/openapi'
-import path from 'path'
+import { OpenAPI, HttpMethod } from '@interledger/openapi'
 import nock from 'nock'
 import {
   createTestDeps,
@@ -9,6 +8,7 @@ import {
   mockOpenApiResponseValidators
 } from '../test/helpers'
 import * as requestors from './requests'
+import { getAuthServerOpenAPI } from '../openapi'
 
 jest.mock('./requests', () => {
   return {
@@ -22,9 +22,7 @@ describe('token', (): void => {
   let openApi: OpenAPI
 
   beforeAll(async () => {
-    openApi = await createOpenAPI(
-      path.resolve(__dirname, '../openapi/auth-server.yaml')
-    )
+    openApi = await getAuthServerOpenAPI()
   })
 
   const deps = createTestDeps()

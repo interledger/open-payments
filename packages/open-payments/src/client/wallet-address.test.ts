@@ -1,6 +1,5 @@
 import { createWalletAddressRoutes } from './wallet-address'
-import { OpenAPI, HttpMethod, createOpenAPI } from '@interledger/openapi'
-import path from 'path'
+import { OpenAPI, HttpMethod } from '@interledger/openapi'
 import {
   createTestDeps,
   mockDIDDocument,
@@ -8,6 +7,7 @@ import {
   mockWalletAddress
 } from '../test/helpers'
 import * as requestors from './requests'
+import { getWalletAddressServerOpenAPI } from '../openapi'
 
 jest.mock('./requests', () => {
   return {
@@ -21,9 +21,7 @@ describe('wallet-address', (): void => {
   let openApi: OpenAPI
 
   beforeAll(async () => {
-    openApi = await createOpenAPI(
-      path.resolve(__dirname, '../openapi/resource-server.yaml')
-    )
+    openApi = await getWalletAddressServerOpenAPI()
   })
 
   const deps = createTestDeps()

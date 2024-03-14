@@ -10,7 +10,7 @@ import {
   createUnauthenticatedIncomingPaymentRoutes,
   getPublicIncomingPayment
 } from './incoming-payment'
-import { OpenAPI, HttpMethod, createOpenAPI } from '@interledger/openapi'
+import { OpenAPI, HttpMethod } from '@interledger/openapi'
 import {
   createTestDeps,
   mockIncomingPayment,
@@ -20,12 +20,12 @@ import {
   mockPublicIncomingPayment
 } from '../test/helpers'
 import nock from 'nock'
-import path from 'path'
 import { v4 as uuid } from 'uuid'
 import * as requestors from './requests'
 import { getRSPath } from '../types'
 import { OpenPaymentsClientError } from './error'
 import assert from 'assert'
+import { getResourceServerOpenAPI } from '../openapi'
 
 jest.mock('./requests', () => {
   return {
@@ -39,9 +39,7 @@ describe('incoming-payment', (): void => {
   let openApi: OpenAPI
 
   beforeAll(async () => {
-    openApi = await createOpenAPI(
-      path.resolve(__dirname, '../openapi/resource-server.yaml')
-    )
+    openApi = await getResourceServerOpenAPI()
   })
 
   const deps = createTestDeps()

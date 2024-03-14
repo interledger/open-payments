@@ -31,6 +31,12 @@ export {
 } from './client'
 
 export {
+  getAuthServerOpenAPI,
+  getResourceServerOpenAPI,
+  getWalletAddressServerOpenAPI
+} from './openapi'
+
+export {
   mockWalletAddress,
   mockIncomingPayment,
   mockPublicIncomingPayment,
