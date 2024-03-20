@@ -55,12 +55,12 @@ Import `createAuthenticatedClient` from the Open Payments SDK package.
 
 ### 2. Create an authenticated Open Payments client
 
-Create an OP authenticated client by providing the following parameters:
+Create an OP authenticated client by providing the following properties:
 
-- `walletAddressURL` is your OP-enabled wallet address that your client will use to authenticate itself to one or more Authorization Servers (AS).
-- `privateKey` is the EdDSA-Ed25519 key or preferably the absolute or relative file path to the key that is bound to your wallet address. A public key signed with this private
+- `walletAddressURL` : your OP-enabled wallet address that your client will use to authenticate itself to one or more Authorization Servers (AS).
+- `privateKey` : the EdDSA-Ed25519 key or preferably the absolute or relative file path to the key that is bound to your wallet address. A public key signed with this private
   key must be made available as a public JWK document at `{walletAddressUrl}/jwks.json` url.
-- `keyId` is the identifier of the private key and the corresponding public key.
+- `keyId` : the identifier of the private key and the corresponding public key.
 
 <ChunkedSnippet
   source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-outgoing-payment.ts'
@@ -78,7 +78,15 @@ Request an `incomingPayment` grant from the payee wallet's AS.
 
 ### 4. Create an Incoming Payment
 
-Create an `incomingPayment` on the payee wallet's Resource Server (RS) using the access token returned by the AS in the grant request.
+Create an `incomingPayment` on the payee wallet's Resource Server (RS) using the access token returned by the AS in the grant request and specify the `walletAddress` with the URL of the payee's wallet.
+
+Add the `incomingAmount` object and define the following properties:
+
+- `value` : the maximum allowable amount that will be paid to the payee's wallet address.
+- `assetCode` : the ISO 4217 currency code representing the underlying asset used to make the payment.
+- `assetScale` : the scale of amounts denoted in the corresponding asset code.
+
+Optionally you may add the `expiresAt` property which is the date and time after which payments to the incoming payments will no longer be accepted.
 
 <ChunkedSnippet
   source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/incoming-payment/incoming-payment-create.ts'
@@ -98,6 +106,12 @@ Request a `quote` grant from the payer wallet's AS.
 
 Create a `quote` on the payer wallet's RS using the access token returned by the AS in the grant request.
 
+Add the following properties:
+
+- `method` : the payment method used to facilitate the payment. Set this property to `ilp` as Open Payments only supports <LinkOut href='https://interledger.org'>Interledger</LinkOut> payments at this time.
+- `walletAddress` : the URL of the payer's wallet address.
+- `receiver` : the URL of the incoming payment that will receive the payment.
+
 <ChunkedSnippet
   source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/quote/quote-create.ts'
   chunk='3'
@@ -106,6 +120,11 @@ Create a `quote` on the payer wallet's RS using the access token returned by the
 ### 7. Request an Outgoing Payment grant
 
 Request an `outgoingPayment` grant from the payer wallet's AS.
+
+Add the `limits` object with the following properties:
+
+- `debitAmount` : the maximum amount to be deducted from the payer's wallet.
+- `receiveAmount` : the maximum amount to be received in the payee's wallet.
 
 :::note
 This request requires an interactive grant as the payer will need to consent before an `outgoingPayment` is made against their wallet.
@@ -122,6 +141,11 @@ Create an Interactive Grant guide. </LinkOut>
 ### 8. Create an Outgoing Payment
 
 Create an `outgoingPayment` on the payer wallet's RS using the access token returned by the AS in the grant request.
+
+Add the following properties:
+
+- `walletAddress` : the URL of the payer's wallet address.
+- `quoteId` : the URL of the quote specifying the payment amount.
 
 <ChunkedSnippet
   source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/outgoing-payment/outgoing-payment-create.ts'
