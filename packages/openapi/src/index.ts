@@ -184,7 +184,7 @@ const customFormats = {
 
 interface ValidationError {
   status?: number
-  errors: string[]
+  errors: ReturnType<typeof errorTransformer>[]
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
