@@ -61,8 +61,6 @@ export function createValidatorMiddleware<T extends Koa.DefaultContext>(
 
       throw err // Should not be possible (only ValidationError is thrown in responseValidator)
     }
-
-    await next()
   }
 }
 
