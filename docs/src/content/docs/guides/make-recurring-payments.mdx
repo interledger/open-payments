@@ -3,25 +3,24 @@ title: Make recurring payments
 ---
 
 import { CodeBlock, LinkOut } from '@interledger/docs-design-system'
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+import HttpSig from '/src/partials/http-msg-sig-note.mdx'
+import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
+import Ts from '/src/partials/ts-prerequisites.mdx'
 
 The Open Payments (OP) API facilitates multiple uses cases for payments to and from different OP-enabled wallets. In this guide we look at the steps for making recurring payments.
 
 An example use case for making recurring payments may be a Buy Now Pay Later (BNPL) scheme where a payer purchases a high priced item but pays for it in installments over regularly scheduled intervals.
 
-### Prerequisites
-
-- Node 18
-- TypeScript
-- NPM
-
-### Dependencies
+## Dependencies
 
 - <LinkOut href='https://github.com/interledger/open-payments/tree/main/packages/open-payments'>
     Open Payments SDK
   </LinkOut>
-  <p></p>
 
-### Endpoints
+<HttpSig />
+
+## Endpoints
 
 - <LinkOut href='https://openpayments.guide/apis/auth-server/operations/post-request/'>
     Grant Request
@@ -38,9 +37,13 @@ An example use case for making recurring payments may be a Buy Now Pay Later (BN
 - <LinkOut href='https://openpayments.guide/apis/resource-server/operations/create-outgoing-payment/'>
     Create an Outgoing Payment
   </LinkOut>
-- <LinkOut href='https://openpayments.guide/apis/auth-server/operations/post-token/'>
+- <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-token/'>
     Rotate an Access Token
   </LinkOut>
+
+<Tabs>
+<TabItem label='TypeScript'>
+<Ts />
 
 ## Steps
 
@@ -48,228 +51,137 @@ An example use case for making recurring payments may be a Buy Now Pay Later (BN
 
 Import `createAuthenticatedClient` from the Open Payments SDK package.
 
-```ts
-import { createAuthenticatedClient } from '@interledger/open-payments'
-```
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/incoming-payment/incoming-payment-create.ts'
+  chunk='1'
+/>
 
 ### 2. Create an authenticated Open Payments client
 
-Create an OP authenticated client by providing the following parameters:
+Create an OP authenticated client by providing the following properties:
 
-- `walletAddressURL` is your OP-enabled wallet address that your client will use to authenticate itself to one or more Authorization Servers (AS).
-- `privateKey` is the EdDSA-Ed25519 key or preferably the absolute or relative file path to the key that is bound to your wallet address. A public key signed with this private
-  key must be made available as a public JWK docuement at `{walletAddressUrl}/jwks.json` url.
-- `keyId` is the identifier of the private key and the corresponding public key.
+- `walletAddressURL` : your OP-enabled wallet address that your client will use to authenticate itself to one or more Authorization Servers (AS).
+- `privateKey` : the EdDSA-Ed25519 key or preferably the absolute or relative file path to the key that is bound to your wallet address. A public key signed with this private
+  key must be made available as a public JWK document at `{walletAddressUrl}/jwks.json` url.
+- `keyId` : the identifier of the private key and the corresponding public key.
 
-<CodeBlock title="Example">
-```ts
-const client = await createAuthenticatedClient({
-  walletAddressUrl: WALLET_ADDRESS,
-  privateKey: PRIVATE_KEY_PATH,
-  keyId: KEY_ID,
-});
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-outgoing-payment.ts'
+  chunk='2'
+/>
 
-````
-</CodeBlock>
+### 3. Request an Incoming Payment grant
 
+Request an `incomingPayment` grant from the payee wallet's AS.
 
-### 3. Get the walletAddresses of payee and payer
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-incoming-payment.ts'
+  chunk='4'
+/>
 
-Fetch the ``walletAddress`` of the wallet you want to send a payment to and the ``walletAddress`` of the wallet you want to send the payment from.
+### 4. Create an Incoming Payment
 
-<CodeBlock title="Example">
+Create an `incomingPayment` on the payee wallet's Resource Server (RS) using the access token returned by the AS in the grant request and specify the `walletAddress` with the URL of the payee's wallet.
 
-```ts
-const payeeWalletAddress = await client.walletAddress.get({
-  url: 'https://bank_of_payee/payee'
-})
-const payerWalletAddress = await client.walletAddress.get({
-  url: 'https://bank_of_payer/payer'
-})
+Add the `incomingAmount` object and define the following properties:
 
-````
+- `value` : the maximum allowable amount that will be paid to the payee's wallet address.
+- `assetCode` : the ISO 4217 currency code representing the underlying asset used to make the payment.
+- `assetScale` : the scale of amounts denoted in the corresponding asset code.
 
-</CodeBlock>
+Optionally you may add the `expiresAt` property which is the date and time after which payments to the incoming payments will no longer be accepted.
 
-### 4. Request an Incoming Payment grant
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/incoming-payment/incoming-payment-create.ts'
+  chunk='3'
+/>
 
-Request an `incomingPayment` grant from the payee wallet's AS
-
-<CodeBlock title="Example">
-
-```ts
-const incomingPaymentGrant = await client.grant.request(
-  { url: payeeWalletAddress.authServer },
-  {
-    access_token: {
-      access: [
-        {
-          type: 'incoming-payment',
-          actions: ['read-all', 'create']
-        }
-      ]
-    }
-  }
-)
-```
-
-</CodeBlock>
-
-### 5. Create an Incoming Payment
-
-Create an `incomingPayment` on the payee wallet's Resource Server (RS) using the access token returned by the AS in the grant request.
-
-<CodeBlock title="Example">
-```ts
-const incomingPayment = await client.incomingPayment.create(
-  {
-    walletAddress: payeeWalletAddress.id,
-    accessToken: incomingPaymentGrant.access_token.value
-  },
-  {
-    incomingAmount: {
-      assetCode: 'USD',
-      assetScale: 2,
-      value: '10000'
-    },
-    metadata: {
-      externalRef: '#An-example-invoice-number',
-      description: 'One-time payment example'
-    }
-  }
-)
-```
-</CodeBlock>
-
-### 6. Request a Quote grant
+### 5. Request a Quote grant
 
 Request a `quote` grant from the payer wallet's AS.
 
-<CodeBlock title="Example">
-```ts
-const quoteGrant = await client.grant.request(
-  { url: payerWalletAddress.authServer },
-  {
-    access_token: {
-      access: [
-        {
-          type: 'quote',
-          actions: ['create', 'read']
-        }
-      ]
-    }
-  }
-)
-```
-</CodeBlock>
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-quote.ts'
+  chunk='4'
+/>
 
-### 7. Create a Quote
+### 6. Create a Quote
 
 Create a `quote` on the payer wallet's RS using the access token returned by the AS in the grant request.
 
-<CodeBlock title="Example">
-```ts
-const quote = await client.quote.create(
-  {
-    walletAddress: payerWalletAddress.id,
-    accessToken: quoteGrant.access_token.value
-  },
-  { receiver: incomingPayment.id }
-)
-```
-</CodeBlock>
+Add the following properties:
 
-### 8. Request an Outgoing Payment grant
+- `method` : the payment method used to facilitate the payment. Set this property to `ilp` as Open Payments only supports <LinkOut href='https://interledger.org'>Interledger</LinkOut> payments at this time.
+- `walletAddress` : the URL of the payer's wallet address.
+- `receiver` : the URL of the incoming payment that will receive the payment.
 
-Request an `outgoingPayment` grant from the payer wallet's AS with the additional parameters:
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/quote/quote-create.ts'
+  chunk='3'
+/>
 
-1. Add the `limits` object to your [grant request](/apis/auth-server/operations/post-request/#request-body)
-2. Specify the `interval` property with an interval period conforming to the <LinkOut href="https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals">ISO8601 repeating interval string format.</LinkOut>
+### 7. Request an Outgoing Payment grant
 
-**Note:** This request requires an interactive grant as the payer will need to consent before an `outgoingPayment` is made against their wallet.
+Request an `outgoingPayment` grant from the payer wallet's AS.
+
+Add the `limits` object with the following properties:
+
+- `debitAmount` : the maximum amount to be deducted from the payer's wallet.
+- `receiveAmount` : the maximum amount to be received in the payee's wallet.
+- `interval` : the interval period conforming to the <LinkOut href="https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals">ISO8601 repeating interval string format.</LinkOut>
+
+:::note
+This request requires an interactive grant as the payer will need to consent before an `outgoingPayment` is made against their wallet.
 
 For details on how to facilitate an interactive grant please see the <LinkOut href='https://openpayments.guide/guides/create-interactive-grant/'>
 Create an Interactive Grant guide. </LinkOut>
+:::
 
-<CodeBlock title="Example">
-```ts
-const grant = await client.grant.request(
-    {
-        url: payerWalletAddress.authServer,
-    },
-    {
-        access_token: {
-            access: [
-                {
-                    identifier: walletAddress.id,
-                    type: "outgoing-payment",
-                    actions: ["list", "list-all", "read", "read-all", "create"],
-                    limits: {
-                        debitAmount: DEBIT_AMOUNT,
-                        receiveAmount: RECEIVE_AMOUNT,
-                        interval: "R12/2019-08-24T14:15:22Z/P1M"
-                    },
-                },
-            ],
-        },
-        interact: {
-            start: ["redirect"],
-            finish: {
-                method: "redirect",
-                uri: "http://localhost:3344",
-                nonce: NONCE,
-            },
-        },
-    },
-);
-```
-</CodeBlock>
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-outgoing-payment-interval.ts'
+  chunk='4'
+/>
 
-### 9. Create an initial Outgoing Payment
+### 8. Create an initial Outgoing Payment
 
 Create an `outgoingPayment` on the payer wallet's RS using the access token returned by the AS in the grant request.
 
-<CodeBlock title="Example">
-```ts
-const outgoingPayment = await client.outgoingPayment.create(
-  {
-    walletAddress: payerWalletAddress.id,
-    accessToken: outgoingPaymentGrant.access_token.value
-  },
-  { quoteId: quote.id, description: 'Your payment to the payee has been made' }
-)
-```
-</CodeBlock>
+Add the following properties:
 
-### 10. Rotate the Access Token
+- `walletAddress` : the URL of the payer's wallet address.
+- `quoteId` : the URL of the quote specifying the payment amount.
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/outgoing-payment/outgoing-payment-create.ts'
+  chunk='3'
+/>
+
+### 9. Rotate the Access Token
 
 Rotate the access token obtained from the previous `outgoingPayment` grant request.
 
-<CodeBlock title="Example">
-```ts
-const token = await client.token.rotate({
-    url: MANAGE_URL,
-    accessToken: ACCESS_TOKEN,
-});
-```
-</CodeBlock>
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/token/token-rotate.ts'
+  chunk='3'
+/>
 
-### 11. Create another Outgoing Payment
+### 10. Create another Outgoing Payment
 
 Create another `outgoingPayment` on the payer wallet's RS using the new access token returned by the AS in the previous step.
 
-<CodeBlock title="Example">
-```ts
-const outgoingPayment = await client.outgoingPayment.create(
-  {
-    walletAddress: payerWalletAddress.id,
-    accessToken: outgoingPaymentGrant.access_token.value
-  },
-  { quoteId: quote.id, description: 'Your payment to the payee has been made' }
-)
-```
-</CodeBlock>
+Add the following properties:
 
-### 12. Make recurring Outgoing Payments
+- `walletAddress` : the URL of the payer's wallet address.
+- `quoteId` : the URL of the quote specifying the payment amount.
 
-Repeat steps 10 and 11 to facilitate as many payments as needed by your application.
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/outgoing-payment/outgoing-payment-create.ts'
+  chunk='3'
+/>
+
+### 11. Make recurring Outgoing Payments
+
+Repeat steps 9 and 10 to facilitate as many payments as needed by your application.
+
+</TabItem>
+</Tabs>
