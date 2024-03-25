@@ -2,7 +2,13 @@ import Koa from 'koa'
 import * as httpMocks from 'node-mocks-http'
 import { v4 as uuid } from 'uuid'
 import assert from 'assert'
-import { createOpenAPI, OpenAPI, HttpMethod } from './'
+import {
+  createOpenAPI,
+  OpenAPI,
+  HttpMethod,
+  RequestValidator,
+  ResponseValidator
+} from './'
 import {
   createValidatorMiddleware,
   OpenAPIValidatorMiddlewareError
@@ -245,6 +251,62 @@ describe('OpenAPI Validator', (): void => {
 
       expect(next).toHaveBeenCalled()
     })
+
+    test.each`
+      validateRequest | validateResponse
+      ${true}         | ${true}
+      ${true}         | ${false}
+      ${false}        | ${true}
+      ${false}        | ${false}
+    `(
+      'calls validators correctly with validateRequest=$validateRequest and validateResponse=$validateResponse',
+      async ({ validateRequest, validateResponse }): Promise<void> => {
+        const ctx = createContext(
+          {
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json'
+            }
+          },
+          {}
+        )
+        addTestSignatureHeaders(ctx)
+        ctx.request['body'] = { walletAddress: WALLET_ADDRESS }
+
+        const mockRequestValidator = jest.fn()
+
+        jest
+          .spyOn(openApi, 'createRequestValidator')
+          .mockReturnValueOnce(
+            mockRequestValidator as unknown as RequestValidator<any>
+          )
+
+        const mockResponseValidator = jest.fn()
+
+        jest
+          .spyOn(openApi, 'createResponseValidator')
+          .mockReturnValueOnce(
+            mockResponseValidator as unknown as ResponseValidator<any>
+          )
+
+        await createValidatorMiddleware(
+          openApi,
+          {
+            path: PATH,
+            method: HttpMethod.POST
+          },
+          { validateRequest, validateResponse }
+        )(ctx, next)
+
+        expect(mockRequestValidator).toHaveBeenCalledTimes(
+          validateRequest ? 1 : 0
+        )
+        expect(mockResponseValidator).toHaveBeenCalledTimes(
+          validateResponse ? 1 : 0
+        )
+        expect(next).toHaveBeenCalled()
+      }
+    )
 
     const body = {
       id: `https://${accountId}/incoming-payments/${uuid()}`,
