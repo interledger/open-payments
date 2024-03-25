@@ -275,19 +275,17 @@ describe('OpenAPI Validator', (): void => {
 
         const mockRequestValidator = jest.fn()
 
-        jest
-          .spyOn(openApi, 'createRequestValidator')
-          .mockReturnValueOnce(
-            mockRequestValidator as unknown as RequestValidator<any>
-          )
+        jest.spyOn(openApi, 'createRequestValidator').mockReturnValueOnce(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          mockRequestValidator as unknown as RequestValidator<any>
+        )
 
         const mockResponseValidator = jest.fn()
 
-        jest
-          .spyOn(openApi, 'createResponseValidator')
-          .mockReturnValueOnce(
-            mockResponseValidator as unknown as ResponseValidator<any>
-          )
+        jest.spyOn(openApi, 'createResponseValidator').mockReturnValueOnce(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          mockResponseValidator as unknown as ResponseValidator<any>
+        )
 
         await createValidatorMiddleware(
           openApi,
