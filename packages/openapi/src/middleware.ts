@@ -22,44 +22,44 @@ export function createValidatorMiddleware<T extends Koa.DefaultContext>(
     ctx: Koa.Context,
     next: () => Promise<unknown>
   ): Promise<void> => {
-    try {
-      if (validationOptions?.validateRequest) {
-        // TODO: Allow 'application/*+json'
-        if (!ctx.accepts('application/json')) {
-          throw new OpenAPIValidatorMiddlewareError(
-            'Received error validating OpenAPI request: Must accept application/json',
-            406
-          )
-        }
-
-        requestValidator(ctx.request)
-      }
-    } catch (err) {
-      if (isValidationError(err)) {
+    if (validationOptions?.validateRequest) {
+      // TODO: Allow 'application/*+json'
+      if (!ctx.accepts('application/json')) {
         throw new OpenAPIValidatorMiddlewareError(
-          `Received error validating OpenAPI request: ${err.errors[0]?.message}`,
-          err.status || 500
+          'Received error validating OpenAPI request: Must accept application/json',
+          406
         )
       }
 
-      throw err // Should not be possible (only ValidationError is thrown in requestValidator)
+      try {
+        requestValidator(ctx.request)
+      } catch (err) {
+        if (isValidationError(err)) {
+          throw new OpenAPIValidatorMiddlewareError(
+            `Received error validating OpenAPI request: ${err.errors[0]?.message}`,
+            err.status || 500
+          )
+        }
+
+        throw err // Should not be possible (only ValidationError is thrown in requestValidator)
+      }
     }
 
     await next()
 
-    try {
-      if (validationOptions?.validateResponse) {
+    if (validationOptions?.validateResponse) {
+      try {
         responseValidator(ctx.response)
-      }
-    } catch (err) {
-      if (isValidationError(err)) {
-        throw new OpenAPIValidatorMiddlewareError(
-          `Received error validating OpenAPI response: ${err.errors[0]?.message}`,
-          err.status || 500
-        )
-      }
+      } catch (err) {
+        if (isValidationError(err)) {
+          throw new OpenAPIValidatorMiddlewareError(
+            `Received error validating OpenAPI response: ${err.errors[0]?.message}`,
+            err.status || 500
+          )
+        }
 
-      throw err // Should not be possible (only ValidationError is thrown in responseValidator)
+        throw err // Should not be possible (only ValidationError is thrown in responseValidator)
+      }
     }
   }
 }
