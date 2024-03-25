@@ -182,7 +182,7 @@ const customFormats = {
   }
 }
 
-interface ValidationError {
+export interface ValidationError {
   status?: number
   errors: ReturnType<typeof errorTransformer>[]
 }
