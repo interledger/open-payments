@@ -37,24 +37,38 @@ Grants for creating incoming payment and quote resources are non-interactive by 
 <TabItem label='TypeScript'>
 <Ts />
 
-#### Get started
+## Steps
+
+### 1. Import dependencies
+
+Import `createAuthenticatedClient` from the Open Payments SDK package.
 
 <ChunkedSnippet
   source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-outgoing-payment.ts'
   chunk='1'
 />
 
+### 2. Create and initialize an authenticated Open Payments client
+
+Create an OP authenticated client by providing the following properties:
+
+- `walletAddressURL`: your OP-enabled wallet address that your client will use to authenticate itself to one or more authorization servers.
+- `privateKey`: the EdDSA-Ed25519 key or preferably the absolute or relative file path to the key that is bound to your wallet address. A public key signed with this private key must be made available as a public JWK document at `{walletAddressUrl}/jwks.json` url.
+- `keyId`: the identifier of the private key and the corresponding public key.
+
 <ChunkedSnippet
   source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-outgoing-payment.ts'
   chunk='2'
 />
+
+### 3. Get payee's wallet address information
 
 <ChunkedSnippet
   source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-outgoing-payment.ts'
   chunk='3'
 />
 
-#### Request an interactive grant
+### 4. Request an interactive grant
 
 Indicate your client is capable of directing the end-user to a URI to start an interaction. We’ll use an outgoing payment grant as an example.
 
@@ -73,12 +87,19 @@ Now, indicate your client can receive a signal from the authorization server whe
   chunk='4'
 />
 
+:::note[Limits]
+
+The optional `debitAmount` and `receiveAmount` parameters, which apply to the payer and payee respectively, allow you to define the limits under which an outgoing payment can be created.
+
+The value for either parameter is the amount that all payments created under the grant cannot exceed. For example, the `DEBIT_AMOUNT` value is the maximum amount that can be debited from the payer's wallet.
+:::
+
 <ChunkedSnippet
   source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-outgoing-payment.ts'
   chunk='5'
 />
 
-#### Start interaction with the end user
+### 5. Start interaction with the end user
 
 Once your client receives the authorization server’s response, it must send the end-user to the `interact.redirect` URI contained in the response. This starts the interaction flow.
 
@@ -104,7 +125,7 @@ Once your client receives the authorization server’s response, it must send th
 Open Payments only supports the `redirect` method at this time. The means by which your client activates the URI is out of scope, but common redirect methods include HTTP redirect and launching a browser on the end-user’s device.
 :::
 
-#### Finish interaction with the end user
+### 6. Finish interaction with the end user
 
 The end-user interacts with the authorization server through the server’s interface and approves or denies the grant.
 
@@ -113,7 +134,7 @@ Provided the end-user approves the grant, the authorization server:
 - Sends the end-user to your client’s previously defined `finish.uri`. The means by which the server sends the end-user to the URI is out of scope, but common options include redirecting the end-user from a web page and launching the system browser with the target URI.
 - Secures the redirect by adding a unique hash, allowing your client to validate the `finish` call, and an interaction reference as query parameters to the URI.
 
-#### Request a grant continuation
+### 7. Request a grant continuation
 
 Add the authorization server’s interaction reference, as the `interact_ref` value, to the body of your continuation request.
 
