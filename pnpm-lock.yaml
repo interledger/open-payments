@@ -61,7 +61,7 @@ importers:
         version: 0.3.2
       astro:
         specifier: 4.5.6
-        version: 4.5.6(@types/node@18.15.3)(typescript@4.9.5)
+        version: 4.5.6
       mermaid:
         specifier: ^10.9.0
         version: 10.9.0
@@ -73,7 +73,7 @@ importers:
         version: 1.2.0
       starlight-openapi:
         specifier: ^0.5.0
-        version: 0.5.0(@astrojs/markdown-remark@4.2.1)(@astrojs/starlight@0.21.1)(astro@4.5.6)(openapi-types@12.1.0)
+        version: 0.5.0(@astrojs/markdown-remark@4.3.0)(@astrojs/starlight@0.21.1)(astro@4.5.6)(openapi-types@12.1.0)
     devDependencies:
       prettier:
         specifier: 3.2.5
@@ -110,7 +110,7 @@ importers:
         specifier: workspace:2.0.2
         version: link:../http-signature-utils
       '@interledger/openapi':
-        specifier: workspace:1.2.1
+        specifier: workspace:2.0.0
         version: link:../openapi
       axios:
         specifier: ^1.6.0
@@ -285,7 +285,7 @@ packages:
       '@astrojs/markdown-remark': 4.2.1
       '@mdx-js/mdx': 3.0.1
       acorn: 8.11.3
-      astro: 4.5.6(@types/node@18.15.3)(typescript@4.9.5)
+      astro: 4.5.6
       es-module-lexer: 1.4.1
       estree-util-visit: 2.0.0
       github-slugger: 2.0.0
@@ -326,7 +326,7 @@ packages:
       '@pagefind/default-ui': 1.0.3
       '@types/hast': 3.0.4
       '@types/mdast': 4.0.3
-      astro: 4.5.6(@types/node@18.15.3)(typescript@4.9.5)
+      astro: 4.5.6
       astro-expressive-code: 0.33.5(astro@4.5.6)
       bcp-47: 2.1.0
       hast-util-from-html: 2.0.1
@@ -361,12 +361,12 @@ packages:
       - supports-color
     dev: false
 
-  /@astropub/md@0.4.0(@astrojs/markdown-remark@4.2.1):
+  /@astropub/md@0.4.0(@astrojs/markdown-remark@4.3.0):
     resolution: {integrity: sha512-f0kJIfywRKLcVqlizqUPModBBuJ7WwBEIWJEt1Eq/ksSYixtOl8HQWMZKJhv9Xtc9OKHhkQf0AQc56EV1xNUnw==}
     peerDependencies:
       '@astrojs/markdown-remark': ^4
     dependencies:
-      '@astrojs/markdown-remark': 4.2.1
+      '@astrojs/markdown-remark': 4.3.0
     dev: false
 
   /@babel/code-frame@7.18.6:
@@ -3220,12 +3220,12 @@ packages:
     peerDependencies:
       astro: ^4.0.0-beta || ^3.3.0
     dependencies:
-      astro: 4.5.6(@types/node@18.15.3)(typescript@4.9.5)
+      astro: 4.5.6
       hast-util-to-html: 8.0.4
       remark-expressive-code: 0.33.5
     dev: false
 
-  /astro@4.5.6(@types/node@18.15.3)(typescript@4.9.5):
+  /astro@4.5.6:
     resolution: {integrity: sha512-/pXr+tDvgps1x3w+9i48XzfNPDr4NrT89EJPeCTL57IjaTpitSQ8Oy10Fv6zAqXNLIUJ5j3P1c+fJx+taKIg0g==}
     engines: {node: '>=18.14.1', npm: '>=6.14.0'}
     hasBin: true
@@ -3283,10 +3283,10 @@ packages:
       shiki: 1.2.0
       string-width: 7.1.0
       strip-ansi: 7.1.0
-      tsconfck: 3.0.0(typescript@4.9.5)
+      tsconfck: 3.0.0
       unist-util-visit: 5.0.0
       vfile: 6.0.1
-      vite: 5.1.6(@types/node@18.15.3)
+      vite: 5.1.6
       vitefu: 0.2.5(vite@5.1.6)
       which-pm: 2.1.1
       yargs-parser: 21.1.1
@@ -9182,7 +9182,7 @@ packages:
       escape-string-regexp: 2.0.0
     dev: true
 
-  /starlight-openapi@0.5.0(@astrojs/markdown-remark@4.2.1)(@astrojs/starlight@0.21.1)(astro@4.5.6)(openapi-types@12.1.0):
+  /starlight-openapi@0.5.0(@astrojs/markdown-remark@4.3.0)(@astrojs/starlight@0.21.1)(astro@4.5.6)(openapi-types@12.1.0):
     resolution: {integrity: sha512-7oOxCH09SaNJay+vzAL0ssVUKcjh2t4P5TZnZ5UOmndm9pd4fh9Li1qZL5UX3Xq0Js2NruTGh1qeK7Qb+I+NSQ==}
     engines: {node: '>=18.14.1'}
     peerDependencies:
@@ -9190,9 +9190,9 @@ packages:
       astro: '>=4.2.7'
     dependencies:
       '@astrojs/starlight': 0.21.1(astro@4.5.6)
-      '@astropub/md': 0.4.0(@astrojs/markdown-remark@4.2.1)
+      '@astropub/md': 0.4.0(@astrojs/markdown-remark@4.3.0)
       '@readme/openapi-parser': 2.5.0(openapi-types@12.1.0)
-      astro: 4.5.6(@types/node@18.15.3)(typescript@4.9.5)
+      astro: 4.5.6
       github-slugger: 2.0.0
     transitivePeerDependencies:
       - '@astrojs/markdown-remark'
@@ -9614,7 +9614,7 @@ packages:
       yn: 3.1.1
     dev: true
 
-  /tsconfck@3.0.0(typescript@4.9.5):
+  /tsconfck@3.0.0:
     resolution: {integrity: sha512-w3wnsIrJNi7avf4Zb0VjOoodoO0woEqGgZGQm+LHH9przdUI+XDKsWAXwxHA1DaRTjeuZNcregSzr7RaA8zG9A==}
     engines: {node: ^18 || >=20}
     hasBin: true
@@ -9623,8 +9623,6 @@ packages:
     peerDependenciesMeta:
       typescript:
         optional: true
-    dependencies:
-      typescript: 4.9.5
     dev: false
 
   /tsconfig@7.0.0:
@@ -9749,6 +9747,7 @@ packages:
     resolution: {integrity: sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==}
     engines: {node: '>=4.2.0'}
     hasBin: true
+    dev: true
 
   /unbox-primitive@1.0.2:
     resolution: {integrity: sha512-61pPlCD9h51VoreyJ0BReideM3MDKMKnh6+V9L08331ipq6Q8OFXZYiqP6n/tbHx4s5I9uRhcye6BrbkizkBDw==}
@@ -10019,7 +10018,7 @@ packages:
       vfile-message: 4.0.2
     dev: false
 
-  /vite@5.1.6(@types/node@18.15.3):
+  /vite@5.1.6:
     resolution: {integrity: sha512-yYIAZs9nVfRJ/AiOLCA91zzhjsHUgMjB+EigzFb6W2XTLO8JixBCKCjvhKZaye+NKYHCrkv3Oh50dH9EdLU2RA==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
@@ -10047,7 +10046,6 @@ packages:
       terser:
         optional: true
     dependencies:
-      '@types/node': 18.15.3
       esbuild: 0.19.12
       postcss: 8.4.35
       rollup: 4.12.0
@@ -10063,7 +10061,7 @@ packages:
       vite:
         optional: true
     dependencies:
-      vite: 5.1.6(@types/node@18.15.3)
+      vite: 5.1.6
     dev: false
 
   /walker@1.0.8:
