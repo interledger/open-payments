@@ -155,10 +155,14 @@ class OpenAPIImpl implements OpenAPI {
   }
 }
 
+interface TransformedError {
+  message: string
+}
+
 const errorTransformer = (
   _openapiError: OpenAPIResponseValidatorError,
   ajvError: ErrorObject
-) => {
+): TransformedError => {
   // Remove preceding 'data/'
   // Delineate subfields with '.'
   const message = ajv.errorsText([ajvError]).slice(5).replace(/\//g, '.')
@@ -182,9 +186,9 @@ const customFormats = {
   }
 }
 
-interface ValidationError {
+export interface ValidationError {
   status?: number
-  errors: string[]
+  errors: TransformedError[]
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

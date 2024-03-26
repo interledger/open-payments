@@ -20,7 +20,7 @@ import {
   DIDDocument
 } from '../types'
 import { v4 as uuid } from 'uuid'
-import { ResponseValidator } from '@interledger/openapi'
+import { ResponseValidator, ValidationError } from '@interledger/openapi'
 import base64url from 'base64url'
 import { BaseDeps } from '../client'
 
@@ -41,10 +41,11 @@ export const mockOpenApiResponseValidators = () => ({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     true) as ResponseValidator<any>,
   failedValidator: ((data: unknown): data is unknown => {
-    throw {
-      errors: ['Failed to validate response'],
-      message: 'Failed to validate response'
-    } // to mock validationError
+    const err: ValidationError = {
+      errors: [{ message: 'Failed to validate response' }]
+    }
+
+    throw err
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   }) as ResponseValidator<any>
 })

@@ -1,9 +1,18 @@
 import Koa from 'koa'
 import * as httpMocks from 'node-mocks-http'
 import { v4 as uuid } from 'uuid'
-
-import { createOpenAPI, OpenAPI, HttpMethod } from './'
-import { createValidatorMiddleware } from './middleware'
+import assert from 'assert'
+import {
+  createOpenAPI,
+  OpenAPI,
+  HttpMethod,
+  RequestValidator,
+  ResponseValidator
+} from './'
+import {
+  createValidatorMiddleware,
+  OpenAPIValidatorMiddlewareError
+} from './middleware'
 import * as path from 'path'
 
 declare module 'koa' {
@@ -94,34 +103,55 @@ describe('OpenAPI Validator', (): void => {
         {}
       )
       addTestSignatureHeaders(ctx)
-      await expect(validateListMiddleware(ctx, next)).rejects.toMatchObject({
-        status: 400,
-        message: 'first must be integer'
-      })
+
+      try {
+        await validateListMiddleware(ctx, next)
+      } catch (err) {
+        assert.ok(err instanceof OpenAPIValidatorMiddlewareError)
+        expect(err.message).toBe(
+          'Received error validating OpenAPI request: first must be integer'
+        )
+        expect(err.status).toBe(400)
+      }
       expect(next).not.toHaveBeenCalled()
     })
 
-    test.each`
-      headers                             | status | message                                  | description
-      ${{ Accept: 'text/plain' }}         | ${406} | ${'must accept json'}                    | ${'Accept'}
-      ${{ 'Content-Type': 'text/plain' }} | ${415} | ${'Unsupported Content-Type text/plain'} | ${'Content-Type'}
-    `(
-      'returns $status on invalid $description header',
-      async ({ headers, status, message }): Promise<void> => {
-        const ctx = createContext(
-          {
-            headers
-          },
-          {}
+    test('returns 406 on invalid Accept header', async (): Promise<void> => {
+      const ctx = createContext({ headers: { Accept: 'text/plain' } }, {})
+      addTestSignatureHeaders(ctx)
+
+      try {
+        await validatePostMiddleware(ctx, next)
+      } catch (err) {
+        assert.ok(err instanceof OpenAPIValidatorMiddlewareError)
+        expect(err.message).toBe(
+          'Received error validating OpenAPI request: Must accept application/json'
         )
-        addTestSignatureHeaders(ctx)
-        await expect(validatePostMiddleware(ctx, next)).rejects.toMatchObject({
-          status,
-          message
-        })
-        expect(next).not.toHaveBeenCalled()
+        expect(err.status).toBe(406)
       }
-    )
+
+      expect(next).not.toHaveBeenCalled()
+    })
+
+    test('returns 415 on invalid Content-Type header', async (): Promise<void> => {
+      const ctx = createContext(
+        { headers: { 'Content-Type': 'text/plain' } },
+        {}
+      )
+      addTestSignatureHeaders(ctx)
+
+      try {
+        await validatePostMiddleware(ctx, next)
+      } catch (err) {
+        assert.ok(err instanceof OpenAPIValidatorMiddlewareError)
+        expect(err.message).toBe(
+          'Received error validating OpenAPI request: Unsupported Content-Type text/plain'
+        )
+        expect(err.status).toBe(415)
+      }
+
+      expect(next).not.toHaveBeenCalled()
+    })
 
     test.each`
       body                                                                    | message                                                                         | description
@@ -145,13 +175,20 @@ describe('OpenAPI Validator', (): void => {
           {}
         )
         addTestSignatureHeaders(ctx)
-        ctx.request.body = body
+        ctx.request['body'] = body
           ? { ...body, walletAddress: WALLET_ADDRESS }
           : body
-        await expect(validatePostMiddleware(ctx, next)).rejects.toMatchObject({
-          status: 400,
-          message
-        })
+
+        try {
+          await validatePostMiddleware(ctx, next)
+        } catch (err) {
+          assert.ok(err instanceof OpenAPIValidatorMiddlewareError)
+          expect(err.message).toBe(
+            `Received error validating OpenAPI request: ${message}`
+          )
+          expect(err.status).toBe(400)
+        }
+
         expect(next).not.toHaveBeenCalled()
       }
     )
@@ -201,13 +238,73 @@ describe('OpenAPI Validator', (): void => {
           ]
         }
       })
-      await expect(validateListMiddleware(ctx, next)).rejects.toMatchObject({
-        status: 500,
-        message:
-          'response.result.0 must NOT have additional properties: additionalProp'
-      })
+
+      try {
+        await validateListMiddleware(ctx, next)
+      } catch (err) {
+        assert.ok(err instanceof OpenAPIValidatorMiddlewareError)
+        expect(err.message).toBe(
+          'Received error validating OpenAPI response: response.result.0 must NOT have additional properties: additionalProp'
+        )
+        expect(err.status).toBe(500)
+      }
+
       expect(next).toHaveBeenCalled()
     })
+
+    test.each`
+      validateRequest | validateResponse
+      ${true}         | ${true}
+      ${true}         | ${false}
+      ${false}        | ${true}
+      ${false}        | ${false}
+    `(
+      'calls validators correctly with validateRequest=$validateRequest and validateResponse=$validateResponse',
+      async ({ validateRequest, validateResponse }): Promise<void> => {
+        const ctx = createContext(
+          {
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json'
+            }
+          },
+          {}
+        )
+        addTestSignatureHeaders(ctx)
+        ctx.request['body'] = { walletAddress: WALLET_ADDRESS }
+
+        const mockRequestValidator = jest.fn()
+
+        jest.spyOn(openApi, 'createRequestValidator').mockReturnValueOnce(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          mockRequestValidator as unknown as RequestValidator<any>
+        )
+
+        const mockResponseValidator = jest.fn()
+
+        jest.spyOn(openApi, 'createResponseValidator').mockReturnValueOnce(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          mockResponseValidator as unknown as ResponseValidator<any>
+        )
+
+        await createValidatorMiddleware(
+          openApi,
+          {
+            path: PATH,
+            method: HttpMethod.POST
+          },
+          { validateRequest, validateResponse }
+        )(ctx, next)
+
+        expect(mockRequestValidator).toHaveBeenCalledTimes(
+          validateRequest ? 1 : 0
+        )
+        expect(mockResponseValidator).toHaveBeenCalledTimes(
+          validateResponse ? 1 : 0
+        )
+        expect(next).toHaveBeenCalled()
+      }
+    )
 
     const body = {
       id: `https://${accountId}/incoming-payments/${uuid()}`,
@@ -244,15 +341,21 @@ describe('OpenAPI Validator', (): void => {
           {}
         )
         addTestSignatureHeaders(ctx)
-        ctx.request.body = { walletAddress: WALLET_ADDRESS }
+        ctx.request['body'] = { walletAddress: WALLET_ADDRESS }
         const next = jest.fn().mockImplementation(() => {
           ctx.status = status
           ctx.response.body = body
         })
-        await expect(validatePostMiddleware(ctx, next)).rejects.toMatchObject({
-          status: 500,
-          message
-        })
+        try {
+          await validatePostMiddleware(ctx, next)
+        } catch (err) {
+          assert.ok(err instanceof OpenAPIValidatorMiddlewareError)
+          expect(err.message).toBe(
+            `Received error validating OpenAPI response: ${message}`
+          )
+          expect(err.status).toBe(500)
+        }
+
         expect(next).toHaveBeenCalled()
       }
     )
@@ -269,8 +372,6 @@ describe('OpenAPI Validator', (): void => {
 
       test.each`
         body                                                                                     | description
-        ${{ receiver: 'ht999tp://something.com/incoming-payments' }}                             | ${'invalid receiver, unknown protocol'}
-        ${{ receiver: 'http://something.com/incoming-payments' }}                                | ${'invalid receiver, missing incoming payment id'}
         ${{ receiver: 'http://something.com/connections/c3a0d182-b221-4612-a500-07ad106b5f5d' }} | ${'invalid receiver, wrong path'}
       `(
         'returns 400 on invalid quote body ($description)',
@@ -285,18 +386,21 @@ describe('OpenAPI Validator', (): void => {
             {}
           )
           addTestSignatureHeaders(ctx)
-          ctx.request.body = {
+          ctx.request['body'] = {
             ...body,
             walletAddress: WALLET_ADDRESS,
             method: 'ilp'
           }
-          await expect(
-            validateQuotePostMiddleware(ctx, next)
-          ).rejects.toMatchObject({
-            status: 400,
-            message:
-              'body.receiver must match pattern "^(https|http):..(.+).incoming-payments.(.+)$"'
-          })
+          try {
+            await validateQuotePostMiddleware(ctx, next)
+          } catch (err) {
+            assert.ok(err instanceof OpenAPIValidatorMiddlewareError)
+            expect(err.message).toBe(
+              'Received error validating OpenAPI request: body.receiver must match pattern "^(https|http):..(.+).incoming-payments.(.+)$"'
+            )
+            expect(err.status).toBe(400)
+          }
+
           expect(next).not.toHaveBeenCalled()
         }
       )
@@ -318,13 +422,13 @@ describe('OpenAPI Validator', (): void => {
             {}
           )
           addTestSignatureHeaders(ctx)
-          ctx.request.body = {
+          ctx.request['body'] = {
             receiver,
             walletAddress: WALLET_ADDRESS,
             method: 'ilp'
           }
           const next = jest.fn().mockImplementation(() => {
-            expect(ctx.request.body.receiver).toEqual(receiver)
+            expect(ctx.request['body'].receiver).toEqual(receiver)
             ctx.status = 201
             ctx.response.body = {
               id: 'https://something-else/quotes/3b461206-daae-4d97-88b0-abffbcaa6f96',

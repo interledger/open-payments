@@ -133,7 +133,7 @@ const handleError = (
     errorStatus = error.response?.status
   } else if (isValidationError(error)) {
     errorDescription = 'Could not validate OpenAPI response'
-    validationErrors = error.errors
+    validationErrors = error.errors.map((e) => e.message)
     errorStatus = error.status
   } else if (error instanceof Error) {
     errorDescription = error.message
