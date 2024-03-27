@@ -81,3 +81,11 @@ Within the request to create the outgoing-payment resource is the payee’s wall
 After the outgoing-payment resource is created, the incoming payment can complete, either automatically or manually, to end the Open Payments flow. Now it’s up to the payer’s ASE to settle with the payee’s ASE over a shared payment rail.
 
 An outgoing-payment resource can represent a payment that will be, is currently being, or has previously been sent from the payer’s account. A client can issue requests to get an outgoing payment’s specific details and list all outgoing payments in order to, for example, provide the end-user with transaction details and history.
+
+## Payment Methods
+
+Open Payments is designed to support a variety of payment methods including, but not limited to, credit cards, debit cards, mobile money, gift cards and <LinkOut href='https://interledger.org'>Pay with Interledger</LinkOut>.
+
+:::note
+Currently the open-source implementation of Open Payments called <LinkOut href='https://rafiki.dev'>Rafiki</LinkOut> only supports `ilp` (Pay with Interledger) as a payment method. Please see the <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-quote/'>Create a Quote</LinkOut> endpoint for more details.  
+:::
