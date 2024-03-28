@@ -1,5 +1,11 @@
 # @interledger/openapi
 
+## 2.0.1
+
+### Patch Changes
+
+- dd7fb76: - Exporting `OpenAPIValidatorMiddlewareError` from package
+
 ## 2.0.0
 
 ### Major Changes
