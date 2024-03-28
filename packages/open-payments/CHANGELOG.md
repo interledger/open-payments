@@ -1,5 +1,12 @@
 # @interledger/open-payments
 
+## 6.8.2
+
+### Patch Changes
+
+- Updated dependencies [dd7fb76]
+  - @interledger/openapi@2.0.1
+
 ## 6.8.1
 
 ### Patch Changes
