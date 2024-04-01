@@ -74,7 +74,7 @@ A successfully created `quote` resource results in the generation of a quote `id
 
 After a quote resource is created, it’s almost time to create the outgoing-payment resource on the payer’s account. The purpose of the outgoing-payment resource is to serve as an instruction to make a payment from the payer’s account.
 
-Open Payments requires the payee to explicitly consent to the creation of the resource before the client can issue the create request. Consent is obtained through an [interactive grant](/introduction/grants/#outgoing-payment-grant).
+Open Payments requires the payer to explicitly consent to the creation of the resource before the client can issue the create request. Consent is obtained through an [interactive grant](/introduction/grants/#outgoing-payment-grant).
 
 Within the request to create the outgoing-payment resource is the payee’s wallet address, so the payer’s ASE knows where to send the payment, and the quote resource’s ID, where the payment amounts are defined.
 
