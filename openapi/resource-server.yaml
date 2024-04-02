@@ -291,27 +291,60 @@ paths:
                   quoteId: 'https://ilp.rafiki.money/quotes/ab03296b-0c8b-4776-b94e-7ee27d868d4d'
                   metadata:
                     externalRef: INV2022-02-0137
+              Create an outgoing payment based on an incoming payment:
+                value:
+                  walletAddress: 'https://ilp.rafiki.money/alice/'
+                  incomingPaymentId: 'https://ilp.rafiki.money/incoming-payments/8d4e4776-2e55-4e5a-bcbe-8348ed1e86de'
+                  debitAmount:
+                    value: '2500'
+                    assetCode: USD
+                    assetScale: 2
+                  metadata:
+                    externalRef: INV2022-02-0137
             schema:
-              type: object
-              properties:
-                walletAddress:
-                  $ref: ./schemas.yaml#/components/schemas/walletAddress
-                quoteId:
-                  type: string
-                  format: uri
-                  description: The URL of the quote defining this payment's amounts.
-                metadata:
-                  type: object
-                  additionalProperties: true
-                  description: Additional metadata associated with the outgoing payment. (Optional)
-              required:
-                - quoteId
-                - walletAddress
-              additionalProperties: false
+              oneOf:
+                - type: object
+                  properties:
+                    walletAddress:
+                      $ref: ./schemas.yaml#/components/schemas/walletAddress
+                    quoteId:
+                      type: string
+                      format: uri
+                      description: The URL of the quote defining this payment's amounts.
+                    metadata:
+                      type: object
+                      additionalProperties: true
+                      description: Additional metadata associated with the outgoing payment. (Optional)
+                  required:
+                    - quoteId
+                    - walletAddress
+                  additionalProperties: false
+                - type: object
+                  properties:
+                    walletAddress:
+                      $ref: ./schemas.yaml#/components/schemas/walletAddress
+                    incomingPaymentId:
+                      type: string
+                      format: uri
+                      description: The URL of the incoming payment this outgoing payment will fulfill.
+                    debitAmount:
+                      description: The fixed amount that would be sent from the sending wallet address given a successful outgoing payment.
+                      $ref: ./schemas.yaml#/components/schemas/amount
+                    metadata:
+                      type: object
+                      additionalProperties: true
+                      description: Additional metadata associated with the outgoing payment. (Optional)
+                  required:
+                    - incomingPaymentId
+                    - debitAmount
+                    - walletAddress
+                  additionalProperties: false
         description: |-
           A subset of the outgoing payments schema is accepted as input to create a new outgoing payment.
 
           The `debitAmount` must use the same `assetCode` and `assetScale` as the wallet address.
+
+          Either provide a `quoteId` to create an outgoing payment based on a quote or provide `incomingPaymentId` and `debitAmount` to create an outgoing payment directly from an incoming payment.
         required: true
       description: |-
         An **outgoing payment** is a sub-resource of a wallet address. It represents a payment from the wallet address.

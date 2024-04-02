@@ -18,6 +18,7 @@ import * as requestors from './requests'
 import { OpenPaymentsClientError } from './error'
 import assert from 'assert'
 import { getResourceServerOpenAPI } from '../openapi'
+import { CreateOutgoingPaymentArgs } from '../types'
 
 jest.mock('./requests', () => {
   return {
@@ -280,38 +281,58 @@ describe('outgoing-payment', (): void => {
   })
 
   describe('createOutgoingPayment', (): void => {
-    const quoteId = `${serverAddress}/quotes/${uuid()}`
+    const quoteId_ = `${serverAddress}/quotes/${uuid()}`
+    const incomingPaymentId = `${serverAddress}/incoming-payments/${uuid()}`
+    const debitAmount = {
+      value: '2500',
+      assetCode: 'USD',
+      assetScale: 2
+    }
 
     test.each`
-      metadata
-      ${{ description: 'Some description', externalRef: '#INV-1' }}
-      ${undefined}
-    `('creates outgoing payment', async ({ metadata }): Promise<void> => {
-      const outgoingPayment = mockOutgoingPayment({
+      quoteId      | incomingPaymentId    | debitAmount    | metadata                                                      | createSource
+      ${quoteId_}  | ${undefined}         | ${undefined}   | ${{ description: 'Some description', externalRef: '#INV-1' }} | ${'quote'}
+      ${quoteId_}  | ${undefined}         | ${undefined}   | ${undefined}                                                  | ${'quote'}
+      ${undefined} | ${incomingPaymentId} | ${debitAmount} | ${undefined}                                                  | ${'incoming payment'}
+    `(
+      'creates outgoing payment from $createSource',
+      async ({
         quoteId,
+        incomingPaymentId,
+        debitAmount,
         metadata
-      })
+      }): Promise<void> => {
+        // quoteId and incomingPaymentId/debitAmount should be mutually exclusive
+        assert(quoteId || (incomingPaymentId && debitAmount))
+        assert(!(quoteId && incomingPaymentId))
+        assert(!(quoteId && debitAmount))
 
-      const scope = nock(serverAddress)
-        .post('/outgoing-payments')
-        .reply(200, outgoingPayment)
+        const outgoingPayment = mockOutgoingPayment({
+          quoteId: quoteId || uuid(),
+          metadata
+        })
 
-      const result = await createOutgoingPayment(
-        deps,
-        {
-          url: serverAddress,
-          accessToken: 'accessToken'
-        },
-        openApiValidators.successfulValidator,
-        {
-          quoteId,
-          metadata,
-          walletAddress
-        }
-      )
-      expect(result).toEqual(outgoingPayment)
-      scope.done()
-    })
+        const scope = nock(serverAddress)
+          .post('/outgoing-payments')
+          .reply(200, outgoingPayment)
+
+        const createOutgoingPaymentInput: CreateOutgoingPaymentArgs = quoteId
+          ? { walletAddress, metadata, quoteId }
+          : { walletAddress, metadata, incomingPaymentId, debitAmount }
+
+        const result = await createOutgoingPayment(
+          deps,
+          {
+            url: serverAddress,
+            accessToken: 'accessToken'
+          },
+          openApiValidators.successfulValidator,
+          createOutgoingPaymentInput
+        )
+        expect(result).toEqual(outgoingPayment)
+        scope.done()
+      }
+    )
 
     test('throws if outgoing payment does not pass validation', async (): Promise<void> => {
       const outgoingPayment = mockOutgoingPayment({
