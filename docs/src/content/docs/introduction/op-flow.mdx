@@ -154,12 +154,13 @@ Similarly, the client can provide the end-user with details about a specific <Li
 
 <Mermaid
   graph={`sequenceDiagram
-    participant Cu as Customer
-    participant A2 as Auth Server B
-    participant R2 as Backend B
-    participant R1 as Backend A
-    participant A1 as Auth Server A
-    participant Cl as Merchant
+    participant IP as Identity Provider
+    participant Cu as Payer
+    participant A2 as Payer-side Auth Server
+    participant R2 as Payer-side Resource Server
+    participant R1 as Payee-side Resource Server
+    participant A1 as Payee-side Auth Server
+    participant Cl as Client
 
     activate Cl
     Cl->>+A1: incoming payment grant request
@@ -183,8 +184,9 @@ Similarly, the client can provide the end-user with details about a specific <Li
     Cl->>+A2: outgoing payment grant request
     A2->>-Cl: IdP redirect info
     rect rgba(0, 0, 255, .1)
-    Cl->>Cu: redirect to IdP
-    Cu->>Cu: consent to grant request
+    Cl->>IP: redirect to IdP
+    IP->>Cu: consent to grant request
+    Cu->>IP: consent given
     Cu->>-Cl: interaction finished
     end
     Cl->>+A2: continue grant request
