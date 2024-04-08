@@ -90,9 +90,7 @@ When an `outgoing-payment` is completed against an open and active `incoming-pay
 
 To set up ILP as a payment method in OP, the following are required:
 
-- <LinkOut href='https://interledger.org/developers/rfcs/ilp-addresses/'>
-    ILP address
-  </LinkOut> of the payee’s ASE: The ILP address is required so that packets representing
+- The <LinkOut href='https://interledger.org/developers/rfcs/ilp-addresses/'>ILP address</LinkOut> of the payee’s ASE: The ILP address is required so that packets representing
   payments routed over the Interledger network will be forwarded to the node owned
   and operated by the intended receiver (i.e. payee's ASE). The `ilpAddress` field
   must be sent by the payee’s ASE in the `methods` object on an `incoming-payment`
