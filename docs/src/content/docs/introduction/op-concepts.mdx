@@ -84,13 +84,19 @@ An outgoing-payment resource can represent a payment that will be, is currently 
 
 ## Payment Methods
 
-While OP specifies a standard way of specifying payment instructions to ASEs, it doesn’t fulfill the payment obligations that result from the creation and consumption of OP resources.  The payment method specifies the payment rails that the payee's ASE and the payer's ASE will to use to fulfill their obligations.   
+While OP specifies a standard way of specifying payment instructions to ASEs, it doesn’t fulfill the payment obligations that result from the creation and consumption of OP resources. The payment method specifies the payment rails that the payee's ASE and the payer's ASE will to use to fulfill their obligations.
 
-When an `outgoing-payment` is completed against an open and active `incoming-payment`, the payer’s ASE becomes obligated to make payment using the payment method initially specified in the `incoming-payment` response.  Though OP is designed to be an abstraction layer that can issue payment instructions between transacting parties atop any payment method, <LinkOut href='https://interledger.org'>Interledger (ILP) </LinkOut>is the only payment method that currently integrates with OP readily.  
+When an `outgoing-payment` is completed against an open and active `incoming-payment`, the payer’s ASE becomes obligated to make payment using the payment method initially specified in the `incoming-payment` response. Though OP is designed to be an abstraction layer that can issue payment instructions between transacting parties atop any payment method, <LinkOut href='https://interledger.org'>Interledger (ILP) </LinkOut>is the only payment method that currently integrates with OP readily.
 
-To set up ILP as a payment method in OP, the following are required: 
+To set up ILP as a payment method in OP, the following are required:
 
-- <LinkOut href='https://interledger.org/developers/rfcs/ilp-addresses/'>ILP address</LinkOut> of the payee’s ASE:  The ILP address is required so that packets representing payments routed over the Interledger network will be forwarded to the node owned and operated by the intended receiver (i.e. payee's ASE).  The `ilpAddress` field must be sent by the payee’s ASE in the `methods` object on an `incoming-payment` response.
-- Shared secret: A cryptographically secured secret exchanged between the sender and receiver to ensure that packets sent over the Interledger network through a <LinkOut href='https://interledger.org/developers/rfcs/stream-protocol/'>STREAM</LinkOut> connection can only be read by the two parties.  The payee’s ASE must return the `sharedSecret` field in the `methods` object on an `incoming-payment` response.
-- The payee's ASE must return the value `ilp` in the `type` field of the `methods` object on an `incoming-payment` response.  
-- The payer's ASE must send the value `ilp` in the `method` field when creating a `quote`. 
+- <LinkOut href='https://interledger.org/developers/rfcs/ilp-addresses/'>
+    ILP address
+  </LinkOut> of the payee’s ASE: The ILP address is required so that packets representing
+  payments routed over the Interledger network will be forwarded to the node owned
+  and operated by the intended receiver (i.e. payee's ASE). The `ilpAddress` field
+  must be sent by the payee’s ASE in the `methods` object on an `incoming-payment`
+  response.
+- Shared secret: A cryptographically secured secret exchanged between the sender and receiver to ensure that packets sent over the Interledger network through a <LinkOut href='https://interledger.org/developers/rfcs/stream-protocol/'>STREAM</LinkOut> connection can only be read by the two parties. The payee’s ASE must return the `sharedSecret` field in the `methods` object on an `incoming-payment` response.
+- The payee's ASE must return the value `ilp` in the `type` field of the `methods` object on an `incoming-payment` response.
+- The payer's ASE must send the value `ilp` in the `method` field when creating a `quote`.
