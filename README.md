@@ -68,9 +68,8 @@ More phone numbers: https://tel.meet/htd-eefo-ovn?hs=5
 ### Environment Setup
 
 ```sh
-# install node 18
-nvm install lts/hydrogen
-nvm use lts/hydrogen
+# install node from `./.nvmrc`
+nvm install
 
 # install pnpm
 corepack enable
