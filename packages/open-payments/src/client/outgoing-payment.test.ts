@@ -282,7 +282,7 @@ describe('outgoing-payment', (): void => {
 
   describe('createOutgoingPayment', (): void => {
     const quoteId_ = `${serverAddress}/quotes/${uuid()}`
-    const incomingPaymentId = `${serverAddress}/incoming-payments/${uuid()}`
+    const incomingPayment = `${serverAddress}/incoming-payments/${uuid()}`
     const debitAmount = {
       value: '2500',
       assetCode: 'USD',
@@ -290,21 +290,21 @@ describe('outgoing-payment', (): void => {
     }
 
     test.each`
-      quoteId      | incomingPaymentId    | debitAmount    | metadata                                                      | createSource
-      ${quoteId_}  | ${undefined}         | ${undefined}   | ${{ description: 'Some description', externalRef: '#INV-1' }} | ${'quote'}
-      ${quoteId_}  | ${undefined}         | ${undefined}   | ${undefined}                                                  | ${'quote'}
-      ${undefined} | ${incomingPaymentId} | ${debitAmount} | ${undefined}                                                  | ${'incoming payment'}
+      quoteId      | incomingPayment    | debitAmount    | metadata                                                      | createSource
+      ${quoteId_}  | ${undefined}       | ${undefined}   | ${{ description: 'Some description', externalRef: '#INV-1' }} | ${'quote'}
+      ${quoteId_}  | ${undefined}       | ${undefined}   | ${undefined}                                                  | ${'quote'}
+      ${undefined} | ${incomingPayment} | ${debitAmount} | ${undefined}                                                  | ${'incoming payment'}
     `(
       'creates outgoing payment from $createSource',
       async ({
         quoteId,
-        incomingPaymentId,
+        incomingPayment,
         debitAmount,
         metadata
       }): Promise<void> => {
-        // quoteId and incomingPaymentId/debitAmount should be mutually exclusive
-        assert(quoteId || (incomingPaymentId && debitAmount))
-        assert(!(quoteId && incomingPaymentId))
+        // quoteId and incomingPayment/debitAmount should be mutually exclusive
+        assert(quoteId || (incomingPayment && debitAmount))
+        assert(!(quoteId && incomingPayment))
         assert(!(quoteId && debitAmount))
 
         const outgoingPayment = mockOutgoingPayment({
@@ -318,7 +318,7 @@ describe('outgoing-payment', (): void => {
 
         const createOutgoingPaymentInput: CreateOutgoingPaymentArgs = quoteId
           ? { walletAddress, metadata, quoteId }
-          : { walletAddress, metadata, incomingPaymentId, debitAmount }
+          : { walletAddress, metadata, incomingPayment, debitAmount }
 
         const result = await createOutgoingPayment(
           deps,

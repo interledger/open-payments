@@ -417,7 +417,7 @@ export interface operations {
      *
      * The `debitAmount` must use the same `assetCode` and `assetScale` as the wallet address.
      *
-     * Either provide a `quoteId` to create an outgoing payment based on a quote or provide `incomingPaymentId` and `debitAmount` to create an outgoing payment directly from an incoming payment.
+     * Either provide a `quoteId` to create an outgoing payment based on a quote or provide `incomingPayment` and `debitAmount` to create an outgoing payment directly from an incoming payment.
      */
     requestBody: {
       content: {
@@ -438,7 +438,7 @@ export interface operations {
                * Format: uri
                * @description The URL of the incoming payment this outgoing payment will fulfill.
                */
-              incomingPaymentId: string;
+              incomingPayment: string;
               /** @description The fixed amount that would be sent from the sending wallet address given a successful outgoing payment. */
               debitAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
               /** @description Additional metadata associated with the outgoing payment. (Optional) */
