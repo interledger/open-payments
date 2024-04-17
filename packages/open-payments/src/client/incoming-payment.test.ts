@@ -96,7 +96,7 @@ describe('incoming-payment', (): void => {
           },
           openApiValidators.successfulValidator
         )
-      ).rejects.toThrowError()
+      ).rejects.toThrow()
     })
 
     test('throws if incoming payment does not pass open api validation', async (): Promise<void> => {
@@ -116,7 +116,7 @@ describe('incoming-payment', (): void => {
           },
           openApiValidators.failedValidator
         )
-      ).rejects.toThrowError()
+      ).rejects.toThrow()
     })
   })
 
@@ -153,7 +153,7 @@ describe('incoming-payment', (): void => {
           },
           openApiValidators.failedValidator
         )
-      ).rejects.toThrowError()
+      ).rejects.toThrow()
     })
   })
 
@@ -178,13 +178,13 @@ describe('incoming-payment', (): void => {
         const result = await createIncomingPayment(
           deps,
           { url: serverAddress, accessToken },
-          openApiValidators.successfulValidator,
           {
             walletAddress,
             incomingAmount,
             expiresAt,
             metadata
-          }
+          },
+          openApiValidators.successfulValidator
         )
 
         scope.done()
@@ -213,8 +213,8 @@ describe('incoming-payment', (): void => {
         await createIncomingPayment(
           deps,
           { url: serverAddress, accessToken },
-          openApiValidators.successfulValidator,
-          { walletAddress }
+          { walletAddress },
+          openApiValidators.successfulValidator
         )
       } catch (error) {
         assert.ok(error instanceof OpenPaymentsClientError)
@@ -242,7 +242,7 @@ describe('incoming-payment', (): void => {
           openApiValidators.failedValidator,
           { walletAddress }
         )
-      ).rejects.toThrowError()
+      ).rejects.toThrow()
       scope.done()
     })
   })
@@ -321,7 +321,7 @@ describe('incoming-payment', (): void => {
           },
           openApiValidators.failedValidator
         )
-      ).rejects.toThrowError(OpenPaymentsClientError)
+      ).rejects.toThrow(OpenPaymentsClientError)
 
       scope.done()
     })
@@ -478,7 +478,7 @@ describe('incoming-payment', (): void => {
           { url: serverAddress, walletAddress, accessToken },
           openApiValidators.failedValidator
         )
-      ).rejects.toThrowError(OpenPaymentsClientError)
+      ).rejects.toThrow(OpenPaymentsClientError)
 
       scope.done()
     })

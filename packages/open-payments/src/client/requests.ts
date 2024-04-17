@@ -27,7 +27,7 @@ interface DeleteArgs {
 export const get = async <T>(
   deps: BaseDeps,
   args: GetArgs,
-  openApiResponseValidator: ResponseValidator<T>
+  openApiResponseValidator?: ResponseValidator<T>
 ): Promise<T> => {
   const { httpClient } = deps
   const { accessToken } = args
@@ -46,10 +46,12 @@ export const get = async <T>(
 
     const responseBody = await response.json<T>()
 
-    openApiResponseValidator({
-      status: response.status,
-      body: responseBody
-    })
+    if (openApiResponseValidator) {
+      openApiResponseValidator({
+        status: response.status,
+        body: responseBody
+      })
+    }
 
     return responseBody
   } catch (error) {
@@ -79,7 +81,7 @@ const getUrlWithQueryParams = (
 export const post = async <TRequest, TResponse>(
   deps: BaseDeps,
   args: PostArgs<TRequest>,
-  openApiResponseValidator: ResponseValidator<TResponse>
+  openApiResponseValidator?: ResponseValidator<TResponse>
 ): Promise<TResponse> => {
   const { httpClient } = deps
   const { body, accessToken } = args
@@ -98,10 +100,12 @@ export const post = async <TRequest, TResponse>(
 
     const responseBody = await response.json<TResponse>()
 
-    openApiResponseValidator({
-      status: response.status,
-      body: responseBody
-    })
+    if (openApiResponseValidator) {
+      openApiResponseValidator({
+        status: response.status,
+        body: responseBody
+      })
+    }
 
     return responseBody
   } catch (error) {
@@ -112,7 +116,7 @@ export const post = async <TRequest, TResponse>(
 export const deleteRequest = async <TResponse>(
   deps: BaseDeps,
   args: DeleteArgs,
-  openApiResponseValidator: ResponseValidator<TResponse>
+  openApiResponseValidator?: ResponseValidator<TResponse>
 ): Promise<void> => {
   const { httpClient } = deps
   const { accessToken } = args
@@ -128,10 +132,12 @@ export const deleteRequest = async <TResponse>(
         : {}
     })
 
-    openApiResponseValidator({
-      status: response.status,
-      body: undefined
-    })
+    if (openApiResponseValidator) {
+      openApiResponseValidator({
+        status: response.status,
+        body: undefined
+      })
+    }
   } catch (error) {
     return handleError(deps, { url, error, requestType: 'DELETE' })
   }
