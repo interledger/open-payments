@@ -12,7 +12,7 @@
     "format:docs": "prettier --write ./docs/**/*.md",
     "changeset:add": "pnpm changeset add",
     "ci:version": "pnpm changeset version && pnpm i --lockfile-only",
-    "ci:publish": "pnpm changeset publish",
+    "ci:publish": "pnpm publish -r",
     "checks": "pnpm check:prettier && pnpm check:lint",
     "check:lint": "eslint --max-warnings=0 .",
     "check:prettier": "prettier --check .",
