@@ -14,20 +14,15 @@ export interface QuoteRoutes {
 export const createQuoteRoutes = (deps: RouteDeps): QuoteRoutes => {
   const { openApi, ...baseDeps } = deps
 
-  let getQuoteOpenApiValidator: ResponseValidator<Quote>
-  let createQuoteOpenApiValidator: ResponseValidator<Quote>
+  const getQuoteOpenApiValidator = openApi.createResponseValidator<Quote>({
+    path: getRSPath('/quotes/{id}'),
+    method: HttpMethod.GET
+  })
 
-  if (deps.validateResponses) {
-    getQuoteOpenApiValidator = openApi.createResponseValidator({
-      path: getRSPath('/quotes/{id}'),
-      method: HttpMethod.GET
-    })
-
-    createQuoteOpenApiValidator = openApi.createResponseValidator({
-      path: getRSPath('/quotes'),
-      method: HttpMethod.POST
-    })
-  }
+  const createQuoteOpenApiValidator = openApi.createResponseValidator<Quote>({
+    path: getRSPath('/quotes'),
+    method: HttpMethod.POST
+  })
 
   return {
     get: (args: ResourceRequestArgs) =>
