@@ -176,13 +176,13 @@ describe('incoming-payment', (): void => {
         const result = await createIncomingPayment(
           deps,
           { url: serverAddress, accessToken },
+          openApiValidators.successfulValidator,
           {
             walletAddress,
             incomingAmount,
             expiresAt,
             metadata
-          },
-          openApiValidators.successfulValidator
+          }
         )
 
         scope.done()
@@ -211,8 +211,8 @@ describe('incoming-payment', (): void => {
         await createIncomingPayment(
           deps,
           { url: serverAddress, accessToken },
-          { walletAddress },
-          openApiValidators.successfulValidator
+          openApiValidators.successfulValidator,
+          { walletAddress }
         )
       } catch (error) {
         assert.ok(error instanceof OpenPaymentsClientError)
@@ -237,8 +237,8 @@ describe('incoming-payment', (): void => {
         createIncomingPayment(
           deps,
           { url: serverAddress, accessToken },
-          { walletAddress },
-          openApiValidators.failedValidator
+          openApiValidators.failedValidator,
+          { walletAddress }
         )
       ).rejects.toThrowError()
       scope.done()
