@@ -5,6 +5,7 @@ import { createTestDeps, mockGrantRequest } from '../test/helpers'
 import * as requestors from './requests'
 import { v4 as uuid } from 'uuid'
 import { getAuthServerOpenAPI } from '../openapi'
+import { BaseDeps } from '.'
 
 jest.mock('./requests', () => ({
   ...jest.requireActual('./requests.ts'),
@@ -15,12 +16,13 @@ jest.mock('./requests', () => ({
 
 describe('grant', (): void => {
   let openApi: OpenAPI
+  let deps: BaseDeps
 
   beforeAll(async () => {
     openApi = await getAuthServerOpenAPI()
+    deps = await createTestDeps()
   })
 
-  const deps = createTestDeps()
   const client = 'https://example.com/.well-known/pay'
 
   describe('routes', () => {

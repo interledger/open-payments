@@ -19,6 +19,7 @@ import { OpenPaymentsClientError } from './error'
 import assert from 'assert'
 import { getResourceServerOpenAPI } from '../openapi'
 import { CreateOutgoingPaymentArgs } from '../types'
+import { BaseDeps } from '.'
 
 jest.mock('./requests', () => {
   return {
@@ -30,12 +31,13 @@ jest.mock('./requests', () => {
 
 describe('outgoing-payment', (): void => {
   let openApi: OpenAPI
+  let deps: BaseDeps
 
   beforeAll(async () => {
     openApi = await getResourceServerOpenAPI()
+    deps = await createTestDeps()
   })
 
-  const deps = createTestDeps()
   const walletAddress = `http://localhost:1000/.well-known/pay`
   const serverAddress = 'http://localhost:1000'
   const openApiValidators = mockOpenApiResponseValidators()

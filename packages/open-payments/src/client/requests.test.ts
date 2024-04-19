@@ -2,6 +2,7 @@ import {
   createHttpClient,
   deleteRequest,
   get,
+  HttpClient,
   post,
   requestShouldBeAuthorized,
   signRequest
@@ -12,6 +13,7 @@ import { createTestDeps, mockOpenApiResponseValidators } from '../test/helpers'
 import { OpenPaymentsClientError } from './error'
 import assert from 'assert'
 import ky from 'ky'
+import { BaseDeps } from '.'
 
 const HTTP_SIGNATURE_REGEX = /sig1=:([a-zA-Z0-9+/]){86}==:/
 const CONTENT_DIGEST_REGEX = /sha-512=:([a-zA-Z0-9+/]){86}==:/
@@ -30,20 +32,26 @@ function getSignatureInputRegex(components: string[], keyId: string) {
 describe('requests', (): void => {
   const privateKey = generateKeyPairSync('ed25519').privateKey
   const keyId = 'myId'
-  const httpClient = createHttpClient({
-    requestTimeoutMs: 1000000,
-    privateKey,
-    keyId
-  })
-  const deps = createTestDeps({
-    httpClient
+
+  let httpClient: HttpClient
+  let deps: BaseDeps
+
+  beforeAll(async () => {
+    httpClient = await createHttpClient({
+      requestTimeoutMs: 1000000,
+      privateKey,
+      keyId
+    })
+    deps = await createTestDeps({
+      httpClient
+    })
   })
 
   describe('createHttpClient', (): void => {
     test('sets timeout properly', async (): Promise<void> => {
       const kyCreateSpy = jest.spyOn(ky, 'create')
 
-      createHttpClient({ requestTimeoutMs: 1000, privateKey, keyId })
+      await createHttpClient({ requestTimeoutMs: 1000, privateKey, keyId })
 
       expect(kyCreateSpy).toHaveBeenCalledWith(
         expect.objectContaining({ timeout: 1000 })
@@ -52,7 +60,7 @@ describe('requests', (): void => {
     test('sets headers properly', async (): Promise<void> => {
       const kyCreateSpy = jest.spyOn(ky, 'create')
 
-      createHttpClient({ requestTimeoutMs: 1000, privateKey, keyId })
+      await createHttpClient({ requestTimeoutMs: 1000, privateKey, keyId })
 
       expect(kyCreateSpy).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -71,7 +79,7 @@ describe('requests', (): void => {
 
       const kyExtendSpy = jest.spyOn(kyInstance, 'extend')
 
-      createHttpClient({
+      await createHttpClient({
         requestTimeoutMs: 0,
         authenticatedRequestInterceptor: (config) => config
       })
@@ -90,7 +98,7 @@ describe('requests', (): void => {
 
       const kyExtendSpy = jest.spyOn(kyInstance, 'extend')
 
-      createHttpClient({
+      await createHttpClient({
         requestTimeoutMs: 0,
         authenticatedRequestInterceptor: (config) => config
       })
@@ -297,7 +305,7 @@ describe('requests', (): void => {
     })
 
     test('uses http protocol for request if development environment', async (): Promise<void> => {
-      const tmpDeps = createTestDeps({
+      const tmpDeps = await createTestDeps({
         httpClient: httpClient,
         useHttp: true
       })
@@ -511,7 +519,7 @@ describe('requests', (): void => {
     })
 
     test('uses http protocol for request if development environment', async (): Promise<void> => {
-      const tmpDeps = createTestDeps({
+      const tmpDeps = await createTestDeps({
         httpClient,
         useHttp: true
       })
@@ -691,7 +699,7 @@ describe('requests', (): void => {
     })
 
     test('uses http protocol for request if development environment', async (): Promise<void> => {
-      const tmpDeps = createTestDeps({
+      const tmpDeps = await createTestDeps({
         httpClient,
         useHttp: true
       })

@@ -30,11 +30,14 @@ export const silentLogger = createLogger({
 
 export const keyId = 'default-key-id'
 
-export const defaultHttpClient = createHttpClient({
-  requestTimeoutMs: 1000,
-  keyId,
-  privateKey: generateKeyPairSync('ed25519').privateKey
-})
+export const getDefaultHttpClient = async (): ReturnType<
+  typeof createHttpClient
+> =>
+  createHttpClient({
+    requestTimeoutMs: 1000,
+    keyId,
+    privateKey: generateKeyPairSync('ed25519').privateKey
+  })
 
 export const mockOpenApiResponseValidators = () => ({
   successfulValidator: ((data: unknown): data is unknown =>
@@ -315,8 +318,10 @@ export const mockQuote = (overrides?: Partial<Quote>): Quote => ({
   ...overrides
 })
 
-export const createTestDeps = (overrides?: Partial<BaseDeps>): BaseDeps => ({
-  httpClient: defaultHttpClient,
+export const createTestDeps = async (
+  overrides?: Partial<BaseDeps>
+): Promise<BaseDeps> => ({
+  httpClient: await getDefaultHttpClient(),
   logger: silentLogger,
   useHttp: false,
   ...overrides

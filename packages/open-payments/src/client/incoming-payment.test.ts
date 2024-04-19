@@ -26,6 +26,7 @@ import { getRSPath } from '../types'
 import { OpenPaymentsClientError } from './error'
 import assert from 'assert'
 import { getResourceServerOpenAPI } from '../openapi'
+import { BaseDeps } from '.'
 
 jest.mock('./requests', () => {
   return {
@@ -37,12 +38,13 @@ jest.mock('./requests', () => {
 
 describe('incoming-payment', (): void => {
   let openApi: OpenAPI
+  let deps: BaseDeps
 
   beforeAll(async () => {
     openApi = await getResourceServerOpenAPI()
+    deps = await createTestDeps()
   })
 
-  const deps = createTestDeps()
   const walletAddress = 'http://localhost:1000/alice/.well-known/pay'
   const serverAddress = 'http://localhost:1000'
   const accessToken = 'accessToken'

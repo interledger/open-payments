@@ -8,6 +8,7 @@ import {
 } from '../test/helpers'
 import * as requestors from './requests'
 import { getWalletAddressServerOpenAPI } from '../openapi'
+import { BaseDeps } from '.'
 
 jest.mock('./requests', () => {
   return {
@@ -19,12 +20,12 @@ jest.mock('./requests', () => {
 
 describe('wallet-address', (): void => {
   let openApi: OpenAPI
+  let deps: BaseDeps
 
   beforeAll(async () => {
     openApi = await getWalletAddressServerOpenAPI()
+    deps = await createTestDeps()
   })
-
-  const deps = createTestDeps()
 
   describe('routes', (): void => {
     const walletAddress = mockWalletAddress()

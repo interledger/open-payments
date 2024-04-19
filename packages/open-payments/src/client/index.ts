@@ -136,7 +136,7 @@ const createUnauthenticatedDeps = async ({
     logger.level = args.logLevel
   }
 
-  const httpClient = createHttpClient({
+  const httpClient = await createHttpClient({
     requestTimeoutMs:
       args?.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS
   })
@@ -179,16 +179,16 @@ const createAuthenticatedClientDeps = async ({
     })
   }
 
-  let httpClient: ReturnType<typeof createHttpClient>
+  let httpClient: HttpClient
 
   if ('authenticatedRequestInterceptor' in args) {
-    httpClient = createHttpClient({
+    httpClient = await createHttpClient({
       requestTimeoutMs:
         args?.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS,
       authenticatedRequestInterceptor: args.authenticatedRequestInterceptor
     })
   } else {
-    httpClient = createHttpClient({
+    httpClient = await createHttpClient({
       requestTimeoutMs:
         args?.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS,
       privateKey,

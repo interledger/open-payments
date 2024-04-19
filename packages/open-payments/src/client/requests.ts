@@ -3,7 +3,9 @@ import { ResponseValidator, isValidationError } from '@interledger/openapi'
 import { BaseDeps } from '.'
 import { createHeaders } from '@interledger/http-signature-utils'
 import { OpenPaymentsClientError } from './error'
-import ky, { HTTPError, KyInstance } from 'ky'
+
+// @ts-expect-error We know we are importing an ESM module into our CJS file, so ignore warnings for types
+import type { KyInstance } from 'ky'
 
 interface GetArgs {
   url: string
@@ -151,18 +153,20 @@ const handleError = async (
   let errorStatus
   let validationErrors
 
+  const { HTTPError } = await import('ky')
+
   if (error instanceof HTTPError) {
     let responseBody
 
     try {
-      responseBody = await error.response.json()
+      responseBody = (await error.response.json()) as { message: string }
     } catch {
       // Ignore if we can't parse the response body (or no body exists)
     }
 
     errorDescription =
-      responseBody && responseBody['message']
-        ? responseBody['message']
+      responseBody && responseBody.message
+        ? responseBody.message
         : error.message
     errorStatus = error.response?.status
   } else if (isValidationError(error)) {
@@ -180,7 +184,7 @@ const handleError = async (
   )
 
   throw new OpenPaymentsClientError(errorMessage, {
-    description: errorDescription,
+    description: errorDescription || 'Unknown error',
     validationErrors,
     status: errorStatus
   })
@@ -198,20 +202,19 @@ const checkUrlProtocol = (deps: BaseDeps, url: string): string => {
 type CreateHttpClientArgs = {
   requestTimeoutMs: number
 } & (
-  | {
-      privateKey?: KeyObject
-      keyId?: string
-    }
-  | {
-      authenticatedRequestInterceptor: InterceptorFn
-    }
+  | { privateKey?: KeyObject; keyId?: string }
+  | { authenticatedRequestInterceptor: InterceptorFn }
 )
 
 export type HttpClient = KyInstance
 
 export type InterceptorFn = (request: Request) => Request | Promise<Request>
 
-export const createHttpClient = (args: CreateHttpClientArgs): HttpClient => {
+export const createHttpClient = async (
+  args: CreateHttpClientArgs
+): Promise<HttpClient> => {
+  const { default: ky } = await import('ky')
+
   const kyInstance = ky.create({
     timeout: args?.requestTimeoutMs,
     headers: {

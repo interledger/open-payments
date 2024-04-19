@@ -9,6 +9,7 @@ import {
 } from '../test/helpers'
 import * as requestors from './requests'
 import { getAuthServerOpenAPI } from '../openapi'
+import { BaseDeps } from '.'
 
 jest.mock('./requests', () => {
   return {
@@ -20,12 +21,13 @@ jest.mock('./requests', () => {
 
 describe('token', (): void => {
   let openApi: OpenAPI
+  let deps: BaseDeps
 
   beforeAll(async () => {
     openApi = await getAuthServerOpenAPI()
+    deps = await createTestDeps()
   })
 
-  const deps = createTestDeps()
   const openApiValidators = mockOpenApiResponseValidators()
 
   describe('createTokenRoutes', (): void => {
