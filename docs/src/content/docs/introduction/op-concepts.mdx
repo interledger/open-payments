@@ -4,11 +4,7 @@ tableOfContents:
   maxHeadingLevel: 4
 ---
 
-import {
-  MermaidWrapper,
-  Mermaid,
-  LinkOut
-} from '@interledger/docs-design-system'
+import { LinkOut, CodeBlock } from '@interledger/docs-design-system'
 
 The Open Payments (OP) standard helps to facilitate the setup of payments between OP-enabled payment accounts.
 
@@ -88,73 +84,28 @@ An outgoing-payment resource can represent a payment that will be, is currently 
 
 ## Payment Methods
 
-The payment method is the means by which the payer's ASE will fulfill its payment obligations to the payee's ASE. Cash, credit and debit cards, bank transfers, gift cards and mobile money can all be considered as different payment methods.
+The payment method is the means by which the payer's ASE will fulfill its payment obligations to the payee's ASE. Cash, credit and debit cards, bank transfers, gift cards and mobile money can all be considered different payment methods.
 
-When an `outgoing-payment` is completed against an open and active `incoming-payment`, the payer’s ASE becomes obligated to make payment using the payment method initially specified in the `incoming-payment` response. Though OP is designed to be an abstraction layer that can issue payment instructions between transacting parties atop any payment method, <LinkOut href='https://interledger.org'>Interledger (ILP) </LinkOut>is the only payment method that currently integrates with OP readily.
+When an `outgoing-payment` is completed against an open and active `incoming-payment`, the payer’s ASE becomes obligated to make payment using the payment method initially specified in the `incoming-payment` response.
 
-To set up ILP as a payment method in OP, the following are required:
+Though OP is designed to be an abstraction layer that can issue payment instructions between transacting parties atop any payment method, <LinkOut href='https://interledger.org'>Interledger (ILP) </LinkOut> is the only payment method that currently integrates with OP readily.
 
-- The <LinkOut href='https://interledger.org/developers/rfcs/ilp-addresses/'>ILP address</LinkOut> of the payee’s ASE: The ILP address is required so that packets representing payments routed over the Interledger network will be forwarded to the node owned and operated by the intended receiver (i.e. payee's ASE). The `ilpAddress` must be sent by the payee’s ASE in the `incoming-payment.methods` object.
-- Shared secret: A cryptographically secured secret exchanged between the sender and receiver to ensure that packets sent over the Interledger network through a <LinkOut href='https://interledger.org/developers/rfcs/stream-protocol/'>STREAM</LinkOut> connection can only be read by the two parties. The payee’s ASE must return a `sharedSecret` in the `incoming-payment.methods` object to initiate a STREAM connection.
+When using ILP as a payment method in OP, the following information is required from the payee's ASE, in the incoming payment's `method` object.
 
-* The payee's ASE must return `ilp` in the `incoming-payment.methods.type` field.
-* The payer's ASE must send `ilp` in the `quote.method` field.
+- A `type` of `ilp` to indicate the payment method.
+- The <LinkOut href='https://interledger.org/developers/rfcs/ilp-addresses/'>ILP address</LinkOut> of the payee’s ASE: The ILP address is required so that packets representing payments routed over the Interledger network will be forwarded to the node owned and operated by the intended receiver (i.e. payee's ASE).
+- A shared secret: A cryptographically secured secret to be exchanged between the payer's ASE (the sender) and the payee's ASE (the receiver) to ensure that packets sent over the Interledger network through a <LinkOut href='https://interledger.org/developers/rfcs/stream-protocol/'>STREAM</LinkOut> connection can only be read by the two parties.
 
-## Complete flow
+<CodeBlock title="incoming-payment methods object">
+  ```http
+  "methods": [
+    {
+      "type": "ilp",
+      "ilpAddress": "g.ilp.iwuyge987y.98y08y",
+      "sharedSecret": "1c7eaXa4rd2fFOBl1iydvCT1tV5TbM3RW1WLCafu_JA"
+    }
+  ] 
+  ```
+</CodeBlock>
 
-We bring the aforementioned concepts together and present them visually in the following sequence diagram. Note that this diagram represents an overview of a complete OP transaction life cycle from an `incoming-payment` grant request to an `outgoing-payment`. Thus, it may be missing details for a particular flow. For more details please see the [Open Payments Flow](/introduction/op-flow) page.
-
-In order to facilitate OP payments, both the payer's ASE and the payee's ASE need to operate their own authorization and resource servers. The client will obtain requisite grants from the authorization servers and create the subsequent resources on the resource servers as necessary. As the creation of the `outgoing-payment` requires explicit consent from the payer (i.e. the client's end-user), the client will issue a redirect to the payer's Identity Provider to obtain the payer's consent. Please see the [GNAP](/introduction/grants) page for more information.
-
-<MermaidWrapper client:load>
-
-<Mermaid
-  graph={`sequenceDiagram
-    participant IP as Identity Provider
-    actor Cu as Payer
-    participant A2 as Payer-side Auth Server
-    participant R2 as Payer-side Resource Server
-    participant R1 as Payee-side Resource Server
-    participant A1 as Payee-side Auth Server
-    participant Cl as Client
-
-    activate Cl
-    Cl->>+A1: incoming payment grant request
-    A1->>-Cl: grant + access token
-    Cl->>+R1: incoming payment creation request
-    R1->>+A1: token introspection
-    A1->>-R1: token valid + grant details
-    R1->>-Cl: incoming payment
-    rect rgba(0, 0, 255, .1)
-    Cl->>+Cu: request wallet address
-    Cu->>Cl: wallet address
-    end
-    Cl->>+R2: query customer's wallet address
-    R2->>-Cl: wallet address details including auth server endpoint
-    Cl->>+A2: quote grant request
-    A2->>-Cl: grant + access token
-    Cl->>+R2: quote creation request
-    R2->>+A2: token introspection
-    A2->>-R2: token valid + grant details
-    R2->>-Cl: quote
-    Cl->>+A2: outgoing payment grant request
-    A2->>-Cl: IdP redirect info
-    rect rgba(0, 0, 255, .1)
-    Cl->>IP: redirect to IdP
-    IP->>Cu: consent to grant request
-    Cu->>IP: consent given
-    Cu->>-Cl: interaction finished
-    end
-    Cl->>+A2: continue grant request
-    A2->>-Cl: grant + access token
-    Cl->>+R2: outgoing payment creation request
-    R2->>+A2: token introspection
-    A2->>-R2: token valid + grant details
-    R2->>R2: grant accounting
-    R2->>-Cl: outgoing payment
-    deactivate Cl
-
-`}
-/>
-
-</MermaidWrapper>
+After the `incoming-payment` response is received, the payer's ASE creates a `quote` request containing `"method": "ilp"`.
