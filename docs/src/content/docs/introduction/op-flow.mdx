@@ -9,11 +9,16 @@ import {
 } from '@interledger/docs-design-system'
 import Interactive from '/src/partials/diagram-interactive-grant.mdx'
 
-This page describes the Open Payments flows at a high level. The sequence diagrams are for illustrative purposes and might not be an exact representation of a given flow.
+This page describes each step in the Open Payments flow at a high level. The sequence diagrams are for illustrative purposes and might not be an exact representation of a given flow.
+
+### Assumptions
+
+- The client's end-user is the payer.
+- The client already has the payer's OP-enabled account details and is able to send payments on behalf of the payer.
 
 ## Get account details
 
-A client can retrieve public details about an Open Payments-enabled account by issuing a <LinkOut href='/apis/wallet-address-server/operations/get-wallet-address/'>GET request</LinkOut> to the account's wallet address. Details include the asset code and scale of the underlying account and the authorization server endpoint to call for grant requests.
+A client retrieves public details about a payee's Open Payments-enabled account by issuing a <LinkOut href='/apis/wallet-address-server/operations/get-wallet-address/'>GET request</LinkOut> to the payee's wallet address. Details include the asset code and scale of the underlying account, as well as the authorization and resource server URLs which the client needs in order to set up a payment to the payee.
 
 <MermaidWrapper client:load>
 
@@ -30,15 +35,7 @@ A client can retrieve public details about an Open Payments-enabled account by i
 
 </MermaidWrapper>
 
-## Basic payment flow
-
-### Assumptions
-
-- The client's end-user is the payer.
-- The client already has the payer's OP-enabled account details and is able to send payments on behalf of the payer.
-- The client has issued a GET request to the payee's wallet address and received the authorization server and resource server URLs.
-
-### Incoming payment
+## Incoming payment
 
 The client first <LinkOut href='/apis/auth-server/operations/post-request'>requests/receives a grant</LinkOut> from the payee's authorization server to create an `incoming-payment` resource. The client then sends a request to the payee-side resource server to <LinkOut href='/apis/resource-server/operations/create-incoming-payment/'>create the resource</LinkOut>. When created, the resource server returns unique payment details the client will use to address one or more payments to the payee.
 
@@ -60,7 +57,7 @@ The client first <LinkOut href='/apis/auth-server/operations/post-request'>reque
 
 </MermaidWrapper>
 
-### Quote
+## Quote
 
 The client <LinkOut href='/apis/auth-server/operations/post-request'>requests/receives a grant</LinkOut> from the end-user's authorization server to create a `quote` resource. The client then sends a request to the end-user's resource server to <LinkOut href='/apis/resource-server/operations/create-quote'>create the resource</LinkOut>. When created, the resource server returns, among other things, a quote `id` and the amount it will cost to make the payment.
 
@@ -82,11 +79,11 @@ The client <LinkOut href='/apis/auth-server/operations/post-request'>requests/re
 
 </MermaidWrapper>
 
-### Outgoing payment
+## Outgoing payment
 
 Before an outgoing payment resource can be created on the end-user's account, Open Payments requires the client to send an <LinkOut href='/apis/auth-server/operations/post-request'>interactive grant request</LinkOut> to the authorization server.
 
-An interactive grant requires explicit consent be collected from the end-user before an access token is issued. While the client must facilitate the interaction, the end-user's authorization server and identity provider are responsible for the interface and collecting consent.
+An interactive grant requires explicit consent be collected from the end-user before an access token is issued. While the client must facilitate the interaction, the end-user's authorization server and identity provider (IdP) are responsible for the interface and collecting consent.
 
 After consent is obtained, the client requests permission to <LinkOut href='/apis/auth-server/operations/post-continue'>continue the grant request</LinkOut> in order to obtain an access token.
 
@@ -142,6 +139,65 @@ Similarly, the client can provide the end-user with details about a specific <Li
 
     C->>RS: Get incoming/outgoing payment with <br/>id={url identifying incoming/outgoing payment}
     RS->>C: 200 Payment found
+
+`}
+/>
+
+</MermaidWrapper>
+
+## Bringing it all together
+
+This diagram brings the aforementioned concepts together, minus getting transaction history, to present a high-level overview of a complete OP transaction.
+
+To facilitate OP payments, both the payer's ASE and the payee's ASE must operate their own authorization and resource servers. As the creation of the `outgoing-payment` requires explicit consent from the payer (i.e. the client's end-user), the client will issue a redirect to the payer's Identity Provider to obtain the payer's consent. Visit the [GNAP](/introduction/grants) page for more information.
+
+<MermaidWrapper client:load>
+
+<Mermaid
+  graph={`sequenceDiagram
+    participant IP as Identity Provider
+    actor Cu as Payer
+    participant A2 as Payer-side Auth Server
+    participant R2 as Payer-side Resource Server
+    participant R1 as Payee-side Resource Server
+    participant A1 as Payee-side Auth Server
+    participant Cl as Client
+
+    activate Cl
+    Cl->>+A1: incoming payment grant request
+    A1->>-Cl: grant + access token
+    Cl->>+R1: incoming payment creation request
+    R1->>+A1: token introspection
+    A1->>-R1: token valid + grant details
+    R1->>-Cl: incoming payment
+    rect rgba(0, 0, 255, .1)
+    Cl->>+Cu: request wallet address
+    Cu->>Cl: wallet address
+    end
+    Cl->>+R2: query customer's wallet address
+    R2->>-Cl: wallet address details including auth server endpoint
+    Cl->>+A2: quote grant request
+    A2->>-Cl: grant + access token
+    Cl->>+R2: quote creation request
+    R2->>+A2: token introspection
+    A2->>-R2: token valid + grant details
+    R2->>-Cl: quote
+    Cl->>+A2: outgoing payment grant request
+    A2->>-Cl: IdP redirect info
+    rect rgba(0, 0, 255, .1)
+    Cl->>IP: redirect to IdP
+    IP->>Cu: consent to grant request
+    Cu->>IP: consent given
+    Cu->>-Cl: interaction finished
+    end
+    Cl->>+A2: continue grant request
+    A2->>-Cl: grant + access token
+    Cl->>+R2: outgoing payment creation request
+    R2->>+A2: token introspection
+    A2->>-R2: token valid + grant details
+    R2->>R2: grant accounting
+    R2->>-Cl: outgoing payment
+    deactivate Cl
 
 `}
 />
