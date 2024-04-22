@@ -98,8 +98,7 @@ To set up ILP as a payment method in OP, the following are required:
 - Shared secret: A cryptographically secured secret exchanged between the sender and receiver to ensure that packets sent over the Interledger network through a <LinkOut href='https://interledger.org/developers/rfcs/stream-protocol/'>STREAM</LinkOut> connection can only be read by the two parties. The payee’s ASE must return a `sharedSecret` in the `incoming-payment.methods` object to initiate a STREAM connection.
 
 * The payee's ASE must return `ilp` in the `incoming-payment.methods.type` field.
-
-- The payer's ASE must send `ilp` in the `quote.method` field.
+* The payer's ASE must send `ilp` in the `quote.method` field.
 
 ## Complete flow
 
