@@ -1,5 +1,18 @@
 # @interledger/open-payments
 
+## 6.9.0
+
+### Minor Changes
+
+- 3bbd59a: changes POST /outgoing-payment body and client's outgoingPayment.create args to accept incomingPayment and debitAmount as alternative to quoteId. This supports creating outgoing payments directly from incoming payments instead of from a quote.
+
+## 6.8.2
+
+### Patch Changes
+
+- Updated dependencies [dd7fb76]
+  - @interledger/openapi@2.0.1
+
 ## 6.8.1
 
 ### Patch Changes
