@@ -96,7 +96,9 @@ To set up ILP as a payment method in OP, the following are required:
 
 - The <LinkOut href='https://interledger.org/developers/rfcs/ilp-addresses/'>ILP address</LinkOut> of the payee’s ASE: The ILP address is required so that packets representing payments routed over the Interledger network will be forwarded to the node owned and operated by the intended receiver (i.e. payee's ASE). The `ilpAddress` must be sent by the payee’s ASE in the `incoming-payment.methods` object.
 - Shared secret: A cryptographically secured secret exchanged between the sender and receiver to ensure that packets sent over the Interledger network through a <LinkOut href='https://interledger.org/developers/rfcs/stream-protocol/'>STREAM</LinkOut> connection can only be read by the two parties. The payee’s ASE must return a `sharedSecret` in the `incoming-payment.methods` object to initiate a STREAM connection.
-- The payee's ASE must return `ilp` in the `incoming-payment.methods.type` field.
+
+* The payee's ASE must return `ilp` in the `incoming-payment.methods.type` field.
+
 - The payer's ASE must send `ilp` in the `quote.method` field.
 
 ## Complete flow
