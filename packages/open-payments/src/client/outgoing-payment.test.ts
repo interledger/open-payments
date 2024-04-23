@@ -22,11 +22,6 @@ import { CreateOutgoingPaymentArgs } from '../types'
 import { BaseDeps } from '.'
 
 jest.mock('./requests', () => {
-  // Allow nock to patch global.fetch
-  Object.defineProperty(global, 'fetch', {
-    writable: true
-  })
-
   return {
     // https://jestjs.io/docs/jest-object#jestmockmodulename-factory-options
     __esModule: true,
