@@ -16,5 +16,6 @@ module.exports = {
   id: packageName,
   displayName: packageName,
   rootDir: '../..',
-  transformIgnorePatterns: [`node_modules/(?!.pnpm|${esModules.join('|')})`]
+  transformIgnorePatterns: [`node_modules/(?!.pnpm|${esModules.join('|')})`],
+  setupFiles: [`<rootDir>/packages/${packageName}/jest.setup.js`]
 }
