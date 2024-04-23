@@ -184,7 +184,7 @@ const handleError = async (
   )
 
   throw new OpenPaymentsClientError(errorMessage, {
-    description: errorDescription || 'Unknown error',
+    description: errorDescription || 'Unknown',
     validationErrors,
     status: errorStatus
   })

@@ -119,10 +119,6 @@ describe('requests', (): void => {
       jest.spyOn(httpClient, 'get')
     })
 
-    afterEach(() => {
-      jest.useRealTimers()
-    })
-
     test('sets headers properly if accessToken provided', async (): Promise<void> => {
       const scope = nock(baseUrl)
         .matchHeader('Signature', HTTP_SIGNATURE_REGEX)
