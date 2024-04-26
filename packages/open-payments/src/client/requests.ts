@@ -216,7 +216,7 @@ export const createHttpClient = async (
   const { default: ky } = await import('ky')
 
   const kyInstance = ky.create({
-    timeout: args?.requestTimeoutMs,
+    timeout: args.requestTimeoutMs,
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json'
@@ -233,7 +233,7 @@ export const createHttpClient = async (
 
       return request
     }
-  } else if ('privateKey' in args && 'keyId' in args) {
+  } else {
     requestInterceptor = (request) => {
       const { privateKey, keyId } = args
 
