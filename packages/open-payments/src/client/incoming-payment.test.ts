@@ -239,8 +239,8 @@ describe('incoming-payment', (): void => {
         createIncomingPayment(
           deps,
           { url: serverAddress, accessToken },
-          openApiValidators.failedValidator,
-          { walletAddress }
+          { walletAddress },
+          openApiValidators.failedValidator
         )
       ).rejects.toThrow()
       scope.done()
@@ -611,200 +611,261 @@ describe('incoming-payment', (): void => {
 
   describe('routes', (): void => {
     describe('get', (): void => {
-      test('calls get method with correct validator', async (): Promise<void> => {
-        const mockResponseValidator = ({ path, method }) =>
-          path === '/incoming-payments/{id}' && method === HttpMethod.GET
+      test.each`
+        validateResponses | description
+        ${true}           | ${'with response validation'}
+        ${false}          | ${'without response validation'}
+      `(
+        'calls get method $description',
+        async ({ validateResponses }): Promise<void> => {
+          const mockResponseValidator = ({ path, method }) =>
+            path === '/incoming-payments/{id}' && method === HttpMethod.GET
 
-        const url = `${serverAddress}/incoming-payments/1`
+          const url = `${serverAddress}/incoming-payments/1`
 
-        jest
-          .spyOn(openApi, 'createResponseValidator')
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .mockImplementation(mockResponseValidator as any)
+          jest
+            .spyOn(openApi, 'createResponseValidator')
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            .mockImplementation(mockResponseValidator as any)
 
-        const getSpy = jest
-          .spyOn(requestors, 'get')
-          .mockResolvedValueOnce(mockIncomingPayment())
+          const getSpy = jest
+            .spyOn(requestors, 'get')
+            .mockResolvedValueOnce(mockIncomingPayment())
 
-        await createIncomingPaymentRoutes({
-          openApi,
-          ...deps
-        }).get({ url, accessToken })
+          await createIncomingPaymentRoutes({
+            openApi,
+            ...deps,
+            validateResponses
+          }).get({ url, accessToken })
 
-        expect(getSpy).toHaveBeenCalledWith(
-          deps,
-          {
-            url,
-            accessToken
-          },
-          true
-        )
-      })
+          expect(getSpy).toHaveBeenCalledWith(
+            {
+              ...deps,
+              validateResponses
+            },
+            {
+              url,
+              accessToken
+            },
+            validateResponses ? true : undefined
+          )
+        }
+      )
     })
 
     describe('getPublic', (): void => {
-      test('calls getPublic method with correct validator', async (): Promise<void> => {
-        const mockResponseValidator = ({ path, method }) =>
-          path === '/incoming-payments/{id}' && method === HttpMethod.GET
+      test.each`
+        validateResponses | description
+        ${true}           | ${'with response validation'}
+        ${false}          | ${'without response validation'}
+      `(
+        'calls get method $description',
+        async ({ validateResponses }): Promise<void> => {
+          const mockResponseValidator = ({ path, method }) =>
+            path === '/incoming-payments/{id}' && method === HttpMethod.GET
 
-        const url = `${serverAddress}/incoming-payments/1`
+          const url = `${serverAddress}/incoming-payments/1`
 
-        jest
-          .spyOn(openApi, 'createResponseValidator')
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .mockImplementation(mockResponseValidator as any)
+          jest
+            .spyOn(openApi, 'createResponseValidator')
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            .mockImplementation(mockResponseValidator as any)
 
-        const publicIncomingPayment = mockPublicIncomingPayment()
+          const publicIncomingPayment = mockPublicIncomingPayment()
 
-        const getSpy = jest
-          .spyOn(requestors, 'get')
-          .mockResolvedValueOnce(publicIncomingPayment)
+          const getSpy = jest
+            .spyOn(requestors, 'get')
+            .mockResolvedValueOnce(publicIncomingPayment)
 
-        await createIncomingPaymentRoutes({
-          openApi,
-          ...deps
-        }).getPublic({ url })
+          await createIncomingPaymentRoutes({
+            openApi,
+            ...deps,
+            validateResponses
+          }).getPublic({ url })
 
-        expect(getSpy).toHaveBeenCalledWith(deps, { url }, true)
-      })
+          expect(getSpy).toHaveBeenCalledWith(
+            { ...deps, validateResponses },
+            { url },
+            validateResponses ? true : undefined
+          )
+        }
+      )
     })
 
     describe('list', (): void => {
-      test('calls get method with correct validator', async (): Promise<void> => {
-        const mockResponseValidator = ({ path, method }) =>
-          path === '/incoming-payments' && method === HttpMethod.GET
+      test.each`
+        validateResponses | description
+        ${true}           | ${'with response validation'}
+        ${false}          | ${'without response validation'}
+      `(
+        'calls get method $description',
+        async ({ validateResponses }): Promise<void> => {
+          const mockResponseValidator = ({ path, method }) =>
+            path === '/incoming-payments' && method === HttpMethod.GET
 
-        const incomingPaymentPaginationResult =
-          mockIncomingPaymentPaginationResult({
-            result: [mockIncomingPayment()]
-          })
-        const url = `${serverAddress}${getRSPath('/incoming-payments')}`
+          const incomingPaymentPaginationResult =
+            mockIncomingPaymentPaginationResult({
+              result: [mockIncomingPayment()]
+            })
+          const url = `${serverAddress}${getRSPath('/incoming-payments')}`
 
-        jest
-          .spyOn(openApi, 'createResponseValidator')
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .mockImplementation(mockResponseValidator as any)
+          jest
+            .spyOn(openApi, 'createResponseValidator')
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            .mockImplementation(mockResponseValidator as any)
 
-        const getSpy = jest
-          .spyOn(requestors, 'get')
-          .mockResolvedValueOnce(incomingPaymentPaginationResult)
+          const getSpy = jest
+            .spyOn(requestors, 'get')
+            .mockResolvedValueOnce(incomingPaymentPaginationResult)
 
-        await createIncomingPaymentRoutes({
-          openApi,
-          ...deps
-        }).list({ url: serverAddress, walletAddress, accessToken })
+          await createIncomingPaymentRoutes({
+            openApi,
+            ...deps,
+            validateResponses
+          }).list({ url: serverAddress, walletAddress, accessToken })
 
-        expect(getSpy).toHaveBeenCalledWith(
-          deps,
-          {
-            url,
-            accessToken,
-            queryParams: {
-              'wallet-address': walletAddress
-            }
-          },
-          true
-        )
-      })
+          expect(getSpy).toHaveBeenCalledWith(
+            { ...deps, validateResponses },
+            {
+              url,
+              accessToken,
+              queryParams: {
+                'wallet-address': walletAddress
+              }
+            },
+            validateResponses ? true : undefined
+          )
+        }
+      )
     })
 
     describe('create', (): void => {
-      test('calls post method with correct validator', async (): Promise<void> => {
-        const mockResponseValidator = ({ path, method }) =>
-          path === '/incoming-payments' && method === HttpMethod.POST
+      test.each`
+        validateResponses | description
+        ${true}           | ${'with response validation'}
+        ${false}          | ${'without response validation'}
+      `(
+        'calls post method $description',
+        async ({ validateResponses }): Promise<void> => {
+          const mockResponseValidator = ({ path, method }) =>
+            path === '/incoming-payments' && method === HttpMethod.POST
 
-        const url = `${serverAddress}/incoming-payments`
-        const incomingPaymentCreateArgs = {
-          walletAddress,
-          description: 'Invoice',
-          incomingAmount: { assetCode: 'USD', assetScale: 2, value: '10' }
+          const url = `${serverAddress}/incoming-payments`
+          const incomingPaymentCreateArgs = {
+            walletAddress,
+            description: 'Invoice',
+            incomingAmount: { assetCode: 'USD', assetScale: 2, value: '10' }
+          }
+
+          jest
+            .spyOn(openApi, 'createResponseValidator')
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            .mockImplementation(mockResponseValidator as any)
+
+          const postSpy = jest
+            .spyOn(requestors, 'post')
+            .mockResolvedValueOnce(
+              mockIncomingPayment(incomingPaymentCreateArgs)
+            )
+
+          await createIncomingPaymentRoutes({
+            openApi,
+            ...deps,
+            validateResponses
+          }).create(
+            { url: serverAddress, accessToken },
+            incomingPaymentCreateArgs
+          )
+
+          expect(postSpy).toHaveBeenCalledWith(
+            { ...deps, validateResponses },
+            { url, accessToken, body: incomingPaymentCreateArgs },
+            validateResponses ? true : undefined
+          )
         }
-
-        jest
-          .spyOn(openApi, 'createResponseValidator')
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .mockImplementation(mockResponseValidator as any)
-
-        const postSpy = jest
-          .spyOn(requestors, 'post')
-          .mockResolvedValueOnce(mockIncomingPayment(incomingPaymentCreateArgs))
-
-        await createIncomingPaymentRoutes({
-          openApi,
-          ...deps
-        }).create(
-          { url: serverAddress, accessToken },
-          incomingPaymentCreateArgs
-        )
-
-        expect(postSpy).toHaveBeenCalledWith(
-          deps,
-          { url, accessToken, body: incomingPaymentCreateArgs },
-          true
-        )
-      })
+      )
     })
 
     describe('complete', (): void => {
-      test('calls post method with correct validator', async (): Promise<void> => {
-        const mockResponseValidator = ({ path, method }) =>
-          path === '/incoming-payments/{id}/complete' &&
-          method === HttpMethod.POST
+      test.each`
+        validateResponses | description
+        ${true}           | ${'with response validation'}
+        ${false}          | ${'without response validation'}
+      `(
+        'calls post method $description',
+        async ({ validateResponses }): Promise<void> => {
+          const mockResponseValidator = ({ path, method }) =>
+            path === '/incoming-payments/{id}/complete' &&
+            method === HttpMethod.POST
 
-        const incomingPaymentUrl = `${serverAddress}/incoming-payments/1`
+          const incomingPaymentUrl = `${serverAddress}/incoming-payments/1`
 
-        jest
-          .spyOn(openApi, 'createResponseValidator')
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .mockImplementation(mockResponseValidator as any)
+          jest
+            .spyOn(openApi, 'createResponseValidator')
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            .mockImplementation(mockResponseValidator as any)
 
-        const postSpy = jest
-          .spyOn(requestors, 'post')
-          .mockResolvedValueOnce(mockIncomingPayment({ completed: true }))
+          const postSpy = jest
+            .spyOn(requestors, 'post')
+            .mockResolvedValueOnce(mockIncomingPayment({ completed: true }))
 
-        await createIncomingPaymentRoutes({
-          openApi,
-          ...deps
-        }).complete({ url: incomingPaymentUrl, accessToken })
+          await createIncomingPaymentRoutes({
+            openApi,
+            ...deps,
+            validateResponses
+          }).complete({ url: incomingPaymentUrl, accessToken })
 
-        expect(postSpy).toHaveBeenCalledWith(
-          deps,
-          {
-            url: `${incomingPaymentUrl}/complete`,
-            accessToken
-          },
-          true
-        )
-      })
+          expect(postSpy).toHaveBeenCalledWith(
+            { ...deps, validateResponses },
+            {
+              url: `${incomingPaymentUrl}/complete`,
+              accessToken
+            },
+            validateResponses ? true : undefined
+          )
+        }
+      )
     })
   })
 
   describe('unauthenticated routes', (): void => {
     describe('get', (): void => {
-      test('calls get method with correct validator', async (): Promise<void> => {
-        const mockResponseValidator = ({ path, method }) =>
-          path === '/incoming-payments/{id}' && method === HttpMethod.GET
+      test.each`
+        validateResponses | description
+        ${true}           | ${'with response validation'}
+        ${false}          | ${'without response validation'}
+      `(
+        'calls get method $description',
+        async ({ validateResponses }): Promise<void> => {
+          const mockResponseValidator = ({ path, method }) =>
+            path === '/incoming-payments/{id}' && method === HttpMethod.GET
 
-        const url = `${serverAddress}/incoming-payments/1`
+          const url = `${serverAddress}/incoming-payments/1`
 
-        jest
-          .spyOn(openApi, 'createResponseValidator')
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .mockImplementation(mockResponseValidator as any)
+          jest
+            .spyOn(openApi, 'createResponseValidator')
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            .mockImplementation(mockResponseValidator as any)
 
-        const publicIncomingPayment = mockPublicIncomingPayment()
+          const publicIncomingPayment = mockPublicIncomingPayment()
 
-        const getSpy = jest
-          .spyOn(requestors, 'get')
-          .mockResolvedValueOnce(publicIncomingPayment)
+          const getSpy = jest
+            .spyOn(requestors, 'get')
+            .mockResolvedValueOnce(publicIncomingPayment)
 
-        await createUnauthenticatedIncomingPaymentRoutes({
-          openApi,
-          ...deps
-        }).get({ url })
+          await createUnauthenticatedIncomingPaymentRoutes({
+            openApi,
+            ...deps,
+            validateResponses
+          }).get({ url })
 
-        expect(getSpy).toHaveBeenCalledWith(deps, { url }, true)
-      })
+          expect(getSpy).toHaveBeenCalledWith(
+            { ...deps, validateResponses },
+            { url },
+            validateResponses ? true : undefined
+          )
+        }
+      )
     })
   })
 })

@@ -101,68 +101,88 @@ describe('quote', (): void => {
 
   describe('routes', (): void => {
     describe('get', (): void => {
-      test('calls get method with the correct validator', async (): Promise<void> => {
-        const mockResponseValidator = ({ path, method }) =>
-          path === `/quotes/{id}` && method === HttpMethod.GET
+      test.each`
+        validateResponses | description
+        ${true}           | ${'with response validation'}
+        ${false}          | ${'without response validation'}
+      `(
+        'calls get method $description',
+        async ({ validateResponses }): Promise<void> => {
+          const mockResponseValidator = ({ path, method }) =>
+            path === `/quotes/{id}` && method === HttpMethod.GET
 
-        jest
-          .spyOn(openApi, 'createResponseValidator')
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .mockImplementation(mockResponseValidator as any)
+          jest
+            .spyOn(openApi, 'createResponseValidator')
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            .mockImplementation(mockResponseValidator as any)
 
-        const getSpy = jest
-          .spyOn(requestors, 'get')
-          .mockResolvedValueOnce(quote)
-        const url = `${baseUrl}${getRSPath('/quotes/{id}')}`
+          const getSpy = jest
+            .spyOn(requestors, 'get')
+            .mockResolvedValueOnce(quote)
+          const url = `${baseUrl}${getRSPath('/quotes/{id}')}`
 
-        await createQuoteRoutes({
-          openApi,
-          ...deps
-        }).get({
-          url,
-          accessToken
-        })
+          await createQuoteRoutes({
+            openApi,
+            ...deps,
+            validateResponses
+          }).get({
+            url,
+            accessToken
+          })
 
-        expect(getSpy).toHaveBeenCalledWith(deps, { url, accessToken }, true)
-      })
+          expect(getSpy).toHaveBeenCalledWith(
+            { ...deps, validateResponses },
+            { url, accessToken },
+            validateResponses ? true : undefined
+          )
+        }
+      )
     })
 
     describe('create', (): void => {
-      test('calls post method with the correct validator', async (): Promise<void> => {
-        const mockResponseValidator = ({ path, method }) =>
-          path === `/quotes` && method === HttpMethod.POST
+      test.each`
+        validateResponses | description
+        ${true}           | ${'with response validation'}
+        ${false}          | ${'without response validation'}
+      `(
+        'calls post method $description',
+        async ({ validateResponses }): Promise<void> => {
+          const mockResponseValidator = ({ path, method }) =>
+            path === `/quotes` && method === HttpMethod.POST
 
-        jest
-          .spyOn(openApi, 'createResponseValidator')
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .mockImplementation(mockResponseValidator as any)
+          jest
+            .spyOn(openApi, 'createResponseValidator')
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            .mockImplementation(mockResponseValidator as any)
 
-        const postSpy = jest
-          .spyOn(requestors, 'post')
-          .mockResolvedValueOnce(quote)
-        const url = `${baseUrl}${getRSPath('/quotes')}`
+          const postSpy = jest
+            .spyOn(requestors, 'post')
+            .mockResolvedValueOnce(quote)
+          const url = `${baseUrl}${getRSPath('/quotes')}`
 
-        await createQuoteRoutes({
-          openApi,
-          ...deps
-        }).create(
-          {
-            url: baseUrl,
-            accessToken
-          },
-          { receiver: quote.receiver, method: 'ilp', walletAddress }
-        )
+          await createQuoteRoutes({
+            openApi,
+            ...deps,
+            validateResponses
+          }).create(
+            {
+              url: baseUrl,
+              accessToken
+            },
+            { receiver: quote.receiver, method: 'ilp', walletAddress }
+          )
 
-        expect(postSpy).toHaveBeenCalledWith(
-          deps,
-          {
-            url,
-            accessToken,
-            body: { receiver: quote.receiver, method: 'ilp', walletAddress }
-          },
-          true
-        )
-      })
+          expect(postSpy).toHaveBeenCalledWith(
+            { ...deps, validateResponses },
+            {
+              url,
+              accessToken,
+              body: { receiver: quote.receiver, method: 'ilp', walletAddress }
+            },
+            validateResponses ? true : undefined
+          )
+        }
+      )
     })
   })
 })

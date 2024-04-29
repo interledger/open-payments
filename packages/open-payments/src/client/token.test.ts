@@ -30,50 +30,6 @@ describe('token', (): void => {
 
   const openApiValidators = mockOpenApiResponseValidators()
 
-  describe('createTokenRoutes', (): void => {
-    const url = 'http://localhost:1000'
-    const accessToken = 'someAccessToken'
-
-    test('creates rotateTokenValidator properly', async (): Promise<void> => {
-      const mockedAccessToken = mockAccessToken()
-      const mockResponseValidator = ({ path, method }) =>
-        path === '/token/{id}' && method === HttpMethod.POST
-
-      jest
-        .spyOn(openApi, 'createResponseValidator')
-        .mockImplementation(mockResponseValidator as any)
-
-      const postSpy = jest
-        .spyOn(requestors, 'post')
-        .mockResolvedValueOnce(mockedAccessToken)
-
-      createTokenRoutes({ openApi, ...deps }).rotate({
-        url,
-        accessToken
-      })
-      expect(postSpy).toHaveBeenCalledWith(deps, { url, accessToken }, true)
-    })
-
-    test('creates revokeTokenValidator properly', async (): Promise<void> => {
-      const mockResponseValidator = ({ path, method }) =>
-        path === '/token/{id}' && method === HttpMethod.DELETE
-
-      jest
-        .spyOn(openApi, 'createResponseValidator')
-        .mockImplementation(mockResponseValidator as any)
-
-      const deleteSpy = jest
-        .spyOn(requestors, 'deleteRequest')
-        .mockResolvedValueOnce()
-
-      createTokenRoutes({ openApi, ...deps }).revoke({
-        url,
-        accessToken
-      })
-      expect(deleteSpy).toHaveBeenCalledWith(deps, { url, accessToken }, true)
-    })
-  })
-
   describe('rotateToken', (): void => {
     test('returns accessToken if passes validation', async (): Promise<void> => {
       const accessToken = mockAccessToken()
@@ -155,6 +111,76 @@ describe('token', (): void => {
         )
       ).rejects.toThrowError()
       scope.done()
+    })
+  })
+
+  describe('routes', (): void => {
+    const url = 'http://localhost:1000'
+    const accessToken = 'someAccessToken'
+
+    describe('rotate', (): void => {
+      test.each`
+        validateResponses | description
+        ${true}           | ${'with response validation'}
+        ${false}          | ${'without response validation'}
+      `(
+        'calls post method $description',
+        async ({ validateResponses }): Promise<void> => {
+          const mockedAccessToken = mockAccessToken()
+          const mockResponseValidator = ({ path, method }) =>
+            path === '/token/{id}' && method === HttpMethod.POST
+
+          jest
+            .spyOn(openApi, 'createResponseValidator')
+            .mockImplementation(mockResponseValidator as any)
+
+          const postSpy = jest
+            .spyOn(requestors, 'post')
+            .mockResolvedValueOnce(mockedAccessToken)
+
+          createTokenRoutes({ openApi, ...deps, validateResponses }).rotate({
+            url,
+            accessToken
+          })
+          expect(postSpy).toHaveBeenCalledWith(
+            { ...deps, validateResponses },
+            { url, accessToken },
+            validateResponses ? true : undefined
+          )
+        }
+      )
+    })
+
+    describe('revoke', (): void => {
+      test.each`
+        validateResponses | description
+        ${true}           | ${'with response validation'}
+        ${false}          | ${'without response validation'}
+      `(
+        'calls delete method $description',
+        async ({ validateResponses }): Promise<void> => {
+          const mockResponseValidator = ({ path, method }) =>
+            path === '/token/{id}' && method === HttpMethod.DELETE
+
+          jest
+            .spyOn(openApi, 'createResponseValidator')
+            .mockImplementation(mockResponseValidator as any)
+
+          const deleteSpy = jest
+            .spyOn(requestors, 'deleteRequest')
+            .mockResolvedValueOnce()
+
+          createTokenRoutes({ openApi, ...deps, validateResponses }).revoke({
+            url,
+            accessToken
+          })
+          expect(deleteSpy).toHaveBeenCalledWith(
+            { ...deps, validateResponses },
+            { url, accessToken },
+            validateResponses ? true : undefined
+          )
+        }
+      )
     })
   })
 })
