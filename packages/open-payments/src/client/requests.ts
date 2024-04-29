@@ -175,6 +175,9 @@ const handleError = async (
     errorStatus = error.status
   } else if (error instanceof Error) {
     errorDescription = error.message
+  } else {
+    errorDescription = 'Received unexpected error'
+    deps.logger.error({ err: error })
   }
 
   const errorMessage = `Error making Open Payments ${requestType} request`
@@ -184,7 +187,7 @@ const handleError = async (
   )
 
   throw new OpenPaymentsClientError(errorMessage, {
-    description: errorDescription || 'Unknown',
+    description: errorDescription,
     validationErrors,
     status: errorStatus
   })
