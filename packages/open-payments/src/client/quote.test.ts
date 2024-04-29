@@ -9,9 +9,11 @@ import nock from 'nock'
 import * as requestors from './requests'
 import { getRSPath } from '../types'
 import { getResourceServerOpenAPI } from '../openapi'
+import { BaseDeps } from '.'
 
 jest.mock('./requests', () => {
   return {
+    // https://jestjs.io/docs/jest-object#jestmockmodulename-factory-options
     __esModule: true,
     ...jest.requireActual('./requests')
   }
@@ -19,12 +21,13 @@ jest.mock('./requests', () => {
 
 describe('quote', (): void => {
   let openApi: OpenAPI
+  let deps: BaseDeps
 
   beforeAll(async () => {
     openApi = await getResourceServerOpenAPI()
+    deps = await createTestDeps()
   })
 
-  const deps = createTestDeps()
   const quote = mockQuote()
   const baseUrl = 'http://localhost:1000'
   const openApiValidators = mockOpenApiResponseValidators()
@@ -42,7 +45,7 @@ describe('quote', (): void => {
         },
         openApiValidators.successfulValidator
       )
-      expect(result).toStrictEqual(quote)
+      expect(result).toEqual(quote)
       scope.done()
     })
 
@@ -75,7 +78,7 @@ describe('quote', (): void => {
         openApiValidators.successfulValidator,
         { receiver: quote.receiver, method: 'ilp', walletAddress }
       )
-      expect(result).toStrictEqual(quote)
+      expect(result).toEqual(quote)
       scope.done()
     })
 

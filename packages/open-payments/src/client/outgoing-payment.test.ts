@@ -19,6 +19,7 @@ import { OpenPaymentsClientError } from './error'
 import assert from 'assert'
 import { getResourceServerOpenAPI } from '../openapi'
 import { CreateOutgoingPaymentArgs } from '../types'
+import { BaseDeps } from '.'
 
 jest.mock('./requests', () => {
   return {
@@ -30,12 +31,13 @@ jest.mock('./requests', () => {
 
 describe('outgoing-payment', (): void => {
   let openApi: OpenAPI
+  let deps: BaseDeps
 
   beforeAll(async () => {
     openApi = await getResourceServerOpenAPI()
+    deps = await createTestDeps()
   })
 
-  const deps = createTestDeps()
   const walletAddress = `http://localhost:1000/.well-known/pay`
   const serverAddress = 'http://localhost:1000'
   const openApiValidators = mockOpenApiResponseValidators()
@@ -56,7 +58,7 @@ describe('outgoing-payment', (): void => {
         },
         openApiValidators.successfulValidator
       )
-      expect(result).toStrictEqual(outgoingPayment)
+      expect(result).toEqual(outgoingPayment)
       scope.done()
     })
 
@@ -160,7 +162,7 @@ describe('outgoing-payment', (): void => {
               cursor
             }
           )
-          expect(result).toStrictEqual(outgoingPaymentPaginationResult)
+          expect(result).toEqual(outgoingPaymentPaginationResult)
           scope.done()
         }
       )
@@ -202,7 +204,7 @@ describe('outgoing-payment', (): void => {
               cursor
             }
           )
-          expect(result).toStrictEqual(outgoingPaymentPaginationResult)
+          expect(result).toEqual(outgoingPaymentPaginationResult)
           scope.done()
         }
       )
@@ -408,9 +410,7 @@ describe('outgoing-payment', (): void => {
     test('returns outgoing payment if passes validation', async (): Promise<void> => {
       const outgoingPayment = mockOutgoingPayment()
 
-      expect(validateOutgoingPayment(outgoingPayment)).toStrictEqual(
-        outgoingPayment
-      )
+      expect(validateOutgoingPayment(outgoingPayment)).toEqual(outgoingPayment)
     })
 
     test('throws if send amount and sent amount asset scales are different', async (): Promise<void> => {

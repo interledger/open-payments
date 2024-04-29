@@ -1,65 +1,113 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import {
-  createAxiosInstance,
-  createCustomAxiosInstance,
+  createHttpClient,
   deleteRequest,
   get,
-  post
+  HttpClient,
+  post,
+  requestShouldBeAuthorized,
+  signRequest
 } from './requests'
 import { generateKeyPairSync } from 'crypto'
 import nock from 'nock'
 import { createTestDeps, mockOpenApiResponseValidators } from '../test/helpers'
 import { OpenPaymentsClientError } from './error'
 import assert from 'assert'
+import ky from 'ky'
+import { BaseDeps } from '.'
+
+const HTTP_SIGNATURE_REGEX = /sig1=:([a-zA-Z0-9+/]){86}==:/
+const CONTENT_DIGEST_REGEX = /sha-512=:([a-zA-Z0-9+/]){86}==:/
+
+function getSignatureInputRegex(components: string[], keyId: string) {
+  const defaultComponents = ['@method', '@target-uri']
+  const allComponents = [...defaultComponents, ...components]
+
+  return new RegExp(
+    `sig1=\\(${allComponents
+      .map((c) => `"${c}"`)
+      .join(' ')}\\);keyid="${keyId}";created=[0-9]{10}`
+  )
+}
 
 describe('requests', (): void => {
   const privateKey = generateKeyPairSync('ed25519').privateKey
   const keyId = 'myId'
-  const axiosInstance = createAxiosInstance({
-    requestTimeoutMs: 0,
-    privateKey,
-    keyId
-  })
-  const deps = createTestDeps({
-    axiosInstance
+
+  let httpClient: HttpClient
+  let deps: BaseDeps
+
+  beforeAll(async () => {
+    httpClient = await createHttpClient({
+      requestTimeoutMs: 1000000,
+      privateKey,
+      keyId
+    })
+    deps = await createTestDeps({
+      httpClient
+    })
   })
 
-  describe('createAxiosInstance', (): void => {
+  describe('createHttpClient', (): void => {
     test('sets timeout properly', async (): Promise<void> => {
-      expect(
-        createAxiosInstance({ requestTimeoutMs: 1000, privateKey, keyId })
-          .defaults.timeout
-      ).toBe(1000)
-    })
-    test('sets Accept header properly', async (): Promise<void> => {
-      expect(
-        createAxiosInstance({ requestTimeoutMs: 0, privateKey, keyId }).defaults
-          .headers.common['Accept']
-      ).toBe('application/json')
-    })
-    test('sets Content-Type header properly', async (): Promise<void> => {
-      expect(
-        createAxiosInstance({ requestTimeoutMs: 0, privateKey, keyId }).defaults
-          .headers.common['Content-Type']
-      ).toBe('application/json')
-    })
-  })
+      const kyCreateSpy = jest.spyOn(ky, 'create')
 
-  describe('createCustomAxiosInstance', (): void => {
-    test('sets authenticated request interceptor', async (): Promise<void> => {
-      const customAxiosInstance = createCustomAxiosInstance({
+      await createHttpClient({ requestTimeoutMs: 1000, privateKey, keyId })
+
+      expect(kyCreateSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ timeout: 1000 })
+      )
+    })
+    test('sets headers properly', async (): Promise<void> => {
+      const kyCreateSpy = jest.spyOn(ky, 'create')
+
+      await createHttpClient({ requestTimeoutMs: 1000, privateKey, keyId })
+
+      expect(kyCreateSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+          }
+        })
+      )
+    })
+
+    test('sets private key request interceptor', async (): Promise<void> => {
+      const kyInstance = ky.create({})
+
+      jest.spyOn(ky, 'create').mockReturnValueOnce(kyInstance)
+
+      const kyExtendSpy = jest.spyOn(kyInstance, 'extend')
+
+      await createHttpClient({
         requestTimeoutMs: 0,
         authenticatedRequestInterceptor: (config) => config
       })
-      expect(
-        customAxiosInstance.interceptors.request['handlers'][0]
-      ).toBeDefined()
-      expect(
-        customAxiosInstance.interceptors.request['handlers'][0].fulfilled
-      ).toBeDefined()
-      expect(
-        customAxiosInstance.interceptors.request['handlers'][0].fulfilled
-      ).toEqual(expect.any(Function))
+
+      expect(kyExtendSpy).toHaveBeenCalledWith({
+        hooks: {
+          beforeRequest: [expect.any(Function)]
+        }
+      })
+    })
+
+    test('sets authenticated request interceptor', async (): Promise<void> => {
+      const kyInstance = ky.create({})
+
+      jest.spyOn(ky, 'create').mockReturnValueOnce(kyInstance)
+
+      const kyExtendSpy = jest.spyOn(kyInstance, 'extend')
+
+      await createHttpClient({
+        requestTimeoutMs: 0,
+        authenticatedRequestInterceptor: (config) => config
+      })
+
+      expect(kyExtendSpy).toHaveBeenCalledWith({
+        hooks: {
+          beforeRequest: [expect.any(Function)]
+        }
+      })
     })
   })
 
@@ -68,40 +116,18 @@ describe('requests', (): void => {
     const responseValidators = mockOpenApiResponseValidators()
 
     beforeAll(() => {
-      jest.spyOn(axiosInstance, 'get')
-    })
-
-    afterEach(() => {
-      jest.useRealTimers()
+      jest.spyOn(httpClient, 'get')
     })
 
     test('sets headers properly if accessToken provided', async (): Promise<void> => {
-      // https://github.com/nock/nock/issues/2200#issuecomment-1280957462
-      jest
-        .useFakeTimers({
-          doNotFake: [
-            'nextTick',
-            'setImmediate',
-            'clearImmediate',
-            'setInterval',
-            'clearInterval',
-            'setTimeout',
-            'clearTimeout'
-          ]
-        })
-        .setSystemTime(new Date())
-
       const scope = nock(baseUrl)
-        .matchHeader('Signature', /sig1=:([a-zA-Z0-9+/]){86}==:/)
+        .matchHeader('Signature', HTTP_SIGNATURE_REGEX)
         .matchHeader(
           'Signature-Input',
-          `sig1=("@method" "@target-uri" "authorization");keyid="${keyId}";created=${Math.floor(
-            Date.now() / 1000
-          )}`
+          getSignatureInputRegex(['authorization'], keyId)
         )
         .get('/incoming-payments')
-        // TODO: verify signature
-        .reply(200)
+        .reply(200, { id: 'id' })
 
       await get(
         deps,
@@ -114,7 +140,7 @@ describe('requests', (): void => {
 
       scope.done()
 
-      expect(axiosInstance.get).toHaveBeenCalledWith(
+      expect(httpClient.get).toHaveBeenCalledWith(
         `${baseUrl}/incoming-payments`,
         {
           headers: {
@@ -129,7 +155,7 @@ describe('requests', (): void => {
         .matchHeader('Signature', (sig) => sig === undefined)
         .matchHeader('Signature-Input', (sigInput) => sigInput === undefined)
         .get('/incoming-payments')
-        .reply(200)
+        .reply(200, { id: 'id' })
 
       await get(
         deps,
@@ -140,7 +166,7 @@ describe('requests', (): void => {
       )
       scope.done()
 
-      expect(axiosInstance.get).toHaveBeenCalledWith(
+      expect(httpClient.get).toHaveBeenCalledWith(
         `${baseUrl}/incoming-payments`,
         {
           headers: {}
@@ -166,7 +192,7 @@ describe('requests', (): void => {
           .matchHeader('Signature-Input', (sigInput) => sigInput === undefined)
           .get('/incoming-payments')
           .query(cleanedQueryParams)
-          .reply(200)
+          .reply(200, { id: 'id' })
 
         await get(
           deps,
@@ -178,13 +204,16 @@ describe('requests', (): void => {
         )
         scope.done()
 
-        expect(axiosInstance.get).toHaveBeenCalledWith(
-          `${baseUrl}/incoming-payments`,
-          {
-            headers: {},
-            params: cleanedQueryParams
-          }
-        )
+        const expectedUrl =
+          Object.values(cleanedQueryParams).length > 0
+            ? `${baseUrl}/incoming-payments?${new URLSearchParams(
+                cleanedQueryParams
+              )}`
+            : `${baseUrl}/incoming-payments`
+
+        expect(httpClient.get).toHaveBeenCalledWith(expectedUrl, {
+          headers: {}
+        })
       }
     )
 
@@ -216,7 +245,9 @@ describe('requests', (): void => {
     })
 
     test('throws if failed request', async (): Promise<void> => {
-      nock(baseUrl).get('/incoming-payments').reply(400, 'Bad Request')
+      nock(baseUrl).get('/incoming-payments').reply(400)
+
+      expect.assertions(4)
 
       try {
         await get(
@@ -229,14 +260,16 @@ describe('requests', (): void => {
       } catch (error) {
         assert.ok(error instanceof OpenPaymentsClientError)
         expect(error.message).toBe('Error making Open Payments GET request')
-        expect(error.description).toBe('Bad Request')
+        expect(error.description).toMatch(/Bad Request/)
         expect(error.status).toBe(400)
         expect(error.validationErrors).toBeUndefined()
       }
     })
 
     test('throws if response validator function fails', async (): Promise<void> => {
-      nock(baseUrl).get('/incoming-payments').reply(200)
+      nock(baseUrl).get('/incoming-payments').reply(200, { id: 'id' })
+
+      expect.assertions(4)
 
       try {
         await get(
@@ -257,21 +290,24 @@ describe('requests', (): void => {
 
     test('keeps https protocol for request if non-development environment', async (): Promise<void> => {
       const httpsUrl = 'https://localhost:1000/'
-      const scope = nock(httpsUrl).get('/').reply(200)
+      const scope = nock(httpsUrl).get('/').reply(200, { id: 'id' })
 
       await get(deps, { url: httpsUrl }, responseValidators.successfulValidator)
 
-      expect(axiosInstance.get).toHaveBeenCalledWith(httpsUrl, {
+      expect(httpClient.get).toHaveBeenCalledWith(httpsUrl, {
         headers: {}
       })
       scope.done()
     })
 
     test('uses http protocol for request if development environment', async (): Promise<void> => {
-      const tmpDeps = createTestDeps({ axiosInstance, useHttp: true })
+      const tmpDeps = await createTestDeps({
+        httpClient: httpClient,
+        useHttp: true
+      })
       const httpsUrl = 'https://localhost:1000/'
       const httpUrl = httpsUrl.replace('https', 'http')
-      const scope = nock(httpUrl).get('/').reply(200)
+      const scope = nock(httpUrl).get('/').reply(200, { id: 'id' })
 
       await get(
         tmpDeps,
@@ -279,7 +315,8 @@ describe('requests', (): void => {
         responseValidators.successfulValidator
       )
 
-      expect(axiosInstance.get).toHaveBeenCalledWith(httpUrl, {
+      expect(httpClient.get).toHaveBeenCalledWith(httpUrl, {
+        json: undefined,
         headers: {}
       })
       scope.done()
@@ -291,7 +328,7 @@ describe('requests', (): void => {
     const responseValidators = mockOpenApiResponseValidators()
 
     beforeAll(() => {
-      jest.spyOn(axiosInstance, 'post')
+      jest.spyOn(httpClient, 'post')
     })
 
     test('properly POSTs request', async (): Promise<void> => {
@@ -300,35 +337,20 @@ describe('requests', (): void => {
         id: 'id'
       }
 
-      // https://github.com/nock/nock/issues/2200#issuecomment-1280957462
-      jest
-        .useFakeTimers({
-          doNotFake: [
-            'nextTick',
-            'setImmediate',
-            'clearImmediate',
-            'setInterval',
-            'clearInterval',
-            'setTimeout',
-            'clearTimeout'
-          ]
-        })
-        .setSystemTime(new Date())
-
       const scope = nock(baseUrl)
-        .matchHeader('Signature', /sig1=:([a-zA-Z0-9+/]){86}==:/)
+        .matchHeader('Signature', HTTP_SIGNATURE_REGEX)
         .matchHeader(
           'Signature-Input',
-          `sig1=("@method" "@target-uri" "content-digest" "content-length" "content-type");keyid="${keyId}";created=${Math.floor(
-            Date.now() / 1000
-          )}`
+          getSignatureInputRegex(
+            ['content-digest', 'content-length', 'content-type'],
+            keyId
+          )
         )
         .matchHeader('Accept', 'application/json')
-        .matchHeader('Content-Digest', /sha-512=:([a-zA-Z0-9+/]){86}==:/)
+        .matchHeader('Content-Digest', CONTENT_DIGEST_REGEX)
         .matchHeader('Content-Length', '11')
         .matchHeader('Content-Type', 'application/json')
         .post('/grant', body)
-        // TODO: verify signature
         .reply(status, body)
 
       await post(
@@ -341,11 +363,10 @@ describe('requests', (): void => {
       )
       scope.done()
 
-      expect(axiosInstance.post).toHaveBeenCalledWith(
-        `${baseUrl}/grant`,
-        body,
-        { headers: {} }
-      )
+      expect(httpClient.post).toHaveBeenCalledWith(`${baseUrl}/grant`, {
+        headers: {},
+        json: body
+      })
     })
 
     test('properly POSTs request with accessToken', async (): Promise<void> => {
@@ -355,32 +376,23 @@ describe('requests', (): void => {
       }
       const accessToken = 'someAccessToken'
 
-      // https://github.com/nock/nock/issues/2200#issuecomment-1280957462
-      jest
-        .useFakeTimers({
-          doNotFake: [
-            'nextTick',
-            'setImmediate',
-            'clearImmediate',
-            'setInterval',
-            'clearInterval',
-            'setTimeout',
-            'clearTimeout'
-          ]
-        })
-        .setSystemTime(new Date())
-
       const scope = nock(baseUrl)
-        .matchHeader('Signature', /sig1=:([a-zA-Z0-9+/]){86}==:/)
+        .matchHeader('Signature', HTTP_SIGNATURE_REGEX)
         .matchHeader(
           'Signature-Input',
-          `sig1=("@method" "@target-uri" "authorization" "content-digest" "content-length" "content-type");keyid="${keyId}";created=${Math.floor(
-            Date.now() / 1000
-          )}`
+          getSignatureInputRegex(
+            [
+              'authorization',
+              'content-digest',
+              'content-length',
+              'content-type'
+            ],
+            keyId
+          )
         )
         .matchHeader('Accept', 'application/json')
         .matchHeader('Authorization', `GNAP ${accessToken}`)
-        .matchHeader('Content-Digest', /sha-512=:([a-zA-Z0-9+/]){86}==:/)
+        .matchHeader('Content-Digest', CONTENT_DIGEST_REGEX)
         .matchHeader('Content-Length', '11')
         .matchHeader('Content-Type', 'application/json')
         .post('/grant', body)
@@ -398,15 +410,14 @@ describe('requests', (): void => {
       )
       scope.done()
 
-      expect(axiosInstance.post).toHaveBeenCalledWith(
-        `${baseUrl}/grant`,
-        body,
-        { headers: { Authorization: `GNAP ${accessToken}` } }
-      )
+      expect(httpClient.post).toHaveBeenCalledWith(`${baseUrl}/grant`, {
+        headers: { Authorization: `GNAP ${accessToken}` },
+        json: body
+      })
     })
 
     test('calls validator function properly', async (): Promise<void> => {
-      const status = 200
+      const status = 201
       const body = {
         id: 'id'
       }
@@ -439,6 +450,8 @@ describe('requests', (): void => {
       }
       nock(baseUrl).post('/grant', body).reply(400, 'Bad Request')
 
+      expect.assertions(4)
+
       try {
         await post(
           deps,
@@ -451,7 +464,7 @@ describe('requests', (): void => {
       } catch (error) {
         assert.ok(error instanceof OpenPaymentsClientError)
         expect(error.message).toBe('Error making Open Payments POST request')
-        expect(error.description).toBe('Bad Request')
+        expect(error.description).toMatch(/Bad Request/)
         expect(error.status).toBe(400)
         expect(error.validationErrors).toBeUndefined()
       }
@@ -463,6 +476,8 @@ describe('requests', (): void => {
         id: 'id'
       }
       nock(baseUrl).post('/grant', body).reply(status, body)
+
+      expect.assertions(4)
 
       try {
         await post(
@@ -484,7 +499,7 @@ describe('requests', (): void => {
 
     test('keeps https protocol for request if non-development environment', async (): Promise<void> => {
       const httpsUrl = 'https://localhost:1000/'
-      const scope = nock(httpsUrl).post('/').reply(200)
+      const scope = nock(httpsUrl).post('/').reply(200, { id: 'id' })
 
       await post(
         deps,
@@ -492,17 +507,21 @@ describe('requests', (): void => {
         responseValidators.successfulValidator
       )
 
-      expect(axiosInstance.post).toHaveBeenCalledWith(httpsUrl, undefined, {
+      expect(httpClient.post).toHaveBeenCalledWith(httpsUrl, {
+        json: undefined,
         headers: {}
       })
       scope.done()
     })
 
     test('uses http protocol for request if development environment', async (): Promise<void> => {
-      const tmpDeps = createTestDeps({ axiosInstance, useHttp: true })
+      const tmpDeps = await createTestDeps({
+        httpClient,
+        useHttp: true
+      })
       const httpsUrl = 'https://localhost:1000/'
       const httpUrl = httpsUrl.replace('https', 'http')
-      const scope = nock(httpUrl).post('/').reply(200)
+      const scope = nock(httpUrl).post('/').reply(200, { id: 'id' })
 
       await post(
         tmpDeps,
@@ -510,7 +529,8 @@ describe('requests', (): void => {
         responseValidators.successfulValidator
       )
 
-      expect(axiosInstance.post).toHaveBeenCalledWith(httpUrl, undefined, {
+      expect(httpClient.post).toHaveBeenCalledWith(httpUrl, {
+        json: undefined,
         headers: {}
       })
       scope.done()
@@ -522,16 +542,21 @@ describe('requests', (): void => {
     const responseValidators = mockOpenApiResponseValidators()
 
     beforeAll(() => {
-      jest.spyOn(axiosInstance, 'delete')
+      jest.spyOn(httpClient, 'delete')
     })
 
     test('properly makes DELETE request', async (): Promise<void> => {
-      const status = 202
+      const status = 204
 
       const scope = nock(baseUrl)
         .delete(`/grant`)
         // TODO: verify signature
         .reply(status)
+
+      const responseValidatorSpy = jest.spyOn(
+        responseValidators,
+        'successfulValidator'
+      )
 
       await deleteRequest(
         deps,
@@ -542,22 +567,24 @@ describe('requests', (): void => {
       )
       scope.done()
 
-      expect(axiosInstance.delete).toHaveBeenCalledWith(`${baseUrl}/grant`, {
+      expect(httpClient.delete).toHaveBeenCalledWith(`${baseUrl}/grant`, {
         headers: {}
+      })
+      expect(responseValidatorSpy).toHaveBeenCalledWith({
+        status,
+        body: undefined
       })
     })
 
     test('properly makes DELETE request with accessToken', async (): Promise<void> => {
-      const status = 202
+      const status = 204
       const accessToken = 'someAccessToken'
 
       const scope = nock(baseUrl)
-        .matchHeader('Signature', /sig1=:([a-zA-Z0-9+/]){86}==:/)
+        .matchHeader('Signature', HTTP_SIGNATURE_REGEX)
         .matchHeader(
           'Signature-Input',
-          `sig1=("@method" "@target-uri" "authorization");keyid="${keyId}";created=${Math.floor(
-            Date.now() / 1000
-          )}`
+          getSignatureInputRegex(['authorization'], keyId)
         )
         .matchHeader('Authorization', `GNAP ${accessToken}`)
         .delete(`/grant/`)
@@ -574,52 +601,42 @@ describe('requests', (): void => {
       )
       scope.done()
 
-      expect(axiosInstance.delete).toHaveBeenCalledWith(`${baseUrl}/grant/`, {
+      expect(httpClient.delete).toHaveBeenCalledWith(`${baseUrl}/grant/`, {
         headers: {
           Authorization: `GNAP ${accessToken}`
         }
       })
     })
 
-    test.each`
-      title                              | response
-      ${'when response is defined'}      | ${{ some: 'value' }}
-      ${'when response is undefined'}    | ${undefined}
-      ${'when response is null'}         | ${null}
-      ${'when response is empty string'} | ${''}
-    `(
-      'calls validator function properly $title',
-      async ({ response }): Promise<void> => {
-        const status = 202
+    test('calls validator function properly', async (): Promise<void> => {
+      const status = 204
 
-        const scope = nock(baseUrl)
-          .delete(`/grant`)
-          // TODO: verify signature
-          .reply(status, response)
+      const scope = nock(baseUrl).delete(`/grant`).reply(status)
 
-        const responseValidatorSpy = jest.spyOn(
-          responseValidators,
-          'successfulValidator'
-        )
+      const responseValidatorSpy = jest.spyOn(
+        responseValidators,
+        'successfulValidator'
+      )
 
-        await deleteRequest(
-          deps,
-          {
-            url: `${baseUrl}/grant`
-          },
-          responseValidators.successfulValidator
-        )
+      await deleteRequest(
+        deps,
+        {
+          url: `${baseUrl}/grant`
+        },
+        responseValidators.successfulValidator
+      )
 
-        scope.done()
-        expect(responseValidatorSpy).toHaveBeenCalledWith({
-          body: response || undefined,
-          status
-        })
-      }
-    )
+      scope.done()
+      expect(responseValidatorSpy).toHaveBeenCalledWith({
+        body: undefined,
+        status
+      })
+    })
 
     test('throws if failed request', async (): Promise<void> => {
       nock(baseUrl).delete('/grant').reply(400, 'Bad Request')
+
+      expect.assertions(4)
 
       try {
         await deleteRequest(
@@ -632,7 +649,7 @@ describe('requests', (): void => {
       } catch (error) {
         assert.ok(error instanceof OpenPaymentsClientError)
         expect(error.message).toBe('Error making Open Payments DELETE request')
-        expect(error.description).toBe('Bad Request')
+        expect(error.description).toMatch(/Bad Request/)
         expect(error.status).toBe(400)
         expect(error.validationErrors).toBeUndefined()
       }
@@ -641,6 +658,8 @@ describe('requests', (): void => {
     test('throws if response validator function fails', async (): Promise<void> => {
       const status = 299
       nock(baseUrl).delete('/grant').reply(status)
+
+      expect.assertions(4)
 
       try {
         await deleteRequest(
@@ -669,14 +688,17 @@ describe('requests', (): void => {
         responseValidators.successfulValidator
       )
 
-      expect(axiosInstance.delete).toHaveBeenCalledWith(httpsUrl, {
+      expect(httpClient.delete).toHaveBeenCalledWith(httpsUrl, {
         headers: {}
       })
       scope.done()
     })
 
     test('uses http protocol for request if development environment', async (): Promise<void> => {
-      const tmpDeps = createTestDeps({ axiosInstance, useHttp: true })
+      const tmpDeps = await createTestDeps({
+        httpClient,
+        useHttp: true
+      })
       const httpsUrl = 'https://localhost:1000/'
       const httpUrl = httpsUrl.replace('https', 'http')
       const scope = nock(httpUrl).delete('/').reply(200)
@@ -687,10 +709,112 @@ describe('requests', (): void => {
         responseValidators.successfulValidator
       )
 
-      expect(axiosInstance.delete).toHaveBeenCalledWith(httpUrl, {
+      expect(httpClient.delete).toHaveBeenCalledWith(httpUrl, {
         headers: {}
       })
       scope.done()
+    })
+  })
+
+  describe('requestShouldBeAuthorized', (): void => {
+    test.each`
+      method    | hasAuthorizationHeader | expectedResult | description
+      ${'GET'}  | ${true}                | ${true}        | ${'should be authorized if it has an authorization header'}
+      ${'GET'}  | ${false}               | ${false}       | ${'should not be authorized if it not POST and does not have an authorization header'}
+      ${'POST'} | ${false}               | ${true}        | ${'should be authorized if it is POST without an authorization header'}
+      ${'POST'} | ${true}                | ${true}        | ${'should be authorized if it is POST and with an authorization header'}
+    `(
+      'request $description',
+      ({ method, hasAuthorizationHeader, expectedResult }): void => {
+        const request = new Request('https://localhost:1000/', { method })
+
+        if (hasAuthorizationHeader) {
+          request.headers.set('Authorization', 'someToken')
+        }
+
+        expect(requestShouldBeAuthorized(request)).toBe(expectedResult)
+      }
+    )
+  })
+
+  describe('signRequest', (): void => {
+    test('does not set headers if keyId is not provided', async () => {
+      const request = new Request('https://localhost:1000/', { method: 'POST' })
+      const signedRequest = await signRequest(request, {
+        privateKey,
+        keyId: undefined
+      })
+
+      expect(signedRequest).toBeDefined()
+      expect([...signedRequest.headers.entries()]).toEqual([
+        ...request.headers.entries()
+      ])
+    })
+
+    test('does not set headers if privateKey is not provided', async () => {
+      const request = new Request('https://localhost:1000/', { method: 'POST' })
+      const signedRequest = await signRequest(request, {
+        keyId,
+        privateKey: undefined
+      })
+
+      expect(signedRequest).toBeDefined()
+      expect([...signedRequest.headers.entries()]).toEqual([
+        ...request.headers.entries()
+      ])
+    })
+
+    test('sets signature headers', async () => {
+      const request = new Request('https://localhost:1000/', {
+        method: 'POST'
+      })
+      const signedRequest = await signRequest(request, {
+        keyId,
+        privateKey
+      })
+
+      expect(signedRequest.headers.get('Signature')).toMatch(
+        HTTP_SIGNATURE_REGEX
+      )
+      expect(signedRequest.headers.get('Signature-Input')).toMatch(
+        getSignatureInputRegex([], keyId)
+      )
+      expect(signedRequest.headers.get('Content-Digest')).toBeNull()
+      expect(signedRequest.headers.get('Content-Type')).toBeNull()
+      expect(signedRequest.headers.get('Content-Length')).toBeNull()
+    })
+
+    test('sets signature headers with request body', async () => {
+      const body = {
+        foo: 'bar'
+      }
+      const stringifiedBody = JSON.stringify(body)
+
+      const request = new Request('https://localhost:1000/', {
+        method: 'POST',
+        body: stringifiedBody
+      })
+      const signedRequest = await signRequest(request, {
+        keyId,
+        privateKey
+      })
+
+      expect(signedRequest.headers.get('Signature')).toMatch(
+        HTTP_SIGNATURE_REGEX
+      )
+      expect(signedRequest.headers.get('Signature-Input')).toMatch(
+        getSignatureInputRegex(
+          ['content-digest', 'content-length', 'content-type'],
+          keyId
+        )
+      )
+      expect(signedRequest.headers.get('Content-Digest')).toMatch(
+        CONTENT_DIGEST_REGEX
+      )
+      expect(signedRequest.headers.get('Content-Type')).toBe('application/json')
+      expect(signedRequest.headers.get('Content-Length')).toBe(
+        stringifiedBody.length.toString()
+      )
     })
   })
 })

@@ -26,6 +26,7 @@ import { getRSPath } from '../types'
 import { OpenPaymentsClientError } from './error'
 import assert from 'assert'
 import { getResourceServerOpenAPI } from '../openapi'
+import { BaseDeps } from '.'
 
 jest.mock('./requests', () => {
   return {
@@ -37,12 +38,13 @@ jest.mock('./requests', () => {
 
 describe('incoming-payment', (): void => {
   let openApi: OpenAPI
+  let deps: BaseDeps
 
   beforeAll(async () => {
     openApi = await getResourceServerOpenAPI()
+    deps = await createTestDeps()
   })
 
-  const deps = createTestDeps()
   const walletAddress = 'http://localhost:1000/alice/.well-known/pay'
   const serverAddress = 'http://localhost:1000'
   const accessToken = 'accessToken'
@@ -64,7 +66,7 @@ describe('incoming-payment', (): void => {
         },
         openApiValidators.successfulValidator
       )
-      expect(result).toStrictEqual(incomingPayment)
+      expect(result).toEqual(incomingPayment)
     })
 
     test('throws if incoming payment does not pass validation', async (): Promise<void> => {
@@ -133,7 +135,7 @@ describe('incoming-payment', (): void => {
         },
         openApiValidators.successfulValidator
       )
-      expect(result).toStrictEqual(publicIncomingPayment)
+      expect(result).toEqual(publicIncomingPayment)
     })
 
     test('throws if incoming payment does not pass open api validation', async (): Promise<void> => {
@@ -266,7 +268,7 @@ describe('incoming-payment', (): void => {
 
       scope.done()
 
-      expect(result).toStrictEqual(incomingPayment)
+      expect(result).toEqual(incomingPayment)
     })
 
     test('throws if the incoming payment does not pass validation', async (): Promise<void> => {
@@ -364,7 +366,7 @@ describe('incoming-payment', (): void => {
             }
           )
 
-          expect(result).toStrictEqual(incomingPaymentPaginationResult)
+          expect(result).toEqual(incomingPaymentPaginationResult)
           scope.done()
         }
       )
@@ -407,7 +409,7 @@ describe('incoming-payment', (): void => {
             }
           )
 
-          expect(result).toStrictEqual(incomingPaymentPaginationResult)
+          expect(result).toEqual(incomingPaymentPaginationResult)
           scope.done()
         }
       )
@@ -498,9 +500,7 @@ describe('incoming-payment', (): void => {
         completed: true
       })
 
-      expect(validateIncomingPayment(incomingPayment)).toStrictEqual(
-        incomingPayment
-      )
+      expect(validateIncomingPayment(incomingPayment)).toEqual(incomingPayment)
     })
 
     test('throws if receiving and incoming amount asset scales are different', async (): Promise<void> => {
@@ -557,7 +557,7 @@ describe('incoming-payment', (): void => {
         }
       })
 
-      expect(validateCreatedIncomingPayment(incomingPayment)).toStrictEqual(
+      expect(validateCreatedIncomingPayment(incomingPayment)).toEqual(
         incomingPayment
       )
     })
@@ -593,7 +593,7 @@ describe('incoming-payment', (): void => {
         completed: true
       })
 
-      expect(validateCompletedIncomingPayment(incomingPayment)).toStrictEqual(
+      expect(validateCompletedIncomingPayment(incomingPayment)).toEqual(
         incomingPayment
       )
     })

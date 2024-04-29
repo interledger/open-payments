@@ -1,6 +1,6 @@
 import { generateKeyPairSync } from 'crypto'
 import createLogger from 'pino'
-import { createAxiosInstance } from '../client/requests'
+import { createHttpClient } from '../client/requests'
 import {
   IncomingPayment,
   GrantRequest,
@@ -30,11 +30,14 @@ export const silentLogger = createLogger({
 
 export const keyId = 'default-key-id'
 
-export const defaultAxiosInstance = createAxiosInstance({
-  requestTimeoutMs: 0,
-  keyId,
-  privateKey: generateKeyPairSync('ed25519').privateKey
-})
+export const getDefaultHttpClient = async (): ReturnType<
+  typeof createHttpClient
+> =>
+  createHttpClient({
+    requestTimeoutMs: 1000,
+    keyId,
+    privateKey: generateKeyPairSync('ed25519').privateKey
+  })
 
 export const mockOpenApiResponseValidators = () => ({
   successfulValidator: ((data: unknown): data is unknown =>
@@ -315,8 +318,10 @@ export const mockQuote = (overrides?: Partial<Quote>): Quote => ({
   ...overrides
 })
 
-export const createTestDeps = (overrides?: Partial<BaseDeps>): BaseDeps => ({
-  axiosInstance: defaultAxiosInstance,
+export const createTestDeps = async (
+  overrides?: Partial<BaseDeps>
+): Promise<BaseDeps> => ({
+  httpClient: await getDefaultHttpClient(),
   logger: silentLogger,
   useHttp: false,
   ...overrides

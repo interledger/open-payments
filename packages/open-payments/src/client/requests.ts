@@ -1,18 +1,15 @@
-import axios, {
-  AxiosInstance,
-  InternalAxiosRequestConfig,
-  isAxiosError
-} from 'axios'
 import { KeyObject } from 'crypto'
-import { ResponseValidator } from '@interledger/openapi'
+import { ResponseValidator, isValidationError } from '@interledger/openapi'
 import { BaseDeps } from '.'
 import { createHeaders } from '@interledger/http-signature-utils'
 import { OpenPaymentsClientError } from './error'
-import { isValidationError } from '@interledger/openapi'
+
+// @ts-expect-error We know we are importing an ESM module into our CJS file, so ignore warnings for types
+import type { KyInstance } from 'ky'
 
 interface GetArgs {
   url: string
-  queryParams?: Record<string, unknown>
+  queryParams?: Record<string, string | number | undefined>
   accessToken?: string
 }
 
@@ -27,52 +24,19 @@ interface DeleteArgs {
   accessToken?: string
 }
 
-const removeEmptyValues = (obj: Record<string, unknown>) =>
-  Object.fromEntries(Object.entries(obj).filter(([_, v]) => v != null))
-
 export const get = async <T>(
   deps: BaseDeps,
   args: GetArgs,
   openApiResponseValidator: ResponseValidator<T>
 ): Promise<T> => {
-  const { axiosInstance } = deps
+  const { httpClient } = deps
   const { accessToken } = args
 
-  const url = checkUrlProtocol(deps, args.url)
+  const urlWithUpdatedProtocol = checkUrlProtocol(deps, args.url)
+  const url = getUrlWithQueryParams(urlWithUpdatedProtocol, args.queryParams)
 
   try {
-    const { data, status } = await axiosInstance.get(url, {
-      headers: accessToken
-        ? {
-            Authorization: `GNAP ${accessToken}`
-          }
-        : {},
-      params: args.queryParams ? removeEmptyValues(args.queryParams) : undefined
-    })
-
-    openApiResponseValidator({
-      status,
-      body: data
-    })
-
-    return data
-  } catch (error) {
-    return handleError(deps, error, 'GET')
-  }
-}
-
-export const post = async <TRequest, TResponse>(
-  deps: BaseDeps,
-  args: PostArgs<TRequest>,
-  openApiResponseValidator: ResponseValidator<TResponse>
-): Promise<TResponse> => {
-  const { axiosInstance } = deps
-  const { body, accessToken } = args
-
-  const url = checkUrlProtocol(deps, args.url)
-
-  try {
-    const { data, status } = await axiosInstance.post<TResponse>(url, body, {
+    const response = await httpClient.get(url, {
       headers: accessToken
         ? {
             Authorization: `GNAP ${accessToken}`
@@ -80,14 +44,68 @@ export const post = async <TRequest, TResponse>(
         : {}
     })
 
+    const responseBody = await response.json<T>()
+
     openApiResponseValidator({
-      status,
-      body: data
+      status: response.status,
+      body: responseBody
     })
 
-    return data
+    return responseBody
   } catch (error) {
-    return handleError(deps, error, 'POST')
+    return handleError(deps, { url, error, requestType: 'GET' })
+  }
+}
+
+const getUrlWithQueryParams = (
+  url: string,
+  queryParams?: Record<string, string | number | undefined>
+): string => {
+  if (!queryParams) {
+    return url
+  }
+
+  const urlObject = new URL(url)
+
+  for (const [key, value] of Object.entries(queryParams)) {
+    if (value) {
+      urlObject.searchParams.set(key, value.toString())
+    }
+  }
+
+  return urlObject.href
+}
+
+export const post = async <TRequest, TResponse>(
+  deps: BaseDeps,
+  args: PostArgs<TRequest>,
+  openApiResponseValidator: ResponseValidator<TResponse>
+): Promise<TResponse> => {
+  const { httpClient } = deps
+  const { body, accessToken } = args
+
+  const url = checkUrlProtocol(deps, args.url)
+
+  try {
+    const response = await httpClient.post(url, {
+      json: body,
+      headers: accessToken
+        ? {
+            Authorization: `GNAP ${accessToken}`
+          }
+        : {}
+    })
+
+    const responseBody = await response.json<TResponse>()
+
+    openApiResponseValidator({
+      status: response.status,
+      body: responseBody
+    })
+
+    return responseBody
+  } catch (error) {
+    return handleError(deps, { url, error, requestType: 'POST' })
   }
 }
 
@@ -96,13 +114,13 @@ export const deleteRequest = async <TResponse>(
   args: DeleteArgs,
   openApiResponseValidator: ResponseValidator<TResponse>
 ): Promise<void> => {
-  const { axiosInstance } = deps
+  const { httpClient } = deps
   const { accessToken } = args
 
   const url = checkUrlProtocol(deps, args.url)
 
   try {
-    const { data, status } = await axiosInstance.delete<TResponse>(url, {
+    const response = await httpClient.delete(url, {
       headers: accessToken
         ? {
             Authorization: `GNAP ${accessToken}`
@@ -111,25 +129,45 @@ export const deleteRequest = async <TResponse>(
     })
 
     openApiResponseValidator({
-      status,
-      body: data || undefined
+      status: response.status,
+      body: undefined
     })
   } catch (error) {
-    return handleError(deps, error, 'DELETE')
+    return handleError(deps, { url, error, requestType: 'DELETE' })
   }
 }
 
-const handleError = (
-  deps: BaseDeps,
-  error: unknown,
+interface HandleErrorArgs {
+  error: unknown
+  url: string
   requestType: 'POST' | 'DELETE' | 'GET'
-): never => {
+}
+
+const handleError = async (
+  deps: BaseDeps,
+  args: HandleErrorArgs
+): Promise<never> => {
+  const { error, url, requestType } = args
+
   let errorDescription
   let errorStatus
   let validationErrors
 
-  if (isAxiosError(error)) {
-    errorDescription = error.response?.data || error.message
+  const { HTTPError } = await import('ky')
+
+  if (error instanceof HTTPError) {
+    let responseBody
+
+    try {
+      responseBody = (await error.response.json()) as { message: string }
+    } catch {
+      // Ignore if we can't parse the response body (or no body exists)
+    }
+
+    errorDescription =
+      responseBody && responseBody.message
+        ? responseBody.message
+        : error.message
     errorStatus = error.response?.status
   } else if (isValidationError(error)) {
     errorDescription = 'Could not validate OpenAPI response'
@@ -137,10 +175,16 @@ const handleError = (
     errorStatus = error.status
   } else if (error instanceof Error) {
     errorDescription = error.message
+  } else {
+    errorDescription = 'Received unexpected error'
+    deps.logger.error({ err: error })
   }
 
   const errorMessage = `Error making Open Payments ${requestType} request`
-  deps.logger.error({ status: errorStatus, errorDescription }, errorMessage)
+  deps.logger.error(
+    { status: errorStatus, errorDescription, url, requestType },
+    errorMessage
+  )
 
   throw new OpenPaymentsClientError(errorMessage, {
     description: errorDescription,
@@ -158,90 +202,113 @@ const checkUrlProtocol = (deps: BaseDeps, url: string): string => {
   return requestUrl.href
 }
 
-export const createAxiosInstance = (args: {
+type CreateHttpClientArgs = {
   requestTimeoutMs: number
-  privateKey?: KeyObject
-  keyId?: string
-}): AxiosInstance => {
-  const axiosInstance = axios.create({
+} & (
+  | { privateKey?: KeyObject; keyId?: string }
+  | { authenticatedRequestInterceptor: InterceptorFn }
+)
+
+export type HttpClient = KyInstance
+
+export type InterceptorFn = (request: Request) => Request | Promise<Request>
+
+export const createHttpClient = async (
+  args: CreateHttpClientArgs
+): Promise<HttpClient> => {
+  const { default: ky } = await import('ky')
+
+  const kyInstance = ky.create({
+    timeout: args.requestTimeoutMs,
     headers: {
-      common: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json'
-      }
-    },
-    timeout: args.requestTimeoutMs
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    }
   })
 
-  if (args.privateKey !== undefined && args.keyId !== undefined) {
-    const privateKey = args.privateKey
-    const keyId = args.keyId
-    axiosInstance.interceptors.request.use(
-      async (config: InternalAxiosRequestConfig) => {
-        if (!config.method || !config.url) {
-          throw new Error('Cannot intercept request: url or method missing')
-        }
-        const contentAndSigHeaders = await createHeaders({
-          request: {
-            method: config.method.toUpperCase(),
-            url: config.url,
-            headers: JSON.parse(JSON.stringify(config.headers)),
-            body: config.data ? JSON.stringify(config.data) : undefined
-          },
-          privateKey,
-          keyId
-        })
-        if (config.data) {
-          config.headers['Content-Digest'] =
-            contentAndSigHeaders['Content-Digest']
-          config.headers['Content-Length'] =
-            contentAndSigHeaders['Content-Length']
-          config.headers['Content-Type'] = contentAndSigHeaders['Content-Type']
-        }
-        config.headers['Signature'] = contentAndSigHeaders['Signature']
-        config.headers['Signature-Input'] =
-          contentAndSigHeaders['Signature-Input']
-        return config
-      },
-      undefined,
-      {
-        runWhen: (config: InternalAxiosRequestConfig) =>
-          config.method?.toLowerCase() === 'post' ||
-          !!(config.headers && config.headers['Authorization'])
+  let requestInterceptor: InterceptorFn | undefined
+
+  if ('authenticatedRequestInterceptor' in args) {
+    requestInterceptor = (request) => {
+      if (requestShouldBeAuthorized(request)) {
+        return args.authenticatedRequestInterceptor(request)
       }
+
+      return request
+    }
+  } else {
+    requestInterceptor = (request) => {
+      const { privateKey, keyId } = args
+
+      if (requestShouldBeAuthorized(request)) {
+        return signRequest(request, { privateKey, keyId })
+      }
+
+      return request
+    }
+  }
+
+  if (requestInterceptor) {
+    return kyInstance.extend({
+      hooks: {
+        beforeRequest: [requestInterceptor]
+      }
+    })
+  }
+
+  return kyInstance
+}
+
+export const requestShouldBeAuthorized = (request: Request) =>
+  request.method?.toLowerCase() === 'post' ||
+  request.headers.has('Authorization')
+
+export const signRequest = async (
+  request: Request,
+  args: {
+    privateKey?: KeyObject
+    keyId?: string
+  }
+): Promise<Request> => {
+  const { privateKey, keyId } = args
+
+  if (!privateKey || !keyId) {
+    return request
+  }
+
+  const requestBody = request.body ? await request.clone().json() : undefined // Request body can only ever be read once, so we clone the original request
+
+  const contentAndSigHeaders = await createHeaders({
+    request: {
+      method: request.method.toUpperCase(),
+      url: request.url,
+      headers: Object.fromEntries(request.headers.entries()),
+      body: requestBody ? JSON.stringify(requestBody) : undefined
+    },
+    privateKey,
+    keyId
+  })
+
+  if (requestBody) {
+    request.headers.set(
+      'Content-Digest',
+      contentAndSigHeaders['Content-Digest'] as string
+    )
+    request.headers.set(
+      'Content-Length',
+      contentAndSigHeaders['Content-Length'] as string
+    )
+    request.headers.set(
+      'Content-Type',
+      contentAndSigHeaders['Content-Type'] as string
     )
   }
 
-  return axiosInstance
-}
-
-export type InterceptorFn = (
-  config: InternalAxiosRequestConfig
-) => InternalAxiosRequestConfig | Promise<InternalAxiosRequestConfig>
-
-export const createCustomAxiosInstance = (args: {
-  requestTimeoutMs: number
-  authenticatedRequestInterceptor: InterceptorFn
-}): AxiosInstance => {
-  const axiosInstance = axios.create({
-    headers: {
-      common: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json'
-      }
-    },
-    timeout: args.requestTimeoutMs
-  })
-
-  axiosInstance.interceptors.request.use(
-    args.authenticatedRequestInterceptor,
-    undefined,
-    {
-      runWhen: (config: InternalAxiosRequestConfig) =>
-        config.method?.toLowerCase() === 'post' ||
-        !!(config.headers && config.headers['Authorization'])
-    }
+  request.headers.set('Signature', contentAndSigHeaders['Signature'])
+  request.headers.set(
+    'Signature-Input',
+    contentAndSigHeaders['Signature-Input']
   )
 
-  return axiosInstance
+  return request
 }
