@@ -36,7 +36,7 @@ export const createOutgoingPaymentRoutes = (
   let listOutgoingPaymentOpenApiValidator: ResponseValidator<OutgoingPaymentPaginationResult>
   let createOutgoingPaymentOpenApiValidator: ResponseValidator<OutgoingPayment>
 
-  if (deps.validateResponses) {
+  if (openApi) {
     getOutgoingPaymentOpenApiValidator = openApi.createResponseValidator({
       path: getRSPath('/outgoing-payments/{id}'),
       method: HttpMethod.GET

@@ -37,7 +37,7 @@ export const createGrantRoutes = (deps: GrantRouteDeps): GrantRoutes => {
   let continueGrantValidator: ResponseValidator<GrantContinuation | Grant>
   let cancelGrantValidator: ResponseValidator<void>
 
-  if (deps.validateResponses) {
+  if (openApi) {
     requestGrantValidator = openApi.createResponseValidator({
       path: getASPath('/'),
       method: HttpMethod.POST

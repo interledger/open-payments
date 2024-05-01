@@ -47,7 +47,7 @@ export const createIncomingPaymentRoutes = (
   let completeIncomingPaymentOpenApiValidator: ResponseValidator<IncomingPayment>
   let listIncomingPaymentOpenApiValidator: ResponseValidator<IncomingPaymentPaginationResult>
 
-  if (deps.validateResponses) {
+  if (openApi) {
     getIncomingPaymentOpenApiValidator = openApi.createResponseValidator({
       path: getRSPath('/incoming-payments/{id}'),
       method: HttpMethod.GET
@@ -120,7 +120,7 @@ export const createUnauthenticatedIncomingPaymentRoutes = (
 
   let getPublicIncomingPaymentOpenApiValidator: ResponseValidator<PublicIncomingPayment>
 
-  if (deps.validateResponses) {
+  if (openApi) {
     getPublicIncomingPaymentOpenApiValidator = openApi.createResponseValidator({
       path: getRSPath('/incoming-payments/{id}'),
       method: HttpMethod.GET

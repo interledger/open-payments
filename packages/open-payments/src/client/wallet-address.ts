@@ -19,7 +19,7 @@ export const createWalletAddressRoutes = (
   let getWalletAddressKeysValidator: ResponseValidator<JWKS>
   let getDidDocumentValidator: ResponseValidator<DIDDocument>
 
-  if (deps.validateResponses) {
+  if (openApi) {
     getWalletAddressValidator = openApi.createResponseValidator({
       path: getWAPath('/'),
       method: HttpMethod.GET

@@ -48,14 +48,13 @@ describe('grant', (): void => {
           const grantRequest = mockGrantRequest()
 
           await createGrantRoutes({
-            openApi,
+            openApi: validateResponses ? openApi : undefined,
             client,
-            ...deps,
-            validateResponses
+            ...deps
           }).request({ url }, grantRequest)
 
           expect(postSpy).toHaveBeenCalledWith(
-            { ...deps, validateResponses },
+            deps,
             {
               url,
               body: {
@@ -89,17 +88,16 @@ describe('grant', (): void => {
             .mockResolvedValueOnce()
 
           await createGrantRoutes({
-            openApi,
+            openApi: validateResponses ? openApi : undefined,
             client,
-            ...deps,
-            validateResponses
+            ...deps
           }).cancel({
             url,
             accessToken
           })
 
           expect(deleteSpy).toHaveBeenCalledWith(
-            { ...deps, validateResponses },
+            deps,
             { url, accessToken },
             validateResponses ? true : undefined
           )
@@ -113,24 +111,19 @@ describe('grant', (): void => {
           path === '/continue/{id}' && method === HttpMethod.POST
 
         test('without response validation', async (): Promise<void> => {
-          jest
-            .spyOn(openApi, 'createResponseValidator')
-            .mockImplementation(mockResponseValidator as any)
-
           const postSpy = jest.spyOn(requestors, 'post')
 
           await createGrantRoutes({
-            openApi,
+            openApi: undefined,
             client,
-            ...deps,
-            validateResponses: false
+            ...deps
           }).continue({
             url,
             accessToken
           })
 
           expect(postSpy).toHaveBeenCalledWith(
-            { ...deps, validateResponses: false },
+            deps,
             { url, accessToken },
             undefined
           )
@@ -144,7 +137,11 @@ describe('grant', (): void => {
           const postSpy = jest.spyOn(requestors, 'post')
           const interact_ref = uuid()
 
-          await createGrantRoutes({ openApi, client, ...deps }).continue(
+          await createGrantRoutes({
+            openApi,
+            client,
+            ...deps
+          }).continue(
             {
               url,
               accessToken
@@ -166,7 +163,11 @@ describe('grant', (): void => {
           const postSpy = jest.spyOn(requestors, 'post')
           const body = {}
 
-          await createGrantRoutes({ openApi, client, ...deps }).continue(
+          await createGrantRoutes({
+            openApi,
+            client,
+            ...deps
+          }).continue(
             {
               url,
               accessToken
@@ -187,7 +188,11 @@ describe('grant', (): void => {
 
           const postSpy = jest.spyOn(requestors, 'post')
 
-          await createGrantRoutes({ openApi, client, ...deps }).continue({
+          await createGrantRoutes({
+            openApi,
+            client,
+            ...deps
+          }).continue({
             url,
             accessToken
           })

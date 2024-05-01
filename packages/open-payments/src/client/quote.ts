@@ -17,7 +17,7 @@ export const createQuoteRoutes = (deps: RouteDeps): QuoteRoutes => {
   let getQuoteOpenApiValidator: ResponseValidator<Quote>
   let createQuoteOpenApiValidator: ResponseValidator<Quote>
 
-  if (deps.validateResponses) {
+  if (openApi) {
     getQuoteOpenApiValidator = openApi.createResponseValidator({
       path: getRSPath('/quotes/{id}'),
       method: HttpMethod.GET

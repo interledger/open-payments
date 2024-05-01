@@ -324,6 +324,5 @@ export const createTestDeps = async (
   httpClient: await getDefaultHttpClient(),
   logger: silentLogger,
   useHttp: false,
-  validateResponses: true,
   ...overrides
 })

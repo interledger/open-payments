@@ -515,13 +515,12 @@ describe('outgoing-payment', (): void => {
             .mockResolvedValueOnce(mockOutgoingPayment())
 
           await createOutgoingPaymentRoutes({
-            openApi,
-            ...deps,
-            validateResponses
+            openApi: validateResponses ? openApi : undefined,
+            ...deps
           }).get({ url, accessToken: 'accessToken' })
 
           expect(getSpy).toHaveBeenCalledWith(
-            { ...deps, validateResponses },
+            deps,
             {
               url,
               accessToken: 'accessToken'
@@ -559,9 +558,8 @@ describe('outgoing-payment', (): void => {
             .mockResolvedValueOnce(outgoingPaymentPaginationResult)
 
           await createOutgoingPaymentRoutes({
-            openApi,
-            ...deps,
-            validateResponses
+            openApi: validateResponses ? openApi : undefined,
+            ...deps
           }).list({
             url: serverAddress,
             walletAddress,
@@ -569,7 +567,7 @@ describe('outgoing-payment', (): void => {
           })
 
           expect(getSpy).toHaveBeenCalledWith(
-            { ...deps, validateResponses },
+            deps,
             {
               url,
               accessToken: 'accessToken',
@@ -612,16 +610,15 @@ describe('outgoing-payment', (): void => {
             )
 
           await createOutgoingPaymentRoutes({
-            openApi,
-            ...deps,
-            validateResponses
+            openApi: validateResponses ? openApi : undefined,
+            ...deps
           }).create(
             { url: serverAddress, accessToken: 'accessToken' },
             outgoingPaymentCreateArgs
           )
 
           expect(postSpy).toHaveBeenCalledWith(
-            { ...deps, validateResponses },
+            deps,
             {
               url,
               accessToken: 'accessToken',

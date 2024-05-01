@@ -51,13 +51,12 @@ describe('wallet-address', (): void => {
             .mockResolvedValueOnce(walletAddress)
 
           await createWalletAddressRoutes({
-            openApi,
             ...deps,
-            validateResponses
+            openApi: validateResponses ? openApi : undefined
           }).get({ url: walletAddress.id })
 
           expect(getSpy).toHaveBeenCalledWith(
-            { ...deps, validateResponses },
+            deps,
             { url: walletAddress.id },
             validateResponses ? true : undefined
           )
@@ -86,13 +85,12 @@ describe('wallet-address', (): void => {
             .mockResolvedValueOnce([mockJwk()])
 
           await createWalletAddressRoutes({
-            openApi,
             ...deps,
-            validateResponses
+            openApi: validateResponses ? openApi : undefined
           }).getKeys({ url: walletAddress.id })
 
           expect(getSpy).toHaveBeenCalledWith(
-            { ...deps, validateResponses },
+            deps,
             { url: `${walletAddress.id}/jwks.json` },
             validateResponses ? true : undefined
           )
@@ -121,13 +119,12 @@ describe('wallet-address', (): void => {
             .mockResolvedValueOnce([mockDIDDocument()])
 
           await createWalletAddressRoutes({
-            openApi,
             ...deps,
-            validateResponses
+            openApi: validateResponses ? openApi : undefined
           }).getDIDDocument({ url: walletAddress.id })
 
           expect(getSpy).toHaveBeenCalledWith(
-            { ...deps, validateResponses },
+            deps,
             { url: `${walletAddress.id}/did.json` },
             validateResponses ? true : undefined
           )

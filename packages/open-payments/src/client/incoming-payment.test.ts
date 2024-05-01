@@ -633,16 +633,12 @@ describe('incoming-payment', (): void => {
             .mockResolvedValueOnce(mockIncomingPayment())
 
           await createIncomingPaymentRoutes({
-            openApi,
             ...deps,
-            validateResponses
+            openApi: validateResponses ? openApi : undefined
           }).get({ url, accessToken })
 
           expect(getSpy).toHaveBeenCalledWith(
-            {
-              ...deps,
-              validateResponses
-            },
+            deps,
             {
               url,
               accessToken
@@ -678,13 +674,12 @@ describe('incoming-payment', (): void => {
             .mockResolvedValueOnce(publicIncomingPayment)
 
           await createIncomingPaymentRoutes({
-            openApi,
-            ...deps,
-            validateResponses
+            openApi: validateResponses ? openApi : undefined,
+            ...deps
           }).getPublic({ url })
 
           expect(getSpy).toHaveBeenCalledWith(
-            { ...deps, validateResponses },
+            deps,
             { url },
             validateResponses ? true : undefined
           )
@@ -719,13 +714,12 @@ describe('incoming-payment', (): void => {
             .mockResolvedValueOnce(incomingPaymentPaginationResult)
 
           await createIncomingPaymentRoutes({
-            openApi,
-            ...deps,
-            validateResponses
+            openApi: validateResponses ? openApi : undefined,
+            ...deps
           }).list({ url: serverAddress, walletAddress, accessToken })
 
           expect(getSpy).toHaveBeenCalledWith(
-            { ...deps, validateResponses },
+            deps,
             {
               url,
               accessToken,
@@ -769,16 +763,15 @@ describe('incoming-payment', (): void => {
             )
 
           await createIncomingPaymentRoutes({
-            openApi,
-            ...deps,
-            validateResponses
+            openApi: validateResponses ? openApi : undefined,
+            ...deps
           }).create(
             { url: serverAddress, accessToken },
             incomingPaymentCreateArgs
           )
 
           expect(postSpy).toHaveBeenCalledWith(
-            { ...deps, validateResponses },
+            deps,
             { url, accessToken, body: incomingPaymentCreateArgs },
             validateResponses ? true : undefined
           )
@@ -810,13 +803,12 @@ describe('incoming-payment', (): void => {
             .mockResolvedValueOnce(mockIncomingPayment({ completed: true }))
 
           await createIncomingPaymentRoutes({
-            openApi,
-            ...deps,
-            validateResponses
+            openApi: validateResponses ? openApi : undefined,
+            ...deps
           }).complete({ url: incomingPaymentUrl, accessToken })
 
           expect(postSpy).toHaveBeenCalledWith(
-            { ...deps, validateResponses },
+            deps,
             {
               url: `${incomingPaymentUrl}/complete`,
               accessToken
@@ -854,13 +846,12 @@ describe('incoming-payment', (): void => {
             .mockResolvedValueOnce(publicIncomingPayment)
 
           await createUnauthenticatedIncomingPaymentRoutes({
-            openApi,
-            ...deps,
-            validateResponses
+            openApi: validateResponses ? openApi : undefined,
+            ...deps
           }).get({ url })
 
           expect(getSpy).toHaveBeenCalledWith(
-            { ...deps, validateResponses },
+            deps,
             { url },
             validateResponses ? true : undefined
           )

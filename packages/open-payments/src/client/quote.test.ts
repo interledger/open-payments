@@ -122,16 +122,15 @@ describe('quote', (): void => {
           const url = `${baseUrl}${getRSPath('/quotes/{id}')}`
 
           await createQuoteRoutes({
-            openApi,
-            ...deps,
-            validateResponses
+            openApi: validateResponses ? openApi : undefined,
+            ...deps
           }).get({
             url,
             accessToken
           })
 
           expect(getSpy).toHaveBeenCalledWith(
-            { ...deps, validateResponses },
+            deps,
             { url, accessToken },
             validateResponses ? true : undefined
           )
@@ -161,9 +160,8 @@ describe('quote', (): void => {
           const url = `${baseUrl}${getRSPath('/quotes')}`
 
           await createQuoteRoutes({
-            openApi,
-            ...deps,
-            validateResponses
+            openApi: validateResponses ? openApi : undefined,
+            ...deps
           }).create(
             {
               url: baseUrl,
@@ -173,7 +171,7 @@ describe('quote', (): void => {
           )
 
           expect(postSpy).toHaveBeenCalledWith(
-            { ...deps, validateResponses },
+            deps,
             {
               url,
               accessToken,

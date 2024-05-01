@@ -14,7 +14,7 @@ export const createTokenRoutes = (deps: RouteDeps): TokenRoutes => {
   let rotateTokenValidator: ResponseValidator<AccessToken>
   let revokeTokenValidator: ResponseValidator<void>
 
-  if (deps.validateResponses) {
+  if (openApi) {
     rotateTokenValidator = openApi.createResponseValidator({
       path: getASPath('/token/{id}'),
       method: HttpMethod.POST

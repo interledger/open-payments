@@ -138,12 +138,15 @@ describe('token', (): void => {
             .spyOn(requestors, 'post')
             .mockResolvedValueOnce(mockedAccessToken)
 
-          createTokenRoutes({ openApi, ...deps, validateResponses }).rotate({
+          createTokenRoutes({
+            openApi: validateResponses ? openApi : undefined,
+            ...deps
+          }).rotate({
             url,
             accessToken
           })
           expect(postSpy).toHaveBeenCalledWith(
-            { ...deps, validateResponses },
+            deps,
             { url, accessToken },
             validateResponses ? true : undefined
           )
@@ -170,12 +173,15 @@ describe('token', (): void => {
             .spyOn(requestors, 'deleteRequest')
             .mockResolvedValueOnce()
 
-          createTokenRoutes({ openApi, ...deps, validateResponses }).revoke({
+          createTokenRoutes({
+            openApi: validateResponses ? openApi : undefined,
+            ...deps
+          }).revoke({
             url,
             accessToken
           })
           expect(deleteSpy).toHaveBeenCalledWith(
-            { ...deps, validateResponses },
+            deps,
             { url, accessToken },
             validateResponses ? true : undefined
           )

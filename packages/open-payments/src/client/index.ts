@@ -36,21 +36,20 @@ export interface BaseDeps {
   httpClient: HttpClient
   logger: Logger
   useHttp: boolean
-  validateResponses: boolean
 }
 
 interface UnauthenticatedClientDeps extends BaseDeps {
-  walletAddressServerOpenApi: OpenAPI
-  resourceServerOpenApi: OpenAPI
+  walletAddressServerOpenApi?: OpenAPI
+  resourceServerOpenApi?: OpenAPI
 }
 
 interface AuthenticatedClientDeps extends UnauthenticatedClientDeps {
-  authServerOpenApi: OpenAPI
+  authServerOpenApi?: OpenAPI
 }
 
 export interface RouteDeps extends BaseDeps {
   httpClient: HttpClient
-  openApi: OpenAPI
+  openApi?: OpenAPI
   logger: Logger
 }
 
@@ -143,16 +142,20 @@ const createUnauthenticatedDeps = async ({
       args?.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS
   })
 
-  const walletAddressServerOpenApi = await getWalletAddressServerOpenAPI()
-  const resourceServerOpenApi = await getResourceServerOpenAPI()
+  let walletAddressServerOpenApi: OpenAPI | undefined = undefined
+  let resourceServerOpenApi: OpenAPI | undefined = undefined
+
+  if (validateResponses) {
+    walletAddressServerOpenApi = await getWalletAddressServerOpenAPI()
+    resourceServerOpenApi = await getResourceServerOpenAPI()
+  }
 
   return {
     httpClient,
     walletAddressServerOpenApi,
     resourceServerOpenApi,
     logger,
-    useHttp,
-    validateResponses
+    useHttp
   }
 }
 
@@ -200,9 +203,15 @@ const createAuthenticatedClientDeps = async ({
     })
   }
 
-  const walletAddressServerOpenApi = await getWalletAddressServerOpenAPI()
-  const resourceServerOpenApi = await getResourceServerOpenAPI()
-  const authServerOpenApi = await getAuthServerOpenAPI()
+  let walletAddressServerOpenApi: OpenAPI | undefined = undefined
+  let resourceServerOpenApi: OpenAPI | undefined = undefined
+  let authServerOpenApi: OpenAPI | undefined = undefined
+
+  if (validateResponses) {
+    walletAddressServerOpenApi = await getWalletAddressServerOpenAPI()
+    resourceServerOpenApi = await getResourceServerOpenAPI()
+    authServerOpenApi = await getAuthServerOpenAPI()
+  }
 
   return {
     httpClient,
@@ -210,8 +219,7 @@ const createAuthenticatedClientDeps = async ({
     resourceServerOpenApi,
     authServerOpenApi,
     logger,
-    useHttp,
-    validateResponses
+    useHttp
   }
 }
 
