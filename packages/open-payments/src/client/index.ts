@@ -142,8 +142,8 @@ const createUnauthenticatedDeps = async ({
       args?.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS
   })
 
-  let walletAddressServerOpenApi: OpenAPI | undefined = undefined
-  let resourceServerOpenApi: OpenAPI | undefined = undefined
+  let walletAddressServerOpenApi: OpenAPI | undefined
+  let resourceServerOpenApi: OpenAPI | undefined
 
   if (validateResponses) {
     walletAddressServerOpenApi = await getWalletAddressServerOpenAPI()
@@ -203,9 +203,9 @@ const createAuthenticatedClientDeps = async ({
     })
   }
 
-  let walletAddressServerOpenApi: OpenAPI | undefined = undefined
-  let resourceServerOpenApi: OpenAPI | undefined = undefined
-  let authServerOpenApi: OpenAPI | undefined = undefined
+  let walletAddressServerOpenApi: OpenAPI | undefined
+  let resourceServerOpenApi: OpenAPI | undefined
+  let authServerOpenApi: OpenAPI | undefined
 
   if (validateResponses) {
     walletAddressServerOpenApi = await getWalletAddressServerOpenAPI()
