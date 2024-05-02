@@ -31,84 +31,105 @@ describe('wallet-address', (): void => {
     const walletAddress = mockWalletAddress()
 
     describe('get', (): void => {
-      test('calls get method with correct validator', async (): Promise<void> => {
-        const mockResponseValidator = ({ path, method }) =>
-          path === '/' && method === HttpMethod.GET
+      test.each`
+        validateResponses | description
+        ${true}           | ${'with response validation'}
+        ${false}          | ${'without response validation'}
+      `(
+        'calls get method $description',
+        async ({ validateResponses }): Promise<void> => {
+          const mockResponseValidator = ({ path, method }) =>
+            path === '/' && method === HttpMethod.GET
 
-        jest
-          .spyOn(openApi, 'createResponseValidator')
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .mockImplementation(mockResponseValidator as any)
+          jest
+            .spyOn(openApi, 'createResponseValidator')
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            .mockImplementation(mockResponseValidator as any)
 
-        const getSpy = jest
-          .spyOn(requestors, 'get')
-          .mockResolvedValueOnce(walletAddress)
+          const getSpy = jest
+            .spyOn(requestors, 'get')
+            .mockResolvedValueOnce(walletAddress)
 
-        await createWalletAddressRoutes({
-          openApi,
-          ...deps
-        }).get({ url: walletAddress.id })
+          await createWalletAddressRoutes({
+            ...deps,
+            openApi: validateResponses ? openApi : undefined
+          }).get({ url: walletAddress.id })
 
-        expect(getSpy).toHaveBeenCalledWith(
-          deps,
-          { url: walletAddress.id },
-          true
-        )
-      })
+          expect(getSpy).toHaveBeenCalledWith(
+            deps,
+            { url: walletAddress.id },
+            validateResponses ? true : undefined
+          )
+        }
+      )
     })
 
     describe('getKeys', (): void => {
-      test('calls get method with correct validator', async (): Promise<void> => {
-        const mockResponseValidator = ({ path, method }) =>
-          path === '/jwks.json' && method === HttpMethod.GET
+      test.each`
+        validateResponses | description
+        ${true}           | ${'with response validation'}
+        ${false}          | ${'without response validation'}
+      `(
+        'calls get method $description',
+        async ({ validateResponses }): Promise<void> => {
+          const mockResponseValidator = ({ path, method }) =>
+            path === '/jwks.json' && method === HttpMethod.GET
 
-        jest
-          .spyOn(openApi, 'createResponseValidator')
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .mockImplementation(mockResponseValidator as any)
+          jest
+            .spyOn(openApi, 'createResponseValidator')
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            .mockImplementation(mockResponseValidator as any)
 
-        const getSpy = jest
-          .spyOn(requestors, 'get')
-          .mockResolvedValueOnce([mockJwk()])
+          const getSpy = jest
+            .spyOn(requestors, 'get')
+            .mockResolvedValueOnce([mockJwk()])
 
-        await createWalletAddressRoutes({
-          openApi,
-          ...deps
-        }).getKeys({ url: walletAddress.id })
+          await createWalletAddressRoutes({
+            ...deps,
+            openApi: validateResponses ? openApi : undefined
+          }).getKeys({ url: walletAddress.id })
 
-        expect(getSpy).toHaveBeenCalledWith(
-          deps,
-          { url: `${walletAddress.id}/jwks.json` },
-          true
-        )
-      })
+          expect(getSpy).toHaveBeenCalledWith(
+            deps,
+            { url: `${walletAddress.id}/jwks.json` },
+            validateResponses ? true : undefined
+          )
+        }
+      )
     })
 
     describe('getDIDDocument', (): void => {
-      test('calls get method with correct validator', async (): Promise<void> => {
-        const mockResponseValidator = ({ path, method }) =>
-          path === '/did.json' && method === HttpMethod.GET
+      test.each`
+        validateResponses | description
+        ${true}           | ${'with response validation'}
+        ${false}          | ${'without response validation'}
+      `(
+        'calls get method $description',
+        async ({ validateResponses }): Promise<void> => {
+          const mockResponseValidator = ({ path, method }) =>
+            path === '/did.json' && method === HttpMethod.GET
 
-        jest
-          .spyOn(openApi, 'createResponseValidator')
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .mockImplementation(mockResponseValidator as any)
+          jest
+            .spyOn(openApi, 'createResponseValidator')
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            .mockImplementation(mockResponseValidator as any)
 
-        const getSpy = jest
-          .spyOn(requestors, 'get')
-          .mockResolvedValueOnce([mockDIDDocument()])
+          const getSpy = jest
+            .spyOn(requestors, 'get')
+            .mockResolvedValueOnce([mockDIDDocument()])
 
-        await createWalletAddressRoutes({
-          openApi,
-          ...deps
-        }).getDIDDocument({ url: walletAddress.id })
+          await createWalletAddressRoutes({
+            ...deps,
+            openApi: validateResponses ? openApi : undefined
+          }).getDIDDocument({ url: walletAddress.id })
 
-        expect(getSpy).toHaveBeenCalledWith(
-          deps,
-          { url: `${walletAddress.id}/did.json` },
-          true
-        )
-      })
+          expect(getSpy).toHaveBeenCalledWith(
+            deps,
+            { url: `${walletAddress.id}/did.json` },
+            validateResponses ? true : undefined
+          )
+        }
+      )
     })
   })
 })

@@ -39,17 +39,17 @@ export interface BaseDeps {
 }
 
 interface UnauthenticatedClientDeps extends BaseDeps {
-  walletAddressServerOpenApi: OpenAPI
-  resourceServerOpenApi: OpenAPI
+  walletAddressServerOpenApi?: OpenAPI
+  resourceServerOpenApi?: OpenAPI
 }
 
 interface AuthenticatedClientDeps extends UnauthenticatedClientDeps {
-  authServerOpenApi: OpenAPI
+  authServerOpenApi?: OpenAPI
 }
 
 export interface RouteDeps extends BaseDeps {
   httpClient: HttpClient
-  openApi: OpenAPI
+  openApi?: OpenAPI
   logger: Logger
 }
 
@@ -129,6 +129,7 @@ const parseKey = (
 
 const createUnauthenticatedDeps = async ({
   useHttp = false,
+  validateResponses = true,
   ...args
 }: Partial<CreateUnauthenticatedClientArgs> = {}): Promise<UnauthenticatedClientDeps> => {
   const logger = args?.logger ?? createLogger({ name: 'Open Payments Client' })
@@ -141,8 +142,13 @@ const createUnauthenticatedDeps = async ({
       args?.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS
   })
 
-  const walletAddressServerOpenApi = await getWalletAddressServerOpenAPI()
-  const resourceServerOpenApi = await getResourceServerOpenAPI()
+  let walletAddressServerOpenApi: OpenAPI | undefined
+  let resourceServerOpenApi: OpenAPI | undefined
+
+  if (validateResponses) {
+    walletAddressServerOpenApi = await getWalletAddressServerOpenAPI()
+    resourceServerOpenApi = await getResourceServerOpenAPI()
+  }
 
   return {
     httpClient,
@@ -155,6 +161,7 @@ const createUnauthenticatedDeps = async ({
 
 const createAuthenticatedClientDeps = async ({
   useHttp = false,
+  validateResponses = true,
   ...args
 }:
   | CreateAuthenticatedClientArgs
@@ -196,9 +203,15 @@ const createAuthenticatedClientDeps = async ({
     })
   }
 
-  const walletAddressServerOpenApi = await getWalletAddressServerOpenAPI()
-  const resourceServerOpenApi = await getResourceServerOpenAPI()
-  const authServerOpenApi = await getAuthServerOpenAPI()
+  let walletAddressServerOpenApi: OpenAPI | undefined
+  let resourceServerOpenApi: OpenAPI | undefined
+  let authServerOpenApi: OpenAPI | undefined
+
+  if (validateResponses) {
+    walletAddressServerOpenApi = await getWalletAddressServerOpenAPI()
+    resourceServerOpenApi = await getResourceServerOpenAPI()
+    authServerOpenApi = await getAuthServerOpenAPI()
+  }
 
   return {
     httpClient,
@@ -219,6 +232,8 @@ export interface CreateUnauthenticatedClientArgs {
   logLevel?: LevelWithSilent
   /** If enabled, all requests will use http as protocol. Use in development mode only. */
   useHttp?: boolean
+  /** Enables or disables response validation against the Open Payments OpenAPI specs. Defaults to true. */
+  validateResponses?: boolean
 }
 
 export interface UnauthenticatedClient {

@@ -30,62 +30,104 @@ describe('grant', (): void => {
     const accessToken = 'someAccessToken'
 
     describe('request', () => {
-      test('calls post method with correct validator', async (): Promise<void> => {
-        const mockResponseValidator = ({ path, method }) =>
-          path === '/' && method === HttpMethod.POST
+      test.each`
+        validateResponses | description
+        ${true}           | ${'with response validation'}
+        ${false}          | ${'without response validation'}
+      `(
+        'calls post method $description',
+        async ({ validateResponses }): Promise<void> => {
+          const mockResponseValidator = ({ path, method }) =>
+            path === '/' && method === HttpMethod.POST
 
-        jest
-          .spyOn(openApi, 'createResponseValidator')
-          .mockImplementation(mockResponseValidator as any)
+          jest
+            .spyOn(openApi, 'createResponseValidator')
+            .mockImplementation(mockResponseValidator as any)
 
-        const postSpy = jest.spyOn(requestors, 'post')
-        const grantRequest = mockGrantRequest()
+          const postSpy = jest.spyOn(requestors, 'post')
+          const grantRequest = mockGrantRequest()
 
-        await createGrantRoutes({ openApi, client, ...deps }).request(
-          { url },
-          grantRequest
-        )
+          await createGrantRoutes({
+            openApi: validateResponses ? openApi : undefined,
+            client,
+            ...deps
+          }).request({ url }, grantRequest)
 
-        expect(postSpy).toHaveBeenCalledWith(
-          deps,
-          {
-            url,
-            body: {
-              ...grantRequest,
-              client
-            }
-          },
-          true
-        )
-      })
+          expect(postSpy).toHaveBeenCalledWith(
+            deps,
+            {
+              url,
+              body: {
+                ...grantRequest,
+                client
+              }
+            },
+            validateResponses ? true : undefined
+          )
+        }
+      )
     })
 
     describe('cancel', () => {
-      test('calls delete method with correct validator', async (): Promise<void> => {
-        const mockResponseValidator = ({ path, method }) =>
-          path === '/continue/{id}' && method === HttpMethod.DELETE
+      test.each`
+        validateResponses | description
+        ${true}           | ${'with response validation'}
+        ${false}          | ${'without response validation'}
+      `(
+        'calls delete method $description',
+        async ({ validateResponses }): Promise<void> => {
+          const mockResponseValidator = ({ path, method }) =>
+            path === '/continue/{id}' && method === HttpMethod.DELETE
 
-        jest
-          .spyOn(openApi, 'createResponseValidator')
-          .mockImplementation(mockResponseValidator as any)
+          jest
+            .spyOn(openApi, 'createResponseValidator')
+            .mockImplementation(mockResponseValidator as any)
 
-        const deleteSpy = jest
-          .spyOn(requestors, 'deleteRequest')
-          .mockResolvedValueOnce()
+          const deleteSpy = jest
+            .spyOn(requestors, 'deleteRequest')
+            .mockResolvedValueOnce()
 
-        await createGrantRoutes({ openApi, client, ...deps }).cancel({
-          url,
-          accessToken
-        })
+          await createGrantRoutes({
+            openApi: validateResponses ? openApi : undefined,
+            client,
+            ...deps
+          }).cancel({
+            url,
+            accessToken
+          })
 
-        expect(deleteSpy).toHaveBeenCalledWith(deps, { url, accessToken }, true)
-      })
+          expect(deleteSpy).toHaveBeenCalledWith(
+            deps,
+            { url, accessToken },
+            validateResponses ? true : undefined
+          )
+        }
+      )
     })
 
     describe('continue', () => {
-      describe('calls post method with correct validator', (): void => {
+      describe('calls post method', (): void => {
         const mockResponseValidator = ({ path, method }) =>
           path === '/continue/{id}' && method === HttpMethod.POST
+
+        test('without response validation', async (): Promise<void> => {
+          const postSpy = jest.spyOn(requestors, 'post')
+
+          await createGrantRoutes({
+            openApi: undefined,
+            client,
+            ...deps
+          }).continue({
+            url,
+            accessToken
+          })
+
+          expect(postSpy).toHaveBeenCalledWith(
+            deps,
+            { url, accessToken },
+            undefined
+          )
+        })
 
         test('with interact_ref', async (): Promise<void> => {
           jest
@@ -95,7 +137,11 @@ describe('grant', (): void => {
           const postSpy = jest.spyOn(requestors, 'post')
           const interact_ref = uuid()
 
-          await createGrantRoutes({ openApi, client, ...deps }).continue(
+          await createGrantRoutes({
+            openApi,
+            client,
+            ...deps
+          }).continue(
             {
               url,
               accessToken
@@ -117,7 +163,11 @@ describe('grant', (): void => {
           const postSpy = jest.spyOn(requestors, 'post')
           const body = {}
 
-          await createGrantRoutes({ openApi, client, ...deps }).continue(
+          await createGrantRoutes({
+            openApi,
+            client,
+            ...deps
+          }).continue(
             {
               url,
               accessToken
@@ -138,7 +188,11 @@ describe('grant', (): void => {
 
           const postSpy = jest.spyOn(requestors, 'post')
 
-          await createGrantRoutes({ openApi, client, ...deps }).continue({
+          await createGrantRoutes({
+            openApi,
+            client,
+            ...deps
+          }).continue({
             url,
             accessToken
           })

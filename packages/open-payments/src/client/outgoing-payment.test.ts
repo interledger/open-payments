@@ -493,114 +493,141 @@ describe('outgoing-payment', (): void => {
 
   describe('routes', (): void => {
     describe('get', (): void => {
-      test('calls get method with correct validator', async (): Promise<void> => {
-        const mockResponseValidator = ({ path, method }) =>
-          path === '/outgoing-payments/{id}' && method === HttpMethod.GET
+      test.each`
+        validateResponses | description
+        ${true}           | ${'with response validation'}
+        ${false}          | ${'without response validation'}
+      `(
+        'calls get method $description',
+        async ({ validateResponses }): Promise<void> => {
+          const mockResponseValidator = ({ path, method }) =>
+            path === '/outgoing-payments/{id}' && method === HttpMethod.GET
 
-        const url = `${serverAddress}/outgoing-payments/1`
+          const url = `${serverAddress}/outgoing-payments/1`
 
-        jest
-          .spyOn(openApi, 'createResponseValidator')
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .mockImplementation(mockResponseValidator as any)
+          jest
+            .spyOn(openApi, 'createResponseValidator')
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            .mockImplementation(mockResponseValidator as any)
 
-        const getSpy = jest
-          .spyOn(requestors, 'get')
-          .mockResolvedValueOnce(mockOutgoingPayment())
+          const getSpy = jest
+            .spyOn(requestors, 'get')
+            .mockResolvedValueOnce(mockOutgoingPayment())
 
-        await createOutgoingPaymentRoutes({
-          openApi,
-          ...deps
-        }).get({ url, accessToken: 'accessToken' })
+          await createOutgoingPaymentRoutes({
+            openApi: validateResponses ? openApi : undefined,
+            ...deps
+          }).get({ url, accessToken: 'accessToken' })
 
-        expect(getSpy).toHaveBeenCalledWith(
-          deps,
-          {
-            url,
-            accessToken: 'accessToken'
-          },
-          true
-        )
-      })
+          expect(getSpy).toHaveBeenCalledWith(
+            deps,
+            {
+              url,
+              accessToken: 'accessToken'
+            },
+            validateResponses ? true : undefined
+          )
+        }
+      )
     })
 
     describe('list', (): void => {
-      test('calls get method with correct validator', async (): Promise<void> => {
-        const mockResponseValidator = ({ path, method }) =>
-          path === '/outgoing-payments' && method === HttpMethod.GET
+      test.each`
+        validateResponses | description
+        ${true}           | ${'with response validation'}
+        ${false}          | ${'without response validation'}
+      `(
+        'calls get method $description',
+        async ({ validateResponses }): Promise<void> => {
+          const mockResponseValidator = ({ path, method }) =>
+            path === '/outgoing-payments' && method === HttpMethod.GET
 
-        const outgoingPaymentPaginationResult =
-          mockOutgoingPaymentPaginationResult({
-            result: [mockOutgoingPayment()]
+          const outgoingPaymentPaginationResult =
+            mockOutgoingPaymentPaginationResult({
+              result: [mockOutgoingPayment()]
+            })
+          const url = `${serverAddress}/outgoing-payments`
+
+          jest
+            .spyOn(openApi, 'createResponseValidator')
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            .mockImplementation(mockResponseValidator as any)
+
+          const getSpy = jest
+            .spyOn(requestors, 'get')
+            .mockResolvedValueOnce(outgoingPaymentPaginationResult)
+
+          await createOutgoingPaymentRoutes({
+            openApi: validateResponses ? openApi : undefined,
+            ...deps
+          }).list({
+            url: serverAddress,
+            walletAddress,
+            accessToken: 'accessToken'
           })
-        const url = `${serverAddress}/outgoing-payments`
 
-        jest
-          .spyOn(openApi, 'createResponseValidator')
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .mockImplementation(mockResponseValidator as any)
-
-        const getSpy = jest
-          .spyOn(requestors, 'get')
-          .mockResolvedValueOnce(outgoingPaymentPaginationResult)
-
-        await createOutgoingPaymentRoutes({
-          openApi,
-          ...deps
-        }).list({
-          url: serverAddress,
-          walletAddress,
-          accessToken: 'accessToken'
-        })
-
-        expect(getSpy).toHaveBeenCalledWith(
-          deps,
-          {
-            url,
-            accessToken: 'accessToken',
-            queryParams: {
-              'wallet-address': walletAddress
-            }
-          },
-          true
-        )
-      })
+          expect(getSpy).toHaveBeenCalledWith(
+            deps,
+            {
+              url,
+              accessToken: 'accessToken',
+              queryParams: {
+                'wallet-address': walletAddress
+              }
+            },
+            validateResponses ? true : undefined
+          )
+        }
+      )
     })
 
     describe('create', (): void => {
-      test('calls post method with correct validator', async (): Promise<void> => {
-        const mockResponseValidator = ({ path, method }) =>
-          path === '/outgoing-payments' && method === HttpMethod.POST
+      test.each`
+        validateResponses | description
+        ${true}           | ${'with response validation'}
+        ${false}          | ${'without response validation'}
+      `(
+        'calls post method $description',
+        async ({ validateResponses }): Promise<void> => {
+          const mockResponseValidator = ({ path, method }) =>
+            path === '/outgoing-payments' && method === HttpMethod.POST
 
-        const url = `${serverAddress}/outgoing-payments`
-        const outgoingPaymentCreateArgs = {
-          quoteId: uuid(),
-          walletAddress
+          const url = `${serverAddress}/outgoing-payments`
+          const outgoingPaymentCreateArgs = {
+            quoteId: uuid(),
+            walletAddress
+          }
+
+          jest
+            .spyOn(openApi, 'createResponseValidator')
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            .mockImplementation(mockResponseValidator as any)
+
+          const postSpy = jest
+            .spyOn(requestors, 'post')
+            .mockResolvedValueOnce(
+              mockOutgoingPayment(outgoingPaymentCreateArgs)
+            )
+
+          await createOutgoingPaymentRoutes({
+            openApi: validateResponses ? openApi : undefined,
+            ...deps
+          }).create(
+            { url: serverAddress, accessToken: 'accessToken' },
+            outgoingPaymentCreateArgs
+          )
+
+          expect(postSpy).toHaveBeenCalledWith(
+            deps,
+            {
+              url,
+              accessToken: 'accessToken',
+              body: outgoingPaymentCreateArgs
+            },
+            validateResponses ? true : undefined
+          )
         }
-
-        jest
-          .spyOn(openApi, 'createResponseValidator')
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .mockImplementation(mockResponseValidator as any)
-
-        const postSpy = jest
-          .spyOn(requestors, 'post')
-          .mockResolvedValueOnce(mockOutgoingPayment(outgoingPaymentCreateArgs))
-
-        await createOutgoingPaymentRoutes({
-          openApi,
-          ...deps
-        }).create(
-          { url: serverAddress, accessToken: 'accessToken' },
-          outgoingPaymentCreateArgs
-        )
-
-        expect(postSpy).toHaveBeenCalledWith(
-          deps,
-          { url, accessToken: 'accessToken', body: outgoingPaymentCreateArgs },
-          true
-        )
-      })
+      )
     })
   })
 })
