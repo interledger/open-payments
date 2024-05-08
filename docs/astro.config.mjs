@@ -218,6 +218,10 @@ export default defineConfig({
             {
               label: 'Supported payment methods',
               link: '/resources/payment-methods/'
+            },
+            {
+              label: 'Get involved',
+              link: '/resources/get-involved/'
             }
           ]
         },
