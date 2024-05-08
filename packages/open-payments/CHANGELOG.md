@@ -1,5 +1,13 @@
 # @interledger/open-payments
 
+## 6.10.0
+
+### Minor Changes
+
+- 8950c21: Replace axios with [ky](https://github.com/sindresorhus/ky) (a wrapper around native fetch)
+- 1bf703c: Adding `validateResponses` flag to Open Payments client initialization functions.
+  This flag enables or disables response validation against the Open Payments OpenAPI specs (via the @interledger/openapi package).
+
 ## 6.9.0
 
 ### Minor Changes
