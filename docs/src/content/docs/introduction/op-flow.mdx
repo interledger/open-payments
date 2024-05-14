@@ -147,58 +147,60 @@ Similarly, the client can provide the end-user with details about a specific <Li
 
 ## Bringing it all together
 
-This diagram brings the aforementioned concepts together, minus getting transaction history, to present a high-level overview of a complete OP transaction.
+This diagram brings the aforementioned concepts together, except for getting transaction history, to present a full transaction sequence without delving too deeply into the contents of each request and response. A link to view a larger version of the diagram is provided at the bottom of the page.
 
-To facilitate OP payments, both the payer's ASE and the payee's ASE must operate their own authorization and resource servers. As the creation of the `outgoing-payment` requires explicit consent from the payer (i.e. the client's end-user), the client will issue a redirect to the payer's Identity Provider to obtain the payer's consent. Visit the [GNAP](/introduction/grants) page for more information.
+As shown below, both the sender and the recipient's ASEs must operate their own authorization and resource servers. Grant requests for incoming payment and quote resources are typically non-interactive. A grant request for an outgoing payment resource requires explicit consent from the sender (e.g., the client's end user), which is obtained through the sender's [identity provider](/introduction/grants#identity-providers).
+
+More information about grant interaction flows can be found in the [Grant negotiation and authorization](/introduction/grants) page.
 
 <MermaidWrapper client:load>
 
 <Mermaid
   graph={`sequenceDiagram
-    participant IP as Identity Provider
-    actor Cu as Payer
-    participant A2 as Payer-side Auth Server
-    participant R2 as Payer-side Resource Server
-    participant R1 as Payee-side Resource Server
-    participant A1 as Payee-side Auth Server
-    participant Cl as Client
-
-    activate Cl
-    Cl->>+A1: incoming payment grant request
-    A1->>-Cl: grant + access token
-    Cl->>+R1: incoming payment creation request
-    R1->>+A1: token introspection
-    A1->>-R1: token valid + grant details
-    R1->>-Cl: incoming payment
-    rect rgba(0, 0, 255, .1)
-    Cl->>+Cu: request wallet address
-    Cu->>Cl: wallet address
+    autonumber
+    box rgb(225,245,254) Sender's<br/>account servicing entity
+    participant SIDP as Identity provider
+    participant SRS as Resource server
+    participant SAS as Auth server
     end
-    Cl->>+R2: query customer's wallet address
-    R2->>-Cl: wallet address details including auth server endpoint
-    Cl->>+A2: quote grant request
-    A2->>-Cl: grant + access token
-    Cl->>+R2: quote creation request
-    R2->>+A2: token introspection
-    A2->>-R2: token valid + grant details
-    R2->>-Cl: quote
-    Cl->>+A2: outgoing payment grant request
-    A2->>-Cl: IdP redirect info
-    rect rgba(0, 0, 255, .1)
-    Cl->>IP: redirect to IdP
-    IP->>Cu: consent to grant request
-    Cu->>IP: consent given
-    Cu->>-Cl: interaction finished
+    participant SC as Client
+    box rgb(232,245,233) Recipient's<br/>account servicing entity
+    participant RW as Wallet address URL
+    participant RAS as Auth server
+    participant RRS as Resource server
     end
-    Cl->>+A2: continue grant request
-    A2->>-Cl: grant + access token
-    Cl->>+R2: outgoing payment creation request
-    R2->>+A2: token introspection
-    A2->>-R2: token valid + grant details
-    R2->>R2: grant accounting
-    R2->>-Cl: outgoing payment
-    deactivate Cl
-
+    SC->>+RW: Sends GET request
+    RW->>-SC: Responds with auth & resource server URLs
+    SC->>+RAS: Sends a non-interactive grant request<br/>(type=incoming-payment)
+    RAS->>-SC: Responds with access token & grant
+    SC->>+RRS: Sends request to create an incoming payment resource
+    RRS->>RAS: Requests validation of access token
+    RAS->>RRS: Access token is validated
+    RRS->>-SC: Incoming payment resource is created
+    SC->>+SAS: Sends non-interactive grant request<br/>(type=quote)
+    SAS->>-SC: Responds with access token and grant
+    SC->>+SRS: Sends request to create a quote resource
+    SRS->>-SC: Quote resource is created
+    SC->>+SAS: Sends interactive grant request<br/>(type=outgoing-payment)
+    SAS->>-SC: Responds with interact redirect uri and continue uri
+    SC->>+SAS: Navigates to interact redirect uri
+    SAS->>SAS: Starts interaction<br/>and sets session
+    SAS->>-SC: Responds with identity provider uri
+    SC->>+SIDP: Navigates (redirects) to identity provider
+    SIDP->>SIDP: Sender accepts interaction,<br/>for eg: confirms payment intent
+    SIDP->>SAS: Sends interaction choice
+    SAS->>SIDP: Accepts choice
+    SIDP->>SAS: Requests to finish interaction
+    SAS->>SAS: Ends session
+    SAS->>SIDP: Redirects to finish url defined in initial grant request
+    SIDP->>-SC: Follows redirect
+    SC->>SC: Verifies hash
+    SC->>+SAS: Sends a grant continuation request
+    SAS->>-SC: Responds with a grant access token
+    SC->>+SRS: Sends request to create an outgoing payment resource
+    SRS->>SAS: Requests validation of access token
+    SAS->>SRS: Access token is validated
+    SRS->>-SC: Outgoing payment resource is created
 `}
 />
 
