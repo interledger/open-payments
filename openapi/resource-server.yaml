@@ -253,7 +253,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/outgoing-payment'
+                $ref: '#/components/schemas/outgoing-payment-with-spent-amounts'
               examples:
                 New Fixed Send Outgoing Payment for $25:
                   value:
@@ -271,6 +271,14 @@ paths:
                       assetScale: 2
                     sentAmount:
                       value: '0'
+                      assetCode: USD
+                      assetScale: 2
+                    grantSpentDebitAmount:
+                      value: '2600'
+                      assetCode: USD
+                      assetScale: 2
+                    grantSpentReceiveAmount:
+                      value: '2500'
                       assetCode: USD
                       assetScale: 2
                     metadata:
@@ -1012,6 +1020,20 @@ components:
         - sentAmount
         - createdAt
         - updatedAt
+    outgoing-payment-with-spent-amounts:
+      allOf:
+        - $ref: '#/components/schemas/outgoing-payment'
+        - type: object
+          properties:
+            grantSpentDebitAmount:
+              $ref: './schemas.yaml#/components/schemas/amount'
+              description: The amount already deducted from the sender's account against the outgoing payment.
+            grantSpentReceiveAmount:
+              $ref: './schemas.yaml#/components/schemas/amount'
+              description: The total amount already received against the outgoing payment.
+          required:
+            - grantSpentDebitAmount
+            - grantSpentReceiveAmount
     quote:
       title: Quote
       description: A **quote** resource represents the quoted amount details with which an Outgoing Payment may be created.

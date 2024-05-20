@@ -38,6 +38,8 @@ export type CreateIncomingPaymentArgs =
   RSOperations['create-incoming-payment']['requestBody']['content']['application/json']
 export type IncomingPaymentPaginationResult = PaginationResult<IncomingPayment>
 export type OutgoingPayment = RSComponents['schemas']['outgoing-payment']
+export type OutgoingPaymentWithSpentAmounts =
+  RSComponents['schemas']['outgoing-payment-with-spent-amounts']
 export type CreateOutgoingPaymentArgs =
   RSOperations['create-outgoing-payment']['requestBody']['content']['application/json']
 type PaginationResult<T> = {

@@ -188,6 +188,12 @@ export interface components {
        */
       updatedAt: string;
     };
+    "outgoing-payment-with-spent-amounts": components["schemas"]["outgoing-payment"] & {
+      /** @description The amount already deducted from the sender's account against the outgoing payment. */
+      grantSpentDebitAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
+      /** @description The total amount already received against the outgoing payment. */
+      grantSpentReceiveAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
+    };
     /**
      * Quote
      * @description A **quote** resource represents the quoted amount details with which an Outgoing Payment may be created.
@@ -406,7 +412,7 @@ export interface operations {
       /** Outgoing Payment Created */
       201: {
         content: {
-          "application/json": components["schemas"]["outgoing-payment"];
+          "application/json": components["schemas"]["outgoing-payment-with-spent-amounts"];
         };
       };
       401: components["responses"]["401"];
