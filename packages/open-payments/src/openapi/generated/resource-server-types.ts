@@ -188,6 +188,10 @@ export interface components {
        */
       updatedAt: string;
     };
+    /**
+     * Outgoing Payment With Grant Spent Amounts
+     * @description An **outgoing payment** resource represents a payment that will be, is currently being, or has previously been, sent from the wallet address.
+     */
     "outgoing-payment-with-spent-amounts": components["schemas"]["outgoing-payment"] & {
       /** @description The amount already deducted from the sender's account against the outgoing payment. */
       grantSpentDebitAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
