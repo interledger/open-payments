@@ -1021,6 +1021,8 @@ components:
         - createdAt
         - updatedAt
     outgoing-payment-with-spent-amounts:
+      title: Outgoing Payment With Grant Spent Amounts
+      description: 'An **outgoing payment** resource represents a payment that will be, is currently being, or has previously been, sent from the wallet address.'
       allOf:
         - $ref: '#/components/schemas/outgoing-payment'
         - type: object
