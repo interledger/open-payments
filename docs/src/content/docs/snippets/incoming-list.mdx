@@ -7,6 +7,7 @@ import { Tabs, TabItem } from '@astrojs/starlight/components'
 import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-prerequisites.mdx'
+import Js from '/src/partials/js-prerequisites.mdx'
 
 After one or more incoming payments have been created on a wallet address, an authorized client can look up active and pending incoming payments on that wallet address.
 
@@ -49,6 +50,39 @@ Run `tsx path/to/directory/index.ts`.
 {/* prettier-ignore */}
 <p>
   <LinkOut href='https://github.com/interledger/open-payments-snippets/blob/main/incoming-payment/incoming-payment-list.ts'>View full source</LinkOut>
+</p>
+
+</TabItem>
+<TabItem label='JavaScript'>
+<Js />
+
+#### Get started
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/incoming-payment/incoming-payment-list.ts'
+  chunk='1'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/incoming-payment/incoming-payment-list.ts'
+  chunk='2'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/incoming-payment/incoming-payment-list.ts'
+  chunk='3'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/incoming-payment/incoming-payment-list.ts'
+  chunk='4'
+/>
+
+Run `node path/to/directory/index.js`.
+
+{/* prettier-ignore */}
+<p>
+  <LinkOut href='https://github.com/interledger/open-payments-snippets/blob/main/incoming-payment/incoming-payment-list.js'>View full source</LinkOut>
 </p>
 
 </TabItem>

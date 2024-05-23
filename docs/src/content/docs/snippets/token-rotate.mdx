@@ -7,6 +7,7 @@ import { Tabs, TabItem } from '@astrojs/starlight/components'
 import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-prerequisites.mdx'
+import Js from '/src/partials/js-prerequisites.mdx'
 
 Rotating an access token consists of the authorization server issuing a new token in place of the existing token, with the same rights and properties as the original token. If, for example, an access token expires, an authorized client can request the token be rotated.
 
@@ -51,6 +52,39 @@ Run `tsx path/to/directory/index.ts`.
 {/* prettier-ignore */}
 <p>
   <LinkOut href='https://github.com/interledger/open-payments-snippets/blob/main/token/token-rotate.ts'>View full source</LinkOut>
+</p>
+
+</TabItem>
+<TabItem label='JavaScript'>
+<Js />
+
+#### Get started
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/token/token-rotate.ts'
+  chunk='1'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/token/token-rotate.ts'
+  chunk='2'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/token/token-rotate.ts'
+  chunk='3'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/token/token-rotate.ts'
+  chunk='4'
+/>
+
+Run `node path/to/directory/index.js`.
+
+{/* prettier-ignore */}
+<p>
+  <LinkOut href='https://github.com/interledger/open-payments-snippets/blob/main/token/token-rotate.js'>View full source</LinkOut>
 </p>
 
 </TabItem>
