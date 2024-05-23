@@ -1,0 +1,1 @@
+requests-http-signature==0.7.1
