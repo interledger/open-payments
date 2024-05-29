@@ -7,6 +7,7 @@ import { Tabs, TabItem } from '@astrojs/starlight/components'
 import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-prerequisites.mdx'
+import Js from '/src/partials/js-prerequisites.mdx'
 
 If an authorized client no longer needs access to protected resources, the client can revoke the corresponding grant request.
 
@@ -44,6 +45,34 @@ Run `tsx path/to/directory/index.ts`.
 {/* prettier-ignore */}
 <p>
   <LinkOut href='https://github.com/interledger/open-payments-snippets/blob/main/grant/grant-revoke.ts'>View full source</LinkOut>
+</p>
+
+</TabItem>
+<TabItem label='JavaScript'>
+<Js />
+
+#### Get started
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-revoke.ts'
+  chunk='1'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-revoke.ts'
+  chunk='2'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-revoke.ts'
+  chunk='3'
+/>
+
+Run `node path/to/directory/index.js`.
+
+{/* prettier-ignore */}
+<p>
+  <LinkOut href='https://github.com/interledger/open-payments-snippets/blob/main/grant/grant-revoke.js'>View full source</LinkOut>
 </p>
 
 </TabItem>
