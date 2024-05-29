@@ -29,7 +29,6 @@ export default defineConfig({
         src: './public/favicon.svg'
       },
       plugins: [
-        starlightLinksValidator(),
         // Generate the OpenAPI documentation pages.
         starlightOpenAPI([
           {
@@ -47,7 +46,12 @@ export default defineConfig({
             label: 'Open Payments Authorization Server',
             schema: '../openapi/auth-server.yaml'
           }
-        ])
+        ]),
+        starlightLinksValidator({
+          exclude: [
+            '/apis/{auth-server,resource-server,wallet-address-server}/**/*'
+          ]
+        })
       ],
       sidebar: [
         {
