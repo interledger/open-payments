@@ -218,9 +218,9 @@ export interface components {
       debitAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
       /** @description The total amount that has been sent under this outgoing payment. */
       sentAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
-      /** @description The amount already deducted from the sender's account against the outgoing payment. */
+      /** @description The total amount already deducted from the sender's account using the current outgoing payment grant. */
       grantSpentDebitAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
-      /** @description The total amount already received against the outgoing payment. */
+      /** @description The total amount already received (by all receivers) against the current outgoing payment grant. */
       grantSpentReceiveAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
       /** @description Additional metadata associated with the outgoing payment. (Optional) */
       metadata?: { [key: string]: unknown };
