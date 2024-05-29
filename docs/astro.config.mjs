@@ -1,6 +1,7 @@
 import { defineConfig } from 'astro/config'
 import starlight from '@astrojs/starlight'
 import starlightOpenAPI from 'starlight-openapi'
+import starlightLinksValidator from 'starlight-links-validator'
 
 // https://astro.build/config
 export default defineConfig({
@@ -28,6 +29,7 @@ export default defineConfig({
         src: './public/favicon.svg'
       },
       plugins: [
+        starlightLinksValidator(),
         // Generate the OpenAPI documentation pages.
         starlightOpenAPI([
           {
