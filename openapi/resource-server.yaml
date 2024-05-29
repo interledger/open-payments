@@ -1053,31 +1053,6 @@ components:
           metadata:
             description: APlusVideo subscription
             externalRef: 'customer: 847458475'
-        - id: 'https://ilp.rafiki.money/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
-          walletAddress: 'https://ilp.rafiki.money/alice/'
-          failed: false
-          receiver: 'https://ilp.rafiki.money/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
-          debitAmount:
-            value: '7126'
-            assetCode: USD
-            assetScale: 2
-          sentAmount:
-            value: '7026'
-            assetCode: USD
-            assetScale: 2
-          grantSpentDebitAmount:
-            value: '7126'
-            assetCode: USD
-            assetScale: 2
-          grantSpentReceiveAmount:
-            value: '7026'
-            assetCode: USD
-            assetScale: 2
-          createdAt: '2022-03-12T23:20:50.52Z'
-          updatedAt: '2022-04-01T10:24:36.11Z'
-          metadata:
-            description: Thank you for your purchase at ShoeShop!
-            externalRef: INV2022-8943756
       properties:
         id:
           type: string
