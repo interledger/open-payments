@@ -16,7 +16,8 @@
     "mermaid": "^10.9.0",
     "sharp": "^0.33.3",
     "shiki": "1.4.0",
-    "starlight-openapi": "^0.6.3"
+    "starlight-openapi": "^0.6.3",
+    "starlight-links-validator": "^0.9.0"
   },
   "devDependencies": {
     "prettier": "3.2.5"
