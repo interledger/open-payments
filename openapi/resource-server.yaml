@@ -1045,6 +1045,27 @@ components:
             value: '2600'
             assetCode: USD
             assetScale: 2
+          createdAt: '2022-03-12T23:20:50.52Z'
+          updatedAt: '2022-04-01T10:24:36.11Z'
+          metadata:
+            description: APlusVideo subscription
+            externalRef: 'customer: 847458475'
+        - id: 'https://ilp.rafiki.money/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
+          walletAddress: 'https://ilp.rafiki.money/alice/'
+          failed: false
+          receiver: 'https://ilp.rafiki.money/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
+          receiveAmount:
+            value: '2500'
+            assetCode: USD
+            assetScale: 2
+          debitAmount:
+            value: '2600'
+            assetCode: USD
+            assetScale: 2
+          sentAmount:
+            value: '2500'
+            assetCode: USD
+            assetScale: 2
           grantSpentReceiveAmount:
             value: '2500'
             assetCode: USD
@@ -1088,10 +1109,10 @@ components:
           description: The total amount that has been sent under this outgoing payment.
         grantSpentDebitAmount:
           $ref: './schemas.yaml#/components/schemas/amount'
-          description: The total amount already deducted from the sender's account using the current outgoing payment grant.
+          description: The total amount successfully deducted from the sender's account using the current outgoing payment grant.
         grantSpentReceiveAmount:
           $ref: './schemas.yaml#/components/schemas/amount'
-          description: The total amount already received (by all receivers) against the current outgoing payment grant.
+          description: The total amount successfully received (by all receivers) using the current outgoing payment grant.
         metadata:
           type: object
           description: Additional metadata associated with the outgoing payment. (Optional)
@@ -1112,8 +1133,6 @@ components:
         - sentAmount
         - createdAt
         - updatedAt
-        - grantSpentDebitAmount
-        - grantSpentReceiveAmount
     quote:
       title: Quote
       description: A **quote** resource represents the quoted amount details with which an Outgoing Payment may be created.
