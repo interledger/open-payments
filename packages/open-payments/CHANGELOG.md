@@ -1,5 +1,11 @@
 # @interledger/open-payments
 
+## 6.11.0
+
+### Minor Changes
+
+- 5c0e768: Changes POST /outgoing-payment return to new 'outgoing-payment-with-spent-amounts' type with grantSpentDebitAmount and grantSpentReceiveAmount
+
 ## 6.10.0
 
 ### Minor Changes
