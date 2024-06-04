@@ -8,6 +8,7 @@ export {
   IlpPaymentMethod,
   Quote,
   OutgoingPayment,
+  OutgoingPaymentWithSpentAmounts,
   PendingGrant,
   Grant,
   isPendingGrant,
