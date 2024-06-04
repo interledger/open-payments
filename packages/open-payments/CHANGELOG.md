@@ -1,5 +1,11 @@
 # @interledger/open-payments
 
+## 6.11.1
+
+### Patch Changes
+
+- 73e2c52: Export OutgoingPaymentWithSpentAmounts
+
 ## 6.11.0
 
 ### Minor Changes
