@@ -17,7 +17,8 @@ import {
   IncomingPaymentWithPaymentMethods,
   IlpPaymentMethod,
   PublicIncomingPayment,
-  DIDDocument
+  DIDDocument,
+  OutgoingPaymentWithSpentAmounts
 } from '../types'
 import { v4 as uuid } from 'uuid'
 import { ResponseValidator, ValidationError } from '@interledger/openapi'
@@ -190,6 +191,23 @@ export const mockOutgoingPayment = (
   metadata: { externalRef: 'INV #1', description: 'some description' },
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
+  ...overrides
+})
+
+export const mockOutgoingPaymentWithSpentAmounts = (
+  overrides?: Partial<OutgoingPaymentWithSpentAmounts>
+): OutgoingPaymentWithSpentAmounts => ({
+  ...mockOutgoingPayment(),
+  grantSpentDebitAmount: {
+    assetCode: 'USD',
+    assetScale: 2,
+    value: '10'
+  },
+  grantSpentReceiveAmount: {
+    assetCode: 'USD',
+    assetScale: 2,
+    value: '10'
+  },
   ...overrides
 })
 

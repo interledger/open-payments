@@ -8,6 +8,7 @@ import {
 import { OpenAPI, HttpMethod } from '@interledger/openapi'
 import {
   mockOutgoingPayment,
+  mockOutgoingPaymentWithSpentAmounts,
   mockOpenApiResponseValidators,
   mockOutgoingPaymentPaginationResult,
   createTestDeps
@@ -309,7 +310,7 @@ describe('outgoing-payment', (): void => {
         assert(!(quoteId && incomingPayment))
         assert(!(quoteId && debitAmount))
 
-        const outgoingPayment = mockOutgoingPayment({
+        const outgoingPayment = mockOutgoingPaymentWithSpentAmounts({
           quoteId: quoteId || uuid(),
           metadata
         })

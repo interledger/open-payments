@@ -189,6 +189,53 @@ export interface components {
       updatedAt: string;
     };
     /**
+     * Outgoing Payment With Grant Spent Amounts
+     * @description An **outgoing payment** resource represents a payment that will be, is currently being, or has previously been, sent from the wallet address.
+     */
+    "outgoing-payment-with-spent-amounts": {
+      /**
+       * Format: uri
+       * @description The URL identifying the outgoing payment.
+       */
+      id: string;
+      /**
+       * Format: uri
+       * @description The URL of the wallet address from which this payment is sent.
+       */
+      walletAddress: string;
+      /**
+       * Format: uri
+       * @description The URL of the quote defining this payment's amounts.
+       */
+      quoteId?: string;
+      /** @description Describes whether the payment failed to send its full amount. */
+      failed?: boolean;
+      /** @description The URL of the incoming payment that is being paid. */
+      receiver: external["schemas.yaml"]["components"]["schemas"]["receiver"];
+      /** @description The total amount that should be received by the receiver when this outgoing payment has been paid. */
+      receiveAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
+      /** @description The total amount that should be deducted from the sender's account when this outgoing payment has been paid. */
+      debitAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
+      /** @description The total amount that has been sent under this outgoing payment. */
+      sentAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
+      /** @description The total amount successfully deducted from the sender's account using the current outgoing payment grant. */
+      grantSpentDebitAmount?: external["schemas.yaml"]["components"]["schemas"]["amount"];
+      /** @description The total amount successfully received (by all receivers) using the current outgoing payment grant. */
+      grantSpentReceiveAmount?: external["schemas.yaml"]["components"]["schemas"]["amount"];
+      /** @description Additional metadata associated with the outgoing payment. (Optional) */
+      metadata?: { [key: string]: unknown };
+      /**
+       * Format: date-time
+       * @description The date and time when the outgoing payment was created.
+       */
+      createdAt: string;
+      /**
+       * Format: date-time
+       * @description The date and time when the outgoing payment was updated.
+       */
+      updatedAt: string;
+    };
+    /**
      * Quote
      * @description A **quote** resource represents the quoted amount details with which an Outgoing Payment may be created.
      */
@@ -406,7 +453,7 @@ export interface operations {
       /** Outgoing Payment Created */
       201: {
         content: {
-          "application/json": components["schemas"]["outgoing-payment"];
+          "application/json": components["schemas"]["outgoing-payment-with-spent-amounts"];
         };
       };
       401: components["responses"]["401"];
