@@ -10,16 +10,16 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/starlight": "^0.22.0",
-    "@interledger/docs-design-system": "^0.4.0",
-    "astro": "4.7.0",
-    "mermaid": "^10.9.0",
-    "sharp": "^0.33.3",
-    "shiki": "1.4.0",
-    "starlight-openapi": "^0.6.3",
+    "@astrojs/starlight": "^0.24.5",
+    "@interledger/docs-design-system": "^0.5.0",
+    "astro": "4.11.3",
+    "mermaid": "^10.9.1",
+    "sharp": "^0.33.4",
+    "shiki": "1.10.0",
+    "starlight-openapi": "^0.6.4",
     "starlight-links-validator": "^0.9.0"
   },
   "devDependencies": {
-    "prettier": "3.2.5"
+    "prettier": "3.3.2"
   }
 }
