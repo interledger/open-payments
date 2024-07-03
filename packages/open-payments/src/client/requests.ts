@@ -149,7 +149,7 @@ interface HandleErrorArgs {
   requestType: 'POST' | 'DELETE' | 'GET'
 }
 
-const handleError = async (
+export const handleError = async (
   deps: BaseDeps,
   args: HandleErrorArgs
 ): Promise<never> => {
@@ -158,23 +158,32 @@ const handleError = async (
   let errorDescription
   let errorStatus
   let validationErrors
+  let errorCode
 
   const { HTTPError } = await import('ky')
 
   if (error instanceof HTTPError) {
-    let responseBody
+    let responseBody:
+      | {
+          error: { description: string; code: string }
+        }
+      | string
+      | undefined
 
     try {
-      responseBody = (await error.response.json()) as { message: string }
+      responseBody = await error.response.text()
+      responseBody = JSON.parse(responseBody)
     } catch {
       // Ignore if we can't parse the response body (or no body exists)
     }
 
+    errorStatus = error.response.status
     errorDescription =
-      responseBody && responseBody.message
-        ? responseBody.message
-        : error.message
-    errorStatus = error.response?.status
+      typeof responseBody === 'object'
+        ? responseBody.error?.description || JSON.stringify(responseBody)
+        : responseBody || error.message
+    errorCode =
+      typeof responseBody === 'object' ? responseBody.error?.code : undefined
   } else if (isValidationError(error)) {
     errorDescription = 'Could not validate OpenAPI response'
     validationErrors = error.errors.map((e) => e.message)
@@ -188,14 +197,21 @@ const handleError = async (
 
   const errorMessage = `Error making Open Payments ${requestType} request`
   deps.logger.error(
-    { status: errorStatus, errorDescription, url, requestType },
+    {
+      method: requestType,
+      url,
+      status: errorStatus,
+      description: errorDescription,
+      code: errorCode
+    },
     errorMessage
   )
 
   throw new OpenPaymentsClientError(errorMessage, {
     description: errorDescription,
     validationErrors,
-    status: errorStatus
+    status: errorStatus,
+    code: errorCode
   })
 }
 

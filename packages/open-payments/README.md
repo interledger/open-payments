@@ -106,6 +106,7 @@ try {
     console.log(error.message)
     console.log(error.description) // additional description of the error
     console.log(error.status) // the HTTP status of the request, if a request failure
+    console.log(error.code) // the error code from the Open Payments API
     console.log(error.validationErrors) // an array of validation errors. Populated if the response of the request failed OpenAPI specfication validation, or other validation checks.
   } else {
     console.log(error)
