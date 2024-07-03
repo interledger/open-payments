@@ -2,6 +2,7 @@ import {
   createHttpClient,
   deleteRequest,
   get,
+  handleError,
   HttpClient,
   post,
   requestShouldBeAuthorized,
@@ -12,7 +13,7 @@ import nock from 'nock'
 import { createTestDeps, mockOpenApiResponseValidators } from '../test/helpers'
 import { OpenPaymentsClientError } from './error'
 import assert from 'assert'
-import ky from 'ky'
+import ky, { HTTPError } from 'ky'
 import { BaseDeps } from '.'
 
 const HTTP_SIGNATURE_REGEX = /sig1=:([a-zA-Z0-9+/]){86}==:/
@@ -815,6 +816,153 @@ describe('requests', (): void => {
       expect(signedRequest.headers.get('Content-Length')).toBe(
         stringifiedBody.length.toString()
       )
+    })
+  })
+
+  describe('handleError', (): void => {
+    test('handles HTTP error with expected JSON response', async (): Promise<void> => {
+      const url = 'https://localhost:1000/'
+      const request = new Request(url)
+      const response = new Response(
+        JSON.stringify({
+          error: {
+            code: 'invalid_client',
+            description: 'Could not determine client'
+          }
+        }),
+        { status: 400 }
+      )
+
+      expect.assertions(5)
+      try {
+        await handleError(deps, {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          error: new HTTPError(response, request, undefined!),
+          requestType: 'POST',
+          url
+        })
+      } catch (error) {
+        assert.ok(error instanceof OpenPaymentsClientError)
+        expect(error.message).toBe('Error making Open Payments POST request')
+        expect(error.description).toBe('Could not determine client')
+        expect(error.code).toBe('invalid_client')
+        expect(error.status).toBe(400)
+        expect(error.validationErrors).toBeUndefined()
+      }
+    })
+
+    test('handles HTTP error with unexpected JSON response', async (): Promise<void> => {
+      const url = 'https://localhost:1000/'
+      const request = new Request(url)
+      const responseBody = {
+        unexpected: 'response'
+      }
+      const response = new Response(JSON.stringify(responseBody), {
+        status: 400
+      })
+
+      expect.assertions(5)
+      try {
+        await handleError(deps, {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          error: new HTTPError(response, request, undefined!),
+          requestType: 'POST',
+          url
+        })
+      } catch (error) {
+        assert.ok(error instanceof OpenPaymentsClientError)
+        expect(error.message).toBe('Error making Open Payments POST request')
+        expect(error.description).toBe(JSON.stringify(responseBody))
+        expect(error.code).toBeUndefined()
+        expect(error.status).toBe(400)
+        expect(error.validationErrors).toBeUndefined()
+      }
+    })
+
+    test('handles HTTP error with text response', async (): Promise<void> => {
+      const url = 'https://localhost:1000/'
+      const request = new Request(url)
+      const response = new Response('Bad Request', { status: 400 })
+
+      expect.assertions(5)
+      try {
+        await handleError(deps, {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          error: new HTTPError(response, request, undefined!),
+          requestType: 'POST',
+          url
+        })
+      } catch (error) {
+        assert.ok(error instanceof OpenPaymentsClientError)
+        expect(error.message).toBe('Error making Open Payments POST request')
+        expect(error.description).toBe('Bad Request')
+        expect(error.code).toBeUndefined()
+        expect(error.status).toBe(400)
+        expect(error.validationErrors).toBeUndefined()
+      }
+    })
+
+    test('handles validation error', async (): Promise<void> => {
+      const url = 'https://localhost:1000/'
+
+      expect.assertions(5)
+      try {
+        await handleError(deps, {
+          error: {
+            status: 400,
+            errors: [{ message: 'invalid request' }]
+          },
+          requestType: 'POST',
+          url
+        })
+      } catch (error) {
+        assert.ok(error instanceof OpenPaymentsClientError)
+        expect(error.message).toBe('Error making Open Payments POST request')
+        expect(error.description).toBe('Could not validate OpenAPI response')
+        expect(error.code).toBeUndefined()
+        expect(error.status).toBe(400)
+        expect(error.validationErrors).toEqual(['invalid request'])
+      }
+    })
+
+    test('handles ordinary error', async (): Promise<void> => {
+      const url = 'https://localhost:1000/'
+
+      expect.assertions(5)
+      try {
+        await handleError(deps, {
+          error: new Error('Something went wrong'),
+          requestType: 'POST',
+          url
+        })
+      } catch (error) {
+        assert.ok(error instanceof OpenPaymentsClientError)
+        expect(error.message).toBe('Error making Open Payments POST request')
+        expect(error.description).toBe('Something went wrong')
+        expect(error.code).toBeUndefined()
+        expect(error.status).toBeUndefined()
+        expect(error.validationErrors).toBeUndefined()
+      }
+    })
+
+    test('handles unexpected (non-object) error', async (): Promise<void> => {
+      const url = 'https://localhost:1000/'
+
+      expect.assertions(5)
+      try {
+        await handleError(deps, {
+          error: 'unexpected error',
+          requestType: 'POST',
+          url
+        })
+      } catch (error) {
+        assert.ok(error instanceof OpenPaymentsClientError)
+        expect(error.message).toBe('Error making Open Payments POST request')
+        expect(error.description).toBe('Received unexpected error')
+        expect(error.code).toBeUndefined()
+        expect(error.status).toBeUndefined()
+        expect(error.validationErrors).toBeUndefined()
+      }
     })
   })
 })
