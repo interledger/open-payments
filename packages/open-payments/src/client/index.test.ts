@@ -75,6 +75,7 @@ describe('Client', (): void => {
     })
 
     test('throws error if could not load private key as Buffer', async (): Promise<void> => {
+      expect.assertions(2)
       try {
         await createAuthenticatedClient({
           logger: silentLogger,
@@ -92,6 +93,7 @@ describe('Client', (): void => {
     })
 
     test('throws error if could not load private key', async (): Promise<void> => {
+      expect.assertions(2)
       try {
         await createAuthenticatedClient({
           logger: silentLogger,
@@ -116,6 +118,7 @@ describe('Client', (): void => {
     `(
       'throws an error if both authenticatedRequestInterceptor and privateKey or keyId are provided',
       async ({ keyId, privateKey }) => {
+        expect.assertions(2)
         try {
           // @ts-expect-error Invalid args
           await createAuthenticatedClient({

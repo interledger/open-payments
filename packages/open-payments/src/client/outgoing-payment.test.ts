@@ -235,6 +235,7 @@ describe('outgoing-payment', (): void => {
         .query({ 'wallet-address': walletAddress })
         .reply(200, outgoingPaymentPaginationResult)
 
+      expect.assertions(3)
       try {
         await listOutgoingPayments(
           deps,
@@ -278,7 +279,7 @@ describe('outgoing-payment', (): void => {
           },
           openApiValidators.failedValidator
         )
-      ).rejects.toThrowError()
+      ).rejects.toThrow()
       scope.done()
     })
   })
@@ -355,6 +356,7 @@ describe('outgoing-payment', (): void => {
         .post('/outgoing-payments')
         .reply(200, outgoingPayment)
 
+      expect.assertions(3)
       try {
         await createOutgoingPayment(
           deps,
@@ -402,7 +404,7 @@ describe('outgoing-payment', (): void => {
             walletAddress
           }
         )
-      ).rejects.toThrowError(OpenPaymentsClientError)
+      ).rejects.toThrow(OpenPaymentsClientError)
       scope.done()
     })
   })
