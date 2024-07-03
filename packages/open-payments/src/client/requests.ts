@@ -3,9 +3,10 @@ import { ResponseValidator, isValidationError } from '@interledger/openapi'
 import { BaseDeps } from '.'
 import { createHeaders } from '@interledger/http-signature-utils'
 import { OpenPaymentsClientError } from './error'
+import { Logger } from 'pino'
 
 // @ts-expect-error We know we are importing an ESM module into our CJS file, so ignore warnings for types
-import type { KyInstance } from 'ky'
+import type { KyInstance, NormalizedOptions } from 'ky'
 
 interface GetArgs {
   url: string
@@ -226,61 +227,111 @@ const checkUrlProtocol = (deps: BaseDeps, url: string): string => {
   return requestUrl.href
 }
 
-type CreateHttpClientArgs = {
+interface CreateHttpClientArgs {
+  logger: Logger
   requestTimeoutMs: number
-} & (
-  | { privateKey?: KeyObject; keyId?: string }
+  requestSigningArgs?: AuthenticatedHttpClientArgs
+}
+
+type AuthenticatedHttpClientArgs =
+  | { privateKey: KeyObject; keyId: string }
   | { authenticatedRequestInterceptor: InterceptorFn }
-)
 
 export type HttpClient = KyInstance
 
-export type InterceptorFn = (request: Request) => Request | Promise<Request>
+export type InterceptorFn = (
+  request: Request
+) => Request | Promise<Request> | void | Promise<void>
 
 export const createHttpClient = async (
   args: CreateHttpClientArgs
 ): Promise<HttpClient> => {
   const { default: ky } = await import('ky')
 
+  const { requestTimeoutMs, requestSigningArgs, logger } = args
+
   const kyInstance = ky.create({
-    timeout: args.requestTimeoutMs,
+    timeout: requestTimeoutMs,
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json'
     }
   })
 
-  let requestInterceptor: InterceptorFn | undefined
+  const beforeRequestHooks = []
+  const afterResponseHooks = []
 
-  if ('authenticatedRequestInterceptor' in args) {
-    requestInterceptor = (request) => {
-      if (requestShouldBeAuthorized(request)) {
-        return args.authenticatedRequestInterceptor(request)
-      }
+  const requestLogger: InterceptorFn = async (request) => {
+    const requestBody = request.body ? await request.clone().json() : undefined
 
-      return request
-    }
-  } else {
-    requestInterceptor = (request) => {
-      const { privateKey, keyId } = args
-
-      if (requestShouldBeAuthorized(request)) {
-        return signRequest(request, { privateKey, keyId })
-      }
-
-      return request
-    }
+    logger.debug(
+      {
+        method: request.method,
+        url: request.url,
+        body: requestBody
+      },
+      'Sending request'
+    )
   }
 
-  if (requestInterceptor) {
-    return kyInstance.extend({
-      hooks: {
-        beforeRequest: [requestInterceptor]
-      }
-    })
+  const responseLogger = async (
+    request: Request,
+    _: NormalizedOptions,
+    response: Response
+  ) => {
+    let responseBody
+    try {
+      responseBody = await response.clone().text()
+      responseBody = JSON.parse(responseBody)
+    } catch {
+      // Ignore if we can't parse the response body (or no body exists)
+    }
+
+    logger.debug(
+      {
+        method: request.method,
+        url: response.url,
+        body: responseBody,
+        status: response.status
+      },
+      'Received response'
+    )
   }
 
-  return kyInstance
+  beforeRequestHooks.push(requestLogger)
+  afterResponseHooks.push(responseLogger)
+
+  if (requestSigningArgs) {
+    let requestInterceptor: InterceptorFn | undefined
+    if ('authenticatedRequestInterceptor' in requestSigningArgs) {
+      requestInterceptor = (request) => {
+        if (requestShouldBeAuthorized(request)) {
+          return requestSigningArgs.authenticatedRequestInterceptor(request)
+        }
+
+        return request
+      }
+    } else {
+      requestInterceptor = (request) => {
+        const { privateKey, keyId } = requestSigningArgs
+
+        if (requestShouldBeAuthorized(request)) {
+          return signRequest(request, { privateKey, keyId })
+        }
+
+        return request
+      }
+    }
+
+    beforeRequestHooks.push(requestInterceptor)
+  }
+
+  return kyInstance.extend({
+    hooks: {
+      beforeRequest: beforeRequestHooks,
+      afterResponse: afterResponseHooks
+    }
+  })
 }
 
 export const requestShouldBeAuthorized = (request: Request) =>

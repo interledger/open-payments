@@ -10,7 +10,11 @@ import {
 } from './requests'
 import { generateKeyPairSync } from 'crypto'
 import nock from 'nock'
-import { createTestDeps, mockOpenApiResponseValidators } from '../test/helpers'
+import {
+  createTestDeps,
+  mockOpenApiResponseValidators,
+  silentLogger
+} from '../test/helpers'
 import { OpenPaymentsClientError } from './error'
 import assert from 'assert'
 import ky, { HTTPError } from 'ky'
@@ -39,9 +43,12 @@ describe('requests', (): void => {
 
   beforeAll(async () => {
     httpClient = await createHttpClient({
+      logger: silentLogger,
       requestTimeoutMs: 1000000,
-      privateKey,
-      keyId
+      requestSigningArgs: {
+        privateKey,
+        keyId
+      }
     })
     deps = await createTestDeps({
       httpClient
@@ -52,7 +59,14 @@ describe('requests', (): void => {
     test('sets timeout properly', async (): Promise<void> => {
       const kyCreateSpy = jest.spyOn(ky, 'create')
 
-      await createHttpClient({ requestTimeoutMs: 1000, privateKey, keyId })
+      await createHttpClient({
+        logger: silentLogger,
+        requestTimeoutMs: 1000,
+        requestSigningArgs: {
+          privateKey,
+          keyId
+        }
+      })
 
       expect(kyCreateSpy).toHaveBeenCalledWith(
         expect.objectContaining({ timeout: 1000 })
@@ -61,7 +75,14 @@ describe('requests', (): void => {
     test('sets headers properly', async (): Promise<void> => {
       const kyCreateSpy = jest.spyOn(ky, 'create')
 
-      await createHttpClient({ requestTimeoutMs: 1000, privateKey, keyId })
+      await createHttpClient({
+        logger: silentLogger,
+        requestTimeoutMs: 1000,
+        requestSigningArgs: {
+          privateKey,
+          keyId
+        }
+      })
 
       expect(kyCreateSpy).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -81,15 +102,24 @@ describe('requests', (): void => {
       const kyExtendSpy = jest.spyOn(kyInstance, 'extend')
 
       await createHttpClient({
+        logger: silentLogger,
         requestTimeoutMs: 0,
-        authenticatedRequestInterceptor: (config) => config
-      })
-
-      expect(kyExtendSpy).toHaveBeenCalledWith({
-        hooks: {
-          beforeRequest: [expect.any(Function)]
+        requestSigningArgs: {
+          privateKey,
+          keyId
         }
       })
+
+      assert.ok(kyExtendSpy.mock.calls[0][0].hooks?.beforeRequest)
+      expect(kyExtendSpy.mock.calls[0][0].hooks?.beforeRequest).toHaveLength(2)
+
+      const requestSignerWithPrivateKey =
+        kyExtendSpy.mock.calls[0][0].hooks.beforeRequest[1]
+
+      const request = new Request('http://localhost:1000')
+
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      expect(requestSignerWithPrivateKey(request, undefined!)).toBeDefined()
     })
 
     test('sets authenticated request interceptor', async (): Promise<void> => {
@@ -99,16 +129,28 @@ describe('requests', (): void => {
 
       const kyExtendSpy = jest.spyOn(kyInstance, 'extend')
 
-      await createHttpClient({
-        requestTimeoutMs: 0,
-        authenticatedRequestInterceptor: (config) => config
-      })
+      const mockedAuthenticatedRequestInterceptor = jest.fn()
 
-      expect(kyExtendSpy).toHaveBeenCalledWith({
-        hooks: {
-          beforeRequest: [expect.any(Function)]
+      await createHttpClient({
+        logger: silentLogger,
+        requestTimeoutMs: 0,
+        requestSigningArgs: {
+          authenticatedRequestInterceptor: mockedAuthenticatedRequestInterceptor
         }
       })
+
+      assert.ok(kyExtendSpy.mock.calls[0][0].hooks?.beforeRequest)
+      expect(kyExtendSpy.mock.calls[0][0].hooks?.beforeRequest).toHaveLength(2)
+
+      const authenticatedRequestInterceptor =
+        kyExtendSpy.mock.calls[0][0].hooks.beforeRequest[1]
+
+      const request = new Request('http://localhost:1000', { method: 'POST' })
+
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      authenticatedRequestInterceptor(request, undefined!)
+
+      expect(mockedAuthenticatedRequestInterceptor).toHaveBeenCalled()
     })
   })
 

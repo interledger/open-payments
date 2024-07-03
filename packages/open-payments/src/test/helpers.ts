@@ -35,9 +35,12 @@ export const getDefaultHttpClient = async (): ReturnType<
   typeof createHttpClient
 > =>
   createHttpClient({
+    logger: silentLogger,
     requestTimeoutMs: 1000,
-    keyId,
-    privateKey: generateKeyPairSync('ed25519').privateKey
+    requestSigningArgs: {
+      keyId,
+      privateKey: generateKeyPairSync('ed25519').privateKey
+    }
   })
 
 export const mockOpenApiResponseValidators = () => ({
