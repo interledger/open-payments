@@ -183,9 +183,7 @@ export const handleError = async (
         ? responseBody.error?.description || JSON.stringify(responseBody)
         : responseBody || error.message
     errorCode =
-      typeof responseBody === 'object' && responseBody.error?.code
-        ? responseBody.error.code
-        : undefined
+      typeof responseBody === 'object' ? responseBody.error?.code : undefined
   } else if (isValidationError(error)) {
     errorDescription = 'Could not validate OpenAPI response'
     validationErrors = error.errors.map((e) => e.message)
