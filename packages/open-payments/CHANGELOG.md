@@ -1,5 +1,11 @@
 # @interledger/open-payments
 
+## 6.12.0
+
+### Minor Changes
+
+- aa21d26: Adding functionality to parse error objects from Open Payments API responses, and expose new `code` field in `OpenPaymentsClientError`.
+
 ## 6.11.1
 
 ### Patch Changes
