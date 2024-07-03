@@ -132,7 +132,9 @@ const createUnauthenticatedDeps = async ({
   validateResponses = true,
   ...args
 }: Partial<CreateUnauthenticatedClientArgs> = {}): Promise<UnauthenticatedClientDeps> => {
-  const logger = args?.logger ?? createLogger({ name: 'Open Payments Client' })
+  const logger =
+    args?.logger ??
+    createLogger({ name: 'Open Payments Client', level: 'silent' })
   if (args.logLevel) {
     logger.level = args.logLevel
   }
@@ -167,7 +169,9 @@ const createAuthenticatedClientDeps = async ({
 }:
   | CreateAuthenticatedClientArgs
   | CreateAuthenticatedClientWithReqInterceptorArgs): Promise<AuthenticatedClientDeps> => {
-  const logger = args?.logger ?? createLogger({ name: 'Open Payments Client' })
+  const logger =
+    args?.logger ??
+    createLogger({ name: 'Open Payments Client', level: 'silent' })
   if (args.logLevel) {
     logger.level = args.logLevel
   }
