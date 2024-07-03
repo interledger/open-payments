@@ -86,7 +86,7 @@ describe('Client', (): void => {
       } catch (error) {
         assert.ok(error instanceof OpenPaymentsClientError)
         expect(error.message).toBe(
-          'Could not load private key when creating Open Payments client'
+          'Could not load private key when creating authenticated client'
         )
         expect(error.description).toBe('Key is not a valid file')
       }
@@ -104,7 +104,7 @@ describe('Client', (): void => {
       } catch (error) {
         assert.ok(error instanceof OpenPaymentsClientError)
         expect(error.message).toBe(
-          'Could not load private key when creating Open Payments client'
+          'Could not load private key when creating authenticated client'
         )
         expect(error.description).toBe('Key is not a valid path or file')
       }
