@@ -1,5 +1,13 @@
 # @interledger/open-payments
 
+## 6.13.0
+
+### Minor Changes
+
+- d7535db: - Adding debug logs during client initialization
+  - Adding debug logs for requests and responses in the http client
+  - Making log level `silent` by default
+
 ## 6.12.0
 
 ### Minor Changes
