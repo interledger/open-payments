@@ -133,7 +133,7 @@ const createUnauthenticatedDeps = async ({
   ...args
 }: Partial<CreateUnauthenticatedClientArgs> = {}): Promise<UnauthenticatedClientDeps> => {
   const logger =
-    args?.logger ??
+    args.logger ??
     createLogger({ name: 'Open Payments Client', level: 'silent' })
   if (args.logLevel) {
     logger.level = args.logLevel
@@ -141,8 +141,7 @@ const createUnauthenticatedDeps = async ({
 
   const httpClient = await createHttpClient({
     logger,
-    requestTimeoutMs:
-      args?.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS
+    requestTimeoutMs: args.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS
   })
 
   let walletAddressServerOpenApi: OpenAPI | undefined
@@ -170,7 +169,7 @@ const createAuthenticatedClientDeps = async ({
   | CreateAuthenticatedClientArgs
   | CreateAuthenticatedClientWithReqInterceptorArgs): Promise<AuthenticatedClientDeps> => {
   const logger =
-    args?.logger ??
+    args.logger ??
     createLogger({ name: 'Open Payments Client', level: 'silent' })
   if (args.logLevel) {
     logger.level = args.logLevel
@@ -182,7 +181,7 @@ const createAuthenticatedClientDeps = async ({
     httpClient = await createHttpClient({
       logger,
       requestTimeoutMs:
-        args?.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS,
+        args.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS,
       requestSigningArgs: {
         authenticatedRequestInterceptor: args.authenticatedRequestInterceptor
       }
@@ -207,7 +206,7 @@ const createAuthenticatedClientDeps = async ({
     httpClient = await createHttpClient({
       logger,
       requestTimeoutMs:
-        args?.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS,
+        args.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS,
       requestSigningArgs: {
         privateKey,
         keyId: args.keyId
@@ -267,7 +266,7 @@ export const createUnauthenticatedClient = async (
       validateResponses: !!args.validateResponses,
       useHttp: baseDeps.useHttp,
       requestTimeoutMs:
-        args?.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS
+        args.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS
     },
     'Created unauthenticated client'
   )
@@ -364,7 +363,7 @@ export async function createAuthenticatedClient(
       validateResponses: !!args.validateResponses,
       useHttp: baseDeps.useHttp,
       requestTimeoutMs:
-        args?.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS
+        args.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS
     },
     'Created authenticated client'
   )
