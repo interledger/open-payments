@@ -56,7 +56,7 @@ const incomingPayment = await client.walletAddress.get({
 | ------------------- | --------------------------------------------------------------------------------------------------------------- |
 | `requestTimeoutMs`  | (optional) The timeout in ms for each request by the client. Defaults to 5000.                                  |
 | `logger`            | (optional) The custom logger to provide for the client. Defaults to pino logger.                                |
-| `logLevel`          | (optional) The log level for the client. Defaults to `info`.                                                    |
+| `logLevel`          | (optional) The log level for the client. Defaults to `silent`.                                                  |
 | `validateResponses` | (optional) Enables or disables response validation against the Open Payments OpenAPI specs. Defaults to `true`. |
 
 ### `AuthenticatedClient`

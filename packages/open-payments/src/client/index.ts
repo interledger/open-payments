@@ -97,31 +97,31 @@ export interface CollectionRequestArgs
   walletAddress: string
 }
 
-const parseKey = (
-  args: Partial<CreateAuthenticatedClientArgs>
-): KeyObject | undefined => {
-  if (!args.privateKey) {
-    return undefined
+const parseKey = (deps: { logger: Logger }, privateKey: KeyLike): KeyObject => {
+  if (privateKey instanceof KeyObject) {
+    deps.logger.debug('Loading key from KeyObject')
+    return privateKey
   }
 
-  if (args.privateKey instanceof KeyObject) {
-    return args.privateKey
-  }
-
-  if (args.privateKey instanceof Buffer) {
+  if (privateKey instanceof Buffer) {
     try {
-      return createPrivateKey(args.privateKey)
+      deps.logger.debug('Loading key from Buffer')
+      return createPrivateKey(privateKey)
     } catch {
       throw new Error('Key is not a valid file')
     }
   }
 
-  if (fs.existsSync(path.resolve(process.cwd(), args.privateKey))) {
-    return loadKey(path.resolve(process.cwd(), args.privateKey))
+  const keyFilePath = path.resolve(process.cwd(), privateKey)
+
+  if (fs.existsSync(keyFilePath)) {
+    deps.logger.debug(`Loading key from file path: ${keyFilePath}`)
+    return loadKey(keyFilePath)
   }
 
   try {
-    return createPrivateKey(args.privateKey)
+    deps.logger.debug('Loading key from string')
+    return createPrivateKey(privateKey)
   } catch {
     throw new Error('Key is not a valid path or file')
   }
@@ -132,14 +132,16 @@ const createUnauthenticatedDeps = async ({
   validateResponses = true,
   ...args
 }: Partial<CreateUnauthenticatedClientArgs> = {}): Promise<UnauthenticatedClientDeps> => {
-  const logger = args?.logger ?? createLogger({ name: 'Open Payments Client' })
+  const logger =
+    args.logger ??
+    createLogger({ name: 'Open Payments Client', level: 'silent' })
   if (args.logLevel) {
     logger.level = args.logLevel
   }
 
   const httpClient = await createHttpClient({
-    requestTimeoutMs:
-      args?.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS
+    logger,
+    requestTimeoutMs: args.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS
   })
 
   let walletAddressServerOpenApi: OpenAPI | undefined
@@ -166,40 +168,49 @@ const createAuthenticatedClientDeps = async ({
 }:
   | CreateAuthenticatedClientArgs
   | CreateAuthenticatedClientWithReqInterceptorArgs): Promise<AuthenticatedClientDeps> => {
-  const logger = args?.logger ?? createLogger({ name: 'Open Payments Client' })
+  const logger =
+    args.logger ??
+    createLogger({ name: 'Open Payments Client', level: 'silent' })
   if (args.logLevel) {
     logger.level = args.logLevel
-  }
-
-  let privateKey: KeyObject | undefined
-  try {
-    privateKey = parseKey(args)
-  } catch (error) {
-    const errorMessage =
-      'Could not load private key when creating Open Payments client'
-    const description = error instanceof Error ? error.message : 'Unknown error'
-
-    logger.error({ description }, errorMessage)
-
-    throw new OpenPaymentsClientError(errorMessage, {
-      description
-    })
   }
 
   let httpClient: HttpClient
 
   if ('authenticatedRequestInterceptor' in args) {
     httpClient = await createHttpClient({
+      logger,
       requestTimeoutMs:
-        args?.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS,
-      authenticatedRequestInterceptor: args.authenticatedRequestInterceptor
+        args.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS,
+      requestSigningArgs: {
+        authenticatedRequestInterceptor: args.authenticatedRequestInterceptor
+      }
     })
   } else {
+    let privateKey: KeyObject
+    try {
+      privateKey = parseKey({ logger }, args.privateKey)
+    } catch (error) {
+      const errorMessage =
+        'Could not load private key when creating authenticated client'
+      const description =
+        error instanceof Error ? error.message : 'Unknown error'
+
+      logger.error({ description }, errorMessage)
+
+      throw new OpenPaymentsClientError(errorMessage, {
+        description
+      })
+    }
+
     httpClient = await createHttpClient({
+      logger,
       requestTimeoutMs:
-        args?.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS,
-      privateKey,
-      keyId: args.keyId
+        args.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS,
+      requestSigningArgs: {
+        privateKey,
+        keyId: args.keyId
+      }
     })
   }
 
@@ -249,6 +260,16 @@ export const createUnauthenticatedClient = async (
 ): Promise<UnauthenticatedClient> => {
   const { resourceServerOpenApi, walletAddressServerOpenApi, ...baseDeps } =
     await createUnauthenticatedDeps(args)
+
+  baseDeps.logger.debug(
+    {
+      validateResponses: !!args.validateResponses,
+      useHttp: baseDeps.useHttp,
+      requestTimeoutMs:
+        args.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS
+    },
+    'Created unauthenticated client'
+  )
 
   return {
     walletAddress: createWalletAddressRoutes({
@@ -334,6 +355,18 @@ export async function createAuthenticatedClient(
     walletAddressServerOpenApi,
     ...baseDeps
   } = await createAuthenticatedClientDeps(args)
+
+  baseDeps.logger.debug(
+    {
+      walletAddressUrl: args.walletAddressUrl,
+      ...('keyId' in args ? { keyId: args.keyId } : {}),
+      validateResponses: !!args.validateResponses,
+      useHttp: baseDeps.useHttp,
+      requestTimeoutMs:
+        args.requestTimeoutMs ?? config.DEFAULT_REQUEST_TIMEOUT_MS
+    },
+    'Created authenticated client'
+  )
 
   return {
     incomingPayment: createIncomingPaymentRoutes({
