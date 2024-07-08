@@ -10,6 +10,7 @@ import {
   getRSPath,
   OutgoingPayment,
   OutgoingPaymentPaginationResult,
+  OutgoingPaymentWithSpentAmounts,
   PaginationArgs
 } from '../types'
 import { get, post } from './requests'
@@ -24,7 +25,7 @@ export interface OutgoingPaymentRoutes {
   create(
     requestArgs: ResourceRequestArgs,
     createArgs: CreateOutgoingPaymentArgs
-  ): Promise<OutgoingPayment>
+  ): Promise<OutgoingPaymentWithSpentAmounts>
 }
 
 export const createOutgoingPaymentRoutes = (
