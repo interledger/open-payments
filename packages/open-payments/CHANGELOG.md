@@ -1,5 +1,11 @@
 # @interledger/open-payments
 
+## 6.13.1
+
+### Patch Changes
+
+- c9e1d15: Changes return type of outgoingPayment.create to OutgoingPaymentWithSpentAmounts to reflect correct return type.
+
 ## 6.13.0
 
 ### Minor Changes
