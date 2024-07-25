@@ -8,7 +8,7 @@ import HttpSig from '/src/partials/http-msg-sig-note.mdx'
 import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Ts from '/src/partials/ts-prerequisites.mdx'
 
-The Open Payments (OP) API facilitates multiple uses cases for payments to and from different OP-enabled wallets. In this guide we look at the steps for making a one time payment.
+The Open Payments APIs facilitate multiple uses cases for payments to and from different Open Payments-enabled wallets. In this guide we look at the steps for making a one time payment.
 
 Examples of use cases for a one-time payment might be an e-commerce or a money transmitter application.
 
@@ -55,9 +55,9 @@ Import `createAuthenticatedClient` from the Open Payments SDK package.
 
 ### 2. Create an authenticated Open Payments client
 
-Create an OP authenticated client by providing the following properties:
+Create an Open Payments-authenticated client by providing the following properties:
 
-- `walletAddressURL` : your OP-enabled wallet address that your client will use to authenticate itself to one or more Authorization Servers (AS).
+- `walletAddressURL` : your Open Payments-enabled wallet address that your client will use to authenticate itself to one or more Authorization Servers (AS).
 - `privateKey` : the EdDSA-Ed25519 key or preferably the absolute or relative file path to the key that is bound to your wallet address. A public key signed with this private
   key must be made available as a public JWK document at `{walletAddressUrl}/jwks.json` url.
 - `keyId` : the identifier of the private key and the corresponding public key.

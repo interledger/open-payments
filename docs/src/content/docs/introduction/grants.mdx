@@ -13,7 +13,7 @@ import Interactive from '/src/partials/diagram-interactive-grant.mdx'
 
 In Open Payments, a grant indicates a transfer, or delegation, of authorization from a resource owner (RO) to a piece of software. An RO can be a physical person, such as the software’s end user, or a process, such as predefined organizational rules. By delegating authorization, the RO allows the software to access and perform operations on protected resources on the RO’s behalf.
 
-Open Payments leverages the <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol'>Grant Negotiation and Authorization Protocol (GNAP)</LinkOut> as the mechanism by which the piece of software, known as a client instance (or client for short), is delegated authorization to use the Open Payments API to interface with supported accounts.
+Open Payments leverages the <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol'>Grant Negotiation and Authorization Protocol (GNAP)</LinkOut> as the mechanism by which the piece of software, known as a client instance (or client for short), is delegated authorization to use the Open Payments APIs to interface with supported accounts.
 
 ## GNAP vs OAuth 2.0
 
@@ -29,7 +29,7 @@ GNAP is being developed as the successor to OAuth 2.0 and is designed to fill ma
 
 ## Grant authorization servers
 
-An authorization server (AS) grants delegated privileges to a client in the form of access tokens. Access tokens represent a set of access rights and/or attributes granted to the client. With the requisite access token(s), the client can access a resource server’s (RS) Open Payments API and perform allowed operations, such as creating incoming payments and listing outgoing payments, on behalf of the resource owner.
+An authorization server (AS) grants delegated privileges to a client in the form of access tokens. Access tokens represent a set of access rights and/or attributes granted to the client. With the requisite access token(s), the client can access a resource server’s (RS) Open Payments APIs and perform allowed operations, such as creating incoming payments and listing outgoing payments, on behalf of the resource owner.
 
 An AS is uniquely identified by its grant endpoint URI, which is an absolute URI that a client calls to initiate a grant request.
 
@@ -41,7 +41,7 @@ A client must generate and add its key to its key registry before requesting a g
 
 ## Grant requests
 
-Before a client can access the Open Payments API, it must send a grant request to the AS. The request must contain the type of resource it wants to work with and the action(s) it wants to take on the resource. Resource types include `incoming-payment`, `quote`, and `outgoing-payment`. The available actions depend on type, but examples include `create` and `read`. A successful grant request results in the AS returning one or more access tokens.
+Before a client can access the Open Payments APIs, it must send a grant request to the AS. The request must contain the type of resource it wants to work with and the action(s) it wants to take on the resource. Resource types include `incoming-payment`, `quote`, and `outgoing-payment`. The available actions depend on type, but examples include `create` and `read`. A successful grant request results in the AS returning one or more access tokens.
 
 The sequence of requests a client makes when setting up a payment can follow one of the paths below.
 
@@ -66,13 +66,13 @@ The sequence of requests a client makes when setting up a payment can follow one
 
 ### incoming-payment
 
-A client begins the Open Payments flow by requesting an incoming payment grant from the AS on the _payee_ side. The client can request a single grant to create multiple incoming payments for different OP-enabled accounts as long as each account belongs to the same <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip>.
+A client begins the Open Payments flow by requesting an incoming payment grant from the AS on the _payee_ side. The client can request a single grant to create multiple incoming payments for different Open Payments-enabled accounts as long as each account belongs to the same <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip>.
 
 Incoming payment grants are non-interactive by default, meaning interaction by an individual (typically the client’s end-user) is not required for the AS to issue an access token.
 
 ### quote
 
-After the client receives an incoming payment grant and an incoming payment resource is created on the payee’s account, the client requests a quote grant from the AS on the _payer_ side. The client can request a single grant to create multiple quotes for different OP-enabled accounts as long as each account belongs to the same <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip>.
+After the client receives an incoming payment grant and an incoming payment resource is created on the payee’s account, the client requests a quote grant from the AS on the _payer_ side. The client can request a single grant to create multiple quotes for different Open Payments-enabled accounts as long as each account belongs to the same <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip>.
 
 Quote grants are non-interactive by default, meaning interaction by an individual (typically the client’s end-user) is not required for the AS to issue an access token.
 
@@ -86,9 +86,9 @@ After a successful interaction, the client must issue a [Grant Continuation requ
 
 ## Open Payments resource servers
 
-A resource server (RS) provides the Open Payments API through which resources can be created or accessed on the server. GNAP doesn’t presume or require a tight coupling between an RS and an AS and it’s increasingly common for the servers to be run and managed separately.
+A resource server (RS) provides the Open Payments APIs through which resources can be created or accessed on the server. GNAP doesn’t presume or require a tight coupling between an RS and an AS and it’s increasingly common for the servers to be run and managed separately.
 
-Operations on the API by a client require the client to have a valid access token issued by a <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol-16#name-trust-relationships'>trusted AS</LinkOut>. When the client uses its access token to call the RS, the RS examines the token to determine if the token is sufficient for the request. The means by which an RS makes this determination are outside of the scope of Open Payments. If the token is sufficient, the client is given the right to access the operation(s) and resource tied to the token.
+Operations on the APIs by a client require the client to have a valid access token issued by a <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol-16#name-trust-relationships'>trusted AS</LinkOut>. When the client uses its access token to call the RS, the RS examines the token to determine if the token is sufficient for the request. The means by which an RS makes this determination are outside of the scope of Open Payments. If the token is sufficient, the client is given the right to access the operation(s) and resource tied to the token.
 
 :::note
 An open-source implementation of an Open Payments resource server, called <LinkOut href='https://rafiki.dev'>Rafiki</LinkOut>, is currently in development.

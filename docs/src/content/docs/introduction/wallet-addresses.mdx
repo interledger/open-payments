@@ -2,11 +2,11 @@
 title: Wallet addresses
 ---
 
-At the heart of all interactions in Open Payments (OP) is an OP-enabled account. Every OP-enabled account is identified by one or more URLs. These URLs are not only account identifiers, but also service endpoints for gaining access to the OP API. These URLs are called **wallet addresses**. Not all URLs are wallet addresses, but all wallet addresses are URLs.
+At the heart of all interactions in Open Payments is an Open Payments-enabled account. Every Open Payments-enabled account is identified by one or more URLs. These URLs are not only account identifiers, but also service endpoints for gaining access to the Open Payments APIs. These URLs are called **wallet addresses**. Not all URLs are wallet addresses, but all wallet addresses are URLs.
 
 A URL is only a wallet address if the:
 
-- Server handling the HTTP requests to the URL supports the OP protocol
+- Server handling the HTTP requests to the URL supports the Open Payments protocol
 - URL uses the `https` protocol and has no `user-info`, `port`, `query string`, or `fragment` parts
 
 The quickest way to test if a URL is a wallet address is to make an HTTP `GET` request to the URL with an `Accept` header value of `application/json`.
@@ -17,7 +17,7 @@ curl --request GET \
  	--header 'accept: application/json'
 ```
 
-If the URL is a wallet address, the response will provide details about the underlying OP-enabled account, including the URL of the grant request endpoint (the `authServer`). The grant request endpoint is used to get access tokens to connect to the account via the OP API.
+If the URL is a wallet address, the response will provide details about the underlying Open Payments-enabled account, including the URL of the grant request endpoint (the `authServer`). The grant request endpoint is used to get access tokens to connect to the account via the Open Payments APIs.
 
 ```http
 HTTP/1.1 200 Success
@@ -46,6 +46,6 @@ For any client, a wallet address is as good as an account. Any two distinct wall
 
 Using URLs as payment instruments solves two of the biggest issues with existing payments UX: discoverability and interaction.
 
-URLs (universal resource locators) have been used on the web for decades to allow clients to directly locate a resource and begin interacting with it via HTTP. A wallet address is both a proxy identifier and a resource locator for the underlying account, used to access the account via the OP API and begin interactions with the account’s ASE.
+URLs (universal resource locators) have been used on the web for decades to allow clients to directly locate a resource and begin interacting with it via HTTP. A wallet address is both a proxy identifier and a resource locator for the underlying account, used to access the account via the Open Payments APIs and begin interactions with the account’s ASE.
 
 Using URLs as proxies is also preferable to overloading other identifiers, such as email addresses and Mobile Station International Subscriber Directory Numbers (MSISDNs), as these proxies have no standard for interaction. As a result, identifiers like an MSISDN or email require a registry that maps the identifier to an account provider and a mechanism for governing this mapping securely.

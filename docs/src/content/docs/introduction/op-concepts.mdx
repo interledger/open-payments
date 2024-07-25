@@ -6,31 +6,31 @@ tableOfContents:
 
 import { LinkOut, CodeBlock } from '@interledger/docs-design-system'
 
-The Open Payments (OP) standard helps to facilitate the setup of payments between OP-enabled payment accounts.
+The Open Payments standard helps to facilitate the setup of payments between Open Payments-enabled payment accounts.
 
-When setting up a payment, the client must obtain the wallet address for both the payer and payee. Since the payer is typically the client's end-user, the client can obtain the payer's wallet address during an onboarding process, for example. The payer must be authenticated by their account servicing entity (ASE) to grant the client the permission it needs to access the their OP-enabled account.
+When setting up a payment, the client must obtain the wallet address for both the payer and payee. Since the payer is typically the client's end-user, the client can obtain the payer's wallet address during an onboarding process, for example. The payer must be authenticated by their account servicing entity (ASE) to grant the client the permission it needs to access the their Open Payments-enabled account.
 
-After the requisite wallet addresses are known, the client can begin obtaining grants to set up one or more payments. The grants allow the client to access the Open Payments API for the purpose of creating and accessing resources for incoming payments, quotes, and outgoing payments.
+After the requisite wallet addresses are known, the client can begin obtaining grants to set up one or more payments. The grants allow the client to access the Open Payments APIs for the purpose of creating and accessing resources for incoming payments, quotes, and outgoing payments.
 
 ## Wallet address server
 
-Every OP-enabled account is identified by one or more wallet addresses. A wallet address is a publicly shareable account identifier and a service endpoint for gaining access to the Open Payments API. The payer and payee must both have a wallet address to transact using Open Payments.
+Every Open Payments-enabled account is identified by one or more wallet addresses. A wallet address is a publicly shareable account identifier and a service endpoint for gaining access to the Open Payments APIs. The payer and payee must both have a wallet address to transact using Open Payments.
 
 A wallet address server provides basic details about a wallet address. For more information, visit the [wallet addresses](/introduction/wallet-addresses) page.
 
 ## Authorization server
 
-An authorization server grants permission for a client to access the Open Payments API and the `incoming-payment`, `quote`, and `outgoing-payment` resources. Open Payments leverages GNAP as the mechanism for delegating authorization.
+An authorization server grants permission for a client to access the Open Payments APIs and the `incoming-payment`, `quote`, and `outgoing-payment` resources. Open Payments leverages GNAP as the mechanism for delegating authorization.
 
 Refer to the [Grant negotiation and authorization](/introduction/grants) page for more information.
 
 ## Resource server
 
-The Open Payments API is served by a resource server. Operations on the API require the client to have a valid access token issued by a trusted authorization server.
+The Open Payments APIs are served by a resource server. Operations on the APIs require the client to have a valid access token issued by a trusted authorization server.
 
 ### Resource types
 
-The Open Payments API is a simple REST API with three resource types: `incoming-payment`, `quote`, and `outgoing-payment`.
+The Open Payments Resource Server API is a simple REST API with three resource types: `incoming-payment`, `quote`, and `outgoing-payment`.
 
 #### incoming-payment
 
@@ -52,8 +52,8 @@ The outgoing payment is created and funds are sent to the `incoming-payment` res
 
 Instead of waiting for the payment session to expire, the client can issue an explicit request to manually <LinkOut href='/apis/resource-server/operations/complete-incoming-payment'>complete the incoming payment</LinkOut> to indicate no further payments will be sent.
 
-:::tip[Use case: streaming Web Monetization (WM) payments]
-In streaming WM payments, the maximum amount to be paid is unknown to the payee’s ASE. Payments continue to stream until the WM agent ends the session. At this point, the WM agent can request to mark the incoming payment as complete. This enables the payee’s ASE to be notified as soon as possible that no further payments will be sent and to credit the payee’s account.
+:::tip[Use case: streaming Web Monetization payments]
+In streaming Web Monetization payments, the maximum amount to be paid is unknown to the payee’s ASE. Payments continue to stream until the Web Monetization agent ends the session. At this point, the Web Monetization agent can request to mark the incoming payment as complete. This enables the payee’s ASE to be notified as soon as possible that no further payments will be sent and to credit the payee’s account.
 :::
 
 #### quote
@@ -74,6 +74,8 @@ A successfully created `quote` resource results in the generation of a quote `id
 
 After a quote resource is created, it’s almost time to create the outgoing-payment resource on the payer’s account. The purpose of the outgoing-payment resource is to serve as an instruction to make a payment from the payer’s account.
 
+Open Payments separates payment instructions from the actual execution of payments, allowing applications to issue payment requests without being registered financial service providers themselves. This structure ensures that applications don't need to handle sensitive financial data directly, reducing risk and complexity.
+
 Open Payments requires the payer to explicitly consent to the creation of the resource before the client can issue the create request. Consent is obtained through an [interactive grant](/introduction/grants/#outgoing-payment).
 
 Within the request to create the outgoing-payment resource is the payee’s wallet address, so the payer’s ASE knows where to send the payment, and the quote resource’s ID, where the payment amounts are defined.
@@ -88,9 +90,9 @@ The payment method is the means by which the payer's ASE will fulfill its paymen
 
 When an `outgoing-payment` is completed against an open and active `incoming-payment`, the payer’s ASE becomes obligated to make payment using the payment method initially specified in the `incoming-payment` response.
 
-Though OP is designed to be an abstraction layer that can issue payment instructions between transacting parties atop any payment method, <LinkOut href='https://interledger.org'>Interledger (ILP) </LinkOut> is the only payment method that currently integrates with OP readily.
+Though Open Payments is designed to be an abstraction layer that can issue payment instructions between transacting parties atop any payment method, <LinkOut href='https://interledger.org'>Interledger (ILP) </LinkOut> is the only payment method that currently integrates with Open Payments readily.
 
-When using ILP as a payment method in OP, the following information is required from the payee's ASE, in the incoming payment's `method` object.
+When using ILP as a payment method in Open Payments, the following information is required from the payee's ASE, in the incoming payment's `method` object.
 
 - A `type` of `ilp` to indicate the payment method.
 - The <LinkOut href='https://interledger.org/developers/rfcs/ilp-addresses/'>ILP address</LinkOut> of the payee’s ASE: The ILP address is required so that packets representing payments routed over the Interledger network will be forwarded to the node owned and operated by the intended receiver (i.e. payee's ASE).
