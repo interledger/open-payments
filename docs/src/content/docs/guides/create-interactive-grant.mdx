@@ -50,9 +50,9 @@ Import `createAuthenticatedClient` from the Open Payments SDK package.
 
 ### 2. Create and initialize an authenticated Open Payments client
 
-Create an OP authenticated client by providing the following properties:
+Create an Open Payments-authenticated client by providing the following properties:
 
-- `walletAddressURL`: your OP-enabled wallet address that your client will use to authenticate itself to one or more authorization servers.
+- `walletAddressURL`: your Open Payments-enabled wallet address that your client will use to authenticate itself to one or more authorization servers.
 - `privateKey`: the EdDSA-Ed25519 key or preferably the absolute or relative file path to the key that is bound to your wallet address. A public key signed with this private key must be made available as a public JWK document at `{walletAddressUrl}/jwks.json` url.
 - `keyId`: the identifier of the private key and the corresponding public key.
 
