@@ -1,0 +1,45 @@
+---
+title: Glossary
+---
+
+import { LinkOut } from '@interledger/docs-design-system'
+
+## Account servicing entity (ASE)
+
+An account servicing entity provides and maintains a payment account for a payer and payee, and is a regulated entity in the country/countries it operates.
+
+## Authorization server (AS)
+
+An authorization server issues tokens to clients, which can then be used to perform authorized actions on resource servers. In the context of Open Payments, the authorization server grants permission for a client to access the Open Payments APIs and the `incoming-payment`, `quote`, and `outgoing-payment` resources. Open Payments leverages GNAP as the mechanism for delegating authorization.
+
+## Client
+
+A client is an application or service that interacts with the authorization server to obtain grants and tokens. A client uses these tokens to access resources or perform transactions on behalf of a user or system.
+
+## Grant Negotiation and Authorization Protocol (GNAP)
+
+The Grant Negotiation Authorization Protocol (GNAP) defines a mechanism for delegating authorization to a piece of software, and conveying the results and artifacts of that delegation to the software. This delegation can include access to a set of APIs as well as subject information passed directly to the software. For more information, see the [specification](https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol-12).
+
+## Incoming payment resource
+
+An incoming payment resource is an object that represents a payment being received by an entity. This resource contains information about the incoming payment, such as the amount, currency, receiver's wallet address, and payment status. It is used to track and manage payments that are expected to or have been received.
+
+## Interactive grant
+
+An interactive grant requires direct user interaction with the authorization server in order to grant permissions to a client. This ensures that the user is aware of and approves the level of access being requested.
+
+## Open Payments (OP)
+
+Open Payments is an open RESTful API and an API standard that enables clients to interface with Open Payments-enabled accounts. In this context, a client is an application, such as a mobile or web app, that consumes one or more Open Payments resources, typically requiring access privileges from one or several authorization servers.
+
+## Outgoing payment resource
+
+An outgoing payment resource is an object that represents a payment being sent by an entity. This resource contains information about the outgoing payment, such as the amount, currency, receiver's wallet address, and payment status. Outgoing payment resources require explicit consent from the sender, obtained through an interactive grant, and serves as a mechanism to separate payment instructions from payment execution.
+
+## Quote resource
+
+A quote resource is an object that represents a potential payment being received by an entity. This resource contains information about the potential payment, but is mainly used to indicate the total cost, including any applicable fees, to make the payment. The quote resource also serves as a commitment from the sender's ASE to deliver a particular amount to the receiver's ASE and it only valid for a limited time.
+
+## Resource server (RS)
+
+A resource server hosts protected resources and enforces access controls based on the tokens provided by the authorization server. In the context of Open Payments, the resource server manages access to three payment-related resources (`incoming-payment`, `quote`, and `outgoing-payment`), ensuring that only authorized clients can perform actions through the Open Payments APIs.
