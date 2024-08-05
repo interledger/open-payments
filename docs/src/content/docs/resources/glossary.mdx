@@ -14,31 +14,27 @@ An authorization server issues tokens to clients, which can then be used to perf
 
 ## Client
 
-A client is an application or service that interacts with the authorization server to obtain grants and tokens. A client uses these tokens to access resources or perform transactions on behalf of a user or system.
+A client is an application or service, such as a mobile or web app, that interacts with the authorization server to obtain grants and tokens. A client uses these tokens to access resources on a resource server to perform actions, such as retriving transaction history and setting up payments, on behalf of a user or system.
 
 ## Grant Negotiation and Authorization Protocol (GNAP)
 
-The Grant Negotiation Authorization Protocol (GNAP) defines a mechanism for delegating authorization to a piece of software, and conveying the results and artifacts of that delegation to the software. This delegation can include access to a set of APIs as well as subject information passed directly to the software. For more information, see the [specification](https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol-12).
+The Grant Negotiation Authorization Protocol (GNAP) defines a mechanism for delegating authorization to a piece of software, and conveying the results and artifacts of that delegation to the software. This delegation can include access to a set of APIs as well as subject information passed directly to the software. For more information, see the <LinkOut href="https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol-12">specification</LinkOut>.
 
 ## Incoming payment resource
 
-An incoming payment resource is an object that represents a payment being received by an entity. This resource contains information about the incoming payment, such as the amount, currency, receiver's wallet address, and payment status. It is used to track and manage payments that are expected to or have been received.
-
-## Interactive grant
-
-An interactive grant requires direct user interaction with the authorization server in order to grant permissions to a client. This ensures that the user is aware of and approves the level of access being requested.
+An [incoming payment resource](/introduction/op-concepts/#incoming-payment) is an object created by the recipient's ASE, on their resource server, that represents a payment being received by an entity. This resource contains information about the incoming payment, such as the amount, currency, receiver's wallet address, and payment status. It is used to track and manage payments that are expected to or have been received.
 
 ## Open Payments (OP)
 
-Open Payments is an open RESTful API and an API standard that enables clients to interface with Open Payments-enabled accounts. In this context, a client is an application, such as a mobile or web app, that consumes one or more Open Payments resources, typically requiring access privileges from one or several authorization servers.
+Open Payments is an open RESTful API and an API standard that enables clients to interface with Open Payments-enabled accounts.
 
 ## Outgoing payment resource
 
-An outgoing payment resource is an object that represents a payment being sent by an entity. This resource contains information about the outgoing payment, such as the amount, currency, receiver's wallet address, and payment status. Outgoing payment resources require explicit consent from the sender, obtained through an interactive grant, and serves as a mechanism to separate payment instructions from payment execution.
+An [outgoing payment resource](/introduction/op-concepts/#outgoing-payment) is an object created by the sender's ASE, on their resource server, that represents a payment being sent by an entity. This resource contains information about the outgoing payment, such as the amount, currency, receiver's wallet address, and payment status. Outgoing payment resources require explicit [consent](/introduction/grants/#identity-providers) from the sender before the resource can be created.
 
 ## Quote resource
 
-A quote resource is an object that represents a potential payment being received by an entity. This resource contains information about the potential payment, but is mainly used to indicate the total cost, including any applicable fees, to make the payment. The quote resource also serves as a commitment from the sender's ASE to deliver a particular amount to the receiver's ASE and it only valid for a limited time.
+A [quote resource](/introduction/op-concepts/#quote) is an object created by the sender's ASE, on their resource server, after the incoming payment resource is created by the recipient's ASE. A quote resource represents a potential payment being received by an entity and contains information about the potential payment, but is mainly used to indicate the total cost, including any applicable fees, to make the payment. The quote resource also serves as a commitment from the sender's ASE to deliver a particular amount to the receiver's ASE and it only valid for a limited time.
 
 ## Resource server (RS)
 
