@@ -213,10 +213,10 @@ export default defineConfig({
           label: 'Resources',
           collapsed: true,
           items: [
-            // {
-            //   label: 'Glossary',
-            //   link: '/resources/glossary/'
-            // },
+            {
+              label: 'Glossary',
+              link: '/resources/glossary/'
+            },
             {
               label: 'Open Payments-enabled wallets',
               link: '/resources/op-wallets/'
@@ -242,12 +242,12 @@ export default defineConfig({
                 {
                   label: 'Get wallet address',
                   link: '/apis/wallet-address-server/operations/get-wallet-address',
-                  badge: { text: 'GET', variant: 'success' }
+                  badge: { text: 'GET', variant: 'note' }
                 },
                 {
                   label: 'Get keys bound to wallet address',
                   link: '/apis/wallet-address-server/operations/get-wallet-address-keys',
-                  badge: { text: 'GET', variant: 'success' }
+                  badge: { text: 'GET', variant: 'note' }
                 }
               ]
             },
@@ -262,22 +262,22 @@ export default defineConfig({
                     {
                       label: 'Create incoming payment',
                       link: '/apis/resource-server/operations/create-incoming-payment',
-                      badge: { text: 'POST', variant: 'note' }
+                      badge: { text: 'POST', variant: 'success' }
                     },
                     {
                       label: 'List incoming payments',
                       link: '/apis/resource-server/operations/list-incoming-payments',
-                      badge: { text: 'GET', variant: 'success' }
+                      badge: { text: 'GET', variant: 'note' }
                     },
                     {
                       label: 'Get an incoming payment',
                       link: '/apis/resource-server/operations/get-incoming-payment',
-                      badge: { text: 'GET', variant: 'success' }
+                      badge: { text: 'GET', variant: 'note' }
                     },
                     {
                       label: 'Complete an incoming payment',
                       link: '/apis/resource-server/operations/complete-incoming-payment',
-                      badge: { text: 'POST', variant: 'note' }
+                      badge: { text: 'POST', variant: 'success' }
                     }
                   ]
                 },
@@ -288,17 +288,17 @@ export default defineConfig({
                     {
                       label: 'Create outgoing payment',
                       link: '/apis/resource-server/operations/create-outgoing-payment',
-                      badge: { text: 'POST', variant: 'note' }
+                      badge: { text: 'POST', variant: 'success' }
                     },
                     {
                       label: 'List outgoing payments',
                       link: '/apis/resource-server/operations/list-outgoing-payments',
-                      badge: { text: 'GET', variant: 'success' }
+                      badge: { text: 'GET', variant: 'note' }
                     },
                     {
                       label: 'Get an outgoing payment',
                       link: '/apis/resource-server/operations/get-outgoing-payment',
-                      badge: { text: 'GET', variant: 'success' }
+                      badge: { text: 'GET', variant: 'note' }
                     }
                   ]
                 },
@@ -309,12 +309,12 @@ export default defineConfig({
                     {
                       label: 'Create quote',
                       link: '/apis/resource-server/operations/create-quote',
-                      badge: { text: 'POST', variant: 'note' }
+                      badge: { text: 'POST', variant: 'success' }
                     },
                     {
                       label: 'Get a quote',
                       link: '/apis/resource-server/operations/get-quote',
-                      badge: { text: 'GET', variant: 'success' }
+                      badge: { text: 'GET', variant: 'note' }
                     }
                   ]
                 }
@@ -331,12 +331,12 @@ export default defineConfig({
                     {
                       label: 'Grant request',
                       link: '/apis/auth-server/operations/post-request',
-                      badge: { text: 'POST', variant: 'note' }
+                      badge: { text: 'POST', variant: 'success' }
                     },
                     {
                       label: 'Grant continuation request',
                       link: '/apis/auth-server/operations/post-continue',
-                      badge: { text: 'POST', variant: 'note' }
+                      badge: { text: 'POST', variant: 'success' }
                     },
                     {
                       label: 'Cancel grant',
@@ -352,7 +352,7 @@ export default defineConfig({
                     {
                       label: 'Rotate access token',
                       link: '/apis/auth-server/operations/post-token',
-                      badge: { text: 'POST', variant: 'note' }
+                      badge: { text: 'POST', variant: 'success' }
                     },
                     {
                       label: 'Revoke access token',

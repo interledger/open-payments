@@ -6,13 +6,13 @@ import { LinkOut } from '@interledger/docs-design-system'
 
 Handling payments is a crucial part of many online applications. Whether it's an eCommerce site selling products, a fundraising platform accepting donations, a streaming service charging for content, or a subscription service with monthly fees, digital payments are central to their operations. Many application developers rely on third-party payment gateways to handle these transactions, which can introduce additional expenses and limit control over the user experience.
 
-Open Payments is an open RESTful API and API standard that enables clients to interface with Open Payments-enabled accounts. In this context, a client is an application, such as a mobile or web app, that consumes one or more Open Payments resources, typically requiring access privileges from one or several authorization servers.
+Open Payments is an open RESTful API and an API standard that enables clients to interface with Open Payments-enabled accounts. In this context, a client is an application, such as a mobile or web app, that consumes one or more Open Payments resources, typically requiring access privileges from one or several authorization servers.
 
 The Open Payments standard is meant to be implemented by account servicing entities (ASEs). ASEs provide and maintain payment accounts for payers and payees, and are regulated entities within the countries they operate. Examples of ASEs include banks, digital wallet providers, and mobile money providers.
 
 ## Benefits of Open Payments
 
-When an ASE implements Open Payments, their customers’ financial accounts become Open Payments-enabled. Clients can then call the Open Payments API to view an Open Payments-enabled account’s transaction history and certain account details, as well as issue instructions for receiving payments into and sending payments from the account.
+When an ASE implements Open Payments, their customers’ financial accounts become Open Payments-enabled. Clients can then call the Open Payments APIs to view an Open Payments-enabled account’s transaction history and certain account details, as well as issue instructions for receiving payments into and sending payments from the account.
 
 For example, an application developer can build payments functionality into their app without the need for custom integrations with each ASE. Users with Open Payments-enabled accounts can use the app to send funds to another Open Payments-enabled account, regardless of whether the recipient uses the same ASE. This app should be able to connect to any ASE that implements the Open Payments standard without the need for custom integrations.
 
@@ -26,7 +26,7 @@ With Open Payments, users remain in full control of their financial transactions
 
 ## Payments
 
-Open Payments does not execute payments or touch funds in any way. Instead, the API allows clients to issue payment instructions to ASEs.
+Open Payments does not execute payments or touch funds in any way. Instead, the APIs allow clients to issue payment instructions to ASEs.
 
 For example, a client can instruct an ASE to send a payment of $20.00 USD from its customer’s account to another Open Payments-enabled account at a different ASE. The sending ASE is responsible for executing and settling the payment with the receiving ASE outside of Open Payments. The ability to execute payments between Open Payments-enabled ASEs is predicated on the availability of a common payment rail between the ASEs.
 
@@ -42,7 +42,7 @@ Wallet addresses in Open Payments are designed to be user-friendly and publicly 
 
 Clients must receive grants before issuing payment instructions. Grants give clients the authorization, via access tokens, to perform one or more operations. Grants represent the rights that are given to the client, such as the right to create an incoming payment request.
 
-Open Payments leverages the <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol'>Grant Negotiation and Authorization Protocol (GNAP)</LinkOut> to define a standard mechanism for clients to request and receive the grants necessary to use the Open Payments API. All requests require signatures, which protect the integrity of the requests. Signatures are generated according to the <LinkOut href='https://datatracker.ietf.org/doc/draft-ietf-httpbis-message-signatures/'>HTTP Signatures specification</LinkOut>.
+Open Payments leverages the <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol'>Grant Negotiation and Authorization Protocol (GNAP)</LinkOut> to define a standard mechanism for clients to request and receive the grants necessary to use the Open Payments APIs. All requests require signatures, which protect the integrity of the requests. Signatures are generated according to the <LinkOut href='https://datatracker.ietf.org/doc/draft-ietf-httpbis-message-signatures/'>HTTP Signatures specification</LinkOut>.
 
 GNAP allows account holders to have specific and fine-grained control over the permissions they grant to the clients that connect to their accounts, including control over the amounts of transactions with time-based and velocity-based limits. This enables powerful use cases such as third-party payment initiation and delegated authorization without compromising the security of the underlying financial accounts and payment instruments.
 
@@ -52,7 +52,7 @@ Review the [Grant negotiation and authorization](/introduction/grants) page for 
 
 Open Payments aims to improve upon existing Open Banking standards as defined in the UK, EU, and other jurisdictions.
 
-Existing Open Banking ecosystems are dominated by aggregators and intermediaries, making it impossible for independent third-parties, such as small merchants, to use payment initiation APIs directly against their customers’ payment accounts. Open Payments allows for scenarios where clients can dynamically register and engage with the API without needing to pre-register with the ASE. This allows for a truly distributed and federated payment ecosystem with global reach and no dependence on any particular underlying account type or settlement system.
+Existing Open Banking ecosystems are dominated by aggregators and intermediaries, making it impossible for independent third-parties, such as small merchants, to use payment initiation APIs directly against their customers’ payment accounts. Open Payments allows for scenarios where clients can dynamically register and engage with the APIs without needing to pre-register with the ASE. This allows for a truly distributed and federated payment ecosystem with global reach and no dependence on any particular underlying account type or settlement system.
 
 Open Payments is also a significantly simpler standard with a small number of resource types and a more secure and powerful authorization protocol.
 
