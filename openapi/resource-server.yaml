@@ -1194,7 +1194,7 @@ components:
         method:
           $ref: '#/components/schemas/payment-method'
         estimatedExchangeRate:
-          type: number 
+          type: number
           description: 'Estimated probed exchange rate over the path (ILP specific).'
           readOnly: true
         expiresAt:
