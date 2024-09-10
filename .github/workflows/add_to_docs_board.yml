@@ -1,0 +1,16 @@
+name: Add to documentation project board
+on:
+  issues:
+    types:
+      - labeled
+
+jobs:
+  add-to-project:
+    if: github.event.label.name == 'user-docs'
+    name: Add issue to project
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/add-to-project@v1.0.2
+        with:
+          project-url: https://github.com/orgs/interledger/projects/24/
+          github-token: ${{ secrets.ADD_TO_PROJECT_TOKEN }}
