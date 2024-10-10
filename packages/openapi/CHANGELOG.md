@@ -1,5 +1,11 @@
 # @interledger/openapi
 
+## 2.0.2
+
+### Patch Changes
+
+- 18ff574: Updating @apidevtools/json-schema-ref-parser package
+
 ## 2.0.1
 
 ### Patch Changes
