@@ -1,49 +1,45 @@
 ---
-title: Rafiki.Money
+title: Test Wallet
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
 
-Before working with our code snippets, we recommend creating a wallet account on <LinkOut href='https://rafiki.money'>Rafiki.Money</LinkOut>, a test wallet provider that's part of the Interledger testnet.
+Before working with our code snippets, we recommend creating a wallet account on the <LinkOut href='https://wallet.interledger-test.dev/'>test wallet</LinkOut> that's part of the Interledger testnet.
 
-Rafiki.Money lets you create developer keys and wallet accounts, funded with play money, for making Interledger transactions via the Open Payments APIs.
+The test wallet lets you create developer keys and wallet accounts, funded with play money, for making Interledger transactions via the Open Payments APIs.
 
-## Create an account on Rafiki.Money
+## Create an account on the test wallet
 
-1. Go to <LinkOut href="https://rafiki.money">rafiki.money</LinkOut>.
+1. Go to <LinkOut href="https://wallet.interledger-test.dev">wallet.interledger-test.dev</LinkOut>.
 2. Click **Create an account** at the bottom right of the screen.
 3. Enter your e-mail address, a password, confirm the password and click the arrowhead.
-4. Go to your inbox and look for an e-mail sent by `tech@interledger.org` with the subject "[Rafiki.Money] Verify your account" and click **Confirm my email address.** <br /><img src="/img/snippets/rafiki-money-step4.png" alt="Confirm email address" class="img-outline" width="350" height="auto" />
-5. Click **Login to your account** at the email verification screen. <br /><img src="/img/snippets/rafiki-money-step5.png" alt="Log in with new account at rafiki.money" class="img-outline" width="350" height="auto" />
+4. Go to your inbox and look for an e-mail sent by `tech@interledger.org` with the subject "[Test.Wallet] Verify your account" and click **Confirm my email address.** <br />
+5. Click **Login to your account** at the email verification screen.
 6. Log in with your credentials.
-7. Enter any First and Last name on the Complete KYC screen and click **Get Wallet Account.** Note that since this is a test environment, the country, city and address fields will already be filled in. <br /><img src="/img/snippets/rafiki-money-step8.png" alt="Get wallet account at rafiki.money" class="img-outline" width="350" height="auto" />
-8. Click **Verify your identity** on the pop-up window. <br /><img src="/img/snippets/rafiki-money-step9.png" alt="Identity verification at rafiki.money" class="img-outline" width="350" height="auto" />
-9. Click **Verify Account** at the Complete KYC screen. Note that since this is a test environment "Passport" will be selected as the verification method and images will be uploaded by default. <br /><img src="/img/snippets/rafiki-money-step10.png" alt="Verify account at rafiki.money" class="img-outline" width="350" height="auto" />
-10. Click **Go to your account overview** on the pop-up window. <br /><img src="/img/snippets/rafiki-money-step11.png" alt="Account overview dashboard on rafiki.money" class="img-outline" width="350" height="auto" />
+7. Complete the KYC steps, and liveness check. In this case, only email and phone need to be correct, all other information can be fictitious.
 
-You're now ready to create a Rafiki.Money test wallet and add money to it!
+
+You're now ready to create a test wallet and add money to it!
 
 ## Create a wallet account
 
-The first time you access <LinkOut href="https://rafiki.money">rafiki.money</LinkOut>, you'll be guided through creating a new wallet account.
+1. You can create a wallet account by clicking **New Account.**
+2. Enter a name for the account, choose an asset code (the currency) from the drop-down menu and click **Create account.**
+3. Click **View Account.**
+4. Click **Add payment pointer.**
+5. Enter a Payment Pointer name and a Public name and then click **Create.**
+6. Click **Deposit**.
+7. Enter an amount, then click **Deposit**
 
-1. If you've completed or skipped the onboarding guide, you can create a wallet account by clicking **New Account.** <br /><img src="/img/snippets/rafiki-money-step13.png" alt="Set up new account at rafiki.money" class="img-outline" width="300" height="auto" />
-2. Enter a name for the account, choose an asset code from the drop-down menu and click **Create account.** <br /><img src="/img/snippets/rafiki-money-step15.png" alt="Enter name and create account on rafiki.money" class="img-outline" width="300" height="auto" />
-3. Click **View Account.** <br /><img src="/img/snippets/rafiki-money-step16.png" alt="Click to view account created on rafiki.money" class="img-outline" width="350" height="auto" />
-4. Click **Add payment pointer.** <br /><img src="/img/snippets/rafiki-money-step17.png" alt="Add a payment pointer for the new account on rafiki.money" class="img-outline" width="400" height="auto" />
-5. Enter a Payment Pointer name and a Public name and then click **Create.** <br /><img src="/img/snippets/rafiki-money-step19.png" alt="Create payment pointer on rafiki.money" class="img-outline" width="400" height="auto" />
-6. Click **Add money.** <br /><img src="/img/snippets/rafiki-money-step20.png" alt="Add money to payment pointer on rafiki.money" class="img-outline" width="400" height="auto" />
-7. Fund your wallet by entering an amount, then click **Add money.** <br /><img src="/img/snippets/rafiki-money-step21.png" alt="Enter amount and add money to the payment pointer on rafiki.money" class="img-outline" width="400" height="auto" />
-
-Congratulations, you now have a funded Rafiki.Money wallet!
+Congratulations, you now have a funded test wallet!
 
 ## Obtain a public-private key pair and key ID
 
 Before you can initialize an authenticated Open Payments client, you must obtain a public-private key pair and a key ID.
 
-1. Sign in to <LinkOut href='https://rafiki.money'>rafiki.money</LinkOut>.
+1. Sign in to <LinkOut href='https://wallet.interledger-test.dev/'>wallet.interledger-test.dev</LinkOut>.
 2. Select **Settings > Developer Keys**.
-3. Expand the drop-down menu for your wallet account.<br /><img src="/img/snippets/generate-keys.png" alt="Expanded account showing payment pointer and Generate public & private key button" class="img-outline" style="max-width:600px;"/>
-4. Click **Generate public & private key**. Your key ID and public key appear on the site. A private key file named `private.key` automatically downloads to your machine. <img src="/img/snippets/view-keys.png" alt="Expanded account showing key ID, option to show public key, and button to revoke public/private keys" class="img-outline" style="max-height:300px;"/>
+3. Expand the drop-down menu for your wallet account.
+4. Click **Generate public & private key**. Your key ID and public key appear on the site. A private key file named `private.key` automatically downloads to your machine. 
 
 You can now use your keys and payment pointer to initialize an authenticated Open Payments client.
