@@ -93,15 +93,3 @@ Operations on the APIs by a client require the client to have a valid access tok
 :::note
 An open-source implementation of an Open Payments resource server, called <LinkOut href='https://rafiki.dev'>Rafiki</LinkOut>, is currently in development.
 :::
-
-## Identity providers
-
-An identity provider (IdP) is a system or service that manages user authentication, identity information, and consent. Open Payments requires any AS that issues <Tooltip content="A grant requiring explicit interaction/consent from the resource owner before an access token can be issued" client:load><span>interactive grants</span></Tooltip> be integrated with an IdP.
-
-After an interactive grant request is initiated and the AS sets the session, the AS provides the client with the IdP URI to redirect the end-user to.
-
-<Interactive />
-
-:::tip[Reference implementation]
-Rafiki provides a reference <LinkOut href='https://github.com/interledger/rafiki/tree/main/packages/auth'>authorization service</LinkOut> implementation that includes support for integration with an IdP.
-:::
