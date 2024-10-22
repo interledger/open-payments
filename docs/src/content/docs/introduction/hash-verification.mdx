@@ -4,7 +4,7 @@ title: Hash verification
 
 import { CodeBlock, LinkOut } from '@interledger/docs-design-system'
 
-Once a resource owner (RO) authorizes a client software, the authorization server (AS) will redeirect the RO's [identify provider (IdP)](/introduction/idp/) to the finish URI. In order to secure this communication and verify that the redirect indeed emanated from the AS, the AS will provide a hash parameter in the request to the client's callback URI. The client **_must_** verify this hash.
+Once a resource owner (RO) authorizes a client software, the authorization server (AS) will redirect the RO's [identity provider (IdP)](/introduction/idp/) to the finish URI. In order to secure this communication and verify that the redirect indeed emanated from the AS, the AS will provide a hash parameter in the request to the client's callback URI. The client **_must_** verify this hash.
 
 ## Hashing method
 
@@ -42,4 +42,4 @@ x-gguKWTj8rQf7d7i3w3UhzvuJ5bpOlKyAlVpLxBffY
 
 </CodeBlock>
 
-For more information refer to the <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol-20#name-calculating-the-interaction'> "Calculating the interaction hash"</LinkOut> section of the GNAP specification.
+For more information refer to the <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol-20#name-calculating-the-interaction'>Calculating the interaction hash</LinkOut> section of the GNAP specification.
