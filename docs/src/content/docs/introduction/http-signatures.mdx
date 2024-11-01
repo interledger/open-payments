@@ -6,7 +6,7 @@ import { CodeBlock, LinkOut } from '@interledger/docs-design-system'
 
 HTTP message signatures are cryptographic digital signatures used by the Open Payments APIs to secure HTTP messages exchanged between sender, receiver, or third-party initiating payment systems.
 
-The Open Payments APIs implement the <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol-16#section-7.3.1'> HTTP Signatures </LinkOut> section of the GNAP (Grant Negotiation and Authorization Protocol) specification.
+The Open Payments APIs implement the <LinkOut href='https://datatracker.ietf.org/doc/html/rfc9635#name-http-message-signatures'> HTTP Signatures </LinkOut> section of the GNAP (Grant Negotiation and Authorization Protocol) specification.
 
 ## Purpose
 
@@ -56,17 +56,9 @@ Authorization: GNAP 123454321
 
 ### Signature base
 
-The signature creation process begins with identifying the fields of the original message to use when creating the signature.
-These are called the covered components of the message. The covered components make up the signature base, together with the signing algorithm, and an identifier for the signer's public key.
+The signature creation process begins with identifying the fields of the original message to use when creating the signature. These fields are referred to as the covered components of the message. The covered components make up the signature base, together with the signing algorithm, and an identifier for the signer's public key.
 
-The final sub-field of the signature base is an HTTP structured field called signature params, an ordered list of components that make up the signature base.
-
-{/* prettier-ignore */}
-{/*
-
-# fyi: contents of codeblock example below were generated using: https://httpsig.org
-
-\*/}
+The final sub-field of the signature base is an HTTP-structured field called `signature-params`, which contains an ordered list of components that make up the signature base.
 
 <CodeBlock title="Example: signature base">
 
@@ -83,13 +75,15 @@ The final sub-field of the signature base is an HTTP structured field called sig
 
 </CodeBlock>
 
+For more information about required components, see <LinkOut href="https://datatracker.ietf.org/doc/html/rfc9635#name-http-message-signatures">Section 7.3.1 HTTP Message Signatures</LinkOut> in the GNAP specification.
+
 ### Generate signature
 
 To generate the http signature:
 
-1. The signature base gets hashed (using SHA-512), producing a digest.
-2. The digest gets signed with the signer's private key, producing the signature as a byte string.
-3. The byte string gets Base64 encoded, and this results in the final signature value.
+1. The signature base is hashed using SHA-512, producing a digest.
+2. The digest is signed with the signer's private key, producing the signature as a byte string.
+3. The byte string is Base64-encoded, resulting in the final signature value.
 
 ### Signed HTTP message
 
