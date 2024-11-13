@@ -172,6 +172,20 @@ export interface components {
       receiveAmount?: external["schemas.yaml"]["components"]["schemas"]["amount"];
       interval?: components["schemas"]["interval"];
     };
+    "gnap-error": {
+      error?: {
+        description?: string;
+        code?:
+          | "invalid_request"
+          | "invalid_client"
+          | "invalid_interaction"
+          | "invalid_rotation"
+          | "invalid_continuation"
+          | "user_denied"
+          | "request_denied"
+          | "unknown_interaction - too_fast";
+      };
+    };
   };
 }
 
@@ -195,11 +209,23 @@ export interface operations {
         };
       };
       /** Bad Request */
-      400: unknown;
+      400: {
+        content: {
+          "application/json": components["schemas"]["gnap-error"];
+        };
+      };
       /** Unauthorized */
-      401: unknown;
+      401: {
+        content: {
+          "application/json": components["schemas"]["gnap-error"];
+        };
+      };
       /** Internal Server Error */
-      500: unknown;
+      500: {
+        content: {
+          "application/json": components["schemas"]["gnap-error"];
+        };
+      };
     };
     requestBody: {
       content: {
@@ -231,11 +257,23 @@ export interface operations {
         };
       };
       /** Bad Request */
-      400: unknown;
+      400: {
+        content: {
+          "application/json": components["schemas"]["gnap-error"];
+        };
+      };
       /** Unauthorized */
-      401: unknown;
+      401: {
+        content: {
+          "application/json": components["schemas"]["gnap-error"];
+        };
+      };
       /** Not Found */
-      404: unknown;
+      404: {
+        content: {
+          "application/json": components["schemas"]["gnap-error"];
+        };
+      };
     };
     requestBody: {
       content: {
@@ -260,11 +298,23 @@ export interface operations {
       /** No Content */
       204: never;
       /** Bad Request */
-      400: unknown;
+      400: {
+        content: {
+          "application/json": components["schemas"]["gnap-error"];
+        };
+      };
       /** Unauthorized */
-      401: unknown;
+      401: {
+        content: {
+          "application/json": components["schemas"]["gnap-error"];
+        };
+      };
       /** Not Found */
-      404: unknown;
+      404: {
+        content: {
+          "application/json": components["schemas"]["gnap-error"];
+        };
+      };
     };
   };
   /** Management endpoint to rotate access token. */
@@ -284,11 +334,23 @@ export interface operations {
         };
       };
       /** Bad Request */
-      400: unknown;
+      400: {
+        content: {
+          "application/json": components["schemas"]["gnap-error"];
+        };
+      };
       /** Unauthorized */
-      401: unknown;
+      401: {
+        content: {
+          "application/json": components["schemas"]["gnap-error"];
+        };
+      };
       /** Not Found */
-      404: unknown;
+      404: {
+        content: {
+          "application/json": components["schemas"]["gnap-error"];
+        };
+      };
     };
   };
   /** Management endpoint to revoke access token. */
@@ -302,9 +364,17 @@ export interface operations {
       /** No Content */
       204: never;
       /** Bad Request */
-      400: unknown;
+      400: {
+        content: {
+          "application/json": components["schemas"]["gnap-error"];
+        };
+      };
       /** Unauthorized */
-      401: unknown;
+      401: {
+        content: {
+          "application/json": components["schemas"]["gnap-error"];
+        };
+      };
     };
   };
 }

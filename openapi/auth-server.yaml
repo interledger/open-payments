@@ -74,10 +74,22 @@ paths:
                       uri: 'https://auth.rafiki.money/continue/4CF492MLVMSW9MKMXKHQ'
         '400':
           description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/gnap-error'
         '401':
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/gnap-error'
         '500':
           description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/gnap-error'
       requestBody:
         content:
           application/json:
@@ -198,10 +210,22 @@ paths:
                       wait: 30
         '400':
           description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/gnap-error'
         '401':
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/gnap-error'
         '404':
           description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/gnap-error'
       requestBody:
         content:
           application/json:
@@ -228,10 +252,22 @@ paths:
           description: No Content
         '400':
           description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/gnap-error'
         '401':
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/gnap-error'
         '404':
           description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/gnap-error'
       description: Cancel a grant request or delete a grant client side.
       tags:
         - grant
@@ -279,10 +315,22 @@ paths:
                               assetScale: 2
         '400':
           description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/gnap-error'
         '401':
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/gnap-error'
         '404':
           description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/gnap-error'
       description: Management endpoint to rotate access token.
       tags:
         - token
@@ -295,8 +343,16 @@ paths:
           description: No Content
         '400':
           description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/gnap-error'
         '401':
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/gnap-error'
       tags:
         - token
 components:
@@ -532,6 +588,26 @@ components:
             - debitAmount
         - required:
             - receiveAmount
+    gnap-error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            description:
+              type: string
+            code:
+              type: string
+              enum:
+                - invalid_request
+                - invalid_client
+                - invalid_interaction
+                - invalid_rotation
+                - invalid_continuation
+                - user_denied
+                - request_denied
+                - unknown_interaction
+                  - too_fast
   securitySchemes:
     GNAP:
       name: Authorization
