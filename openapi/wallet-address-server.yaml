@@ -10,9 +10,9 @@ info:
   contact:
     email: tech@interledger.org
 servers:
-  - url: 'https://rafiki.money/alice'
+  - url: 'https://ilp.interledger-test.dev/alice'
     description: "Server for Alice's wallet address"
-  - url: 'https://rafiki.money/bob'
+  - url: 'https://ilp.interledger-test.dev/bob'
     description: "Server for Bob's wallet address"
 tags:
   - name: wallet-address
@@ -31,14 +31,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/wallet-address'
               examples:
-                Get wallet address for $rafiki.money/alice:
+                Get wallet address for $ilp.interledger-test.dev/alice:
                   value:
-                    id: 'https://rafiki.money/alice'
+                    id: 'https://ilp.interledger-test.dev/alice'
                     publicName: Alice
                     assetCode: USD
                     assetScale: 2
-                    authServer: 'https://rafiki.money/auth'
-                    resourceServer: 'https://rafiki.money/op'
+                    authServer: 'https://ilp.interledger-test.dev/auth'
+                    resourceServer: 'https://ilp.interledger-test.dev/op'
         '404':
           description: Wallet Address Not Found
       operationId: get-wallet-address
@@ -93,12 +93,12 @@ components:
       description: A **wallet address** resource is the root of the API and contains the public details of the financial account represented by the Wallet Address that is also the service endpoint URL.
       additionalProperties: true
       examples:
-        - id: 'https://rafiki.money/alice'
+        - id: 'https://ilp.interledger-test.dev/alice'
           publicName: Alice
           assetCode: USD
           assetScale: 2
-          authServer: 'https://rafiki.money/auth'
-          resourceServer: 'https://rafiki.money/op'
+          authServer: 'https://ilp.interledger-test.dev/auth'
+          resourceServer: 'https://ilp.interledger-test.dev/op'
       properties:
         id:
           type: string
