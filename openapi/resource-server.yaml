@@ -28,10 +28,10 @@ info:
   contact:
     email: tech@interledger.org
 servers:
-  - url: 'https://ilp.rafiki.money'
-    description: 'Server for wallet address subresources (ie https://ilp.rafiki.money/alice)'
-  - url: 'https://ilp.rafiki.money/.well-known/pay'
-    description: 'Server for when the wallet address has no pathname (ie https://ilp.rafiki.money)'
+  - url: 'https://ilp.interledger-test.dev'
+    description: 'Server for wallet address subresources (ie https://ilp.interledger-test.dev/alice)'
+  - url: 'https://ilp.interledger-test.dev/.well-known/pay'
+    description: 'Server for when the wallet address has no pathname (ie https://ilp.interledger-test.dev)'
 tags:
   - name: wallet-address
     description: wallet address operations
@@ -58,8 +58,8 @@ paths:
               examples:
                 New Incoming Payment for $25:
                   value:
-                    id: 'https://ilp.rafiki.money/incoming-payments/08394f02-7b7b-45e2-b645-51d04e7c330c'
-                    walletAddress: 'https://ilp.rafiki.money/alice/'
+                    id: 'https://ilp.interledger-test.dev/incoming-payments/08394f02-7b7b-45e2-b645-51d04e7c330c'
+                    walletAddress: 'https://ilp.interledger-test.dev/alice/'
                     incomingAmount:
                       value: '2500'
                       assetCode: USD
@@ -161,8 +161,8 @@ paths:
                       hasPreviousPage: false
                       hasNextPage: true
                     result:
-                      - id: 'https://ilp.rafiki.money/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
-                        walletAddress: 'https://ilp.rafiki.money/alice/'
+                      - id: 'https://ilp.interledger-test.dev/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
+                        walletAddress: 'https://ilp.interledger-test.dev/alice/'
                         incomingAmount:
                           value: '250'
                           assetCode: USD
@@ -178,8 +178,8 @@ paths:
                         createdAt: '2022-03-12T23:20:50.52Z'
                         updatedAt: '2022-04-01T10:24:36.11Z'
                         completed: true
-                      - id: 'https://ilp.rafiki.money/incoming-payments/32abc219-3dc3-44ec-a225-790cacfca8fa'
-                        walletAddress: 'https://ilp.rafiki.money/alice/'
+                      - id: 'https://ilp.interledger-test.dev/incoming-payments/32abc219-3dc3-44ec-a225-790cacfca8fa'
+                        walletAddress: 'https://ilp.interledger-test.dev/alice/'
                         receivedAmount:
                           value: '100'
                           assetCode: USD
@@ -198,8 +198,8 @@ paths:
                       hasPreviousPage: true
                       hasNextPage: false
                     result:
-                      - id: 'https://ilp.rafiki.money/incoming-payments/32abc219-3dc3-44ec-a225-790cacfca8fa'
-                        walletAddress: 'https://ilp.rafiki.money/alice/'
+                      - id: 'https://ilp.interledger-test.dev/incoming-payments/32abc219-3dc3-44ec-a225-790cacfca8fa'
+                        walletAddress: 'https://ilp.interledger-test.dev/alice/'
                         receivedAmount:
                           value: '100'
                           assetCode: USD
@@ -210,8 +210,8 @@ paths:
                         updatedAt: '2022-04-01T10:24:36.11Z'
                         metadata:
                           description: 'I love your website, Alice! Thanks for the great content'
-                      - id: 'https://ilp.rafiki.money/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
-                        walletAddress: 'https://ilp.rafiki.money/alice/'
+                      - id: 'https://ilp.interledger-test.dev/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
+                        walletAddress: 'https://ilp.interledger-test.dev/alice/'
                         incomingAmount:
                           value: '250'
                           assetCode: USD
@@ -257,10 +257,10 @@ paths:
               examples:
                 New Fixed Send Outgoing Payment for $25:
                   value:
-                    id: 'https://ilp.rafiki.money/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
-                    walletAddress: 'https://ilp.rafiki.money/alice/'
+                    id: 'https://ilp.interledger-test.dev/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
+                    walletAddress: 'https://ilp.interledger-test.dev/alice/'
                     failed: false
-                    receiver: 'https://ilp.rafiki.money/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2'
+                    receiver: 'https://ilp.interledger-test.dev/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2'
                     debitAmount:
                       value: '2600'
                       assetCode: USD
@@ -295,14 +295,14 @@ paths:
             examples:
               Create an outgoing payment based on a quote:
                 value:
-                  walletAddress: 'https://ilp.rafiki.money/alice/'
-                  quoteId: 'https://ilp.rafiki.money/quotes/ab03296b-0c8b-4776-b94e-7ee27d868d4d'
+                  walletAddress: 'https://ilp.interledger-test.dev/alice/'
+                  quoteId: 'https://ilp.interledger-test.dev/quotes/ab03296b-0c8b-4776-b94e-7ee27d868d4d'
                   metadata:
                     externalRef: INV2022-02-0137
               Create an outgoing payment based on an incoming payment:
                 value:
-                  walletAddress: 'https://ilp.rafiki.money/alice/'
-                  incomingPayment: 'https://ilp.rafiki.money/incoming-payments/8d4e4776-2e55-4e5a-bcbe-8348ed1e86de'
+                  walletAddress: 'https://ilp.interledger-test.dev/alice/'
+                  incomingPayment: 'https://ilp.interledger-test.dev/incoming-payments/8d4e4776-2e55-4e5a-bcbe-8348ed1e86de'
                   debitAmount:
                     value: '2500'
                     assetCode: USD
@@ -388,10 +388,10 @@ paths:
                       hasPreviousPage: false
                       hasNextPage: true
                     result:
-                      - id: 'https://ilp.rafiki.money/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
-                        walletAddress: 'https://ilp.rafiki.money/alice/'
+                      - id: 'https://ilp.interledger-test.dev/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
+                        walletAddress: 'https://ilp.interledger-test.dev/alice/'
                         failed: false
-                        receiver: 'https://ilp.rafiki.money/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
+                        receiver: 'https://ilp.interledger-test.dev/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
                         receiveAmount:
                           value: '2500'
                           assetCode: USD
@@ -409,10 +409,10 @@ paths:
                         metadata:
                           description: APlusVideo subscription
                           externalRef: 'customer: 847458475'
-                      - id: 'https://ilp.rafiki.money/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
-                        walletAddress: 'https://ilp.rafiki.money/alice/'
+                      - id: 'https://ilp.interledger-test.dev/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
+                        walletAddress: 'https://ilp.interledger-test.dev/alice/'
                         failed: false
-                        receiver: 'https://ilp.rafiki.money/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
+                        receiver: 'https://ilp.interledger-test.dev/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
                         debitAmount:
                           value: '7126'
                           assetCode: USD
@@ -438,10 +438,10 @@ paths:
                       hasPreviousPage: true
                       hasNextPage: false
                     result:
-                      - id: 'https://ilp.rafiki.money/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
-                        walletAddress: 'https://ilp.rafiki.money/alice/'
+                      - id: 'https://ilp.interledger-test.dev/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
+                        walletAddress: 'https://ilp.interledger-test.dev/alice/'
                         failed: false
-                        receiver: 'https://ilp.rafiki.money/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
+                        receiver: 'https://ilp.interledger-test.dev/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
                         debitAmount:
                           value: '7126'
                           assetCode: USD
@@ -459,10 +459,10 @@ paths:
                         metadata:
                           description: Thank you for your purchase at ShoeShop!
                           externalRef: INV2022-8943756
-                      - id: 'https://ilp.rafiki.money/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
-                        walletAddress: 'https://ilp.rafiki.money/alice/'
+                      - id: 'https://ilp.interledger-test.dev/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
+                        walletAddress: 'https://ilp.interledger-test.dev/alice/'
                         failed: false
-                        receiver: 'https://ilp.rafiki.money/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
+                        receiver: 'https://ilp.interledger-test.dev/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
                         receiveAmount:
                           value: '2500'
                           assetCode: USD
@@ -510,9 +510,9 @@ paths:
               examples:
                 New Fixed Send Quote for $25:
                   value:
-                    id: 'https://ilp.rafiki.money/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
-                    walletAddress: 'https://ilp.rafiki.money/alice/'
-                    receiver: 'https://ilp.rafiki.money/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
+                    id: 'https://ilp.interledger-test.dev/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
+                    walletAddress: 'https://ilp.interledger-test.dev/alice/'
+                    receiver: 'https://ilp.interledger-test.dev/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
                     debitAmount:
                       value: '2500'
                       assetCode: USD
@@ -536,13 +536,13 @@ paths:
             examples:
               Create quote for an `receiver` that is an Incoming Payment with an `incomingAmount`:
                 value:
-                  walletAddress: 'https://ilp.rafiki.money/alice'
-                  receiver: 'https://ilp.rafiki.money/incoming-payments/37a0d0ee-26dc-4c66-89e0-01fbf93156f7'
+                  walletAddress: 'https://ilp.interledger-test.dev/alice'
+                  receiver: 'https://ilp.interledger-test.dev/incoming-payments/37a0d0ee-26dc-4c66-89e0-01fbf93156f7'
                   method: ilp
               Create fixed-send amount quote for $25:
                 value:
-                  walletAddress: 'https://ilp.rafiki.money/alice'
-                  receiver: 'https://ilp.rafiki.money/incoming-payments/37a0d0ee-26dc-4c66-89e0-01fbf93156f7'
+                  walletAddress: 'https://ilp.interledger-test.dev/alice'
+                  receiver: 'https://ilp.interledger-test.dev/incoming-payments/37a0d0ee-26dc-4c66-89e0-01fbf93156f7'
                   method: ilp
                   debitAmount:
                     value: '2500'
@@ -550,8 +550,8 @@ paths:
                     assetScale: 2
               Create fixed-receive amount quote for $25:
                 value:
-                  walletAddress: 'https://ilp.rafiki.money/alice'
-                  receiver: 'https://ilp.rafiki.money/incoming-payments/37a0d0ee-26dc-4c66-89e0-01fbf93156f7'
+                  walletAddress: 'https://ilp.interledger-test.dev/alice'
+                  receiver: 'https://ilp.interledger-test.dev/incoming-payments/37a0d0ee-26dc-4c66-89e0-01fbf93156f7'
                   method: ilp
                   receiveAmount:
                     value: '2500'
@@ -634,8 +634,8 @@ paths:
               examples:
                 Incoming Payment for $25 with $12.34 received so far:
                   value:
-                    id: 'https://ilp.rafiki.money/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
-                    walletAddress: 'https://ilp.rafiki.money/alice/'
+                    id: 'https://ilp.interledger-test.dev/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
+                    walletAddress: 'https://ilp.interledger-test.dev/alice/'
                     incomingAmount:
                       value: '2500'
                       assetCode: USD
@@ -684,8 +684,8 @@ paths:
               examples:
                 Completed Incoming Payment:
                   value:
-                    id: 'https://ilp.rafiki.money/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
-                    walletAddress: 'https://ilp.rafiki.money/alice/'
+                    id: 'https://ilp.interledger-test.dev/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
+                    walletAddress: 'https://ilp.interledger-test.dev/alice/'
                     incomingAmount:
                       value: '250'
                       assetCode: USD
@@ -732,10 +732,10 @@ paths:
               examples:
                 Outgoing Payment with a fixed send amount of $25:
                   value:
-                    id: 'https://ilp.rafiki.money/bob/outgoing-payments/3859b39e-4666-4ce5-8745-72f1864c5371'
-                    walletAddress: 'https://ilp.rafiki.money/bob/'
+                    id: 'https://ilp.interledger-test.dev/bob/outgoing-payments/3859b39e-4666-4ce5-8745-72f1864c5371'
+                    walletAddress: 'https://ilp.interledger-test.dev/bob/'
                     failed: false
-                    receiver: 'https://ilp.rafiki.money/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
+                    receiver: 'https://ilp.interledger-test.dev/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
                     debitAmount:
                       value: '2500'
                       assetCode: USD
@@ -781,9 +781,9 @@ paths:
               examples:
                 Quote with a fixed send amount of $25:
                   value:
-                    id: 'https://ilp.rafiki.money/bob/quotes/3859b39e-4666-4ce5-8745-72f1864c5371'
-                    walletAddress: 'https://ilp.rafiki.money/bob/'
-                    receiver: 'https://ilp.rafiki.money/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
+                    id: 'https://ilp.interledger-test.dev/bob/quotes/3859b39e-4666-4ce5-8745-72f1864c5371'
+                    walletAddress: 'https://ilp.interledger-test.dev/bob/'
+                    receiver: 'https://ilp.interledger-test.dev/incoming-payments/2f1b0150-db73-49e8-8713-628baa4a17ff'
                     debitAmount:
                       value: '2500'
                       assetCode: USD
@@ -814,8 +814,8 @@ components:
       description: 'An **incoming payment** resource represents a payment that will be, is currently being, or has been received by the account.'
       type: object
       examples:
-        - id: 'https://ilp.rafiki.money/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
-          walletAddress: 'https://ilp.rafiki.money/alice/'
+        - id: 'https://ilp.interledger-test.dev/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
+          walletAddress: 'https://ilp.interledger-test.dev/alice/'
           incomingAmount:
             value: '250'
             assetCode: USD
@@ -831,8 +831,8 @@ components:
           metadata:
             description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
             externalRef: Coffee w/ Mo on 10 March 22
-        - id: 'https://ilp.rafiki.money/incoming-payments/456da9d5-c9a4-4c80-a354-86b915a04ff8'
-          walletAddress: 'https://ilp.rafiki.money/alice/'
+        - id: 'https://ilp.interledger-test.dev/incoming-payments/456da9d5-c9a4-4c80-a354-86b915a04ff8'
+          walletAddress: 'https://ilp.interledger-test.dev/alice/'
           incomingAmount:
             value: '2500'
             assetCode: USD
@@ -913,7 +913,7 @@ components:
             value: '0'
             assetCode: USD
             assetScale: 2
-        - authServer: 'https://auth.rafiki.money'
+        - authServer: 'https://auth.ilp.interledger-test.dev'
       properties:
         receivedAmount:
           $ref: ./schemas.yaml#/components/schemas/amount
@@ -929,10 +929,10 @@ components:
       description: 'An **outgoing payment** resource represents a payment that will be, is currently being, or has previously been, sent from the wallet address.'
       type: object
       examples:
-        - id: 'https://ilp.rafiki.money/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
-          walletAddress: 'https://ilp.rafiki.money/alice/'
+        - id: 'https://ilp.interledger-test.dev/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
+          walletAddress: 'https://ilp.interledger-test.dev/alice/'
           failed: false
-          receiver: 'https://ilp.rafiki.money/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
+          receiver: 'https://ilp.interledger-test.dev/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
           receiveAmount:
             value: '2500'
             assetCode: USD
@@ -950,10 +950,10 @@ components:
           metadata:
             description: APlusVideo subscription
             externalRef: 'customer: 847458475'
-        - id: 'https://ilp.rafiki.money/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
-          walletAddress: 'https://ilp.rafiki.money/alice/'
+        - id: 'https://ilp.interledger-test.dev/outgoing-payments/0cffa5a4-58fd-4cc8-8e01-7145c72bf07c'
+          walletAddress: 'https://ilp.interledger-test.dev/alice/'
           failed: false
-          receiver: 'https://ilp.rafiki.money/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
+          receiver: 'https://ilp.interledger-test.dev/shoeshop/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
           debitAmount:
             value: '7126'
             assetCode: USD
@@ -1025,10 +1025,10 @@ components:
       description: 'An **outgoing payment** resource represents a payment that will be, is currently being, or has previously been, sent from the wallet address.'
       type: object
       examples:
-        - id: 'https://ilp.rafiki.money/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
-          walletAddress: 'https://ilp.rafiki.money/alice/'
+        - id: 'https://ilp.interledger-test.dev/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
+          walletAddress: 'https://ilp.interledger-test.dev/alice/'
           failed: false
-          receiver: 'https://ilp.rafiki.money/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
+          receiver: 'https://ilp.interledger-test.dev/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
           receiveAmount:
             value: '2500'
             assetCode: USD
@@ -1050,10 +1050,10 @@ components:
           metadata:
             description: APlusVideo subscription
             externalRef: 'customer: 847458475'
-        - id: 'https://ilp.rafiki.money/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
-          walletAddress: 'https://ilp.rafiki.money/alice/'
+        - id: 'https://ilp.interledger-test.dev/outgoing-payments/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
+          walletAddress: 'https://ilp.interledger-test.dev/alice/'
           failed: false
-          receiver: 'https://ilp.rafiki.money/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
+          receiver: 'https://ilp.interledger-test.dev/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
           receiveAmount:
             value: '2500'
             assetCode: USD
@@ -1138,9 +1138,9 @@ components:
       description: A **quote** resource represents the quoted amount details with which an Outgoing Payment may be created.
       type: object
       examples:
-        - id: 'https://ilp.rafiki.money/quotes/ab03296b-0c8b-4776-b94e-7ee27d868d4d'
-          walletAddress: 'https://ilp.rafiki.money/alice/'
-          receiver: 'https://ilp.rafiki.money/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
+        - id: 'https://ilp.interledger-test.dev/quotes/ab03296b-0c8b-4776-b94e-7ee27d868d4d'
+          walletAddress: 'https://ilp.interledger-test.dev/alice/'
+          receiver: 'https://ilp.interledger-test.dev/shoeshop/incoming-payments/2fe92c6f-ef0d-487c-8759-3784eae6bce9'
           receiveAmount:
             value: '2500'
             assetCode: USD
@@ -1156,9 +1156,9 @@ components:
           method: ilp
           createdAt: '2022-03-12T23:20:50.52Z'
           expiresAt: '2022-04-12T23:20:50.52Z'
-        - id: 'https://ilp.rafiki.money/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
-          walletAddress: 'https://ilp.rafiki.money/alice/'
-          receiver: 'https://ilp.rafiki.money/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
+        - id: 'https://ilp.interledger-test.dev/quotes/8c68d3cc-0a0f-4216-98b4-4fa44a6c88cf'
+          walletAddress: 'https://ilp.interledger-test.dev/alice/'
+          receiver: 'https://ilp.interledger-test.dev/aplusvideo/incoming-payments/45d495ad-b763-4882-88d7-aa14d261686e'
           debitAmount:
             value: '7126'
             assetCode: USD
