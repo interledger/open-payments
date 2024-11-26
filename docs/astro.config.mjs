@@ -12,7 +12,8 @@ export default defineConfig({
       description:
         'An API for open access to financial accounts to send and receive payments.',
       components: {
-        Header: './src/components/Header.astro'
+        Header: './src/components/Header.astro',
+        PageSidebar: './src/components/PageSidebar.astro'
       },
       customCss: [
         './node_modules/@interledger/docs-design-system/src/styles/teal-theme.css',
