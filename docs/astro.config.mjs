@@ -11,6 +11,17 @@ export default defineConfig({
       title: 'Open Payments',
       description:
         'An API for open access to financial accounts to send and receive payments.',
+      head: [
+        {
+          tag: 'script',
+          attrs: {
+            defer: true,
+            'data-website-id': '76afa57f-78bb-48ab-a9e4-095a32d8a1b9',
+            src: 'https://ilf-site-analytics.netlify.app/script.js',
+            'data-domains': 'openpayments.dev'
+          }
+        }
+      ],
       components: {
         Header: './src/components/Header.astro',
         PageSidebar: './src/components/PageSidebar.astro'
