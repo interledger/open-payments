@@ -81,15 +81,30 @@ export default defineConfig({
             },
             {
               label: 'Grant negotiation and authorization',
-              link: '/introduction/grants/'
-            },
-            {
-              label: 'Client keys',
-              link: '/introduction/client-keys/'
-            },
-            {
-              label: 'HTTP message signatures',
-              link: '/introduction/http-signatures/'
+              collapsed: true,
+
+              items: [
+                {
+                  label: 'Overview',
+                  link: '/introduction/grants/'
+                },
+                {
+                  label: 'Identity providers',
+                  link: '/introduction/idp/'
+                },
+                {
+                  label: 'Client keys',
+                  link: '/introduction/client-keys/'
+                },
+                {
+                  label: 'HTTP message signatures',
+                  link: '/introduction/http-signatures/'
+                },
+                {
+                  label: 'Hash verification',
+                  link: '/introduction/hash-verification/'
+                }
+              ]
             }
           ]
         },
