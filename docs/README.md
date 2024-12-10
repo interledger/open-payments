@@ -71,10 +71,10 @@ We have extracted some of the commonly repeated patterns within the documentatio
 - [FullSnippet](#fullsnippet-component) (Project-specific)
 - [ChunkedSnippet](#chunkedsnippet-component) (Project-specific)
 
-For the shared components, if you are using both `CodeBlock` and `Hidden` on the same page, you can import them both like so:
+For the shared components, if you are using both `CodeBlock` and `Tooltip` on the same page, you can import them both like so:
 
 ```jsx
-import { CodeBlock, Hidden } from '@interledger/docs-design-system'
+import { CodeBlock, Tooltip } from '@interledger/docs-design-system'
 ```
 
 For more information about importing things in Javascript, please refer to [import on MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import).
