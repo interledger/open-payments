@@ -28,7 +28,7 @@ https://server.example.com/tx
 
 </CodeBlock>
 
-The ASCII encoding of this string is hashed with the `sha-256` algorithm, which is the only hashing algorithm currently supported by Open Payments.  The byte array from the hash function is then encoded using Base64 with no padding. The resultant string is the hash value.
+The ASCII encoding of this string is hashed with the `sha-256` algorithm, which is the only hashing algorithm currently supported by Open Payments. The byte array from the hash function is then encoded using Base64 with no padding. The resultant string is the hash value.
 
 Using our hash base string example above, the following is the `sha-256` encoded hash that uses the 256-bit SHA2 algorithm.
 
@@ -42,7 +42,7 @@ x-gguKWTj8rQf7d7i3w3UhzvuJ5bpOlKyAlVpLxBffY
 
 ## Verifying hash
 
-When the client receives a redirect from the AS, the AS will include the hash parameter in the response. The client must calculate this exact value by concatenating the fields referenced above and then applying the `sha-256` hashing algorithm. If the hash value matches the parameter sent by the AS, then the client can be certain the redirect emanated from the AS.  
+When the client receives a redirect from the AS, the AS will include the hash parameter in the response. The client must calculate this exact value by concatenating the fields referenced above and then applying the `sha-256` hashing algorithm. If the hash value matches the parameter sent by the AS, then the client can be certain the redirect emanated from the AS.
 
 ## Further reading
 
