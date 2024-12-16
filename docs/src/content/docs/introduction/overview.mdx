@@ -74,7 +74,9 @@ Open Payments facilitates various use cases including but not limited to:
 
 ### Peer-to-peer payments
 
-ASEs implementing the Open Payments standard and API create a peer-to-peer payment network, which allows developers to build payments into their applications using a single API. Thus, developers do not have to build custom integrations for each ASE, and users of their applications can send funds from their Open Payments-enabled accounts to another Open Payments-enabled account, even if the recipient uses a different ASE. For more details, refer to the [one-time payment guide](/guides/make-onetime-payment).
+A peer-to-peer payment is a type of payment made directly from one person to another via a linked funding source. When ASEs implement the Open Payments standard, applications can call the Open Payments APIs to facilitate peer-to-peer payments. Having a standard means app developers can avoid building custom integrations for each ASE. Plus, app users can hold funding accounts with different Open Payments-enabled ASEs and even use different Open Payments-enabled applications to make peer-to-peer payments.
+
+A peer-to-peer payment can be one-time or recurring. For more information on building an Open Payments client that supports either type, refer to the [one-time payment](/guides/make-onetime-payment) and [recurring payments](/guides/make-recurring-payments) guides.
 
 ### E-commerce platforms
 
@@ -92,8 +94,8 @@ Buy Now and Pay Later (BNPL) plans allow customers to pay for high-priced purcha
 
 ### Web Monetization
 
-<LinkOut href='https://webmonetization.org'>Web Monetization</LinkOut> is a new standard
-and API that allows website visitors to pay an amount they choose to a participating
-website with little to no interaction using Open Payments as the payment method.
-The site and the site visitor must have an Open Payments-enabled wallet address to
-receive and send payments.
+<LinkOut href='https://webmonetization.org'>Web Monetization</LinkOut> is a new
+standard and API that allows website visitors to pay an amount they choose to a
+participating website with little to no interaction using Open Payments as the
+payment method. The site and the site visitor must have an Open Payments-enabled
+wallet address to receive and send payments.
