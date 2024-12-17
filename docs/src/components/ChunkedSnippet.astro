@@ -3,6 +3,7 @@ import prettier from 'prettier';
 import { Code } from 'astro:components';
 import { CodeBlock } from '@interledger/docs-design-system'
 const {source, chunk} = Astro.props;
+const uuid = crypto.randomUUID();
 
 // Retrieve code snippet from GitHub as text
 const getApiData = async () => {
@@ -75,6 +76,87 @@ const output = await prettier.format(rawOutput, {
 const codeBlockTitle = codeChunkArray[chunkNumber].title;
 ---
 
-<CodeBlock title={codeBlockTitle}>
+<CodeBlock title={codeBlockTitle} id={uuid} class="chunked-snippet">
   <Code code={output} lang="ts" theme="css-variables" />
+  <span>Copied!</span>
+  <button data-copy-button type="button">
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke-width='1.75'>
+      <path d='M3 19a2 2 0 0 1-1-2V2a2 2 0 0 1 1-1h13a2 2 0 0 1 2 1'/>
+      <rect x='6' y='5' width='16' height='18' rx='1.5' ry='1.5'/>
+    </svg>
+    <span class="visually-hidden">Copy</span>
+  </button>
+  <textarea>{output}</textarea>
 </CodeBlock>
+
+<style>
+  .chunked-snippet {
+    position: relative;
+  }
+
+  .chunked-snippet pre:hover ~ button {
+     opacity: 0.7;
+  }
+
+  button {
+    position: absolute;
+    top: 2.5em;
+    right: 0.25em;
+    background-color: var(--sl-color-gray-6);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--sl-color-gray-5);
+    cursor: pointer;
+    padding: var(--space-2xs);
+    opacity: 0;
+    transition: opacity ease-in-out 150ms;
+  }
+
+  button:hover,
+  button.active {
+    opacity: 1;
+  }
+
+  button svg {
+    height: 1em;
+    width: 1em;
+    stroke: var(--sl-color-gray-3);
+  }
+
+  span {
+    position: absolute;
+    top: 1.5em;
+    right: 0.5em;
+    font-size: smaller;
+    display: none;
+  }
+
+  textarea {
+    display: none;
+  }
+</style>
+
+<script>
+  const buttons = document.querySelectorAll('[data-copy-button]');
+  buttons.forEach((button) => {
+    const codeToCopy = (button.nextElementSibling as HTMLTextAreaElement).value
+    const copyMsg = button.previousElementSibling as HTMLSpanElement
+
+    button.addEventListener('click', () => {
+      navigator.clipboard
+        .writeText(codeToCopy)
+        .then(() => {
+          copyMsg.style.display = "block";
+          (button as HTMLButtonElement).classList.add('active');
+
+          setTimeout(() => {
+            copyMsg.style.display = "none";
+            (button as HTMLButtonElement).classList.remove('active');
+          }, 2000);
+        })
+        .catch((error) => {
+          const err = error as Error;
+          console.error(err.name, err.message);
+        })
+    });
+  });
+</script>
