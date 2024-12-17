@@ -3,7 +3,6 @@ import prettier from 'prettier';
 import { Code } from 'astro:components';
 import { CodeBlock } from '@interledger/docs-design-system'
 const {source, chunk} = Astro.props;
-const uuid = crypto.randomUUID();
 
 // Retrieve code snippet from GitHub as text
 const getApiData = async () => {
@@ -76,7 +75,7 @@ const output = await prettier.format(rawOutput, {
 const codeBlockTitle = codeChunkArray[chunkNumber].title;
 ---
 
-<CodeBlock title={codeBlockTitle} id={uuid} class="chunked-snippet">
+<CodeBlock title={codeBlockTitle} class="chunked-snippet">
   <Code code={output} lang="ts" theme="css-variables" />
   <span>Copied!</span>
   <button data-copy-button type="button">
