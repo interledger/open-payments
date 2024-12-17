@@ -2,7 +2,7 @@
 title: Change this title
 ---
 
-import { Disclosure, CodeBlock } from '@interledger/docs-design-system'
+import { CodeBlock } from '@interledger/docs-design-system'
 import { Tabs, TabItem } from '@astrojs/starlight/components'
 import FullSnippet from '/src/components/FullSnippet.astro'
 import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
@@ -30,9 +30,10 @@ import Ts from '/src/partials/ts-prerequisites.mdx'
 </TabItem>
 </Tabs>
 
-<Disclosure toggleText='View full source' client:load>
+<details>
+<summary>View full source</summary>
 
-Delete the contents of this disclosure and replace it with a link to the raw source
+Delete the contents of this details tag and replace it with a link to the raw source
 file like so:
 
 ```html
@@ -41,7 +42,7 @@ file like so:
 />
 ```
 
-</Disclosure>
+</details>
 
 ## References
 
