@@ -1,0 +1,22 @@
+---
+title: Identity providers
+---
+
+import {
+  CodeBlock,
+  LinkOut,
+  Tooltip,
+  Mermaid,
+  MermaidWrapper
+} from '@interledger/docs-design-system'
+import Interactive from '/src/partials/diagram-interactive-grant.mdx'
+
+An identity provider (IdP) is a system or service that manages user authentication, identity information, and consent. Open Payments requires any authorization server (AS) that issues <Tooltip content="A grant requiring explicit interaction/consent from the resource owner before an access token can be issued" client:load><span>interactive grants</span></Tooltip> be integrated with an IdP.
+
+After an interactive grant request is initiated and the AS sets the session, the AS provides the client with the IdP URI to redirect the end-user to.
+
+<Interactive />
+
+:::tip[Reference implementation]
+Rafiki provides a reference <LinkOut href='https://rafiki.dev/integration/services/auth-service/'>authorization service</LinkOut> implementation that includes support for integration with an IdP.
+:::
