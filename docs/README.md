@@ -1,6 +1,6 @@
 # OpenPayments API documentation
 
-This repo is the code behind [openpayments.guide](https://openpayments.guide), the documentation website for the OpenPayments API.
+This repo is the code behind [openpayments.dev](https://openpayments.dev), the documentation website for the OpenPayments API.
 
 ## Contribute
 
@@ -32,7 +32,7 @@ This command generates static content into the build directory and can be served
 
 ## Editing Content
 
-Starlight looks for `.md` or `.mdx` files in the `src/content/docs/` directory. Each file is exposed as a route based on its file name. Due to the nature of how Starlight deals with content and their generated URLs, all docs content lives in `/src/content/docs/`. For example, the home page of the documentation lives within the `/src/content/docs/` folder and is rendered at openpayments.guide, not openpayments.guide/docs.
+Starlight looks for `.md` or `.mdx` files in the `src/content/docs/` directory. Each file is exposed as a route based on its file name. Due to the nature of how Starlight deals with content and their generated URLs, all docs content lives in `/src/content/docs/`. For example, the home page of the documentation lives within the `/src/content/docs/` folder and is rendered at openpayments.dev, not openpayments.dev/docs.
 
 Static assets, like favicons or images, can be placed in the `public/` directory. When referencing these assets in your markdown, you do not have to include `public/` in the file path, so an image would have a path like:
 

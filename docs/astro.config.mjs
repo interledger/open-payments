@@ -5,7 +5,7 @@ import starlightLinksValidator from 'starlight-links-validator'
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://openpayments.guide',
+  site: 'https://openpayments.dev',
   integrations: [
     starlight({
       title: 'Open Payments',
