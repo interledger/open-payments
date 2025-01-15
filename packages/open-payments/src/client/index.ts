@@ -59,7 +59,7 @@ export interface UnauthenticatedResourceRequestArgs {
    *
    * For example, if the requested resource is an incoming payment:
    * ```
-   * https://openpayments.guide/incoming-payments/08394f02-7b7b-45e2-b645-51d04e7c330c`
+   * https://openpayments.dev/incoming-payments/08394f02-7b7b-45e2-b645-51d04e7c330c`
    * ```
    */
   url: string
@@ -70,7 +70,7 @@ interface AuthenticatedRequestArgs {
    * The access token required to access the resource.
    * This token is provided when a grant is created.
    *
-   * @see [Open Payments - Grant Request](https://openpayments.guide/apis/auth-server/operations/post-request/)
+   * @see [Open Payments - Grant Request](https://openpayments.dev/apis/auth-server/operations/post-request/)
    */
   accessToken: string
 }
@@ -91,7 +91,7 @@ export interface CollectionRequestArgs
    *
    * Example:
    * ```
-   * https://openpayments.guide/alice`
+   * https://openpayments.dev/alice`
    * ```
    */
   walletAddress: string
