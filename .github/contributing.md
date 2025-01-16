@@ -49,7 +49,7 @@ The team will review your pull request as soon as possible.
 
 ### :books: Documentation
 
-We started to maintain public-facing documentation for Open Payments on [openpayments.guide](https://github.com/interledger/open-payments/tree/main/docs). The project is new, and available documentation is currently WIP.
+We started to maintain public-facing documentation for Open Payments on [openpayments.dev](https://github.com/interledger/open-payments/tree/main/docs). The project is new, and available documentation is currently WIP.
 
 ## Working in the Open Payments repository
 
