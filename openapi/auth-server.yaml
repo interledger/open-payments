@@ -421,7 +421,24 @@ components:
       additionalProperties: false
     client:
       title: client
-      type: string
+      oneOf:
+        - type: string
+        - type: object
+          properties:
+            wallet_address:
+              type: string
+            jwk:
+              not: {}
+          required: ['wallet_address']
+          additionalProperties: false
+        - type: object
+          properties:
+            jwk:
+              $ref: '#/components/schemas/json-web-key'
+            wallet_address:
+              not: {}
+          required: ['jwk']
+          additionalProperties: false
       description: |-
         Wallet address of the client instance that is making this request.
 
@@ -532,6 +549,51 @@ components:
             - debitAmount
         - required:
             - receiveAmount
+    json-web-key:
+      type: object
+      properties:
+        kid:
+          type: string
+        alg:
+          type: string
+          description: 'The cryptographic algorithm family used with the key. The only allowed value is `EdDSA`. '
+          enum:
+            - EdDSA
+        use:
+          type: string
+          enum:
+            - sig
+        kty:
+          type: string
+          enum:
+            - OKP
+        crv:
+          type: string
+          enum:
+            - Ed25519
+        x:
+          type: string
+          pattern: '^[a-zA-Z0-9-_]+$'
+          description: The base64 url-encoded public key.
+      required:
+        - kid
+        - alg
+        - kty
+        - crv
+        - x
+      title: Ed25519 Public Key
+      description: A JWK representation of an Ed25519 Public Key
+      examples:
+        - kid: key-1
+          use: sig
+          kty: OKP
+          crv: Ed25519
+          x: 11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo
+        - kid: '2022-09-02'
+          use: sig
+          kty: OKP
+          crv: Ed25519
+          x: oy0L_vTygNE4IogRyn_F5GmHXdqYVjIXkWs2jky7zsI
   securitySchemes:
     GNAP:
       name: Authorization
