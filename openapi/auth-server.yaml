@@ -427,16 +427,12 @@ components:
           properties:
             wallet_address:
               type: string
-            jwk:
-              not: {}
           required: ['wallet_address']
           additionalProperties: false
         - type: object
           properties:
             jwk:
               $ref: '#/components/schemas/json-web-key'
-            wallet_address:
-              not: {}
           required: ['jwk']
           additionalProperties: false
       description: |-

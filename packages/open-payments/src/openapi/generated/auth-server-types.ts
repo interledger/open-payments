@@ -107,7 +107,14 @@ export interface components {
      *
      * If sending a grant initiation request that requires RO interaction, the wallet address MUST serve necessary client display information.
      */
-    client: string;
+    client:
+      | string
+      | {
+          wallet_address: string;
+        }
+      | {
+          jwk: components["schemas"]["json-web-key"];
+        };
     /**
      * continue
      * @description If the AS determines that the request can be continued with additional requests, it responds with the continue field.
@@ -171,6 +178,20 @@ export interface components {
       /** @description All amounts are maxima, i.e. multiple payments can be created under a grant as long as the total amounts of these payments do not exceed the maximum amount per interval as specified in the grant. */
       receiveAmount?: external["schemas.yaml"]["components"]["schemas"]["amount"];
       interval?: components["schemas"]["interval"];
+    };
+    /**
+     * Ed25519 Public Key
+     * @description A JWK representation of an Ed25519 Public Key
+     */
+    "json-web-key": {
+      kid: string;
+      /** @description The cryptographic algorithm family used with the key. The only allowed value is `EdDSA`. */
+      alg: "EdDSA";
+      use?: "sig";
+      kty: "OKP";
+      crv: "Ed25519";
+      /** @description The base64 url-encoded public key. */
+      x: string;
     };
   };
 }

@@ -13,6 +13,16 @@ import {
   paths as WAPaths
 } from './openapi/generated/wallet-address-server-types'
 
+// Helper types to convert to a mutually exclusive type.
+// `openapi-typescript` uses `unknown` instead of never. Converting unknown
+// to never directly doesn't really work since everything extends unknown
+// This is currently used for the `client` field when requesting a grant.
+type UnionKeys<T> = T extends T ? keyof T : never
+type StrictUnionHelper<T, TAll> = T extends unknown
+  ? T & Partial<Record<Exclude<UnionKeys<TAll>, keyof T>, never>>
+  : never
+type StrictUnion<T> = StrictUnionHelper<T, T>
+
 export const getWAPath = <P extends keyof WAPaths>(path: P): string =>
   path as string
 
@@ -94,7 +104,14 @@ export type GrantContinuation = {
 }
 export type GrantRequest = {
   access_token: ASOperations['post-request']['requestBody']['content']['application/json']['access_token']
-  client: ASOperations['post-request']['requestBody']['content']['application/json']['client']
+  client:
+    | StrictUnion<
+        Exclude<
+          ASOperations['post-request']['requestBody']['content']['application/json']['client'],
+          string
+        >
+      >
+    | string
   interact?: ASOperations['post-request']['requestBody']['content']['application/json']['interact']
 }
 export type GrantContinuationRequest = {
@@ -154,3 +171,5 @@ export const AccessAction: Record<
   List: 'list',
   ListAll: 'list-all'
 })
+
+export type JsonWebKey = ASComponents['schemas']['json-web-key']

@@ -9,10 +9,15 @@ import {
   PendingGrant,
   Grant,
   GrantContinuation,
-  GrantRequest,
-  GrantContinuationRequest
+  GrantRequest as IGrantRequest,
+  GrantContinuationRequest,
+  JsonWebKey
 } from '../types'
 import { post, deleteRequest } from './requests'
+
+interface GrantRequest extends Omit<IGrantRequest, 'client'> {
+  client?: JsonWebKey
+}
 
 export interface GrantRouteDeps extends RouteDeps {
   client: string
@@ -21,7 +26,7 @@ export interface GrantRouteDeps extends RouteDeps {
 export interface GrantRoutes {
   request(
     postArgs: UnauthenticatedResourceRequestArgs,
-    args: Omit<GrantRequest, 'client'>
+    args: GrantRequest
   ): Promise<PendingGrant | Grant>
   continue(
     postArgs: GrantOrTokenRequestArgs,
@@ -31,7 +36,7 @@ export interface GrantRoutes {
 }
 
 export const createGrantRoutes = (deps: GrantRouteDeps): GrantRoutes => {
-  const { openApi, client, ...baseDeps } = deps
+  const { openApi, ...baseDeps } = deps
 
   let requestGrantValidator: ResponseValidator<PendingGrant | Grant>
   let continueGrantValidator: ResponseValidator<GrantContinuation | Grant>
@@ -54,20 +59,9 @@ export const createGrantRoutes = (deps: GrantRouteDeps): GrantRoutes => {
 
   return {
     request: (
-      { url }: UnauthenticatedResourceRequestArgs,
-      args: Omit<GrantRequest, 'client'>
-    ) =>
-      post(
-        baseDeps,
-        {
-          url,
-          body: {
-            ...args,
-            client
-          }
-        },
-        requestGrantValidator
-      ),
+      requestArgs: UnauthenticatedResourceRequestArgs,
+      grantRequest: GrantRequest
+    ) => requestGrant(deps, requestArgs, grantRequest, requestGrantValidator),
     continue: (
       { url, accessToken }: GrantOrTokenRequestArgs,
       args: GrantContinuationRequest
@@ -91,4 +85,32 @@ export const createGrantRoutes = (deps: GrantRouteDeps): GrantRoutes => {
         cancelGrantValidator
       )
   }
+}
+
+export async function requestGrant(
+  deps: GrantRouteDeps,
+  requestArgs: UnauthenticatedResourceRequestArgs,
+  grantRequst: GrantRequest,
+  openApiValidator: ResponseValidator<Grant | PendingGrant>
+) {
+  const { url } = requestArgs
+
+  // TODO: Runtime checks for grant access.
+  // Directed identity should not be used for:
+  //  - outgoing payments (all access)
+  //  - incoming payments (if access is *-all)
+  //  - quote (if access is *-all)
+
+  const grant = await post(
+    deps,
+    {
+      url,
+      body: {
+        ...grantRequst
+      }
+    },
+    openApiValidator
+  )
+
+  return grant
 }
