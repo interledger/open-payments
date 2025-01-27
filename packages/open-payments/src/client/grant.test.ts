@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { createGrantRoutes } from './grant'
+import { createGrantRoutes, ExternalGrantRequest } from './grant'
 import { OpenAPI, HttpMethod } from '@interledger/openapi'
 import { createTestDeps, mockGrantRequest } from '../test/helpers'
 import * as requestors from './requests'
@@ -23,7 +23,7 @@ describe('grant', (): void => {
     deps = await createTestDeps()
   })
 
-  const client = 'https://example.com/.well-known/pay'
+  const client = { wallet_address: 'https://example.com/.well-known/pay' }
 
   describe('routes', () => {
     const url = 'http://localhost:1000'
@@ -49,9 +49,9 @@ describe('grant', (): void => {
 
           await createGrantRoutes({
             openApi: validateResponses ? openApi : undefined,
-            client,
+            client: client.wallet_address,
             ...deps
-          }).request({ url }, grantRequest)
+          }).request({ url }, grantRequest as unknown as ExternalGrantRequest)
 
           expect(postSpy).toHaveBeenCalledWith(
             deps,

@@ -24,6 +24,7 @@ import { v4 as uuid } from 'uuid'
 import { ResponseValidator, ValidationError } from '@interledger/openapi'
 import base64url from 'base64url'
 import { BaseDeps } from '../client'
+import { ExternalGrantRequest } from '../client/grant'
 
 export const silentLogger = createLogger({
   level: 'silent'
@@ -283,7 +284,9 @@ export const mockGrantRequest = (
       }
     ]
   },
-  client: 'https://shoe-shop/.well-known/pay',
+  client: {
+    wallet_address: 'https://shoe-shop/.well-known/pay'
+  },
   interact: {
     start: ['redirect'],
     finish: {

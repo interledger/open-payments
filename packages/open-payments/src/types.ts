@@ -22,6 +22,7 @@ type StrictUnionHelper<T, TAll> = T extends unknown
   ? T & Partial<Record<Exclude<UnionKeys<TAll>, keyof T>, never>>
   : never
 type StrictUnion<T> = StrictUnionHelper<T, T>
+export type RemoveString<T> = T extends string ? never : T
 
 export const getWAPath = <P extends keyof WAPaths>(path: P): string =>
   path as string
@@ -95,6 +96,7 @@ export type NonInteractiveGrantRequest = {
   access_token: ASOperations['post-request']['requestBody']['content']['application/json']['access_token']
   client: ASOperations['post-request']['requestBody']['content']['application/json']['client']
 }
+export type JsonWebKey = ASComponents['schemas']['json-web-key']
 export type Grant = {
   access_token: ASComponents['schemas']['access_token']
   continue: ASComponents['schemas']['continue']
@@ -171,5 +173,3 @@ export const AccessAction: Record<
   List: 'list',
   ListAll: 'list-all'
 })
-
-export type JsonWebKey = ASComponents['schemas']['json-web-key']

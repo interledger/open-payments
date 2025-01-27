@@ -15,8 +15,10 @@ import {
 } from '../types'
 import { post, deleteRequest } from './requests'
 
-interface GrantRequest extends Omit<IGrantRequest, 'client'> {
-  client?: JsonWebKey
+export interface ExternalGrantRequest extends Omit<IGrantRequest, 'client'> {
+  client?: {
+    jwk: JsonWebKey
+  }
 }
 
 export interface GrantRouteDeps extends RouteDeps {
@@ -26,7 +28,7 @@ export interface GrantRouteDeps extends RouteDeps {
 export interface GrantRoutes {
   request(
     postArgs: UnauthenticatedResourceRequestArgs,
-    args: GrantRequest
+    args: ExternalGrantRequest
   ): Promise<PendingGrant | Grant>
   continue(
     postArgs: GrantOrTokenRequestArgs,
@@ -36,7 +38,7 @@ export interface GrantRoutes {
 }
 
 export const createGrantRoutes = (deps: GrantRouteDeps): GrantRoutes => {
-  const { openApi, ...baseDeps } = deps
+  const { openApi, client, ...baseDeps } = deps
 
   let requestGrantValidator: ResponseValidator<PendingGrant | Grant>
   let continueGrantValidator: ResponseValidator<GrantContinuation | Grant>
@@ -60,8 +62,14 @@ export const createGrantRoutes = (deps: GrantRouteDeps): GrantRoutes => {
   return {
     request: (
       requestArgs: UnauthenticatedResourceRequestArgs,
-      grantRequest: GrantRequest
-    ) => requestGrant(deps, requestArgs, grantRequest, requestGrantValidator),
+      grantRequest: ExternalGrantRequest
+    ) =>
+      requestGrant(
+        { ...baseDeps, client },
+        requestArgs,
+        grantRequest,
+        requestGrantValidator
+      ),
     continue: (
       { url, accessToken }: GrantOrTokenRequestArgs,
       args: GrantContinuationRequest
@@ -90,23 +98,37 @@ export const createGrantRoutes = (deps: GrantRouteDeps): GrantRoutes => {
 export async function requestGrant(
   deps: GrantRouteDeps,
   requestArgs: UnauthenticatedResourceRequestArgs,
-  grantRequst: GrantRequest,
+  grantRequest: ExternalGrantRequest,
   openApiValidator: ResponseValidator<Grant | PendingGrant>
 ) {
+  const { client: sdkClient, ...baseDeps } = deps
   const { url } = requestArgs
 
-  // TODO: Runtime checks for grant access.
+  let client: IGrantRequest['client'] = { wallet_address: sdkClient }
+
+  if (grantRequest.client && grantRequest.client.jwk) {
+    client = { jwk: grantRequest.client.jwk }
+  }
+
+  // TODO(radu): Runtime checks for grant access.
   // Directed identity should not be used for:
   //  - outgoing payments (all access)
   //  - incoming payments (if access is *-all)
   //  - quote (if access is *-all)
+  //
+  // Other assertions:
+  //  - ensure only the JWK is passed when using `client.grant.request`
+  //
+  // Do we want to have these runtime checks here or only the AS should take
+  // care of this validation?
 
   const grant = await post(
-    deps,
+    baseDeps,
     {
       url,
       body: {
-        ...grantRequst
+        ...grantRequest,
+        client
       }
     },
     openApiValidator
