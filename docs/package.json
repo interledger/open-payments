@@ -12,14 +12,14 @@
   "dependencies": {
     "@astrojs/starlight": "^0.31.1",
     "@interledger/docs-design-system": "^0.6.1",
-    "astro": "5.1.7",
+    "astro": "5.2.5",
     "mermaid": "^11.4.1",
     "sharp": "^0.33.5",
-    "shiki": "1.27.2",
-    "starlight-openapi": "^0.10.0",
-    "starlight-links-validator": "^0.14.1"
+    "shiki": "2.3.2",
+    "starlight-openapi": "^0.12.0",
+    "starlight-links-validator": "^0.14.2"
   },
   "devDependencies": {
-    "prettier": "3.4.2"
+    "prettier": "3.5.0"
   }
 }
