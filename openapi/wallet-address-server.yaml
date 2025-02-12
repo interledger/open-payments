@@ -39,6 +39,8 @@ paths:
                     assetScale: 2
                     authServer: 'https://ilp.interledger-test.dev/auth'
                     resourceServer: 'https://ilp.interledger-test.dev/op'
+        '307':
+          description: Redirect to Wallet Address
         '404':
           description: Wallet Address Not Found
       operationId: get-wallet-address
