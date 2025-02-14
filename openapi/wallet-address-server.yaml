@@ -41,6 +41,11 @@ paths:
                     resourceServer: 'https://ilp.interledger-test.dev/op'
         '302':
           description: Redirect to Wallet Webpage (browser only)
+          headers:
+            Location:
+              description: 'The URL of the wallet address webpage.'
+              schema:
+                type: string
         '404':
           description: Wallet Address Not Found
       operationId: get-wallet-address
