@@ -255,6 +255,10 @@ export default defineConfig({
             {
               label: 'Get involved',
               link: '/resources/get-involved/'
+            },
+            {
+              label: 'Further learning',
+              link: '/resources/further-learning/'
             }
           ]
         },
