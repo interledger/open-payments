@@ -1,4 +1,7 @@
 on:
+  push:
+    branches-ignore: 
+      - main
   pull_request:
     types:
       - opened
