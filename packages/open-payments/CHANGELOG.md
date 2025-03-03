@@ -1,5 +1,11 @@
 # @interledger/open-payments
 
+## 6.14.0
+
+### Minor Changes
+
+- 5cf35b3: Added GNAP error models to auth server responses.
+
 ## 6.13.2
 
 ### Patch Changes
