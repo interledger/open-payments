@@ -96,6 +96,8 @@ export interface operations {
           "application/json": components["schemas"]["wallet-address"];
         };
       };
+      /** Redirect to Wallet Webpage (browser only) */
+      302: never;
       /** Wallet Address Not Found */
       404: unknown;
     };
