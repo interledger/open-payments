@@ -46,17 +46,17 @@ export default defineConfig({
           {
             base: 'apis/resource-server',
             schema: '../openapi/resource-server.yaml',
-            sidebar: {label: 'Open Payments'}
+            sidebar: { label: 'Open Payments' }
           },
           {
             base: 'apis/wallet-address-server',
             schema: '../openapi/wallet-address-server.yaml',
-            sidebar: {label: 'Wallet Addresses'}
+            sidebar: { label: 'Wallet Addresses' }
           },
           {
             base: 'apis/auth-server',
             schema: '../openapi/auth-server.yaml',
-            sidebar: {label: 'Open Payments Authorization Server'}
+            sidebar: { label: 'Open Payments Authorization Server' }
           }
         ]),
         starlightLinksValidator({
