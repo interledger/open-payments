@@ -232,7 +232,6 @@ describe('OpenAPI Validator', (): void => {
               completed: false,
               receivedAmount: { value: '0', assetCode: 'USD', assetScale: 2 },
               createdAt: '2022-03-12T23:20:50.52Z',
-              updatedAt: '2022-04-01T10:24:36.11Z',
               additionalProp: 'disallowed'
             }
           ]
@@ -321,8 +320,7 @@ describe('OpenAPI Validator', (): void => {
           sharedSecret: '1c7eaXa4rd2fFOBl1iydvCT1tV5TbM3RW1WLCafu_JA'
         }
       ],
-      createdAt: '2022-03-12T23:20:50.52Z',
-      updatedAt: '2022-04-01T10:24:36.11Z'
+      createdAt: '2022-03-12T23:20:50.52Z'
     }
     test.each`
       status | body                                                                    | message                                                           | description
