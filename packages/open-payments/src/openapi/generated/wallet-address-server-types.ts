@@ -96,7 +96,7 @@ export interface operations {
           "application/json": components["schemas"]["wallet-address"];
         };
       };
-      /** Redirect to Wallet Webpage (browser only) */
+      /** If the `Accept` header is `text/html` in the request, the server may choose to redirect to an HTML page for the given wallet address. */
       302: never;
       /** Wallet Address Not Found */
       404: unknown;
