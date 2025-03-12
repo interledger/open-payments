@@ -119,11 +119,6 @@ export interface components {
        * @description The date and time when the incoming payment was created.
        */
       createdAt: string;
-      /**
-       * Format: date-time
-       * @description The date and time when the incoming payment was updated.
-       */
-      updatedAt: string;
     };
     /**
      * Incoming Payment with payment methods
@@ -182,11 +177,6 @@ export interface components {
        * @description The date and time when the outgoing payment was created.
        */
       createdAt: string;
-      /**
-       * Format: date-time
-       * @description The date and time when the outgoing payment was updated.
-       */
-      updatedAt: string;
     };
     /**
      * Outgoing Payment With Grant Spent Amounts
@@ -229,11 +219,6 @@ export interface components {
        * @description The date and time when the outgoing payment was created.
        */
       createdAt: string;
-      /**
-       * Format: date-time
-       * @description The date and time when the outgoing payment was updated.
-       */
-      updatedAt: string;
     };
     /**
      * Quote

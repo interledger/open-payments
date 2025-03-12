@@ -101,7 +101,6 @@ export const mockIncomingPayment = (
     value: '0'
   },
   createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
   ...overrides
 })
 
@@ -122,7 +121,6 @@ export const mockIncomingPaymentWithPaymentMethods = (
     value: '0'
   },
   createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
   methods: [mockIlpPaymentMethod()],
   ...overrides
 })
@@ -193,7 +191,6 @@ export const mockOutgoingPayment = (
   receiver: uuid(),
   metadata: { externalRef: 'INV #1', description: 'some description' },
   createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
   ...overrides
 })
 
