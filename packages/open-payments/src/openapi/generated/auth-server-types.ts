@@ -164,14 +164,22 @@ export interface components {
      * limits-outgoing
      * @description Open Payments specific property that defines the limits under which outgoing payments can be created.
      */
-    "limits-outgoing": Partial<unknown> & {
+    "limits-outgoing": Partial<{
       receiver?: external["schemas.yaml"]["components"]["schemas"]["receiver"];
-      /** @description All amounts are maxima, i.e. multiple payments can be created under a grant as long as the total amounts of these payments do not exceed the maximum amount per interval as specified in the grant. */
-      debitAmount?: external["schemas.yaml"]["components"]["schemas"]["amount"];
-      /** @description All amounts are maxima, i.e. multiple payments can be created under a grant as long as the total amounts of these payments do not exceed the maximum amount per interval as specified in the grant. */
-      receiveAmount?: external["schemas.yaml"]["components"]["schemas"]["amount"];
       interval?: components["schemas"]["interval"];
-    };
+    }> &
+      Partial<{
+        receiver?: external["schemas.yaml"]["components"]["schemas"]["receiver"];
+        interval?: components["schemas"]["interval"];
+        /** @description All amounts are maxima, i.e. multiple payments can be created under a grant as long as the total amounts of these payments do not exceed the maximum amount per interval as specified in the grant. */
+        debitAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
+      }> &
+      Partial<{
+        receiver?: external["schemas.yaml"]["components"]["schemas"]["receiver"];
+        interval?: components["schemas"]["interval"];
+        /** @description All amounts are maxima, i.e. multiple payments can be created under a grant as long as the total amounts of these payments do not exceed the maximum amount per interval as specified in the grant. */
+        receiveAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
+      }>;
     "error-invalid-client": {
       error?: {
         description?: string;
