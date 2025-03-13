@@ -57,9 +57,9 @@ describe('OpenAPI', (): void => {
             'application/json'
           ]['schema']['properties']['access_token']['properties']['access'][
             'items'
-          ]['oneOf'][1]['properties']['limits']['anyOf'][1]['properties']['debitAmount'][
-            'properties'
-          ]
+          ]['oneOf'][1]['properties']['limits']['anyOf'][1]['properties'][
+            'debitAmount'
+          ]['properties']
         ).sort()
       ).toEqual(['assetCode', 'assetScale', 'value'].sort())
     })
