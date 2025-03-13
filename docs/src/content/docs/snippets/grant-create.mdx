@@ -296,6 +296,10 @@ Run `node path/to/directory/index.js`.
 </TabItem>
 </Tabs>
 
+:::note[Continue object]
+The continue object is included in all grant responses and is part of the standard grant response format. It is particularly important for interactive outgoing payment grants, as it facilitates the process of obtaining explicit user consent. While the continue object is present in all grant responses, it is primarily used in the context of outgoing payments. Implementations have the option to make other grants interactive if desired.
+:::
+
 ## References
 
 - [API specification](/apis/auth-server/operations/post-request)

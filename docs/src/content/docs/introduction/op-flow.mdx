@@ -87,6 +87,10 @@ An interactive grant requires explicit consent be collected from the end-user be
 
 After consent is obtained, the client requests permission to <LinkOut href='/apis/auth-server/operations/post-continue'>continue the grant request</LinkOut> in order to obtain an access token.
 
+:::note[Continue request timing]
+For outgoing payments, explicit user consent is required before proceeding with the continuation request. After the user completes their interaction with the identity provider (IdP), they should be redirected back to your application. At this point, you can make the grant continuation request. In scenarios where a user interface is not available, consider implementing a polling mechanism to check for the completion of the interaction.
+:::
+
 <Interactive />
 
 Once an access token is acquired, the client can request the creation of the <LinkOut href='/apis/resource-server/operations/create-outgoing-payment'>outgoing-payment resource</LinkOut>. The setup of the payment is complete and the Open Payments flow ends after the resource is created.
