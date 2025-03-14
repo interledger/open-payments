@@ -103,6 +103,8 @@ The value for either parameter is the amount that all payments created under the
 
 Once your client receives the authorization server’s response, it must send the end-user to the `interact.redirect` URI contained in the response. This starts the interaction flow.
 
+The response also includes a `continue` object, which is essential for managing the interaction and obtaining explicit user consent for outgoing payment grants. The `continue` object contains an access token and a URI that the client will use to finalize the grant request after the user has completed their interaction with the identity provider (IdP). This ensures that the client can securely obtain the necessary permissions to proceed with the payment process.
+
 <CodeBlock title="Example response">
 ```json
 {
@@ -135,6 +137,8 @@ Provided the end-user approves the grant, the authorization server:
 - Secures the redirect by adding a unique hash, allowing your client to validate the `finish` call, and an interaction reference as query parameters to the URI.
 
 ### 7. Request a grant continuation
+
+After the end-user completes their interaction with the identity provider (IdP), they should be redirected back to your application. At this point, you can make the grant continuation request. In scenarios where a user interface is not available, consider implementing a polling mechanism to check for the completion of the interaction.
 
 Add the authorization server’s interaction reference, as the `interact_ref` value, to the body of your continuation request.
 
