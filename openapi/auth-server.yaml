@@ -149,6 +149,7 @@ paths:
                         identifier: 'http://ilp.interledger-test.dev/bob'
                   client: 'https://webmonize.com/.well-known/pay'
         description: ''
+        required: true
       description: Make a new grant request
       security: []
       tags:
