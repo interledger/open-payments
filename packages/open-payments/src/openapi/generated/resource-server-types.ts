@@ -212,7 +212,9 @@ export interface components {
              */
             expiresAt?: string;
             /** @description Additional metadata associated with the incoming payment. (Optional) */
-            metadata?: Record<string, never>;
+            metadata?: {
+                [key: string]: unknown;
+            };
             /**
              * Format: date-time
              * @description The date and time when the incoming payment was created.
@@ -278,7 +280,9 @@ export interface components {
             /** @description The total amount that has been sent under this outgoing payment. */
             sentAmount: components["schemas"]["amount"];
             /** @description Additional metadata associated with the outgoing payment. (Optional) */
-            metadata?: Record<string, never>;
+            metadata?: {
+                [key: string]: unknown;
+            };
             /**
              * Format: date-time
              * @description The date and time when the outgoing payment was created.
@@ -328,7 +332,9 @@ export interface components {
             /** @description The total amount successfully received (by all receivers) using the current outgoing payment grant. */
             grantSpentReceiveAmount?: components["schemas"]["amount"];
             /** @description Additional metadata associated with the outgoing payment. (Optional) */
-            metadata?: Record<string, never>;
+            metadata?: {
+                [key: string]: unknown;
+            };
             /**
              * Format: date-time
              * @description The date and time when the outgoing payment was created.

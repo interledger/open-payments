@@ -130,7 +130,9 @@ export interface components {
          * DID Document
          * @description A DID Document using JSON encoding
          */
-        "did-document": Record<string, never>;
+        "did-document": {
+            [key: string]: unknown;
+        };
         /**
          * Asset code
          * @description The assetCode is a code that indicates the underlying asset. This SHOULD be an ISO4217 currency code.
