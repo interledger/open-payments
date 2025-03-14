@@ -5,7 +5,6 @@ import { createHeaders } from '@interledger/http-signature-utils'
 import { OpenPaymentsClientError } from './error'
 import { Logger } from 'pino'
 
-// @ts-expect-error We know we are importing an ESM module into our CJS file, so ignore warnings for types
 import type { KyInstance, NormalizedOptions } from 'ky'
 
 interface GetArgs {
