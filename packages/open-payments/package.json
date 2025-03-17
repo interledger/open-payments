@@ -33,7 +33,7 @@
     "@types/node": "^20.12.7",
     "@types/uuid": "^9.0.0",
     "nock": "14.0.0-beta.5",
-    "openapi-typescript": "^4.5.0"
+    "openapi-typescript": "^7.6.1"
   },
   "dependencies": {
     "@interledger/http-signature-utils": "workspace:2.0.2",

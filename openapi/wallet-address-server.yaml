@@ -204,5 +204,6 @@ components:
           x: oy0L_vTygNE4IogRyn_F5GmHXdqYVjIXkWs2jky7zsI
     did-document:
       type: object
+      additionalProperties: true
       title: DID Document
       description: A DID Document using JSON encoding
