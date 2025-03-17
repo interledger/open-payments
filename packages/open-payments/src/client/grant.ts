@@ -53,11 +53,20 @@ export const createGrantRoutes = (deps: GrantRouteDeps): GrantRoutes => {
   }
 
   return {
-    request: (
+    request: async (
       { url }: UnauthenticatedResourceRequestArgs,
       args: Omit<GrantRequest, 'client'>
-    ) =>
-      post(
+    ) => {
+      const outgoingPaymentAccess = args.access_token.access.find(
+        (el) => el.type === 'outgoing-payment'
+      )
+      if (
+        outgoingPaymentAccess?.limits?.debitAmount &&
+        outgoingPaymentAccess.limits?.receiveAmount
+      ) {
+        throw new Error('Invalid Grant Request')
+      }
+      return post(
         baseDeps,
         {
           url,
@@ -67,7 +76,8 @@ export const createGrantRoutes = (deps: GrantRouteDeps): GrantRoutes => {
           }
         },
         requestGrantValidator
-      ),
+      )
+    },
     continue: (
       { url, accessToken }: GrantOrTokenRequestArgs,
       args: GrantContinuationRequest
