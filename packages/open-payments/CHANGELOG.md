@@ -1,5 +1,15 @@
 # @interledger/open-payments
 
+## 6.14.1
+
+### Patch Changes
+
+- ff811ea: Updating typescript to v5
+- 13aa6b5: Updating types with latest openapi-typescript version
+- Updated dependencies [ff811ea]
+  - @interledger/http-signature-utils@2.0.3
+  - @interledger/openapi@2.0.3
+
 ## 6.14.0
 
 ### Minor Changes
