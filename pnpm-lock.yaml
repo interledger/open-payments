@@ -110,10 +110,10 @@ importers:
   packages/open-payments:
     dependencies:
       '@interledger/http-signature-utils':
-        specifier: workspace:2.0.2
+        specifier: workspace:2.0.3
         version: link:../http-signature-utils
       '@interledger/openapi':
-        specifier: workspace:2.0.2
+        specifier: workspace:2.0.3
         version: link:../openapi
       base64url:
         specifier: ^3.0.1
