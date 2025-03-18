@@ -856,6 +856,7 @@ components:
           format: date-time
         metadata:
           type: object
+          additionalProperties: true
           description: Additional metadata associated with the incoming payment. (Optional)
         createdAt:
           type: string
@@ -980,6 +981,7 @@ components:
           description: The total amount that has been sent under this outgoing payment.
         metadata:
           type: object
+          additionalProperties: true
           description: Additional metadata associated with the outgoing payment. (Optional)
         createdAt:
           type: string
@@ -1086,6 +1088,7 @@ components:
           description: The total amount successfully received (by all receivers) using the current outgoing payment grant.
         metadata:
           type: object
+          additionalProperties: true
           description: Additional metadata associated with the outgoing payment. (Optional)
         createdAt:
           type: string

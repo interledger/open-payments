@@ -97,9 +97,15 @@ export type GrantRequest = {
   client: ASOperations['post-request']['requestBody']['content']['application/json']['client']
   interact?: ASOperations['post-request']['requestBody']['content']['application/json']['interact']
 }
-export type GrantContinuationRequest = {
-  interact_ref?: ASOperations['post-continue']['requestBody']['content']['application/json']['interact_ref']
-}
+
+export type GrantContinuationRequest =
+  | Required<
+      NonNullable<
+        ASOperations['post-continue']['requestBody']
+      >['content']['application/json']
+    >
+  | undefined
+
 export type PendingGrant = {
   interact: ASComponents['schemas']['interact-response']
   continue: ASComponents['schemas']['continue']
