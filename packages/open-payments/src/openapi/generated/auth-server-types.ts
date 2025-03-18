@@ -4,438 +4,275 @@
  */
 
 export interface paths {
-  "/": {
-    /** Make a new grant request */
-    post: operations["post-request"];
-    parameters: {};
-  };
-  "/continue/{id}": {
-    /** Continue a grant request during or after user interaction. */
-    post: operations["post-continue"];
-    /** Cancel a grant request or delete a grant client side. */
-    delete: operations["delete-continue"];
-    parameters: {
-      path: {
-        id: string;
-      };
-    };
-  };
-  "/token/{id}": {
-    /** Management endpoint to rotate access token. */
-    post: operations["post-token"];
-    /** Management endpoint to revoke access token. */
-    delete: operations["delete-token"];
-    parameters: {
-      path: {
-        id: string;
-      };
-    };
-  };
-}
-
-export interface components {
-  schemas: {
-    /** @description A description of the rights associated with this access token. */
-    access: components["schemas"]["access-item"][];
-    /** @description The access associated with the access token is described using objects that each contain multiple dimensions of access. */
-    "access-item":
-      | components["schemas"]["access-incoming"]
-      | components["schemas"]["access-outgoing"]
-      | components["schemas"]["access-quote"];
-    /** access-incoming */
-    "access-incoming": {
-      /** @description The type of resource request as a string.  This field defines which other fields are allowed in the request object. */
-      type: "incoming-payment";
-      /** @description The types of actions the client instance will take at the RS as an array of strings. */
-      actions: (
-        | "create"
-        | "complete"
-        | "read"
-        | "read-all"
-        | "list"
-        | "list-all"
-      )[];
-      /**
-       * Format: uri
-       * @description A string identifier indicating a specific resource at the RS.
-       */
-      identifier?: string;
-    };
-    /** access-outgoing */
-    "access-outgoing": {
-      /** @description The type of resource request as a string.  This field defines which other fields are allowed in the request object. */
-      type: "outgoing-payment";
-      /** @description The types of actions the client instance will take at the RS as an array of strings. */
-      actions: ("create" | "read" | "read-all" | "list" | "list-all")[];
-      /**
-       * Format: uri
-       * @description A string identifier indicating a specific resource at the RS.
-       */
-      identifier: string;
-      limits?: components["schemas"]["limits-outgoing"];
-    };
-    /** access-quote */
-    "access-quote": {
-      /** @description The type of resource request as a string.  This field defines which other fields are allowed in the request object. */
-      type: "quote";
-      /** @description The types of actions the client instance will take at the RS as an array of strings. */
-      actions: ("create" | "read" | "read-all")[];
-    };
-    /**
-     * access_token
-     * @description A single access token or set of access tokens that the client instance can use to call the RS on behalf of the RO.
-     */
-    access_token: {
-      /** @description The value of the access token as a string.  The value is opaque to the client instance.  The value SHOULD be limited to ASCII characters to facilitate transmission over HTTP headers within other protocols without requiring additional encoding. */
-      value: string;
-      /**
-       * Format: uri
-       * @description The management URI for this access token. This URI MUST NOT include the access token value and SHOULD be different for each access token issued in a request.
-       */
-      manage: string;
-      /** @description The number of seconds in which the access will expire.  The client instance MUST NOT use the access token past this time.  An RS MUST NOT accept an access token past this time. */
-      expires_in?: number;
-      access: components["schemas"]["access"];
-    };
-    /**
-     * client
-     * @description Wallet address of the client instance that is making this request.
-     *
-     * When sending a non-continuation request to the AS, the client instance MUST identify itself by including the client field of the request and by signing the request.
-     *
-     * A JSON Web Key Set document, including the public key that the client instance will use to protect this request and any continuation requests at the AS and any user-facing information about the client instance used in interactions, MUST be available at the wallet address + `/jwks.json` url.
-     *
-     * If sending a grant initiation request that requires RO interaction, the wallet address MUST serve necessary client display information.
-     */
-    client: string;
-    /**
-     * continue
-     * @description If the AS determines that the request can be continued with additional requests, it responds with the continue field.
-     */
-    continue: {
-      /** @description A unique access token for continuing the request, called the "continuation access token". */
-      access_token: {
-        value: string;
-      };
-      /**
-       * Format: uri
-       * @description The URI at which the client instance can make continuation requests.
-       */
-      uri: string;
-      /** @description The amount of time in integer seconds the client instance MUST wait after receiving this request continuation response and calling the continuation URI. */
-      wait?: number;
-    };
-    /**
-     * interact
-     * @description The client instance declares the parameters for interaction methods that it can support using the interact field.
-     */
-    "interact-request": {
-      /** @description Indicates how the client instance can start an interaction. */
-      start: "redirect"[];
-      /** @description Indicates how the client instance can receive an indication that interaction has finished at the AS. */
-      finish?: {
-        /** @description The callback method that the AS will use to contact the client instance. */
-        method: "redirect";
+    "/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
         /**
-         * Format: uri
-         * @description Indicates the URI that the AS will either send the RO to after interaction or send an HTTP POST request.
+         * Grant Request
+         * @description Make a new grant request
          */
-        uri: string;
-        /** @description Unique value to be used in the calculation of the "hash" query parameter sent to the callback URI, must be sufficiently random to be unguessable by an attacker.  MUST be generated by the client instance as a unique value for this request. */
-        nonce: string;
-      };
+        post: operations["post-request"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /** interact-response */
-    "interact-response": {
-      /**
-       * Format: uri
-       * @description The URI to direct the end user to.
-       */
-      redirect: string;
-      /** @description Unique key to secure the callback. */
-      finish: string;
+    "/continue/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Continuation Request
+         * @description Continue a grant request during or after user interaction.
+         */
+        post: operations["post-continue"];
+        /**
+         * Cancel Grant
+         * @description Cancel a grant request or delete a grant client side.
+         */
+        delete: operations["delete-continue"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /**
-     * Interval
-     * @description [ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)
-     */
-    interval: string;
-    /**
-     * limits-outgoing
-     * @description Open Payments specific property that defines the limits under which outgoing payments can be created.
-     */
-    "limits-outgoing": Partial<{
-      receiver?: external["schemas.yaml"]["components"]["schemas"]["receiver"];
-      interval?: components["schemas"]["interval"];
-    }> &
-      Partial<{
-        receiver?: external["schemas.yaml"]["components"]["schemas"]["receiver"];
-        interval?: components["schemas"]["interval"];
-        /** @description All amounts are maxima, i.e. multiple payments can be created under a grant as long as the total amounts of these payments do not exceed the maximum amount per interval as specified in the grant. */
-        debitAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
-      }> &
-      Partial<{
-        receiver?: external["schemas.yaml"]["components"]["schemas"]["receiver"];
-        interval?: components["schemas"]["interval"];
-        /** @description All amounts are maxima, i.e. multiple payments can be created under a grant as long as the total amounts of these payments do not exceed the maximum amount per interval as specified in the grant. */
-        receiveAmount: external["schemas.yaml"]["components"]["schemas"]["amount"];
-      }>;
-    "error-invalid-client": {
-      error?: {
-        description?: string;
-        code?: "invalid_client";
-      };
+    "/token/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Rotate Access Token
+         * @description Management endpoint to rotate access token.
+         */
+        post: operations["post-token"];
+        /**
+         * Revoke Access Token
+         * @description Management endpoint to revoke access token.
+         */
+        delete: operations["delete-token"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    "error-invalid-request": {
-      error?: {
-        description?: string;
-        code?: "invalid_request";
-      };
-    };
-    "error-request-denied": {
-      error?: {
-        description?: string;
-        code?: "request_denied";
-      };
-    };
-    "error-too-fast": {
-      error?: {
-        description?: string;
-        code?: "too_fast";
-      };
-    };
-    "error-invalid-continuation": {
-      error?: {
-        description?: string;
-        code?: "invalid_continuation";
-      };
-    };
-    "error-invalid-rotation": {
-      error?: {
-        description?: string;
-        code?: "invalid_rotation";
-      };
-    };
-  };
 }
-
-export interface operations {
-  /** Make a new grant request */
-  "post-request": {
-    parameters: {};
-    responses: {
-      /** OK */
-      200: {
-        content: {
-          "application/json":
-            | {
-                interact: components["schemas"]["interact-response"];
-                continue: components["schemas"]["continue"];
-              }
-            | {
-                access_token: components["schemas"]["access_token"];
-                continue: components["schemas"]["continue"];
-              };
+export type webhooks = Record<string, never>;
+export interface components {
+    schemas: {
+        /** @description A description of the rights associated with this access token. */
+        access: components["schemas"]["access-item"][];
+        /** @description The access associated with the access token is described using objects that each contain multiple dimensions of access. */
+        "access-item": components["schemas"]["access-incoming"] | components["schemas"]["access-outgoing"] | components["schemas"]["access-quote"];
+        /** access-incoming */
+        "access-incoming": {
+            /**
+             * @description The type of resource request as a string.  This field defines which other fields are allowed in the request object.
+             * @enum {string}
+             */
+            type: "incoming-payment";
+            /** @description The types of actions the client instance will take at the RS as an array of strings. */
+            actions: ("create" | "complete" | "read" | "read-all" | "list" | "list-all")[];
+            /**
+             * Format: uri
+             * @description A string identifier indicating a specific resource at the RS.
+             */
+            identifier?: string;
         };
-      };
-      /** Bad Request */
-      400: {
-        content: {
-          "application/json":
-            | components["schemas"]["error-invalid-request"]
-            | components["schemas"]["error-invalid-client"];
+        /** access-outgoing */
+        "access-outgoing": {
+            /**
+             * @description The type of resource request as a string.  This field defines which other fields are allowed in the request object.
+             * @enum {string}
+             */
+            type: "outgoing-payment";
+            /** @description The types of actions the client instance will take at the RS as an array of strings. */
+            actions: ("create" | "read" | "read-all" | "list" | "list-all")[];
+            /**
+             * Format: uri
+             * @description A string identifier indicating a specific resource at the RS.
+             */
+            identifier: string;
+            limits?: components["schemas"]["limits-outgoing"];
         };
-      };
-      /** Unauthorized */
-      401: {
-        content: {
-          "application/json": components["schemas"]["error-invalid-client"];
+        /** access-quote */
+        "access-quote": {
+            /**
+             * @description The type of resource request as a string.  This field defines which other fields are allowed in the request object.
+             * @enum {string}
+             */
+            type: "quote";
+            /** @description The types of actions the client instance will take at the RS as an array of strings. */
+            actions: ("create" | "read" | "read-all")[];
         };
-      };
-      /** Internal Server Error */
-      500: {
-        content: {
-          "application/json": components["schemas"]["error-request-denied"];
-        };
-      };
-    };
-    requestBody: {
-      content: {
-        "application/json": {
-          access_token: {
+        /**
+         * access_token
+         * @description A single access token or set of access tokens that the client instance can use to call the RS on behalf of the RO.
+         */
+        access_token: {
+            /** @description The value of the access token as a string.  The value is opaque to the client instance.  The value SHOULD be limited to ASCII characters to facilitate transmission over HTTP headers within other protocols without requiring additional encoding. */
+            value: string;
+            /**
+             * Format: uri
+             * @description The management URI for this access token. This URI MUST NOT include the access token value and SHOULD be different for each access token issued in a request.
+             */
+            manage: string;
+            /** @description The number of seconds in which the access will expire.  The client instance MUST NOT use the access token past this time.  An RS MUST NOT accept an access token past this time. */
+            expires_in?: number;
             access: components["schemas"]["access"];
-          };
-          client: components["schemas"]["client"];
-          interact?: components["schemas"]["interact-request"];
         };
-      };
-    };
-  };
-  /** Continue a grant request during or after user interaction. */
-  "post-continue": {
-    parameters: {
-      path: {
-        id: string;
-      };
-    };
-    responses: {
-      /** Success */
-      200: {
-        content: {
-          "application/json": {
-            access_token?: components["schemas"]["access_token"];
-            continue: components["schemas"]["continue"];
-          };
+        /**
+         * client
+         * @description Wallet address of the client instance that is making this request.
+         *
+         *     When sending a non-continuation request to the AS, the client instance MUST identify itself by including the client field of the request and by signing the request.
+         *
+         *     A JSON Web Key Set document, including the public key that the client instance will use to protect this request and any continuation requests at the AS and any user-facing information about the client instance used in interactions, MUST be available at the wallet address + `/jwks.json` url.
+         *
+         *     If sending a grant initiation request that requires RO interaction, the wallet address MUST serve necessary client display information.
+         */
+        client: string;
+        /**
+         * continue
+         * @description If the AS determines that the request can be continued with additional requests, it responds with the continue field.
+         */
+        continue: {
+            /** @description A unique access token for continuing the request, called the "continuation access token". */
+            access_token: {
+                value: string;
+            };
+            /**
+             * Format: uri
+             * @description The URI at which the client instance can make continuation requests.
+             */
+            uri: string;
+            /** @description The amount of time in integer seconds the client instance MUST wait after receiving this request continuation response and calling the continuation URI. */
+            wait?: number;
         };
-      };
-      /** Bad Request */
-      400: {
-        content: {
-          "application/json":
-            | components["schemas"]["error-too-fast"]
-            | components["schemas"]["error-invalid-client"];
+        /**
+         * interact
+         * @description The client instance declares the parameters for interaction methods that it can support using the interact field.
+         */
+        "interact-request": {
+            /** @description Indicates how the client instance can start an interaction. */
+            start: "redirect"[];
+            /** @description Indicates how the client instance can receive an indication that interaction has finished at the AS. */
+            finish?: {
+                /**
+                 * @description The callback method that the AS will use to contact the client instance.
+                 * @enum {string}
+                 */
+                method: "redirect";
+                /**
+                 * Format: uri
+                 * @description Indicates the URI that the AS will either send the RO to after interaction or send an HTTP POST request.
+                 */
+                uri: string;
+                /** @description Unique value to be used in the calculation of the "hash" query parameter sent to the callback URI, must be sufficiently random to be unguessable by an attacker.  MUST be generated by the client instance as a unique value for this request. */
+                nonce: string;
+            };
         };
-      };
-      /** Unauthorized */
-      401: {
-        content: {
-          "application/json":
-            | components["schemas"]["error-invalid-client"]
-            | components["schemas"]["error-invalid-continuation"]
-            | components["schemas"]["error-request-denied"];
+        /** interact-response */
+        "interact-response": {
+            /**
+             * Format: uri
+             * @description The URI to direct the end user to.
+             */
+            redirect: string;
+            /** @description Unique key to secure the callback. */
+            finish: string;
         };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "application/json":
-            | components["schemas"]["error-invalid-continuation"]
-            | components["schemas"]["error-invalid-request"];
+        /**
+         * Interval
+         * @description [ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)
+         */
+        interval: string;
+        /**
+         * limits-outgoing
+         * @description Open Payments specific property that defines the limits under which outgoing payments can be created.
+         */
+        "limits-outgoing": {
+            receiver?: components["schemas"]["receiver"];
+            interval?: components["schemas"]["interval"];
+        } | {
+            receiver?: components["schemas"]["receiver"];
+            interval?: components["schemas"]["interval"];
+            /** @description All amounts are maxima, i.e. multiple payments can be created under a grant as long as the total amounts of these payments do not exceed the maximum amount per interval as specified in the grant. */
+            debitAmount: components["schemas"]["amount"];
+        } | {
+            receiver?: components["schemas"]["receiver"];
+            interval?: components["schemas"]["interval"];
+            /** @description All amounts are maxima, i.e. multiple payments can be created under a grant as long as the total amounts of these payments do not exceed the maximum amount per interval as specified in the grant. */
+            receiveAmount: components["schemas"]["amount"];
         };
-      };
-    };
-    requestBody: {
-      content: {
-        "application/json": {
-          /**
-           * @description The interaction reference generated for this
-           * interaction by the AS.
-           */
-          interact_ref?: string;
+        "error-invalid-client": {
+            error?: {
+                description?: string;
+                /** @enum {string} */
+                code?: "invalid_client";
+            };
         };
-      };
-    };
-  };
-  /** Cancel a grant request or delete a grant client side. */
-  "delete-continue": {
-    parameters: {
-      path: {
-        id: string;
-      };
-    };
-    responses: {
-      /** No Content */
-      204: never;
-      /** Unauthorized */
-      401: {
-        content: {
-          "application/json":
-            | components["schemas"]["error-invalid-client"]
-            | components["schemas"]["error-invalid-continuation"]
-            | components["schemas"]["error-invalid-request"];
+        "error-invalid-request": {
+            error?: {
+                description?: string;
+                /** @enum {string} */
+                code?: "invalid_request";
+            };
         };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "application/json": components["schemas"]["error-invalid-request"];
+        "error-request-denied": {
+            error?: {
+                description?: string;
+                /** @enum {string} */
+                code?: "request_denied";
+            };
         };
-      };
-    };
-  };
-  /** Management endpoint to rotate access token. */
-  "post-token": {
-    parameters: {
-      path: {
-        id: string;
-      };
-    };
-    responses: {
-      /** OK */
-      200: {
-        content: {
-          "application/json": {
-            access_token: components["schemas"]["access_token"];
-          };
+        "error-too-fast": {
+            error?: {
+                description?: string;
+                /** @enum {string} */
+                code?: "too_fast";
+            };
         };
-      };
-      /** Bad Request */
-      400: {
-        content: {
-          "application/json": components["schemas"]["error-invalid-rotation"];
+        "error-invalid-continuation": {
+            error?: {
+                description?: string;
+                /** @enum {string} */
+                code?: "invalid_continuation";
+            };
         };
-      };
-      /** Unauthorized */
-      401: {
-        content: {
-          "application/json": components["schemas"]["error-invalid-client"];
+        "error-invalid-rotation": {
+            error?: {
+                description?: string;
+                /** @enum {string} */
+                code?: "invalid_rotation";
+            };
         };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "application/json": components["schemas"]["error-invalid-rotation"];
-        };
-      };
-      /** Internal Server Error */
-      500: {
-        content: {
-          "application/json": components["schemas"]["error-request-denied"];
-        };
-      };
-    };
-  };
-  /** Management endpoint to revoke access token. */
-  "delete-token": {
-    parameters: {
-      path: {
-        id: string;
-      };
-    };
-    responses: {
-      /** No Content */
-      204: never;
-      /** Unauthorized */
-      401: {
-        content: {
-          "application/json": components["schemas"]["error-invalid-client"];
-        };
-      };
-      /** Internal Server Error */
-      500: {
-        content: {
-          "application/json": components["schemas"]["error-request-denied"];
-        };
-      };
-    };
-  };
-}
-
-export interface external {
-  "schemas.yaml": {
-    paths: {};
-    components: {
-      schemas: {
-        /** amount */
-        amount: {
-          /**
-           * Format: uint64
-           * @description The value is an unsigned 64-bit integer amount, represented as a string.
-           */
-          value: string;
-          assetCode: external["schemas.yaml"]["components"]["schemas"]["assetCode"];
-          assetScale: external["schemas.yaml"]["components"]["schemas"]["assetScale"];
-        };
+        /**
+         * Receiver
+         * Format: uri
+         * @description The URL of the incoming payment that is being paid.
+         */
+        receiver: string;
         /**
          * Asset code
          * @description The assetCode is a code that indicates the underlying asset. This SHOULD be an ISO4217 currency code.
@@ -446,20 +283,282 @@ export interface external {
          * @description The scale of amounts denoted in the corresponding asset code.
          */
         assetScale: number;
-        /**
-         * Receiver
-         * Format: uri
-         * @description The URL of the incoming payment that is being paid.
-         */
-        receiver: string;
-        /**
-         * Wallet Address
-         * Format: uri
-         * @description URL of a wallet address hosted by a Rafiki instance.
-         */
-        walletAddress: string;
-      };
+        /** amount */
+        amount: {
+            /**
+             * Format: uint64
+             * @description The value is an unsigned 64-bit integer amount, represented as a string.
+             */
+            value: string;
+            assetCode: components["schemas"]["assetCode"];
+            assetScale: components["schemas"]["assetScale"];
+        };
     };
-    operations: {};
-  };
+    responses: never;
+    parameters: never;
+    requestBodies: never;
+    headers: never;
+    pathItems: never;
+}
+export type $defs = Record<string, never>;
+export interface operations {
+    "post-request": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    access_token: {
+                        access: components["schemas"]["access"];
+                    };
+                    client: components["schemas"]["client"];
+                    interact?: components["schemas"]["interact-request"];
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        interact: components["schemas"]["interact-response"];
+                        continue: components["schemas"]["continue"];
+                    } | {
+                        access_token: components["schemas"]["access_token"];
+                        continue: components["schemas"]["continue"];
+                    };
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["error-invalid-request"] | components["schemas"]["error-invalid-client"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["error-invalid-client"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["error-request-denied"];
+                };
+            };
+        };
+    };
+    "post-continue": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /** @description The interaction reference generated for this
+                     *     interaction by the AS. */
+                    interact_ref?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        access_token?: components["schemas"]["access_token"];
+                        continue: components["schemas"]["continue"];
+                    };
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["error-too-fast"] | components["schemas"]["error-invalid-client"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["error-invalid-client"] | components["schemas"]["error-invalid-continuation"] | components["schemas"]["error-request-denied"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["error-invalid-continuation"] | components["schemas"]["error-invalid-request"];
+                };
+            };
+        };
+    };
+    "delete-continue": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["error-invalid-client"] | components["schemas"]["error-invalid-continuation"] | components["schemas"]["error-invalid-request"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["error-invalid-request"];
+                };
+            };
+        };
+    };
+    "post-token": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        access_token: components["schemas"]["access_token"];
+                    };
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["error-invalid-rotation"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["error-invalid-client"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["error-invalid-rotation"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["error-request-denied"];
+                };
+            };
+        };
+    };
+    "delete-token": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["error-invalid-client"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["error-request-denied"];
+                };
+            };
+        };
+    };
 }
