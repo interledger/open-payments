@@ -6,7 +6,8 @@ import {
 import {
   components as ASComponents,
   paths as ASPaths,
-  operations as ASOperations
+  operations as ASOperations,
+  components
 } from './openapi/generated/auth-server-types'
 import {
   components as WAComponents,
@@ -160,3 +161,12 @@ export const AccessAction: Record<
   List: 'list',
   ListAll: 'list-all'
 })
+
+export type OutgoingPaymentLimitWithDebitAmount = Extract<
+  ASComponents['schemas']['access-outgoing']['limits'],
+  { debitAmount: components['schemas']['amount'] }
+>
+export type OutgoingPaymentLimitWithReceiveAmount = Extract<
+  ASComponents['schemas']['access-outgoing']['limits'],
+  { receiveAmount: components['schemas']['amount'] }
+>

@@ -11,7 +11,9 @@ import {
   Grant,
   GrantContinuation,
   GrantRequest,
-  GrantContinuationRequest
+  GrantContinuationRequest,
+  OutgoingPaymentLimitWithDebitAmount,
+  OutgoingPaymentLimitWithReceiveAmount
 } from '../types'
 import { post, deleteRequest } from './requests'
 
@@ -62,8 +64,10 @@ export const createGrantRoutes = (deps: GrantRouteDeps): GrantRoutes => {
         (el) => el.type === 'outgoing-payment'
       )
       if (
-        outgoingPaymentAccess?.limits?.debitAmount &&
-        outgoingPaymentAccess.limits?.receiveAmount
+        (outgoingPaymentAccess?.limits as OutgoingPaymentLimitWithDebitAmount)
+          ?.debitAmount &&
+        (outgoingPaymentAccess?.limits as OutgoingPaymentLimitWithReceiveAmount)
+          ?.receiveAmount
       ) {
         throw new OpenPaymentsClientError('Invalid Grant Request', {
           description: 'Invalid Request'
