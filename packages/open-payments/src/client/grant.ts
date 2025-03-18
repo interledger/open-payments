@@ -1,6 +1,7 @@
 import { HttpMethod, ResponseValidator } from '@interledger/openapi'
 import {
   GrantOrTokenRequestArgs,
+  OpenPaymentsClientError,
   RouteDeps,
   UnauthenticatedResourceRequestArgs
 } from '.'
@@ -64,7 +65,9 @@ export const createGrantRoutes = (deps: GrantRouteDeps): GrantRoutes => {
         outgoingPaymentAccess?.limits?.debitAmount &&
         outgoingPaymentAccess.limits?.receiveAmount
       ) {
-        throw new Error('Invalid Grant Request')
+        throw new OpenPaymentsClientError('Invalid Grant Request', {
+          description: 'Invalid Request'
+        })
       }
       return post(
         baseDeps,
