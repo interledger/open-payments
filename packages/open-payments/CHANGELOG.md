@@ -1,5 +1,11 @@
 # @interledger/open-payments
 
+## 7.0.0
+
+### Major Changes
+
+- a163bd6: Removed the `updatedAt` field from the incoming and outgoing payment resources in the resource server OpenAPI specification.
+
 ## 6.14.1
 
 ### Patch Changes
