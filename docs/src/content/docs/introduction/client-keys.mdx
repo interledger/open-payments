@@ -127,7 +127,7 @@ AS->>RS: 4.) Requests public keys from client's JWKS endpoint<br>GET {client_dom
 RS-->>AS: 5.) 200 domain found,<br>returns public key
 AS->>AS: 6.) Uses public key to validate the signature in the client's<br>original request, binds client's domain to the grant
 AS-->>C: 7.) 200 OK
-note over AS: Explicit consent is collected from the end-user, facilitated by the client, authorization server, and IdP (not shown)
+note over AS: Explicit consent is collected from the client's user, facilitated by the client, authorization server, and IdP (not shown)
 C->>AS: 8.) Makes grant continuation request<br>(POST /continue) signed with private key
 AS->>AS: 9.) Pulls the keyId from the grant request's<br> signature-input header, gets client's domain<br>from the database entry for the grant
 AS->>RS: 10.) Requests public key bound to the domain from client's<br>JWKS endpoint GET {client_domain/jwks.json}
