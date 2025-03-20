@@ -47,40 +47,40 @@ The sequence of requests a client makes when setting up a payment can follow one
 
 #### Path 1 (most common)
 
-1. Request an `incoming-payment` grant from the payee's AS
-2. Send request to create an incoming payment resource to the payee's RS
-3. Request a `quote` grant from the payer's AS
-4. Send request to create a quote resource to the payer's RS
-5. Request an interactive `outgoing-payment` grant from the payer's AS
-6. Send request to create an outgoing payment resource to the payer's RS
+1. Request an `incoming-payment` grant from the AS of recipient's <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip>
+2. Send request to create an incoming payment resource to the RS of recipient's ASE
+3. Request a `quote` grant from the AS of sender's ASE
+4. Send request to create a quote resource to the RS of sender's ASE
+5. Request an interactive `outgoing-payment` grant from the AS of sender's ASE
+6. Send request to create an outgoing payment resource to the RS of sender's ASE
 
 #### Path 2
 
-1. Request an `incoming-payment` grant from the payee's AS
-2. Send request to create an incoming payment resource to the payee's RS
-3. Request a single interactive grant for both `quote` and `outgoing-payment` from the payer's AS
-4. Send request to create a quote resource to the payer's RS
-5. Send request to create an outgoing payment resource to the payer's RS
+1. Request an `incoming-payment` grant from the AS of recipient's <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip>
+2. Send request to create an incoming payment resource to the RS of recipient's ASE
+3. Request a single interactive grant for both `quote` and `outgoing-payment` from the AS of sender's ASE
+4. Send request to create a quote resource to the RS of sender's ASE
+5. Send request to create an outgoing payment resource to the RS of sender's ASE
 
 ## Grant types
 
 ### incoming-payment
 
-A client begins the Open Payments flow by requesting an incoming payment grant from the AS on the _payee_ side. The client can request a single grant to create multiple incoming payments for different Open Payments-enabled accounts as long as each account belongs to the same <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip>.
+A client begins the Open Payments flow by requesting an incoming payment grant from the AS on the _recipient_ side. The client can request a single grant to create multiple incoming payments for different Open Payments-enabled accounts as long as each account belongs to the same <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip>.
 
-Incoming payment grants are non-interactive by default, meaning interaction by an individual (typically the client’s end-user) is not required for the AS to issue an access token.
+Incoming payment grants are non-interactive by default, meaning interaction by an individual (typically the client’s user) is not required for the AS to issue an access token.
 
 ### quote
 
-After the client receives an incoming payment grant and an incoming payment resource is created on the payee’s account, the client requests a quote grant from the AS on the _payer_ side. The client can request a single grant to create multiple quotes for different Open Payments-enabled accounts as long as each account belongs to the same <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip>.
+After the client receives an incoming payment grant and an incoming payment resource is created on the recipient's account, the client requests a quote grant from the AS on the _sender_ side. The client can request a single grant to create multiple quotes for different Open Payments-enabled accounts as long as each account belongs to the same <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip>.
 
-Quote grants are non-interactive by default, meaning interaction by an individual (typically the client’s end-user) is not required for the AS to issue an access token.
+Quote grants are non-interactive by default, meaning interaction by an individual (typically the client’s user) is not required for the AS to issue an access token.
 
 ### outgoing-payment
 
-Having progressed through the incoming payment and quote portions of the Open Payments flow, the client is ready to request an outgoing payment grant from the AS on the _payer_ side.
+Having progressed through the incoming payment and quote portions of the Open Payments flow, the client is ready to request an outgoing payment grant from the AS on the _sender_ side.
 
-Open Payments requires outgoing payment grant requests to be interactive. When a grant request is interactive, it means explicit interaction by an individual (typically the client’s end user) is a required step in the delegation process.
+Open Payments requires outgoing payment grant requests to be interactive. When a grant request is interactive, it means explicit interaction by an individual (typically the client’s user) is a required step in the delegation process.
 
 After a successful interaction, the client must issue a [Grant Continuation request](/apis/auth-server/operations/post-continue) so the AS knows to issue an access token.
 

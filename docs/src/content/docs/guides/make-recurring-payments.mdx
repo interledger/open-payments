@@ -72,7 +72,7 @@ Create an Open Payments-authenticated client by providing the following properti
 
 ### 3. Request an Incoming Payment grant
 
-Request an `incomingPayment` grant from the payee wallet's AS.
+Request an `incomingPayment` grant from the recipient wallet's AS.
 
 <ChunkedSnippet
   source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-incoming-payment.ts'
@@ -81,11 +81,11 @@ Request an `incomingPayment` grant from the payee wallet's AS.
 
 ### 4. Create an Incoming Payment
 
-Create an `incomingPayment` on the payee wallet's Resource Server (RS) using the access token returned by the AS in the grant request and specify the `walletAddress` with the URL of the payee's wallet.
+Create an `incomingPayment` on the recipient wallet's Resource Server (RS) using the access token returned by the AS in the grant request and specify the `walletAddress` with the URL of the recipient's wallet.
 
 Add the `incomingAmount` object and define the following properties:
 
-- `value` : the maximum allowable amount that will be paid to the payee's wallet address.
+- `value` : the maximum allowable amount that will be paid to the recipient's wallet address.
 - `assetCode` : the ISO 4217 currency code representing the underlying asset used to make the payment.
 - `assetScale` : the scale of amounts denoted in the corresponding asset code.
 
@@ -98,7 +98,7 @@ Optionally you may add the `expiresAt` property which is the date and time after
 
 ### 5. Request a Quote grant
 
-Request a `quote` grant from the payer wallet's AS.
+Request a `quote` grant from the sender wallet's AS.
 
 <ChunkedSnippet
   source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-quote.ts'
@@ -107,12 +107,12 @@ Request a `quote` grant from the payer wallet's AS.
 
 ### 6. Create a Quote
 
-Create a `quote` on the payer wallet's RS using the access token returned by the AS in the grant request.
+Create a `quote` on the sender wallet's RS using the access token returned by the AS in the grant request.
 
 Add the following properties:
 
 - `method` : the payment method used to facilitate the payment. Set this property to `ilp` as Open Payments only supports <LinkOut href='https://interledger.org'>Interledger</LinkOut> payments at this time.
-- `walletAddress` : the URL of the payer's wallet address.
+- `walletAddress` : the URL of the sender's wallet address.
 - `receiver` : the URL of the incoming payment that will receive the payment.
 
 <ChunkedSnippet
@@ -122,18 +122,18 @@ Add the following properties:
 
 ### 7. Request an Outgoing Payment grant
 
-Request an `outgoingPayment` grant from the payer wallet's AS.
+Request an `outgoingPayment` grant from the sender wallet's AS.
 
 Add the `limits` object with the following properties:
 
-- `debitAmount` : the maximum amount to be deducted from the payer's wallet.
-- `receiveAmount` : the maximum amount to be received in the payee's wallet.
+- `debitAmount` : the maximum amount to be deducted from the sender's wallet.
+- `receiveAmount` : the maximum amount to be received in the recipient's wallet.
 - `interval` : the interval period conforming to the <LinkOut href="https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals">ISO8601 repeating interval string format.</LinkOut>
 
 :::note
-This request requires an interactive grant as the payer will need to consent before an `outgoingPayment` is made against their wallet.
+This request requires an interactive grant as the user will need to consent before an `outgoingPayment` is made against their wallet.
 
-For details on how to facilitate an interactive grant please see the <LinkOut href='https://openpayments.dev/guides/create-interactive-grant/'>
+For details on how to facilitate an interactive grant refer to the <LinkOut href='https://openpayments.dev/guides/create-interactive-grant/'>
 Create an Interactive Grant guide. </LinkOut>
 :::
 
@@ -144,11 +144,11 @@ Create an Interactive Grant guide. </LinkOut>
 
 ### 8. Create an initial Outgoing Payment
 
-Create an `outgoingPayment` on the payer wallet's RS using the access token returned by the AS in the grant request.
+Create an `outgoingPayment` on the sender wallet's RS using the access token returned by the AS in the grant request.
 
 Add the following properties:
 
-- `walletAddress` : the URL of the payer's wallet address.
+- `walletAddress` : the URL of the sender's wallet address.
 - `quoteId` : the URL of the quote specifying the payment amount.
 
 <ChunkedSnippet
@@ -171,11 +171,11 @@ Rotate the access token obtained from the previous `outgoingPayment` grant reque
 
 ### 10. Create another Outgoing Payment
 
-Create another `outgoingPayment` on the payer wallet's RS using the new access token returned by the AS in the previous step.
+Create another `outgoingPayment` on the sender wallet's RS using the new access token returned by the AS in the previous step.
 
 Add the following properties:
 
-- `walletAddress` : the URL of the payer's wallet address.
+- `walletAddress` : the URL of the sender's wallet address.
 - `quoteId` : the URL of the quote specifying the payment amount.
 
 <ChunkedSnippet
