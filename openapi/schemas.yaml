@@ -34,8 +34,8 @@ components:
     assetScale:
       title: Asset scale
       type: integer
-      minimum: 0
-      maximum: 255
+      # minimum: 0
+      # maximum: 255
       description: The scale of amounts denoted in the corresponding asset code.
     receiver:
       title: Receiver
