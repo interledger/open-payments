@@ -6,6 +6,7 @@ import * as requestors from './requests'
 import { v4 as uuid } from 'uuid'
 import { getAuthServerOpenAPI } from '../openapi'
 import { BaseDeps } from '.'
+import { GrantRequest } from '../types'
 
 jest.mock('./requests', () => ({
   ...jest.requireActual('./requests.ts'),
@@ -64,6 +65,75 @@ describe('grant', (): void => {
             },
             validateResponses ? true : undefined
           )
+        }
+      )
+
+      test.each`
+        debitAmount | receiveAmount | isValid  | description
+        ${true}     | ${true}       | ${false} | ${'fails with both debit and send amount'}
+        ${true}     | ${false}      | ${true}  | ${'passes with debit amount but not send amount'}
+        ${false}    | ${true}       | ${true}  | ${'passes with send amount but not debit amount'}
+        ${false}    | ${false}      | ${true}  | ${'passes with neither send nor debit amount'}
+      `(
+        'POST grant request $description',
+        async ({ debitAmount, receiveAmount, isValid }): Promise<void> => {
+          const grantRequest = mockGrantRequest()
+          const testGrantRequest = {
+            ...grantRequest,
+            access_token: {
+              access: [
+                {
+                  type: 'outgoing-payment',
+                  actions: ['create', 'read'],
+                  identifier: 'https://example.com/alice',
+                  limits: {
+                    debitAmount: debitAmount
+                      ? {
+                          assetCode: 'USD',
+                          assetScale: 2,
+                          value: '500'
+                        }
+                      : undefined,
+                    receiveAmount: receiveAmount
+                      ? {
+                          assetCode: 'USD',
+                          assetScale: 2,
+                          value: '500'
+                        }
+                      : undefined
+                  }
+                }
+              ]
+            }
+          }
+
+          const postSpy = jest.spyOn(requestors, 'post')
+          if (isValid) {
+            await createGrantRoutes({
+              openApi,
+              client,
+              ...deps
+            }).request({ url }, testGrantRequest as GrantRequest)
+            expect(postSpy).toHaveBeenCalledWith(
+              deps,
+              {
+                url,
+                body: {
+                  ...testGrantRequest,
+                  client
+                }
+              },
+              true
+            )
+          } else {
+            await expect(
+              createGrantRoutes({
+                openApi,
+                client,
+                ...deps
+              }).request({ url }, testGrantRequest as GrantRequest)
+            ).rejects.toThrow('Invalid Grant Request')
+          }
         }
       )
     })

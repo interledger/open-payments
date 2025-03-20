@@ -213,12 +213,18 @@ export interface components {
          */
         "limits-outgoing": {
             receiver?: components["schemas"]["receiver"];
-            /** @description All amounts are maxima, i.e. multiple payments can be created under a grant as long as the total amounts of these payments do not exceed the maximum amount per interval as specified in the grant. */
-            debitAmount?: components["schemas"]["amount"];
-            /** @description All amounts are maxima, i.e. multiple payments can be created under a grant as long as the total amounts of these payments do not exceed the maximum amount per interval as specified in the grant. */
-            receiveAmount?: components["schemas"]["amount"];
             interval?: components["schemas"]["interval"];
-        } | unknown | unknown | unknown;
+        } | {
+            receiver?: components["schemas"]["receiver"];
+            interval?: components["schemas"]["interval"];
+            /** @description All amounts are maxima, i.e. multiple payments can be created under a grant as long as the total amounts of these payments do not exceed the maximum amount per interval as specified in the grant. */
+            debitAmount: components["schemas"]["amount"];
+        } | {
+            receiver?: components["schemas"]["receiver"];
+            interval?: components["schemas"]["interval"];
+            /** @description All amounts are maxima, i.e. multiple payments can be created under a grant as long as the total amounts of these payments do not exceed the maximum amount per interval as specified in the grant. */
+            receiveAmount: components["schemas"]["amount"];
+        };
         "error-invalid-client": {
             error?: {
                 description?: string;
