@@ -19,13 +19,13 @@ components:
           type: string
           format: uint64
           description: 'The value is an unsigned 64-bit integer amount, represented as a string.'
-        # assetCode:
-        #   $ref: '#/components/schemas/assetCode'
+        assetCode:
+          $ref: '#/components/schemas/assetCode'
         assetScale:
           $ref: '#/components/schemas/assetScale'
       required:
         - value
-        # - assetCode
+        - assetCode
         - assetScale
     assetCode:
       title: Asset code
