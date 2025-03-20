@@ -195,10 +195,10 @@ paths:
                           limits:
                             receiver: 'https://ilp.interledger-test.dev/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2'
                             interval: 'R12/2019-08-24T14:15:22Z/P1M'
-                            debitAmount:
-                              # value: '500'
-                              # assetCode: 'USD'
-                              assetScale: 2
+                            # debitAmount:
+                            #   value: '500'
+                            #   assetCode: 'USD'
+                            #   assetScale: 2
                     continue:
                       access_token:
                         value: 33OMUKMKSKU80UPRY5NM
