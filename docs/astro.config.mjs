@@ -237,6 +237,16 @@ export default defineConfig({
           ]
         },
         {
+          label: 'Tutorials',
+          collapsed: true,
+          items: [
+            {
+              label: 'Build a split-payments marketplace',
+              link: '/tutorials/marketplace/'
+            }
+          ]
+        },
+        {
           label: 'Resources',
           collapsed: true,
           items: [
