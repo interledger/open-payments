@@ -126,10 +126,10 @@ paths:
                         limits:
                           receiver: 'https://ilp.interledger-test.dev/incoming-payments/45a0d0ee-26dc-4c66-89e0-01fbf93156f7'
                           interval: 'R12/2019-08-24T14:15:22Z/P1M'
-                          debitAmount:
-                            value: '500'
-                            assetCode: 'USD'
-                            assetScale: 2
+                          # debitAmount:
+                          #   value: '500'
+                          #   assetCode: 'USD'
+                          #   assetScale: 2
                   client: 'https://webmonize.com/.well-known/pay'
                   interact:
                     start:
