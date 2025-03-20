@@ -129,7 +129,7 @@ paths:
                           debitAmount:
                             # value: '500'
                             # assetCode: 'USD'
-                            assetScale: 2
+                            # assetScale: 2
                   client: 'https://webmonize.com/.well-known/pay'
                   interact:
                     start:
