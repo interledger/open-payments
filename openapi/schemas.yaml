@@ -15,16 +15,16 @@ components:
       title: amount
       type: object
       properties:
-        # value:
-        #   type: string
-        #   format: uint64
-        #   description: 'The value is an unsigned 64-bit integer amount, represented as a string.'
+        value:
+          type: string
+          format: uint64
+          description: 'The value is an unsigned 64-bit integer amount, represented as a string.'
         # assetCode:
         #   $ref: '#/components/schemas/assetCode'
         assetScale:
           $ref: '#/components/schemas/assetScale'
       required:
-        # - value
+        - value
         # - assetCode
         - assetScale
     assetCode:
