@@ -11,7 +11,7 @@ import { MermaidWrapper, Mermaid } from '@interledger/docs-design-system'
     Authorization server (AS)->>Authorization server (AS): Starts interaction and sets session
     Authorization server (AS)-->>Client instance: 302 temporary redirect to identity provider <br>uri with grant info in query string
     Client instance->>Identity provider (IdP): Redirects to identity provider
-    Identity provider (IdP)->>Identity provider (IdP): Resource owner (e.g. client end-user) <br>accepts interaction
+    Identity provider (IdP)->>Identity provider (IdP): Resource owner (e.g. client user) <br>accepts interaction
     Identity provider (IdP)->>Authorization server (AS): Sends interaction choice
     Authorization server (AS) -->>Identity provider (IdP): 202 choice accepted
     Identity provider (IdP)->>Authorization server (AS): Requests to finish interaction
