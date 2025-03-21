@@ -14,8 +14,8 @@ This page describes each step in the Open Payments flow at a high level. The seq
 
 ### Assumptions
 
-- The <Tooltip content="A mobile or web application or service" client:load>client's</Tooltip> user is the sender.
-- The client already has the sender's Open Payments-enabled account details and is able to send payments on behalf of the sender.
+- The <Tooltip content="Such as a mobile or web application or service" client:load>client's</Tooltip> user is the sender.
+- The client already has the sender's Open Payments-enabled account details and is able to send payments on their behalf.
 
 ## Get account details
 
@@ -38,7 +38,7 @@ A client retrieves public details about a recipient's Open Payments-enabled acco
 
 ## Incoming payment
 
-The client first <LinkOut href='/apis/auth-server/operations/post-request'>requests/receives a grant</LinkOut> from the authorization server of the sender's <Tooltip content="account servicing entity" client:load>ASE</Tooltip> to create an `incoming-payment` resource. The client then sends a request to the resource server of the recipient's ASE to <LinkOut href='/apis/resource-server/operations/create-incoming-payment/'>create the resource</LinkOut>. When created, the resource server returns unique payment details the client will use to address one or more payments to the recipient.
+The client first <LinkOut href='/apis/auth-server/operations/post-request'>requests/receives a grant</LinkOut> from the authorization server of the recipient's <Tooltip content="account servicing entity" client:load>ASE</Tooltip> to create an `incoming-payment` resource. The client then sends a request to the ASE's resource server to <LinkOut href='/apis/resource-server/operations/create-incoming-payment/'>create the resource</LinkOut>. When created, the resource server returns unique payment details the client will use to address one or more payments to the recipient.
 
 <MermaidWrapper client:load>
 
@@ -60,7 +60,7 @@ The client first <LinkOut href='/apis/auth-server/operations/post-request'>reque
 
 ## Quote
 
-The client <LinkOut href='/apis/auth-server/operations/post-request'>requests/receives a grant</LinkOut> from the authorization server of the sender's <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip> to create a `quote` resource. The client then sends a request to the resource server of the sender's ASE to <LinkOut href='/apis/resource-server/operations/create-quote'>create the resource</LinkOut>. When created, the resource server returns, among other things, a quote `id` and the amount it will cost to make the payment.
+The client <LinkOut href='/apis/auth-server/operations/post-request'>requests/receives a grant</LinkOut> from the authorization server of the sender's <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip> to create a `quote` resource. The client then sends a request to the resource server to <LinkOut href='/apis/resource-server/operations/create-quote'>create the resource</LinkOut>. When created, the resource server returns, among other things, a quote `id` and the amount it will cost to make the payment.
 
 <MermaidWrapper client:load>
 

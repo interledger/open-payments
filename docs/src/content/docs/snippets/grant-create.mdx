@@ -14,7 +14,7 @@ Before a client can call the Open Payments APIs, it must request and receive a g
 These code snippets enable a client to request a grant for the `incoming-payment`, `quote`, and `outgoing-payment` resource types. Each request includes all valid actions the client can take for the resource type.
 
 :::note
-When setting up a payment, the client first requests a grant from the authorization server of the recipient's <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip> to create an `incoming-payment` resource. The client then requests grants to create the `quote` and `outgoing-payment` resources from the authorization server sender's ASE.
+When setting up a payment, the client first requests a grant from the authorization server of the recipient's <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip> to create an `incoming-payment` resource. The client then requests grants to create the `quote` and `outgoing-payment` resources from the authorization server of the sender's ASE.
 :::
 
 ## Before you begin
@@ -205,7 +205,7 @@ Run `node path/to/directory/index.js`.
 
 ## Request an outgoing payment grant
 
-In Open Payments, an outgoing payment grant must be interactive. An interactive grant requires interaction from a user, typically a client's end-user, before the grant can be issued.
+In Open Payments, an outgoing payment grant must be interactive. An interactive grant requires interaction from a user, typically a client's user, before the grant can be issued.
 
 <Tabs>
 <TabItem label='TypeScript'>

@@ -57,7 +57,7 @@ Import `createAuthenticatedClient` from the Open Payments SDK package.
 
 Create an Open Payments-authenticated client by providing the following properties:
 
-- `walletAddressURL` : your Open Payments-enabled wallet address that your client will use to authenticate itself to one or more Authorization Servers (AS).
+- `walletAddressURL` : your Open Payments-enabled wallet address that your client will use to authenticate itself to one or more Authorization Servers.
 - `privateKey` : the EdDSA-Ed25519 key or preferably the absolute or relative file path to the key that is bound to your wallet address. A public key signed with this private
   key must be made available as a public JWK document at `{walletAddressUrl}/jwks.json` url.
 - `keyId` : the identifier of the private key and the corresponding public key.
@@ -69,7 +69,7 @@ Create an Open Payments-authenticated client by providing the following properti
 
 ### 3. Request an Incoming Payment grant
 
-Request an `incomingPayment` grant from the recipient wallet's AS.
+Request an `incomingPayment` grant from the recipient wallet's authorization server.
 
 <ChunkedSnippet
   source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-incoming-payment.ts'
@@ -78,7 +78,7 @@ Request an `incomingPayment` grant from the recipient wallet's AS.
 
 ### 4. Create an Incoming Payment
 
-Create an `incomingPayment` on the recipient wallet's Resource Server (RS) using the access token returned by the AS in the grant request and specify the `walletAddress` with the URL of the recipient's wallet.
+Create an `incomingPayment` on the recipient wallet's resource server using the access token returned by the authorization server in the grant request and specify the `walletAddress` with the URL of the recipient's wallet.
 
 Add the `incomingAmount` object and define the following properties:
 
@@ -95,7 +95,7 @@ Optionally you may add the `expiresAt` property which is the date and time after
 
 ### 5. Request a Quote grant
 
-Request a `quote` grant from the sender wallet's AS.
+Request a `quote` grant from the sender wallet's authorization server.
 
 <ChunkedSnippet
   source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-quote.ts'
@@ -104,7 +104,7 @@ Request a `quote` grant from the sender wallet's AS.
 
 ### 6. Create a Quote
 
-Create a `quote` on the sender wallet's RS using the access token returned by the AS in the grant request.
+Create a `quote` on the sender wallet's resource server using the access token returned by the authorization server in the grant request.
 
 Add the following properties:
 
@@ -119,7 +119,7 @@ Add the following properties:
 
 ### 7. Request an Outgoing Payment grant
 
-Request an `outgoingPayment` grant from the sender wallet's AS.
+Request an `outgoingPayment` grant from the sender wallet's authorization server.
 
 Add the `limits` object with the following properties:
 
@@ -129,7 +129,7 @@ Add the `limits` object with the following properties:
 :::note
 This request requires an interactive grant as the sender will need to consent before an `outgoingPayment` is made against their wallet.
 
-For details on how to facilitate an interactive grant refer to the <LinkOut href='https://openpayments.dev/guides/create-interactive-grant/'>
+For details on how to facilitate an interactive grant refer the <LinkOut href='https://openpayments.dev/guides/create-interactive-grant/'>
 Create an Interactive Grant guide. </LinkOut>
 :::
 
@@ -140,7 +140,7 @@ Create an Interactive Grant guide. </LinkOut>
 
 ### 8. Create an Outgoing Payment
 
-Create an `outgoingPayment` on the sender's wallet's RS using the access token returned by the AS in the grant request.
+Create an `outgoingPayment` on the sender wallet's resource server using the access token returned by the authorization server in the grant request.
 
 Add the following properties:
 

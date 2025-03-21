@@ -8,7 +8,7 @@ import { LinkOut, CodeBlock, Tooltip } from '@interledger/docs-design-system'
 
 The Open Payments standard helps to facilitate the setup of payments between Open Payments-enabled payment accounts.
 
-When setting up a payment, the <Tooltip content="A mobile or web application or service" client:load>client</Tooltip> must obtain the wallet address for both the sender and recipient. Since the sender is typically the client's user, the client can obtain the sender's wallet address during an onboarding process, for example. The sender must be authenticated by their account servicing entity (ASE) to grant the client the permission it needs to access the their Open Payments-enabled account.
+When setting up a payment, the <Tooltip content="Such as a mobile or web application or service" client:load>client</Tooltip> must obtain the wallet address for both the sender and recipient. Since the sender is typically the client's user, the client can obtain the sender's wallet address during an onboarding process, for example. The sender must be authenticated by their account servicing entity (ASE) to grant the client the permission it needs to access the their Open Payments-enabled account.
 
 After the requisite wallet addresses are known, the client can begin obtaining grants to set up one or more payments. The grants allow the client to access the Open Payments APIs for the purpose of creating and accessing resources for incoming payments, quotes, and outgoing payments.
 
