@@ -57,7 +57,7 @@ describe('OpenAPI', (): void => {
             'application/json'
           ]['schema']['properties']['access_token']['properties']['access'][
             'items'
-          ]['oneOf'][1]['properties']['limits']['oneOf'][1]['properties'][
+          ]['oneOf'][1]['properties']['limits']['anyOf'][1]['properties'][
             'debitAmount'
           ]['properties']
         ).sort()
