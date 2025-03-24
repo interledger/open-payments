@@ -8,9 +8,13 @@ import HttpSig from '/src/partials/http-msg-sig-note.mdx'
 import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Ts from '/src/partials/ts-prerequisites.mdx'
 
-The Open Payments APIs facilitate multiple uses cases for payments to and from different Open Payments-enabled wallets. In this guide we look at the steps for making a one time payment.
+:::tip[Summary]
+A client can support one-time payments by obtaining the necessary grants and calling the Open Payments APIs to create the incoming payment, quote, and outgoing payment resources.
+:::
 
-Examples of use cases for a one-time payment might be an e-commerce or a money transmitter application.
+The Open Payments APIs facilitate multiple use cases for one-time payments to and from Open Payments-enabled wallets. Making a payment directly from one person to another, called a peer-to-peer payment, is one example. Purchasing an item from an online merchant and paying in full is another example.
+
+This guide provides steps for making a one-time payment, in which an outgoing payment grant is used to create a single outgoing payment resource.
 
 ## Dependencies
 

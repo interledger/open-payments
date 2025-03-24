@@ -6,6 +6,10 @@ tableOfContents:
 
 import { LinkOut, CodeBlock } from '@interledger/docs-design-system'
 
+:::tip[Summary]
+Before a client can access the Open Payments APIs, it must obtain one or more grants. With the requisite grant, the client can use the APIs to send payment instructions for creating incoming payment, quote, and/or outgoing payment resources.
+:::
+
 The Open Payments standard helps to facilitate the setup of payments between Open Payments-enabled payment accounts.
 
 When setting up a payment, the client must obtain the wallet address for both the payer and payee. Since the payer is typically the client's end-user, the client can obtain the payer's wallet address during an onboarding process, for example. The payer must be authenticated by their account servicing entity (ASE) to grant the client the permission it needs to access the their Open Payments-enabled account.
