@@ -132,7 +132,7 @@ describe('grant', (): void => {
                 client,
                 ...deps
               }).request({ url }, testGrantRequest as GrantRequest)
-            ).rejects.toThrowError('Invalid Grant Request')
+            ).rejects.toThrow('Invalid Grant Request')
           }
         }
       )
