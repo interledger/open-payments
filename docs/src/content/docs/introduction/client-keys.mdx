@@ -9,6 +9,10 @@ import {
   MermaidWrapper
 } from '@interledger/docs-design-system'
 
+:::tip[Summary]
+Client keys are unique identifiers that allow clients to sign Open Payments requests. They enable the verification of a client’s identity through a publicly accessible key registry.
+:::
+
 All client requests in Open Payments are signed using a unique key that identifies the client to the authorization and resource servers. All requests, except for new grant requests, also carry an access token that is bound to the key.
 
 ## Key registry

@@ -11,6 +11,10 @@ import {
 } from '@interledger/docs-design-system'
 import Interactive from '/src/partials/diagram-interactive-grant.mdx'
 
+:::tip[Summary]
+A grant in Open Payments allows a client to obtain authorization from a resource owner to access and perform operations on protected resources. Open Payments uses the Grant Negotiation and Authorization Protocol (GNAP) to facilitate this process, allowing clients to securely interact with the API.
+:::
+
 In Open Payments, a grant indicates a transfer, or delegation, of authorization from a resource owner (RO) to a piece of software. An RO can be a physical person, such as the software’s end user, or a process, such as predefined organizational rules. By delegating authorization, the RO allows the software to access and perform operations on protected resources on the RO’s behalf.
 
 Open Payments leverages the <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol'>Grant Negotiation and Authorization Protocol (GNAP)</LinkOut> as the mechanism by which the piece of software, known as a client instance (or client for short), is delegated authorization to use the Open Payments APIs to interface with supported accounts.
