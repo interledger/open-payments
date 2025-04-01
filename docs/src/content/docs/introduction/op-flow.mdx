@@ -10,7 +10,11 @@ import {
 } from '@interledger/docs-design-system'
 import Interactive from '/src/partials/diagram-interactive-grant.mdx'
 
-This page describes each step in the Open Payments flow at a high level. The sequence diagrams are for illustrative purposes and might not be an exact representation of a given flow.
+:::tip[Summary]
+When a client issues payment instructions, numerous interactions between the client and servers are needed to obtain grants, verify identities, and create the resources required to complete a transaction.
+:::
+
+This page provides a high-level look at the API calls and interactions that occur between the client and servers during a payment. The sequence diagrams are for illustrative purposes and may be simplified in some instances.
 
 ### Assumptions
 

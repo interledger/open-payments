@@ -4,7 +4,7 @@ import { MermaidWrapper, Mermaid } from '@interledger/docs-design-system'
 
 {/* prettier-ignore */}
 <Mermaid
-  graph={`sequenceDiagram
+  graph={`sequenceDiagram autonumber
     Client instance->>Authorization server (AS): Sends interactive grant request
     Authorization server (AS)-->>Client instance: 200 returns interact redirect uri and continue uri
     Client instance->>Authorization server (AS): Navigates to interact redirect uri

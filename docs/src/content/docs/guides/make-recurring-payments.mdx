@@ -8,9 +8,13 @@ import HttpSig from '/src/partials/http-msg-sig-note.mdx'
 import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Ts from '/src/partials/ts-prerequisites.mdx'
 
-The Open Payments APIs facilitate multiple uses cases for payments to and from different Open Payments-enabled wallets. In this guide we look at the steps for making recurring payments.
+:::tip[Summary]
+A client can support recurring payments by obtaining the necessary grants and calling the Open Payments APIs to create the incoming payment, quote, and multiple outgoing payment resources.
+:::
 
-An example use case for making recurring payments may be a Buy Now Pay Later (BNPL) scheme where a payer purchases a high priced item but pays for it in installments over regularly scheduled intervals.
+The Open Payments APIs facilitate multiple use cases for recurring payments to and from Open Payments-enabled wallets. Buy Now Pay Later (BNPL) is one example, where a purchaser pays for an item in installments over regularly scheduled intervals.
+
+This guide provides steps for making recurring payments, in which a single outgoing payment grant is used to create multiple outgoing payment resources at defined intervals.
 
 ## Dependencies
 

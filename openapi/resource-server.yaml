@@ -73,7 +73,6 @@ paths:
                     metadata:
                       externalRef: INV2022-02-0137
                     createdAt: '2022-03-12T23:20:50.52Z'
-                    updatedAt: '2022-04-01T10:24:36.11Z'
                     methods:
                       - type: ilp
                         ilpAddress: g.ilp.iwuyge987y.98y08y
@@ -176,7 +175,6 @@ paths:
                           externalRef: Coffee w/ Mo on 10 March 22
                         expiresAt: '2022-04-12T23:20:50.52Z'
                         createdAt: '2022-03-12T23:20:50.52Z'
-                        updatedAt: '2022-04-01T10:24:36.11Z'
                         completed: true
                       - id: 'https://ilp.interledger-test.dev/incoming-payments/32abc219-3dc3-44ec-a225-790cacfca8fa'
                         walletAddress: 'https://ilp.interledger-test.dev/alice/'
@@ -186,7 +184,6 @@ paths:
                           assetScale: 2
                         expiresAt: '2022-04-12T23:20:50.52Z'
                         createdAt: '2022-03-12T23:20:50.52Z'
-                        updatedAt: '2022-04-01T10:24:36.11Z'
                         metadata:
                           description: 'I love your website, Alice! Thanks for the great content'
                         completed: false
@@ -207,7 +204,6 @@ paths:
                         completed: true
                         expiresAt: '2022-04-12T23:20:50.52Z'
                         createdAt: '2022-03-12T23:20:50.52Z'
-                        updatedAt: '2022-04-01T10:24:36.11Z'
                         metadata:
                           description: 'I love your website, Alice! Thanks for the great content'
                       - id: 'https://ilp.interledger-test.dev/incoming-payments/016da9d5-c9a4-4c80-a354-86b915a04ff8'
@@ -223,7 +219,6 @@ paths:
                         completed: true
                         expiresAt: '2022-04-12T23:20:50.52Z'
                         createdAt: '2022-03-12T23:20:50.52Z'
-                        updatedAt: '2022-04-01T10:24:36.11Z'
                         metadata:
                           description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
                           externalRef: Coffee w/ Mo on 10 March 22
@@ -284,7 +279,6 @@ paths:
                     metadata:
                       description: Thank you for the shoes.
                     createdAt: '2022-03-12T23:20:50.52Z'
-                    updatedAt: '2022-04-01T10:24:36.11Z'
         '401':
           $ref: '#/components/responses/401'
         '403':
@@ -405,7 +399,6 @@ paths:
                           assetCode: USD
                           assetScale: 2
                         createdAt: '2022-03-12T23:20:50.52Z'
-                        updatedAt: '2022-04-01T10:24:36.11Z'
                         metadata:
                           description: APlusVideo subscription
                           externalRef: 'customer: 847458475'
@@ -426,7 +419,6 @@ paths:
                           assetCode: USD
                           assetScale: 2
                         createdAt: '2022-03-12T23:20:50.52Z'
-                        updatedAt: '2022-04-01T10:24:36.11Z'
                         metadata:
                           description: Thank you for your purchase at ShoeShop!
                           externalRef: INV2022-8943756
@@ -455,7 +447,6 @@ paths:
                           assetCode: USD
                           assetScale: 2
                         createdAt: '2022-03-12T23:20:50.52Z'
-                        updatedAt: '2022-04-01T10:24:36.11Z'
                         metadata:
                           description: Thank you for your purchase at ShoeShop!
                           externalRef: INV2022-8943756
@@ -476,7 +467,6 @@ paths:
                           assetCode: USD
                           assetScale: 2
                         createdAt: '2022-03-12T23:20:50.52Z'
-                        updatedAt: '2022-04-01T10:24:36.11Z'
                         metadata:
                           description: APlusVideo subscription
                           externalRef: 'customer: 847458475'
@@ -647,7 +637,6 @@ paths:
                     completed: false
                     expiresAt: '2022-04-12T23:20:50.52Z'
                     createdAt: '2022-03-12T23:20:50.52Z'
-                    updatedAt: '2022-04-01T10:24:36.11Z'
                     metadata:
                       description: Thanks for the flowers!
                       externalRef: INV-12876
@@ -697,7 +686,6 @@ paths:
                     completed: true
                     expiresAt: '2022-04-12T23:20:50.52Z'
                     createdAt: '2022-03-12T23:20:50.52Z'
-                    updatedAt: '2022-04-01T10:24:36.11Z'
                     metadata:
                       description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
                       externalRef: Coffee w/ Mo on 10 March 2
@@ -749,7 +737,6 @@ paths:
                       assetCode: USD
                       assetScale: 2
                     createdAt: '2022-03-12T23:20:50.52Z'
-                    updatedAt: '2022-04-01T10:24:36.11Z'
                     metadata:
                       description: Thanks for the flowers!
                       externalRef: INV-12876
@@ -827,7 +814,6 @@ components:
           completed: true
           expiresAt: '2022-04-12T23:20:50.52Z'
           createdAt: '2022-03-12T23:20:50.52Z'
-          updatedAt: '2022-04-01T10:24:36.11Z'
           metadata:
             description: 'Hi Mo, this is for the cappuccino I bought for you the other day.'
             externalRef: Coffee w/ Mo on 10 March 22
@@ -843,7 +829,6 @@ components:
             assetScale: 2
           expiresAt: '2022-04-12T23:20:50.52Z'
           createdAt: '2022-03-12T23:20:50.52Z'
-          updatedAt: '2022-03-12T23:20:50.52Z'
       properties:
         id:
           type: string
@@ -871,22 +856,18 @@ components:
           format: date-time
         metadata:
           type: object
+          additionalProperties: true
           description: Additional metadata associated with the incoming payment. (Optional)
         createdAt:
           type: string
           format: date-time
           description: The date and time when the incoming payment was created.
-        updatedAt:
-          type: string
-          format: date-time
-          description: The date and time when the incoming payment was updated.
       required:
         - id
         - walletAddress
         - completed
         - receivedAmount
         - createdAt
-        - updatedAt
     incoming-payment-with-methods:
       title: Incoming Payment with payment methods
       description: An **incoming payment** resource with public details.
@@ -946,7 +927,6 @@ components:
             assetCode: USD
             assetScale: 2
           createdAt: '2022-03-12T23:20:50.52Z'
-          updatedAt: '2022-04-01T10:24:36.11Z'
           metadata:
             description: APlusVideo subscription
             externalRef: 'customer: 847458475'
@@ -963,7 +943,6 @@ components:
             assetCode: USD
             assetScale: 2
           createdAt: '2022-03-12T23:20:50.52Z'
-          updatedAt: '2022-04-01T10:24:36.11Z'
           metadata:
             description: Thank you for your purchase at ShoeShop!
             externalRef: INV2022-8943756
@@ -1002,15 +981,12 @@ components:
           description: The total amount that has been sent under this outgoing payment.
         metadata:
           type: object
+          additionalProperties: true
           description: Additional metadata associated with the outgoing payment. (Optional)
         createdAt:
           type: string
           format: date-time
           description: The date and time when the outgoing payment was created.
-        updatedAt:
-          type: string
-          format: date-time
-          description: The date and time when the outgoing payment was updated.
       required:
         - id
         - walletAddress
@@ -1019,7 +995,6 @@ components:
         - debitAmount
         - sentAmount
         - createdAt
-        - updatedAt
     outgoing-payment-with-spent-amounts:
       title: Outgoing Payment With Grant Spent Amounts
       description: 'An **outgoing payment** resource represents a payment that will be, is currently being, or has previously been, sent from the wallet address.'
@@ -1046,7 +1021,6 @@ components:
             assetCode: USD
             assetScale: 2
           createdAt: '2022-03-12T23:20:50.52Z'
-          updatedAt: '2022-04-01T10:24:36.11Z'
           metadata:
             description: APlusVideo subscription
             externalRef: 'customer: 847458475'
@@ -1071,7 +1045,6 @@ components:
             assetCode: USD
             assetScale: 2
           createdAt: '2022-03-12T23:20:50.52Z'
-          updatedAt: '2022-04-01T10:24:36.11Z'
           metadata:
             description: APlusVideo subscription
             externalRef: 'customer: 847458475'
@@ -1115,15 +1088,12 @@ components:
           description: The total amount successfully received (by all receivers) using the current outgoing payment grant.
         metadata:
           type: object
+          additionalProperties: true
           description: Additional metadata associated with the outgoing payment. (Optional)
         createdAt:
           type: string
           format: date-time
           description: The date and time when the outgoing payment was created.
-        updatedAt:
-          type: string
-          format: date-time
-          description: The date and time when the outgoing payment was updated.
       required:
         - id
         - walletAddress
@@ -1132,7 +1102,6 @@ components:
         - debitAmount
         - sentAmount
         - createdAt
-        - updatedAt
     quote:
       title: Quote
       description: A **quote** resource represents the quoted amount details with which an Outgoing Payment may be created.
