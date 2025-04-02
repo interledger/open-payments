@@ -14,7 +14,7 @@ Before a client can call the Open Payments APIs, it must request and receive a g
 These code snippets enable a client to request a grant for the `incoming-payment`, `quote`, and `outgoing-payment` resource types. Each request includes all valid actions the client can take for the resource type.
 
 :::note
-When setting up a payment, the client first requests a grant from the authorization server of the recipient's <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip> to create an `incoming-payment` resource. The client then requests grants to create the `quote` and `outgoing-payment` resources from the authorization server of the sender's ASE.
+When setting up a payment, the client first requests an incoming payment grant from the authorization server of the recipient's <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip>. Then, the client requests quote and outgoing payment grants from the authorization server of the sender's ASE.
 :::
 
 ## Before you begin

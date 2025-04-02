@@ -76,21 +76,21 @@ A successfully created `quote` resource results in the generation of a quote `id
 
 #### outgoing-payment
 
-After a quote resource is created, it’s almost time to create the outgoing-payment resource on the sender's account. The purpose of the outgoing-payment resource is to serve as an instruction to make a payment from the sender's account.
+After a quote resource is created, it’s almost time to create the `outgoing-payment` resource on the sender's account. The purpose of the `outgoing-payment` resource is to serve as an instruction to make a payment from the sender's account.
 
 Open Payments separates payment instructions from the actual execution of payments, allowing applications to issue payment requests without being registered financial service providers themselves. This structure ensures that applications don't need to handle sensitive financial data directly, reducing risk and complexity.
 
 Open Payments requires the sender to explicitly consent to the creation of the resource before the client can issue the create request. Consent is obtained through an [interactive grant](/introduction/grants/#outgoing-payment).
 
-Within the request to create the outgoing-payment resource is the recipient wallet address, so the sender's ASE knows where to send the payment, and the quote resource’s ID, where the payment amounts are defined.
+Within the request to create the `outgoing-payment` resource is the recipient wallet address, so the sender's ASE knows where to send the payment, and the quote resource’s ID, where the payment amounts are defined.
 
-After the outgoing-payment resource is created, the incoming payment can complete, either automatically or manually, to end the Open Payments flow. Now it’s up to the sender's ASE to settle with the recipient's ASE over a shared payment rail.
+After the `outgoing-payment` resource is created, the incoming payment can complete, either automatically or manually, to end the Open Payments flow. Now it’s up to the sender's ASE to settle with the recipient's ASE over a shared payment rail.
 
-An outgoing-payment resource can represent a payment that will be, is currently being, or has previously been sent from the sender's account. A client can issue requests to get an outgoing payment’s specific details and list all outgoing payments in order to, for example, provide the sender with transaction details and history.
+An `outgoing-payment` resource can represent a payment that will be, is currently being, or has previously been sent from the sender's account. A client can issue requests to get an outgoing payment’s specific details and list all outgoing payments in order to, for example, provide the sender with transaction details and history.
 
 ## Payment Methods
 
-The payment method is the means by which the sender's ASE will fulfill its payment obligations to the recipient's ASE. Cash, credit and debit cards, bank transfers, gift cards and mobile money can all be considered different payment methods.
+The payment method is the means by which the sender's ASE will fulfill its payment obligations to the recipient's ASE. Cash, credit/debit cards, bank transfers, gift cards and mobile money can all be considered different payment methods.
 
 When an `outgoing-payment` is completed against an open and active `incoming-payment`, the sender's ASE becomes obligated to make payment using the payment method initially specified in the `incoming-payment` response.
 

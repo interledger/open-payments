@@ -48,7 +48,7 @@ The client first <LinkOut href='/apis/auth-server/operations/post-request'>reque
 
 <Mermaid
   graph={`sequenceDiagram
-    participant C as Client instance
+    participant C as Client
     participant AS as Authorization server<br/>recipient's ASE
     participant RS as Resource server<br/>recipient's ASE
 
@@ -70,7 +70,7 @@ The client <LinkOut href='/apis/auth-server/operations/post-request'>requests/re
 
 <Mermaid
   graph={`sequenceDiagram
-    participant C as Client instance
+    participant C as Client
     participant AS as Authorization server<br/>sender's ASE
     participant RS as Resource server<br/>sender's ASE
 
@@ -105,7 +105,7 @@ Once an access token is acquired, the client can request the creation of the <Li
 <Mermaid
   graph={`sequenceDiagram
 
-    participant C as Client instance
+    participant C as Client
     participant RS as Resource server<br/>sender's ASE
 
     C->>RS: Create outgoing payment resource (POST)
