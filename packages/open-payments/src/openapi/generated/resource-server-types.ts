@@ -524,7 +524,9 @@ export interface operations {
                      */
                     expiresAt?: string;
                     /** @description Additional metadata associated with the incoming payment. (Optional) */
-                    metadata?: Record<string, never>;
+                    metadata?: {
+                        [key: string]: unknown;
+                    };
                 };
             };
         };
