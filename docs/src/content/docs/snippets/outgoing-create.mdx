@@ -2,14 +2,14 @@
 title: Create an outgoing payment
 ---
 
-import { CodeBlock, LinkOut } from '@interledger/docs-design-system'
+import { CodeBlock, LinkOut, Tooltip } from '@interledger/docs-design-system'
 import { Tabs, TabItem } from '@astrojs/starlight/components'
 import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-prerequisites.mdx'
 import Js from '/src/partials/js-prerequisites.mdx'
 
-After a quote is accepted and the authorized client obtains the requisite grant from the payer’s authorization server, the client can create an outgoing payment resource against the payer’s wallet address.
+After a quote is accepted and the authorized client obtains the requisite grant from the authorization server of the sender's <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip>, the client can create an outgoing payment resource against the sender's wallet address.
 
 These code snippets create an outgoing payment to a given wallet address. The amount of the outgoing payment is based on the amounts in the associated quote.
 
