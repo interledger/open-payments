@@ -85,6 +85,27 @@ pnpm i
 
 ### Local Development
 
+
+#### Prerequisites
+
+- [Docker](https://docs.docker.com/get-docker/) to run containerized services
+
+#### Installation steps
+
+Start Preview in Swagger UI
+
+```sh
+pnpm viewer:compose up
+```
+
+After starting the serive, SwaggerUI will be available at http://localhost:8000
+
+#### Shutting down
+
+```sh
+pnpm viewer:compose down
+```
+
 ### Useful commands
 
 ```sh

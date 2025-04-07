@@ -16,11 +16,11 @@ info:
 
     A quote is a commitment from the Account Servicing Entity to deliver a particular amount to a receiver when sending a particular amount from the wallet address. It is only valid for a limited time.
 
-    All resource and collection resource representations use JSON and the media-type `application/json`.  
+    All resource and collection resource representations use JSON and the media-type `application/json`.
 
     The `wallet address` resource has three collections of sub-resources:
-    1. `/incoming-payments` contains the **incoming payment** sub-resources  
-    2. `/outgoing-payments` contains the **outgoing payment** sub-resources  
+    1. `/incoming-payments` contains the **incoming payment** sub-resources
+    2. `/outgoing-payments` contains the **outgoing payment** sub-resources
     3. `/quotes` contains the **quote** sub-resources
 
     Access to resources and permission to execute the methods exposed by the API is determined by the grants given to the client represented by an access token used in API requests.
@@ -649,6 +649,7 @@ paths:
         '403':
           $ref: '#/components/responses/403'
         '404':
+          $ref: '#/components/responses/404'
           description: Incoming Payment Not Found
       parameters:
         - $ref: '#/components/parameters/optional-signature-input'
@@ -694,6 +695,7 @@ paths:
         '403':
           $ref: '#/components/responses/403'
         '404':
+          $ref: '#/components/responses/404'
           description: Incoming Payment Not Found
       description: |-
         A client with the appropriate permissions MAY mark a non-expired **incoming payment** as `completed` indicating that the client is not going to make any further payments toward this **incoming payment**, even though the full `incomingAmount` may not have been received.
@@ -745,6 +747,7 @@ paths:
         '403':
           $ref: '#/components/responses/403'
         '404':
+          $ref: '#/components/responses/404'
           description: Outgoing Payment Not Found
       description: A client can fetch the latest state of an outgoing payment.
       parameters:
@@ -787,6 +790,7 @@ paths:
         '403':
           $ref: '#/components/responses/403'
         '404':
+          $ref: '#/components/responses/404'
           description: Quote Not Found
       description: A client can fetch the latest state of a quote.
       parameters:
@@ -1234,6 +1238,38 @@ components:
         - type: string
           ilpAddress: string
           sharedSecret: string
+    error-response:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: number
+            description:
+              type: string
+            details:
+              type: object
+              additionalProperties: true
+              description: Additional details about the error.
+          required:
+            - description
+            - code
+      required:
+        - error
+  examples:
+    error-response-minimal:
+      value:
+        error:
+          code: 400
+          description: Error description
+    error-response-full:
+      value:
+        error:
+          code: 400
+          description: Error description
+          details:
+            anyKey: anyValue
   securitySchemes:
     GNAP:
       name: Authorization
@@ -1253,6 +1289,26 @@ components:
           description: The address of the authorization server for grant requests in the format `GNAP as_uri=<URI>`
     '403':
       description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/error-response'
+          examples:
+            Error response with extra details:
+              $ref: '#/components/examples/error-response-full'
+            Error response with no details:
+              $ref: '#/components/examples/error-response-minimal'
+    '404':
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/error-response'
+          examples:
+            Error response with extra details:
+              $ref: '#/components/examples/error-response-full'
+            Error response with no details:
+              $ref: '#/components/examples/error-response-minimal'
   parameters:
     cursor:
       schema:
