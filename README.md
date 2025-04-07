@@ -85,7 +85,6 @@ pnpm i
 
 ### Local Development
 
-
 #### Prerequisites
 
 - [Docker](https://docs.docker.com/get-docker/) to run containerized services
