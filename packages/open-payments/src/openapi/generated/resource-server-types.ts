@@ -381,6 +381,16 @@ export interface components {
             /** @description The base64 url-encoded shared secret to use when establishing a STREAM connection. */
             sharedSecret: string;
         };
+        "error-response": {
+            error: {
+                code: number;
+                description: string;
+                /** @description Additional details about the error. */
+                details?: {
+                    [key: string]: unknown;
+                };
+            };
+        };
         /**
          * Asset code
          * @description The assetCode is a code that indicates the underlying asset. This SHOULD be an ISO4217 currency code.
@@ -429,7 +439,18 @@ export interface components {
             headers: {
                 [name: string]: unknown;
             };
-            content?: never;
+            content: {
+                "application/json": components["schemas"]["error-response"];
+            };
+        };
+        /** @description Not Found */
+        404: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": components["schemas"]["error-response"];
+            };
         };
     };
     parameters: {
@@ -727,12 +748,7 @@ export interface operations {
             401: components["responses"]["401"];
             403: components["responses"]["403"];
             /** @description Incoming Payment Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+            404: components["responses"]["404"];
         };
     };
     "complete-incoming-payment": {
@@ -764,12 +780,7 @@ export interface operations {
             401: components["responses"]["401"];
             403: components["responses"]["403"];
             /** @description Incoming Payment Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+            404: components["responses"]["404"];
         };
     };
     "get-outgoing-payment": {
@@ -801,12 +812,7 @@ export interface operations {
             401: components["responses"]["401"];
             403: components["responses"]["403"];
             /** @description Outgoing Payment Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+            404: components["responses"]["404"];
         };
     };
     "get-quote": {
@@ -838,12 +844,7 @@ export interface operations {
             401: components["responses"]["401"];
             403: components["responses"]["403"];
             /** @description Quote Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+            404: components["responses"]["404"];
         };
     };
 }
