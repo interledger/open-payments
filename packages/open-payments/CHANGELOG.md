@@ -1,5 +1,16 @@
 # @interledger/open-payments
 
+## 7.0.0
+
+### Major Changes
+
+- 7fb1f25: Updated Authorization Server's Grant Request spec to prevent both "debitAmount" and "receiveAmount" being submitted at the same time during an outgoing payment grant request.
+- a163bd6: Removed the `updatedAt` field from the incoming and outgoing payment resources in the resource server OpenAPI specification.
+
+### Patch Changes
+
+- dfe5f1f: Adding correct type for incoming payment creation metadata field
+
 ## 6.14.1
 
 ### Patch Changes
