@@ -66,7 +66,7 @@ The final sub-field of the signature base is an HTTP-structured field called `si
 
 <CodeBlock title="Example: signature base">
 
-```http
+```http wrap
 "content-type": application/json
 "content-digest": sha-512=:X48E9qOokqqrvdts8nOJRJN3OWDUoyWxBf7kbu9DBPE=:
 "content-length": 18
@@ -95,7 +95,7 @@ The original message gets signed by adding uniquely labelled signature headers t
 
 <CodeBlock title="Example: signed message">
 
-```http
+```http wrap
 POST HTTP/1.1
 Host: https://example.com
 Content-Type: application/json
