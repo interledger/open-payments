@@ -45,18 +45,18 @@ export default defineConfig({
         starlightOpenAPI([
           {
             base: 'apis/resource-server',
-            label: 'Open Payments',
-            schema: '../openapi/resource-server.yaml'
+            schema: '../openapi/resource-server.yaml',
+            sidebar: { label: 'Open Payments' }
           },
           {
             base: 'apis/wallet-address-server',
-            label: 'Wallet Addresses',
-            schema: '../openapi/wallet-address-server.yaml'
+            schema: '../openapi/wallet-address-server.yaml',
+            sidebar: { label: 'Wallet Addresses' }
           },
           {
             base: 'apis/auth-server',
-            label: 'Open Payments Authorization Server',
-            schema: '../openapi/auth-server.yaml'
+            schema: '../openapi/auth-server.yaml',
+            sidebar: { label: 'Open Payments Authorization Server' }
           }
         ]),
         starlightLinksValidator({
@@ -397,9 +397,13 @@ export default defineConfig({
           ]
         }
       ],
-      social: {
-        github: 'https://github.com/interledger/open-payments'
-      }
+      social: [
+        {
+          icon: 'github',
+          label: 'GitHub',
+          href: 'https://github.com/interledger/open-payments'
+        }
+      ]
     }),
     starlightOpenAPI()
   ],
