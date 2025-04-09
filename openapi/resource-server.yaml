@@ -1294,9 +1294,9 @@ components:
           schema:
             $ref: '#/components/schemas/error-response'
           examples:
-            Error response with extra details:
+            Standard error response:
               $ref: '#/components/examples/error-response-full'
-            Error response with no details:
+            Detailed error response:
               $ref: '#/components/examples/error-response-minimal'
     '404':
       description: Not Found
