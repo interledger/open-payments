@@ -397,9 +397,13 @@ export default defineConfig({
           ]
         }
       ],
-      social: {
-        github: 'https://github.com/interledger/open-payments'
-      }
+      social: [
+        {
+          icon: 'github',
+          label: 'GitHub',
+          href: 'https://github.com/interledger/open-payments'
+        }
+      ]
     }),
     starlightOpenAPI()
   ],
