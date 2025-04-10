@@ -97,12 +97,9 @@ const isValidHeader = validateSignatureHeaders({
   headers: {
     'content-type': 'application/json',
     'content-length': '1234',
-    'content-digest':
-      'sha-512=:vMVGexd7h7oBvi9aTwj05YvuCBTJaAYFPTwaxzu41/TyjXTueuKjxLlnTOhQfxE+YdA/QTiSXEkWh4gZ5zDZLg==:',
-    signature:
-      'sig1=:Tk6ZvOqKxPysDpLPyjDRah76Uskr8OYxcuJasg4tSrD8qRaGBTji+WdMHxkkTqUX1cASaoqAdE3s7YDUFmlnCw==:',
-    'signature-input':
-      'sig1=("@method" "@target-uri" "authorization" "content-digest" "content-length" "content-type");created=1670837620;keyid="keyid-97a3a431-8ee1-48fc-ac85-70e2f5eba8e5";alg="ed25519"',
+    'content-digest': 'sha-512=:vMVGexd7h7oBvi9aTwj05YvuCBTJaAYFPTwaxzu41/TyjXTueuKjxLlnTOhQfxE+YdA/QTiSXEkWh4gZ5zDZLg==:',
+    signature: 'sig1=:Tk6ZvOqKxPysDpLPyjDRah76Uskr8OYxcuJasg4tSrD8qRaGBTji+WdMHxkkTqUX1cASaoqAdE3s7YDUFmlnCw==:',
+    'signature-input': 'sig1=("@method" "@target-uri" "authorization" "content-digest" "content-length" "content-type");created=1670837620;keyid="keyid-97a3a431-8ee1-48fc-ac85-70e2f5eba8e5";alg="ed25519"',
     authorization: 'GNAP 123454321'
   },
   body: JSON.stringify(body)
@@ -118,12 +115,9 @@ const isValidSig = await validateSignature(jwk, {
   headers: {
     'content-type': 'application/json',
     'content-length': '1234',
-    'content-digest':
-      'sha-512=:vMVGexd7h7oBvi9aTwj05YvuCBTJaAYFPTwaxzu41/TyjXTueuKjxLlnTOhQfxE+YdA/QTiSXEkWh4gZ5zDZLg==:',
-    signature:
-      'sig1=:Tk6ZvOqKxPysDpLPyjDRah76Uskr8OYxcuJasg4tSrD8qRaGBTji+WdMHxkkTqUX1cASaoqAdE3s7YDUFmlnCw==:',
-    'signature-input':
-      'sig1=("@method" "@target-uri" "authorization" "content-digest" "content-length" "content-type");created=1670837620;keyid="keyid-97a3a431-8ee1-48fc-ac85-70e2f5eba8e5";alg="ed25519"',
+    'content-digest': 'sha-512=:vMVGexd7h7oBvi9aTwj05YvuCBTJaAYFPTwaxzu41/TyjXTueuKjxLlnTOhQfxE+YdA/QTiSXEkWh4gZ5zDZLg==:',
+    signature: 'sig1=:Tk6ZvOqKxPysDpLPyjDRah76Uskr8OYxcuJasg4tSrD8qRaGBTji+WdMHxkkTqUX1cASaoqAdE3s7YDUFmlnCw==:',
+    'signature-input': 'sig1=("@method" "@target-uri" "authorization" "content-digest" "content-length" "content-type");created=1670837620;keyid="keyid-97a3a431-8ee1-48fc-ac85-70e2f5eba8e5";alg="ed25519"',
     authorization: 'GNAP 123454321'
   },
   body: JSON.stringify(body)
