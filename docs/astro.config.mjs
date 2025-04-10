@@ -241,7 +241,7 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
-              label: 'Build a split-payments marketplace',
+              label: 'Integrate split-payments',
               link: '/tutorials/marketplace/'
             }
           ]

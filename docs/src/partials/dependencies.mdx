@@ -57,24 +57,3 @@ Create an Open Payments-authenticated client by providing the following properti
   chunk='2'
 />
 </details>
-
-<details> 
-<summary>Get WalletAddresses</summary>
-
-Fetch wallet addresses of the buyer, merchant and your marketplace platform.
-
-```ts
-const merchantWalletAddress = await client.walletAddress.get({
-  url: 'https://ASEabc.com/merchant'
-})
-
-const customerWalletAddress = await client.walletAddress.get({
-  url: 'https://ASExyz.com/alice'
-})
-
-const platformWalletAddress = await client.walletAddress.get({
-  url: 'https://ASEdef.com/platform'
-})
-```
-
-</details>
