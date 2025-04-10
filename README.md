@@ -85,24 +85,10 @@ pnpm i
 
 ### Local Development
 
-#### Prerequisites
-
-- [Docker](https://docs.docker.com/get-docker/) to run containerized services
-
-#### Installation steps
-
-Start Preview in Swagger UI
+You can preview the docs by running the command
 
 ```sh
-pnpm viewer:compose up
-```
-
-After starting the serive, SwaggerUI will be available at http://localhost:8000
-
-#### Shutting down
-
-```sh
-pnpm viewer:compose down
+pnpm --filter openpayments-docs start
 ```
 
 ### Useful commands

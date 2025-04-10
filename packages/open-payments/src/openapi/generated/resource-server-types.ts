@@ -383,7 +383,7 @@ export interface components {
         };
         "error-response": {
             error: {
-                code: number;
+                code: string;
                 description: string;
                 /** @description Additional details about the error. */
                 details?: {
@@ -425,6 +425,15 @@ export interface components {
         receiver: string;
     };
     responses: {
+        /** @description Bad Request */
+        400: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": components["schemas"]["error-response"];
+            };
+        };
         /** @description Authorization required */
         401: {
             headers: {
@@ -432,7 +441,9 @@ export interface components {
                 "WWW-Authenticate"?: string;
                 [name: string]: unknown;
             };
-            content?: never;
+            content: {
+                "application/json": components["schemas"]["error-response"];
+            };
         };
         /** @description Forbidden */
         403: {
@@ -709,12 +720,7 @@ export interface operations {
                 };
             };
             /** @description No amount was provided and no amount could be inferred from the receiver. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+            400: components["responses"]["400"];
             401: components["responses"]["401"];
             403: components["responses"]["403"];
         };

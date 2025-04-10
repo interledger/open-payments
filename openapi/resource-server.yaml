@@ -516,6 +516,7 @@ paths:
                     expiresAt: '2022-04-12T23:20:50.52Z'
         '400':
           description: No amount was provided and no amount could be inferred from the receiver.
+          $ref: '#/components/responses/400'
         '401':
           $ref: '#/components/responses/401'
         '403':
@@ -1245,7 +1246,7 @@ components:
           type: object
           properties:
             code:
-              type: number
+              type: string
             description:
               type: string
             details:
@@ -1280,6 +1281,17 @@ components:
 
         All requests must also be signed using a client key over some select headers and a digest of the request body.
   responses:
+    '400':
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/error-response'
+          examples:
+            Detailed error response:
+              $ref: '#/components/examples/error-response-full'
+            Standard error response:
+              $ref: '#/components/examples/error-response-minimal'
     '401':
       description: Authorization required
       headers:
@@ -1287,6 +1299,15 @@ components:
           schema:
             type: string
           description: The address of the authorization server for grant requests in the format `GNAP as_uri=<URI>`
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/error-response'
+          examples:
+            Detailed error response:
+              $ref: '#/components/examples/error-response-full'
+            Standard error response:
+              $ref: '#/components/examples/error-response-minimal'
     '403':
       description: Forbidden
       content:
@@ -1294,9 +1315,9 @@ components:
           schema:
             $ref: '#/components/schemas/error-response'
           examples:
-            Standard error response:
-              $ref: '#/components/examples/error-response-full'
             Detailed error response:
+              $ref: '#/components/examples/error-response-full'
+            Standard error response:
               $ref: '#/components/examples/error-response-minimal'
     '404':
       description: Not Found
@@ -1305,9 +1326,9 @@ components:
           schema:
             $ref: '#/components/schemas/error-response'
           examples:
-            Error response with extra details:
+            Detailed error response:
               $ref: '#/components/examples/error-response-full'
-            Error response with no details:
+            Standard error response:
               $ref: '#/components/examples/error-response-minimal'
   parameters:
     cursor:
