@@ -225,6 +225,16 @@ export interface components {
             /** @description All amounts are maxima, i.e. multiple payments can be created under a grant as long as the total amounts of these payments do not exceed the maximum amount per interval as specified in the grant. */
             receiveAmount: components["schemas"]["amount"];
         };
+        /**
+         * subject
+         * @description Information about the subject for which the client is requesting information
+         */
+        subject: {
+            /** @description The formats of subject identifiers that the client can accept */
+            sub_id_formats: "uri"[];
+            /** @description Specific identifiers for the subject for which the client is requesting information */
+            sub_ids: string[];
+        };
         "error-invalid-client": {
             error?: {
                 description?: string;
@@ -312,12 +322,15 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    access_token: {
-                        access: components["schemas"]["access"];
-                    };
                     client: components["schemas"]["client"];
                     interact?: components["schemas"]["interact-request"];
-                };
+                } & ({
+                    subject?: components["schemas"]["subject"];
+                } | {
+                    access_token?: {
+                        access: components["schemas"]["access"];
+                    };
+                });
             };
         };
         responses: {
