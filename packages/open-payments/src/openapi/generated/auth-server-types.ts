@@ -202,6 +202,18 @@ export interface components {
             /** @description Unique key to secure the callback. */
             finish: string;
         };
+        "grant-request-with-access-token": {
+            client: components["schemas"]["client"];
+            access_token: {
+                access: components["schemas"]["access"];
+            };
+            interact?: components["schemas"]["interact-request"];
+        };
+        "grant-request-with-subject": {
+            client: components["schemas"]["client"];
+            subject: components["schemas"]["subject"];
+            interact?: components["schemas"]["interact-request"];
+        };
         /**
          * Interval
          * @description [ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)
@@ -224,6 +236,16 @@ export interface components {
             interval?: components["schemas"]["interval"];
             /** @description All amounts are maxima, i.e. multiple payments can be created under a grant as long as the total amounts of these payments do not exceed the maximum amount per interval as specified in the grant. */
             receiveAmount: components["schemas"]["amount"];
+        };
+        /**
+         * subject
+         * @description Information about the subject for which the client is requesting information
+         */
+        subject: {
+            /** @description The formats of subject identifiers that the client can accept */
+            sub_id_formats: "uri"[];
+            /** @description Specific identifiers for the subject for which the client is requesting information */
+            sub_ids: string[];
         };
         "error-invalid-client": {
             error?: {
@@ -311,13 +333,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": {
-                    access_token: {
-                        access: components["schemas"]["access"];
-                    };
-                    client: components["schemas"]["client"];
-                    interact?: components["schemas"]["interact-request"];
-                };
+                "application/json": components["schemas"]["grant-request-with-access-token"] | components["schemas"]["grant-request-with-subject"];
             };
         };
         responses: {
