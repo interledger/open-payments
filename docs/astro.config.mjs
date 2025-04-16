@@ -223,10 +223,6 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
-              label: 'Create an interactive grant',
-              link: '/guides/create-interactive-grant/'
-            },
-            {
               label: 'Make a one-time payment',
               link: '/guides/make-onetime-payment/'
             },
