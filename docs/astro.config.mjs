@@ -241,8 +241,8 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
-              label: 'Integrate split-payments',
-              link: '/tutorials/marketplace/'
+              label: 'Create a split-payments application',
+              link: '/tutorials/split-payments/'
             }
           ]
         },
