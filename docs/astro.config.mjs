@@ -237,6 +237,16 @@ export default defineConfig({
           ]
         },
         {
+          label: 'Tutorials',
+          collapsed: true,
+          items: [
+            {
+              label: 'Create a split-payments application',
+              link: '/tutorials/split-payments/'
+            }
+          ]
+        },
+        {
           label: 'Resources',
           collapsed: true,
           items: [
