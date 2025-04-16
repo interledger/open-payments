@@ -121,7 +121,7 @@ Then add the `interval` property to the `limits` object, which is the interval p
 
 :::note[Limits]
 
-The `debitAmount` and `receiveAmount` parameters, which apply to the sender and recipient respectively, allow you to define the limits under which an outgoing payment can be created. Select the parameter most appropriate for your particular use case. Specify the `receiveAmount` when the recipient must receive a defined amount. Specify the `debitAmount` for cases where the sender can exercise a limit on the amount that can be debited from their account.
+The `debitAmount` and `receiveAmount` parameters, which apply to the sender and recipient respectively, allow you to define the limits under which an outgoing payment can be created. Select the parameter most appropriate for your particular use case. Specify the `receiveAmount` when the recipient must receive a defined amount. Specify the `debitAmount` for cases when the sender can exercise a limit on the amount that can be debited from their account.
 
 The `value` for either parameter is the amount that all payments created under the grant cannot exceed. For example, the `DEBIT_AMOUNT` value is the maximum amount that can be debited from the sender's wallet.
 :::
