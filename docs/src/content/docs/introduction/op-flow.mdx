@@ -5,20 +5,25 @@ title: Open Payments flow
 import {
   MermaidWrapper,
   Mermaid,
-  LinkOut
+  LinkOut,
+  Tooltip
 } from '@interledger/docs-design-system'
 import Interactive from '/src/partials/diagram-interactive-grant.mdx'
 
-This page describes each step in the Open Payments flow at a high level. The sequence diagrams are for illustrative purposes and might not be an exact representation of a given flow.
+:::tip[Summary]
+When a client issues payment instructions, numerous interactions between the client and servers are needed to obtain grants, verify identities, and create the resources required to complete a transaction.
+:::
+
+This page provides a high-level look at the API calls and interactions that occur between the client and servers during a payment. The sequence diagrams are for illustrative purposes and may be simplified in some instances.
 
 ### Assumptions
 
-- The client's end-user is the payer.
-- The client already has the payer's Open Payments-enabled account details and is able to send payments on behalf of the payer.
+- The <Tooltip content="Such as a mobile or web application or service" client:load>client's</Tooltip> user is the sender.
+- The client already has the sender's Open Payments-enabled account details and is able to send payments on their behalf.
 
 ## Get account details
 
-A client retrieves public details about a payee's Open Payments-enabled account by issuing a <LinkOut href='/apis/wallet-address-server/operations/get-wallet-address/'>GET request</LinkOut> to the payee's wallet address. Details include the asset code and scale of the underlying account, as well as the authorization and resource server URLs which the client needs in order to set up a payment to the payee.
+A client retrieves public details about a recipient's Open Payments-enabled account by issuing a <LinkOut href='/apis/wallet-address-server/operations/get-wallet-address/'>GET request</LinkOut> to the recipient's wallet address. Details include the asset code and scale of the underlying account, as well as the authorization and resource server URLs which the client needs in order to set up a payment to the recipient.
 
 <MermaidWrapper client:load>
 
@@ -37,15 +42,15 @@ A client retrieves public details about a payee's Open Payments-enabled account 
 
 ## Incoming payment
 
-The client first <LinkOut href='/apis/auth-server/operations/post-request'>requests/receives a grant</LinkOut> from the payee's authorization server to create an `incoming-payment` resource. The client then sends a request to the payee-side resource server to <LinkOut href='/apis/resource-server/operations/create-incoming-payment/'>create the resource</LinkOut>. When created, the resource server returns unique payment details the client will use to address one or more payments to the payee.
+The client first <LinkOut href='/apis/auth-server/operations/post-request'>requests/receives a grant</LinkOut> from the authorization server of the recipient's <Tooltip content="account servicing entity" client:load>ASE</Tooltip> to create an `incoming-payment` resource. The client then sends a request to the ASE's resource server to <LinkOut href='/apis/resource-server/operations/create-incoming-payment/'>create the resource</LinkOut>. When created, the resource server returns unique payment details the client will use to address one or more payments to the recipient.
 
 <MermaidWrapper client:load>
 
 <Mermaid
   graph={`sequenceDiagram
-    participant C as Client instance
-    participant AS as Payee-side<br/>authorization server
-    participant RS as Payee-side<br/>resource server
+    participant C as Client
+    participant AS as Authorization server<br/>recipient's ASE
+    participant RS as Resource server<br/>recipient's ASE
 
     C->>AS: Grant request (POST) with type=incoming-payment
     AS->>C: 200 OK, returns access token
@@ -59,15 +64,15 @@ The client first <LinkOut href='/apis/auth-server/operations/post-request'>reque
 
 ## Quote
 
-The client <LinkOut href='/apis/auth-server/operations/post-request'>requests/receives a grant</LinkOut> from the end-user's authorization server to create a `quote` resource. The client then sends a request to the end-user's resource server to <LinkOut href='/apis/resource-server/operations/create-quote'>create the resource</LinkOut>. When created, the resource server returns, among other things, a quote `id` and the amount it will cost to make the payment.
+The client <LinkOut href='/apis/auth-server/operations/post-request'>requests/receives a grant</LinkOut> from the authorization server of the sender's <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip> to create a `quote` resource. The client then sends a request to the resource server to <LinkOut href='/apis/resource-server/operations/create-quote'>create the resource</LinkOut>. When created, the resource server returns, among other things, a quote `id` and the amount it will cost to make the payment.
 
 <MermaidWrapper client:load>
 
 <Mermaid
   graph={`sequenceDiagram
-    participant C as Client instance
-    participant AS as Payer-side<br/>authorization server
-    participant RS as Payer-side<br/>resource server
+    participant C as Client
+    participant AS as Authorization server<br/>sender's ASE
+    participant RS as Resource server<br/>sender's ASE
 
     C->>AS: Grant request (POST) with type=quote
     AS->>C: 200 OK, returns access token
@@ -81,11 +86,15 @@ The client <LinkOut href='/apis/auth-server/operations/post-request'>requests/re
 
 ## Outgoing payment
 
-Before an outgoing payment resource can be created on the end-user's account, Open Payments requires the client to send an <LinkOut href='/apis/auth-server/operations/post-request'>interactive grant request</LinkOut> to the authorization server.
+Before an outgoing payment resource can be created on the sender's account, Open Payments requires the client to send an <LinkOut href='/apis/auth-server/operations/post-request'>interactive grant request</LinkOut> to the authorization server of the sender's <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip>.
 
-An interactive grant requires explicit consent be collected from the end-user before an access token is issued. While the client must facilitate the interaction, the end-user's authorization server and identity provider (IdP) are responsible for the interface and collecting consent.
+An interactive grant requires explicit consent be collected from the sender before an access token is issued. While the client must facilitate the interaction, the authorization server and identity provider (IdP) of the sender's ASE are responsible for the interface and collecting consent.
 
 After consent is obtained, the client requests permission to <LinkOut href='/apis/auth-server/operations/post-continue'>continue the grant request</LinkOut> in order to obtain an access token.
+
+:::note[Continue request timing]
+For outgoing payments, explicit user consent is required before proceeding with the continuation request. After the user completes their interaction with the identity provider (IdP), they should be redirected back to your application. At this point, you can make the grant continuation request. In scenarios where a user interface is not available, consider implementing a polling mechanism to check for the completion of the interaction.
+:::
 
 <Interactive />
 
@@ -96,8 +105,8 @@ Once an access token is acquired, the client can request the creation of the <Li
 <Mermaid
   graph={`sequenceDiagram
 
-    participant C as Client instance
-    participant RS as Payer-side<br/>resource server
+    participant C as Client
+    participant RS as Resource server<br/>sender's ASE
 
     C->>RS: Create outgoing payment resource (POST)
     RS->>C: 201 Outgoing payment resource created
@@ -109,7 +118,7 @@ Once an access token is acquired, the client can request the creation of the <Li
 
 ## Get transaction history
 
-To provide an end-user with their transaction history, the client can retrieve a list of the user's <LinkOut href='/apis/resource-server/operations/list-incoming-payments/'>incoming (received) payments</LinkOut> and <LinkOut href='/apis/resource-server/operations/list-outgoing-payments/'>outgoing (sent) payments</LinkOut>.
+To provide a user with their transaction history, the client can retrieve a list of the user's <LinkOut href='/apis/resource-server/operations/list-incoming-payments/'>incoming (received) payments</LinkOut> and <LinkOut href='/apis/resource-server/operations/list-outgoing-payments/'>outgoing (sent) payments</LinkOut>.
 
 <MermaidWrapper client:load>
 
@@ -127,7 +136,7 @@ To provide an end-user with their transaction history, the client can retrieve a
 
 </MermaidWrapper>
 
-Similarly, the client can provide the end-user with details about a specific <LinkOut href='/apis/resource-server/operations/get-incoming-payment'>incoming</LinkOut> or <LinkOut href='/apis/resource-server/operations/get-outgoing-payment'>outgoing</LinkOut> payment.
+Similarly, the client can provide the user with details about a specific <LinkOut href='/apis/resource-server/operations/get-incoming-payment'>incoming</LinkOut> or <LinkOut href='/apis/resource-server/operations/get-outgoing-payment'>outgoing</LinkOut> payment.
 
 <MermaidWrapper client:load>
 
@@ -149,7 +158,7 @@ Similarly, the client can provide the end-user with details about a specific <Li
 
 This diagram brings the aforementioned concepts together, except for getting transaction history, to present a full transaction sequence without delving too deeply into the contents of each request and response. A link to view a larger version of the diagram is provided at the bottom of the page.
 
-As shown below, both the sender and the recipient's ASEs must operate their own authorization and resource servers. Grant requests for incoming payment and quote resources are typically non-interactive. A grant request for an outgoing payment resource requires explicit consent from the sender (e.g., the client's end user), which is obtained through the sender's [identity provider](/introduction/idp/).
+As shown below, both the sender and the recipient's ASEs must operate their own authorization and resource servers. Grant requests for incoming payment and quote resources are typically non-interactive. A grant request for an outgoing payment resource requires explicit consent from the sender (e.g., the client's user), which is obtained through the sender's [identity provider](/introduction/idp/).
 
 More information about grant interaction flows can be found in the [Grant negotiation and authorization](/introduction/grants) page.
 

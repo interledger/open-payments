@@ -15,6 +15,10 @@ After the individual approves the grant, the auth server sends the client an int
 
 These code snippets enable an authorized client to send a grant continuation request to the authorization server.
 
+:::note[Continue request timing]
+After the user completes their interaction with the identity provider (IdP), they should be redirected back to your application. At this point, you can make the grant continuation request. In scenarios where a user interface is not available, consider implementing a polling mechanism to check for the completion of the interaction.
+:::
+
 ## Before you begin
 
 <Begin />
@@ -105,4 +109,3 @@ Run `node path/to/directory/index.js`.
 
 - [API specification](/apis/auth-server/operations/post-continue)
 - [Grant negotiation and authorization](/introduction/grants)
-- [Create an interactive grant](/guides/create-interactive-grant)

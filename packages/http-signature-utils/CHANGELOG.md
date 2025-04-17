@@ -1,5 +1,11 @@
 # @interledger/http-signature-utils
 
+## 2.0.3
+
+### Patch Changes
+
+- ff811ea: Updating typescript to v5
+
 ## 2.0.2
 
 ### Patch Changes

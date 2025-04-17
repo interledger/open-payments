@@ -4,6 +4,10 @@ title: HTTP message signatures
 
 import { CodeBlock, LinkOut } from '@interledger/docs-design-system'
 
+:::tip[Summary]
+HTTP message signatures secure communications in Open Payments by verifying message authenticity and protecting against tampering.
+:::
+
 HTTP message signatures are cryptographic digital signatures used by the Open Payments APIs to secure HTTP messages exchanged between sender, receiver, or third-party initiating payment systems.
 
 The Open Payments APIs implement the <LinkOut href='https://datatracker.ietf.org/doc/html/rfc9635#name-http-message-signatures'> HTTP Signatures </LinkOut> section of the GNAP (Grant Negotiation and Authorization Protocol) specification.
@@ -62,7 +66,7 @@ The final sub-field of the signature base is an HTTP-structured field called `si
 
 <CodeBlock title="Example: signature base">
 
-```http
+```http wrap
 "content-type": application/json
 "content-digest": sha-512=:X48E9qOokqqrvdts8nOJRJN3OWDUoyWxBf7kbu9DBPE=:
 "content-length": 18
@@ -79,7 +83,7 @@ For more information about required components, see <LinkOut href="https://datat
 
 ### Generate signature
 
-To generate the http signature:
+To generate the HTTP signature:
 
 1. The signature base is hashed using SHA-512, producing a digest.
 2. The digest is signed with the signer's private key, producing the signature as a byte string.
@@ -91,7 +95,7 @@ The original message gets signed by adding uniquely labelled signature headers t
 
 <CodeBlock title="Example: signed message">
 
-```http
+```http wrap
 POST HTTP/1.1
 Host: https://example.com
 Content-Type: application/json

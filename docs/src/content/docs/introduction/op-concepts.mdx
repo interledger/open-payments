@@ -4,17 +4,21 @@ tableOfContents:
   maxHeadingLevel: 4
 ---
 
-import { LinkOut, CodeBlock } from '@interledger/docs-design-system'
+import { LinkOut, CodeBlock, Tooltip } from '@interledger/docs-design-system'
+
+:::tip[Summary]
+Before a client can access the Open Payments APIs, it must obtain one or more grants. With the requisite grant, the client can use the APIs to send payment instructions for creating incoming payment, quote, and/or outgoing payment resources.
+:::
 
 The Open Payments standard helps to facilitate the setup of payments between Open Payments-enabled payment accounts.
 
-When setting up a payment, the client must obtain the wallet address for both the payer and payee. Since the payer is typically the client's end-user, the client can obtain the payer's wallet address during an onboarding process, for example. The payer must be authenticated by their account servicing entity (ASE) to grant the client the permission it needs to access the their Open Payments-enabled account.
+When setting up a payment, the <Tooltip content="Such as a mobile or web application or service" client:load>client</Tooltip> must obtain the wallet address for both the sender and recipient. Since the sender is typically the client's user, the client can obtain the sender's wallet address during an onboarding process, for example. The sender must be authenticated by their account servicing entity (ASE) to grant the client the permission it needs to access the their Open Payments-enabled account.
 
 After the requisite wallet addresses are known, the client can begin obtaining grants to set up one or more payments. The grants allow the client to access the Open Payments APIs for the purpose of creating and accessing resources for incoming payments, quotes, and outgoing payments.
 
 ## Wallet address server
 
-Every Open Payments-enabled account is identified by one or more wallet addresses. A wallet address is a publicly shareable account identifier and a service endpoint for gaining access to the Open Payments APIs. The payer and payee must both have a wallet address to transact using Open Payments.
+Every Open Payments-enabled account is identified by one or more wallet addresses. A wallet address is a publicly shareable account identifier and a service endpoint for gaining access to the Open Payments APIs. The sender and recipient must both have a wallet address to transact using Open Payments.
 
 A wallet address server provides basic details about a wallet address. For more information, visit the [wallet addresses](/introduction/wallet-addresses) page.
 
@@ -34,13 +38,13 @@ The Open Payments Resource Server API is a simple REST API with three resource t
 
 #### incoming-payment
 
-The first resource to be created when setting up a payment is the `incoming-payment` resource, created on the payee’s account. When created, the payee’s ASE returns unique payment details to the client that can be used to address payments to the account. Any payments received using these details are then associated with the `incoming-payment` resource.
+The first resource to be created when setting up a payment is the `incoming-payment` resource, created on the recipient's account. When created, the recipient's ASE returns unique payment details to the client that can be used to address payments to the account. Any payments received using these details are then associated with the `incoming-payment` resource.
 
-A client can issue requests to get an incoming payment’s specific details, as well as list all incoming payments in order to, for example, provide the end-user with transaction details and history.
+A client can issue requests to get an incoming payment’s specific details, as well as list all incoming payments in order to, for example, provide the recipient with transaction details and history.
 
 **Create an incoming payment without specifying an `incomingAmount`**
 
-When a request to create an `incoming-payment` resource includes an `incomingAmount`, the `incomingAmount` is the maximum amount to pay into the payee's account. In other words, it's the amount that the payee should receive.
+When a request to create an `incoming-payment` resource includes an `incomingAmount`, the `incomingAmount` is the maximum amount to pay into the recipient's account. In other words, it's the amount that the recipient should receive.
 
 Instead of specifying the amount to be received, you can specify how much you want to send by:
 
@@ -48,55 +52,55 @@ Instead of specifying the amount to be received, you can specify how much you wa
 2. Including a `debitAmount` of the amount you want to send within a [Create Quote](#quote) request (referred to as a fixed-send quote)
 3. Creating an outgoing payment request that includes the `quoteId` of the above quote
 
-The outgoing payment is created and funds are sent to the `incoming-payment` resource. However, the `incomingAmount` was never set, so there's no indicator on the payee's side for how much to expect. The payee's ASE won't know when the payment has completed.
+The outgoing payment is created and funds are sent to the `incoming-payment` resource. However, the `incomingAmount` was never set, so there's no indicator on the recipient's side for how much to expect. The recipient's ASE won't know when the payment has completed.
 
 Instead of waiting for the payment session to expire, the client can issue an explicit request to manually <LinkOut href='/apis/resource-server/operations/complete-incoming-payment'>complete the incoming payment</LinkOut> to indicate no further payments will be sent.
 
 :::tip[Use case: streaming Web Monetization payments]
-In streaming Web Monetization payments, the maximum amount to be paid is unknown to the payee’s ASE. Payments continue to stream until the Web Monetization agent ends the session. At this point, the Web Monetization agent can request to mark the incoming payment as complete. This enables the payee’s ASE to be notified as soon as possible that no further payments will be sent and to credit the payee’s account.
+In streaming Web Monetization payments, the maximum amount to be paid is unknown to the recipient's ASE. Payments continue to stream until the Web Monetization agent ends the session. At this point, the Web Monetization agent can request to mark the incoming payment as complete. This enables the recipient's ASE to be notified as soon as possible that no further payments will be sent and to credit the recipient's account.
 :::
 
 #### quote
 
-After an `incoming-payment` resource is created on the payee’s account, a `quote` resource must be created on the payer’s account.
+After an `incoming-payment` resource is created on the recipient's account, a `quote` resource must be created on the sender's account.
 
-The purpose of a quote is to indicate how much it will cost, including any applicable fees, to make the payment. The quote serves as a commitment from the payer’s ASE to deliver a particular amount to the payee’s ASE. A quote is only valid for a limited time.
+The purpose of a quote is to indicate how much it will cost, including any applicable fees, to make the payment. The quote serves as a commitment from the sender's ASE to deliver a particular amount to the recipient's ASE. A quote is only valid for a limited time.
 
 There are three types of quotes.
 
-- **Fixed-send quote** - A fixed amount will be paid from the _payer’s_ account. A `debitAmount` is required for this type. With this quote type, an incoming payment can't automatically complete until it expires. Instead of waiting for the expiration, the client can issue a <LinkOut href='/apis/resource-server/operations/complete-incoming-payment'>Complete Incoming Payment request</LinkOut> when the outgoing payment is complete.
-- **Fixed-receive quote** - A fixed amount will be paid into the _payee’s_ account. A `receiveAmount` is required for this type.
+- **Fixed-send quote** - A fixed amount will be paid from the _sender’s_ account. A `debitAmount` is required for this type. With this quote type, an incoming payment can't automatically complete until it expires. Instead of waiting for the expiration, the client can issue a <LinkOut href='/apis/resource-server/operations/complete-incoming-payment'>Complete Incoming Payment request</LinkOut> when the outgoing payment is complete.
+- **Fixed-receive quote** - A fixed amount will be paid into the _recipient's_ account. A `receiveAmount` is required for this type.
 - **Quote with incomingAmount** - The incoming payment already has a defined `incomingAmount`. For this type, the `receiver` is the URL of the `incoming-payment` resource that will be paid into, indicated by `/incoming-payments` being part of the URL.
 
 A successfully created `quote` resource results in the generation of a quote `id` in the form of a URL.
 
 #### outgoing-payment
 
-After a quote resource is created, it’s almost time to create the outgoing-payment resource on the payer’s account. The purpose of the outgoing-payment resource is to serve as an instruction to make a payment from the payer’s account.
+After a quote resource is created, it’s almost time to create the `outgoing-payment` resource on the sender's account. The purpose of the `outgoing-payment` resource is to serve as an instruction to make a payment from the sender's account.
 
 Open Payments separates payment instructions from the actual execution of payments, allowing applications to issue payment requests without being registered financial service providers themselves. This structure ensures that applications don't need to handle sensitive financial data directly, reducing risk and complexity.
 
-Open Payments requires the payer to explicitly consent to the creation of the resource before the client can issue the create request. Consent is obtained through an [interactive grant](/introduction/grants/#outgoing-payment).
+Open Payments requires the sender to explicitly consent to the creation of the resource before the client can issue the create request. Consent is obtained through an [interactive grant](/introduction/grants/#outgoing-payment).
 
-Within the request to create the outgoing-payment resource is the payee’s wallet address, so the payer’s ASE knows where to send the payment, and the quote resource’s ID, where the payment amounts are defined.
+Within the request to create the `outgoing-payment` resource is the recipient wallet address, so the sender's ASE knows where to send the payment, and the quote resource’s ID, where the payment amounts are defined.
 
-After the outgoing-payment resource is created, the incoming payment can complete, either automatically or manually, to end the Open Payments flow. Now it’s up to the payer’s ASE to settle with the payee’s ASE over a shared payment rail.
+After the `outgoing-payment` resource is created, the incoming payment can complete, either automatically or manually, to end the Open Payments flow. Now it’s up to the sender's ASE to settle with the recipient's ASE over a shared payment rail.
 
-An outgoing-payment resource can represent a payment that will be, is currently being, or has previously been sent from the payer’s account. A client can issue requests to get an outgoing payment’s specific details and list all outgoing payments in order to, for example, provide the end-user with transaction details and history.
+An `outgoing-payment` resource can represent a payment that will be, is currently being, or has previously been sent from the sender's account. A client can issue requests to get an outgoing payment’s specific details and list all outgoing payments in order to, for example, provide the sender with transaction details and history.
 
 ## Payment Methods
 
-The payment method is the means by which the payer's ASE will fulfill its payment obligations to the payee's ASE. Cash, credit and debit cards, bank transfers, gift cards and mobile money can all be considered different payment methods.
+The payment method is the means by which the sender's ASE will fulfill its payment obligations to the recipient's ASE. Cash, credit/debit cards, bank transfers, gift cards and mobile money can all be considered different payment methods.
 
-When an `outgoing-payment` is completed against an open and active `incoming-payment`, the payer’s ASE becomes obligated to make payment using the payment method initially specified in the `incoming-payment` response.
+When an `outgoing-payment` is completed against an open and active `incoming-payment`, the sender's ASE becomes obligated to make payment using the payment method initially specified in the `incoming-payment` response.
 
 Though Open Payments is designed to be an abstraction layer that can issue payment instructions between transacting parties atop any payment method, <LinkOut href='https://interledger.org'>Interledger (ILP) </LinkOut> is the only payment method that currently integrates with Open Payments readily.
 
-When using ILP as a payment method in Open Payments, the following information is required from the payee's ASE, in the incoming payment's `method` object.
+When using ILP as a payment method in Open Payments, the following information is required from the recipient's ASE, in the incoming payment's `method` object.
 
 - A `type` of `ilp` to indicate the payment method.
-- The <LinkOut href='https://interledger.org/developers/rfcs/ilp-addresses/'>ILP address</LinkOut> of the payee’s ASE: The ILP address is required so that packets representing payments routed over the Interledger network will be forwarded to the node owned and operated by the intended receiver (i.e. payee's ASE).
-- A shared secret: A cryptographically secured secret to be exchanged between the payer's ASE (the sender) and the payee's ASE (the receiver) to ensure that packets sent over the Interledger network through a <LinkOut href='https://interledger.org/developers/rfcs/stream-protocol/'>STREAM</LinkOut> connection can only be read by the two parties.
+- The <LinkOut href='https://interledger.org/developers/rfcs/ilp-addresses/'>ILP address</LinkOut> of the recipient’s ASE: The ILP address is required so that packets representing payments routed over the Interledger network will be forwarded to the node owned and operated by the intended receiver (i.e. recipient's ASE).
+- A shared secret: A cryptographically secured secret to be exchanged between the sender's ASE and the recipient's ASE to ensure that packets sent over the Interledger network through a <LinkOut href='https://interledger.org/developers/rfcs/stream-protocol/'>STREAM</LinkOut> connection can only be read by the two parties.
 
 <CodeBlock title="incoming-payment methods object">
   ```http
@@ -110,4 +114,4 @@ When using ILP as a payment method in Open Payments, the following information i
   ```
 </CodeBlock>
 
-After the `incoming-payment` response is received, the payer's ASE creates a `quote` request containing `"method": "ilp"`.
+After the `incoming-payment` response is received, the sender's ASE creates a `quote` request containing `"method": "ilp"`.

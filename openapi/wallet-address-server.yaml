@@ -39,6 +39,13 @@ paths:
                     assetScale: 2
                     authServer: 'https://ilp.interledger-test.dev/auth'
                     resourceServer: 'https://ilp.interledger-test.dev/op'
+        '302':
+          description: If the `Accept` header is `text/html` in the request, the server may choose to redirect to an HTML page for the given wallet address.
+          headers:
+            Location:
+              description: 'The URL of the wallet address webpage.'
+              schema:
+                type: string
         '404':
           description: Wallet Address Not Found
       operationId: get-wallet-address
@@ -197,5 +204,6 @@ components:
           x: oy0L_vTygNE4IogRyn_F5GmHXdqYVjIXkWs2jky7zsI
     did-document:
       type: object
+      additionalProperties: true
       title: DID Document
       description: A DID Document using JSON encoding

@@ -93,13 +93,19 @@ export type GrantContinuation = {
   continue: ASComponents['schemas']['continue']
 }
 export type GrantRequest = {
-  access_token: ASOperations['post-request']['requestBody']['content']['application/json']['access_token']
+  access_token: { access: GrantRequestAccessItem[] }
   client: ASOperations['post-request']['requestBody']['content']['application/json']['client']
   interact?: ASOperations['post-request']['requestBody']['content']['application/json']['interact']
 }
-export type GrantContinuationRequest = {
-  interact_ref?: ASOperations['post-continue']['requestBody']['content']['application/json']['interact_ref']
-}
+
+export type GrantContinuationRequest =
+  | Required<
+      NonNullable<
+        ASOperations['post-continue']['requestBody']
+      >['content']['application/json']
+    >
+  | undefined
+
 export type PendingGrant = {
   interact: ASComponents['schemas']['interact-response']
   continue: ASComponents['schemas']['continue']
@@ -154,3 +160,35 @@ export const AccessAction: Record<
   List: 'list',
   ListAll: 'list-all'
 })
+
+// From: https://github.com/microsoft/TypeScript/issues/14094#issuecomment-373782604
+type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never }
+type XOR<T, U> = T | U extends object
+  ? (Without<T, U> & U) | (Without<U, T> & T)
+  : T | U
+type XOR3<T, U, V> = XOR<T, XOR<U, V>>
+export type AccessOutgoingBase = {
+  receiver?: ASComponents['schemas']['receiver']
+  interval?: ASComponents['schemas']['interval']
+}
+export type AccessOutgoingWithDebitAmount = AccessOutgoingBase & {
+  debitAmount: ASComponents['schemas']['amount']
+}
+export type AccessOutgoingWithReceiveAmount = AccessOutgoingBase & {
+  receiveAmount: ASComponents['schemas']['amount']
+}
+export type AccessOutgoingLimits = XOR3<
+  AccessOutgoingBase,
+  AccessOutgoingWithDebitAmount,
+  AccessOutgoingWithReceiveAmount
+>
+export type AccessOutgoing = {
+  type: 'outgoing-payment'
+  actions: ('create' | 'read' | 'read-all' | 'list' | 'list-all')[]
+  identifier: string
+  limits?: AccessOutgoingLimits
+}
+export type GrantRequestAccessItem =
+  | ASComponents['schemas']['access-incoming']
+  | AccessOutgoing
+  | ASComponents['schemas']['access-quote']

@@ -1,6 +1,7 @@
 import { HttpMethod, ResponseValidator } from '@interledger/openapi'
 import {
   GrantOrTokenRequestArgs,
+  OpenPaymentsClientError,
   RouteDeps,
   UnauthenticatedResourceRequestArgs
 } from '.'
@@ -10,7 +11,9 @@ import {
   Grant,
   GrantContinuation,
   GrantRequest,
-  GrantContinuationRequest
+  GrantContinuationRequest,
+  AccessOutgoingWithDebitAmount,
+  AccessOutgoingWithReceiveAmount
 } from '../types'
 import { post, deleteRequest } from './requests'
 
@@ -53,11 +56,25 @@ export const createGrantRoutes = (deps: GrantRouteDeps): GrantRoutes => {
   }
 
   return {
-    request: (
+    request: async (
       { url }: UnauthenticatedResourceRequestArgs,
       args: Omit<GrantRequest, 'client'>
-    ) =>
-      post(
+    ) => {
+      const outgoingPaymentAccess = args.access_token.access.find(
+        (el) => el.type === 'outgoing-payment'
+      )
+      if (
+        (outgoingPaymentAccess?.limits as AccessOutgoingWithDebitAmount)
+          ?.debitAmount &&
+        (outgoingPaymentAccess?.limits as AccessOutgoingWithReceiveAmount)
+          ?.receiveAmount
+      ) {
+        throw new OpenPaymentsClientError('Invalid Grant Request', {
+          description:
+            'Only one of "debitAmount" or "receiveAmount" may be specified.'
+        })
+      }
+      return post(
         baseDeps,
         {
           url,
@@ -67,7 +84,8 @@ export const createGrantRoutes = (deps: GrantRouteDeps): GrantRoutes => {
           }
         },
         requestGrantValidator
-      ),
+      )
+    },
     continue: (
       { url, accessToken }: GrantOrTokenRequestArgs,
       args: GrantContinuationRequest
