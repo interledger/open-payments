@@ -7,9 +7,11 @@ import { Tabs, TabItem } from '@astrojs/starlight/components'
 import HttpSig from '/src/partials/http-msg-sig-note.mdx'
 import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Ts from '/src/partials/ts-prerequisites.mdx'
+import StartInteraction from '/src/partials/grant-start-interaction.mdx'
+import FinishInteraction from '/src/partials/grant-finish-interaction.mdx'
 
 :::tip[Summary]
-A client can support one-time payments by obtaining the necessary grants and calling the Open Payments APIs to create the incoming payment, quote, and outgoing payment resources.
+Add support for one-time payments to your client. A one-time payment is a single, non-recurring payment.
 :::
 
 The Open Payments APIs facilitate multiple use cases for one-time payments to and from Open Payments-enabled wallets. Making a payment directly from one person to another, called a peer-to-peer payment, is one example. Purchasing an item from an online merchant and paying in full is another example.
@@ -143,42 +145,17 @@ Now indicate your client can receive a signal from the authorization server when
 
 ### 7. Start interaction with the user
 
-Once your client receives the authorization server’s response, it must send the user to the `interact.redirect` URI contained in the response. This starts the interaction flow.
-
-The response also includes a `continue` object, which is essential for managing the interaction and obtaining explicit user consent for outgoing payment grants. The `continue` object contains an access token and a URI that the client will use to finalize the grant request after the user has completed their interaction with the identity provider (IdP). This ensures that the client can securely obtain the necessary permissions to proceed with the payment process.
-
-<CodeBlock title="Example response">
-```json
-{
-  "interact": {
-    "redirect": "https://auth.interledger-test.dev/4CF492MLVMSW9MKMXKHQ",
-    "finish": "4105340a-05eb-4290-8739-f9e2b463bfa7"
-  },
-  "continue": {
-    "access_token": {
-      "value": "33OMUKMKSKU80UPRY5NM"
-    },
-    "uri": "https://auth.interledger-test.dev/continue/4CF492MLVMSW9MKMXKHQ",
-    "wait": 30
-  }
-}
-```
-</CodeBlock>
+<StartInteraction />
 
 ### 8. Finish interaction with the user
 
-The user interacts with the authorization server through the server’s interface and approves or denies the grant.
-
-Provided the user approves the grant, the authorization server:
-
-- Sends the user to your client’s previously defined `finish.uri`. The means by which the server sends the user to the URI is out of scope, but common options include redirecting the user from a web page and launching the system browser with the target URI.
-- Secures the redirect by adding a unique hash, allowing your client to validate the `finish` call, and an interaction reference as query parameters to the URI.
+<FinishInteraction />
 
 ### 9. Request a grant continuation
 
-After the user completes their interaction with the identity provider (IdP), they should be redirected back to your application. At this point, you can make the grant continuation request. In scenarios where a user interface is not available, consider implementing a polling mechanism to check for the completion of the interaction.
+After the user completes their interaction with the identity provider (IdP), they should be redirected back to your application. Now you can make the grant continuation request. In scenarios where a user interface is not available, consider implementing a polling mechanism to check for the completion of the interaction.
 
-Add the authorization server’s interaction reference, as the `interact_ref` value, to the body of your continuation request.
+Add the authorization server’s interaction reference as the `interact_ref` value to the body of your continuation request.
 
 <ChunkedSnippet
   source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-continuation.ts'
@@ -191,8 +168,7 @@ Issue the request to the `continue uri` supplied in the authorization server’s
 
 A successful continuation response from the authorization server provides your client with an access token and other information necessary to continue the transaction.
 
-<CodeBlock title="Example response">
-```json wrap
+```json title="Example response" wrap
 {
   "access_token": {
     "value": "OS9M2PMHKUR64TB8N6BW7OZB8CDFONP219RP1LT0",
@@ -201,13 +177,7 @@ A successful continuation response from the authorization server provides your c
     "access": [
       {
         "type": "outgoing-payment",
-        "actions": [
-          "create",
-          "read",
-          "read-all",
-          "list",
-          "list-all"
-        ],
+        "actions": ["create", "read", "read-all", "list", "list-all"],
         "identifier": "https://ilp.interledger-test.dev/alice",
         "limits": {
           "receiver": "https://ilp.interledger-test.dev/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2",
@@ -230,7 +200,6 @@ A successful continuation response from the authorization server provides your c
   }
 }
 ```
-</CodeBlock>
 
 ### 10. Create an Outgoing Payment
 

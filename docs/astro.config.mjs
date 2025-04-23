@@ -229,16 +229,10 @@ export default defineConfig({
             {
               label: 'Make recurring payments',
               link: '/guides/make-recurring-payments/'
-            }
-          ]
-        },
-        {
-          label: 'Tutorials',
-          collapsed: true,
-          items: [
+            },
             {
-              label: 'Create a split-payments application',
-              link: '/tutorials/split-payments/'
+              label: 'Split an incoming payment',
+              link: '/guides/split-payments/'
             }
           ]
         },
