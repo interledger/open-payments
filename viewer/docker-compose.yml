@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   swagger-ui:
     image: docker.swagger.io/swaggerapi/swagger-ui

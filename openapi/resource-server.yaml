@@ -1262,12 +1262,12 @@ components:
     error-response-minimal:
       value:
         error:
-          code: '400'
+          code: 'invalid_request'
           description: Error description
     error-response-full:
       value:
         error:
-          code: '400'
+          code: 'invalid_request'
           description: Error description
           details:
             anyKey: anyValue
