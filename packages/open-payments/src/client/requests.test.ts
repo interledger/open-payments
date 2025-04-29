@@ -893,6 +893,45 @@ describe('requests', (): void => {
       }
     })
 
+    test('handles HTTP error with expected JSON response with details', async (): Promise<void> => {
+      const url = 'https://localhost:1000/'
+      const request = new Request(url)
+      const errDetails = {
+        foo: 'bar',
+        someObj: {
+          anyKey: 'anyValue'
+        }
+      }
+      const response = new Response(
+        JSON.stringify({
+          error: {
+            code: 'invalid_client',
+            description: 'Could not determine client',
+            details: errDetails
+          }
+        }),
+        { status: 400 }
+      )
+
+      expect.assertions(6)
+      try {
+        await handleError(deps, {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          error: new HTTPError(response, request, undefined!),
+          requestType: 'POST',
+          url
+        })
+      } catch (error) {
+        assert.ok(error instanceof OpenPaymentsClientError)
+        expect(error.message).toBe('Error making Open Payments POST request')
+        expect(error.description).toBe('Could not determine client')
+        expect(error.code).toBe('invalid_client')
+        expect(error.status).toBe(400)
+        expect(error.details).toMatchObject(errDetails)
+        expect(error.validationErrors).toBeUndefined()
+      }
+    })
+
     test('handles HTTP error with unexpected JSON response', async (): Promise<void> => {
       const url = 'https://localhost:1000/'
       const request = new Request(url)

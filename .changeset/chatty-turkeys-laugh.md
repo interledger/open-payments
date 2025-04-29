@@ -1,5 +1,5 @@
 ---
-"@interledger/open-payments": patch
+"@interledger/open-payments": minor
 ---
 
-Add error object to responses
+Add details to error object of responses
