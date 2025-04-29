@@ -48,45 +48,29 @@ This guide provides steps for making a one-time payment, in which an outgoing pa
 
 ## Steps
 
-### 1. Import dependencies
-
-Import `createAuthenticatedClient` from the Open Payments SDK package.
-
-<ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/incoming-payment/incoming-payment-create.ts'
-  chunk='1'
-/>
-
-### 2. Create an authenticated Open Payments client
-
-Create an Open Payments-authenticated client by providing the following properties:
-
-- `walletAddressURL` : your Open Payments-enabled wallet address that your client will use to authenticate itself to one or more Authorization Servers (AS).
-- `privateKey` : the EdDSA-Ed25519 key or preferably the absolute or relative file path to the key that is bound to your wallet address. A public key signed with this private
-  key must be made available as a public JWK document at `{walletAddressUrl}/jwks.json` url.
-- `keyId` : the identifier of the private key and the corresponding public key.
+### 1. Get recipient's wallet address information
 
 <ChunkedSnippet
   source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-outgoing-payment.ts'
-  chunk='2'
+  chunk='3'
 />
 
-### 3. Request an Incoming Payment grant
+### 2. Request an Incoming Payment grant
 
-Request an `incomingPayment` grant from the payee wallet's AS.
+Request an `incomingPayment` grant from the recipient wallet's authorization server.
 
 <ChunkedSnippet
   source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-incoming-payment.ts'
   chunk='4'
 />
 
-### 4. Create an Incoming Payment
+### 3. Create an Incoming Payment
 
-Create an `incomingPayment` on the payee wallet's Resource Server (RS) using the access token returned by the AS in the grant request and specify the `walletAddress` with the URL of the payee's wallet.
+Create an `incomingPayment` on the recipient wallet's resource server using the access token returned by the authorization server in the grant request and specify the `walletAddress` with the URL of the recipient's wallet.
 
 Add the `incomingAmount` object and define the following properties:
 
-- `value` : the maximum allowable amount that will be paid to the payee's wallet address.
+- `value` : the maximum allowable amount that will be paid to the recipient's wallet address.
 - `assetCode` : the ISO 4217 currency code representing the underlying asset used to make the payment.
 - `assetScale` : the scale of amounts denoted in the corresponding asset code.
 
@@ -97,23 +81,23 @@ Optionally you may add the `expiresAt` property which is the date and time after
   chunk='3'
 />
 
-### 5. Request a Quote grant
+### 4. Request a Quote grant
 
-Request a `quote` grant from the payer wallet's AS.
+Request a `quote` grant from the sender wallet's authorization server.
 
 <ChunkedSnippet
   source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-quote.ts'
   chunk='4'
 />
 
-### 6. Create a Quote
+### 5. Create a Quote
 
-Create a `quote` on the payer wallet's RS using the access token returned by the AS in the grant request.
+Create a `quote` on the sender wallet's resource server using the access token returned by the authorization server in the grant request.
 
 Add the following properties:
 
 - `method` : the payment method used to facilitate the payment. Set this property to `ilp` as Open Payments only supports <LinkOut href='https://interledger.org'>Interledger</LinkOut> payments at this time.
-- `walletAddress` : the URL of the payer's wallet address.
+- `walletAddress` : the URL of the sender's wallet address.
 - `receiver` : the URL of the incoming payment that will receive the payment.
 
 <ChunkedSnippet
@@ -121,34 +105,140 @@ Add the following properties:
   chunk='3'
 />
 
-### 7. Request an Outgoing Payment grant
+### 6. Request an interactive Outgoing Payment grant
 
-Request an `outgoingPayment` grant from the payer wallet's AS.
+Request an `outgoingPayment` grant from the sender wallet's authorization server. This request requires an interactive grant as the sender will need to consent before an `outgoingPayment` is made against their wallet.
 
-Add the `limits` object with the following properties:
+Add the `limits` object with one of the following properties:
 
-- `debitAmount` : the maximum amount to be deducted from the payer's wallet.
-- `receiveAmount` : the maximum amount to be received in the payee's wallet.
+- `debitAmount` : the maximum amount to be deducted from the sender's wallet.
+- `receiveAmount` : the maximum amount to be received in the recipient's wallet.
 
-:::note
-This request requires an interactive grant as the payer will need to consent before an `outgoingPayment` is made against their wallet.
+:::note[Limits]
 
-For details on how to facilitate an interactive grant please see the <LinkOut href='https://openpayments.dev/guides/create-interactive-grant/'>
-Create an Interactive Grant guide. </LinkOut>
+The `debitAmount` and `receiveAmount` parameters, which apply to the sender and recipient respectively, allow you to define the limits under which an outgoing payment can be created. Select the parameter most appropriate for your particular use case. Specify the `receiveAmount` when the recipient must receive a defined amount. Specify the `debitAmount` for cases when the sender can exercise a limit on the amount that can be debited from their account.
 :::
+
+Next, indicate your client is capable of directing the user to a URI to start an interaction.
+
+1. Add the `interact` object to your grant request.
+2. Specify `redirect` as the `start` mode. Open Payments only supports `redirect` at this time. The redirect URI will be provided by the authorization server in its response.
+
+Now indicate your client can receive a signal from the authorization server when the interaction has finished.
+
+1. Add the `finish` object within the `interact` object.
+2. Specify `redirect` as the `method`. Open Payments only supports `redirect` at this time.
+3. Specify the `uri` that the authorization server will send the user back to when the interaction has finished.
+4. Create a `nonce` for your client to use to verify the authorization server is the same entity throughout the entire process. The nonce can be any random, hard-to-guess string.
 
 <ChunkedSnippet
   source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-outgoing-payment.ts'
   chunk='4'
 />
 
-### 8. Create an Outgoing Payment
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-outgoing-payment.ts'
+  chunk='5'
+/>
 
-Create an `outgoingPayment` on the payer wallet's RS using the access token returned by the AS in the grant request.
+### 7. Start interaction with the user
+
+Once your client receives the authorization server’s response, it must send the user to the `interact.redirect` URI contained in the response. This starts the interaction flow.
+
+The response also includes a `continue` object, which is essential for managing the interaction and obtaining explicit user consent for outgoing payment grants. The `continue` object contains an access token and a URI that the client will use to finalize the grant request after the user has completed their interaction with the identity provider (IdP). This ensures that the client can securely obtain the necessary permissions to proceed with the payment process.
+
+<CodeBlock title="Example response">
+```json
+{
+  "interact": {
+    "redirect": "https://auth.interledger-test.dev/4CF492MLVMSW9MKMXKHQ",
+    "finish": "4105340a-05eb-4290-8739-f9e2b463bfa7"
+  },
+  "continue": {
+    "access_token": {
+      "value": "33OMUKMKSKU80UPRY5NM"
+    },
+    "uri": "https://auth.interledger-test.dev/continue/4CF492MLVMSW9MKMXKHQ",
+    "wait": 30
+  }
+}
+```
+</CodeBlock>
+
+### 8. Finish interaction with the user
+
+The user interacts with the authorization server through the server’s interface and approves or denies the grant.
+
+Provided the user approves the grant, the authorization server:
+
+- Sends the user to your client’s previously defined `finish.uri`. The means by which the server sends the user to the URI is out of scope, but common options include redirecting the user from a web page and launching the system browser with the target URI.
+- Secures the redirect by adding a unique hash, allowing your client to validate the `finish` call, and an interaction reference as query parameters to the URI.
+
+### 9. Request a grant continuation
+
+After the user completes their interaction with the identity provider (IdP), they should be redirected back to your application. At this point, you can make the grant continuation request. In scenarios where a user interface is not available, consider implementing a polling mechanism to check for the completion of the interaction.
+
+Add the authorization server’s interaction reference, as the `interact_ref` value, to the body of your continuation request.
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-continuation.ts'
+  chunk='3'
+/>
+
+Issue the request to the `continue uri` supplied in the authorization server’s initial grant response. For example:
+
+`POST https://auth.interledger-test.dev/continue/4CF492MLVMSW9MKMXKHQ`
+
+A successful continuation response from the authorization server provides your client with an access token and other information necessary to continue the transaction.
+
+<CodeBlock title="Example response">
+```json wrap
+{
+  "access_token": {
+    "value": "OS9M2PMHKUR64TB8N6BW7OZB8CDFONP219RP1LT0",
+    "manage": "https://auth.interledger-test.dev/token/dd17a202-9982-4ed9-ae31-564947fb6379",
+    "expires_in": 3600,
+    "access": [
+      {
+        "type": "outgoing-payment",
+        "actions": [
+          "create",
+          "read",
+          "read-all",
+          "list",
+          "list-all"
+        ],
+        "identifier": "https://ilp.interledger-test.dev/alice",
+        "limits": {
+          "receiver": "https://ilp.interledger-test.dev/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2",
+          "interval": "R12/2019-08-24T14:15:22Z/P1M",
+          "debitAmount": {
+            "value": "500",
+            "assetCode": "USD",
+            "assetScale": 2
+          }
+        }
+      }
+    ]
+  },
+  "continue": {
+    "access_token": {
+      "value": "33OMUKMKSKU80UPRY5NM"
+    },
+    "uri": "https://auth.interledger-test.dev/continue/4CF492MLVMSW9MKMXKHQ",
+    "wait": 30
+  }
+}
+```
+</CodeBlock>
+
+### 10. Create an Outgoing Payment
+
+Create an `outgoingPayment` on the sender wallet's resource server using the access token returned by the authorization server in the grant request.
 
 Add the following properties:
 
-- `walletAddress` : the URL of the payer's wallet address.
+- `walletAddress` : the URL of the sender's wallet address.
 - `quoteId` : the URL of the quote specifying the payment amount.
 
 <ChunkedSnippet
