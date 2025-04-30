@@ -1,5 +1,5 @@
 ---
-"@interledger/open-payments": minor
+'@interledger/open-payments': minor
 ---
 
 Add details to error object of responses
