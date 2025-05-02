@@ -177,7 +177,7 @@ Request a `quote` grant from the customer wallet authorization server. You recei
 ```ts wrap
 const customerGrant = await client.grant.request(
   {
-    url: walletAddress.authServer
+    url: customerWalletAddress.authServer
   },
   {
     access_token: {
@@ -347,7 +347,7 @@ A successful continuation response from the authorization server provides your c
 
 ### 10. Create outgoing payments
 
-Using the merchant and platform access tokens provided in the quote responses, request the creation of two `outgoingPayment` resources on the customer's wallet account: one for the merchant and one for your platform.
+Using the merchant and platform access tokens provided in the quote responses in Step 5, request the creation of two `outgoingPayment` resources on the customer's wallet account: one for the merchant and one for your platform.
 
 The `quoteId` is the URL of the quote that specified the amount to be paid to the merchant and the platform, respectively.
 
