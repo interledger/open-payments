@@ -1,0 +1,19 @@
+Once your client receives the authorization server’s response, it must send the user to the `interact.redirect` URI contained in the response. This starts the interaction flow.
+
+The response also includes a `continue` object, which is essential for managing the interaction and obtaining explicit user consent for outgoing payment grants. The `continue` object contains an access token and a URI that the client will use to finalize the grant request after the user has completed their interaction with the identity provider (IdP). This ensures that the client can securely obtain the necessary permissions to proceed with the payment process.
+
+```json title="Example response" wrap
+{
+  "interact": {
+    "redirect": "https://auth.interledger-test.dev/4CF492MLVMSW9MKMXKHQ",
+    "finish": "4105340a-05eb-4290-8739-f9e2b463bfa7"
+  },
+  "continue": {
+    "access_token": {
+      "value": "33OMUKMKSKU80UPRY5NM"
+    },
+    "uri": "https://auth.interledger-test.dev/continue/4CF492MLVMSW9MKMXKHQ",
+    "wait": 30
+  }
+}
+```
