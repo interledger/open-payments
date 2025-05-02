@@ -17,7 +17,7 @@ import { MermaidWrapper, Mermaid } from '@interledger/docs-design-system'
     Identity provider (IdP)->>Authorization server (AS): Requests to finish interaction
     Authorization server (AS)->>Authorization server (AS): Ends session
     Authorization server (AS)-->>Identity provider (IdP): 302 temporary redirect to finish URI <br>(defined in initial grant request) <br>secured with unique hash and <br>interact_ref in query string
-    Identity provider (IdP)->>Client instance: Follows redirect
+    Identity provider (IdP)->>Client: Follows redirect
     Client->>Client: Verifies hash
     Client->>Authorization server (AS): POST grant continuation request with <br>interact_ref in body to continue URI
     Authorization server (AS)-->>Client: 200 OK, returns grant access token

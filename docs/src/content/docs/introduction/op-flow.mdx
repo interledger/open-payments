@@ -185,7 +185,7 @@ More information about grant interaction flows can be found in the [Grant negoti
     SC->>+RRS: Request to create the incoming payment
     RRS->>+RAS: Requests access token validation
     RAS-->>-RRS: Access token is validated
-    RRS-->>-SC: Incoming payment is created
+    RRS-->>-SC: Responds with created incoming payment
     SC->>+SAS: Requests a non-interactive grant for a quote
     SAS-->>-SC: Provides access token and grant for the quote
     SC->>+SRS: Request to create the quote
@@ -198,18 +198,18 @@ More information about grant interaction flows can be found in the [Grant negoti
     SC->>+SIDP: Navigates (redirects) to identity provider
     SIDP->>SIDP: Sender accepts interaction, <br/>confirms payment intent
     SIDP->>SAS: Sends interaction choice
-    SAS->>SIDP: Confirms the choice has been accepted
+    SAS-->>SIDP: Confirms the choice has been accepted
     SIDP->>SAS: Requests to finalize the interaction
     SAS->>SAS: Completes the session
     SAS->>SIDP: Redirects to interact URI defined in initial grant request
-    SIDP->>-SC: Follows redirect
+    SIDP-->>-SC: Client follows redirect
     SC->>SC: Verifies hash
     SC->>+SAS: Requests a grant continuation
-    SAS->>-SC: Provides a grant access token
+    SAS-->>SC: Provides a grant access token
     SC->>+SRS: Request to create the outgoing payment
     SRS->>SAS: Requests access token validation
-    SAS->>SRS: Access token is validated
-    SRS->>-SC: Outgoing payment is created
+    SAS-->>SRS: Access token is validated
+    SRS->>-SC: Responds with created outgoing payment
 `}
 />
 
