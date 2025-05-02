@@ -32,8 +32,8 @@ A client retrieves public details about a recipient's Open Payments-enabled acco
     participant C as Client
     participant WA as Wallet address
 
-    C->>WA: GET wallet address url (e.g. https://wallet.example.com/alice)
-    WA->>C: 200 wallet address found, return public account details
+    C->>WA: GET wallet address URL (e.g. https://wallet.example.com/alice)
+    WA-->>C: 200 wallet address found, return public account details
 
 `}
 />
@@ -52,10 +52,10 @@ The client first <LinkOut href='/apis/auth-server/operations/post-request'>reque
     participant AS as Authorization server<br/>recipient's ASE
     participant RS as Resource server<br/>recipient's ASE
 
-    C->>AS: Grant request (POST) with type=incoming-payment
-    AS->>C: 200 OK, returns access token
-    C->>RS: Create incoming payment resource (POST)
-    RS->>C: 201 Incoming payment resource created
+    C->>AS: POST grant request with type=incoming-payment
+    AS-->>C: 200 OK, returns access token
+    C->>RS: POST create incoming payment
+    RS-->>C: 201 incoming payment created, return incoming payment with public details
 
 `}
 />
@@ -74,10 +74,10 @@ The client <LinkOut href='/apis/auth-server/operations/post-request'>requests/re
     participant AS as Authorization server<br/>sender's ASE
     participant RS as Resource server<br/>sender's ASE
 
-    C->>AS: Grant request (POST) with type=quote
-    AS->>C: 200 OK, returns access token
-    C->>RS: Create quote resource (POST)
-    RS->>C: 201 Quote resource created
+    C->>AS: POST grant request with type=quote
+    AS-->>C: 200 OK, returns access token
+    C->>RS: POST create quote
+    RS-->>C: 201 quote created, returns quote details
 
 `}
 />
@@ -108,8 +108,8 @@ Once an access token is acquired, the client can request the creation of the <Li
     participant C as Client
     participant RS as Resource server<br/>sender's ASE
 
-    C->>RS: Create outgoing payment resource (POST)
-    RS->>C: 201 Outgoing payment resource created
+    C->>RS: POST create outgoing payment
+    RS-->>C: 201 outgoing payment created, <br/>returns outgoing payment details
 
 `}
 />
@@ -128,8 +128,8 @@ To provide a user with their transaction history, the client can retrieve a list
     participant C as Client
     participant RS as Resource server
 
-    C->>RS: Get list of incoming/outgoing payments <br/>with wallet-address={url of wallet address}
-    RS->>C: 200 OK
+    C->>RS: GET list of incoming/outgoing payments <br/>with wallet-address={URL of wallet address}
+    RS-->>C: 200 OK, returns array of incoming/outgoing payments <br/>with relevant payment details
 
 `}
 />
@@ -146,8 +146,8 @@ Similarly, the client can provide the user with details about a specific <LinkOu
     participant C as Client
     participant RS as Resource server
 
-    C->>RS: Get incoming/outgoing payment with <br/>id={url identifying incoming/outgoing payment}
-    RS->>C: 200 Payment found
+    C->>RS: GET an incoming/outgoing payment with <br/>id={URL identifying incoming/outgoing payment}
+    RS-->>C: 200 incoming/outgoing payment found, <br/>returns incoming/outgoing payment details
 
 `}
 />
@@ -178,38 +178,38 @@ More information about grant interaction flows can be found in the [Grant negoti
     participant RAS as Auth server
     participant RRS as Resource server
     end
-    SC->>+RW: Sends GET request
-    RW->>-SC: Responds with auth & resource server URLs
-    SC->>+RAS: Sends a non-interactive grant request<br/>(type=incoming-payment)
-    RAS->>-SC: Responds with access token & grant
-    SC->>+RRS: Sends request to create an incoming payment resource
-    RRS->>RAS: Requests validation of access token
-    RAS->>RRS: Access token is validated
-    RRS->>-SC: Incoming payment resource is created
-    SC->>+SAS: Sends non-interactive grant request<br/>(type=quote)
-    SAS->>-SC: Responds with access token and grant
-    SC->>+SRS: Sends request to create a quote resource
-    SRS->>-SC: Quote resource is created
-    SC->>+SAS: Sends interactive grant request<br/>(type=outgoing-payment)
-    SAS->>-SC: Responds with interact redirect uri and continue uri
-    SC->>+SAS: Navigates to interact redirect uri
-    SAS->>SAS: Starts interaction<br/>and sets session
-    SAS->>-SC: Responds with identity provider uri
+    SC->>+RW: Requests the wallet address
+    RW-->>-SC: Provides the wallet address details
+    SC->>+RAS: Requests a non-interactive grant for an incoming payment
+    RAS-->>-SC: Provides access token and grant for the payment
+    SC->>+RRS: Request to create the incoming payment
+    RRS->>+RAS: Requests access token validation
+    RAS-->>-RRS: Access token is validated
+    RRS-->>-SC: Incoming payment is created
+    SC->>+SAS: Requests a non-interactive grant for a quote
+    SAS-->>-SC: Provides access token and grant for the quote
+    SC->>+SRS: Request to create the quote
+    SRS-->>-SC: Quote is created
+    SC->>+SAS: Requests an interactive grant for an outgoing payment
+    SAS-->>-SC: Provides interact redirect URI and continue URI
+    SC->>+SAS: Navigates to the interact redirect URI
+    SAS->>SAS: Starts the interaction process and sets up the session
+    SAS-->>-SC: Provides identity provider URI
     SC->>+SIDP: Navigates (redirects) to identity provider
-    SIDP->>SIDP: Sender accepts interaction,<br/>for eg: confirms payment intent
+    SIDP->>SIDP: Sender accepts interaction, <br/>confirms payment intent
     SIDP->>SAS: Sends interaction choice
-    SAS->>SIDP: Accepts choice
-    SIDP->>SAS: Requests to finish interaction
-    SAS->>SAS: Ends session
-    SAS->>SIDP: Redirects to finish url defined in initial grant request
+    SAS->>SIDP: Confirms the choice has been accepted
+    SIDP->>SAS: Requests to finalize the interaction
+    SAS->>SAS: Completes the session
+    SAS->>SIDP: Redirects to interact URI defined in initial grant request
     SIDP->>-SC: Follows redirect
     SC->>SC: Verifies hash
-    SC->>+SAS: Sends a grant continuation request
-    SAS->>-SC: Responds with a grant access token
-    SC->>+SRS: Sends request to create an outgoing payment resource
-    SRS->>SAS: Requests validation of access token
+    SC->>+SAS: Requests a grant continuation
+    SAS->>-SC: Provides a grant access token
+    SC->>+SRS: Request to create the outgoing payment
+    SRS->>SAS: Requests access token validation
     SAS->>SRS: Access token is validated
-    SRS->>-SC: Outgoing payment resource is created
+    SRS->>-SC: Outgoing payment is created
 `}
 />
 
