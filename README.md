@@ -85,6 +85,12 @@ pnpm i
 
 ### Local Development
 
+You can preview the docs by running the command
+
+```sh
+pnpm --filter openpayments-docs start
+```
+
 ### Useful commands
 
 ```sh
