@@ -1,0 +1,6 @@
+The user interacts with the authorization server through the server’s interface and approves or denies the grant.
+
+Provided the user approves the grant, the authorization server:
+
+- Sends the user to your client’s previously defined `finish.uri`. The means by which the server sends the user to the URI is out of scope, but common options include redirecting the user from a web page and launching the system browser with the target URI.
+- Secures the redirect by adding a unique hash, allowing your client to validate the `finish` call, and an interaction reference as query parameters to the URI.

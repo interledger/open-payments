@@ -229,6 +229,10 @@ export default defineConfig({
             {
               label: 'Make recurring payments',
               link: '/guides/make-recurring-payments/'
+            },
+            {
+              label: 'Split an incoming payment',
+              link: '/guides/split-payments/'
             }
           ]
         },
