@@ -3,6 +3,7 @@ import prettier from 'prettier';
 import { Code } from 'astro:components';
 import { CodeBlock } from '@interledger/docs-design-system'
 const {source, chunk} = Astro.props;
+import * as phpPlugin from '@prettier/plugin-php'
 
 // Retrieve code snippet from GitHub as text
 const getApiData = async () => {
@@ -67,16 +68,64 @@ for (const delimiter of delimiterArray) {
 
 // Handle zero-index situation and format code nicely
 const chunkNumber = parseInt(chunk) - 1;
-const rawOutput = codeChunkArray[chunkNumber].code_chunk;
-const output = await prettier.format(rawOutput, {
-  parser: 'typescript',
-  tabWidth: 2,
-});
-const codeBlockTitle = codeChunkArray[chunkNumber].title;
+let rawOutput = codeChunkArray[chunkNumber]?.code_chunk;
+interface LanguageConfig {
+  parser: string;
+  lang: string;
+  plugins: any[];
+};
+
+const languageConfig: Record<string, LanguageConfig> = {
+  '.php': {
+    parser: 'php',
+    lang: 'php',
+    plugins: [phpPlugin]
+  },
+  '.ts': {
+    parser: 'typescript',
+    lang: 'ts',
+    plugins: []
+  }
+};
+
+const getLanguageConfig = (url: string): LanguageConfig | null => {
+  const ext = Object.keys(languageConfig).find((key) => url.endsWith(key))
+  return ext
+    ? languageConfig[ext]
+    : null
+};
+
+const { parser, lang, plugins } = getLanguageConfig(source) ?? {
+  parser: '',
+  lang: '',
+  plugins: [],
+};
+
+let output
+if (!parser || !lang || !rawOutput) {
+  output = 'Code snippet not found.'
+} else {
+  if (lang === 'php') {
+    // The PHP Prettier plugin requires the <?php opening delimiter for formatting
+    rawOutput = rawOutput.trim().startsWith('<?php')
+      ? rawOutput
+      : `<?php\n${rawOutput}`
+  }
+  output = await prettier.format(rawOutput, {
+    parser,
+    tabWidth: 2,
+    plugins
+  })
+  if (lang === 'php') {
+    output = output.replace(/^<\?php\s*/, '')
+  }
+};
+
+const codeBlockTitle = codeChunkArray[chunkNumber]?.title;
 ---
 
-<CodeBlock title={codeBlockTitle} class="chunked-snippet">
-  <Code code={output} lang="ts" theme="css-variables" />
+<CodeBlock title={codeBlockTitle} class='chunked-snippet'>
+  <Code code={output} lang={lang} theme='css-variables' />
   <span>Copied!</span>
   <button data-copy-button type="button">
     <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke-width='1.75'>
