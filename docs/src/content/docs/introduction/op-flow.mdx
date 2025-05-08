@@ -185,7 +185,7 @@ More information about grant interaction flows can be found in the [Grant negoti
     SC->>+RRS: Request to create the incoming payment
     RRS->>+RAS: Requests access token validation
     RAS-->>-RRS: Access token is validated
-    RRS-->>-SC: Responds with created incoming payment
+    RRS-->>-SC: Responds with created incoming payment details
     SC->>+SAS: Requests a non-interactive grant for a quote
     SAS-->>-SC: Provides access token and grant for the quote
     SC->>+SRS: Request to create the quote
@@ -209,7 +209,7 @@ More information about grant interaction flows can be found in the [Grant negoti
     SC->>+SRS: Request to create the outgoing payment
     SRS->>SAS: Requests access token validation
     SAS-->>SRS: Access token is validated
-    SRS->>-SC: Responds with created outgoing payment
+    SRS->>-SC: Responds with created outgoing payment details
 `}
 />
 
