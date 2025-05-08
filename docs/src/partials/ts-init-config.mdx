@@ -1,0 +1,18 @@
+import { Steps } from '@astrojs/starlight/components'
+import { LinkOut } from '@interledger/docs-design-system'
+import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
+
+If you're using JavaScript, only do the first step.
+
+<Steps>
+1. Add `"type": "module"` to `package.json`.
+2. Add the following to `tsconfig.json`
+    ```json
+    {
+      "compilerOptions": {
+        "target": "ES2022",
+        "module": "ES2022"
+      }
+    }
+    ```
+</Steps>
