@@ -5,22 +5,22 @@ import { MermaidWrapper, Mermaid } from '@interledger/docs-design-system'
 {/* prettier-ignore */}
 <Mermaid
   graph={`sequenceDiagram autonumber
-    Client ->>Authorization server (AS): Sends interactive grant request
-    Authorization server (AS)-->>Client: 200 returns interact redirect uri and continue uri
-    Client ->>Authorization server (AS): Navigates to interact redirect uri
+    Client->>Authorization server (AS): POST grant request (with interact object)
+    Authorization server (AS)-->>Client: 200 OK, returns interact redirect URI and continue URI
+    Client->>Authorization server (AS): Navigates to interact redirect URI
     Authorization server (AS)->>Authorization server (AS): Starts interaction and sets session
-    Authorization server (AS)-->>Client: 302 temporary redirect to identity provider <br>uri with grant info in query string
-    Client ->>Identity provider (IdP): Redirects to identity provider
+    Authorization server (AS)-->>Client: 302 temporary redirect to identity provider <br>URI with grant info in query string
+    Client->>Identity provider (IdP): Redirects to identity provider
     Identity provider (IdP)->>Identity provider (IdP): Resource owner (e.g. client user) <br>accepts interaction
     Identity provider (IdP)->>Authorization server (AS): Sends interaction choice
-    Authorization server (AS) -->>Identity provider (IdP): 202 choice accepted
+    Authorization server (AS)-->>Identity provider (IdP): 202 choice accepted
     Identity provider (IdP)->>Authorization server (AS): Requests to finish interaction
     Authorization server (AS)->>Authorization server (AS): Ends session
-    Authorization server (AS)-->>Identity provider (IdP): 302 temporary redirect to finish url <br>(defined in initial grant request) <br>secured with unique hash and <br>interact_ref in query string
+    Authorization server (AS)-->>Identity provider (IdP): 302 temporary redirect to finish URI <br>(defined in initial grant request) <br>secured with unique hash and <br>interact_ref in query string
     Identity provider (IdP)->>Client: Follows redirect
     Client->>Client: Verifies hash
-    Client->>Authorization server (AS): Sends grant continuation request with <br>interact_ref in body to continue uri
-    Authorization server (AS)->>Client: 200 returns grant access token
+    Client->>Authorization server (AS): POST grant continuation request with <br>interact_ref in body to continue URI
+    Authorization server (AS)-->>Client: 200 OK, returns grant access token
 `}
 />
 
