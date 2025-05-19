@@ -12,13 +12,11 @@ import Ts from '/src/partials/ts-init-config.mdx'
 import TsImport from '/src/partials/ts-import-initialize.mdx'
 import PhpImport from '/src/partials/php-import-initialize.mdx'
 
-Before a client can call the Open Payments APIs, it must request and receive a grant from the appropriate authorization server. The request must indicate the resource type the client intends to work with and the actions the client wants to take at the resource server. The response includes a `continue` object, which is part of the standard grant response format. This object is included in all grant responses but is used for interactive grants to obtain explicit user consent. While outgoing payments are interactive by default, implementations have the option to make other grants interactive if desired.
+Before a client can call most of the Open Payments APIs, it must receive a grant from the appropriate authorization server.
 
-These code snippets enable a client to request a grant for the `incoming-payment`, `quote`, and `outgoing-payment` resource types. Each request includes all valid actions the client can take for the resource type.
+The request to the authorization server must indicate the access type (`incoming-payment`, `quote`, or `outgoing-payment`) and actions the client wants to take at the resource server.
 
-:::note
-When setting up a payment, the client first requests an incoming payment grant from the authorization server of the recipient's <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip>. Then, the client requests quote and outgoing payment grants from the authorization server of the sender's ASE.
-:::
+The snippets below enable a client to request a grant for each resource type.
 
 ## Before you begin
 
@@ -156,7 +154,9 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 
 ## Request an outgoing payment grant
 
-In Open Payments, an outgoing payment grant must be interactive. An interactive grant requires interaction from a user, typically a client's user, before the grant can be issued.
+In Open Payments, outgoing payments require explicit consent, usually by the client's user, before a grant can be issued. Consent is obtained through an interactive grant.
+
+Open Payments also requires any authorization server that issues interactive grants to integrate with an [identity provider (IdP)](/introduction/idp). When the client requests the outgoing payment grant, the authorization server provides the client with the IdP URI the client should redirect to.
 
 <Tabs syncKey="langs">
 <TabItem label='TypeScript/JavaScript'>
