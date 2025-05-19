@@ -111,7 +111,7 @@ export default defineConfig({
           ]
         },
         {
-          label: 'Code snippets',
+          label: 'SDK snippets',
           collapsed: true,
           items: [
             {
