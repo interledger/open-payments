@@ -120,24 +120,25 @@ This diagram shows the sequence of calls needed between a client and the servers
 {/* prettier-ignore */}
 <Mermaid
   graph={`sequenceDiagram
-participant C as Client
-participant AS as Authorization server
-participant RS as Resource server
-C->>C: 1.) Generates public/private key pair,<br>adds the public key to its key registry
-C->RS: Public key uploaded/accessible at the RS
-C->>AS: 2.) Requests an interactive outgoing-payment<br>grant (POST /), signs request with private key
-AS->>AS: 3.) Pulls keyId from grant request's signature-input<br>header, gets client's domain from request's body
-AS->>RS: 4.) Requests public keys from client's JWKS endpoint<br>GET {client_domain/jwks.json}
-RS-->>AS: 5.) 200 domain found,<br>returns public key
-AS->>AS: 6.) Uses public key to validate the signature in the client's<br>original request, binds client's domain to the grant
-AS-->>C: 7.) 200 OK
-note over AS: Explicit consent is collected from the client's user, facilitated by the client, authorization server, and IdP (not shown)
-C->>AS: 8.) Makes grant continuation request<br>(POST /continue) signed with private key
-AS->>AS: 9.) Pulls the keyId from the grant request's<br> signature-input header, gets client's domain<br>from the database entry for the grant
-AS->>RS: 10.) Requests public key bound to the domain from client's<br>JWKS endpoint GET {client_domain/jwks.json}
-RS-->>AS: 11.) 200 domain found,<br>returns public key
-AS->>AS: 12.) Finds the registry key with the matching<br> keyId, validates signature with key
-AS-->>C: 13.) 200 success,<br>access token issued,<br>grant continuation request complete
+    autonumber
+    participant C as Client
+    participant AS as Authorization server
+    participant RS as Resource server
+    C->>C: Generates public/private key pair,<br/>adds the public key to its key registry
+    C->RS: Public key uploaded to the resource server
+    C->>AS: POST grant request (interactive outgoing-payment), <br/>signed with private key
+    AS->>AS: Pulls keyId from grant request's signature-input <br/>header, gets client's domain from request's body
+    AS->>RS: GET {client_domain/jwks.json} public keys<br/> from client's JWKS endpoint
+    RS-->>AS: 200 JWKS document found, <br/>returns public key
+    AS->>AS: Validates the signature in the client's original request <br/>using the public key, binds client's domain to the grant
+    AS-->>C: 200 OK
+    note over AS: Explicit consent is collected from the client's user, facilitated by the client, authorization server, and IdP (not shown)
+    C->>AS: POST grant continuation request, <br/>signed with private key
+    AS->>AS: Pulls the keyId from the grant request's <br/>signature-input header, gets client's domain <br/>from the database entry for the grant
+    AS->>RS: GET {client_domain/jwks.json} public key bound <br/>to the domain from client's JWKS endpoint
+    RS-->>AS: 200 JWKS document found, <br/>returns public key
+    AS->>AS: Validates signature with the <br/>key found in the registry
+    AS-->>C: 200 success, access token issued, <br/>grant continuation request complete
 `}
 />
 

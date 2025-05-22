@@ -1,21 +1,22 @@
 ---
 title: Create a grant request
+tableOfContents:
+  maxHeadingLevel: 2
 ---
 
-import { CodeBlock, LinkOut } from '@interledger/docs-design-system'
-import { Tabs, TabItem } from '@astrojs/starlight/components'
+import { CodeBlock, LinkOut, Tooltip } from '@interledger/docs-design-system'
+import { Tabs, TabItem, LinkButton } from '@astrojs/starlight/components'
 import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Begin from '/src/partials/before-you-begin.mdx'
-import Ts from '/src/partials/ts-prerequisites.mdx'
-import Js from '/src/partials/js-prerequisites.mdx'
+import Ts from '/src/partials/ts-init-config.mdx'
+import TsImport from '/src/partials/ts-import-initialize.mdx'
+import PhpImport from '/src/partials/php-import-initialize.mdx'
 
-Before a client can call the Open Payments APIs, it must request and receive a grant from the appropriate authorization server. The request must indicate the resource type the client intends to work with and the actions the client wants to take at the resource server. The response includes a `continue` object, which is part of the standard grant response format. This object is included in all grant responses but is used for interactive grants to obtain explicit user consent. While outgoing payments are interactive by default, implementations have the option to make other grants interactive if desired.
+Before a client can call most of the Open Payments APIs, it must receive a grant from the appropriate authorization server.
 
-These code snippets enable a client to request a grant for the `incoming-payment`, `quote`, and `outgoing-payment` resource types. Each request includes all valid actions the client can take for the resource type.
+The request to the authorization server must indicate the access type (`incoming-payment`, `quote`, or `outgoing-payment`) and actions the client wants to take at the resource server.
 
-:::note
-When setting up a payment, the client first requests a grant from the recipient's (payee's) authorization server to create an `incoming-payment` resource. The client then requests grants to create the `quote` and `outgoing-payment` resources from the sender's (payer's) authorization server.
-:::
+The snippets below enable a client to request a grant for each resource type.
 
 ## Before you begin
 
@@ -23,21 +24,16 @@ When setting up a payment, the client first requests a grant from the recipient'
 
 ## Request an incoming payment grant
 
-<Tabs>
-<TabItem label='TypeScript'>
-<Ts />
+<Tabs syncKey="langs">
+<TabItem label='TypeScript/JavaScript'>
+<LinkButton href="https://github.com/interledger/open-payments-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-#### Get started
+<details>
+  <summary>Initial configuration</summary>
+  <Ts />
+</details>
 
-<ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-incoming-payment.ts'
-  chunk='1'
-/>
-
-<ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-incoming-payment.ts'
-  chunk='2'
-/>
+<TsImport />
 
 <ChunkedSnippet
   source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-incoming-payment.ts'
@@ -59,76 +55,50 @@ When setting up a payment, the client first requests a grant from the recipient'
   chunk='6'
 />
 
-Run `tsx path/to/directory/index.ts`.
+For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href='https://github.com/interledger/open-payments-snippets/blob/main/grant/grant-incoming-payment.ts'>View full TS source</LinkOut>
 
-{/* prettier-ignore */}
-<p>
-  <LinkOut href='https://github.com/interledger/open-payments-snippets/blob/main/grant/grant-incoming-payment.ts'>View full source</LinkOut>
-</p>
+For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://github.com/interledger/open-payments-snippets/blob/main/grant/grant-incoming-payment.js'>View full JS source</LinkOut>
 
 </TabItem>
-<TabItem label='JavaScript'>
-<Js />
+<TabItem label="PHP">
+<LinkButton href="https://github.com/interledger/open-payments-php-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-#### Get started
-
-<ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-incoming-payment.ts'
-  chunk='1'
-/>
+<PhpImport />
 
 <ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-incoming-payment.ts'
-  chunk='2'
-/>
-
-<ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-incoming-payment.ts'
+  source='https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/Grant/GrantIncomingPayment.php'
   chunk='3'
 />
-
 <ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-incoming-payment.ts'
+  source='https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/Grant/GrantIncomingPayment.php'
   chunk='4'
 />
-
 <ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-incoming-payment.ts'
+  source='https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/Grant/GrantIncomingPayment.php'
   chunk='5'
 />
-
 <ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-incoming-payment.ts'
+  source='https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/Grant/GrantIncomingPayment.php'
   chunk='6'
 />
-
-Run `node path/to/directory/index.js`.
-
 {/* prettier-ignore */}
-<p>
-  <LinkOut href='https://github.com/interledger/open-payments-snippets/blob/main/grant/grant-incoming-payment.js'>View full source</LinkOut>
-</p>
 
+<p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Grant/GrantIncomingPayment.php'>View full source</LinkOut></p>
 </TabItem>
 </Tabs>
 
 ## Request a quote grant
 
-<Tabs>
-<TabItem label='TypeScript'>
-<Ts />
+<Tabs syncKey="langs">
+<TabItem label='TypeScript/JavaScript'>
+<LinkButton href="https://github.com/interledger/open-payments-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-#### Get started
+<details>
+  <summary>Initial configuration</summary>
+  <Ts />
+</details>
 
-<ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-quote.ts'
-  chunk='1'
-/>
-
-<ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-quote.ts'
-  chunk='2'
-/>
+<TsImport />
 
 <ChunkedSnippet
   source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-quote.ts'
@@ -150,78 +120,54 @@ Run `node path/to/directory/index.js`.
   chunk='6'
 />
 
-Run `tsx path/to/directory/index.ts`.
+For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href='https://github.com/interledger/open-payments-snippets/blob/main/grant/grant-quote.ts'>View full TS source</LinkOut>
 
-{/* prettier-ignore */}
-<p>
-  <LinkOut href='https://github.com/interledger/open-payments-snippets/blob/main/grant/grant-quote.ts'>View full source</LinkOut>
-</p>
+For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://github.com/interledger/open-payments-snippets/blob/main/grant/grant-quote.js'>View full JS source</LinkOut>
 
 </TabItem>
-<TabItem label='JavaScript'>
-<Js />
+<TabItem label="PHP">
+<LinkButton href="https://github.com/interledger/open-payments-php-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-#### Get started
-
-<ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-quote.ts'
-  chunk='1'
-/>
+<PhpImport />
 
 <ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-quote.ts'
-  chunk='2'
-/>
-
-<ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-quote.ts'
+  source='https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/Grant/GrantQuote.php'
   chunk='3'
 />
-
 <ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-quote.ts'
+  source='https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/Grant/GrantQuote.php'
   chunk='4'
 />
-
 <ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-quote.ts'
+  source='https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/Grant/GrantQuote.php'
   chunk='5'
 />
-
 <ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-quote.ts'
+  source='https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/Grant/GrantQuote.php'
   chunk='6'
 />
-
-Run `node path/to/directory/index.js`.
-
 {/* prettier-ignore */}
-<p>
-  <LinkOut href='https://github.com/interledger/open-payments-snippets/blob/main/grant/grant-quote.js'>View full source</LinkOut>
-</p>
 
+<p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Grant/GrantQuote.php'>View full source</LinkOut></p>
 </TabItem>
 </Tabs>
 
 ## Request an outgoing payment grant
 
-In Open Payments, an outgoing payment grant must be interactive. An interactive grant requires interaction from a user, typically a client's end-user, before the grant can be issued.
+In Open Payments, outgoing payments require explicit consent, usually by the client's user, before a grant can be issued. Consent is obtained through an interactive grant.
 
-<Tabs>
-<TabItem label='TypeScript'>
-<Ts />
+Open Payments also requires any authorization server that issues interactive grants to integrate with an [identity provider (IdP)](/introduction/idp). When the client requests the outgoing payment grant, the authorization server provides the client with the IdP URI the client should redirect to.
 
-#### Get started
+<Tabs syncKey="langs">
+<TabItem label='TypeScript/JavaScript'>
+<LinkButton href="https://github.com/interledger/open-payments-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-<ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-outgoing-payment.ts'
-  chunk='1'
-/>
+<details>
+  <summary>Initial configuration</summary>
+  <Ts />
+</details>
 
-<ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-outgoing-payment.ts'
-  chunk='2'
-/>
+<TsImport />
 
 <ChunkedSnippet
   source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-outgoing-payment.ts'
@@ -243,56 +189,52 @@ In Open Payments, an outgoing payment grant must be interactive. An interactive 
   chunk='6'
 />
 
-Run `tsx path/to/directory/index.ts`.
+For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href='https://github.com/interledger/open-payments-snippets/blob/main/grant/grant-outgoing-payment.ts'>View full TS source</LinkOut>
 
-{/* prettier-ignore */}
-<p>
-  <LinkOut href='https://github.com/interledger/open-payments-snippets/blob/main/grant/grant-outgoing-payment.ts'>View full source</LinkOut>
-</p>
+For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://github.com/interledger/open-payments-snippets/blob/main/grant/grant-outgoing-payment.js'>View full JS source</LinkOut>
 
 </TabItem>
-<TabItem label='JavaScript'>
-<Js />
+<TabItem label="PHP">
+<LinkButton href="https://github.com/interledger/open-payments-php-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-#### Get started
-
-<ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-outgoing-payment.ts'
-  chunk='1'
-/>
+<PhpImport />
 
 <ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-outgoing-payment.ts'
-  chunk='2'
-/>
-
-<ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-outgoing-payment.ts'
+  source='https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/Grant/GrantOutgoingPayment.php'
   chunk='3'
 />
 
+#### Generate without an interval
+
 <ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-outgoing-payment.ts'
+  source='https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/Grant/GrantOutgoingPayment.php'
+  chunk='4'
+/>
+
+#### Generate with an interval
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/Grant/GrantOutgoingPaymentInterval.php'
   chunk='4'
 />
 
 <ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-outgoing-payment.ts'
+  source='https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/Grant/GrantOutgoingPayment.php'
   chunk='5'
 />
-
 <ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-outgoing-payment.ts'
+  source='https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/Grant/GrantOutgoingPayment.php'
   chunk='6'
 />
-
-Run `node path/to/directory/index.js`.
-
 {/* prettier-ignore */}
+
 <p>
-  <LinkOut href='https://github.com/interledger/open-payments-snippets/blob/main/grant/grant-outgoing-payment.js'>View full source</LinkOut>
+  <LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Grant/GrantOutgoingPayment.php'>
+    View full source without interval
+  </LinkOut>
 </p>
 
+<p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Grant/GrantOutgoingPaymentInterval.php'>View full source with interval</LinkOut></p>
 </TabItem>
 </Tabs>
 
@@ -300,4 +242,3 @@ Run `node path/to/directory/index.js`.
 
 - [API specification](/apis/auth-server/operations/post-request)
 - [Grant negotiation and authorization](/introduction/grants)
-- [Create an interactive grant](/guides/create-interactive-grant)

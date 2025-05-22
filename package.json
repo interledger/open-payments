@@ -9,6 +9,7 @@
   "packageManager": "pnpm@8.15.6",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
+    "viewer:compose": "docker compose -f ./viewer/docker-compose.yml",
     "lint": "eslint --max-warnings=0 --fix .",
     "format": "prettier --write . && pnpm lint",
     "format:docs": "prettier --write ./docs/**/*.md",

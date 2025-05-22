@@ -3,13 +3,14 @@ title: List incoming payments
 ---
 
 import { CodeBlock, LinkOut } from '@interledger/docs-design-system'
-import { Tabs, TabItem } from '@astrojs/starlight/components'
+import { Tabs, TabItem, LinkButton } from '@astrojs/starlight/components'
 import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Begin from '/src/partials/before-you-begin.mdx'
-import Ts from '/src/partials/ts-prerequisites.mdx'
-import Js from '/src/partials/js-prerequisites.mdx'
+import Ts from '/src/partials/ts-init-config.mdx'
+import TsImport from '/src/partials/ts-import-initialize.mdx'
+import PhpImport from '/src/partials/php-import-initialize.mdx'
 
-After one or more incoming payments have been created on a wallet address, an authorized client can look up active and pending incoming payments on that wallet address.
+After one or more incoming payments are created on a wallet address, an authorized client can look up active and pending incoming payments on that wallet address.
 
 These code snippets retrieve the first ten incoming payments on the given wallet address.
 
@@ -17,23 +18,18 @@ These code snippets retrieve the first ten incoming payments on the given wallet
 
 <Begin />
 
-## List all incoming payments on a payment pointer
+## List all incoming payments on a wallet address
 
 <Tabs>
-<TabItem label='TypeScript'>
-<Ts />
+<TabItem label='TypeScript/JavaScript'>
+<LinkButton href="https://github.com/interledger/open-payments-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-#### Get started
+<details>
+  <summary>Initial configuration</summary>
+  <Ts />
+</details>
 
-<ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/incoming-payment/incoming-payment-list.ts'
-  chunk='1'
-/>
-
-<ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/incoming-payment/incoming-payment-list.ts'
-  chunk='2'
-/>
+<TsImport />
 
 <ChunkedSnippet
   source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/incoming-payment/incoming-payment-list.ts'
@@ -45,46 +41,30 @@ These code snippets retrieve the first ten incoming payments on the given wallet
   chunk='4'
 />
 
-Run `tsx path/to/directory/index.ts`.
+For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href='https://github.com/interledger/open-payments-snippets/blob/main/incoming-payment/incoming-payment-list.ts'>View full TS source</LinkOut>
 
-{/* prettier-ignore */}
-<p>
-  <LinkOut href='https://github.com/interledger/open-payments-snippets/blob/main/incoming-payment/incoming-payment-list.ts'>View full source</LinkOut>
-</p>
+For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://github.com/interledger/open-payments-snippets/blob/main/incoming-payment/incoming-payment-list.js'>View full JS source</LinkOut>
 
 </TabItem>
-<TabItem label='JavaScript'>
-<Js />
+<TabItem label="PHP">
+<LinkButton href="https://github.com/interledger/open-payments-php-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-#### Get started
-
-<ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/incoming-payment/incoming-payment-list.ts'
-  chunk='1'
-/>
+<PhpImport />
 
 <ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/incoming-payment/incoming-payment-list.ts'
-  chunk='2'
-/>
-
-<ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/incoming-payment/incoming-payment-list.ts'
+  source='https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/IncomingPayment/IncomingPaymentList.php'
   chunk='3'
 />
-
 <ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/incoming-payment/incoming-payment-list.ts'
+  source='https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/IncomingPayment/IncomingPaymentList.php'
   chunk='4'
 />
-
-Run `node path/to/directory/index.js`.
-
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/IncomingPayment/IncomingPaymentList.php'
+  chunk='5'
+/>
 {/* prettier-ignore */}
-<p>
-  <LinkOut href='https://github.com/interledger/open-payments-snippets/blob/main/incoming-payment/incoming-payment-list.js'>View full source</LinkOut>
-</p>
-
+<p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/IncomingPayment/IncomingPaymentList.php'>View full source</LinkOut></p>
 </TabItem>
 </Tabs>
 

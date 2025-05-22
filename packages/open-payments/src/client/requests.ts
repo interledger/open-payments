@@ -159,13 +159,18 @@ export const handleError = async (
   let errorStatus
   let validationErrors
   let errorCode
+  let errorDetails
 
   const { HTTPError } = await import('ky')
 
   if (error instanceof HTTPError) {
     let responseBody:
       | {
-          error: { description: string; code: string }
+          error: {
+            description: string
+            code: string
+            details: Record<string, unknown>
+          }
         }
       | string
       | undefined
@@ -184,6 +189,8 @@ export const handleError = async (
         : responseBody || error.message
     errorCode =
       typeof responseBody === 'object' ? responseBody.error?.code : undefined
+    errorDetails =
+      typeof responseBody === 'object' ? responseBody.error?.details : undefined
   } else if (isValidationError(error)) {
     errorDescription = 'Could not validate OpenAPI response'
     validationErrors = error.errors.map((e) => e.message)
@@ -211,7 +218,8 @@ export const handleError = async (
     description: errorDescription,
     validationErrors,
     status: errorStatus,
-    code: errorCode
+    code: errorCode,
+    details: errorDetails
   })
 }
 

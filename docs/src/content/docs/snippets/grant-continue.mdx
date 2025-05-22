@@ -3,11 +3,12 @@ title: Continue a grant request
 ---
 
 import { CodeBlock, LinkOut } from '@interledger/docs-design-system'
-import { Tabs, TabItem } from '@astrojs/starlight/components'
+import { Tabs, TabItem, LinkButton } from '@astrojs/starlight/components'
 import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Begin from '/src/partials/before-you-begin.mdx'
-import Ts from '/src/partials/ts-prerequisites.mdx'
-import Js from '/src/partials/js-prerequisites.mdx'
+import Ts from '/src/partials/ts-init-config.mdx'
+import TsImport from '/src/partials/ts-import-initialize.mdx'
+import PhpImport from '/src/partials/php-import-initialize.mdx'
 
 During a grant request flow, an authorization server can require an individual (typically a client's end user) to approve the grant by interacting directly with the server. For example, by tapping an Approve button on a web page provided by the auth server.
 
@@ -26,20 +27,15 @@ After the user completes their interaction with the identity provider (IdP), the
 ## Issue grant continuation request
 
 <Tabs>
-<TabItem label='TypeScript'>
-<Ts />
+<TabItem label='TypeScript/JavaScript'>
+<LinkButton href="https://github.com/interledger/open-payments-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-#### Get started
+<details>
+  <summary>Initial configuration</summary>
+  <Ts />
+</details>
 
-<ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-continuation.ts'
-  chunk='1'
-/>
-
-<ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-continuation.ts'
-  chunk='2'
-/>
+<TsImport />
 
 <ChunkedSnippet
   source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-continuation.ts'
@@ -56,52 +52,31 @@ After the user completes their interaction with the identity provider (IdP), the
   chunk='5'
 />
 
-Run `tsx path/to/directory/index.ts`.
+For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href='https://github.com/interledger/open-payments-snippets/blob/main/grant/grant-continuation.ts'>View full TS source</LinkOut>
 
-{/* prettier-ignore */}
-<p>
-  <LinkOut href='https://github.com/interledger/open-payments-snippets/blob/main/grant/grant-continuation.ts'>View full source</LinkOut>
-</p>
+For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://github.com/interledger/open-payments-snippets/blob/main/grant/grant-continuation.js'>View full JS source</LinkOut>
 
 </TabItem>
+<TabItem label="PHP">
+<LinkButton href="https://github.com/interledger/open-payments-php-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-<TabItem label='JavaScript'>
-<Js />
-
-#### Get started
-
-<ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-continuation.ts'
-  chunk='1'
-/>
+<PhpImport />
 
 <ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-continuation.ts'
-  chunk='2'
-/>
-
-<ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-continuation.ts'
+  source='https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/Grant/GrantContinuation.php'
   chunk='3'
 />
-
 <ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-continuation.ts'
+  source='https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/Grant/GrantContinuation.php'
   chunk='4'
 />
-
 <ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-continuation.ts'
+  source='https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/Grant/GrantContinuation.php'
   chunk='5'
 />
-
-Run `node path/to/directory/index.js`.
-
 {/* prettier-ignore */}
-<p>
-  <LinkOut href='https://github.com/interledger/open-payments-snippets/blob/main/grant/grant-continuation.js'>View full source</LinkOut>
-</p>
 
+<p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Grant/GrantContinuation.php'>View full source</LinkOut></p>
 </TabItem>
 </Tabs>
 
@@ -109,4 +84,3 @@ Run `node path/to/directory/index.js`.
 
 - [API specification](/apis/auth-server/operations/post-continue)
 - [Grant negotiation and authorization](/introduction/grants)
-- [Create an interactive grant](/guides/create-interactive-grant)
