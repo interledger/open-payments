@@ -235,15 +235,15 @@ export interface components {
         };
         /**
          * subject
-         * @description Information about the subject for which the client is requesting information
+         * @description Information about the subject for which the client is requesting information.
          */
         subject: {
-            /** @description null */
+            /** @description A list of subject identifiers. */
             sub_ids: {
-                /** @description Specific identifier for the subject for which the client is requesting information */
+                /** @description Specific identifier for the subject for which the client is requesting information. */
                 id?: string;
                 /**
-                 * @description The format of subject identifier that the client can accept
+                 * @description The format of subject identifier that the client can accept.
                  * @enum {string}
                  */
                 format?: "uri";

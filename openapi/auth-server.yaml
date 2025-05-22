@@ -628,20 +628,20 @@ components:
     subject:
       title: subject
       type: object
-      description: Information about the subject for which the client is requesting information
+      description: Information about the subject for which the client is requesting information.
       properties:
         sub_ids:
           type: array
-          description:
+          description: A list of subject identifiers.
           items:
             type: object
             properties:
               id:
                 type: string
-                description: Specific identifier for the subject for which the client is requesting information
+                description: Specific identifier for the subject for which the client is requesting information.
               format:
                 type: string
-                description: The format of subject identifier that the client can accept
+                description: The format of subject identifier that the client can accept.
                 enum:
                   - uri
           minItems: 1
