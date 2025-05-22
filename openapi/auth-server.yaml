@@ -125,8 +125,9 @@ paths:
               Grant request for subject information:
                 value:
                   subject:
-                    sub_id_formats: ['uri']
-                    sub_ids: ['https://wallet.example.com/alice']
+                    sub_ids:
+                      - id: 'https://wallet.example.com/alice'
+                        format: 'uri'
                   client: 'https://webmonize.com/.well-known/pay'
                   interact:
                     start:
