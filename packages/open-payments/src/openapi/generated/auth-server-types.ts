@@ -202,18 +202,14 @@ export interface components {
             /** @description Unique key to secure the callback. */
             finish: string;
         };
-        "grant-request-with-access-token": {
-            client: components["schemas"]["client"];
-            access_token: {
+        "grant-request": {
+            client?: components["schemas"]["client"];
+            access_token?: {
                 access: components["schemas"]["access"];
             };
+            subject?: components["schemas"]["subject"];
             interact?: components["schemas"]["interact-request"];
-        };
-        "grant-request-with-subject": {
-            client: components["schemas"]["client"];
-            subject: components["schemas"]["subject"];
-            interact?: components["schemas"]["interact-request"];
-        };
+        } | unknown | unknown;
         /**
          * Interval
          * @description [ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)
@@ -242,10 +238,16 @@ export interface components {
          * @description Information about the subject for which the client is requesting information
          */
         subject: {
-            /** @description The formats of subject identifiers that the client can accept */
-            sub_id_formats: "uri"[];
-            /** @description Specific identifiers for the subject for which the client is requesting information */
-            sub_ids: string[];
+            /** @description null */
+            sub_ids: {
+                /** @description Specific identifier for the subject for which the client is requesting information */
+                id?: string;
+                /**
+                 * @description The format of subject identifier that the client can accept
+                 * @enum {string}
+                 */
+                format?: "uri";
+            }[];
         };
         "error-invalid-client": {
             error?: {
@@ -333,7 +335,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["grant-request-with-access-token"] | components["schemas"]["grant-request-with-subject"];
+                "application/json": components["schemas"]["grant-request"];
             };
         };
         responses: {
