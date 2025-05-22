@@ -583,8 +583,8 @@ components:
         interact:
           $ref: '#/components/schemas/interact-request'
       anyOf:
-       - required: [client, access_token]
-       - required: [client, subject]
+        - required: [client, access_token]
+        - required: [client, subject]
     interval:
       title: Interval
       type: string
