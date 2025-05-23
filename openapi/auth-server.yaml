@@ -481,6 +481,8 @@ components:
           description: The number of seconds in which the access will expire.  The client instance MUST NOT use the access token past this time.  An RS MUST NOT accept an access token past this time.
         access:
           $ref: '#/components/schemas/access'
+        subject:
+          $ref: '#/components/schemas/subject/properties/sub_ids'
       required:
         - value
         - manage
