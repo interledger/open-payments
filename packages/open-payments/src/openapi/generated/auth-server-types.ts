@@ -140,6 +140,7 @@ export interface components {
             /** @description The number of seconds in which the access will expire.  The client instance MUST NOT use the access token past this time.  An RS MUST NOT accept an access token past this time. */
             expires_in?: number;
             access: components["schemas"]["access"];
+            subjects?: components["schemas"]["subject"]["sub_ids"];
         };
         /**
          * client
@@ -202,6 +203,14 @@ export interface components {
             /** @description Unique key to secure the callback. */
             finish: string;
         };
+        "grant-request": {
+            client?: components["schemas"]["client"];
+            access_token?: {
+                access: components["schemas"]["access"];
+            };
+            subject?: components["schemas"]["subject"];
+            interact?: components["schemas"]["interact-request"];
+        } | unknown | unknown;
         /**
          * Interval
          * @description [ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)
@@ -224,6 +233,22 @@ export interface components {
             interval?: components["schemas"]["interval"];
             /** @description All amounts are maxima, i.e. multiple payments can be created under a grant as long as the total amounts of these payments do not exceed the maximum amount per interval as specified in the grant. */
             receiveAmount: components["schemas"]["amount"];
+        };
+        /**
+         * subject
+         * @description Information about the subject for which the client is requesting information.
+         */
+        subject: {
+            /** @description A list of subject identifiers. */
+            sub_ids: {
+                /** @description Specific identifier for the subject for which the client is requesting information. */
+                id?: string;
+                /**
+                 * @description The format of subject identifier that the client can accept.
+                 * @enum {string}
+                 */
+                format?: "uri";
+            }[];
         };
         "error-invalid-client": {
             error?: {
@@ -311,13 +336,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": {
-                    access_token: {
-                        access: components["schemas"]["access"];
-                    };
-                    client: components["schemas"]["client"];
-                    interact?: components["schemas"]["interact-request"];
-                };
+                "application/json": components["schemas"]["grant-request"];
             };
         };
         responses: {
