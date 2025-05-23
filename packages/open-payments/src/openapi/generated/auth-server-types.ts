@@ -140,7 +140,7 @@ export interface components {
             /** @description The number of seconds in which the access will expire.  The client instance MUST NOT use the access token past this time.  An RS MUST NOT accept an access token past this time. */
             expires_in?: number;
             access: components["schemas"]["access"];
-            subject?: components["schemas"]["subject"]["sub_ids"];
+            subjects?: components["schemas"]["subject"]["sub_ids"];
         };
         /**
          * client
