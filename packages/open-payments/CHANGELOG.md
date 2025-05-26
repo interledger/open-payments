@@ -1,5 +1,11 @@
 # @interledger/open-payments
 
+## 7.1.0
+
+### Minor Changes
+
+- ddaef03: Add details to error object of responses
+
 ## 7.0.0
 
 ### Major Changes
