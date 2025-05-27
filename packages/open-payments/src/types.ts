@@ -88,6 +88,7 @@ export type NonInteractiveGrantRequest = {
 export type Grant = {
   access_token: ASComponents['schemas']['access_token']
   continue: ASComponents['schemas']['continue']
+  subject?: ASComponents['schemas']['subject']
 }
 export type GrantContinuation = {
   continue: ASComponents['schemas']['continue']

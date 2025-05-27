@@ -647,6 +647,9 @@ components:
                 description: The format of subject identifier that the client can accept.
                 enum:
                   - uri
+            required:
+              - id
+              - format
           minItems: 1
       required:
         - sub_ids

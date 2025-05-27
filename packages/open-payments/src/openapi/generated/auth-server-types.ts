@@ -242,12 +242,12 @@ export interface components {
             /** @description A list of subject identifiers. */
             sub_ids: {
                 /** @description Specific identifier for the subject for which the client is requesting information. */
-                id?: string;
+                id: string;
                 /**
                  * @description The format of subject identifier that the client can accept.
                  * @enum {string}
                  */
-                format?: "uri";
+                format: "uri";
             }[];
         };
         "error-invalid-client": {
