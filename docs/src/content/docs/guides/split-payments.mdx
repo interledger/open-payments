@@ -7,6 +7,7 @@ import { Tabs, TabItem } from '@astrojs/starlight/components'
 import HttpSig from '/src/partials/http-msg-sig-note.mdx'
 import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Ts from '/src/partials/ts-import-initialize.mdx'
+import InteractionReq from '/src/partials/interaction-required.mdx'
 import StartInteraction from '/src/partials/grant-start-interaction.mdx'
 import FinishInteraction from '/src/partials/grant-finish-interaction.mdx'
 
@@ -235,9 +236,7 @@ const platformQuote = await client.quote.create(
 
 Request an interactive `outgoingPayment` grant from the customer wallet authorization server.
 
-:::note
-Outgoing payments require an interactive grant. This type of grant will obtain the customer's consent before an outgoing payment is made against their wallet account. You can find more information in the [Open Payments flow](/introduction/op-flow/#outgoing-payment) and [identity providers](/introduction/idp) pages.
-:::
+<InteractionReq />
 
 Include the `receiveAmount` object within the `limits` object. The `value` property must be the total amount the customer has agreed to pay.
 
