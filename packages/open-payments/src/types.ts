@@ -94,9 +94,10 @@ export type GrantContinuation = {
   continue: ASComponents['schemas']['continue']
 }
 export type GrantRequest = {
-  access_token: { access: GrantRequestAccessItem[] }
+  access_token?: { access: GrantRequestAccessItem[] }
   client: ASOperations['post-request']['requestBody']['content']['application/json']['client']
   interact?: ASOperations['post-request']['requestBody']['content']['application/json']['interact']
+  subject?: ASComponents['schemas']['subject']
 }
 
 export type GrantContinuationRequest =

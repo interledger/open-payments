@@ -349,10 +349,11 @@ export interface operations {
                     "application/json": {
                         interact: components["schemas"]["interact-response"];
                         continue: components["schemas"]["continue"];
-                    } | {
-                        access_token: components["schemas"]["access_token"];
-                        continue: components["schemas"]["continue"];
-                    };
+                    } | ({
+                        access_token?: components["schemas"]["access_token"];
+                        continue?: components["schemas"]["continue"];
+                        subject?: components["schemas"]["subject"];
+                    } | unknown | unknown);
                 };
             };
             /** @description Bad Request */

@@ -41,9 +41,11 @@ paths:
                         $ref: '#/components/schemas/access_token'
                       continue:
                         $ref: '#/components/schemas/continue'
-                    required:
-                      - access_token
-                      - continue
+                      subject:
+                        $ref: '#/components/schemas/subject'
+                    anyOf:
+                      - required: [access_token, continue]
+                      - required: [subject, continue]
                 type: object
               examples:
                 Interaction instructions:
@@ -56,7 +58,7 @@ paths:
                         value: 33OMUKMKSKU80UPRY5NM
                       uri: 'https://auth.interledger-test.dev/continue/4CF492MLVMSW9MKMXKHQ'
                       wait: 30
-                Grant:
+                Grant with Access Token:
                   value:
                     access_token:
                       value: OS9M2PMHKUR64TB8N6BW7OZB8CDFONP219RP1LT0
@@ -68,6 +70,16 @@ paths:
                             - create
                             - read
                           identifier: 'https://ilp.interledger-test.dev/bob'
+                    continue:
+                      access_token:
+                        value: 33OMUKMKSKU80UPRY5NM
+                      uri: 'https://auth.interledger-test.dev/continue/4CF492MLVMSW9MKMXKHQ'
+                Grant with Subject Information:
+                  value:
+                    subject:
+                      sub_ids:
+                        - id: 'https://wallet.example.com/alice'
+                          format: 'uri'
                     continue:
                       access_token:
                         value: 33OMUKMKSKU80UPRY5NM
