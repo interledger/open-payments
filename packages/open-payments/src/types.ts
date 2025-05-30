@@ -82,20 +82,22 @@ export type CreateQuoteArgs =
 export const getASPath = <P extends keyof ASPaths>(path: P): string =>
   path as string
 export type NonInteractiveGrantRequest = {
-  access_token: ASOperations['post-request']['requestBody']['content']['application/json']['access_token']
+  access_token: { access: GrantRequestAccessItem[] }
   client: ASOperations['post-request']['requestBody']['content']['application/json']['client']
 }
 export type Grant = {
   access_token: ASComponents['schemas']['access_token']
   continue: ASComponents['schemas']['continue']
+  subject?: ASComponents['schemas']['subject']
 }
 export type GrantContinuation = {
   continue: ASComponents['schemas']['continue']
 }
 export type GrantRequest = {
-  access_token: { access: GrantRequestAccessItem[] }
+  access_token?: { access: GrantRequestAccessItem[] }
   client: ASOperations['post-request']['requestBody']['content']['application/json']['client']
   interact?: ASOperations['post-request']['requestBody']['content']['application/json']['interact']
+  subject?: ASComponents['schemas']['subject']
 }
 
 export type GrantContinuationRequest =
