@@ -140,7 +140,6 @@ export interface components {
             /** @description The number of seconds in which the access will expire.  The client instance MUST NOT use the access token past this time.  An RS MUST NOT accept an access token past this time. */
             expires_in?: number;
             access: components["schemas"]["access"];
-            subjects?: components["schemas"]["subject"]["sub_ids"];
         };
         /**
          * client
@@ -203,14 +202,21 @@ export interface components {
             /** @description Unique key to secure the callback. */
             finish: string;
         };
-        "grant-request": {
-            client?: components["schemas"]["client"];
-            access_token?: {
+        grant_request: {
+            client: components["schemas"]["client"];
+            interact?: components["schemas"]["interact-request"];
+            access_token: {
                 access: components["schemas"]["access"];
             };
             subject?: components["schemas"]["subject"];
+        } | {
+            client: components["schemas"]["client"];
             interact?: components["schemas"]["interact-request"];
-        } | unknown | unknown;
+            access_token?: {
+                access: components["schemas"]["access"];
+            };
+            subject: components["schemas"]["subject"];
+        };
         /**
          * Interval
          * @description [ISO8601 repeating interval](https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals)
@@ -336,7 +342,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["grant-request"];
+                "application/json": components["schemas"]["grant_request"];
             };
         };
         responses: {

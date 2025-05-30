@@ -108,7 +108,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/grant-request'
+              $ref: '#/components/schemas/grant_request'
             examples:
               Grant request for creating and reading recurring fixed payment:
                 value:
@@ -493,8 +493,6 @@ components:
           description: The number of seconds in which the access will expire.  The client instance MUST NOT use the access token past this time.  An RS MUST NOT accept an access token past this time.
         access:
           $ref: '#/components/schemas/access'
-        subjects:
-          $ref: '#/components/schemas/subject/properties/sub_ids'
       required:
         - value
         - manage
@@ -582,24 +580,40 @@ components:
       required:
         - redirect
         - finish
-    grant-request:
-      type: object
-      properties:
-        client:
-          $ref: '#/components/schemas/client'
-        access_token:
-          type: object
-          required: [access]
-          properties:
-            access:
-              $ref: '#/components/schemas/access'
-        subject:
-          $ref: '#/components/schemas/subject'
-        interact:
-          $ref: '#/components/schemas/interact-request'
+    grant_request:
       anyOf:
-        - required: [client, access_token]
-        - required: [client, subject]
+        - title: with Access Token
+          type: object
+          properties:
+            client:
+              $ref: '#/components/schemas/client'
+            interact:
+              $ref: '#/components/schemas/interact-request'
+            access_token:
+              type: object
+              required: [access]
+              properties:
+                access:
+                  $ref: '#/components/schemas/access'
+            subject:
+              $ref: '#/components/schemas/subject'
+          required: [client, access_token]
+        - title: with Subject
+          type: object
+          properties:
+            client:
+              $ref: '#/components/schemas/client'
+            interact:
+              $ref: '#/components/schemas/interact-request'
+            access_token:
+              type: object
+              required: [access]
+              properties:
+                access:
+                  $ref: '#/components/schemas/access'
+            subject:
+              $ref: '#/components/schemas/subject'
+          required: [client, subject]
     interval:
       title: Interval
       type: string
