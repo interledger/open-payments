@@ -235,6 +235,10 @@ export default defineConfig({
             {
               label: 'Split an incoming payment',
               link: '/guides/split-payments/'
+            },
+            {
+              label: 'Get an outgoing payment grant without recipients',
+              link: '/guides/outgoing-grant-no-recipients/'
             }
           ]
         },
