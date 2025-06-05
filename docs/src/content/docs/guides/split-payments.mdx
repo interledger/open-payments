@@ -82,7 +82,7 @@ If you and the merchant use the same account servicing entity, and the authoriza
 ```ts wrap
 const merchantIncomingPaymentGrant = await client.grant.request(
   {
-    url: merchantWalletAddress.authServer,
+    url: merchantWalletAddress.authServer
   },
   {
     access_token: {
@@ -101,7 +101,7 @@ const merchantIncomingPaymentGrant = await client.grant.request(
 ```ts wrap
 const platformIncomingPaymentGrant = await client.grant.request(
   {
-    url: platformWalletAddress.authServer,
+    url: platformWalletAddress.authServer
   },
   {
     access_token: {
@@ -152,7 +152,7 @@ const merchantIncomingPayment = await client.incomingPayment.create(
 ```ts wrap
 const platformIncomingPayment = await client.incomingPayment.create(
   {
-    url: platformWalletAddress.resourceServier,
+    url: platformWalletAddress.resourceServer,
     accessToken: platformIncomingPaymentGrant.access_token.value
   },
   {
