@@ -80,7 +80,7 @@ If you and the merchant use the same account servicing entity, and the authoriza
 <Tabs>
 <TabItem label = 'Merchant'>
 ```ts wrap
-const merchantGrant = await client.grant.request(
+const merchantIncomingPaymentGrant = await client.grant.request(
   {
     url: merchantWalletAddress.authServer,
   },
@@ -99,7 +99,7 @@ const merchantGrant = await client.grant.request(
 </TabItem>
 <TabItem label = 'Platform'>
 ```ts wrap
-const platformGrant = await client.grant.request(
+const platformIncomingPaymentGrant = await client.grant.request(
   {
     url: platformWalletAddress.authServer,
   },
@@ -130,11 +130,11 @@ In this example, you will give the merchant 99% of the payment while retaining 1
 ```ts wrap
 const merchantIncomingPayment = await client.incomingPayment.create(
   {
-    url: new URL(WALLET_ADDRESS).origin,
-    accessToken: INCOMING_PAYMENT_ACCESS_TOKEN
+    url: merchantWalletAddress.resourceServer,
+    accessToken: merchantIncomingPaymentGrant.access_token.value
   },
   {
-    walletAddress: MERCHANT_WALLET_ADDRESS,
+    walletAddress: merchantWalletAddress.id,
     incomingAmount: {
       value: '9900',
       assetCode: 'USD',
@@ -152,11 +152,11 @@ const merchantIncomingPayment = await client.incomingPayment.create(
 ```ts wrap
 const platformIncomingPayment = await client.incomingPayment.create(
   {
-    url: new URL(WALLET_ADDRESS).origin,
-    accessToken: INCOMING_PAYMENT_ACCESS_TOKEN
+    url: platformWalletAddress.resourceServier,
+    accessToken: platformIncomingPaymentGrant.access_token.value
   },
   {
-    walletAddress: PLATFORM_WALLET_ADDRESS,
+    walletAddress: platformWalletAddress.id,
     incomingAmount: {
       value: '100',
       assetCode: 'USD',
@@ -175,7 +175,7 @@ const platformIncomingPayment = await client.incomingPayment.create(
 Request a `quote` grant from the customer wallet authorization server. You received the authorization server URL as part of Step 1.
 
 ```ts wrap
-const customerGrant = await client.grant.request(
+const customerQuoteGrant = await client.grant.request(
   {
     url: customerWalletAddress.authServer
   },
@@ -196,20 +196,18 @@ const customerGrant = await client.grant.request(
 
 Using the customer-side access token received from the previous step, request the creation of two `quote` resources: one on the merchant wallet account and one on your platform wallet account.
 
-Each request should contain its respective `INCOMING_PAYMENT_URL` received from Step 3.
-
 <Tabs>
 <TabItem label = 'Merchant'>
 ```ts wrap
 const merchantQuote = await client.quote.create(
   {
-    url: new URL(WALLET_ADDRESS).origin,
-    accessToken: QUOTE_ACCESS_TOKEN
+    url: customerWalletAddress.resourceServer,
+    accessToken: customerQuoteGrant.access_token.value
   },
   {
     method: 'ilp',
-    walletAddress: WALLET_ADDRESS,
-    receiver: INCOMING_PAYMENT_URL
+    walletAddress: customerWalletAddress.id,
+    receiver: merchantIncomingPayment.id
   }
 )
 ```
@@ -218,13 +216,13 @@ const merchantQuote = await client.quote.create(
 ```ts wrap
 const platformQuote = await client.quote.create(
   {
-    url: new URL(WALLET_ADDRESS).origin,
-    accessToken: QUOTE_ACCESS_TOKEN
+    url: customerWalletAddress.resourceServer,
+    accessToken: customerQuoteGrant.access_token.value
   },
   {
     method: 'ilp',
-    walletAddress: WALLET_ADDRESS,
-    receiver: INCOMING_PAYMENT_URL
+    walletAddress: customerWalletAddress.id,
+    receiver: platformIncomingPayment.id
   }
 )
 ```
@@ -242,7 +240,7 @@ Outgoing payments require an interactive grant. This type of grant will obtain t
 Include the `receiveAmount` object within the `limits` object. The `value` property must be the total amount the customer has agreed to pay.
 
 ```ts wrap
-const customerGrant = await client.grant.request(
+const pendingCustomerOutgoingPaymentGrant = await client.grant.request(
   {
     url: customerWalletAddress.authServer
   },
@@ -296,10 +294,10 @@ In a scenario where a user interface is not available, consider implementing a p
 Add the `interact_ref` returned by the client wallet authorization server in the previous step.
 
 ```ts wrap
-const customerGrant = await client.grant.continue(
+const customerOutgoingPaymentGrant = await client.grant.continue(
   {
-    accessToken: CONTINUE_ACCESS_TOKEN,
-    url: CONTINUE_URI
+    url: pendingCustomerOutgoingPaymentGrant.continue.uri,
+    accessToken: pendingCustomerOutgoingPaymentGrant.continue.access_token.value
   },
   {
     interact_ref: interactRef
@@ -358,7 +356,7 @@ The `quoteId` is the URL of the quote that specified the amount to be paid to th
 const customerOutgoingPayment = await client.outgoingPayment.create(
   {
     url: customerWalletAddress.resourceServer,
-    accessToken: OUTGOING_PAYMENT_ACCESS_TOKEN
+    accessToken: customerOutgoingPaymentGrant.access_token.value
   },
   {
     walletAddress: customerWalletAddress.id,
@@ -374,8 +372,8 @@ const customerOutgoingPayment = await client.outgoingPayment.create(
 ```ts wrap
 const customerOutgoingPayment = await client.outgoingPayment.create(
   {
-    url: new URL(WALLET_ADDRESS).origin,
-    accessToken: OUTGOING_PAYMENT_ACCESS_TOKEN
+    url: customerWalletAddress.resourceServer,
+    accessToken: customerOutgoingPaymentGrant.access_token.value
   },
   {
     walletAddress: customerWalletAddress.id,
