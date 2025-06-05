@@ -108,6 +108,7 @@ try {
     console.log(error.status) // the HTTP status of the request, if a request failure
     console.log(error.code) // the error code from the Open Payments API
     console.log(error.validationErrors) // an array of validation errors. Populated if the response of the request failed OpenAPI specfication validation, or other validation checks.
+    console.log(error.details) // an object containing additional error details
   } else {
     console.log(error)
   }
@@ -135,7 +136,7 @@ const client = await createAuthenticatedClient({
   walletAddressUrl: 'https://online-marketplace.com/usa',
   keyId: KEY_ID,
   privateKey: PRIVATE_KEY
-  // The public JWK with this key (and keyId) would be available at https://online-marketplace.com/usa/jwks.json
+  // The public JWK with this key (and keyId) must be available at https://online-marketplace.com/usa/jwks.json
 })
 ```
 
@@ -178,7 +179,7 @@ and creates an `IncomingPayment` using the access token from the grant:
 ```ts
 const incomingPayment = await client.incomingPayment.create(
   {
-    url: new URL(shoeShopWalletAddress.id).origin,
+    url: shoeShopWalletAddress.resourceServer,
     accessToken: incomingPaymentGrant.access_token.value
   },
   {
@@ -217,7 +218,7 @@ const quoteGrant = await client.grant.request(
 
 const quote = await client.quote.create(
   {
-    url: new URL(customerWalletAddress.id).origin,
+    url: customerWalletAddress.resourceServer,
     accessToken: quoteGrant.access_token.value
   },
   {
@@ -245,8 +246,7 @@ const outgoingPaymentGrant = await client.grant.request(
           actions: ['read', 'create', 'list'],
           identifier: customerWalletAddress.id,
           limits: {
-            debitAmount: quote.debitAmount, // to authorize an amount up to the quoted amount
-            receiveAmount: quote.receiveAmount
+            debitAmount: quote.debitAmount // to authorize an amount up to the quoted amount
           }
         }
       ]
@@ -293,8 +293,8 @@ Once Alice approves the grant request at Cloud Nine Wallet (or the Identity Prov
 ```ts
 const finalizedOutgoingPaymentGrant = await client.grant.continue(
   {
-    accessToken: outgoingPaymentGrant.access_token.value,
-    url: outgoingPaymentGrant.continue.uri
+    url: outgoingPaymentGrant.continue.uri,
+    accessToken: outgoingPaymentGrant.continue.access_token.value
   },
   { interact_ref: INTERACT_REF_FROM_URL }
 )
@@ -307,7 +307,7 @@ Once the grant interaction flow has finished, and Alice has consented to the pay
 ```ts
 const outgoingPayment = await client.outgoingPayment.create(
   {
-    url: new URL(customerWalletAddress.id).origin,
+    url: customerWalletAddress.resourceServer,
     accessToken: finalizedOutgoingPaymentGrant.access_token.value
   },
   {
