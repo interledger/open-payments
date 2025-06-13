@@ -1,42 +1,19 @@
 ---
-title: Open Payments concepts
+title: Resources
+parent: Concepts
 tableOfContents:
   maxHeadingLevel: 4
 ---
 
 import { LinkOut, CodeBlock, Tooltip } from '@interledger/docs-design-system'
 
-:::tip[Summary]
-Before a client can access the Open Payments APIs, it must obtain one or more grants. With the requisite grant, the client can use the APIs to send payment instructions for creating incoming payment, quote, and/or outgoing payment resources.
-:::
-
-The Open Payments standard helps to facilitate the setup of payments between Open Payments-enabled payment accounts.
-
-When setting up a payment, the <Tooltip content="Such as a mobile or web application or service" client:load>client</Tooltip> must obtain the wallet address for both the sender and recipient. Since the sender is typically the client's user, the client can obtain the sender's wallet address during an onboarding process, for example. The sender must be authenticated by their account servicing entity (ASE) to grant the client the permission it needs to access the their Open Payments-enabled account.
-
-After the requisite wallet addresses are known, the client can begin obtaining grants to set up one or more payments. The grants allow the client to access the Open Payments APIs for the purpose of creating and accessing resources for incoming payments, quotes, and outgoing payments.
-
-## Wallet address server
-
-Every Open Payments-enabled account is identified by one or more wallet addresses. A wallet address is a publicly shareable account identifier and a service endpoint for gaining access to the Open Payments APIs. The sender and recipient must both have a wallet address to transact using Open Payments.
-
-A wallet address server provides basic details about a wallet address. For more information, visit the [wallet addresses](/introduction/wallet-addresses) page.
-
-## Authorization server
-
-An authorization server grants permission for a client to access the Open Payments APIs and the `incoming-payment`, `quote`, and `outgoing-payment` resources. Open Payments leverages GNAP as the mechanism for delegating authorization.
-
-Refer to the [Grant negotiation and authorization](/introduction/grants) page for more information.
-
-## Resource server
-
 The Open Payments APIs are served by a resource server. Operations on the APIs require the client to have a valid access token issued by a trusted authorization server.
 
-### Resource types
+## Resource types
 
 The Open Payments Resource Server API is a simple REST API with three resource types: `incoming-payment`, `quote`, and `outgoing-payment`.
 
-#### incoming-payment
+### incoming-payment
 
 The first resource to be created when setting up a payment is the `incoming-payment` resource, created on the recipient's account. When created, the recipient's ASE returns unique payment details to the client that can be used to address payments to the account. Any payments received using these details are then associated with the `incoming-payment` resource.
 
@@ -60,7 +37,7 @@ Instead of waiting for the payment session to expire, the client can issue an ex
 In streaming Web Monetization payments, the maximum amount to be paid is unknown to the recipient's ASE. Payments continue to stream until the Web Monetization agent ends the session. At this point, the Web Monetization agent can request to mark the incoming payment as complete. This enables the recipient's ASE to be notified as soon as possible that no further payments will be sent and to credit the recipient's account.
 :::
 
-#### quote
+### quote
 
 After an `incoming-payment` resource is created on the recipient's account, a `quote` resource must be created on the sender's account.
 
@@ -74,13 +51,13 @@ There are three types of quotes.
 
 A successfully created `quote` resource results in the generation of a quote `id` in the form of a URL.
 
-#### outgoing-payment
+### outgoing-payment
 
 After a quote resource is created, it’s almost time to create the `outgoing-payment` resource on the sender's account. The purpose of the `outgoing-payment` resource is to serve as an instruction to make a payment from the sender's account.
 
 Open Payments separates payment instructions from the actual execution of payments, allowing applications to issue payment requests without being registered financial service providers themselves. This structure ensures that applications don't need to handle sensitive financial data directly, reducing risk and complexity.
 
-Open Payments requires the sender to explicitly consent to the creation of the resource before the client can issue the create request. Consent is obtained through an [interactive grant](/introduction/grants/#outgoing-payment).
+Open Payments requires the sender to explicitly consent to the creation of the resource before the client can issue the create request. Consent is obtained through an [interactive grant](/concepts/auth/#outgoing-payment).
 
 Within the request to create the `outgoing-payment` resource is the recipient wallet address, so the sender's ASE knows where to send the payment, and the quote resource’s ID, where the payment amounts are defined.
 
@@ -88,30 +65,6 @@ After the `outgoing-payment` resource is created, the incoming payment can compl
 
 An `outgoing-payment` resource can represent a payment that will be, is currently being, or has previously been sent from the sender's account. A client can issue requests to get an outgoing payment’s specific details and list all outgoing payments in order to, for example, provide the sender with transaction details and history.
 
-## Payment Methods
+## Related grants
 
-The payment method is the means by which the sender's ASE will fulfill its payment obligations to the recipient's ASE. Cash, credit/debit cards, bank transfers, gift cards and mobile money can all be considered different payment methods.
-
-When an `outgoing-payment` is completed against an open and active `incoming-payment`, the sender's ASE becomes obligated to make payment using the payment method initially specified in the `incoming-payment` response.
-
-Though Open Payments is designed to be an abstraction layer that can issue payment instructions between transacting parties atop any payment method, <LinkOut href='https://interledger.org'>Interledger (ILP) </LinkOut> is the only payment method that currently integrates with Open Payments readily.
-
-When using ILP as a payment method in Open Payments, the following information is required from the recipient's ASE, in the incoming payment's `method` object.
-
-- A `type` of `ilp` to indicate the payment method.
-- The <LinkOut href='https://interledger.org/developers/rfcs/ilp-addresses/'>ILP address</LinkOut> of the recipient’s ASE: The ILP address is required so that packets representing payments routed over the Interledger network will be forwarded to the node owned and operated by the intended receiver (i.e. recipient's ASE).
-- A shared secret: A cryptographically secured secret to be exchanged between the sender's ASE and the recipient's ASE to ensure that packets sent over the Interledger network through a <LinkOut href='https://interledger.org/developers/rfcs/stream-protocol/'>STREAM</LinkOut> connection can only be read by the two parties.
-
-<CodeBlock title="incoming-payment methods object">
-  ```http
-  "methods": [
-    {
-      "type": "ilp",
-      "ilpAddress": "g.ilp.iwuyge987y.98y08y",
-      "sharedSecret": "1c7eaXa4rd2fFOBl1iydvCT1tV5TbM3RW1WLCafu_JA"
-    }
-  ] 
-  ```
-</CodeBlock>
-
-After the `incoming-payment` response is received, the sender's ASE creates a `quote` request containing `"method": "ilp"`.
+For more information on the authorization server and grant types, refer to [Grant types](/concepts/auth/#grant-types).

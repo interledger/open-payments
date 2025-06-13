@@ -234,7 +234,7 @@ const platformQuote = await client.quote.create(
 Request an interactive `outgoingPayment` grant from the customer wallet authorization server.
 
 :::note
-Outgoing payments require an interactive grant. This type of grant will obtain the customer's consent before an outgoing payment is made against their wallet account. You can find more information in the [Open Payments flow](/introduction/op-flow/#outgoing-payment) and [identity providers](/introduction/idp) pages.
+Outgoing payments require an interactive grant. This type of grant will obtain the customer's consent before an outgoing payment is made against their wallet account. You can find more information in the [Open Payments flow](/concepts/op-flow/#outgoing-payment) and [identity providers](/identity/idp) pages.
 :::
 
 Include the `receiveAmount` object within the `limits` object. The `value` property must be the total amount the customer has agreed to pay.
