@@ -19,7 +19,7 @@ All client requests in Open Payments are signed using a unique key that identifi
 
 A key registry is a list of keys, generated and stored by the client, for when the client requires access to protected Open Payment resources. Since grant requests are completed over multiple signed HTTP requests, it's important for the client to provide a way to consistently identify itself across these requests to the authorization server. The key registry allows the authorization server to verify that the client is who it says it is.
 
-Each client is represented by a [wallet address](/introduction/wallet-addresses). A client's key registry is publicly accessible through its wallet address via a `jwks.json` endpoint. An authorization server can retrieve the client's key registry by accessing `WALLET_ADDRESS/jwks.json`.
+Each client is represented by a [wallet address](/concepts/wallet-addresses). A client's key registry is publicly accessible through its wallet address via a `jwks.json` endpoint. An authorization server can retrieve the client's key registry by accessing `WALLET_ADDRESS/jwks.json`.
 
 ```http title="Example"
 https://wallet.example.com/alice/jwks.json
@@ -109,7 +109,7 @@ The `httpsig` proofing method must be declared as part of the key material when 
 
 When using `httpsig`, the signer (the client) creates an HTTP message signature. Open Payments clients typically secure their requests to servers by presenting an access token and proof of a key it possesses. The exception is for calls to an authorization server to initiate a grant. In this case, a key proof is used with no access token and is a non-authorized signed request.
 
-See the [HTTP message signatures](/introduction/http-signatures) page for more information specific to Open Payments. Additional information is found in the <LinkOut href='https://datatracker.ietf.org/doc/html/rfc9421'>specification</LinkOut> for HTTP message signatures.
+See the [HTTP message signatures](/identity/http-signatures) page for more information specific to Open Payments. Additional information is found in the <LinkOut href='https://datatracker.ietf.org/doc/html/rfc9421'>specification</LinkOut> for HTTP message signatures.
 
 ## Sequence diagram
 

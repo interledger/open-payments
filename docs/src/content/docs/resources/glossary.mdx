@@ -22,7 +22,7 @@ The Grant Negotiation Authorization Protocol (GNAP) defines a mechanism for dele
 
 ## Incoming payment resource
 
-An [incoming payment resource](/introduction/op-concepts/#incoming-payment) is an object created by the recipient's ASE, on their resource server, that represents a payment being received by an entity. This resource contains information about the incoming payment, such as the amount, currency, receiver's wallet address, and payment status. It is used to track and manage payments that are expected to or have been received.
+An [incoming payment resource](concepts/resources/#incoming-payment) is an object created by the recipient's ASE, on their resource server, that represents a payment being received by an entity. This resource contains information about the incoming payment, such as the amount, currency, receiver's wallet address, and payment status. It is used to track and manage payments that are expected to or have been received.
 
 ## Open Payments (OP)
 
@@ -30,17 +30,17 @@ Open Payments is an open RESTful API and an API standard that enables clients to
 
 ## Outgoing payment resource
 
-An [outgoing payment resource](/introduction/op-concepts/#outgoing-payment) is an object created by the sender's ASE, on their resource server, that represents a payment being sent by an entity. This resource contains information about the outgoing payment, such as the amount, currency, receiver's wallet address, and payment status. Outgoing payment resources require explicit [consent](/introduction/idp/) from the sender before the resource can be created.
+An [outgoing payment resource](/concepts/resources/#outgoing-payment) is an object created by the sender's ASE, on their resource server, that represents a payment being sent by an entity. This resource contains information about the outgoing payment, such as the amount, currency, receiver's wallet address, and payment status. Outgoing payment resources require explicit [consent](/identity/idp/) from the sender before the resource can be created.
 
 ## Payment Pointer
 
 A <LinkOut href="https://paymentpointers.org/">payment pointer</LinkOut> is a secure, unique identifier that’s assigned to payment accounts that use Interledger’s <LinkOut href='https://interledger.org/developers/rfcs/simple-payment-setup-protocol/'>Simple Payment Setup Protocol (SPSP)</LinkOut> to exchange payment information. The shorthand for a payment pointer starts with $. For example, $wallet.example.com/alice.
 
-A payment pointer may serve as a [wallet address](/introduction/wallet-addresses) if Interledger is used as the payment method by transacting parties. The wallet address URL will be translated to a payment pointer when a payment is initiated over the Interledger network. However, note that not every wallet address is necessarily a payment pointer.
+A payment pointer may serve as a [wallet address](/concepts/wallet-addresses) if Interledger is used as the payment method by transacting parties. The wallet address URL will be translated to a payment pointer when a payment is initiated over the Interledger network. However, note that not every wallet address is necessarily a payment pointer.
 
 ## Quote resource
 
-A [quote resource](/introduction/op-concepts/#quote) is an object created by the sender's ASE, on their resource server, after the incoming payment resource is created by the recipient's ASE. A quote resource represents a potential payment being received by an entity and contains information about the potential payment, but is mainly used to indicate the total cost, including any applicable fees, to make the payment. The quote resource also serves as a commitment from the sender's ASE to deliver a particular amount to the receiver's ASE and it only valid for a limited time.
+A [quote resource](/concepts/resources/#quote) is an object created by the sender's ASE, on their resource server, after the incoming payment resource is created by the recipient's ASE. A quote resource represents a potential payment being received by an entity and contains information about the potential payment, but is mainly used to indicate the total cost, including any applicable fees, to make the payment. The quote resource also serves as a commitment from the sender's ASE to deliver a particular amount to the receiver's ASE and it only valid for a limited time.
 
 ## Resource server (RS)
 
