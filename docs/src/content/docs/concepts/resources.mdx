@@ -15,7 +15,7 @@ The Open Payments Resource Server API is a simple REST API with three resource t
 
 ### incoming-payment
 
-The first resource to be created when setting up a payment is the `incoming-payment` resource, created on the recipient's account. When created, the recipient's ASE returns unique payment details to the client that can be used to address payments to the account. Any payments received using these details are then associated with the `incoming-payment` resource.
+The `incoming-payment` resource is often the first resource created in the Open Payments flow on the recipient's account. When created, the recipient's ASE returns unique payment details to the client that can be used to address payments to the account. Any payments received using these details are then associated with the `incoming-payment` resource.
 
 A client can issue requests to get an incoming payment’s specific details, as well as list all incoming payments in order to, for example, provide the recipient with transaction details and history.
 

@@ -69,60 +69,60 @@ export default defineConfig({
       ],
       sidebar: [
         {
-          label: 'Intro to Open Payments',
+          label: 'Overview',
           items: [
-            { label: 'Getting started', link: '/introduction/getting-started/' }
-          ]
-        },
-        {
-          label: 'Key concepts',
-          collapsed: true,
-          items: [
+            { label: 'Getting started', link: '/overview/getting-started/' },
             {
-              label: 'Wallet addresses',
-              link: '/concepts/wallet-addresses/'
+              label: 'Concepts',
+              collapsed: false,
+              items: [
+                {
+                  label: 'Wallet addresses',
+                  link: '/concepts/wallet-addresses/'
+                },
+                {
+                  label: 'Resources',
+                  link: '/concepts/resources/'
+                },
+                {
+                  label: 'Authorization',
+                  link: '/concepts/auth/'
+                },
+                {
+                  label: 'Payment methods',
+                  link: '/concepts/payments/'
+                },
+                {
+                  label: 'Open Payments flow',
+                  link: '/concepts/op-flow/'
+                }
+              ]
             },
             {
-              label: 'Resources',
-              link: '/concepts/resources/'
-            },
-            {
-              label: 'Authorization',
-              link: '/concepts/auth/'
-            },
-            {
-              label: 'Payment methods',
-              link: '/concepts/payments/'
-            },
-            {
-              label: 'Open Payments flow',
-              link: '/concepts/op-flow/'
-            }
-          ]
-        },
-        {
-          label: 'Identity and access management',
-          collapsed: true,
-          items: [
-            {
-              label: 'Grant negotiation and authorization',
-              link: '/identity/grants/'
-            },
-            {
-              label: 'Identity providers',
-              link: '/identity/idp/'
-            },
-            {
-              label: 'Client keys',
-              link: '/identity/client-keys/'
-            },
-            {
-              label: 'HTTP signatures',
-              link: '/identity/http-signatures/'
-            },
-            {
-              label: 'Hash verification',
-              link: '/identity/hash-verification/'
+              label: 'Identity and access management',
+              collapsed: true,
+              items: [
+                {
+                  label: 'Grant negotiation and authorization',
+                  link: '/identity/grants/'
+                },
+                {
+                  label: 'Identity providers',
+                  link: '/identity/idp/'
+                },
+                {
+                  label: 'Client keys',
+                  link: '/identity/client-keys/'
+                },
+                {
+                  label: 'HTTP signatures',
+                  link: '/identity/http-signatures/'
+                },
+                {
+                  label: 'Hash verification',
+                  link: '/identity/hash-verification/'
+                }
+              ]
             }
           ]
         },

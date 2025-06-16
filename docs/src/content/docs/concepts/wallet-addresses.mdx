@@ -13,8 +13,8 @@ At the heart of all interactions in Open Payments is an Open Payments-enabled ac
 
 A URL is only a wallet address if it meets the following criteria:
 
-- Server handling the HTTP requests to the URL supports the Open Payments protocol
-- URL uses the `https` protocol and has no `user-info`, `port`, `query string`, or `fragment` parts
+- The server handling the HTTP requests to the URL supports the Open Payments protocol
+- The URL uses the `https` protocol and has no `user-info`, `port`, `query string`, or `fragment` parts
 
 ### Verifying a wallet address
 
@@ -41,13 +41,13 @@ Content-Type: application/json
 }
 ```
 
-# Wallet address server
+## Wallet address server
 
-When setting up a payment, the client must obtain the wallet address for both the sender and the recipient. Since the sender it typically the client's user, the client can obtain the sender's wallet address during an onboarding process, for example. The sender must be authenticated by their account servicing entity (ASE) to grant the client the permission it needs to access their Open Payments-enabled account.
+When setting up a payment, the client must obtain the wallet address for both the sender and the recipient. Since the sender is typically the client's user, the client can obtain the sender's wallet address during an onboarding process, for example. The sender must be authenticated by their account servicing entity (ASE) to grant the client the permission it needs to access their Open Payments-enabled account.
 
 A wallet address server is an API endpoint that retrieves public information about a wallet address, including its associated public keys. For more technical details, visit the [wallet address server API docs](/apis/wallet-address-server/operations/get-wallet-address/).
 
-# Privacy and security
+## Privacy and security
 
 A wallet address acts as a proxy identifier (alias) for an underlying financial account. If permitted by an ASE, a single account can have multiple wallet addresses. Allowing account holders to generate unique wallet addresses for every client they interact with can help prevent a single address from becoming a tracking vector.
 
@@ -57,7 +57,7 @@ Ultimately, it’s up to the ASE to define the supported configuration of relati
 
 For any client, a wallet address is as good as an account. Any two distinct wallet addresses should be treated as distinct accounts by clients even if the client is aware that they are proxies for the same underlying account. Permission for a client to access an account via one wallet address is not automatically granted when accessing the same account via another wallet address.
 
-# Discovery and interaction
+## Discovery and interaction
 
 Using URLs as payment instruments solves two of the biggest issues with existing payments UX: discoverability and interaction.
 
