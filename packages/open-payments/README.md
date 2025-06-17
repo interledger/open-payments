@@ -2,7 +2,7 @@
 
 [Open Payments](https://openpayments.dev/) is an API standard that allows third-parties (with the account holder's consent) to initiate payments and to view the transaction history on the account holder's account.
 
-Open Payments consists of two OpenAPI specifications, a **resource server** which exposes APIs for performing functions against the underlying accounts and an **authorization server** which exposes APIs compliant with the [GNAP](https://openpayments.dev/introduction/grants/) standard for getting grants to access the resource server APIs.
+Open Payments consists of two OpenAPI specifications, a **resource server** which exposes APIs for performing functions against the underlying accounts and an **authorization server** which exposes APIs compliant with the [GNAP](https://openpayments.dev/identity/grants/) standard for getting grants to access the resource server APIs.
 
 This package provides TypeScript & NodeJS tools for using Open Payments:
 
@@ -119,7 +119,7 @@ try {
 
 > **Note**
 >
-> A high level Open Payments flow with diagrams can be found [here](https://openpayments.dev/introduction/op-flow/).
+> A high level Open Payments flow with diagrams can be found [here](/concepts/op-flow/).
 
 As mentioned previously, Open Payments APIs can facilitate a payment between two parties.
 

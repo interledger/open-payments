@@ -1,5 +1,5 @@
 ---
-title: Overview
+title: Getting started
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
@@ -22,7 +22,7 @@ For example, an application developer can build payments functionality into thei
 
 The Open Payments standard simplifies integration by offering a single access point to various financial accounts, whether they are bank accounts, digital wallets, or mobile money accounts. This approach eliminates the need for multiple custom integrations, similar to how email standards facilitate seamless communication across different email providers.
 
-Refer to the [Open Payments concepts](/introduction/op-concepts) and [Open Payments flow](/introduction/op-flow) pages for additional details.
+Refer to the [Open Payments flow](/concepts/op-flow) page for additional details.
 
 ## User control and security
 
@@ -38,7 +38,7 @@ By separating payment instructions from execution/settlement, client developers 
 
 ## Open Payments account identification
 
-Every Open Payments-enabled account is identified by one or more URLs. These URLs not only identify the account, but are also Open Payments service endpoints that provide the entry point for the API. These URLs are called [wallet addresses](/introduction/wallet-addresses).
+Every Open Payments-enabled account is identified by one or more URLs. These URLs not only identify the account, but are also Open Payments service endpoints that provide the entry point for the API. These URLs are called [wallet addresses](/concepts/wallet-addresses).
 
 Wallet addresses in Open Payments are designed to be user-friendly and publicly shareable. They function like email addresses, allowing for straightforward and secure interactions with accounts across various financial institutions without exposing sensitive data.
 
@@ -50,7 +50,7 @@ Open Payments leverages the <LinkOut href='https://datatracker.ietf.org/doc/html
 
 GNAP allows account holders to have specific and fine-grained control over the permissions they grant to the clients that connect to their accounts, including control over the amounts of transactions with time-based and velocity-based limits. This enables powerful use cases such as third-party payment initiation and delegated authorization without compromising the security of the underlying financial accounts and payment instruments.
 
-Review the [Grant negotiation and authorization](/introduction/grants) page for more information.
+Review the [Grant negotiation and authorization](/identity/grants) page for more information.
 
 ## Relation to Open Banking
 

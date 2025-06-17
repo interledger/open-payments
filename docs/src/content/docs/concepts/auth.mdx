@@ -1,0 +1,52 @@
+---
+title: Authorization
+parent: Concepts
+---
+
+import { LinkOut, Tooltip } from '@interledger/docs-design-system'
+
+:::tip[Summary]
+Authorization in Open Payments refers to the process by which a client obtains permission from a resource owner to access and perform operations on protected resources.
+:::
+
+Open Payments leverages the <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol'>Grant Negotiation and Authorization Protocol (GNAP)</LinkOut> as the mechanism by which the piece of software, known as a client instance (or client for short), is delegated authorization to use the Open Payments APIs to interface with supported accounts.
+
+## Authorization server
+
+The authorization server grants permission for a client to access the Open Payments APIs and the `incoming-payment`, `quote`, and `outgoing-payment` resources. It does this by issuing access tokens, which represent a set of access rights and/or attributes granted to the client. With the appropriate access tokens, the client can perform allowed operations, such as creating incoming and outgoing payments, on behalf of the resource owner (RO).
+
+### Relationship between grants and access tokens
+
+A **grant** is an authorization issued by the RO that allows a client to access specific resources. The grant specifies the type of actions the client is allowed to perform. Grants may require user interaction and can be contingent on the RO's consent. The authorization server validates the grant each time the client uses their access token.
+
+An **access token** is issued after a grant request is approved by the authorization server. This token serves as a credential that the client uses to authenticate itself when making requests to access protected resources. The access token contains information about the permissions granted, including the specific actions the client can perform and the resources it can access.
+
+## Grant types
+
+This section outlines the different types of grants that clients can request within Open Payments. While the flow often begins with an incoming payment grant, there are scenarios where other grant types may be requested first.
+
+### incoming-payment
+
+A client typically begins the Open Payments flow by requesting an incoming payment grant from the authorization server on the _recipient_ side. However, there are instances where the client may request an outgoing payment grant first, such as in the case of Web Monetization.
+
+The client can request a single grant to create multiple incoming payments for different Open Payments-enabled accounts as long as each account belongs to the same <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip>.
+
+Incoming payment grants are non-interactive by default, meaning interaction by an individual (typically the client’s user) is not required for the authorization server to issue an access token.
+
+### quote
+
+After the client receives an incoming payment grant and an incoming payment resource is created on the recipient's account, the client requests a quote grant from the authorization server on the _sender_ side. The client can request a single grant to create multiple quotes for different Open Payments-enabled accounts as long as each account belongs to the same <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip>.
+
+Quote grants are non-interactive by default, meaning interaction by an individual (typically the client’s user) is not required for the authorization server to issue an access token.
+
+### outgoing-payment
+
+Having progressed through the incoming payment and quote portions of the Open Payments flow, the client is ready to request an outgoing payment grant from the authorization server on the _sender_ side.
+
+Open Payments requires outgoing payment grant requests to be interactive. When a grant request is interactive, it means explicit interaction by an individual (typically the client’s user) is a required step in the delegation process.
+
+After a successful interaction, the client must issue a [Grant Continuation request](/apis/auth-server/operations/post-continue) so the authorization server knows to issue an access token.
+
+## More about authorization
+
+For a deeper dive into authorization topics including GNAP and requesting grants, refer to [Grant negotation and authorization](/identity/grants) and the other pages under **Identity and access management**.
