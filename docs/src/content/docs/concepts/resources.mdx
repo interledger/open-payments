@@ -39,7 +39,7 @@ In streaming Web Monetization payments, the maximum amount to be paid is unknown
 
 ### quote
 
-After an `incoming-payment` resource is created on the recipient's account, a `quote` resource must be created on the sender's account.
+After an `incoming-payment` resource is created on the recipient's account, a `quote` resource is typically created on the sender's account.
 
 The purpose of a quote is to indicate how much it will cost, including any applicable fees, to make the payment. The quote serves as a commitment from the sender's ASE to deliver a particular amount to the recipient's ASE. A quote is only valid for a limited time.
 
@@ -60,6 +60,10 @@ Open Payments separates payment instructions from the actual execution of paymen
 Open Payments requires the sender to explicitly consent to the creation of the resource before the client can issue the create request. Consent is obtained through an [interactive grant](/concepts/auth/#outgoing-payment).
 
 Within the request to create the `outgoing-payment` resource is the recipient wallet address, so the sender's ASE knows where to send the payment, and the quote resource’s ID, where the payment amounts are defined.
+
+:::note[Creating an outgoing payment without a quote]
+A quote is not always required for creating an outgoing payment. In cases where the sender doesn't need to specify the amount the recipient will receive (like <LinkOut href='https://webmonetization.org'>Web Monetization</LinkOut>, for example), the outgoing payment can be created using an `incomingPayment` and `debitAmount` instead.
+:::
 
 After the `outgoing-payment` resource is created, the incoming payment can complete, either automatically or manually, to end the Open Payments flow. Now it’s up to the sender's ASE to settle with the recipient's ASE over a shared payment rail.
 
