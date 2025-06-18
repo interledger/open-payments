@@ -425,6 +425,9 @@ export default defineConfig({
     }),
     starlightOpenAPI()
   ],
+  redirects: {
+    '/introduction/wallet-addresses': '/concepts/wallet-addresses'
+  },
   server: {
     port: 1104
   }
