@@ -1,0 +1,152 @@
+---
+title: Get an outgoing payment grant for future payments
+---
+
+import { CodeBlock, LinkOut } from '@interledger/docs-design-system'
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
+import InteractionReq from '/src/partials/interaction-required.mdx'
+import StartInteraction from '/src/partials/grant-start-interaction.mdx'
+import FinishInteraction from '/src/partials/grant-finish-interaction.mdx'
+
+:::tip[Summary]
+Learn how to get an outgoing payment grant for future payments without specifying any recipients.
+:::
+
+Often, a transaction will start with the client getting the recipient’s details and asking the recipient’s ASE for permission to send money. However, Open Payments also supports a different approach, where the client gets permission from the sender’s ASE to send money before knowing who the recipient will be. This approach is used in Web Monetization's pay-as-you-browse model.
+
+In this model, a user installs a browser extension and visits a web monetized site. The extension uses Open Payments to issue continuous outgoing payments to the site, on behalf of the user, for as long as the user is on the site. The extension has no idea who the recipient will be until the user visits the site.
+
+Setting up the extension requires the user to connect it to their wallet account. They specify a maximum amount they're willing to spend and select whether the amount should renew monthly. The extension then receives an outgoing payment grant from the user’s wallet provider, allowing the extension to initiate future payments.
+
+In this guide, you’ll assume the role of an app developer. The guide takes you through the steps your app will perform when requesting an outgoing payment grant without known recipients. The example scenario illustrates how to allow your app’s user to send payments of up to $100 CAD a month for three months.
+
+## Dependencies
+
+- <LinkOut href='https://github.com/interledger/open-payments/tree/main/packages/open-payments'>
+    Open Payments TypeScript SDK
+  </LinkOut>
+
+## Endpoints
+
+- <LinkOut href='https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/'>
+    Get Wallet Address
+  </LinkOut>
+- <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-request/'>
+    Grant Request
+  </LinkOut>
+- <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-continue/'>
+    Continue Grant Request
+  </LinkOut>
+
+## Steps
+
+### 1. Get user's wallet address information
+
+Let’s assume your user saved their wallet address in their account profile when setting up your app. Use this address to get the authorization server address, resource server address, and other details about your user’s wallet.
+
+You should perform this step every time you request a grant in case something changes on your user’s side.
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript'>
+```ts
+const walletAddress = await client.walletAddress.get({
+  url: 'https://cloudninebank.example.com/user'
+})
+```
+</TabItem>
+</Tabs>
+
+### 2. Request an interactive outgoing payment grant
+
+Your user indicates they want to make payments of up to $100 CAD a month for three months. The amount resets each month and any unspent portions don't roll over.
+
+Begin by requesting an interactive outgoing payment grant from the authorization server URL returned in the previous step.
+
+<InteractionReq />
+
+#### Request requirements
+
+The request must include:
+
+- `debitAmount` - The maximum amount that your user can send per interval. When the next interval begins, the value resets.
+- `interval` - The recurring time [interval](#about-the-interval) under which this grant is valid. Must be expressed in <LinkOut href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601</LinkOut> format which is a standardized way to express time-related information.
+- `interact` object with a `finish` URI - The URI your user will be automatically sent to when interaction, described in the next steps, is complete.
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript'>
+```ts
+const grant = await client.grant.request(
+  {
+    url: walletAddress.authServer,
+  },
+  {
+    access_token: {
+      access: [
+        {
+          identifier: walletAddress.id,
+          type: 'outgoing-payment',
+          actions: ['read', 'create'],
+          limits: {
+            interval: 'R3/2025-05-20T13:00:00Z/P1M'
+            debitAmount: {
+              assetCode: 'CAD',
+              assetScale: 2,
+              value: '10000',
+            },
+          },
+        },
+      ],
+    },
+    client: clientWalletAddress.id,
+    interact: {
+      start: ['redirect'],
+      finish: {
+        method: 'redirect',
+        uri: 'https://cloudninebank.example.com/finish/T8jw5Xy',
+        nonce: NONCE,
+      },
+    },
+  },
+);
+```
+</TabItem>
+</Tabs>
+
+#### About the interval
+
+The interval used in this guide is `R3/2025-05-20T13:00:00Z/P1M`. Remember that your user wants to send payments up to $100 CAD a month for three months. The interval breaks down like this:
+
+- `R[3]/` is the number of repetitions - three.
+- `2025-05-20` is the start date of the repeating interval - 20 May 2025
+- `T13:00:00Z/` is the start time of the repeating interval - 1:00 PM UTC.
+- `[P1M]` is the period of time between each interval - one month. Used with `R[3]`, you have a grant that’s valid once a month for three months.
+
+Altogether, your user can send up to $100 CAD from:
+
+- 1 PM UTC on 20 May 2025 through 12:59 PM UCT on 20 June 2025
+- 1 PM UTC on 20 June 2025 through 12:59 PM UTC on 20 July 2025
+- 1 PM UTC on 20 July 2025 through 12:59 PM UCT on 20 August 2025
+
+### 3. Start interaction with the user
+
+<StartInteraction />
+
+### 4. Finish interaction with the user
+
+<FinishInteraction />
+
+### 5. Request a grant continuation
+
+Use the interaction reference (`interact_ref`) returned in the redirect URI's query parameters.
+
+<Tabs syncKey='lang'>
+  <TabItem label='TypeScript/JavaScript'>
+    <ChunkedSnippet
+      source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-continuation.ts'
+      chunk='3'
+    />
+  </TabItem>
+</Tabs>
+
+A successful response provides your app with an access token. Now your app can issue outgoing payment requests to future recipients against the grant. Each request must reference the access token.

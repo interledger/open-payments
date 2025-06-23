@@ -251,6 +251,10 @@ export default defineConfig({
             {
               label: 'Split an incoming payment',
               link: '/guides/split-payments/'
+            },
+            {
+              label: 'Get an outgoing payment grant for future payments',
+              link: '/guides/outgoing-grant-future-payments/'
             }
           ]
         },
