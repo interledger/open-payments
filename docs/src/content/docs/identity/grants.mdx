@@ -41,7 +41,7 @@ An authorization server is uniquely identified by its grant endpoint URI, which 
 
 A key registry is a list of keys associated with clients requiring access to protected Open Payments resources. Key registries are publicly exposed via a `jwks.json` endpoint and allows an authorization server to verify that a client is who it says it is.
 
-A client must generate and add its key to its key registry before requesting a grant for the first time. For more information on key generation and registration, as well as how key registries work with authorization servers, refer to the [Client keys](/introduction/client-keys) page.
+A client must generate and add its key to its key registry before requesting a grant for the first time. For more information on key generation and registration, as well as how key registries work with authorization servers, refer to the [Client keys](/identity/client-keys) page.
 
 ## Grant requests
 
@@ -65,28 +65,6 @@ The sequence of requests a client makes when setting up a payment can follow one
 3. Request a single interactive grant for both `quote` and `outgoing-payment` from the sender-side authorization server.
 4. Send request to create a quote resource to the sender-side resource server.
 5. Send request to create an outgoing payment resource to the sender-side resource server.
-
-## Grant types
-
-### incoming-payment
-
-A client begins the Open Payments flow by requesting an incoming payment grant from the authorization server on the _recipient_ side. The client can request a single grant to create multiple incoming payments for different Open Payments-enabled accounts as long as each account belongs to the same <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip>.
-
-Incoming payment grants are non-interactive by default, meaning interaction by an individual (typically the client’s user) is not required for the authorization server to issue an access token.
-
-### quote
-
-After the client receives an incoming payment grant and an incoming payment resource is created on the recipient's account, the client requests a quote grant from the authorization server on the _sender_ side. The client can request a single grant to create multiple quotes for different Open Payments-enabled accounts as long as each account belongs to the same <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip>.
-
-Quote grants are non-interactive by default, meaning interaction by an individual (typically the client’s user) is not required for the authorization server to issue an access token.
-
-### outgoing-payment
-
-Having progressed through the incoming payment and quote portions of the Open Payments flow, the client is ready to request an outgoing payment grant from the authorization server on the _sender_ side.
-
-Open Payments requires outgoing payment grant requests to be interactive. When a grant request is interactive, it means explicit interaction by an individual (typically the client’s user) is a required step in the delegation process.
-
-After a successful interaction, the client must issue a [Grant Continuation request](/apis/auth-server/operations/post-continue) so the authorization server knows to issue an access token.
 
 ## Open Payments resource servers
 

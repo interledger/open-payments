@@ -69,54 +69,70 @@ export default defineConfig({
       ],
       sidebar: [
         {
-          label: 'Intro to Open Payments',
+          label: 'Overview',
           items: [
-            { label: 'Overview', link: '/introduction/overview/' },
+            { label: 'Getting started', link: '/overview/getting-started/' },
             {
-              label: 'Open Payments concepts',
-              link: '/introduction/op-concepts'
-            },
-            { label: 'Open Payments flow', link: '/introduction/op-flow/' },
-            {
-              label: 'Wallet addresses',
-              link: '/introduction/wallet-addresses/'
-            },
-            {
-              label: 'Grant negotiation and authorization',
-              collapsed: true,
-
+              label: 'Concepts',
+              collapsed: false,
               items: [
                 {
-                  label: 'Overview',
-                  link: '/introduction/grants/'
+                  label: 'Wallet addresses',
+                  link: '/concepts/wallet-addresses/'
+                },
+                {
+                  label: 'Resources',
+                  link: '/concepts/resources/'
+                },
+                {
+                  label: 'Authorization',
+                  link: '/concepts/auth/'
+                },
+                {
+                  label: 'Payment methods',
+                  link: '/concepts/payments/'
+                },
+                {
+                  label: 'Open Payments flow',
+                  link: '/concepts/op-flow/'
+                }
+              ]
+            },
+            {
+              label: 'Identity and access management',
+              collapsed: true,
+              items: [
+                {
+                  label: 'Grant negotiation and authorization',
+                  link: '/identity/grants/'
                 },
                 {
                   label: 'Identity providers',
-                  link: '/introduction/idp/'
+                  link: '/identity/idp/'
                 },
                 {
                   label: 'Client keys',
-                  link: '/introduction/client-keys/'
+                  link: '/identity/client-keys/'
                 },
                 {
-                  label: 'HTTP message signatures',
-                  link: '/introduction/http-signatures/'
+                  label: 'HTTP signatures',
+                  link: '/identity/http-signatures/'
                 },
                 {
                   label: 'Hash verification',
-                  link: '/introduction/hash-verification/'
+                  link: '/identity/hash-verification/'
                 }
               ]
             }
           ]
         },
         {
-          label: 'SDK snippets',
+          label: 'SDKs',
           collapsed: true,
           items: [
             {
               label: 'Before you begin',
-              link: '/snippets/before-you-begin'
+              link: '/sdk/before-you-begin'
             },
             {
               label: 'Wallet addresses',
@@ -124,11 +140,11 @@ export default defineConfig({
               items: [
                 {
                   label: 'Get wallet address info',
-                  link: '/snippets/wallet-get-info'
+                  link: '/sdk/wallet-get-info'
                 },
                 {
                   label: 'Get keys bound to a wallet address',
-                  link: '/snippets/wallet-get-keys'
+                  link: '/sdk/wallet-get-keys'
                 }
               ]
             },
@@ -138,15 +154,15 @@ export default defineConfig({
               items: [
                 {
                   label: 'Create a grant request',
-                  link: '/snippets/grant-create'
+                  link: '/sdk/grant-create'
                 },
                 {
                   label: 'Continue a grant request',
-                  link: '/snippets/grant-continue'
+                  link: '/sdk/grant-continue'
                 },
                 {
                   label: 'Revoke a grant request',
-                  link: '/snippets/grant-revoke'
+                  link: '/sdk/grant-revoke'
                 }
               ]
             },
@@ -156,19 +172,19 @@ export default defineConfig({
               items: [
                 {
                   label: 'Create an incoming payment',
-                  link: '/snippets/incoming-create/'
+                  link: '/sdk/incoming-create/'
                 },
                 {
                   label: 'List incoming payments',
-                  link: '/snippets/incoming-list/'
+                  link: '/sdk/incoming-list/'
                 },
                 {
                   label: 'Get an incoming payment',
-                  link: '/snippets/incoming-get/'
+                  link: '/sdk/incoming-get/'
                 },
                 {
                   label: 'Complete an incoming payment',
-                  link: '/snippets/incoming-complete/'
+                  link: '/sdk/incoming-complete/'
                 }
               ]
             },
@@ -178,11 +194,11 @@ export default defineConfig({
               items: [
                 {
                   label: 'Create a quote',
-                  link: '/snippets/quote-create/'
+                  link: '/sdk/quote-create/'
                 },
                 {
                   label: 'Get a quote',
-                  link: '/snippets/quote-get/'
+                  link: '/sdk/quote-get/'
                 }
               ]
             },
@@ -192,15 +208,15 @@ export default defineConfig({
               items: [
                 {
                   label: 'Create an outgoing payment',
-                  link: '/snippets/outgoing-create/'
+                  link: '/sdk/outgoing-create/'
                 },
                 {
                   label: 'List outgoing payments',
-                  link: '/snippets/outgoing-list/'
+                  link: '/sdk/outgoing-list/'
                 },
                 {
                   label: 'Get an outgoing payment',
-                  link: '/snippets/outgoing-get/'
+                  link: '/sdk/outgoing-get/'
                 }
               ]
             },
@@ -210,11 +226,11 @@ export default defineConfig({
               items: [
                 {
                   label: 'Rotate an access token',
-                  link: '/snippets/token-rotate/'
+                  link: '/sdk/token-rotate/'
                 },
                 {
                   label: 'Revoke an access token',
-                  link: '/snippets/token-revoke/'
+                  link: '/sdk/token-revoke/'
                 }
               ]
             }
@@ -269,7 +285,7 @@ export default defineConfig({
           ]
         },
         {
-          label: 'API Specifications',
+          label: 'API specifications',
           collapsed: true,
           items: [
             {
@@ -413,6 +429,9 @@ export default defineConfig({
     }),
     starlightOpenAPI()
   ],
+  redirects: {
+    '/introduction/wallet-addresses': '/concepts/wallet-addresses'
+  },
   server: {
     port: 1104
   }

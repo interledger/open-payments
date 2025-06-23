@@ -1,6 +1,6 @@
 {
   "name": "@interledger/open-payments",
-  "version": "7.0.0",
+  "version": "7.1.1",
   "description": "Tools for interacting with the Open Payments API",
   "author": "Interledger Tech Team <tech@interledger.org>",
   "repository": {
