@@ -153,8 +153,16 @@ export default defineConfig({
               collapsed: true,
               items: [
                 {
-                  label: 'Create a grant request',
-                  link: '/sdk/grant-create'
+                  label: 'Create an incoming payment grant request',
+                  link: '/sdk/grant-create-incoming'
+                },
+                {
+                  label: 'Create a quote grant request',
+                  link: '/sdk/grant-create-quote'
+                },
+                {
+                  label: 'Create an outgoing payment grant request',
+                  link: '/sdk/grant-create-outgoing'
                 },
                 {
                   label: 'Continue a grant request',
@@ -430,7 +438,8 @@ export default defineConfig({
     starlightOpenAPI()
   ],
   redirects: {
-    '/introduction/wallet-addresses': '/concepts/wallet-addresses'
+    '/introduction/wallet-addresses': '/concepts/wallet-addresses',
+    '/sdk/grant-create': '/sdk/grant-create-incoming'
   },
   server: {
     port: 1104
