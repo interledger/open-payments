@@ -6,6 +6,7 @@ on:
     types:
       - opened
       - synchronize
+  workflow_dispatch:
 
 name: PR Checks
 
