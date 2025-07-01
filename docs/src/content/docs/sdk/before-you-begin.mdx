@@ -1,14 +1,34 @@
 ---
-title: Test Wallet
+title: Before you begin
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
 
-Before working with our code snippets, we recommend creating a wallet account on the <LinkOut href='https://wallet.interledger-test.dev/'>test wallet</LinkOut> that's part of the Interledger testnet.
+The Open Payments SDKs provide developers with pre-built functions that simplify interactions with the Open Payments API. Currently, we offer a <LinkOut href='https://github.com/interledger/open-payments/tree/main/packages/open-payments'>TypeScript/NodeJS SDK</LinkOut> and a <LinkOut href='https://github.com/interledger/open-payments-php'>PHP SDK</LinkOut>, with plans to expand to additional languages and frameworks in the future.
 
-The test wallet lets you create developer keys and wallet accounts, funded with play money, for making Interledger transactions via the Open Payments APIs.
+## Using the SDKs
+
+Each SDK snippet page uses a tabbed interface to support multiple programming languages. This means you can find the relevant code snippets for the language of your choice with ease, without needing individual pages for each language. The basic structure of each page is as follows:
+
+- The page title reflects the operation, function, or action being performed.
+- A few overview paragraphs provide context about the function, its role in the Open Payments flow, and any general information that may be helpful.
+- The "Before you begin" section that links back to this page for steps to create a test wallet.
+- The main content area includes the tabbed interface where you can select your preferred programming language.
+
+Within the tabbed interface, you'll notice the following sections:
+
+- A "Prerequisites" button that links to the respective SDK's README on GitHub for setup instructions.
+- Any additional configuration steps required for the selected language.
+- Code blocks for each step in the process, broken down into manageable chunks.
+- After the code snippets, any other commands that need to be run are mentioned, along with links to the relevant API reference documentation or other pertinent resources.
+
+This consistent structure across all SDK snippet pages allow you to quickly grasp the functionality and implementation details, making it easier to work with the Open Payments SDKs.
 
 ## Create an account on the test wallet
+
+Before working with our SDK snippets, we recommend creating a wallet account on the <LinkOut href='https://wallet.interledger-test.dev/'>test wallet</LinkOut> that's part of the Interledger testnet.
+
+The test wallet lets you create developer keys and wallet accounts, funded with play money, for making Interledger transactions via the Open Payments APIs.
 
 1. Go to <LinkOut href="https://wallet.interledger-test.dev">wallet.interledger-test.dev</LinkOut>.
 2. Click **Create account** at the bottom-right of the screen.
