@@ -1,7 +1,5 @@
 **Description of changes**
 
-
-
 **Required**
 
 - [ ] Used LinkOut component on external links
