@@ -1,16 +1,4 @@
-<!--
-If updating the specs in /openapi, you can test the changes by opening a PR and checking the Netlify deploy preview
--->
+Please go to the `Preview` tab and select the appropriate sub-template:
 
-## Changes proposed in this pull request
-
-<!--
-Provide a succinct description of what this pull request entails.
--->
-
-## Context
-
-<!--
-What were you trying to do?
-Link issues here -  using `fixes #number`
--->
+* [Engineering](?expand=1&template=eng_template.md)
+* [Documentation](?expand=1&template=doc_template.md)
