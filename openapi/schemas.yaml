@@ -30,13 +30,13 @@ components:
     assetCode:
       title: Asset code
       type: string
-      description: The assetCode is a code that indicates the underlying asset. This SHOULD be an ISO4217 currency code. As an example, the US Dollar is represented as USD.
+      description: The assetCode is a code that indicates the underlying asset. This SHOULD be an ISO4217 currency code. As an example, the euro is represented as EUR.
     assetScale:
       title: Asset scale
       type: integer
       minimum: 0
       maximum: 255
-      description: The number of decimal places used to represent the minimum value of the asset. As an example, USD has an asset scale of 2 with a minimum value of $0.01. 
+      description: The number of decimal places used to represent the minimum possible value of the asset. As an example, EUR has an asset scale of 2 with a minimum possible value of €0.01.
     receiver:
       title: Receiver
       type: string
