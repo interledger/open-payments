@@ -18,6 +18,12 @@ div.expressive-code figure.frame {
   margin-top: 0;
 }
 
+/* Adjust background color of code blocks */
+div.expressive-code figure.frame pre {
+  background-color: var(--sl-color-gray-6);
+  border: 1px solid var(--sl-color-gray-5);
+}
+
 /* OpenAPI specification styling */
 div.panel {
   background-color: var(--sl-color-gray-7);
