@@ -1,11 +1,13 @@
 ---
+import { getRelativeLocaleUrl } from 'astro:i18n';
 import Search from "@astrojs/starlight/components/Search.astro";
 import ThemeSelect from "@astrojs/starlight/components/ThemeSelect.astro";
+import LanguageSelect from '@astrojs/starlight/components/LanguageSelect.astro';
 import SocialIcons from "@astrojs/starlight/components/SocialIcons.astro";
 import OpenPaymentsLogo from "../components/OpenPaymentsLogo.astro";
 ---
 <div class="header sl-flex">
-  <a href="/" class="site-logo">
+  <a href={getRelativeLocaleUrl(Astro.currentLocale ?? 'en', '/')} class="site-logo">
     <OpenPaymentsLogo />
   </a>
   <div class="secondary-wrap">
@@ -14,6 +16,7 @@ import OpenPaymentsLogo from "../components/OpenPaymentsLogo.astro";
     <div class="sl-hidden md:sl-flex">
       <ThemeSelect />
     </div>
+    <LanguageSelect />
   </div>
 </div>
 

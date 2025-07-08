@@ -32,6 +32,16 @@ export default defineConfig({
         './node_modules/@interledger/docs-design-system/src/styles/ilf-docs.css',
         './src/styles/openpayments.css'
       ],
+      defaultLocale: 'root',
+      locales: {
+        root: {
+          label: 'English',
+          lang: 'en'
+        },
+        es: {
+          label: 'Español'
+        }
+      },
       expressiveCode: {
         styleOverrides: {
           borderColor: 'transparent',
@@ -61,6 +71,8 @@ export default defineConfig({
           }
         ]),
         starlightLinksValidator({
+          errorOnLocalLinks: false,
+          errorOnFallbackPages: false,
           exclude: [
             '/apis/{auth-server,resource-server,wallet-address-server}/**/*'
           ]
