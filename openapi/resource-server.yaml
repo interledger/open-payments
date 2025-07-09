@@ -889,6 +889,7 @@ components:
               items:
                 anyOf:
                   - $ref: '#/components/schemas/ilp-payment-method'
+                  - $ref: '#/components/schemas/sepa-payment-method'
           required:
             - methods
     public-incoming-payment:
@@ -1215,6 +1216,7 @@ components:
       type: string
       enum:
         - ilp
+        - sepa
     ilp-payment-method:
       type: object
       additionalProperties: false
@@ -1240,6 +1242,23 @@ components:
         - type: string
           ilpAddress: string
           sharedSecret: string
+    sepa-payment-method:
+      type: object
+      additionalProperties: true
+      properties:
+        type:
+          type: string
+          enum:
+            - sepa
+        iban:
+          type: string
+          description: The IBAN of the account to use as the SEPA payment recipient.         
+      required:
+        - type
+        - iban
+      examples:
+        - type: string
+          iban: string
     error-response:
       type: object
       properties:

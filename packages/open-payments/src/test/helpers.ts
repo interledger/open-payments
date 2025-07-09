@@ -16,6 +16,7 @@ import {
   Grant,
   IncomingPaymentWithPaymentMethods,
   IlpPaymentMethod,
+  SepaPaymentMethod,
   PublicIncomingPayment,
   DIDDocument,
   OutgoingPaymentWithSpentAmounts
@@ -121,7 +122,7 @@ export const mockIncomingPaymentWithPaymentMethods = (
     value: '0'
   },
   createdAt: new Date().toISOString(),
-  methods: [mockIlpPaymentMethod()],
+  methods: [mockIlpPaymentMethod(), mockIBANPaymentMethod()],
   ...overrides
 })
 
@@ -143,6 +144,14 @@ export const mockIlpPaymentMethod = (
   type: 'ilp',
   sharedSecret: base64url('sharedSecret'),
   ilpAddress: 'test.ilpAddress',
+  ...overrides
+})
+
+export const mockIBANPaymentMethod = (
+  overrides?: Partial<SepaPaymentMethod>
+): SepaPaymentMethod => ({
+  type: 'sepa',
+  iban: 'RO66BACX0000001234567890',
   ...overrides
 })
 

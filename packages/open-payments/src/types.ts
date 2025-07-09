@@ -29,7 +29,8 @@ export type PublicIncomingPayment =
   RSComponents['schemas']['public-incoming-payment']
 
 export type IlpPaymentMethod = RSComponents['schemas']['ilp-payment-method']
-type PaymentMethods = IlpPaymentMethod
+export type SepaPaymentMethod = RSComponents['schemas']['sepa-payment-method']
+type PaymentMethods = IlpPaymentMethod | SepaPaymentMethod
 
 export type IncomingPaymentWithPaymentMethods = IncomingPayment & {
   methods: PaymentMethods[]
