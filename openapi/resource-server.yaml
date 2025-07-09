@@ -1252,7 +1252,7 @@ components:
             - sepa
         iban:
           type: string
-          description: The IBAN of the account to use as the SEPA payment recipient.         
+          description: The IBAN of the account to use as the SEPA payment recipient.
       required:
         - type
         - iban
