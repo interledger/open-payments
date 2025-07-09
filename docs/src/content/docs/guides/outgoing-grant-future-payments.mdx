@@ -48,7 +48,7 @@ Let’s assume your user saved their wallet address in their account profile whe
 You should perform this step every time you request a grant in case something changes on your user’s side.
 
 <Tabs syncKey="lang">
-<TabItem label='TypeScript/JavaScript'>
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
 ```ts
 const walletAddress = await client.walletAddress.get({
   url: 'https://cloudninebank.example.com/user'
@@ -74,7 +74,7 @@ The request must include:
 - `interact` object with a `finish` URI - The URI your user will be automatically sent to when interaction, described in the next steps, is complete.
 
 <Tabs syncKey="lang">
-<TabItem label='TypeScript/JavaScript'>
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
 ```ts
 const grant = await client.grant.request(
   {
@@ -141,7 +141,7 @@ Altogether, your user can send up to $100 CAD from:
 Use the interaction reference (`interact_ref`) returned in the redirect URI's query parameters.
 
 <Tabs syncKey='lang'>
-  <TabItem label='TypeScript/JavaScript'>
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
     <ChunkedSnippet
       source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-continuation.ts'
       chunk='3'
