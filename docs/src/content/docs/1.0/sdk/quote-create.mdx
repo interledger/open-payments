@@ -1,0 +1,150 @@
+---
+title: Create a quote
+slug: 1.0/sdk/quote-create
+---
+
+import { CodeBlock, LinkOut, Tooltip } from '@interledger/docs-design-system'
+import { Tabs, TabItem, LinkButton } from '@astrojs/starlight/components'
+import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
+import Begin from '/src/partials/before-you-begin.mdx'
+import Ts from '/src/partials/ts-init-config.mdx'
+import TsImport from '/src/partials/ts-import-initialize.mdx'
+import PhpImport from '/src/partials/php-import-initialize.mdx'
+
+A quote is a commitment from an account servicing entity to deliver a particular amount to a recipient when sending a particular amount from a sender. Once an authorized client obtains the requisite grant from the authorization server of the sender's <Tooltip content="Account servicing entity" client:load><span>ASE</span></Tooltip>, the client can create a quote resource against the sender's wallet address. The quote indicates how much it will cost the sender to proceed with the transaction.
+
+## Before you begin
+
+<Begin />
+
+## Create a quote with an incomingAmount
+
+This code snippet allows a client to create a quote with an `incomingAmount` when one is specified in the `INCOMING_PAYMENT_URL`.
+
+<Tabs syncKey="langs">
+  <TabItem label="TypeScript/JavaScript" icon="seti:javascript">
+    <LinkButton href="https://github.com/interledger/open-payments-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+    <details>
+      <summary>Initial configuration</summary>
+
+      <Ts />
+    </details>
+
+    <TsImport />
+
+    <ChunkedSnippet source="https://raw.githubusercontent.com/interledger/open-payments-snippets/main/quote/quote-create.ts" chunk="3" />
+
+    <ChunkedSnippet source="https://raw.githubusercontent.com/interledger/open-payments-snippets/main/quote/quote-create.ts" chunk="4" />
+
+    For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href="https://github.com/interledger/open-payments-snippets/blob/main/quote/quote-create.ts">View full TS source</LinkOut>
+
+    For JavaScript, run `node path/to/directory/index.js`. <LinkOut href="https://github.com/interledger/open-payments-snippets/blob/main/quote/quote-create.js">View full JS source</LinkOut>
+  </TabItem>
+
+  <TabItem label="PHP" icon="seti:php">
+    <LinkButton href="https://github.com/interledger/open-payments-php-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+    <PhpImport />
+
+    <ChunkedSnippet source="https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/Quote/QuoteCreate.php" chunk="3" />
+
+    <ChunkedSnippet source="https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/Quote/QuoteCreate.php" chunk="4" />
+
+    {/* prettier-ignore */}
+
+    <p><LinkOut href="https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Quote/QuoteCreate.php">View full source</LinkOut></p>
+  </TabItem>
+</Tabs>
+
+## Create a quote with a debit amount
+
+This code snippet allows a client to create a quote with a `debitAmount`, which specifies the amount that will be deducted from the sender's wallet.
+
+<Tabs syncKey="langs">
+  <TabItem label="TypeScript/JavaScript" icon="seti:javascript">
+    <LinkButton href="https://github.com/interledger/open-payments-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+    <details>
+      <summary>Initial configuration</summary>
+
+      <Ts />
+    </details>
+
+    <TsImport />
+
+    <ChunkedSnippet source="https://raw.githubusercontent.com/interledger/open-payments-snippets/main/quote/quote-create-debit-amount.ts" chunk="3" />
+
+    <ChunkedSnippet source="https://raw.githubusercontent.com/interledger/open-payments-snippets/main/quote/quote-create-debit-amount.ts" chunk="4" />
+
+    <ChunkedSnippet source="https://raw.githubusercontent.com/interledger/open-payments-snippets/main/quote/quote-create-debit-amount.ts" chunk="5" />
+
+    For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href="https://github.com/interledger/open-payments-snippets/blob/main/quote/quote-create-debit-amount.ts">View full TS source</LinkOut>
+
+    For JavaScript, run `node path/to/directory/index.js`. <LinkOut href="https://github.com/interledger/open-payments-snippets/blob/main/quote/quote-create-debit-amount.js">View full JS source</LinkOut>
+  </TabItem>
+
+  <TabItem label="PHP" icon="seti:php">
+    <LinkButton href="https://github.com/interledger/open-payments-php-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+    <PhpImport />
+
+    <ChunkedSnippet source="https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/Quote/QuoteCreateDebitAmount.php" chunk="3" />
+
+    <ChunkedSnippet source="https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/Quote/QuoteCreateDebitAmount.php" chunk="4" />
+
+    <ChunkedSnippet source="https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/Quote/QuoteCreateDebitAmount.php" chunk="5" />
+
+    {/* prettier-ignore */}
+
+    <p><LinkOut href="https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Quote/QuoteCreateDebitAmount.php">View full source</LinkOut></p>
+  </TabItem>
+</Tabs>
+
+## Create a quote with a receive amount
+
+This code snippet allows a client to create a quote with a `receiveAmount`, which specifies the amount that the recipient's wallet will receive.
+
+<Tabs syncKey="langs">
+  <TabItem label="TypeScript/JavaScript" icon="seti:javascript">
+    <LinkButton href="https://github.com/interledger/open-payments-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+    <details>
+      <summary>Initial configuration</summary>
+
+      <Ts />
+    </details>
+
+    <TsImport />
+
+    <ChunkedSnippet source="https://raw.githubusercontent.com/interledger/open-payments-snippets/main/quote/quote-create-receive-amount.ts" chunk="3" />
+
+    <ChunkedSnippet source="https://raw.githubusercontent.com/interledger/open-payments-snippets/main/quote/quote-create-receive-amount.ts" chunk="4" />
+
+    <ChunkedSnippet source="https://raw.githubusercontent.com/interledger/open-payments-snippets/main/quote/quote-create-receive-amount.ts" chunk="5" />
+
+    For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href="https://github.com/interledger/open-payments-snippets/blob/main/quote/quote-create-receive-amount.ts">View full TS source</LinkOut>
+
+    For JavaScript, run `node path/to/directory/index.js`. <LinkOut href="https://github.com/interledger/open-payments-snippets/blob/main/quote/quote-create-receive-amount.js">View full JS source</LinkOut>
+  </TabItem>
+
+  <TabItem label="PHP">
+    <LinkButton href="https://github.com/interledger/open-payments-php-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+    <PhpImport />
+
+    <ChunkedSnippet source="https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/Quote/QuoteCreateReceiveAmount.php" chunk="3" />
+
+    <ChunkedSnippet source="https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/Quote/QuoteCreateReceiveAmount.php" chunk="4" />
+
+    <ChunkedSnippet source="https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/Quote/QuoteCreateReceiveAmount.php" chunk="5" />
+
+    {/* prettier-ignore */}
+
+    <p><LinkOut href="https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Quote/QuoteCreateReceiverAmount.php">View full source</LinkOut></p>
+  </TabItem>
+</Tabs>
+
+## References
+
+* [API specification](/1.0/apis/resource-server/operations/create-quote)

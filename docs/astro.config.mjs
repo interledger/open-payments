@@ -3,6 +3,7 @@ import starlight from '@astrojs/starlight'
 import starlightOpenAPI from 'starlight-openapi'
 import starlightLinksValidator from 'starlight-links-validator'
 import starlightFullViewMode from 'starlight-fullview-mode'
+import starlightVersions from 'starlight-versions'
 
 // https://astro.build/config
 export default defineConfig({
@@ -77,7 +78,10 @@ export default defineConfig({
             '/apis/{auth-server,resource-server,wallet-address-server}/**/*'
           ]
         }),
-        starlightFullViewMode()
+        starlightFullViewMode(),
+        starlightVersions({
+          versions: [{ slug: '1.0' }]
+        })
       ],
       sidebar: [
         {

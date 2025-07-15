@@ -18,7 +18,8 @@
     "shiki": "3.7.0",
     "starlight-fullview-mode": "^0.2.3",
     "starlight-links-validator": "^0.17.0",
-    "starlight-openapi": "^0.19.1"
+    "starlight-openapi": "^0.19.1",
+    "starlight-versions": "^0.5.3"
   },
   "devDependencies": {
     "@prettier/plugin-php": "^0.22.4",
