@@ -76,9 +76,9 @@ The three parties involved in the transaction are the:
 
     Using the authorization server information received from the previous step, request two `incomingPayment` grants: one from the merchant wallet authorization server and one from your platform wallet authorization server. The grants will allow an `incomingPayment` resource to be created on both your and your merchant's Open Payments accounts.
 
-    :::note[Alternate scenario]
+    <Aside title="Alternate scenario">
     If you and the merchant use the same account servicing entity, and the authorization server information received is the same for you both, you only need one `incomingPayment` grant.
-    :::
+    </Aside>
 
     <Tabs>
       <TabItem label="Merchant">
@@ -286,9 +286,9 @@ The three parties involved in the transaction are the:
 
     In this guide, we're assuming the IdP has a user interface with which the customer interacts. When the interaction completes, the customer should be directed back to your platform. Now you can make the grant continuation request.
 
-    :::note
+    <Aside>
     In a scenario where a user interface is not available, consider implementing a polling mechanism to check for the completion of the interaction.
-    :::
+    </Aside>
 
     Add the `interact_ref` returned by the client wallet authorization server in the previous step.
 
