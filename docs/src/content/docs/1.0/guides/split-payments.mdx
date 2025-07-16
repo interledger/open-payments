@@ -12,7 +12,7 @@ import InteractionReq from '/src/partials/interaction-required.mdx'
 import StartInteraction from '/src/partials/grant-start-interaction.mdx'
 import FinishInteraction from '/src/partials/grant-finish-interaction.mdx'
 
-:::tip\[Summary]
+:::tip[Summary]
 Add support for split payments to your client. A split payment is a single payment of a full amount that's split into one or more simultaneous transactions and delivered to multiple recipients.
 :::
 
@@ -76,7 +76,7 @@ The three parties involved in the transaction are the:
 
     Using the authorization server information received from the previous step, request two `incomingPayment` grants: one from the merchant wallet authorization server and one from your platform wallet authorization server. The grants will allow an `incomingPayment` resource to be created on both your and your merchant's Open Payments accounts.
 
-    :::note\[Alternate scenario]
+    :::note[Alternate scenario]
     If you and the merchant use the same account servicing entity, and the authorization server information received is the same for you both, you only need one `incomingPayment` grant.
     :::
 

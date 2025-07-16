@@ -11,7 +11,7 @@ import Ts from '/src/partials/ts-import-initialize.mdx'
 import StartInteraction from '/src/partials/grant-start-interaction.mdx'
 import FinishInteraction from '/src/partials/grant-finish-interaction.mdx'
 
-:::tip\[Summary]
+:::tip[Summary]
 Add support for one-time payments to your client. A one-time payment is a single, non-recurring payment.
 :::
 
@@ -102,8 +102,7 @@ This guide provides steps for making a one-time payment, in which an outgoing pa
     * `debitAmount` : the maximum amount to be deducted from the sender's wallet.
     * `receiveAmount` : the maximum amount to be received in the recipient's wallet.
 
-    :::note\[Limits]
-
+    :::note[Limits]
     The `debitAmount` and `receiveAmount` parameters, which apply to the sender and recipient respectively, allow you to define the limits under which an outgoing payment can be created. Select the parameter most appropriate for your particular use case. Specify the `receiveAmount` when the recipient must receive a defined amount. Specify the `debitAmount` for cases when the sender can exercise a limit on the amount that can be debited from their account.
     :::
 

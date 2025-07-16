@@ -11,7 +11,7 @@ import Ts from '/src/partials/ts-import-initialize.mdx'
 import StartInteraction from '/src/partials/grant-start-interaction.mdx'
 import FinishInteraction from '/src/partials/grant-finish-interaction.mdx'
 
-:::tip\[Summary]
+:::tip[Summary]
 Add support for recurring payments to your client. A recurring payment requires the sender's authorization once, then automatically pays out at regular intervals.
 :::
 
@@ -107,8 +107,7 @@ This guide provides steps for making recurring payments, in which a single outgo
 
     Then add the `interval` property to the `limits` object, which is the interval period conforming to the <LinkOut href="https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals">ISO8601 repeating interval string format.</LinkOut>
 
-    :::note\[Limits]
-
+    :::note[Limits]
     The `debitAmount` and `receiveAmount` parameters, which apply to the sender and recipient respectively, allow you to define the limits under which an outgoing payment can be created. Select the parameter most appropriate for your particular use case. Specify the `receiveAmount` when the recipient must receive a defined amount. Specify the `debitAmount` for cases when the sender can exercise a limit on the amount that can be debited from their account.
 
     The `value` for either parameter is the amount that all payments created under the grant cannot exceed. For example, the `DEBIT_AMOUNT` value is the maximum amount that can be debited from the sender's wallet.

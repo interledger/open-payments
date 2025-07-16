@@ -34,7 +34,7 @@ The outgoing payment is created and funds are sent to the `incoming-payment` res
 
 Instead of waiting for the payment session to expire, the client can issue an explicit request to manually <LinkOut href="/apis/resource-server/operations/complete-incoming-payment">complete the incoming payment</LinkOut> to indicate no further payments will be sent.
 
-:::tip\[Use case: streaming Web Monetization payments]
+:::tip[Use case: streaming Web Monetization payments]
 In streaming Web Monetization payments, the maximum amount to be paid is unknown to the recipient's ASE. Payments continue to stream until the Web Monetization agent ends the session. At this point, the Web Monetization agent can request to mark the incoming payment as complete. This enables the recipient's ASE to be notified as soon as possible that no further payments will be sent and to credit the recipient's account.
 :::
 
@@ -62,7 +62,7 @@ Open Payments requires the sender to explicitly consent to the creation of the r
 
 Within the request to create the `outgoing-payment` resource is the recipient wallet address, so the sender's ASE knows where to send the payment, and the quote resource’s ID, where the payment amounts are defined.
 
-:::note\[Creating an outgoing payment without a quote]
+:::note[Creating an outgoing payment without a quote]
 A quote is not always required for creating an outgoing payment. In cases where the sender doesn't need to specify the amount the recipient will receive (like <LinkOut href="https://webmonetization.org">Web Monetization</LinkOut>, for example), the outgoing payment can be created using an `incomingPayment` and `debitAmount` instead.
 :::
 

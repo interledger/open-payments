@@ -10,19 +10,19 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/starlight": "^0.34.4",
-    "@interledger/docs-design-system": "^0.8.0",
-    "astro": "5.11.0",
-    "mermaid": "^11.8.0",
-    "sharp": "^0.34.2",
-    "shiki": "3.7.0",
+    "@astrojs/starlight": "^0.34.7",
+    "@interledger/docs-design-system": "^0.9.0",
+    "astro": "5.11.1",
+    "mermaid": "^11.8.1",
+    "sharp": "^0.34.3",
+    "shiki": "3.8.0",
     "starlight-fullview-mode": "^0.2.3",
     "starlight-links-validator": "^0.17.0",
     "starlight-openapi": "^0.19.1",
-    "starlight-versions": "^0.5.3"
+    "starlight-versions": "^0.5.4"
   },
   "devDependencies": {
-    "@prettier/plugin-php": "^0.22.4",
+    "@prettier/plugin-php": "^0.23.0",
     "prettier": "3.6.2"
   }
 }

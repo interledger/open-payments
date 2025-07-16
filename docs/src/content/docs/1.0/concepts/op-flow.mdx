@@ -11,7 +11,7 @@ import {
 } from '@interledger/docs-design-system'
 import Interactive from '/src/partials/diagram-interactive-grant.mdx'
 
-:::tip\[Summary]
+:::tip[Summary]
 When a client issues payment instructions, numerous interactions between the client and servers are needed to obtain grants, verify identities, and create the resources required to complete a transaction.
 :::
 
@@ -87,7 +87,7 @@ An interactive grant requires explicit consent be collected from the sender befo
 
 After consent is obtained, the client requests permission to <LinkOut href="/apis/auth-server/operations/post-continue">continue the grant request</LinkOut> in order to obtain an access token.
 
-:::note\[Continue request timing]
+:::note[Continue request timing]
 For outgoing payments, explicit user consent is required before proceeding with the continuation request. After the user completes their interaction with the identity provider (IdP), they should be redirected back to your application. At this point, you can make the grant continuation request. In scenarios where a user interface is not available, consider implementing a polling mechanism to check for the completion of the interaction.
 :::
 
