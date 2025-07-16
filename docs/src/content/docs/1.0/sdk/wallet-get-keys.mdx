@@ -1,0 +1,62 @@
+---
+title: Get keys bound to a wallet address
+slug: 1.0/sdk/wallet-get-keys
+---
+
+import { CodeBlock, LinkOut } from '@interledger/docs-design-system'
+import { Tabs, TabItem, LinkButton } from '@astrojs/starlight/components'
+import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
+import Begin from '/src/partials/before-you-begin.mdx'
+import Ts from '/src/partials/ts-init-config.mdx'
+import TsImport from '/src/partials/ts-import-initialize.mdx'
+import PhpImport from '/src/partials/php-import-initialize.mdx'
+
+While most Open Payments code snippets are intended for clients, getting the keys bound to a wallet address is primarily a function of account servicing entities.
+
+When an authorization server receives a signed grant request, the server can make a call to acquire the public keys bound to the wallet address. Then, when a client makes a request to a resource server, the resource server calls the auth server to ensure the signature of the request corresponds to the public JWK of the wallet address. This enables the server to ensure the client is who it says it is.
+
+These code snippets get the keys associated with the specified wallet address.
+
+## Before you begin
+
+<Begin />
+
+## Retrieve the public keys for a wallet address
+
+<Tabs>
+  <TabItem label="TypeScript/JavaScript" icon="seti:javascript">
+    <LinkButton href="https://github.com/interledger/open-payments-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+    <details><summary>Initial configuration</summary><Ts /></details>
+
+    <TsImport />
+
+    <ChunkedSnippet source="https://raw.githubusercontent.com/interledger/open-payments-snippets/main/wallet-address/wallet-address-get-keys.ts" chunk="3" />
+
+    <ChunkedSnippet source="https://raw.githubusercontent.com/interledger/open-payments-snippets/main/wallet-address/wallet-address-get-keys.ts" chunk="4" />
+
+    For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href="https://github.com/interledger/open-payments-snippets/blob/main/wallet-address/wallet-address-get-keys.ts">View full TS source</LinkOut>
+
+    For JavaScript, run `node path/to/directory/index.js`. <LinkOut href="https://github.com/interledger/open-payments-snippets/blob/main/wallet-address/wallet-address-get-keys.js">View full JS source</LinkOut>
+
+  </TabItem>
+
+  <TabItem label="PHP" icon="seti:php">
+    <LinkButton href="https://github.com/interledger/open-payments-php-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+    <PhpImport />
+
+    <ChunkedSnippet source="https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/WalletAddress/PublicGetWalletAddressKeys.php" chunk="3" />
+
+    <ChunkedSnippet source="https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/WalletAddress/PublicGetWalletAddressKeys.php" chunk="4" />
+
+    {/* prettier-ignore */}
+
+    <p><LinkOut href="https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/WalletAddress/PublicGetWalletAddressKeys.php">View full source</LinkOut></p>
+
+  </TabItem>
+</Tabs>
+
+## References
+
+- [API specification](/1.0/apis/wallet-address-server/operations/get-wallet-address-keys)
+- [Wallet addresses](/1.0/concepts/wallet-addresses)

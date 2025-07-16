@@ -3,6 +3,7 @@ import starlight from '@astrojs/starlight'
 import starlightOpenAPI from 'starlight-openapi'
 import starlightLinksValidator from 'starlight-links-validator'
 import starlightFullViewMode from 'starlight-fullview-mode'
+import starlightVersions from 'starlight-versions'
 
 // https://astro.build/config
 export default defineConfig({
@@ -32,7 +33,7 @@ export default defineConfig({
         './node_modules/@interledger/docs-design-system/src/styles/ilf-docs.css',
         './src/styles/openpayments.css'
       ],
-      defaultLocale: 'root',
+      // defaultLocale: 'root',
       locales: {
         root: {
           label: 'English',
@@ -74,10 +75,14 @@ export default defineConfig({
           errorOnLocalLinks: false,
           errorOnFallbackPages: false,
           exclude: [
-            '/apis/{auth-server,resource-server,wallet-address-server}/**/*'
+            '/apis/{auth-server,resource-server,wallet-address-server}/**/*',
+            '/1.0/apis/{auth-server,resource-server,wallet-address-server}/**/*'
           ]
         }),
-        starlightFullViewMode()
+        starlightFullViewMode(),
+        starlightVersions({
+          versions: [{ slug: '1.0' }]
+        })
       ],
       sidebar: [
         {
@@ -447,8 +452,7 @@ export default defineConfig({
           href: 'https://github.com/interledger/open-payments'
         }
       ]
-    }),
-    starlightOpenAPI()
+    })
   ],
   redirects: {
     '/introduction/wallet-addresses': '/concepts/wallet-addresses',

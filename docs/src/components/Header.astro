@@ -4,6 +4,7 @@ import Search from "@astrojs/starlight/components/Search.astro";
 import ThemeSelect from "@astrojs/starlight/components/ThemeSelect.astro";
 import LanguageSelect from '@astrojs/starlight/components/LanguageSelect.astro';
 import SocialIcons from "@astrojs/starlight/components/SocialIcons.astro";
+import VersionSelect from 'starlight-versions/components/VersionSelect.astro';
 import OpenPaymentsLogo from "../components/OpenPaymentsLogo.astro";
 ---
 <div class="header sl-flex">
@@ -14,6 +15,7 @@ import OpenPaymentsLogo from "../components/OpenPaymentsLogo.astro";
     <Search />
     <SocialIcons />
     <div class="sl-hidden md:sl-flex">
+      <VersionSelect />
       <ThemeSelect />
     </div>
     <LanguageSelect />

@@ -1,0 +1,77 @@
+---
+title: Grant negotiation and authorization
+slug: 1.0/identity/grants
+---
+
+import {
+  LinkOut,
+  Tooltip,
+  Mermaid,
+  MermaidWrapper
+} from '@interledger/docs-design-system'
+import Interactive from '/src/partials/diagram-interactive-grant.mdx'
+
+:::tip[Summary]
+A grant in Open Payments allows a client to obtain authorization from a resource owner to access and perform operations on protected resources. Open Payments uses the Grant Negotiation and Authorization Protocol (GNAP) to facilitate this process, allowing clients to securely interact with the API.
+:::
+
+In Open Payments, a grant indicates a transfer, or delegation, of authorization from a Resource Owner (RO) to a piece of software. An RO can be a physical person, such as the software’s end user, or a process, such as predefined organizational rules. By delegating authorization, the RO allows the software to access and perform operations on protected resources on the RO’s behalf.
+
+Open Payments leverages the <LinkOut href="https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol">Grant Negotiation and Authorization Protocol (GNAP)</LinkOut> as the mechanism by which the piece of software, known as a client instance (or client for short), is delegated authorization to use the Open Payments APIs to interface with supported accounts.
+
+## GNAP vs OAuth 2.0
+
+GNAP is being developed as the successor to OAuth 2.0 and is designed to fill many of the gaps discovered through the use of OAuth in Open Banking and other financial use cases. <LinkOut href="https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol#name-compared-to-oauth-20">Appendix B</LinkOut> in the GNAP specification outlines ways in which the protocol’s design differs from OAuth 2.0. Some examples include:
+
+| GNAP                                                                                                                                                                                                    | OAuth 2.0                                                                                                                                                              |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The client declares the different ways it can start and finish an interaction, and these can be mixed together as needed for different use cases; interactions can use a web browser, but don’t have to | The type of interaction available is fixed and dictated by the grant type; assumes the user has access to a web browser                                                |
+| Allows the entity requesting access to protected resources to be different from the resource owner, but still works in the optimized cased of them being the same party                                 | Assumes the user is the same user that will interact with the authorization server to approve access; assumes the resource owner is the person who requested the grant |
+| Allows the client to present an unknown key to the authorization server and use that key to protect the ongoing request                                                                                 | Requires all clients to be registered at the authorization server and use a `client_id` known to the authorization server                                              |
+| Always starts at the same endpoint at the authorization server                                                                                                                                          | Different grant types start at different endpoints                                                                                                                     |
+| A client can ask for multiple access tokens in a single grant request                                                                                                                                   | A client can only ask for a single access token in a single request                                                                                                    |
+
+## Grant authorization servers
+
+An authorization server grants delegated privileges to a client in the form of access tokens. Access tokens represent a set of access rights and/or attributes granted to the client. With the requisite access token(s), the client can access a resource server’s Open Payments APIs and perform allowed operations, such as creating incoming payments and listing outgoing payments, on behalf of the resource owner.
+
+An authorization server is uniquely identified by its grant endpoint URI, which is an absolute URI that a client calls to initiate a grant request.
+
+### Key registries
+
+A key registry is a list of keys associated with clients requiring access to protected Open Payments resources. Key registries are publicly exposed via a `jwks.json` endpoint and allows an authorization server to verify that a client is who it says it is.
+
+A client must generate and add its key to its key registry before requesting a grant for the first time. For more information on key generation and registration, as well as how key registries work with authorization servers, refer to the [Client keys](/1.0/identity/client-keys) page.
+
+## Grant requests
+
+Before a client can access the Open Payments APIs, it must send a grant request to the authorization server. The request must contain the type of resource it wants to work with and the action(s) it wants to take on the resource. Resource types include `incoming-payment`, `quote`, and `outgoing-payment`. The available actions depend on type, but examples include `create` and `read`. A successful grant request results in the authorization server returning one or more access tokens.
+
+The sequence of requests a client makes when setting up a payment can follow one of the paths below.
+
+#### Path 1 (most common)
+
+1. Request an incoming-payment grant from the recipient-side authorization server.
+2. Send request to create an incoming-payment resource to the recipient-side resource server.
+3. Request a quote grant from the sender-side authorization server.
+4. Send request to create a quote resource to the sender-side resource server.
+5. Request an interactive `outgoing-payment` grant from the sender-side authorization server.
+6. Send request to create an outgoing payment resource to the sender-side resource server.
+
+#### Path 2
+
+1. Request an `incoming-payment` grant from the recipient-side authorization server.
+2. Send request to create an incoming payment resource to the recpient-side resource server.
+3. Request a single interactive grant for both `quote` and `outgoing-payment` from the sender-side authorization server.
+4. Send request to create a quote resource to the sender-side resource server.
+5. Send request to create an outgoing payment resource to the sender-side resource server.
+
+## Open Payments resource servers
+
+A resource server provides the Open Payments APIs through which resources can be created or accessed on the server. GNAP doesn’t presume or require a tight coupling between a resource server and an authorization server and it’s increasingly common for the servers to be run and managed separately.
+
+Operations on the APIs by a client require the client to have a valid access token issued by a <LinkOut href="https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol-16#name-trust-relationships">trusted authorization server</LinkOut>. When the client uses its access token to call the resource server, the resource server examines the token to determine if the token is sufficient for the request. The means by which a resource server makes this determination are outside of the scope of Open Payments. If the token is sufficient, the client is given the right to access the operation(s) and resource tied to the token.
+
+:::note
+An open-source implementation of an Open Payments resource server, called <LinkOut href="https://rafiki.dev">Rafiki</LinkOut>, is currently in development.
+:::
