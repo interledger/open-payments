@@ -68,11 +68,11 @@ Before a client can request a grant for the first time, it must:
 
 Since client requests are completed over multiple signed HTTP requests, it's important for a client to provide a way to consistently identify itself across these requests. As such, clients must include the following when making requests:
 
-* Headers
-  * A `Signature-Input` header that includes the `keyId` associated with the client's key pair. This header is a comma-separated list of headers that map to values in the data that was signed.
-  * A `signature` header generated based on the `Signature-Input`, using the `EdDSA` signing algorithm
-* Body
-  * A `client` property containing the client’s wallet address
+- Headers
+  - A `Signature-Input` header that includes the `keyId` associated with the client's key pair. This header is a comma-separated list of headers that map to values in the data that was signed.
+  - A `signature` header generated based on the `Signature-Input`, using the `EdDSA` signing algorithm
+- Body
+  - A `client` property containing the client’s wallet address
 
 Securing client requests follows a profile of what's defined in the <LinkOut href="https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol#name-securing-requests-from-the-">GNAP specification</LinkOut>.
 

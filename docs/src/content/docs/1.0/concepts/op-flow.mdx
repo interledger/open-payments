@@ -19,8 +19,8 @@ This page provides a high-level look at the API calls and interactions that occu
 
 ### Assumptions
 
-* The <Tooltip content="Such as a mobile or web application or service" client:load>client's</Tooltip> user is the sender.
-* The client already has the sender's Open Payments-enabled account details and is able to send payments on their behalf.
+- The <Tooltip content="Such as a mobile or web application or service" client:load>client's</Tooltip> user is the sender.
+- The client already has the sender's Open Payments-enabled account details and is able to send payments on their behalf.
 
 ## Get account details
 
@@ -36,7 +36,8 @@ A client retrieves public details about a recipient's Open Payments-enabled acco
     WA-->>C: 200 wallet address found, return public account details
 
 `}
-  />
+/>
+
 </MermaidWrapper>
 
 ## Incoming payment
@@ -56,7 +57,8 @@ The client first <LinkOut href="/apis/auth-server/operations/post-request">reque
     RS-->>C: 201 incoming payment created, return incoming payment with public details
 
 `}
-  />
+/>
+
 </MermaidWrapper>
 
 ## Quote
@@ -76,7 +78,8 @@ The client <LinkOut href="/apis/auth-server/operations/post-request">requests/re
     RS-->>C: 201 quote created, returns quote details
 
 `}
-  />
+/>
+
 </MermaidWrapper>
 
 ## Outgoing payment
@@ -106,7 +109,8 @@ Once an access token is acquired, the client can request the creation of the <Li
     RS-->>C: 201 outgoing payment created, <br/>returns outgoing payment details
 
 `}
-  />
+/>
+
 </MermaidWrapper>
 
 ## Get transaction history
@@ -124,7 +128,8 @@ To provide a user with their transaction history, the client can retrieve a list
     RS-->>C: 200 OK, returns array of incoming/outgoing payments <br/>with relevant payment details
 
 `}
-  />
+/>
+
 </MermaidWrapper>
 
 Similarly, the client can provide the user with details about a specific <LinkOut href="/apis/resource-server/operations/get-incoming-payment">incoming</LinkOut> or <LinkOut href="/apis/resource-server/operations/get-outgoing-payment">outgoing</LinkOut> payment.
@@ -140,7 +145,8 @@ Similarly, the client can provide the user with details about a specific <LinkOu
     RS-->>C: 200 incoming/outgoing payment found, <br/>returns incoming/outgoing payment details
 
 `}
-  />
+/>
+
 </MermaidWrapper>
 
 ## Bringing it all together

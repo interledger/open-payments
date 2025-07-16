@@ -24,19 +24,19 @@ In this guide, you’ll assume the role of an app developer. The guide takes you
 
 ## Dependencies
 
-* <LinkOut href="https://github.com/interledger/open-payments/tree/main/packages/open-payments">
+- <LinkOut href='https://github.com/interledger/open-payments/tree/main/packages/open-payments'>
     Open Payments TypeScript SDK
   </LinkOut>
 
 ## Endpoints
 
-* <LinkOut href="https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/">
+- <LinkOut href='https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/'>
     Get Wallet Address
   </LinkOut>
-* <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-request/">
+- <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-request/'>
     Grant Request
   </LinkOut>
-* <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-continue/">
+- <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-continue/'>
     Continue Grant Request
   </LinkOut>
 
@@ -70,9 +70,9 @@ Begin by requesting an interactive outgoing payment grant from the authorization
 
 The request must include:
 
-* `debitAmount` - The maximum amount that your user can send per interval. When the next interval begins, the value resets.
-* `interval` - The recurring time [interval](#about-the-interval) under which this grant is valid. Must be expressed in <LinkOut href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601</LinkOut> format which is a standardized way to express time-related information.
-* `interact` object with a `finish` URI - The URI your user will be automatically sent to when interaction, described in the next steps, is complete.
+- `debitAmount` - The maximum amount that your user can send per interval. When the next interval begins, the value resets.
+- `interval` - The recurring time [interval](#about-the-interval) under which this grant is valid. Must be expressed in <LinkOut href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601</LinkOut> format which is a standardized way to express time-related information.
+- `interact` object with a `finish` URI - The URI your user will be automatically sent to when interaction, described in the next steps, is complete.
 
 <Tabs syncKey="lang">
   <TabItem label="TypeScript/JavaScript" icon="seti:javascript">
@@ -118,16 +118,16 @@ The request must include:
 
 The interval used in this guide is `R3/2025-05-20T13:00:00Z/P1M`. Remember that your user wants to send payments up to $100 CAD a month for three months. The interval breaks down like this:
 
-* `R[3]/` is the number of repetitions - three.
-* `2025-05-20` is the start date of the repeating interval - 20 May 2025
-* `T13:00:00Z/` is the start time of the repeating interval - 1:00 PM UTC.
-* `[P1M]` is the period of time between each interval - one month. Used with `R[3]`, you have a grant that’s valid once a month for three months.
+- `R[3]/` is the number of repetitions - three.
+- `2025-05-20` is the start date of the repeating interval - 20 May 2025
+- `T13:00:00Z/` is the start time of the repeating interval - 1:00 PM UTC.
+- `[P1M]` is the period of time between each interval - one month. Used with `R[3]`, you have a grant that’s valid once a month for three months.
 
 Altogether, your user can send up to $100 CAD from:
 
-* 1 PM UTC on 20 May 2025 through 12:59 PM UCT on 20 June 2025
-* 1 PM UTC on 20 June 2025 through 12:59 PM UTC on 20 July 2025
-* 1 PM UTC on 20 July 2025 through 12:59 PM UCT on 20 August 2025
+- 1 PM UTC on 20 May 2025 through 12:59 PM UCT on 20 June 2025
+- 1 PM UTC on 20 June 2025 through 12:59 PM UTC on 20 July 2025
+- 1 PM UTC on 20 July 2025 through 12:59 PM UCT on 20 August 2025
 
 ### 3. Start interaction with the user
 
@@ -141,9 +141,12 @@ Altogether, your user can send up to $100 CAD from:
 
 Use the interaction reference (`interact_ref`) returned in the redirect URI's query parameters.
 
-<Tabs syncKey="lang">
-  <TabItem label="TypeScript/JavaScript" icon="seti:javascript">
-    <ChunkedSnippet source="https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-continuation.ts" chunk="3" />
+<Tabs syncKey='lang'>
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+    <ChunkedSnippet
+      source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-continuation.ts'
+      chunk='3'
+    />
   </TabItem>
 </Tabs>
 

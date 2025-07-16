@@ -9,7 +9,7 @@ import { LinkOut, Tooltip } from '@interledger/docs-design-system'
 After a resource owner allows a client to access their account, the client must verify that the resource owner provided their consent. The client verifies consent by calculating the hash issued by the authorization server.
 :::
 
-Once a resource owner authorizes a client software, the authorization server will redirect the resource owner's [identity provider (IdP)](/1.0/identity/idp/) to the finish URI if the client had provided an `interact.finish` object in the initial request. In order to secure this communication and verify that the redirect indeed emanated from the authorization server, the authorization server will provide a hash parameter in the request to the client's callback URI. The client ***must*** verify this hash.
+Once a resource owner authorizes a client software, the authorization server will redirect the resource owner's [identity provider (IdP)](/1.0/identity/idp/) to the finish URI if the client had provided an `interact.finish` object in the initial request. In order to secure this communication and verify that the redirect indeed emanated from the authorization server, the authorization server will provide a hash parameter in the request to the client's callback URI. The client **_must_** verify this hash.
 
 ## Hashing method
 

@@ -46,9 +46,9 @@ The purpose of a quote is to indicate how much it will cost, including any appli
 
 There are three types of quotes.
 
-* **Fixed-send quote** - A fixed amount will be paid from the *sender’s* account. A `debitAmount` is required for this type. With this quote type, an incoming payment can't automatically complete until it expires. Instead of waiting for the expiration, the client can issue a <LinkOut href="/apis/resource-server/operations/complete-incoming-payment">Complete Incoming Payment request</LinkOut> when the outgoing payment is complete.
-* **Fixed-receive quote** - A fixed amount will be paid into the *recipient's* account. A `receiveAmount` is required for this type.
-* **Quote with incomingAmount** - The incoming payment already has a defined `incomingAmount`. For this type, the `receiver` is the URL of the `incoming-payment` resource that will be paid into, indicated by `/incoming-payments` being part of the URL.
+- **Fixed-send quote** - A fixed amount will be paid from the _sender’s_ account. A `debitAmount` is required for this type. With this quote type, an incoming payment can't automatically complete until it expires. Instead of waiting for the expiration, the client can issue a <LinkOut href="/apis/resource-server/operations/complete-incoming-payment">Complete Incoming Payment request</LinkOut> when the outgoing payment is complete.
+- **Fixed-receive quote** - A fixed amount will be paid into the _recipient's_ account. A `receiveAmount` is required for this type.
+- **Quote with incomingAmount** - The incoming payment already has a defined `incomingAmount`. For this type, the `receiver` is the URL of the `incoming-payment` resource that will be paid into, indicated by `/incoming-payments` being part of the URL.
 
 A successfully created `quote` resource results in the generation of a quote `id` in the form of a URL.
 

@@ -88,8 +88,8 @@ importers:
         version: 0.5.4(@astrojs/starlight@0.34.7)
     devDependencies:
       '@prettier/plugin-php':
-        specifier: ^0.23.0
-        version: 0.23.0(prettier@3.6.2)
+        specifier: ^0.24.0
+        version: 0.24.0(prettier@3.6.2)
       prettier:
         specifier: 3.6.2
         version: 3.6.2
@@ -2498,8 +2498,8 @@ packages:
     dev: false
     optional: true
 
-  /@prettier/plugin-php@0.23.0(prettier@3.6.2):
-    resolution: {integrity: sha512-8VeSOewhR9eBaQbxDS+NCkbjk57VKlCroz4zTNDKnLl6h4JXG2MLITZR89WDFdHS/E35s/uwtSDgnigWlbGvkQ==}
+  /@prettier/plugin-php@0.24.0(prettier@3.6.2):
+    resolution: {integrity: sha512-x9l65fCE/pgoET6RQowgdgG8Xmzs44z6j6Hhg3coINCyCw9JBGJ5ZzMR2XHAM2jmAdbJAIgqB6cUn4/3W3XLTA==}
     peerDependencies:
       prettier: ^3.0.0
     dependencies:

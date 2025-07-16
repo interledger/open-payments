@@ -17,8 +17,8 @@ The Open Payments APIs implement the <LinkOut href="https://datatracker.ietf.org
 
 The use of digital signatures allow the Open Payments APIs to address two key aspects of message security:
 
-* **Authenticity** of any system that requests access to specific resources
-* **Integrity** of specific message fields to guard against message tampering
+- **Authenticity** of any system that requests access to specific resources
+- **Integrity** of specific message fields to guard against message tampering
 
 Part of how Open Payments-enabled systems control access to protected resources is by generating or verifying the digital signature of each HTTP message.
 
@@ -29,10 +29,10 @@ EdDSA is an elliptic curve cryptographic algorithm that offers advantages over p
 
 The main advantages for using this digital signature algorithm include:
 
-* Good hash function collision resilience.
-* Speed and efficiency for signature generation and verification.
-* Guarding against the risk of an encryption key downgrade attack.
-* Relatively efficient security offered with smaller key sizes. Earlier public-key cryptographic algorithms, such as RSA, offer comparable security with notably larger key sizes.
+- Good hash function collision resilience.
+- Speed and efficiency for signature generation and verification.
+- Guarding against the risk of an encryption key downgrade attack.
+- Relatively efficient security offered with smaller key sizes. Earlier public-key cryptographic algorithms, such as RSA, offer comparable security with notably larger key sizes.
 
 For more information about the EdDSA and its variants, refer to <LinkOut href="https://datatracker.ietf.org/doc/html/rfc8032">RFC8032</LinkOut>.
 

@@ -33,7 +33,7 @@ export default defineConfig({
         './node_modules/@interledger/docs-design-system/src/styles/ilf-docs.css',
         './src/styles/openpayments.css'
       ],
-      defaultLocale: 'root',
+      // defaultLocale: 'root',
       locales: {
         root: {
           label: 'English',
@@ -451,8 +451,7 @@ export default defineConfig({
           href: 'https://github.com/interledger/open-payments'
         }
       ]
-    }),
-    starlightOpenAPI()
+    })
   ],
   redirects: {
     '/introduction/wallet-addresses': '/concepts/wallet-addresses',

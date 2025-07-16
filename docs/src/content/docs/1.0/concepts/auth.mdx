@@ -28,7 +28,7 @@ This section outlines the different types of grants that clients can request wit
 
 ### incoming-payment
 
-A client typically begins the Open Payments flow by requesting an incoming payment grant from the authorization server on the *recipient* side. However, there are instances where the client may request an outgoing payment grant first, such as in the case of Web Monetization.
+A client typically begins the Open Payments flow by requesting an incoming payment grant from the authorization server on the _recipient_ side. However, there are instances where the client may request an outgoing payment grant first, such as in the case of Web Monetization.
 
 The client can request a single grant to create multiple incoming payments for different Open Payments-enabled accounts as long as each account belongs to the same <Tooltip content="Account servicing entity" client:load><span>ASE</span></Tooltip>.
 
@@ -36,13 +36,13 @@ Incoming payment grants are non-interactive by default, meaning interaction by a
 
 ### quote
 
-After the client receives an incoming payment grant and an incoming payment resource is created on the recipient's account, the client requests a quote grant from the authorization server on the *sender* side. The client can request a single grant to create multiple quotes for different Open Payments-enabled accounts as long as each account belongs to the same <Tooltip content="Account servicing entity" client:load><span>ASE</span></Tooltip>.
+After the client receives an incoming payment grant and an incoming payment resource is created on the recipient's account, the client requests a quote grant from the authorization server on the _sender_ side. The client can request a single grant to create multiple quotes for different Open Payments-enabled accounts as long as each account belongs to the same <Tooltip content="Account servicing entity" client:load><span>ASE</span></Tooltip>.
 
 Quote grants are non-interactive by default, meaning interaction by an individual (typically the client’s user) is not required for the authorization server to issue an access token.
 
 ### outgoing-payment
 
-Having progressed through the incoming payment and quote portions of the Open Payments flow, the client is ready to request an outgoing payment grant from the authorization server on the *sender* side.
+Having progressed through the incoming payment and quote portions of the Open Payments flow, the client is ready to request an outgoing payment grant from the authorization server on the _sender_ side.
 
 Open Payments requires outgoing payment grant requests to be interactive. When a grant request is interactive, it means explicit interaction by an individual (typically the client’s user) is a required step in the delegation process.
 
