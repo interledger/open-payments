@@ -275,7 +275,8 @@ export default defineConfig({
             },
             {
               label: 'Split an incoming payment',
-              link: '/guides/split-payments/'
+              link: '/guides/split-payments/',
+              badge: 'Updated'
             },
             {
               label: 'Get an outgoing payment grant for future payments',

@@ -3,29 +3,28 @@ title: Split an incoming payment
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
-import { Tabs, TabItem } from '@astrojs/starlight/components'
-import HttpSig from '/src/partials/http-msg-sig-note.mdx'
-import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
-import Ts from '/src/partials/ts-import-initialize.mdx'
+import { Tabs, TabItem, Card } from '@astrojs/starlight/components'
 import InteractionReq from '/src/partials/interaction-required.mdx'
 import StartInteraction from '/src/partials/grant-start-interaction.mdx'
 import FinishInteraction from '/src/partials/grant-finish-interaction.mdx'
 
 :::tip[Summary]
-Add support for split payments to your client. A split payment is a single payment of a full amount that's split into one or more simultaneous transactions and delivered to multiple recipients.
+Learn how to take a single payment and split the value between multiple recipients.
 :::
 
-In the context of Open Payments, a split payment is a single payment that's divided into two or more smaller payments before reaching the recipients. From the sender's point of view, they're making a single payment to a single recipient.
+Imagine making a purchase from an online marketplace. From your perspective, you’re sending a single payment to a merchant in exchange for a good. Behind the scenes, the marketplace receives a portion of the payment as a service fee.
 
-In this guide you will assume the role of a platform operator adding support for split payments to your online marketplace. When a consumer makes a purchase on your marketplace, both you and the merchant will receive a portion of the payment.
+There's a few ways for the marketplace to collect their fee. For example, it could receive the full amount, deduct the fee, then send the rest to the merchant. However, holding funds for the merchant, even for a second, requires compliance with certain financial rules and regulations. A better way is to ensure both parties only receive the amount they're supposed to receive.
+
+Remember, Open Payments doesn't execute payments or touch money in any way. It's used to issue payment instructions before any money movement occurs. Examples of payment instructions are, "of the $6 purchase, pay the marketplace $1 and the merchant $5." This way, funds meant for one party never pass through the other party.
+
+For this guide, you'll assume the role of a platform operator of an online marketplace. The guide explains how to split a customer's $100 USD payment into two incoming payments. The merchant will receive 99% of the payment while you keep 1% as a fee.
 
 The three parties involved in the transaction are the:
 
 - Customer: the purchaser of a good or service on the marketplace
 - Merchant: the seller of a good or service on the marketplace
-- Platform: you, as the operator of the marketplace
-
-<HttpSig />
+- Platform operator: you, as the operator of the marketplace
 
 ## Endpoints
 
@@ -36,7 +35,7 @@ The three parties involved in the transaction are the:
     Grant Request
   </LinkOut>
 - <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-incoming-payment/'>
-    Create an Incoming Payment
+    Create Incoming Payment
   </LinkOut>
 - <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-quote/'>
     Create a Quote
@@ -44,42 +43,48 @@ The three parties involved in the transaction are the:
 - <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment/'>
     Create an Outgoing Payment
   </LinkOut>
-<Tabs>
-<TabItem label='TypeScript'>
-<Ts />
 
 ## Steps
 
 ### 1. Get wallet address information
 
-For the customer to initiate a payment, your website must get wallet address information for the customer, the merchant, and your marketplace platform. Let's assume that your wallet address is built in to your platform and the merchant saved their wallet address in their marketplace account. Let's also assume the customer provided their wallet address during the checkout flow.
+When a customer initiates a payment, your platform must get wallet address information for the customer, the merchant, and you, as the operator.
 
-In this example, we assume each party has an Open Payments-enabled account with a different account servicing entity.
+Let's assume your wallet address already saved to your platform, as is the merchant's. Let's also assume the customer provided their wallet address at the beginning of the checkout flow.
 
-```ts wrap
-const customerWalletAddress = await client.walletAddress.get({
-  url: 'https://cloudninebank.example.com/customer'
-})
+Call the [Get Wallet Address API](/apis/wallet-address-server/operations/get-wallet-address) for each address.
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts
+  const customerWalletAddress = await client.walletAddress.get({
+    url: 'https://cloudninebank.example.com/customer'
+  })
 
 const merchantWalletAddress = await client.walletAddress.get({
-  url: 'https://happylifebank.example.com/merchant'
+url: 'https://happylifebank.example.com/merchant'
 })
 
 const platformWalletAddress = await client.walletAddress.get({
-  url: 'https://coolwallet.example.com/platform'
+url: 'https://coolwallet.example.com/platform'
 })
-```
 
-### 2. Request Incoming Payment grants
+````
+</TabItem>
+</Tabs>
 
-Using the authorization server information received from the previous step, request two `incomingPayment` grants: one from the merchant wallet authorization server and one from your platform wallet authorization server. The grants will allow an `incomingPayment` resource to be created on both your and your merchant's Open Payments accounts.
+### 2. Request incoming payment grants
+
+Use the merchant and platform `authServer` details, received in the previous step, to call the [Grant Request API](/apis/auth-server/operations/post-request).
+
+The purpose of these calls is to obtain access tokens that allow your platform to request an incoming payment resource be created on the merchant's wallet account and your wallet account.
 
 :::note[Alternate scenario]
 If you and the merchant use the same account servicing entity, and the authorization server information received is the same for you both, you only need one `incomingPayment` grant.
 :::
 
-<Tabs>
-<TabItem label = 'Merchant'>
+<Tabs syncKey="lang">
+<TabItem label='Merchant' icon='seti:javascript'>
 ```ts wrap
 const merchantIncomingPaymentGrant = await client.grant.request(
   {
@@ -96,293 +101,302 @@ const merchantIncomingPaymentGrant = await client.grant.request(
     },
   },
 );
-```
+````
+
 </TabItem>
-<TabItem label = 'Platform'>
-```ts wrap
-const platformIncomingPaymentGrant = await client.grant.request(
-  {
-    url: platformWalletAddress.authServer
-  },
-  {
-    access_token: {
-      access: [
-        {
-          type: "incoming-payment",
-          actions: ["read", "create"],
-        },
-      ],
+<TabItem label='Platform' icon='seti:javascript'>
+  ```ts wrap
+  const platformIncomingPaymentGrant = await client.grant.request(
+    {
+      url: platformWalletAddress.authServer
     },
-  },
-);
-```
+    {
+      access_token: {
+        access: [
+          {
+            type: "incoming-payment",
+            actions: ["read", "create"],
+          },
+        ],
+      },
+    },
+  )
+  ```
 </TabItem>
 </Tabs>
 
-### 3. Create Incoming Payments
+### 3. Request the creation of incoming payment resources
 
-Using the access tokens provided by the authorization servers in the previous step, request the creation of two `incomingPayment` resources: one on the merchant's wallet account and one on your platform wallet account.
+Use the access tokens returned in the previous responses to call the [Create Incoming Payment API](/apis/resource-server/operations/create-incoming-payment).
 
-In this example, you will give the merchant 99% of the payment while retaining 1% as a platform operation fee.
+The purpose of these calls is to request an incoming payment resource be created on the merchant's wallet account and your wallet account.
 
-<Tabs>
-<TabItem label = 'Merchant'>
+Remember that you're retaining 1% of the customer's $100 USD payment as a fee.
 
-```ts wrap
-const merchantIncomingPayment = await client.incomingPayment.create(
-  {
-    url: merchantWalletAddress.resourceServer,
-    accessToken: merchantIncomingPaymentGrant.access_token.value
-  },
-  {
-    walletAddress: merchantWalletAddress.id,
-    incomingAmount: {
-      value: '9900',
-      assetCode: 'USD',
-      assetScale: 2
+Include the following in both requests, along with any other required parameters.
+
+- `incomingAmount` object
+  - `value` - The maximum amount to pay into a given wallet address.
+  - `assetCode` - The code used by the wallet account, provided in the Get Wallet Address API's response.
+  - `assetScale` - The scale used by the wallet account, provided in the Get Wallet Address API's response.
+
+The full `value` of $100 is `10000`. The merchant will receive 99% (`9900`) and you will receive 1% (`100`).
+
+<Tabs syncKey="lang">
+<TabItem label='Merchant' icon='seti:javascript'>
+  ```ts wrap
+  const merchantIncomingPayment = await client.incomingPayment.create(
+    {
+      url: merchantWalletAddress.resourceServer,
+      accessToken: merchantIncomingPaymentGrant.access_token.value
     },
-    expiresAt: new Date(Date.now() + 60_000 * 10).toISOString()
-  }
-)
-```
-
+    {
+      walletAddress: merchantWalletAddress.id,
+      incomingAmount: {
+        value: '9900',
+        assetCode: 'USD',
+        assetScale: 2
+      },
+    },
+  )
+  ```
 </TabItem>
-
-<TabItem label = 'Platform'>
-
-```ts wrap
-const platformIncomingPayment = await client.incomingPayment.create(
-  {
-    url: platformWalletAddress.resourceServer,
-    accessToken: platformIncomingPaymentGrant.access_token.value
-  },
-  {
-    walletAddress: platformWalletAddress.id,
-    incomingAmount: {
-      value: '100',
-      assetCode: 'USD',
-      assetScale: 2
+<TabItem label='Platform' icon='seti:javascript'>
+  ```ts wrap
+  const platformIncomingPayment = await client.incomingPayment.create(
+    {
+      url: platformWalletAddress.resourceServer,
+      accessToken: platformIncomingPaymentGrant.access_token.value
     },
-    expiresAt: new Date(Date.now() + 60_000 * 10).toISOString()
-  }
-)
-```
-
+    {
+      walletAddress: platformWalletAddress.id,
+      incomingAmount: {
+        value: '100',
+        assetCode: 'USD',
+        assetScale: 2
+      },
+    },
+  )
+  ```
 </TabItem>
 </Tabs>
 
-### 4. Request a Quote grant
+### 4. Request a quote grant
 
-Request a `quote` grant from the customer wallet authorization server. You received the authorization server URL as part of Step 1.
+Use the customer's `authServer` details, received in Step 1, to call the [Grant Request API](/apis/auth-server/operations/post-request).
 
-```ts wrap
-const customerQuoteGrant = await client.grant.request(
-  {
-    url: customerWalletAddress.authServer
-  },
-  {
-    access_token: {
-      access: [
-        {
-          type: 'quote',
-          actions: ['create', 'read']
-        }
-      ]
+The purpose of this call is to obtain an access token that allows your platform to request quote resources be created on the customer's wallet account.
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts wrap
+  const customerQuoteGrant = await client.grant.request(
+    {
+      url: customerWalletAddress.authServer
+    },
+    {
+      access_token: {
+        access: [
+          {
+            type: 'quote',
+            actions: ['create', 'read']
+          }
+        ]
+      }
     }
-  }
-)
-```
-
-### 5. Create Quotes
-
-Using the customer-side access token received from the previous step, request the creation of two `quote` resources: one on the merchant wallet account and one on your platform wallet account.
-
-<Tabs>
-<TabItem label = 'Merchant'>
-```ts wrap
-const merchantQuote = await client.quote.create(
-  {
-    url: customerWalletAddress.resourceServer,
-    accessToken: customerQuoteGrant.access_token.value
-  },
-  {
-    method: 'ilp',
-    walletAddress: customerWalletAddress.id,
-    receiver: merchantIncomingPayment.id
-  }
-)
-```
-</TabItem>
-<TabItem label = 'Platform'>
-```ts wrap
-const platformQuote = await client.quote.create(
-  {
-    url: customerWalletAddress.resourceServer,
-    accessToken: customerQuoteGrant.access_token.value
-  },
-  {
-    method: 'ilp',
-    walletAddress: customerWalletAddress.id,
-    receiver: platformIncomingPayment.id
-  }
-)
-```
+  )
+  ```
 </TabItem>
 </Tabs>
 
-### 6. Request an interactive Outgoing Payment grant for the customer
+### 5. Request the creation of quote resources
 
-Request an interactive `outgoingPayment` grant from the customer wallet authorization server.
+Use the access token, received in the previous step, to call the [Create Quote API](/apis/resource-server/operations/create-quote).
+
+The purpose of this call is to request a quote resource be created on the customer's wallet account. Since the customer needs a quote resource for the merchant and the platform, we'll call the API twice using the same access token.
+
+First, let's request a quote resource associated with the merchant. The request must contain the `receiver`, which is the merchant's incoming payment `id`, along with any other required parameters. The `id` was returned in the Create an Incoming Payment API response in Step 3.
+
+Next, call the Create Quote API again and request a quote resource associated with the platform's incoming payment `id`.
+
+<Tabs syncKey="lang">
+<TabItem label='Merchant' icon='seti:javascript'>
+  ```ts wrap
+  const merchantQuote = await client.quote.create(
+    {
+      url: customerWalletAddress.resourceServer,
+      accessToken: customerQuoteGrant.access_token.value
+    },
+    {
+      method: 'ilp',
+      walletAddress: customerWalletAddress.id,
+      receiver: merchantIncomingPayment.id
+    }
+  )
+  ```
+</TabItem>
+<TabItem label='Platform' icon='seti:javascript'>
+  ```ts wrap
+  const platformQuote = await client.quote.create(
+    {
+      url: customerWalletAddress.resourceServer,
+      accessToken: customerQuoteGrant.access_token.value
+    },
+    {
+      method: 'ilp',
+      walletAddress: customerWalletAddress.id,
+      receiver: platformIncomingPayment.id
+    }
+  )
+  ```
+</TabItem>
+</Tabs>
+
+Each response returns a `receiveAmount`, a `debitAmount`, and other required information.
+
+- `receiveAmount` - The `incomingAmount value` from the incoming payment resource
+- `debitAmount` - The amount the customer must pay toward the incoming payment resource (`receiveAmount` plus any applicable fees)
+
+<Card title="Example">
+  The merchant charges a flat $2.00 for shipping. The response associated with the merchant's incoming payment resource would have a `debitAmount` of `10100` ($99 + $2). 
+  
+  Your platform doesn't charge the customer any fees, so the `debitAmount` and the `receiveAmount` are the same (`100`).
+
+With this information, your platform can display a message to the customer that states their total payment amount will be $102.00 USD.
+
+</Card>
+
+### 6. Request an interactive outgoing payment grant
+
+Use the customer's `authServer` information received in Step 1 to call the [Grant Request API](/apis/auth-server/operations/post-request).
+
+The purpose of this call is to obtain an access token that allows your platform to request outgoing payment resources be created on the customer's wallet account.
 
 <InteractionReq />
 
-Include the `receiveAmount` object within the `limits` object. The `value` property must be the total amount the customer has agreed to pay.
+Include the following in the request, along with any other required parameters.
 
-```ts wrap
-const pendingCustomerOutgoingPaymentGrant = await client.grant.request(
-  {
-    url: customerWalletAddress.authServer
-  },
-  {
-    access_token: {
-      access: [
-        {
-          identifier: customerWalletAddress.id,
-          type: 'outgoing-payment',
-          actions: ['read', 'create'],
-          limits: {
-            receiveAmount: {
-              assetCode: 'USD',
-              assetScale: 2,
-              value: '10000'
+- `limits` object
+  - `receiveAmount` object
+    - `value` - The total amount the customer has agreed to pay.
+    - `assetCode` - The code used by the wallet account, provided in the Get Wallet Address API’s response.
+    - `assetScale` - The scale used by the wallet account, provided in the Get Wallet Address API’s response.
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts wrap
+  const pendingCustomerOutgoingPaymentGrant = await client.grant.request(
+    {
+      url: customerWalletAddress.authServer
+    },
+    {
+      access_token: {
+        access: [
+          {
+            identifier: customerWalletAddress.id,
+            type: 'outgoing-payment',
+            actions: ['read', 'create'],
+            limits: {
+              receiveAmount: {
+                assetCode: 'USD',
+                assetScale: 2,
+                value: '10000'
+              }
             }
           }
+        ]
+      },
+      interact: {
+        start: ['redirect'],
+        finish: {
+          method: 'redirect',
+          uri: 'http://localhost:3344',
+          nonce: NONCE
         }
-      ]
-    },
-    interact: {
-      start: ['redirect'],
-      finish: {
-        method: 'redirect',
-        uri: 'http://localhost:3344',
-        nonce: NONCE
       }
     }
-  }
-)
-```
-
-### 7. Start interaction with the user
-
-<StartInteraction />
-
-### 8. Finish interaction with the user
-
-<FinishInteraction />
-
-You'll need the interaction reference (`interact_ref`) in the next step.
-
-### 9. Request a grant continuation
-
-In this guide, we're assuming the IdP has a user interface with which the customer interacts. When the interaction completes, the customer should be directed back to your platform. Now you can make the grant continuation request.
-
-:::note
-In a scenario where a user interface is not available, consider implementing a polling mechanism to check for the completion of the interaction.
-:::
-
-Add the `interact_ref` returned by the client wallet authorization server in the previous step.
-
-```ts wrap
-const customerOutgoingPaymentGrant = await client.grant.continue(
-  {
-    url: pendingCustomerOutgoingPaymentGrant.continue.uri,
-    accessToken: pendingCustomerOutgoingPaymentGrant.continue.access_token.value
-  },
-  {
-    interact_ref: interactRef
-  }
-)
-```
-
-Issue the request to the `continue uri` supplied in the authorization server’s initial grant response (Step 6). For example:
-
-`POST https://auth.interledger-test.dev/continue/4CF492MLVMSW9MKMXKHQ`
-
-A successful continuation response from the authorization server provides your client with an access token and other information necessary to continue the transaction.
-
-```json title="Example response" wrap
-{
-  "access_token": {
-    "value": "OS9M2PMHKUR64TB8N6BW7OZB8CDFONP219RP1LT0",
-    "manage": "https://auth.interledger-test.dev/token/dd17a202-9982-4ed9-ae31-564947fb6379",
-    "expires_in": 3600,
-    "access": [
-      {
-        "type": "outgoing-payment",
-        "actions": ["create", "read"],
-        "identifier": "customerWalletAddress.id",
-        "limits": {
-          "receiver": "INCOMING_PAYMENT_URL",
-          "debitAmount": {
-            "value": "10000",
-            "assetCode": "USD",
-            "assetScale": 2
-          }
-        }
-      }
-    ]
-  },
-  "continue": {
-    "access_token": {
-      "value": "33OMUKMKSKU80UPRY5NM"
-    },
-    "uri": "https://auth.interledger-test.dev/continue/4CF492MLVMSW9MKMXKHQ",
-    "wait": 30
-  }
-}
-```
-
-### 10. Create outgoing payments
-
-Using the merchant and platform access tokens provided in the quote responses in Step 5, request the creation of two `outgoingPayment` resources on the customer's wallet account: one for the merchant and one for your platform.
-
-The `quoteId` is the URL of the quote that specified the amount to be paid to the merchant and the platform, respectively.
-
-<Tabs>
-<TabItem label = 'Merchant'>
-
-```ts wrap
-const customerOutgoingPayment = await client.outgoingPayment.create(
-  {
-    url: customerWalletAddress.resourceServer,
-    accessToken: customerOutgoingPaymentGrant.access_token.value
-  },
-  {
-    walletAddress: customerWalletAddress.id,
-    quoteId: merchantQuote.id
-  }
-)
-```
-
-</TabItem>
-
-<TabItem label ='Platform'>
-
-```ts wrap
-const customerOutgoingPayment = await client.outgoingPayment.create(
-  {
-    url: customerWalletAddress.resourceServer,
-    accessToken: customerOutgoingPaymentGrant.access_token.value
-  },
-  {
-    walletAddress: customerWalletAddress.id,
-    quoteId: platformQuote.id
-  }
-)
-```
-
+  )
+  ```
 </TabItem>
 </Tabs>
 
+### 7. Start interaction with the customer
+
+<StartInteraction />
+
+### 8. Finish interaction with the customer
+
+<FinishInteraction />
+
+### 9. Request a grant continuation
+
+In our example, we're assuming the IdP the customer interacted with has a user interface. When the interaction completes, the customer returns to your platform. Now your platform can make a continuation request for the outgoing payment grant.
+
+:::note
+In a scenario where a user interface isn't available, consider implementing a polling mechanism to check for the completion of the interaction.
+:::
+
+Call the [Grant Continuation Request API](/apis/auth-server/operations/post-continue). The purpose of this call is to request an access token that allows your platform to request outgoing payment resources be created on the customer's wallet account.
+
+Issue the request to the `continue uri` provided in the initial outgoing payment grant response (Step 6). For example:
+
+`POST https://auth.interledger-test.dev/continue/4CF492MLVMSW9MKMXKHQ`
+
+Include the `interact_ref` returned in the redirect URI's query parameters.
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts wrap
+  const customerOutgoingPaymentGrant = await client.grant.continue(
+    {
+      url: pendingCustomerOutgoingPaymentGrant.continue.uri,
+      accessToken: pendingCustomerOutgoingPaymentGrant.continue.access_token.value
+    },
+    {
+      interact_ref: interactRef
+    }
+  )
+  ```
+</TabItem>
+</Tabs>
+
+### 10. Request the creation of outgoing payment resources
+
+Recall that the Create Quote API responses for the merchant and your platform (Step 5) both included a `debitAmount` and a `receiveAmount`. The responses also included an `id` which is a URL to identify each quote.
+
+Because the quotes contain debit and receive amounts, we won't specify any other amounts when making a Create Outgoing Payment API request. Instead, we will specify a `quoteId`.
+
+Use the access tokens returned in Step 5 to call the [Create Outgoing Payment API](/apis/resource-server/operations/create-outgoing-payment).
+
+The purpose of these calls is to request an outgoing payment resource be created on the customer's wallet account: one for the merchant and one for your platform. Include the appropriate `quoteId` in each request.
+
+<Tabs syncKey="lang">
+<TabItem label='Merchant' icon='seti:javascript'>
+  ```ts wrap
+  const customerOutgoingPayment = await client.outgoingPayment.create(
+    {
+      url: customerWalletAddress.resourceServer,
+      accessToken: customerOutgoingPaymentGrant.access_token.value
+    },
+    {
+      walletAddress: customerWalletAddress.id,
+      quoteId: merchantQuote.id
+    }
+  )
+  ```
+</TabItem>
+<TabItem label='Platform' icon='seti:javascript'>
+  ```ts wrap
+  const customerOutgoingPayment = await client.outgoingPayment.create(
+    {
+      url: customerWalletAddress.resourceServer,
+      accessToken: customerOutgoingPaymentGrant.access_token.value
+    },
+    {
+      walletAddress: customerWalletAddress.id,
+      quoteId: platformQuote.id
+    }
+  )
+  ```
 </TabItem>
 </Tabs>
