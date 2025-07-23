@@ -279,8 +279,7 @@ export default defineConfig({
             },
             {
               label: 'Get an outgoing payment grant for future payments',
-              link: '/guides/outgoing-grant-future-payments/',
-              badge: 'New'
+              link: '/guides/outgoing-grant-future-payments/'
             }
           ]
         },
