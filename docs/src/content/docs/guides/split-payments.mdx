@@ -61,14 +61,15 @@ Call the [Get Wallet Address API](/apis/wallet-address-server/operations/get-wal
     url: 'https://cloudninebank.example.com/customer'
   })
 
-  const merchantWalletAddress = await client.walletAddress.get({
-  url: 'https://happylifebank.example.com/merchant'
-  })
+const merchantWalletAddress = await client.walletAddress.get({
+url: 'https://happylifebank.example.com/merchant'
+})
 
-  const platformWalletAddress = await client.walletAddress.get({
-  url: 'https://coolwallet.example.com/platform'
-  })
-  ```
+const platformWalletAddress = await client.walletAddress.get({
+url: 'https://coolwallet.example.com/platform'
+})
+
+````
 </TabItem>
 </Tabs>
 
@@ -84,23 +85,24 @@ If you and the merchant use the same account servicing entity, and the authoriza
 
 <Tabs syncKey="lang">
 <TabItem label='Merchant' icon='seti:javascript'>
-  ```ts wrap
-  const merchantIncomingPaymentGrant = await client.grant.request(
-    {
-      url: merchantWalletAddress.authServer
+```ts wrap
+const merchantIncomingPaymentGrant = await client.grant.request(
+  {
+    url: merchantWalletAddress.authServer
+  },
+  {
+    access_token: {
+      access: [
+        {
+          type: "incoming-payment",
+          actions: ["read", "create"],
+        },
+      ],
     },
-    {
-      access_token: {
-        access: [
-          {
-            type: "incoming-payment",
-            actions: ["read", "create"],
-          },
-        ],
-      },
-    },
-  );
-  ```
+  },
+);
+````
+
 </TabItem>
 <TabItem label='Platform' icon='seti:javascript'>
   ```ts wrap
