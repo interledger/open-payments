@@ -14,7 +14,7 @@ Learn how to take a single payment and split the value between multiple recipien
 
 Imagine making a purchase from an online marketplace. From your perspective, you’re sending a single payment to a merchant in exchange for a good. Behind the scenes, the marketplace receives a portion of the payment as a service fee.
 
-There's a few ways for the marketplace to collect their fee. For example, it could receive the full amount, deduct the fee, then send the rest to the merchant. However, holding funds for the merchant, even for a second, requires compliance with certain financial rules and regulations. A better way is to ensure both parties only receive the amount they're supposed to receive.
+There's a few ways for the marketplace to collect their fee. For example, it could receive the full amount, deduct the fee, then send the rest to the merchant. However, holding funds for the merchant, even for a second, requires compliance with certain financial rules and regulations. A better way is to ensure both parties only receive the amount they're supposed to receive, directly from the user.
 
 Remember, Open Payments doesn't execute payments or touch money in any way. It's used to issue payment instructions before any money movement occurs. Examples of payment instructions are, "of the $6 purchase, pay the marketplace $1 and the merchant $5." This way, funds meant for one party never pass through the other party.
 
@@ -61,15 +61,14 @@ Call the [Get Wallet Address API](/apis/wallet-address-server/operations/get-wal
     url: 'https://cloudninebank.example.com/customer'
   })
 
-const merchantWalletAddress = await client.walletAddress.get({
-url: 'https://happylifebank.example.com/merchant'
-})
+  const merchantWalletAddress = await client.walletAddress.get({
+  url: 'https://happylifebank.example.com/merchant'
+  })
 
-const platformWalletAddress = await client.walletAddress.get({
-url: 'https://coolwallet.example.com/platform'
-})
-
-````
+  const platformWalletAddress = await client.walletAddress.get({
+  url: 'https://coolwallet.example.com/platform'
+  })
+  ```
 </TabItem>
 </Tabs>
 
@@ -85,24 +84,23 @@ If you and the merchant use the same account servicing entity, and the authoriza
 
 <Tabs syncKey="lang">
 <TabItem label='Merchant' icon='seti:javascript'>
-```ts wrap
-const merchantIncomingPaymentGrant = await client.grant.request(
-  {
-    url: merchantWalletAddress.authServer
-  },
-  {
-    access_token: {
-      access: [
-        {
-          type: "incoming-payment",
-          actions: ["read", "create"],
-        },
-      ],
+  ```ts wrap
+  const merchantIncomingPaymentGrant = await client.grant.request(
+    {
+      url: merchantWalletAddress.authServer
     },
-  },
-);
-````
-
+    {
+      access_token: {
+        access: [
+          {
+            type: "incoming-payment",
+            actions: ["read", "create"],
+          },
+        ],
+      },
+    },
+  );
+  ```
 </TabItem>
 <TabItem label='Platform' icon='seti:javascript'>
   ```ts wrap
@@ -120,7 +118,7 @@ const merchantIncomingPaymentGrant = await client.grant.request(
         ],
       },
     },
-  )
+  );
   ```
 </TabItem>
 </Tabs>
@@ -254,17 +252,8 @@ Next, call the Create Quote API again and request a quote resource associated wi
 
 Each response returns a `receiveAmount`, a `debitAmount`, and other required information.
 
-- `receiveAmount` - The `incomingAmount value` from the incoming payment resource
+- `receiveAmount` - The `incomingAmount` value from the incoming payment resource
 - `debitAmount` - The amount the customer must pay toward the incoming payment resource (`receiveAmount` plus any applicable fees)
-
-<Card title="Example">
-  The merchant charges a flat $2.00 for shipping. The response associated with the merchant's incoming payment resource would have a `debitAmount` of `10100` ($99 + $2). 
-  
-  Your platform doesn't charge the customer any fees, so the `debitAmount` and the `receiveAmount` are the same (`100`).
-
-With this information, your platform can display a message to the customer that states their total payment amount will be $102.00 USD.
-
-</Card>
 
 ### 6. Request an interactive outgoing payment grant
 

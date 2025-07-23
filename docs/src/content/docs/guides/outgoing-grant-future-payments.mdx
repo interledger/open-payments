@@ -144,15 +144,15 @@ Add the `interact_ref` returned in the redirect URI's query parameters.
 <Tabs syncKey='lang'>
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
   ```ts wrap
-    const grant = await client.grant.continue(
-      {
-        accessToken: CONTINUE_ACCESS_TOKEN,
-        url: CONTINUE_URI,
-      },
-      {
-        interact_ref: interactRef,
-      },
-    );
+  const grant = await client.grant.continue(
+    {
+      accessToken: CONTINUE_ACCESS_TOKEN,
+      url: CONTINUE_URI,
+    },
+    {
+      interact_ref: INTERACT_REF,
+    },
+  );
   ```
   </TabItem>
 </Tabs>
