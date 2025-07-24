@@ -8,6 +8,14 @@ import { LinkOut } from '@interledger/docs-design-system'
 
 An account servicing entity provides and maintains a payment account for a sender and recipient, and is a regulated entity in the country/countries it operates.
 
+## Asset code
+
+An `assetCode` is a code representation of the underlying asset used to make a payment. The `assetCode` should be an <LinkOut href='https://www.iso.org/iso-4217-currency-codes.html'>ISO 4217</LinkOut> currency code. The ISO 4217 currency code representing the US Dollar is USD.
+
+## Asset scale
+
+The `assetScale` is the number decimal places used to represent the minimum value of an asset. As an example, USD has an asset scale of 2 with a minimum value of $0.01. An interger amount of 1000 with an `assetCode` of USD and an `assetScale` of 2 translates to $10.00.
+
 ## Authorization server (AS)
 
 An authorization server issues tokens to clients, which can then be used to perform authorized actions on resource servers. In the context of Open Payments, the authorization server grants permission for a client to access the Open Payments APIs and the `incoming-payment`, `quote`, and `outgoing-payment` resources. Open Payments leverages GNAP as the mechanism for delegating authorization.
