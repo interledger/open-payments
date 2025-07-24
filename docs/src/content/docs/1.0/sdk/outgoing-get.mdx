@@ -1,0 +1,64 @@
+---
+title: Get an outgoing payment
+slug: 1.0/sdk/outgoing-get
+---
+
+import { CodeBlock, LinkOut } from '@interledger/docs-design-system'
+import { Tabs, TabItem, LinkButton } from '@astrojs/starlight/components'
+import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
+import Begin from '/src/partials/before-you-begin.mdx'
+import Ts from '/src/partials/ts-init-config.mdx'
+import TsImport from '/src/partials/ts-import-initialize.mdx'
+import PhpImport from '/src/partials/php-import-initialize.mdx'
+
+An authorized client can look up the state of an outgoing payment on a wallet address. This is useful when a client must determine if an outgoing payment is still active and pending payment.
+
+These code snippets return the state and details of a specific outgoing payment, if found.
+
+## Before you begin
+
+<Begin />
+
+## Get the state of an outgoing payment
+
+<Tabs>
+  <TabItem label="TypeScript/JavaScript" icon="seti:javascript">
+    <LinkButton href="https://github.com/interledger/open-payments-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+    <details>
+      <summary>Initial configuration</summary>
+
+      <Ts />
+    </details>
+
+    <TsImport />
+
+    <ChunkedSnippet source="https://raw.githubusercontent.com/interledger/open-payments-snippets/main/outgoing-payment/outgoing-payment-get.ts" chunk="3" />
+
+    <ChunkedSnippet source="https://raw.githubusercontent.com/interledger/open-payments-snippets/main/outgoing-payment/outgoing-payment-get.ts" chunk="4" />
+
+    For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href="https://github.com/interledger/open-payments-snippets/blob/main/outgoing-payment/outgoing-payment-get.ts">View full TS source</LinkOut>
+
+    For JavaScript, run `node path/to/directory/index.js`. <LinkOut href="https://github.com/interledger/open-payments-snippets/blob/main/outgoing-payment/outgoing-payment-get.js">View full JS source</LinkOut>
+
+  </TabItem>
+
+  <TabItem label="PHP" icon="seti:php">
+    <LinkButton href="https://github.com/interledger/open-payments-php-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+    <PhpImport />
+
+    <ChunkedSnippet source="https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/OutgoingPayment/OutgoingPaymentGet.php" chunk="3" />
+
+    <ChunkedSnippet source="https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/OutgoingPayment/OutgoingPaymentGet.php" chunk="4" />
+
+    {/* prettier-ignore */}
+
+    <p><LinkOut href="https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/OutgoingPayment/OutgoingPaymentGet.php">View full source</LinkOut></p>
+
+  </TabItem>
+</Tabs>
+
+## References
+
+- [API specification](/1.0/apis/resource-server/operations/get-outgoing-payment)

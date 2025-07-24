@@ -1,0 +1,144 @@
+---
+title: Client keys
+slug: 1.0/identity/client-keys
+---
+
+import {
+  LinkOut,
+  Mermaid,
+  MermaidWrapper
+} from '@interledger/docs-design-system'
+
+:::tip[Summary]
+Client keys are unique identifiers that allow clients to sign Open Payments requests. They enable the verification of a client’s identity through a publicly accessible key registry.
+:::
+
+All client requests in Open Payments are signed using a unique key that identifies the client to the authorization and resource servers. All requests, except for new grant requests, also carry an access token that is bound to the key.
+
+## Key registry
+
+A key registry is a list of keys, generated and stored by the client, for when the client requires access to protected Open Payment resources. Since grant requests are completed over multiple signed HTTP requests, it's important for the client to provide a way to consistently identify itself across these requests to the authorization server. The key registry allows the authorization server to verify that the client is who it says it is.
+
+Each client is represented by a [wallet address](/1.0/concepts/wallet-addresses). A client's key registry is publicly accessible through its wallet address via a `jwks.json` endpoint. An authorization server can retrieve the client's key registry by accessing `WALLET_ADDRESS/jwks.json`.
+
+```http title="Example"
+https://wallet.example.com/alice/jwks.json
+```
+
+### Registry structure
+
+The key registry must expose public keys in the form of JSON Web Key Sets (JWKS). The keys must be generated using the `Ed25519` algorithm and the resultant JWKS document must contain the following fields and values.
+
+```
+{
+  alg: 'EdDSA',
+  kty: 'OKP',
+  crv: 'Ed25519'
+}
+```
+
+Additionally, it must contain the `x` and `kid` (key ID) fields for the specific client to identify itself in a signature.
+
+```json title="Example: https://wallet.example.com/alice/jwks.json"
+{
+  "keys": [
+    {
+      "kid": "3724c845-829d-425a-9a0d-194d6f12c336",
+      "x": "_Eg6UcC8G-O4TY2cxGnZyG_lMn0aWF1rVV-Bqn9NmhE",
+      "alg": "EdDSA",
+      "kty": "OKP",
+      "crv": "Ed25519"
+    }
+  ]
+}
+```
+
+### Key generation
+
+Before a client can request a grant for the first time, it must:
+
+1. Generate an asymmetric key pair. Keys must be generated using the <LinkOut href="https://datatracker.ietf.org/doc/html/rfc8032">ed25519 algorithm</LinkOut>.
+   :::note
+   A `keyId` must be generated to identify the pair; however, this is usually the responsibility of the account servicing entity (ASE).
+   :::
+2. Add the public key to its key registry.
+3. Store the private key. The private key is used to sign the payload described in the [key proofing method](#key-proofing-method) section below.
+
+## Client requests
+
+Since client requests are completed over multiple signed HTTP requests, it's important for a client to provide a way to consistently identify itself across these requests. As such, clients must include the following when making requests:
+
+- Headers
+  - A `Signature-Input` header that includes the `keyId` associated with the client's key pair. This header is a comma-separated list of headers that map to values in the data that was signed.
+  - A `signature` header generated based on the `Signature-Input`, using the `EdDSA` signing algorithm
+- Body
+  - A `client` property containing the client’s wallet address
+
+Securing client requests follows a profile of what's defined in the <LinkOut href="https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol#name-securing-requests-from-the-">GNAP specification</LinkOut>.
+
+:::note
+Open Payments **does not** support bearer tokens.
+:::
+
+### Grant requests
+
+Upon receiving a signed grant request, the authorization server obtains the client’s domain from the `client` property. The authorization server binds the domain to the grant in order to use the domain to acquire the key set for subsequent grant requests.
+
+The authorization server then acquires the client's key registry by making a `GET` request to the client’s JWKS endpoint at `WALLET_ADDRESS/jwks.json`. When the authorization server locates the public key containing the `keyId` included in the request's `Signature-Input` header, the authorization server uses the key to decrypt and validate the request's signature. This binds the client to the grant and allows the authorization server to continue with the grant request.
+
+## Key proofing method
+
+### HTTP message signatures
+
+Open Payments uses the <LinkOut href="https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol#name-http-message-signatures">HTTP message signatures</LinkOut> (`httpsig`) key proofing method.
+
+The `httpsig` proofing method must be declared as part of the key material when directly using a key to request a grant. The key material below is for illustrative purposes. In Open Payments, it's expected that the wallet address be used in the grant request.
+
+```json title="Example"
+"key": {
+    "proof": "httpsig",
+    "jwk": {
+        "kid": "3724c845-829d-425a-9a0d-194d6f12c336",
+        "x": "_Eg6UcC8G-O4TY2cxGnZyG_lMn0aWF1rVV-Bqn9NmhE",
+        "alg": "EdDSA",
+        "kty": "OKP",
+        "crv": "Ed25519"
+    }
+}
+```
+
+When using `httpsig`, the signer (the client) creates an HTTP message signature. Open Payments clients typically secure their requests to servers by presenting an access token and proof of a key it possesses. The exception is for calls to an authorization server to initiate a grant. In this case, a key proof is used with no access token and is a non-authorized signed request.
+
+See the [HTTP message signatures](/1.0/identity/http-signatures) page for more information specific to Open Payments. Additional information is found in the <LinkOut href="https://datatracker.ietf.org/doc/html/rfc9421">specification</LinkOut> for HTTP message signatures.
+
+## Sequence diagram
+
+This diagram shows the sequence of calls needed between a client and the servers on the sender's side to obtain an interactive grant for creating an `outgoing-payment` resource.
+
+<MermaidWrapper client:load>
+  {/* prettier-ignore */}
+
+  <Mermaid
+    graph={`sequenceDiagram
+    autonumber
+    participant C as Client
+    participant AS as Authorization server
+    participant RS as Resource server
+    C->>C: Generates public/private key pair,<br/>adds the public key to its key registry
+    C->RS: Public key uploaded to the resource server
+    C->>AS: POST grant request (interactive outgoing-payment), <br/>signed with private key
+    AS->>AS: Pulls keyId from grant request's signature-input <br/>header, gets client's domain from request's body
+    AS->>RS: GET {client_domain/jwks.json} public keys<br/> from client's JWKS endpoint
+    RS-->>AS: 200 JWKS document found, <br/>returns public key
+    AS->>AS: Validates the signature in the client's original request <br/>using the public key, binds client's domain to the grant
+    AS-->>C: 200 OK
+    note over AS: Explicit consent is collected from the client's user, facilitated by the client, authorization server, and IdP (not shown)
+    C->>AS: POST grant continuation request, <br/>signed with private key
+    AS->>AS: Pulls the keyId from the grant request's <br/>signature-input header, gets client's domain <br/>from the database entry for the grant
+    AS->>RS: GET {client_domain/jwks.json} public key bound <br/>to the domain from client's JWKS endpoint
+    RS-->>AS: 200 JWKS document found, <br/>returns public key
+    AS->>AS: Validates signature with the <br/>key found in the registry
+    AS-->>C: 200 success, access token issued, <br/>grant continuation request complete
+`}
+  />
+</MermaidWrapper>
