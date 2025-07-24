@@ -393,12 +393,12 @@ export interface components {
         };
         /**
          * Asset code
-         * @description The assetCode is a code that indicates the underlying asset. This SHOULD be an ISO4217 currency code.
+         * @description The assetCode is a code that indicates the underlying asset. An ISO4217 currency code should be used whenever possible. The ISO4217 representation of the US Dollar is USD.
          */
         assetCode: string;
         /**
          * Asset scale
-         * @description The scale of amounts denoted in the corresponding asset code.
+         * @description The number of decimal places used to represent the minimum value of the asset. As an example, USD has an asset scale of 2 with a minimum value of $0.01. An integer amount of 1000 with an `assetCode` of USD and `assetScale` of 2 translates to $10.00
          */
         assetScale: number;
         /** amount */
