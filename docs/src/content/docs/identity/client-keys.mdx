@@ -12,7 +12,7 @@ import {
 Client keys are unique identifiers that allow clients to sign Open Payments requests. They enable the verification of a client’s identity through a publicly accessible key registry.
 :::
 
-All client requests in Open Payments are signed using a unique key that identifies the client to the authorization and resource servers. All requests, except for new grant requests, also carry an access token that is bound to the key.
+All client requests in Open Payments are signed using a unique key that identifies the client to the authorization and resource servers. All requests, except for new grant requests, also carry an access token that's bound to the key.
 
 ## Key registry
 
@@ -58,10 +58,10 @@ Before a client can request a grant for the first time, it must:
 
 1. Generate an asymmetric key pair. Keys must be generated using the <LinkOut href='https://datatracker.ietf.org/doc/html/rfc8032'>ed25519 algorithm</LinkOut>.
    :::note
-   A `keyId` must be generated to identify the pair; however, this is usually the responsibility of the account servicing entity (ASE).
+   A `keyId` must be generated to identify the pair. This is often the responsibility of the account servicing entity (ASE).
    :::
 2. Add the public key to its key registry.
-3. Store the private key. The private key is used to sign the payload described in the [key proofing method](#key-proofing-method) section below.
+3. Store the private key. The private key signs the payload described in the [key proofing method](#key-proofing-method) section below.
 
 ## Client requests
 
@@ -81,7 +81,7 @@ Open Payments **does not** support bearer tokens.
 
 ### Grant requests
 
-Upon receiving a signed grant request, the authorization server obtains the client’s domain from the `client` property. The authorization server binds the domain to the grant in order to use the domain to acquire the key set for subsequent grant requests.
+Upon receiving a signed grant request, the authorization server obtains the client’s domain from the `client` property. The authorization server binds the domain to the grant to use the domain to acquire the key set for subsequent grant requests.
 
 The authorization server then acquires the client's key registry by making a `GET` request to the client’s JWKS endpoint at `WALLET_ADDRESS/jwks.json`. When the authorization server locates the public key containing the `keyId` included in the request's `Signature-Input` header, the authorization server uses the key to decrypt and validate the request's signature. This binds the client to the grant and allows the authorization server to continue with the grant request.
 
@@ -91,7 +91,7 @@ The authorization server then acquires the client's key registry by making a `GE
 
 Open Payments uses the <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol#name-http-message-signatures'>HTTP message signatures</LinkOut> (`httpsig`) key proofing method.
 
-The `httpsig` proofing method must be declared as part of the key material when directly using a key to request a grant. The key material below is for illustrative purposes. In Open Payments, it's expected that the wallet address be used in the grant request.
+Declare the `httpsig` proofing method as part of the key material when directly using a key to request a grant. The key material below is for illustrative purposes. In Open Payments, it's expected that the wallet address be used in the grant request.
 
 ```json title="Example"
 "key": {
@@ -108,13 +108,13 @@ The `httpsig` proofing method must be declared as part of the key material when 
 
 When using `httpsig`, the signer (the client) creates an HTTP message signature. Open Payments clients typically secure their requests to servers by presenting an access token and proof of a key it possesses. The exception is for calls to an authorization server to initiate a grant. In this case, a key proof is used with no access token and is a non-authorized signed request.
 
-See the [HTTP message signatures](/identity/http-signatures) page for more information specific to Open Payments. Additional information is found in the <LinkOut href='https://datatracker.ietf.org/doc/html/rfc9421'>specification</LinkOut> for HTTP message signatures.
+See the [HTTP message signatures](/identity/http-signatures) page for more information specific to Open Payments. Additional information is in the <LinkOut href='https://datatracker.ietf.org/doc/html/rfc9421'>specification</LinkOut> for HTTP message signatures.
 
 ## Sequence diagram
 
 This diagram shows the sequence of calls needed between a client and the servers on the sender's side to obtain an interactive grant for creating an `outgoing-payment` resource.
 
-<MermaidWrapper client:load>
+<MermaidWrapper diagramName="client-keys">
 
 {/* prettier-ignore */}
 <Mermaid
