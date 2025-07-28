@@ -24,6 +24,15 @@ div.expressive-code figure.frame pre {
   border: 1px solid var(--sl-color-gray-5);
 }
 
+/* Tab styling adjustments */
+.sl-markdown-content.sl-markdown-content starlight-tabs [role='tabpanel'] {
+  margin-block-start: var(--space-s);
+}
+
+[role='tabpanel'] .sl-link-button {
+  margin-block-start: 0;
+}
+
 /* OpenAPI specification styling */
 div.panel {
   background-color: var(--sl-color-gray-7);
