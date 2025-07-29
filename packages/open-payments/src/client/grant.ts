@@ -60,7 +60,7 @@ export const createGrantRoutes = (deps: GrantRouteDeps): GrantRoutes => {
       { url }: UnauthenticatedResourceRequestArgs,
       args: Omit<GrantRequest, 'client'>
     ) => {
-      const outgoingPaymentAccess = args.access_token.access.find(
+      const outgoingPaymentAccess = args.access_token?.access.find(
         (el) => el.type === 'outgoing-payment'
       )
       if (
