@@ -14,11 +14,7 @@ Learn how to create a single, non-recurring payment with an `incomingAmount` add
 
 Making a one-time payment (OTP) to a single recipient is one of the more common transaction flows. OTPs facilitate a number of use cases, such as online purchases, peer-to-peer payments, and remittances.
 
-Depending on the use case, the transaction will have a defined `incomingAmount`, `debitAmount`, or `receiveAmount`.
-
-- `incomingAmount` - The maximum amount to pay toward an incoming payment. It's possible to pay less, but not more.
-- `debitAmount` - A fixed amount to pay from the sender toward an incoming payment. It's possible for the incoming payment to receive less than the `debitAmount`, depending on fees and other factors.
-- `receiveAmount` - A fixed amount to pay into an incoming payment. It's possible for the amount paid by the sender to be greater than the `receiveAmount` depending on fees and other factors.
+By specifying an `incomingAmount`, you're defining the maximum amount to pay toward an incoming payment. It's possible to pay less, but not more. For example, if an incoming payment has a defined incoming amount of $10 USD, then the incoming payment would accept $9.00 but not $10.01.
 
 In this guide, you'll assume the role of an app developer for an online store. The guide takes you through the steps your app will perform to facilitate a customer's one-time purchase by setting an `incomingAmount` when creating the incoming payment resource. In this example, the customer's total comes to €35.00.
 
@@ -46,9 +42,9 @@ In this guide, you'll assume the role of an app developer for an online store. T
 
 When a customer initiates a payment, you must get the wallet address information for the customer and for the store.
 
-Let's assume the store's wallet address is built into your app. Let's also assume the customer provided their wallet address at the beginning of the checkout flow.
+As the app developer, you already know the store's wallet address. Let's assume the customer provided their wallet address at the beginning of the checkout flow.
 
-Call the [Get Wallet Address API](/apis/wallet-address-server/operations/get-wallet-address) for each address.
+Call the <LinkOut href="https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address">Get Wallet Address API</LinkOut> for each address to get details about the underlying Open-Payments enabled accounts.
 
 <Tabs syncKey="lang">
 <TabItem label="TypeScript/JavaScript" icon="seti:javascript">
@@ -67,7 +63,7 @@ url: 'https://happylifebank.example.com/store'
 
 ### 2. Request an incoming payment grant
 
-Use the store's `authServer` details, received in the previous step, to call the [Grant Request API](/apis/auth-server/operations/post-request).
+Use the store's `authServer` details, received in the previous step, to call the <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-request">Grant Request API</LinkOut>.
 
 The purpose of this call is to obtain an access token that will allow your app to request an incoming payment resource be created on the store's wallet account.
 
@@ -96,7 +92,7 @@ const storeIncomingPaymentGrant = await client.grant.request(
 
 ### 3. Request the creation of an incoming payment resource
 
-Use the access token returned in the previous response to call the [Create Incoming Payment API](/apis/resource-server/operations/create-incoming-payment).
+Use the access token returned in the previous response to call the <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-incoming-payment">Create Incoming Payment API</LinkOut>.
 
 The purpose of this call is to request an incoming payment resource be created on the store's wallet account.
 
@@ -132,7 +128,7 @@ const storeIncomingPayment = await client.incomingPayment.create(
 
 ### 4. Request a quote grant
 
-Use the customer's `authServer` details, received in Step 1, to call the [Grant Request API](/apis/auth-server/operations/post-request).
+Use the customer's `authServer` details, received in Step 1, to call the <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-request">Grant Request API</LinkOut>.
 
 The purpose of this call is to obtain an access token that allows your app to request a quote resource be created on the customer's wallet account.
 
@@ -160,7 +156,7 @@ const customerQuoteGrant = await client.grant.request(
 
 ### 5. Request the creation of a quote resource
 
-Use the access token, received in the previous step, to call the [Create Quote API](/apis/resource-server/operations/create-quote).
+Use the access token, received in the previous step, to call the <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-quote">Create Quote API</LinkOut>.
 
 The purpose of this call is to request a quote resource be created on the customer's wallet account.
 
@@ -191,9 +187,9 @@ The response returns a `receiveAmount`, a `debitAmount`, and other required info
 
 ### 6. Request an interactive outgoing payment grant
 
-Use the customer's `authServer` information received in Step 1 to call the [Grant Request API](/apis/auth-server/operations/post-request).
+Use the customer's `authServer` information received in Step 1 to call the <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-request">Grant Request API</LinkOut>.
 
-The purpose of this call is to obtain an access token that allows your app to request an outgoing payment resource be created on the customer's wallet account.
+The purpose of this call is to obtain the customer's consent to make a payment.
 
 <InteractionReq />
 
@@ -202,8 +198,8 @@ Include the following in the request, along with any other required parameters.
 - `limits` object
   - `receiveAmount` object
     - `value` - The total amount the customer has agreed to pay.
-    - `assetCode` - The code used by the wallet account, provided in the Get Wallet Address API’s response.
-    - `assetScale` - The scale used by the wallet account, provided in the Get Wallet Address API’s response.
+    - `assetCode` - The code used by the wallet account, provided in the Get Wallet Address API's response.
+    - `assetScale` - The scale used by the wallet account, provided in the Get Wallet Address API's response.
 
 <Tabs syncKey="lang">
 <TabItem label="TypeScript/JavaScript" icon="seti:javascript">
@@ -223,7 +219,7 @@ const pendingCustomerOutgoingPaymentGrant = await client.grant.request(
             receiveAmount: {
               assetCode: 'EUR',
               assetScale: 2,
-              value: '3600'
+              value: '3500'
             }
           }
         }
@@ -259,7 +255,7 @@ In our example, we're assuming the IdP the customer interacted with has a user i
 In a scenario where a user interface isn't available, consider implementing a polling mechanism to check for the completion of the interaction.
 :::
 
-Call the [Grant Continuation Request API](/apis/auth-server/operations/post-continue). The purpose of this call is to request an access token that allows your app to request an outgoing payment resource be created on the customer's wallet account.
+Call the <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-continue">Grant Continuation Request API</LinkOut>. The purpose of this call is to request an access token that allows your app to request an outgoing payment resource be created on the customer's wallet account.
 
 Issue the request to the `continue uri` provided in the initial outgoing payment grant response (Step 6). For example:
 
@@ -287,11 +283,11 @@ const customerOutgoingPaymentGrant = await client.grant.continue(
 
 Recall that the Create Quote API response for the store (Step 5) included a `debitAmount` and a `receiveAmount`. The response also included an `id` which is a URL to identify the quote.
 
-Because the quote contains debit and receive amounts, we won’t specify any other amounts when making a Create Outgoing Payment API request. Instead, we will specify a `quoteId`.
+Because the quote contains debit and receive amounts, we won't specify any other amounts when making a Create Outgoing Payment API request. Instead, we will specify a `quoteId`.
 
-Use the access token returned in Step 5 to call the [Create Outgoing Payment API](/apis/resource-server/operations/create-outgoing-payment).
+Use the access token returned in the previous step to call the <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment">Create Outgoing Payment API</LinkOut>.
 
-The purpose of this call is to request an outgoing payment resource be created on the customer’s wallet account. Include the `quoteId` in the request.
+The purpose of this call is to request an outgoing payment resource be created on the customer's wallet account. Include the `quoteId` in the request.
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>

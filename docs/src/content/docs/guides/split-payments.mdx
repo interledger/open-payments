@@ -50,9 +50,9 @@ The three parties involved in the transaction are the:
 
 When a customer initiates a payment, your platform must get wallet address information for the customer, the merchant, and you, as the operator.
 
-Let's assume your wallet address already saved to your platform, as is the merchant's. Let's also assume the customer provided their wallet address at the beginning of the checkout flow.
+As the platform operator, you already know the merchant's wallet address and your platform's wallet address. Let's assume the customer provided their wallet address at the beginning of the checkout flow.
 
-Call the [Get Wallet Address API](/apis/wallet-address-server/operations/get-wallet-address) for each address.
+Call the <LinkOut href="https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address">Get Wallet Address API</LinkOut> for each address to get details about the underlying Open-Payments enabled accounts.
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -75,7 +75,7 @@ url: 'https://coolwallet.example.com/platform'
 
 ### 2. Request incoming payment grants
 
-Use the merchant and platform `authServer` details, received in the previous step, to call the [Grant Request API](/apis/auth-server/operations/post-request).
+Use the merchant and platform `authServer` details, received in the previous step, to call the <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-request">Grant Request API</LinkOut>.
 
 The purpose of these calls is to obtain access tokens that allow your platform to request an incoming payment resource be created on the merchant's wallet account and your wallet account.
 
@@ -127,7 +127,7 @@ const merchantIncomingPaymentGrant = await client.grant.request(
 
 ### 3. Request the creation of incoming payment resources
 
-Use the access tokens returned in the previous responses to call the [Create Incoming Payment API](/apis/resource-server/operations/create-incoming-payment).
+Use the access tokens returned in the previous responses to call the <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-incoming-payment">Create Incoming Payment API</LinkOut>.
 
 The purpose of these calls is to request an incoming payment resource be created on the merchant's wallet account and your wallet account.
 
@@ -183,7 +183,7 @@ The full `value` of $100 is `10000`. The merchant will receive 99% (`9900`) and 
 
 ### 4. Request a quote grant
 
-Use the customer's `authServer` details, received in Step 1, to call the [Grant Request API](/apis/auth-server/operations/post-request).
+Use the customer's `authServer` details, received in Step 1, to call the <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-request">Grant Request API</LinkOut>.
 
 The purpose of this call is to obtain an access token that allows your platform to request quote resources be created on the customer's wallet account.
 
@@ -211,7 +211,7 @@ The purpose of this call is to obtain an access token that allows your platform 
 
 ### 5. Request the creation of quote resources
 
-Use the access token, received in the previous step, to call the [Create Quote API](/apis/resource-server/operations/create-quote).
+Use the access token, received in the previous step, to call the <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-quote">Create Quote API</LinkOut>.
 
 The purpose of this call is to request a quote resource be created on the customer's wallet account. Since the customer needs a quote resource for the merchant and the platform, we'll call the API twice using the same access token.
 
@@ -259,9 +259,9 @@ Each response returns a `receiveAmount`, a `debitAmount`, and other required inf
 
 ### 6. Request an interactive outgoing payment grant
 
-Use the customer's `authServer` information received in Step 1 to call the [Grant Request API](/apis/auth-server/operations/post-request).
+Use the customer's `authServer` information received in Step 1 to call the <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-request">Grant Request API</LinkOut>.
 
-The purpose of this call is to obtain an access token that allows your platform to request outgoing payment resources be created on the customer's wallet account.
+The purpose of this call is to obtain the customer's consent to make a payment.
 
 <InteractionReq />
 
@@ -270,8 +270,8 @@ Include the following in the request, along with any other required parameters.
 - `limits` object
   - `receiveAmount` object
     - `value` - The total amount the customer has agreed to pay.
-    - `assetCode` - The code used by the wallet account, provided in the Get Wallet Address API’s response.
-    - `assetScale` - The scale used by the wallet account, provided in the Get Wallet Address API’s response.
+    - `assetCode` - The code used by the wallet account, provided in the Get Wallet Address API's response.
+    - `assetScale` - The scale used by the wallet account, provided in the Get Wallet Address API's response.
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -327,7 +327,7 @@ In our example, we're assuming the IdP the customer interacted with has a user i
 In a scenario where a user interface isn't available, consider implementing a polling mechanism to check for the completion of the interaction.
 :::
 
-Call the [Grant Continuation Request API](/apis/auth-server/operations/post-continue). The purpose of this call is to request an access token that allows your platform to request outgoing payment resources be created on the customer's wallet account.
+Call the <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-continue">Grant Continuation Request API</LinkOut>. The purpose of this call is to request an access token that allows your platform to request outgoing payment resources be created on the customer's wallet account.
 
 Issue the request to the `continue uri` provided in the initial outgoing payment grant response (Step 6). For example:
 
@@ -357,7 +357,7 @@ Recall that the Create Quote API responses for the merchant and your platform (S
 
 Because the quotes contain debit and receive amounts, we won't specify any other amounts when making a Create Outgoing Payment API request. Instead, we will specify a `quoteId`.
 
-Use the access tokens returned in Step 5 to call the [Create Outgoing Payment API](/apis/resource-server/operations/create-outgoing-payment).
+Use the access tokens returned in the previous step to call the <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment">Create Outgoing Payment API</LinkOut>.
 
 The purpose of these calls is to request an outgoing payment resource be created on the customer's wallet account: one for the merchant and one for your platform. Include the appropriate `quoteId` in each request.
 
