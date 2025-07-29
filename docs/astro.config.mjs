@@ -266,12 +266,12 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
-              label: 'Make a one-time payment',
-              link: '/guides/make-onetime-payment/'
+              label: 'Make a one-time purchase from an online store',
+              link: '/guides/make-onetime-purchase/'
             },
             {
-              label: 'Make recurring payments',
-              link: '/guides/make-recurring-payments/'
+              label: 'Make a recurring subscription payment',
+              link: '/guides/make-recurring-sub-payment/'
             },
             {
               label: 'Split an incoming payment',
