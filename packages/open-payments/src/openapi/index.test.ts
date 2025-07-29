@@ -55,11 +55,11 @@ describe('OpenAPI', (): void => {
         Object.keys(
           openApi.paths?.['/']?.['post']?.['requestBody']?.['content'][
             'application/json'
-          ]['schema']['properties']['access_token']['properties']['access'][
-            'items'
-          ]['oneOf'][1]['properties']['limits']['anyOf'][1]['properties'][
-            'debitAmount'
-          ]['properties']
+          ]['schema']['anyOf'][0]['properties']['access_token']['properties'][
+            'access'
+          ]['items']['oneOf'][1]['properties']['limits']['anyOf'][1][
+            'properties'
+          ]['debitAmount']['properties']
         ).sort()
       ).toEqual(['assetCode', 'assetScale', 'value'].sort())
     })

@@ -41,9 +41,11 @@ paths:
                         $ref: '#/components/schemas/access_token'
                       continue:
                         $ref: '#/components/schemas/continue'
-                    required:
-                      - access_token
-                      - continue
+                      subject:
+                        $ref: '#/components/schemas/subject'
+                    anyOf:
+                      - required: [access_token, continue]
+                      - required: [subject, continue]
                 type: object
               examples:
                 Interaction instructions:
@@ -56,7 +58,7 @@ paths:
                         value: 33OMUKMKSKU80UPRY5NM
                       uri: 'https://auth.interledger-test.dev/continue/4CF492MLVMSW9MKMXKHQ'
                       wait: 30
-                Grant:
+                Grant with Access Token:
                   value:
                     access_token:
                       value: OS9M2PMHKUR64TB8N6BW7OZB8CDFONP219RP1LT0
@@ -68,6 +70,16 @@ paths:
                             - create
                             - read
                           identifier: 'https://ilp.interledger-test.dev/bob'
+                    continue:
+                      access_token:
+                        value: 33OMUKMKSKU80UPRY5NM
+                      uri: 'https://auth.interledger-test.dev/continue/4CF492MLVMSW9MKMXKHQ'
+                Grant with Subject Information:
+                  value:
+                    subject:
+                      sub_ids:
+                        - id: 'https://wallet.example.com/alice'
+                          format: 'uri'
                     continue:
                       access_token:
                         value: 33OMUKMKSKU80UPRY5NM
@@ -96,23 +108,7 @@ paths:
         content:
           application/json:
             schema:
-              description: ''
-              type: object
-              properties:
-                access_token:
-                  type: object
-                  required:
-                    - access
-                  properties:
-                    access:
-                      $ref: '#/components/schemas/access'
-                client:
-                  $ref: '#/components/schemas/client'
-                interact:
-                  $ref: '#/components/schemas/interact-request'
-              required:
-                - access_token
-                - client
+              $ref: '#/components/schemas/grant_request'
             examples:
               Grant request for creating and reading recurring fixed payment:
                 value:
@@ -130,6 +126,20 @@ paths:
                             value: '500'
                             assetCode: USD
                             assetScale: 2
+                  client: 'https://webmonize.com/.well-known/pay'
+                  interact:
+                    start:
+                      - redirect
+                    finish:
+                      method: redirect
+                      uri: 'https://webmonize.com/return/876FGRD8VC'
+                      nonce: 4edb2194-dbdf-46bb-9397-d5fd57b7c8a7
+              Grant request for subject information:
+                value:
+                  subject:
+                    sub_ids:
+                      - id: 'https://wallet.example.com/alice'
+                        format: 'uri'
                   client: 'https://webmonize.com/.well-known/pay'
                   interact:
                     start:
@@ -570,6 +580,40 @@ components:
       required:
         - redirect
         - finish
+    grant_request:
+      anyOf:
+        - title: with Access Token
+          type: object
+          properties:
+            client:
+              $ref: '#/components/schemas/client'
+            interact:
+              $ref: '#/components/schemas/interact-request'
+            access_token:
+              type: object
+              required: [access]
+              properties:
+                access:
+                  $ref: '#/components/schemas/access'
+            subject:
+              $ref: '#/components/schemas/subject'
+          required: [client, access_token]
+        - title: with Subject
+          type: object
+          properties:
+            client:
+              $ref: '#/components/schemas/client'
+            interact:
+              $ref: '#/components/schemas/interact-request'
+            access_token:
+              type: object
+              required: [access]
+              properties:
+                access:
+                  $ref: '#/components/schemas/access'
+            subject:
+              $ref: '#/components/schemas/subject'
+          required: [client, subject]
     interval:
       title: Interval
       type: string
@@ -610,6 +654,31 @@ components:
               $ref: ./schemas.yaml#/components/schemas/amount
           required:
             - receiveAmount
+    subject:
+      title: subject
+      type: object
+      description: Information about the subject for which the client is requesting information.
+      properties:
+        sub_ids:
+          type: array
+          description: A list of subject identifiers.
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: Specific identifier for the subject for which the client is requesting information.
+              format:
+                type: string
+                description: The format of subject identifier that the client can accept.
+                enum:
+                  - uri
+            required:
+              - id
+              - format
+          minItems: 1
+      required:
+        - sub_ids
     error-invalid-client:
       type: object
       properties:
