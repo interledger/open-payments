@@ -398,7 +398,7 @@ export interface components {
         assetCode: string;
         /**
          * Asset scale
-         * @description The number of decimal places used to represent the minimum value of the asset. As an example, USD has an asset scale of 2 with a minimum value of $0.01. An integer amount of 1000 with an `assetCode` of USD and `assetScale` of 2 translates to $10.00
+         * @description The number of decimal places that defines the scale of the smallest divisible unit for the given asset code. It determines how an integer amount is scaled to derive the actual monetary value. For example, USD has an asset scale of 2 with the smallest unit being 0.01. An integer amount of `1000` with an `assetCode` of `USD` and `assetScale` of `2` translates to $10.00.
          */
         assetScale: number;
         /** amount */
