@@ -6,6 +6,8 @@ slug: 1.0/sdk/token-revoke
 import { CodeBlock, LinkOut } from '@interledger/docs-design-system'
 import { Tabs, TabItem, LinkButton } from '@astrojs/starlight/components'
 import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
+import ChunkedSnippetExperimental from '/src/components/ChunkedSnippetExperimental.astro'
+import { VERSION } from '../version.ts'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
 import TsImport from '/src/partials/ts-import-initialize.mdx'
@@ -33,7 +35,7 @@ These code snippets enable the client to call a management endpoint to revoke th
 
     <TsImport />
 
-    <ChunkedSnippet source="https://raw.githubusercontent.com/interledger/open-payments-snippets/main/token/token-revoke.ts" chunk="3" />
+    <ChunkedSnippetExperimental source="token/token-revoke.ts" chunk="3" l="node" version={VERSION}  />
 
     For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href="https://github.com/interledger/open-payments-snippets/blob/main/token/token-revoke.ts">View full TS source</LinkOut>
 
