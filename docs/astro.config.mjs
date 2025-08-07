@@ -57,17 +57,19 @@ export default defineConfig({
         starlightOpenAPI([
           {
             base: 'apis/resource-server',
-            schema: '../openapi/resource-server.yaml',
+            schema:
+              '../open-payments-specifications/openapi/resource-server.yaml',
             sidebar: { label: 'Open Payments' }
           },
           {
             base: 'apis/wallet-address-server',
-            schema: '../openapi/wallet-address-server.yaml',
+            schema:
+              '../open-payments-specifications/openapi/wallet-address-server.yaml',
             sidebar: { label: 'Wallet Addresses' }
           },
           {
             base: 'apis/auth-server',
-            schema: '../openapi/auth-server.yaml',
+            schema: '../open-payments-specifications/openapi/auth-server.yaml',
             sidebar: { label: 'Open Payments Authorization Server' }
           }
         ]),
