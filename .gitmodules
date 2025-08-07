@@ -1,0 +1,3 @@
+[submodule "open-payments-specifications"]
+	path = open-payments-specifications
+	url = git@github.com:interledger/open-payments-specifications.git
