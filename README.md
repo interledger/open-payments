@@ -21,8 +21,7 @@ The Open Payments APIs are a collection of three sub-systems:
 - A **resource server** which exposes APIs for performing functions against the underlying accounts
 - A **authorisation server** which exposes APIs compliant with the [GNAP](https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol) standard for getting grants to access the resource server APIs
 
-This repository hosts the documentation for the Open Payments APIs, which is published on [openpayments.dev](
-https://openpayments.dev)
+This repository hosts the documentation for the Open Payments APIs, which is published on [openpayments.dev](https://openpayments.dev)
 
 ### New to Interledger?
 
@@ -94,3 +93,4 @@ pnpm check:prettier
 
 # verify lint
 pnpm check:lint
+```
