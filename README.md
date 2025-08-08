@@ -15,25 +15,14 @@ Open Payments is an open API standard that can be implemented by account servici
 - Subscriptions
 - Invoice Payments
 
-An Open Payments server runs two sub-systems, a **resource server** which exposes APIs for performing functions against the
-underlying accounts and and **authorisation server** which exposes APIs compliant with the
-[GNAP](https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol) standard for getting grants to access the resource server
-APIs.
+The Open Payments APIs are a collection of three sub-systems:
 
-This repository hosts the Open API Specifications of the two APIs which are published along with additional documentation at
-https://openpayments.dev.
+- A **wallet address server** which exposes public information about Open Payments-enabled accounts called "wallet addresses"
+- A **resource server** which exposes APIs for performing functions against the underlying accounts
+- A **authorisation server** which exposes APIs compliant with the [GNAP](https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol) standard for getting grants to access the resource server APIs
 
-Additionally, this repository also contains three published libraries:
-
-- [`@interledger/open-payments`](https://github.com/interledger/open-payments/tree/main/packages/open-payments) contains a NodeJS Open Payments SDK to make requests via the Open Payments API, as well as TypeScript types for the API.
-- [`@interledger/http-signature-utils`](https://github.com/interledger/open-payments/tree/main/packages/http-signature-utils) provides tools for working with [HTTP Message Signatures](https://datatracker.ietf.org/doc/draft-ietf-httpbis-message-signatures).
-- [`@interledger/openapi`](https://github.com/interledger/open-payments/tree/main/packages/openapi) exposes functionality to validate requests and responses according to a given OpenAPI 3.1 schema.
-
-The code for the landing [page](https://openpayments.dev) is in `./docs`.
-
-## Dependencies
-
-- [Interledger](https://interledger.org/developers/rfcs/interledger-protocol/)
+This repository hosts the documentation for the Open Payments APIs, which is published on [openpayments.dev](
+https://openpayments.dev)
 
 ### New to Interledger?
 
@@ -51,7 +40,7 @@ Please read the [contribution guidelines](.github/contributing.md) before submit
 
 ## Open Payments Catchup Call
 
-Our catchup calls are open to our community. We have them every other Wednesday at 13:00 GMT, via Google Meet.
+Our catchup calls are open to our community. We have them every other Wednesday at 12:00 GMT, via Google Meet.
 
 Video call link: https://meet.google.com/htd-eefo-ovn
 
@@ -88,7 +77,7 @@ pnpm i
 You can preview the docs by running the command
 
 ```sh
-pnpm --filter openpayments-docs start
+pnpm --filter docs start
 ```
 
 ### Useful commands
@@ -105,13 +94,3 @@ pnpm check:prettier
 
 # verify lint
 pnpm check:lint
-
-# build all the packages in the repo:
-pnpm -r build
-
-# run individual tests (e.g. open-payments)
-pnpm --filter open-payments test
-
-# run all tests
-pnpm -r --workspace-concurrency=1 test
-```
