@@ -8,7 +8,6 @@
   },
   "packageManager": "pnpm@8.15.6",
   "scripts": {
-    "preinstall": "npx only-allow pnpm",
     "lint": "eslint --max-warnings=0 --fix .",
     "format": "prettier --write . && pnpm lint",
     "format:docs": "prettier --write ./docs/**/*.md",
@@ -22,7 +21,7 @@
     "@typescript-eslint/parser": "^5.55.0",
     "eslint": "^8.36.0",
     "eslint-config-prettier": "^8.7.0",
-    "prettier": "^2.8.4",
+    "prettier": "^3.6.2",
     "typescript": "^5.8.2"
   },
   "prettier": {

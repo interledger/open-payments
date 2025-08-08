@@ -22,7 +22,6 @@
     "starlight-versions": "^0.5.4"
   },
   "devDependencies": {
-    "@prettier/plugin-php": "^0.24.0",
-    "prettier": "3.6.2"
+    "@prettier/plugin-php": "^0.24.0"
   }
 }
