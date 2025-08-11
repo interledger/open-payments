@@ -1,5 +1,11 @@
 # @interledger/open-payments
 
+## 7.2.0
+
+### Minor Changes
+
+- f2d350d: Subject field added to spec
+
 ## 7.1.1
 
 ### Patch Changes
