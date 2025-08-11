@@ -31,7 +31,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/wallet-address'
               examples:
-                Get wallet address for $ilp.interledger-test.dev/alice:
+                Get wallet address for https://ilp.interledger-test.dev/alice:
                   value:
                     id: 'https://ilp.interledger-test.dev/alice'
                     publicName: Alice
