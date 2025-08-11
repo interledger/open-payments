@@ -64,7 +64,7 @@ importers:
         version: 0.9.0
       astro:
         specifier: 5.11.1
-        version: 5.11.1(@types/node@20.12.7)(typescript@5.8.2)
+        version: 5.11.1(typescript@5.8.2)
       mermaid:
         specifier: ^11.8.1
         version: 11.8.1
@@ -83,9 +83,6 @@ importers:
       starlight-openapi:
         specifier: ^0.19.1
         version: 0.19.1(@astrojs/markdown-remark@6.3.2)(@astrojs/starlight@0.34.7)(astro@5.11.1)(openapi-types@12.1.3)
-      starlight-versions:
-        specifier: ^0.5.4
-        version: 0.5.4(@astrojs/starlight@0.34.7)
     devDependencies:
       '@prettier/plugin-php':
         specifier: ^0.24.0
@@ -306,7 +303,7 @@ packages:
       '@astrojs/markdown-remark': 6.3.1
       '@mdx-js/mdx': 3.1.0(acorn@8.14.1)
       acorn: 8.14.1
-      astro: 5.11.1(@types/node@20.12.7)(typescript@5.8.2)
+      astro: 5.11.1(typescript@5.8.2)
       es-module-lexer: 1.6.0
       estree-util-visit: 2.0.0
       hast-util-to-html: 9.0.5
@@ -355,7 +352,7 @@ packages:
       '@types/hast': 3.0.4
       '@types/js-yaml': 4.0.9
       '@types/mdast': 4.0.4
-      astro: 5.11.1(@types/node@20.12.7)(typescript@5.8.2)
+      astro: 5.11.1(typescript@5.8.2)
       astro-expressive-code: 0.41.2(astro@5.11.1)
       bcp-47: 2.1.0
       hast-util-from-html: 2.0.3
@@ -385,7 +382,7 @@ packages:
     engines: {node: 18.20.8 || ^20.3.0 || >=22.0.0}
     dependencies:
       ci-info: 4.2.0
-      debug: 4.4.0(supports-color@9.4.0)
+      debug: 4.4.0
       dlv: 1.1.3
       dset: 3.1.4
       is-docker: 3.0.0
@@ -1654,7 +1651,7 @@ packages:
       '@antfu/install-pkg': 0.4.1
       '@antfu/utils': 0.7.10
       '@iconify/types': 2.0.0
-      debug: 4.4.0(supports-color@9.4.0)
+      debug: 4.4.0
       kolorist: 1.8.0
       local-pkg: 0.5.0
       mlly: 1.7.3
@@ -3861,11 +3858,11 @@ packages:
     peerDependencies:
       astro: ^4.0.0-beta || ^5.0.0-beta || ^3.3.0
     dependencies:
-      astro: 5.11.1(@types/node@20.12.7)(typescript@5.8.2)
+      astro: 5.11.1(typescript@5.8.2)
       rehype-expressive-code: 0.41.2
     dev: false
 
-  /astro@5.11.1(@types/node@20.12.7)(typescript@5.8.2):
+  /astro@5.11.1(typescript@5.8.2):
     resolution: {integrity: sha512-32dpUh0tXSV/FR2q2/z7LOA6IXl7RqET9J51IA0pPSSi3exhRP3EOSQGjBq10DzXT7VrvplDrFqwfiiWBS8oYA==}
     engines: {node: 18.20.8 || ^20.3.0 || >=22.0.0, npm: '>=9.6.5', pnpm: '>=7.1.0'}
     hasBin: true
@@ -3886,7 +3883,7 @@ packages:
       common-ancestor-path: 1.0.1
       cookie: 1.0.2
       cssesc: 3.0.0
-      debug: 4.4.0(supports-color@9.4.0)
+      debug: 4.4.0
       deterministic-object-hash: 2.0.2
       devalue: 5.1.1
       diff: 5.2.0
@@ -3923,7 +3920,7 @@ packages:
       unist-util-visit: 5.0.0
       unstorage: 1.15.0
       vfile: 6.0.3
-      vite: 6.3.5(@types/node@20.12.7)
+      vite: 6.3.5
       vitefu: 1.0.6(vite@6.3.5)
       xxhash-wasm: 1.1.0
       yargs-parser: 21.1.1
@@ -4997,6 +4994,18 @@ packages:
       ms: 2.1.2
     dev: false
 
+  /debug@4.4.0:
+    resolution: {integrity: sha512-6WTZ/IxCY/T6BALoZHaE4ctp9xm+Z5kY/pzYaCHRFeyVhojxlrm+46y68HA6hr0TcwEssoxNiDEUJQjfPZ/RYA==}
+    engines: {node: '>=6.0'}
+    peerDependencies:
+      supports-color: '*'
+    peerDependenciesMeta:
+      supports-color:
+        optional: true
+    dependencies:
+      ms: 2.1.3
+    dev: false
+
   /debug@4.4.0(supports-color@9.4.0):
     resolution: {integrity: sha512-6WTZ/IxCY/T6BALoZHaE4ctp9xm+Z5kY/pzYaCHRFeyVhojxlrm+46y68HA6hr0TcwEssoxNiDEUJQjfPZ/RYA==}
     engines: {node: '>=6.0'}
@@ -5008,6 +5017,7 @@ packages:
     dependencies:
       ms: 2.1.3
       supports-color: 9.4.0
+    dev: true
 
   /decamelize-keys@1.1.1:
     resolution: {integrity: sha512-WiPxgEirIV0/eIOMcnFBA3/IJZAZqKnwAwWyvvdi4lsr1WCN22nhdf/3db3DoZcUjTV2SqfzIwNyp6y2xs3nmg==}
@@ -5688,12 +5698,6 @@ packages:
       reusify: 1.0.4
     dev: true
 
-  /fault@2.0.1:
-    resolution: {integrity: sha512-WtySTkS4OKev5JtpHXnib4Gxiurzh5NCGvWrFaZ34m6JehfTUhKZvn9njTfw48t6JumVQOmrKqpmGcdwxnhqBQ==}
-    dependencies:
-      format: 0.2.2
-    dev: false
-
   /fb-watchman@2.0.2:
     resolution: {integrity: sha512-p5161BqbuCaSnB8jIbzQHOlpgsPmK5rJVDfDKO91Axs5NC1uu3HRQm6wt9cd9/+GtQQIO53JdGXXoyDpTAsgYA==}
     dependencies:
@@ -5799,11 +5803,6 @@ packages:
     dependencies:
       is-callable: 1.2.7
     dev: true
-
-  /format@0.2.2:
-    resolution: {integrity: sha512-wzsgA6WOq+09wrU1tsJ09udeR/YZRaeArL9e1wPbFg3GG2yDnC2ldKpxs4xunpFF9DgqCqOIra3bc1HWrJ37Ww==}
-    engines: {node: '>=0.4.x'}
-    dev: false
 
   /fresh@0.5.2:
     resolution: {integrity: sha512-zJ2mQYM18rEFOudeV4GShTGIQ7RbzA7ozbU9I/XBpm7kqgMywgmylMwXHxZJmkVoYkna9d2pVXVXPdYTP9ej8Q==}
@@ -7715,19 +7714,6 @@ packages:
       - supports-color
     dev: false
 
-  /mdast-util-frontmatter@2.0.1:
-    resolution: {integrity: sha512-LRqI9+wdgC25P0URIJY9vwocIzCcksduHQ9OF2joxQoyTNVduwLAFUzjoopuRJbJAReaKrNQKAZKL3uCMugWJA==}
-    dependencies:
-      '@types/mdast': 4.0.4
-      devlop: 1.1.0
-      escape-string-regexp: 5.0.0
-      mdast-util-from-markdown: 2.0.2
-      mdast-util-to-markdown: 2.1.2
-      micromark-extension-frontmatter: 2.0.0
-    transitivePeerDependencies:
-      - supports-color
-    dev: false
-
   /mdast-util-gfm-autolink-literal@2.0.1:
     resolution: {integrity: sha512-5HVP2MKaP6L+G6YaxPNjuL0BPrq9orG3TsrZ9YXbA3vDw/ACI4MEsnoDpn6ZNm7GnZgtAcONJyPhOP8tNJQavQ==}
     dependencies:
@@ -8013,27 +7999,6 @@ packages:
       micromark-util-symbol: 2.0.1
       micromark-util-types: 2.0.2
       parse-entities: 4.0.1
-    dev: false
-
-  /micromark-extension-directive@4.0.0:
-    resolution: {integrity: sha512-/C2nqVmXXmiseSSuCdItCMho7ybwwop6RrrRPk0KbOHW21JKoCldC+8rFOaundDoRBUWBnJJcxeA/Kvi34WQXg==}
-    dependencies:
-      devlop: 1.1.0
-      micromark-factory-space: 2.0.1
-      micromark-factory-whitespace: 2.0.1
-      micromark-util-character: 2.1.1
-      micromark-util-symbol: 2.0.1
-      micromark-util-types: 2.0.2
-      parse-entities: 4.0.1
-    dev: false
-
-  /micromark-extension-frontmatter@2.0.0:
-    resolution: {integrity: sha512-C4AkuM3dA58cgZha7zVnuVxBhDsbttIMiytjgsM2XbHAB2faRVaHRle40558FBN+DJcrLNCoqG5mlrpdU4cRtg==}
-    dependencies:
-      fault: 2.0.1
-      micromark-util-character: 2.1.1
-      micromark-util-symbol: 2.0.1
-      micromark-util-types: 2.0.2
     dev: false
 
   /micromark-extension-gfm-autolink-literal@2.0.0:
@@ -8329,7 +8294,7 @@ packages:
     resolution: {integrity: sha512-zpe98Q6kvavpCr1NPVSCMebCKfD7CA2NqZ+rykeNhONIJBpc1tFKt9hucLGwha3jNTNI8lHpctWJWoimVF4PfA==}
     dependencies:
       '@types/debug': 4.1.12
-      debug: 4.4.0(supports-color@9.4.0)
+      debug: 4.4.0
       decode-named-character-reference: 1.1.0
       devlop: 1.1.0
       micromark-core-commonmark: 2.0.3
@@ -9367,28 +9332,6 @@ packages:
       - supports-color
     dev: false
 
-  /remark-directive@4.0.0:
-    resolution: {integrity: sha512-7sxn4RfF1o3izevPV1DheyGDD6X4c9hrGpfdUpm7uC++dqrnJxIZVkk7CoKqcLm0VUMAuOol7Mno3m6g8cfMuA==}
-    dependencies:
-      '@types/mdast': 4.0.4
-      mdast-util-directive: 3.0.0
-      micromark-extension-directive: 4.0.0
-      unified: 11.0.5
-    transitivePeerDependencies:
-      - supports-color
-    dev: false
-
-  /remark-frontmatter@5.0.0:
-    resolution: {integrity: sha512-XTFYvNASMe5iPN0719nPrdItC9aU0ssC4v14mH1BCi1u0n1gAocqcujWUrByftZTbLhRtiKRyjYTSIOcr69UVQ==}
-    dependencies:
-      '@types/mdast': 4.0.4
-      mdast-util-frontmatter: 2.0.1
-      micromark-extension-frontmatter: 2.0.0
-      unified: 11.0.5
-    transitivePeerDependencies:
-      - supports-color
-    dev: false
-
   /remark-gfm@4.0.1:
     resolution: {integrity: sha512-1quofZ2RQ9EWdeN34S79+KExV1764+wCUGop5CPL1WGdD0ocPpu91lzPGbwWMECpEpd42kJGQwzRfyov9j4yNg==}
     dependencies:
@@ -9448,17 +9391,6 @@ packages:
       '@types/mdast': 4.0.4
       mdast-util-to-markdown: 2.1.2
       unified: 11.0.5
-    dev: false
-
-  /remark@15.0.1:
-    resolution: {integrity: sha512-Eht5w30ruCXgFmxVUSlNWQ9iiimq07URKeFS3hNc8cUWy1llX4KDWfyEDZRycMc+znsN9Ux5/tJ/BFdgdOwA3A==}
-    dependencies:
-      '@types/mdast': 4.0.4
-      remark-parse: 11.0.0
-      remark-stringify: 11.0.0
-      unified: 11.0.5
-    transitivePeerDependencies:
-      - supports-color
     dev: false
 
   /require-directory@2.1.1:
@@ -9988,33 +9920,11 @@ packages:
       '@astrojs/markdown-remark': 6.3.2
       '@astrojs/starlight': 0.34.7(astro@5.11.1)
       '@readme/openapi-parser': 2.7.0(openapi-types@12.1.3)
-      astro: 5.11.1(@types/node@20.12.7)(typescript@5.8.2)
+      astro: 5.11.1(typescript@5.8.2)
       github-slugger: 2.0.0
       url-template: 3.1.1
     transitivePeerDependencies:
       - openapi-types
-    dev: false
-
-  /starlight-versions@0.5.4(@astrojs/starlight@0.34.7):
-    resolution: {integrity: sha512-RwoauWVAiFaks2fh1fZgQPIi62FK8tndyyTOtCPlrB8sr/6Mg8o+3iU1f019AaJADyCta90z91uouCrG8cdqww==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      '@astrojs/starlight': '>=0.32.0'
-    dependencies:
-      '@astrojs/starlight': 0.34.7(astro@5.11.1)
-      '@pagefind/default-ui': 1.3.0
-      github-slugger: 2.0.0
-      mdast-util-mdx-jsx: 3.2.0
-      mdast-util-mdxjs-esm: 2.0.1
-      remark: 15.0.1
-      remark-directive: 4.0.0
-      remark-frontmatter: 5.0.0
-      remark-mdx: 3.1.0
-      unist-util-visit: 5.0.0
-      vfile: 6.0.3
-      yaml: 2.8.0
-    transitivePeerDependencies:
-      - supports-color
     dev: false
 
   /statuses@1.5.0:
@@ -10189,6 +10099,7 @@ packages:
   /supports-color@9.4.0:
     resolution: {integrity: sha512-VL+lNrEoIXww1coLPOmiEmK/0sGigko5COxI09KzHc2VJXJsQ37UaQ+8quuxjDeA7+KnLGTWRyOXSLLR2Wb4jw==}
     engines: {node: '>=12'}
+    dev: true
 
   /supports-preserve-symlinks-flag@1.0.0:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
@@ -10786,7 +10697,7 @@ packages:
       vfile-message: 4.0.2
     dev: false
 
-  /vite@6.3.5(@types/node@20.12.7):
+  /vite@6.3.5:
     resolution: {integrity: sha512-cZn6NDFE7wdTpINgs++ZJ4N49W2vRp8LCKrn3Ob1kYNtOo21vfDoaV5GzBfLU4MovSAB8uNRm4jgzVQZ+mBzPQ==}
     engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
     hasBin: true
@@ -10826,7 +10737,6 @@ packages:
       yaml:
         optional: true
     dependencies:
-      '@types/node': 20.12.7
       esbuild: 0.25.2
       fdir: 6.4.4(picomatch@4.0.2)
       picomatch: 4.0.2
@@ -10845,7 +10755,7 @@ packages:
       vite:
         optional: true
     dependencies:
-      vite: 6.3.5(@types/node@20.12.7)
+      vite: 6.3.5
     dev: false
 
   /vscode-jsonrpc@8.2.0:
@@ -11044,12 +10954,6 @@ packages:
   /yaml-ast-parser@0.0.43:
     resolution: {integrity: sha512-2PTINUwsRqSd+s8XxKaJWQlUuEMHJQyEuh2edBbW8KNJz0SJPwUSD2zRWqezFEdN7IzAgeuYHFUCF7o8zRdZ0A==}
     dev: true
-
-  /yaml@2.8.0:
-    resolution: {integrity: sha512-4lLa/EcQCB0cJkyts+FpIRx5G/llPxfP6VQU5KByHEhLxY3IJCH0f0Hy1MHI8sClTvsIb8qwRJ6R/ZdlDJ/leQ==}
-    engines: {node: '>= 14.6'}
-    hasBin: true
-    dev: false
 
   /yargs-parser@18.1.3:
     resolution: {integrity: sha512-o50j0JeToy/4K6OZcaQmW6lyXXKhq7csREXcDwk2omFPJEwUNOVtJKvmDr9EI1fAJZUyZcRF7kxGBWmRXudrCQ==}
