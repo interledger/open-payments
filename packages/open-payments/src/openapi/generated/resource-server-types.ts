@@ -227,7 +227,7 @@ export interface components {
          */
         "incoming-payment-with-methods": components["schemas"]["incoming-payment"] & {
             /** @description The list of payment methods supported by this incoming payment. */
-            methods: components["schemas"]["ilp-payment-method"][];
+            methods: (components["schemas"]["ilp-payment-method"] | components["schemas"]["sepa-payment-method"])[];
         };
         /**
          * Public Incoming Payment
@@ -372,7 +372,7 @@ export interface components {
             hasPreviousPage: boolean;
         };
         /** @enum {string} */
-        "payment-method": "ilp";
+        "payment-method": "ilp" | "sepa";
         "ilp-payment-method": {
             /** @enum {string} */
             type: "ilp";
@@ -380,6 +380,14 @@ export interface components {
             ilpAddress: string;
             /** @description The base64 url-encoded shared secret to use when establishing a STREAM connection. */
             sharedSecret: string;
+        };
+        "sepa-payment-method": {
+            /** @enum {string} */
+            type: "sepa";
+            /** @description The IBAN of the account to use as the SEPA payment recipient. */
+            iban: string;
+        } & {
+            [key: string]: unknown;
         };
         "error-response": {
             error: {
