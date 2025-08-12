@@ -1,5 +1,5 @@
 {
-  "name": "openpayments-docs",
+  "name": "docs",
   "type": "module",
   "private": "true",
   "version": "0.0.1",
@@ -21,7 +21,6 @@
     "starlight-openapi": "^0.19.1"
   },
   "devDependencies": {
-    "@prettier/plugin-php": "^0.24.0",
-    "prettier": "3.6.2"
+    "@prettier/plugin-php": "^0.24.0"
   }
 }
