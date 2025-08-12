@@ -25,7 +25,14 @@ The three Open Payments OpenAPI specifications are found in the [open-payments-s
 
 ### Open Payments SDKs
 
-The Open Payments SDKs provide developers with pre-built functions that simplify interactions with the Open Payments API. Currently, we offer a [TypeScript/NodeJS SDK](https://github.com/interledger/open-payments-node/tree/main/packages/open-payments) and a [PHP SDK](https://github.com/interledger/open-payments-php), with plans to expand to additional languages and frameworks in the future.
+The Open Payments SDKs provide developers with pre-built functions that simplify interactions with the Open Payments API.
+
+Currently, we offer:
+- [TypeScript/NodeJS SDK](https://github.com/interledger/open-payments-node/tree/main/packages/open-payments)
+- [PHP SDK](https://github.com/interledger/open-payments-php)
+- [Rust SDK](https://github.com/interledger/open-payments-rust)
+
+with plans to expand to additional languages and frameworks in the future.
 
 ### New to Interledger?
 
