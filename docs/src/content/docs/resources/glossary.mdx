@@ -26,11 +26,11 @@ A client is an application or service, such as a mobile or web app, that interac
 
 ## Grant Negotiation and Authorization Protocol (GNAP)
 
-The Grant Negotiation Authorization Protocol (GNAP) defines a mechanism for delegating authorization to a piece of software, and conveying the results and artifacts of that delegation to the software. This delegation can include access to a set of APIs as well as subject information passed directly to the software. For more information, see the <LinkOut href="https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol-12">specification</LinkOut>.
+The Grant Negotiation Authorization Protocol (GNAP) defines a mechanism for delegating authorization to a piece of software, and conveying the results and artifacts of that delegation to the software. This delegation can include access to a set of APIs and subject information passed directly to the software. For more information, see the <LinkOut href="https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol-12">specification</LinkOut>.
 
 ## Incoming payment resource
 
-An [incoming payment resource](/concepts/resources/#incoming-payment) is an object created by the recipient's ASE, on their resource server, that represents a payment being received by an entity. This resource contains information about the incoming payment, such as the amount, currency, receiver's wallet address, and payment status. It is used to track and manage payments that are expected to or have been received.
+An [incoming payment resource](/concepts/resources/#incoming-payment) is an object created by the recipient's ASE, on their resource server, that represents a payment being received by an entity. This resource contains information about the incoming payment, such as the amount, currency, receiver's wallet address, and payment status. It's used to track and manage payments that are expected to or have been received.
 
 ## Open Payments (OP)
 
@@ -40,9 +40,9 @@ Open Payments is an open RESTful API and an API standard that enables clients to
 
 An [outgoing payment resource](/concepts/resources/#outgoing-payment) is an object created by the sender's ASE, on their resource server, that represents a payment being sent by an entity. This resource contains information about the outgoing payment, such as the amount, currency, receiver's wallet address, and payment status. Outgoing payment resources require explicit [consent](/identity/idp/) from the sender before the resource can be created.
 
-## Payment Pointer
+## Payment pointer
 
-A <LinkOut href="https://paymentpointers.org/">payment pointer</LinkOut> is a secure, unique identifier that’s assigned to payment accounts that use Interledger’s <LinkOut href='https://interledger.org/developers/rfcs/simple-payment-setup-protocol/'>Simple Payment Setup Protocol (SPSP)</LinkOut> to exchange payment information. The shorthand for a payment pointer starts with $. For example, $wallet.example.com/alice.
+A <LinkOut href="https://paymentpointers.org/">payment pointer</LinkOut> is a secure, unique identifier that’s assigned to payment accounts that use Interledger’s <LinkOut href='https://interledger.org/developers/rfcs/simple-payment-setup-protocol/'>Simple Payment Setup Protocol (SPSP)</LinkOut> to exchange payment information. The shorthand for a payment pointer starts with $. For example, `$wallet.example.com/alice`.
 
 A payment pointer may serve as a [wallet address](/concepts/wallet-addresses) if Interledger is used as the payment method by transacting parties. The wallet address URL will be translated to a payment pointer when a payment is initiated over the Interledger network. However, note that not every wallet address is necessarily a payment pointer.
 
@@ -53,3 +53,7 @@ A [quote resource](/concepts/resources/#quote) is an object created by the sende
 ## Resource server (RS)
 
 A resource server hosts protected resources and enforces access controls based on the tokens provided by the authorization server. In the context of Open Payments, the resource server manages access to three payment-related resources (`incoming-payment`, `quote`, and `outgoing-payment`), ensuring that only authorized clients can perform actions through the Open Payments APIs.
+
+## Wallet address
+
+A [wallet address](/concepts/wallet-addresses) is a secure, sharable identifier for an Open Payments-enabled account. Wallet addresses take the form of HTTPS URLs. These URLs are service endpoints for gaining access to the Open Payments APIs. Querying a wallet address provides details about the underlying Open Payments-enabled account.
