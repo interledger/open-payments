@@ -4,7 +4,11 @@ title: Before you begin
 
 import { LinkOut } from '@interledger/docs-design-system'
 
-The Open Payments SDKs provide developers with pre-built functions that simplify interactions with the Open Payments API. Currently, we offer a <LinkOut href='https://github.com/interledger/open-payments-node/tree/main/packages/open-payments'>TypeScript/NodeJS SDK</LinkOut> and a <LinkOut href='https://github.com/interledger/open-payments-php'>PHP SDK</LinkOut>, with plans to expand to additional languages and frameworks in the future.
+The Open Payments SDKs provide developers with pre-built functions that simplify interactions with the Open Payments API. Currently, we offer the following SDKs, with plans to expand to additional languages and frameworks in the future.
+
+* <LinkOut href="https://github.com/interledger/open-payments-node">TypeScript/NodeJS</LinkOut>
+* <LinkOut href="https://github.com/interledger/open-payments-php">PHP</LinkOut>
+* <LinkOut href="https://github.com/interledger/open-payments-rust">Rust</LinkOut>
 
 ## Using the SDKs
 
@@ -15,7 +19,7 @@ Each SDK snippet page uses a tabbed interface to support multiple programming la
 - The "Before you begin" section that links back to this page for steps to create a test wallet.
 - The main content area includes the tabbed interface where you can select your preferred programming language.
 
-Within the tabbed interface, you'll notice the following sections:
+In the tabbed interface, you'll notice the following sections:
 
 - A "Prerequisites" button that links to the respective SDK's README on GitHub for setup instructions.
 - Any additional configuration steps required for the selected language.
@@ -26,14 +30,14 @@ This consistent structure across all SDK snippet pages allow you to quickly gras
 
 ## Create an account on the test wallet
 
-Before working with our SDK snippets, we recommend creating a wallet account on the <LinkOut href='https://wallet.interledger-test.dev/'>test wallet</LinkOut> that's part of the Interledger testnet.
+Before working with our SDK snippets, we recommend creating a <LinkOut href='https://wallet.interledger-test.dev/'>test wallet account</LinkOut> on the Interledger test network.
 
-The test wallet lets you create developer keys and wallet accounts, funded with play money, for making Interledger transactions via the Open Payments APIs.
+The test wallet lets you create accounts, funded with play money, and developer keys for making Interledger transactions via the Open Payments APIs.
 
 1. Go to <LinkOut href="https://wallet.interledger-test.dev">wallet.interledger-test.dev</LinkOut>.
 2. Click **Create account** at the bottom-right of the screen.
-3. Enter your e-mail address, a strong password, then confirm the password. Click the arrowhead.
-4. Go to your inbox and look for an e-mail sent by `tech@interledger.org` with the subject "[Test.Wallet] Verify your account". Click **Confirm my email address.**
+3. Enter your email address, a strong password, then confirm the password. Click the arrowhead.
+4. Go to your inbox and look for an email sent by `tech@interledger.org` with the subject "[Test.Wallet] Verify your account". Click **Confirm my email address.**
 5. Click **Login to your account** at the email verification screen.
 6. Log in with your credentials.
 7. Complete the Know Your Customer (KYC) steps. The only real information you need to share is your email address. All other information can be fake.
@@ -41,7 +45,7 @@ The test wallet lets you create developer keys and wallet accounts, funded with 
    The Interledger test wallet environment is running on a GateHub pre-production environment. The pre-production environment mimics the production environment, including many of the <LinkOut href="https://support.gatehub.net/hc/en-us/articles/360021131234-KYC-requirements-for-account-verification">KYC steps</LinkOut>.
    :::
 
-You're now ready to create a test wallet and add money to it!
+You're now ready to create a test wallet and deposit money!
 
 ## Create and fund a wallet account
 
@@ -64,14 +68,14 @@ You're now ready to create a test wallet and add money to it!
 5. Click **Deposit**.
    <img
      src='/img/snippets/tw-acct-options.png'
-     alt='Account options screen showing buttons for deposit and add payment pointer'
+     alt='Account options screen showing buttons for deposit and add wallet address'
      class='img-outline'
      style='max-width:400px'
    />
 6. Enter an amount between 50 to 1,000 to deposit into the account, then click **Deposit**.
 
    :::caution
-   The minimum deposit amount is 50. Though you can enter an amount larger than 1,000, total deposits exceeding 10,000 within 24 hours will be subject to manual review and approval. Thus, to avoid delays, it is advised that each deposit be limited to 1,000 to allow multiple deposits within a 24-hour period automatically.
+   The minimum deposit amount is 50. Though you can enter an amount larger than 1,000, total deposits exceeding 10,000 in 24 hours will be subject to manual review and approval. Thus, to avoid delays, it's advised that each deposit be limited to 1,000 to allow multiple deposits in a 24-hour period automatically.
    :::
 
    <img
@@ -83,24 +87,24 @@ You're now ready to create a test wallet and add money to it!
 
    You now have a funded test wallet!
 
-## Add a payment pointer to your wallet account
+## Add a wallet address to your account
 
 1. Select the account from the Test Wallet dashboard.
-2. Click **Add payment pointer**.
+2. Click **Add wallet address**.
    <img
      src='/img/snippets/tw-acct-options.png'
-     alt='Account options screen showing buttons for add payment pointer and deposit'
+     alt='Account options screen showing buttons for add wallet address and deposit'
      class='img-outline'
      style='max-width:400px'
    />
-3. Enter a **Payment Pointer name** and a **Public name** of your choosing.
+3. Enter a **Wallet Address name** and a **Public name** of your choosing.
    <img
-     src='/img/snippets/tw-create-payment-pointer.png'
-     alt='Create payment pointer screen with fields for payment pointer name and public name'
+     src='/img/snippets/tw-create-wallet-address.png'
+     alt='Create wallet address screen with fields for wallet address name and public name'
      class='img-outline'
      style='max-width:400px'
    />
-4. Click **Create**. Your account now has a payment pointer.
+4. Click **Create**. Your account now has a wallet address.
 
 ## Obtain a public-private key pair and key ID
 
@@ -137,4 +141,4 @@ Before you can initialize an authenticated Open Payments client, you must obtain
      style='max-width:400px'
    />
 
-You can now use your keys and payment pointer to initialize an authenticated Open Payments client.
+You can now use your keys and wallet address to initialize an authenticated Open Payments client.
