@@ -19,15 +19,15 @@ Asset codes identify the type of currency or digital asset being used in a payme
 
 <div class="overflow-table">
 
-| Asset Code | Currency | Symbol |
-|------------|----------|---------|
-| `USD` | US Dollar | $ |
-| `EUR` | Euro | € |
-| `GBP` | British Pound | £ |
-| `JPY` | Japanese Yen | ¥ |
-| `MXN` | Mexican Peso | $ |
-| `ZAR` | South African Rand | R |
-| `JOD` | Jordanian Dinar | د.ا |
+| Asset Code | Currency           | Symbol |
+| ---------- | ------------------ | ------ |
+| `USD`      | US Dollar          | $      |
+| `EUR`      | Euro               | €      |
+| `GBP`      | British Pound      | £      |
+| `JPY`      | Japanese Yen       | ¥      |
+| `MXN`      | Mexican Peso       | $      |
+| `ZAR`      | South African Rand | R      |
+| `JOD`      | Jordanian Dinar    | د.ا    |
 
 </div>
 
@@ -55,15 +55,15 @@ The asset scale represents the number of decimal places. To get the actual monet
 
 <div class="overflow-table">
 
-| Currency | Asset Code | Asset Scale | Integer Amount | Actual Value |
-|----------|------------|-------------|----------------|--------------|
-| US Dollar | `USD` | 2 | 1000 | $10.00 |
-| Euro | `EUR` | 2 | 2550 | €25.50 |
-| British Pound | `GBP` | 2 | 3250 | £32.50 |
-| Japanese Yen | `JPY` | 0 | 1000 | ¥1000 |
-| Mexican Peso | `MXN` | 2 | 18500 | $185.00 |
-| Jordanian Dinar | `JOD` | 3 | 1000 | د.ا1.000 |
-| South African Rand | `ZAR` | 2 | 1500 | R15.00 |
+| Currency           | Asset Code | Asset Scale | Integer Amount | Actual Value |
+| ------------------ | ---------- | ----------- | -------------- | ------------ |
+| US Dollar          | `USD`      | 2           | 1000           | $10.00       |
+| Euro               | `EUR`      | 2           | 2550           | €25.50       |
+| British Pound      | `GBP`      | 2           | 3250           | £32.50       |
+| Japanese Yen       | `JPY`      | 0           | 1000           | ¥1000        |
+| Mexican Peso       | `MXN`      | 2           | 18500          | $185.00      |
+| Jordanian Dinar    | `JOD`      | 3           | 1000           | د.ا1.000     |
+| South African Rand | `ZAR`      | 2           | 1500           | R15.00       |
 
 </div>
 
@@ -99,7 +99,7 @@ Represents the amount that will be deducted from the sender's account, including
 {
   "debitAmount": {
     "value": "5025",
-    "assetCode": "USD", 
+    "assetCode": "USD",
     "assetScale": 2
   }
 }
@@ -147,10 +147,10 @@ Imagine you're building a payment app where a US user wants to send money to a f
 
 <div class="overflow-table">
 
-| Type | JSON | Display | Notes |
-|------|------|---------|-------|
-| User Input | - | $25.00 | Initial request |
-| Debit Amount | `{"value": "2510", "assetCode": "USD", "assetScale": 2}` | $25.10 | +$0.10 fee (sender's ASE) |
+| Type           | JSON                                                      | Display | Notes                          |
+| -------------- | --------------------------------------------------------- | ------- | ------------------------------ |
+| User Input     | -                                                         | $25.00  | Initial request                |
+| Debit Amount   | `{"value": "2510", "assetCode": "USD", "assetScale": 2}`  | $25.10  | +$0.10 fee (sender's ASE)      |
 | Receive Amount | `{"value": "45000", "assetCode": "ZAR", "assetScale": 2}` | R450.00 | ASE handles USD→ZAR conversion |
 
 </div>
@@ -161,11 +161,11 @@ For an online store accepting payments in multiple currencies. The ASEs handle c
 
 <div class="overflow-table">
 
-| Type | JSON | Display | Notes |
-|------|------|---------|-------|
-| Incoming Amount | `{"value": "1999", "assetCode": "EUR", "assetScale": 2}` | €19.99 | Product price |
-| Debit Amount | `{"value": "2150", "assetCode": "USD", "assetScale": 2}` | $21.50 | Customer's ASE charges |
-| Receive Amount | `{"value": "1999", "assetCode": "EUR", "assetScale": 2}` | €19.99 | Store's ASE delivers |
+| Type            | JSON                                                     | Display | Notes                  |
+| --------------- | -------------------------------------------------------- | ------- | ---------------------- |
+| Incoming Amount | `{"value": "1999", "assetCode": "EUR", "assetScale": 2}` | €19.99  | Product price          |
+| Debit Amount    | `{"value": "2150", "assetCode": "USD", "assetScale": 2}` | $21.50  | Customer's ASE charges |
+| Receive Amount  | `{"value": "1999", "assetCode": "EUR", "assetScale": 2}` | €19.99  | Store's ASE delivers   |
 
 </div>
 
