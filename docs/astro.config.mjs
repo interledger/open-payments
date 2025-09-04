@@ -103,6 +103,10 @@ export default defineConfig({
                   link: '/concepts/auth/'
                 },
                 {
+                  label: 'Amounts',
+                  link: '/concepts/amounts/'
+                },
+                {
                   label: 'Payment methods',
                   link: '/concepts/payments/'
                 },
