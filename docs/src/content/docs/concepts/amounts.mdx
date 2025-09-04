@@ -3,33 +3,94 @@ title: Amounts
 parent: Concepts
 ---
 
-import { LinkOut } from '@interledger/docs-design-system'
+import { LinkOut, Tooltip } from '@interledger/docs-design-system'
 
 :::tip[Summary]
 Amounts in Open Payments define monetary values using asset codes, asset scales, and specific amount types. They provide a standardized way to represent money across different currencies and payment scenarios.
 :::
 
-In the Open Payments API, **amounts** represent monetary values and are fundamental to all payment operations. Every amount consists of three key components: a numerical value, an asset code, and an asset scale. Understanding these components is crucial for building applications that handle cross-currency payments and multi-precision monetary calculations.
+Amounts represent monetary values and are fundamental to all payment operations. Every amount consists of three key components: a numerical value, an asset code, and an asset scale. Understanding these components is crucial for building Open Payments applications.
+
+Amounts are central to every Open Payments operation. Whether you're creating an incoming payment, requesting a quote, or tracking payment progress, all amounts follow the same three-part structure: a value, asset code, and asset scale.
+
+Every amount in Open Payments consists of three components:
+
+```json
+{
+  "value": "1000",
+  "assetCode": "USD",
+  "assetScale": 2
+}
+```
+
+This consistent structure enables multi-currency payments, precise calculations, and seamless integration between different <Tooltip content="Account servicing entity">ASEs</Tooltip>.
 
 ## Asset codes
 
-Asset codes identify the type of currency or digital asset being used in a payment. Open Payments follows the <LinkOut href='https://en.wikipedia.org/wiki/ISO_4217'>ISO 4217</LinkOut> standard for currency representation.
+Asset codes identify the type of currency or asset being used in a payment and should follow the <LinkOut href='https://en.wikipedia.org/wiki/ISO_4217'>ISO 4217</LinkOut> standard for currency representation.
 
 ### Common currency examples
 
-<div class="overflow-table">
-
-| Asset Code | Currency           | Symbol |
-| ---------- | ------------------ | ------ |
-| `USD`      | US Dollar          | $      |
-| `EUR`      | Euro               | €      |
-| `GBP`      | British Pound      | £      |
-| `JPY`      | Japanese Yen       | ¥      |
-| `MXN`      | Mexican Peso       | $      |
-| `ZAR`      | South African Rand | R      |
-| `JOD`      | Jordanian Dinar    | د.ا    |
-
-</div>
+<table style='width: auto; margin: 1;'>
+  <thead>
+    <tr>
+      <th>Asset Code</th>
+      <th>Currency</th>
+      <th>Symbol</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <code>USD</code>
+      </td>
+      <td>US Dollar</td>
+      <td>$</td>
+    </tr>
+    <tr>
+      <td>
+        <code>EUR</code>
+      </td>
+      <td>Euro</td>
+      <td>€</td>
+    </tr>
+    <tr>
+      <td>
+        <code>GBP</code>
+      </td>
+      <td>British Pound</td>
+      <td>£</td>
+    </tr>
+    <tr>
+      <td>
+        <code>JPY</code>
+      </td>
+      <td>Japanese Yen</td>
+      <td>¥</td>
+    </tr>
+    <tr>
+      <td>
+        <code>MXN</code>
+      </td>
+      <td>Mexican Peso</td>
+      <td>$</td>
+    </tr>
+    <tr>
+      <td>
+        <code>ZAR</code>
+      </td>
+      <td>South African Rand</td>
+      <td>R</td>
+    </tr>
+    <tr>
+      <td>
+        <code>JOD</code>
+      </td>
+      <td>Jordanian Dinar</td>
+      <td>د.ا</td>
+    </tr>
+  </tbody>
+</table>
 
 When building payment applications, you'll specify the asset code to indicate which currency you're working with:
 
@@ -43,140 +104,95 @@ When building payment applications, you'll specify the asset code to indicate wh
 
 ## Asset scales
 
-Asset scale defines how many decimal places are used to represent the smallest unit of a currency. It determines how integer amounts are converted to actual monetary values.
+An asset scale defines the decimal precision for monetary amounts by specifying the power of 10 to divide the integer value by to get the display amount.
 
-### How asset scale works
+### Integer representation
 
-The asset scale represents the number of decimal places. To get the actual monetary value:
+Open Payments uses unsigned 64-bit integers for monetary amounts instead of floating-point numbers to maximize precision and avoid rounding errors in financial calculations. The smallest useful unit of each currency maps to 1, with all amounts expressed as multiples of that unit.
+
+### How scales work
+
+Asset scales are integers between 0 and 255 that represent the exponent in the conversion formula:
 
 **Monetary Value = Integer Amount ÷ 10^(Asset Scale)**
 
+For USD with scale 2: $1.00 = 100 cents, so the scale is 2 (10² = 100).
+
 ### Examples by currency
 
-<div class="overflow-table">
-
-| Currency           | Asset Code | Asset Scale | Integer Amount | Actual Value |
-| ------------------ | ---------- | ----------- | -------------- | ------------ |
-| US Dollar          | `USD`      | 2           | 1000           | $10.00       |
-| Euro               | `EUR`      | 2           | 2550           | €25.50       |
-| British Pound      | `GBP`      | 2           | 3250           | £32.50       |
-| Japanese Yen       | `JPY`      | 0           | 1000           | ¥1000        |
-| Mexican Peso       | `MXN`      | 2           | 18500          | $185.00      |
-| Jordanian Dinar    | `JOD`      | 3           | 1000           | د.ا1.000     |
-| South African Rand | `ZAR`      | 2           | 1500           | R15.00       |
-
-</div>
-
-### Why use integer representation?
-
-Using integers avoids floating-point arithmetic errors that can occur with decimal calculations, ensuring precise monetary computations across all systems.
-
-## Amount types in Open Payments
-
-Open Payments defines different types of amounts depending on the context and purpose of the payment operation:
-
-### 1. Incoming Amount
-
-Represents the amount specified in an incoming payment resource, indicating how much the recipient expects to receive.
-
-```json
-{
-  "incomingAmount": {
-    "value": "5000",
-    "assetCode": "USD",
-    "assetScale": 2
-  }
-}
-```
-
-**Use case**: When a merchant creates an invoice for $50.00, they specify an incoming amount. This tells potential payers exactly how much should be sent to fulfill the payment request.
-
-### 2. Debit Amount
-
-Represents the amount that will be deducted from the sender's account, including any applicable fees.
-
-```json
-{
-  "debitAmount": {
-    "value": "5025",
-    "assetCode": "USD",
-    "assetScale": 2
-  }
-}
-```
-
-**Use case**: When sending $50.00, your wallet might deduct $50.25 from your account to cover the $50.00 payment plus a $0.25 processing fee. The debit amount helps you understand the total cost before confirming the payment.
-
-### 3. Receive Amount
-
-Represents the amount the recipient will actually receive after any fees or currency conversion.
-
-```json
-{
-  "receiveAmount": {
-    "value": "4950",
-    "assetCode": "EUR",
-    "assetScale": 2
-  }
-}
-```
-
-**Use case**: When sending $50.00 to a European merchant, they might receive €49.50 after currency conversion and fees. The receive amount tells you exactly what the recipient will get in their preferred currency.
-
-### 4. Sent Amount
-
-Represents the amount that has been successfully transmitted during an outgoing payment. This is a real-time tracking field that shows the actual progress of a payment.
-
-```json
-{
-  "sentAmount": {
-    "value": "3000",
-    "assetCode": "USD",
-    "assetScale": 2
-  }
-}
-```
-
-**Use case**: When sending $50.00, the sent amount starts at $0.00 and increases as the payment is processed. If you check the payment status mid-transaction, you might see a sent amount of $30.00, indicating that $30.00 has been successfully transmitted while $20.00 is still being processed.
-
-## Practical examples
-
-### Cross-currency payment scenario
-
-Imagine you're building a payment app where a US user wants to send money to a friend in South Africa. The currency conversion is handled automatically by the Account Servicing Entities (ASEs) involved in the transaction:
-
-<div class="overflow-table">
-
-| Type           | JSON                                                      | Display | Notes                          |
-| -------------- | --------------------------------------------------------- | ------- | ------------------------------ |
-| User Input     | -                                                         | $25.00  | Initial request                |
-| Debit Amount   | `{"value": "2510", "assetCode": "USD", "assetScale": 2}`  | $25.10  | +$0.10 fee (sender's ASE)      |
-| Receive Amount | `{"value": "45000", "assetCode": "ZAR", "assetScale": 2}` | R450.00 | ASE handles USD→ZAR conversion |
-
-</div>
-
-### E-commerce integration
-
-For an online store accepting payments in multiple currencies. The ASEs handle currency conversion automatically:
-
-<div class="overflow-table">
-
-| Type            | JSON                                                     | Display | Notes                  |
-| --------------- | -------------------------------------------------------- | ------- | ---------------------- |
-| Incoming Amount | `{"value": "1999", "assetCode": "EUR", "assetScale": 2}` | €19.99  | Product price          |
-| Debit Amount    | `{"value": "2150", "assetCode": "USD", "assetScale": 2}` | $21.50  | Customer's ASE charges |
-| Receive Amount  | `{"value": "1999", "assetCode": "EUR", "assetScale": 2}` | €19.99  | Store's ASE delivers   |
-
-</div>
-
-## Implementation considerations
-
-When working with amounts in your applications:
-
-1. **Always validate asset scales**: Ensure your calculations account for the correct number of decimal places
-2. **Handle precision carefully**: Use integer arithmetic to avoid floating-point errors
-3. **Display formatting**: Convert integer amounts to user-friendly formats for display
-4. **Currency conversion**: ASEs handle all currency conversion automatically - you only need to work with the amount values provided by the API
-5. **Amount relationships**: Debit and receive amounts may use different currencies, but the conversion rates and fees are managed by the underlying payment infrastructure
-
-Understanding amounts, asset codes, and asset scales forms the foundation for building robust payment applications with the Open Payments API. These concepts ensure your application can handle diverse currencies and provide transparent payment information to users.
+<table style='width: auto; margin: 1;'>
+  <thead>
+    <tr>
+      <th>Currency</th>
+      <th>Asset Code</th>
+      <th>Asset Scale</th>
+      <th>Integer Amount</th>
+      <th>Actual Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>US Dollar</td>
+      <td>
+        <code>USD</code>
+      </td>
+      <td>2</td>
+      <td>100</td>
+      <td>$1.00</td>
+    </tr>
+    <tr>
+      <td>Euro</td>
+      <td>
+        <code>EUR</code>
+      </td>
+      <td>2</td>
+      <td>2550</td>
+      <td>€25.50</td>
+    </tr>
+    <tr>
+      <td>British Pound</td>
+      <td>
+        <code>GBP</code>
+      </td>
+      <td>2</td>
+      <td>3250</td>
+      <td>£32.50</td>
+    </tr>
+    <tr>
+      <td>Japanese Yen</td>
+      <td>
+        <code>JPY</code>
+      </td>
+      <td>0</td>
+      <td>1000</td>
+      <td>¥1000</td>
+    </tr>
+    <tr>
+      <td>Mexican Peso</td>
+      <td>
+        <code>MXN</code>
+      </td>
+      <td>2</td>
+      <td>18500</td>
+      <td>$185.00</td>
+    </tr>
+    <tr>
+      <td>Jordanian Dinar</td>
+      <td>
+        <code>JOD</code>
+      </td>
+      <td>3</td>
+      <td>1000</td>
+      <td>د.ا1.000</td>
+    </tr>
+    <tr>
+      <td>South African Rand</td>
+      <td>
+        <code>ZAR</code>
+      </td>
+      <td>2</td>
+      <td>1500</td>
+      <td>R15.00</td>
+    </tr>
+  </tbody>
+</table>
