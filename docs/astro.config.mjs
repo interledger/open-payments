@@ -35,11 +35,14 @@ export default defineConfig({
       // defaultLocale: 'root',
       locales: {
         root: {
+          // English docs in `src/content/docs`
           label: 'English',
           lang: 'en'
         },
         es: {
-          label: 'Español'
+          // Spanish docs in `src/content/docs/es`
+          label: 'Español',
+          lang: 'es'
         }
       },
       expressiveCode: {
@@ -84,56 +87,75 @@ export default defineConfig({
       sidebar: [
         {
           label: 'Overview',
+          translations: { es: 'Descripción general' },
           items: [
-            { label: 'Getting started', link: '/overview/getting-started/' },
+            {
+              label: 'Getting started',
+              translations: { es: 'Cómo empezar' },
+              link: '/overview/getting-started/'
+            },
             {
               label: 'Concepts',
+              translations: { es: 'Conceptos' },
               collapsed: false,
               items: [
                 {
                   label: 'Wallet addresses',
+                  translations: { es: 'Direcciones de billetera' },
                   link: '/concepts/wallet-addresses/'
                 },
                 {
                   label: 'Resources',
+                  translations: { es: 'Recursos' },
                   link: '/concepts/resources/'
                 },
                 {
                   label: 'Authorization',
+                  translations: { es: 'Autorización' },
                   link: '/concepts/auth/'
                 },
                 {
                   label: 'Payment methods',
+                  translations: { es: 'Métodos de pago' },
                   link: '/concepts/payments/'
                 },
                 {
                   label: 'Open Payments flow',
+                  translations: { es: 'Flujo de Open Payments' },
                   link: '/concepts/op-flow/'
                 }
               ]
             },
             {
               label: 'Identity and access management',
+              translations: { es: 'Gestión de la identidad y el acceso' },
               collapsed: true,
               items: [
                 {
                   label: 'Grant negotiation and authorization',
+                  translations: {
+                    es: 'Negociación y autorización de las concesiones'
+                  },
                   link: '/identity/grants/'
                 },
                 {
                   label: 'Identity providers',
+                  translations: { es: 'Proveedores de identidad' },
                   link: '/identity/idp/'
                 },
                 {
                   label: 'Client keys',
+                  translations: { es: 'Claves de cliente' },
                   link: '/identity/client-keys/'
                 },
                 {
                   label: 'HTTP signatures',
+                  translations: { es: 'Firmas de mensajes HTTP' },
                   link: '/identity/http-signatures/'
                 },
                 {
                   label: 'Hash verification',
+                  translations: { es: 'Verificación de hash' },
                   link: '/identity/hash-verification/'
                 }
               ]
@@ -260,28 +282,36 @@ export default defineConfig({
         },
         {
           label: 'Guides',
+          translations: { es: 'Guías' },
           collapsed: true,
           items: [
             {
               label: 'Make a one-time payment',
+              translations: { es: 'Cómo efectuar un pago único' },
               link: '/guides/make-onetime-payment/'
             },
             {
               label: 'Make recurring payments',
+              translations: { es: 'Realizar pagos recurrentes' },
               link: '/guides/make-recurring-payments/'
             },
             {
               label: 'Split an incoming payment',
+              translations: { es: 'Dividir un pago entrante' },
               link: '/guides/split-payments/'
             },
             {
               label: 'Get an outgoing payment grant for future payments',
+              translations: {
+                es: 'Obtener una concesión de pago saliente para pagos futuros'
+              },
               link: '/guides/outgoing-grant-future-payments/'
             }
           ]
         },
         {
           label: 'Resources',
+          translations: { es: 'Recursos' },
           collapsed: true,
           items: [
             {

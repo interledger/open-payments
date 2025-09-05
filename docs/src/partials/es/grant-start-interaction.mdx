@@ -1,0 +1,19 @@
+﻿Una vez que el cliente recibe la respuesta del servidor de autorización, debe enviar al usuario al URI de `interact.redirect` de la respuesta. Esto da comienzo al flujo de interacción.
+
+La respuesta también incluye un objeto de `continue`, que es fundamental para gestionar la interacción y obtener el consentimiento explícito del usuario para concesiones de autorizaciones de pagos salientes. El objeto de `continue` contiene un token de acceso y un URI que el cliente usará para finalizar la solicitud de concesión de autorización después de que el usuario haya completado su interacción con el proveedor de identidad (Identity provider, IdP). Esto asegura que el cliente pueda obtener de manera segura los permisos necesarios para proceder con el proceso de pago.
+
+```json title="Respuesta de ejemplo" wrap
+{
+  "interact": {
+    "redirect": "https://auth.interledger-test.dev/4CF492MLVMSW9MKMXKHQ",
+    "finish": "4105340a-05eb-4290-8739-f9e2b463bfa7"
+  },
+  "continue": {
+    "access_token": {
+      "value": "33OMUKMKSKU80UPRY5NM"
+    },
+    "uri": "https://auth.interledger-test.dev/continue/4CF492MLVMSW9MKMXKHQ",
+    "wait": 30
+  }
+}
+```

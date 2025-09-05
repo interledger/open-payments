@@ -1,0 +1,66 @@
+﻿---
+title: Direcciones de billetera
+parent: Concepts
+---
+
+:::tip[Resumen]
+Una dirección de billetera es un identificador seguro de una cuenta compatible con Open Payments (estándar de pagos abiertos), que se puede compartir. Cada dirección de billetera funciona como un punto final de servicio dentro de las interfaces de programación de aplicaciones (application programming interfaces, API) y permite que los clientes interactúen con la cuenta subyacente.
+:::
+
+En el centro de todas las interacciones de Open Payments, se encuentra una cuenta compatible con Open Payments. Cada cuenta compatible con Open Payments se identifica por medio de una URL o más. Estas URL no solo son identificadores de cuentas, sino también puntos finales de servicio para obtener acceso a las API de Open Payments. Estas URL se denominan **direcciones de billetera**. No todas las URL son direcciones de billetera, pero todas las direcciones de billetera son URL.
+
+## ¿Qué hace que una URL sea una dirección de billetera?
+
+Una URL solo es una dirección de billetera si cumple con los siguientes criterios:
+
+- El servidor que gestiona las solicitudes HTTP admite el protocolo de Open Payments.
+- La URL utiliza el protocolo `https` y no tiene componentes de `user-info`, `port`, `query string` ni `fragment`.
+
+### Cómo verificar una dirección de billetera
+
+La forma más rápida de comprobar que una URL es una dirección de billetera es haciendo una solicitud HTTP `GET` a la URL con un encabezado `Accept` con el valor `application/json`.
+
+```http
+curl --request GET \
+ 	--url https://wallet.example.com/alice \
+ 	--header 'accept: application/json'
+```
+
+Si la URL es una dirección de billetera, en la respuesta, se proporcionarán datos sobre la cuenta compatible con Open Payments subyacente, lo que incluye la URL del punto final de la solicitud de concesión de autorización (el `authServer`). El punto final de la solicitud de concesión de autorización se utiliza para obtener tókenes de acceso para conectarse a la cuenta por medio de las API de Open Payments.
+
+```http
+HTTP/1.1 200 Success
+Content-Type: application/json
+
+{
+  "id": "https://wallet.example.com/alice",
+  "publicName": "Alice",
+  "assetCode": "USD",
+  "assetScale": 2,
+  "authServer": "https://auth.wallet.example.com"
+}
+```
+
+## Servidor de direcciones de billetera
+
+Al configurar un pago, el cliente debe obtener la dirección de billetera tanto del remitente como del destinatario. Dado que el remitente, por lo general, es el usuario del cliente, el cliente puede obtener su dirección de billetera, por ejemplo, durante el proceso de incorporación. La entidad que administra la cuenta (account servicing entity, ASE) debe autenticar al remitente para concederle el permiso que necesita para acceder a su cuenta compatible con Open Payments.
+
+Un servidor de direcciones de billetera es el punto final de una API que recupera información pública sobre una dirección de billetera, lo que incluye sus claves públicas asociadas. Para obtener más información técnica, visite los [documentos de la API del servidor de direcciones de billetera](/apis/wallet-address-server/operations/get-wallet-address/).
+
+## Privacidad y seguridad
+
+Una dirección de billetera funciona como un identificador proxy (alias) de una cuenta financiera subyacente. Si una ASE lo permite, una sola cuenta puede tener múltiples direcciones de billetera. Permitir que los titulares de cuentas generen direcciones de billetera únicas para cada cliente con el que interactúan puede ayudar a prevenir que una sola dirección se convierta en un vector de rastreo.
+
+Además de los modelos de “una cuenta para una dirección de billetera” y “una cuenta para múltiples direcciones de billetera”, una ASE puede permitir que una sola dirección de billetera represente a todas las cuentas de un usuario. Por ejemplo, supongamos que un usuario tiene tres cuentas con un proveedor de billetera digital. El proveedor le proporciona al usuario una sola dirección de billetera. Cuando se envía un pago a la dirección de billetera, el proveedor determina cuál de las tres cuentas debe recibir el pago sobre la base del tipo de divisa u otro criterio acordado.
+
+En última instancia, definir la configuración admitida para la relación entre las direcciones de billetera y las cuentas del usuario queda a criterio de la ASE. Este acoplamiento flexible permite que las direcciones de billetera se desactiven o, incluso, que se vinculen a una nueva cuenta (aunque deben tenerse en cuenta algunos aspectos antes de permitirlo) sin afectar a la cuenta subyacente.
+
+Para cualquier cliente, una dirección de billetera sirve tanto como una cuenta. Los clientes deben tratar a dos direcciones de billetera diferentes como si fueran cuentas distintas, incluso aunque sepan que son proxies de la misma cuenta subyacente. El permiso para que un cliente acceda a una cuenta por medio de una dirección de billetera no se concede de forma automática al acceder a la misma cuenta a través de otra dirección de billetera.
+
+## Descubrimiento e interacción
+
+El uso de las URL como instrumentos de pago resuelve dos de los problemas más grandes de la experiencia de usuario (UX) en los pagos actuales: la facilidad de descubrimiento y la interacción.
+
+Las URL (localizadores de recursos universales) se han utilizado en Internet durante décadas para permitir que los clientes localicen un recurso de forma directa y comiencen a interactuar con él por medio de HTTP. Una dirección de billetera es un identificador proxy y un localizador de recursos para la cuenta subyacente, que se utiliza para acceder a la cuenta por medio de las API de Open Payments y comenzar a interactuar con la ASE de la cuenta.
+
+Además, es preferible utilizar las URL a modo de proxies antes de sobrecargar a otros identificadores, como las direcciones de correo electrónico y los Números Internacionales de Directorio de Suscriptores de Estación Móvil (Mobile Station International Subscriber Directory Numbers, MSISDN), dado que estos proxies no tienen un estándar para la interacción. Por lo tanto, los identificadores como un MSISDN o un correo electrónico requieren un registro que relacione el identificador con un proveedor de cuenta y también un mecanismo para gestionar esta relación de manera segura.

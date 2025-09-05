@@ -1,0 +1,30 @@
+﻿---
+title: Métodos de pago
+parent: Concepts
+---
+
+import { LinkOut } from '@interledger/docs-design-system'
+
+El método de pago es el medio a través del cual la entidad que administra la cuenta (account servicing entity, ASE) del remitente cumplirá con sus obligaciones de pago hacia la ASE del destinatario. El dinero en efectivo, las tarjetas de crédito/débito, las transferencias bancarias, las tarjetas de regalo y el dinero móvil se pueden considerar métodos de pago distintos.
+
+Cuando un `outgoing-payment` se completa en función de un `incoming-payment` activo, el ASE del remitente tiene la obligación de efectuar el pago utilizando el método que se especificó al inicio en la respuesta del `incoming-payment`.
+
+Aunque Open Payments (estándar de pagos abiertos) se diseñó con el fin de ser una capa de abstracción capaz de emitir instrucciones de pago entre las partes involucradas en una transacción por sobre cualquier método de pago, <LinkOut href='https://interledger.org'>Interledger (ILP) </LinkOut> es actualmente el único método de pago que se integra con Open Payments de manera inmediata.
+
+Al utilizar ILP como un método de pago, se exige la siguiente información a la ASE de destinatario, en el objeto `method` del pago entrante.
+
+- Un `type` de `ilp` para indicar el método de pago.
+- La <LinkOut href='https://interledger.org/developers/rfcs/ilp-addresses/'>dirección de ILP</LinkOut> de la ASE del destinatario: la dirección de ILP se exige con el fin de que los paquetes que representan los pagos enviados a través de la red de Interledger se reenvíen al nodo que el destinatario previsto posee y opera (es decir, la ASE del destinatario).
+- Un secreto compartido: un secreto protegido criptográficamente, que intercambian la ASE del remitente y la ASE del destinatario, para garantizar que solo esas dos partes puedan leer los paquetes que viajan por la red de Interledger a través de una conexión de <LinkOut href='https://interledger.org/developers/rfcs/stream-protocol/'>Protocolo de Transporte Simple (Simple Transport Protocol, STREAM)</LinkOut>.
+
+```http title="incoming-payment methods object"
+"methods": [
+    {
+      "type": "ilp",
+      "ilpAddress": "g.ilp.iwuyge987y.98y08y",
+      "sharedSecret": "1c7eaXa4rd2fFOBl1iydvCT1tV5TbM3RW1WLCafu_JA"
+    }
+  ]
+```
+
+Una vez que se recibió la respuesta de `incoming-payment`, la ASE del remitente crea una solicitud de `quote` que contenga el parámetro `"method": "ilp"`.

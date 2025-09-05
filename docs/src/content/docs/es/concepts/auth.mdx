@@ -1,0 +1,52 @@
+﻿---
+title: Autorización
+parent: Concepts
+---
+
+import { LinkOut, Tooltip } from '@interledger/docs-design-system'
+
+:::tip[Resumen]
+La autorización en Open Payments (estándar de pagos abiertos) se refiere al proceso mediante el cual un cliente obtiene el permiso de un propietario de recursos para acceder a los recursos protegidos y operar en ellos.
+:::
+
+Open Payments aprovecha el Protocolo de Negociación y Autorización de Concesiones <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol'>(Grant Negotiation and Authorization Protocol, GNAP)</LinkOut> como el mecanismo mediante el cual un programa de software, conocido como “instancia de cliente” (o simplemente “cliente”), recibe la delegación de autorización para utilizar las interfaces de programación de aplicaciones (application programming interfaces, API) de Open Payments para interactuar con las cuentas admitidas.
+
+## Servidor de autorización
+
+El servidor de autorización concede permisos para que un cliente acceda a las API de Open Payments y los recursos de `incoming-payment`, `quote` y `outgoing-payment`. Para ello, emite tókenes de acceso que representan un conjunto de derechos de acceso o atributos concedidos al cliente. Con los tókenes de acceso adecuados, el cliente puede ejecutar las operaciones permitidas, como crear pagos entrantes y salientes, en nombre del propietario del recurso (resource owner, RO).
+
+### Relación entre las concesiones y los tókenes de acceso
+
+Una **concesión** es una autorización que emite el RO para permitir que un cliente acceda a recursos específicos. La concesión de autorización especifica el tipo de acciones que el cliente puede efectuar. Puede requerir la interacción del usuario y está sujeta al consentimiento del RO. El servidor de autorización valida la concesión cada vez que el cliente utiliza su token de acceso.
+
+Un **token de acceso** se emite luego de que el servidor de autorización aprueba una solicitud de concesión. Este token funciona como una credencial que el cliente utiliza para su propia autenticación a la hora de emitir solicitudes de acceso a recursos protegidos. El token de acceso contiene información sobre los permisos concedidos, lo que incluye las acciones específicas que el cliente puede realizar y los recursos a los que puede acceder.
+
+## Tipos de concesiones
+
+En esta sección, se detallan los diferentes tipos de concesiones de autorización que los clientes pueden solicitar en el entorno de Open Payments. Aunque el flujo suele comenzar con una concesión para un pago entrante, existen situaciones en las que otros tipos de concesiones pueden solicitarse primero.
+
+### Pago entrante
+
+Por lo general, para iniciar el flujo de Open Payments, el cliente solicita una concesión de autorización para un pago entrante al servidor de autorización que corresponde al _destinatario_. Sin embargo, existen situaciones en las que el cliente solicita una concesión de autorización para un pago saliente primero, como en el caso de Web Monetization (estándar de monetización web).
+
+El cliente puede solicitar una sola concesión de autorización para crear varios pagos entrantes destinados a distintas cuentas compatibles con Open Payments, siempre que todas las cuentas pertenezcan a la misma <Tooltip content="Entidad que administra la cuenta" client: load><span>ASE</span></Tooltip>.
+
+Por defecto, las concesiones de autorización para pagos entrantes no son interactivas; esto significa que no se requiere la interacción de una persona (por lo general, el usuario del cliente) para que el servidor de autorización emita un token de acceso.
+
+### Cotización
+
+Una vez que el cliente recibe una concesión de autorización para un pago entrante y se crea un recurso de pago entrante en la cuenta del destinatario, el cliente solicita la concesión de autorización para una cotización al servidor de autorización que corresponde al _remitente_. El cliente puede solicitar una sola concesión de autorización para crear varias cotizaciones destinadas a distintas cuentas compatibles con Open Payments, siempre que todas las cuentas pertenezcan a la misma <Tooltip content="Entidad que administra la cuenta" client: load><span>ASE</span></Tooltip>.
+
+Por defecto, las concesiones de autorización para cotizaciones no son interactivas; esto significa que no se requiere la interacción de una persona (por lo general, el usuario del cliente) para que el servidor de autorización emita un token de acceso.
+
+### Pago saliente
+
+Una vez que el cliente avanzó en las secciones de pagos entrantes y cotizaciones del flujo de Open Payments, está listo para solicitar una concesión de autorización para un pago saliente al servidor de autorización que corresponde al _remitente_.
+
+En Open Payments, se exige que las solicitudes de concesiones de autorización para los pagos salientes sean interactivas. Esto significa que la interacción explícita de una persona (por lo general, el usuario del cliente) es un paso obligatorio en el proceso de delegación.
+
+Luego de una interacción correcta, el cliente debe emitir una [solicitud de continuación de la concesión de autorización](/apis/auth-server/operations/post-continue), para que el servidor de autorización sepa que debe emitir un token de acceso.
+
+## Más información sobre la autorización
+
+Para profundizar en los temas relacionados con la autorización, por ejemplo, el Protocolo de Negociación y Autorización de Concesiones (Grant Negotiation and Authorization Protocol, GNAP) y la solicitud de concesiones de autorización, consulte la sección [Negociación y autorización de concesiones](/es/identity/grants) y otras páginas incluidas en **Gestión de la identidad y el acceso**.

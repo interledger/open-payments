@@ -1,0 +1,216 @@
+﻿---
+title: Flujo de Open Payments
+---
+
+import {
+  MermaidWrapper,
+  Mermaid,
+  LinkOut,
+  Tooltip
+} from '@interledger/docs-design-system'
+import Interactive from '/src/partials/es/diagram-interactive-grant.mdx'
+
+:::tip[Resumen]
+Cuando un cliente emite instrucciones de pago, se necesitan numerosas interacciones entre el cliente y los servidores para obtener las concesiones de autorización, verificar las identidades y crear los recursos que se requieren para completar una transacción.
+:::
+
+En esta página, se analizan en profundidad las llamadas e interacciones de la interfaz de programación de aplicaciones (application programming interface, API), que ocurren entre el cliente y los servidores durante un pago. Los diagramas de la secuencia se incluyen con fines ilustrativos y se pueden simplificar en algunas instancias.
+
+### Supuestos
+
+- El usuario del <Tooltip content="Como una aplicación o servicio móvil o web">cliente</Tooltip> es el remitente.
+- El cliente ya tiene los datos de la cuenta compatible con Open Payments del remitente y puede enviar pagos en su nombre.
+
+## Cómo obtener los datos de la cuenta
+
+Un cliente recupera los datos públicos sobre la cuenta compatible con Open Payments de un destinatario mediante la emisión de una <LinkOut href='/apis/wallet-address-server/operations/get-wallet-address/'>solicitud GET</LinkOut> para la dirección de billetera del destinatario. Los datos incluyen el código y la escala del activo de la cuenta subyacente, así como las URL de los servidores de autorización y de recursos que el cliente necesita para configurar un pago al destinatario.
+
+<MermaidWrapper diagramName="get-account-details">
+
+<Mermaid
+  graph={`sequenceDiagram
+    participant C as Cliente
+    participant WA as Dirección de billetera
+
+    C->>WA: GET, URL de la dirección de billetera<br /> (p. ej., https://wallet.example.com/alice)
+    WA-->>C: 200, dirección de billetera encontrada,<br />devolver los detalles públicos de la cuenta
+
+`}
+/>
+
+</MermaidWrapper>
+
+## Pago entrante
+
+Primero, el cliente <LinkOut href='/apis/auth-server/operations/post-request'>solicita/recibe una concesión de autorización</LinkOut> de parte del servidor de autorización de la <Tooltip content="Entidad que administra la cuenta" client:load>ASE</Tooltip> del destinatario para crear un recurso de `incoming-payment`. El cliente envía una solicitud al servidor de recursos de la ASE para <LinkOut href='/apis/resource-server/operations/create-incoming-payment/'>crear el recurso</LinkOut>. Una vez creado, el servidor de recursos devuelve los datos de pago único que el cliente utilizará para realizar uno o más pagos al destinatario.
+
+<MermaidWrapper diagramName="incoming-payment">
+
+<Mermaid
+  graph={`sequenceDiagram
+    participant C as Cliente
+    participant AS as Servidor de autorización<br/>ASE del destinatario
+    participant RS as Servidor de recursos<br/>ASE del destinatario
+
+    C->>AS: POST, solicitud de concesión de autorización con el parámetro<br />type=incoming-payment
+    AS-->>C: 200 OK, devuelve el token de acceso
+    C->>RS: POST, crear un pago entrante
+    RS-->>C: 201, pago entrante creado,<br />devolver el pago recibido con datos públicos
+
+`}
+/>
+
+</MermaidWrapper>
+
+## Cotización
+
+El cliente <LinkOut href='/apis/auth-server/operations/post-request'>solicita/recibe una concesión de autorización</LinkOut> de parte del servidor de autorización de la <Tooltip content="Entidad que administra la cuenta" client: load><span>ASE</span></Tooltip> del destinatario, para crear un recurso de `quote`. El cliente envía una solicitud al servidor de recursos para <LinkOut href='/apis/resource-server/operations/create-quote'>crear el recurso</LinkOut>. Una vez creado, el servidor de recursos devuelve, entre otros datos, una `id` de cotización y el monto que costará efectuar el pago.
+
+<MermaidWrapper diagramName="quote">
+
+<Mermaid
+  graph={`sequenceDiagram
+    participant C as Cliente
+    participant AS as Servidor de autorización<br/>ASE del remitente
+    participant RS as Servidor de recursos<br/>ASE del remitente
+
+    C->>AS: POST, solicitud de concesión de autorización con el parámetro<br />type=quote
+    AS-->>C: 200 OK, devuelve el token de acceso
+    C->>RS: POST, crear la cotización
+    RS-->>C: 201, cotización creada,<br />devuelve los datos de la cotización
+
+`}
+/>
+
+</MermaidWrapper>
+
+## Pago saliente
+
+Antes de que se pueda crear un recurso de pago saliente en la cuenta del remitente, Open Payments exige que el cliente envíe una <LinkOut href='/apis/auth-server/operations/post-request'>solicitud interactiva de concesión de autorización</LinkOut> al servidor de autorización de la <Tooltip content="Entidad que administra la cuenta" client: load><span>ASE</span></Tooltip> del remitente.
+
+Una solicitud interactiva de concesión de autorización exige que se obtenga el consentimiento explícito del remitente antes de que se emita un token de acceso. Aunque el cliente debe facilitar la interacción, el servidor de autorización y el proveedor de identidad (identity provider, IdP) de la ASE del remitente son responsables de la interfaz y de obtener el consentimiento.
+
+Una vez que se obtuvo el consentimiento, el cliente solicita permiso para <LinkOut href='/apis/auth-server/operations/post-continue'>continuar con la solicitud de concesión de autorización</LinkOut> con el fin de obtener un token de acceso.
+
+:::note[Cronograma de la solicitud de continuación]
+Para los pagos salientes, se requiere el consentimiento explícito del usuario antes de avanzar con la solicitud de continuación. Una vez que el usuario completó su interacción con el proveedor de identidad (IdP), debe ser redirigido de vuelta a la aplicación. En este punto, usted puede hacer la solicitud de continuación de la concesión. En situaciones donde una interfaz de usuario no se encuentra disponible, analice la posibilidad de implementar un mecanismo de sondeo para verificar que se haya completado la interacción.
+:::
+
+<Interactive />
+
+Una vez que se obtiene un token de acceso, el cliente puede solicitar la creación de un <LinkOut href='/apis/resource-server/operations/create-outgoing-payment'>recurso de pago saliente</LinkOut>. La configuración del pago está completa, y el flujo de Open Payments finaliza luego de la creación del recurso.
+
+<MermaidWrapper diagramName="outgoing-payment">
+
+<Mermaid
+  graph={`sequenceDiagram
+
+    participant C as Cliente
+    participant RS as Servidor de recursos<br/>ASE del remitente
+
+    C->>RS: POST, crear un pago saliente
+    RS-->>C: 201, pago saliente creado, <br/>devuelve los datos del pago saliente
+
+`}
+/>
+
+</MermaidWrapper>
+
+## Cómo obtener el historial de transacciones
+
+Para proporcionar a un usuario el historial de sus transacciones, el cliente puede recuperar una lista de los <LinkOut href='/apis/resource-server/operations/list-incoming-payments/'>pagos entrantes (recibidos)</LinkOut> y los <LinkOut href='/apis/resource-server/operations/list-outgoing-payments/'>pagos salientes (enviados)</LinkOut> del usuario.
+
+<MermaidWrapper diagramName="get-all-transaction-history">
+
+<Mermaid
+  graph={`sequenceDiagram
+
+    participant C as Cliente
+    participant RS as Servidor de recursos
+
+    C->>RS: GET, lista de pagos entrantes/salientes <br/>con el parámetro wallet-address={URL of wallet address}
+    RS-->>C: 200 OK, devuelve un arreglo de pagos entrantes/salientes <br/>con los datos de pago importantes
+
+`}
+/>
+
+</MermaidWrapper>
+
+De igual manera, el cliente puede proporcionar al usuario los datos sobre un pago <LinkOut href='/apis/resource-server/operations/get-incoming-payment'>entrante</LinkOut> o <LinkOut href='/apis/resource-server/operations/get-outgoing-payment'>saliente</LinkOut> en específico.
+
+<MermaidWrapper diagramName="get-specific-transaction-history">
+
+<Mermaid
+  graph={`sequenceDiagram
+
+    participant C as Cliente
+    participant RS as Servidor de recursos
+
+    C->>RS: GET, un pago entrante/saliente con el parámetro <br/>id={URL identifying incoming/outgoing payment}
+    RS-->>C: 200, pago entrante/saliente encontrado, <br/>devuelve los datos del pago entrante/saliente
+
+`}
+/>
+
+</MermaidWrapper>
+
+## Resumiendo
+
+En este diagrama, se reúnen todos los conceptos mencionados anteriormente, excepto el de obtener el historial de transacciones, para mostrar una secuencia completa de las transacciones. Al final de la página, encontrará un enlace a la versión ampliada del diagrama.
+
+Como se muestra a continuación, las ASE del remitente y del destinatario deben operar sus propios servidores de autorización y recursos. Las solicitudes de concesión de autorización para los recursos de pago entrante y cotización, por lo general, no son interactivos. En cambio, una solicitud de concesión de autorización para un recurso de pago saliente exige el consentimiento explícito del remitente (p. ej., el usuario del cliente), que se obtiene por medio del [proveedor de identidad](/es/identity/idp/) del remitente.
+
+Puede encontrar más información sobre los flujos de interacción de las concesiones de autorización en la página [Negociación y autorización de concesiones](/es/identity/grants).
+
+<MermaidWrapper diagramName="transaction-flow">
+
+<Mermaid
+  graph={`sequenceDiagram
+    autonumber
+    box rgb(225,245,254) Entidad que administra<br/>la cuenta del remitente
+    participant SIDP as Proveedor de identidad
+    participant SRS as Servidor de recursos
+    participant SAS as Servidor de autorización
+    end
+    participant SC as Cliente
+    box rgb(232,245,233) Entidad que administra<br/>la cuenta del destinatario
+    participant RW as URL de la dirección de billetera
+    participant RAS as Servidor de autorización
+    participant RRS as Servidor de recursos
+    end
+    SC->>+RW: Solicita la dirección de billetera
+    RW-->>-SC: Proporciona los datos de la dirección de billetera
+    SC->>+RAS: Solicita una concesión de autorización no interactiva para un pago entrante
+    RAS-->>-SC: Proporciona el token de acceso y la concesión de autorización para el pago
+    SC->>+RRS: Solicita crear el pago entrante
+    RRS->>+RAS: Solicita la validación del token de acceso
+    RAS-->>-RRS: Se valida el token de acceso
+    RRS-->>-SC: Responde con los datos del pago entrante creado
+    SC->>+SAS: Solicita una concesión de autorización no interactiva para una cotización
+    SAS-->>-SC: Proporciona el token de acceso y la concesión de autorización para la cotización
+    SC->>+SRS: Solicita crear la cotización
+    SRS-->>-SC: Se crea la cotización
+    SC->>+SAS: Solicita una concesión de autorización interactiva para un pago saliente
+    SAS-->>-SC: Proporciona la URI de redirección para la interacción y la URI de continuación
+    SC->>+SAS: Navega a la URI de redirección para la interacción
+    SAS->>SAS: Comienza el proceso de interacción y configura la sesión
+    SAS-->>-SC: Proporciona la URI del proveedor de identidad
+    SC->>+SIDP: Navega (redirige) hacia el proveedor de identidad
+    SIDP->>SIDP: El remitente acepta la interacción, <br/>confirma la intención de pago
+    SIDP->>SAS: Transmite la decisión de interacción
+    SAS-->>SIDP: Confirma que se la decisión se aceptó
+    SIDP->>SAS: Solicita finalizar la interacción
+    SAS->>SAS: Completa la sesión
+    SAS->>SIDP: Redirige al URI de interacción definido en la solicitud inicial de concesión
+    SIDP-->>-SC: El cliente sigue la redirección
+    SC->>SC: Verifica el hash
+    SC->>+SAS: Solicita una continuación de la concesión
+    SAS-->>SC: Proporciona un token de acceso para la concesión
+    SC->>+SRS: Solicita crear el pago saliente
+    SRS->>SAS: Solicita la validación del token de acceso
+    SAS-->>SRS: Se valida el token de acceso
+    SRS->>-SC: Responde con los datos del pago saliente creado
+`}
+/>
+
+</MermaidWrapper>
