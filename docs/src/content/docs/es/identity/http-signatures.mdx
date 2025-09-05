@@ -1,0 +1,104 @@
+﻿---
+title: Firmas de mensajes HTTP
+---
+
+import { LinkOut } from '@interledger/docs-design-system'
+
+:::tip[Resumen]
+Las firmas de mensajes HTTP protegen las comunicaciones en Open Payments verificando la autenticidad de los mensajes y evitando su manipulación.
+:::
+
+Las firmas de mensajes HTTP son firmas digitales criptográficas que utilizan las API de Open Payments para proteger los mensajes HTTP intercambiados entre remitente, destinatario o sistemas de pago iniciados por terceros.
+
+Las API de Open Payments implementan la sección <LinkOut href='https://datatracker.ietf.org/doc/html/rfc9635#name-http-message-signatures'> Firmas HTTP </LinkOut> de la especificación de GNAP (Protocolo de Negociación y Autorización de Concesiones).
+
+## Propósito
+
+El uso de firmas digitales permite que las API de Open Payments aborden dos aspectos clave de la seguridad de los mensajes:
+
+- La **autenticidad** de cualquier sistema que solicita acceso a recursos específicos.
+- La **integridad** de campos específicos de los mensajes para protegerlos de manipulaciones.
+
+Parte de cómo los sistemas compatibles con Open Payments controlan el acceso a recursos protegidos consiste en generar o verificar la firma digital de cada mensaje HTTP.
+
+## Algoritmos de firma
+
+Para generar firmas de mensajes, las API de Open Payments implementan la variante **Ed25519** del EdDSA (Algoritmo de firma digital de curva de Edwards).
+EdDSA es un algoritmo criptográfico de curva elíptica que ofrece ventajas sobre generaciones anteriores de algoritmos de criptografía de claves públicas.
+
+Las principales ventajas de este algoritmo de firma digital incluyen:
+
+- Buena resiliencia a colisiones de funciones hash.
+- Rapidez y eficiencia en la generación y la verificación de firmas.
+- Protección contra el riesgo de un ataque de degradación de clave de cifrado.
+- Seguridad relativamente eficiente con tamaños de claves más pequeños. Algoritmos criptográficos de claves públicas anteriores, como RSA, ofrecen una seguridad comparable, pero con tamaños de claves notablemente mayores.
+
+Para obtener más información sobre el EdDSA y sus variantes, consulte <LinkOut href='https://datatracker.ietf.org/doc/html/rfc8032'>RFC8032</LinkOut>.
+
+## Creación de firmas
+
+El ejemplo a continuación ilustra cómo crear la firma, comenzando con el mensaje HTTP original.
+
+```http title="Example: message before signature"
+POST HTTP/1.1
+Host: example.com
+Content-Type: application/json
+Content-Digest: sha-512=:X48E9qOokqqrvdts8nOJRJN3OWDUoyWxBf7kbu9DBPE=:
+Content-Length: 18
+Authorization: GNAP 123454321
+
+{
+    "hello";"world"
+}
+```
+
+![Create the http signature](/img/4-sig-creation.png)
+
+### Base de la firma
+
+El proceso de creación de la firma comienza por identificar los campos del mensaje original que se usarán para crear la firma. Estos campos se denominan componentes cubiertos del mensaje. Los componentes cubiertos conforman la base de la firma, junto con el algoritmo de firma y un identificador de la clave pública del firmante.
+
+El subcampo final de la base de la firma es un campo estructurado HTTP llamado `signature-params`, que contiene una lista ordenada de los componentes que conforman la base de la firma.
+
+```http wrap title="Example: signature base"
+"content-type": application/json
+"content-digest": sha-512=:X48E9qOokqqrvdts8nOJRJN3OWDUoyWxBf7kbu9DBPE=:
+"content-length": 18
+"authorization": GNAP 123454321
+"@method": POST
+"@target-uri": https://example.com/
+"@signature-params": ("content-type" "content-digest" "content-length" "authorization" "@method" "@target-uri");alg="ed25519";keyid="eddsa_key_1";created=1704722601
+
+```
+
+Para obtener más información sobre los componentes necesarios, consulte la <LinkOut href="https://datatracker.ietf.org/doc/html/rfc9635#name-http-message-signatures">Sección 7.3.1, Firmas de mensajes HTTP</LinkOut> de la especificación GNAP.
+
+### Generar firma
+
+Para generar la firma HTTP:
+
+1. La base de la firma se somete a hash con SHA-512, lo cual produce un resumen.
+2. El resumen se firma con la clave privada del firmante, lo cual produce la firma como una cadena de bytes.
+3. La cadena de bytes se codifica en Base64, lo cual da como resultado el valor final de la firma.
+
+### Mensaje HTTP firmado
+
+El mensaje original se firma agregando encabezados de firma con etiquetas exclusivas al mensaje original: `Signature-Input` y `Signature`.
+
+```http wrap title="Example: signed message"
+POST HTTP/1.1
+Host: https://example.com
+Content-Type: application/json
+Content-Length: 18
+Authorization: "GNAP 123454321"
+Signature-Input: sig1=("content-type" "content-digest" "content-length" "authorization" "@method" "@target-uri");alg="ed25519";keyid="eddsa_key_1";created=1704722601
+Signature: sig1=:EiCdZMbyXj6pN59g+mh3mY/Q6DlSBrCL7CJM4OZ550+d2MZhfdDKrOJU/ugeRdwd1KYyd1wA/VA7J2fi9YehCA==:
+
+{
+    "hello";"world"
+}
+```
+
+:::note
+Los mensajes HTTP pueden contener varias firmas, cada una con una etiqueta exclusiva. Si es necesario, se pueden generar firmas distintas usando diferentes algoritmos de firma.
+:::

@@ -1,0 +1,62 @@
+﻿---
+title: Verificación de hash
+---
+
+import { LinkOut, Tooltip } from '@interledger/docs-design-system'
+
+:::tip[Resumen]
+Después de que un propietario de recursos autoriza a un cliente a acceder a su cuenta, el cliente debe verificar que dicho propietario haya otorgado su consentimiento. El cliente verifica el consentimiento calculando el hash emitido por el servidor de autorización.
+:::
+
+Una vez que un propietario de recursos autoriza a un software cliente, el servidor de autorización redirige al [proveedor de identidad (IdP)](/es/identity/idp/) del propietario de recursos hacia el URI de finalización, siempre que el cliente haya proporcionado un objeto `interact.finish` en la solicitud inicial. Para proteger esta comunicación y verificar que la redirección efectivamente proviene del servidor de autorización, este incluirá un parámetro de hash en la solicitud dirigida al URI de devolución de llamada del cliente. El cliente **_debe_** verificar ese hash.
+
+## Método de hash
+
+La base del hash se genera concatenando en secuencia los valores siguientes, separados por un único carácter de salto de línea `(/n)`:
+
+1. Valor `nonce` enviado por el cliente en la solicitud inicial.
+2. Valor `nonce` devuelto por el servidor de autorización después de la solicitud de concesión inicial.
+3. `interact_ref` devuelto por el servidor de autorización en el método de finalización de la interacción.
+4. El punto final de concesión `uri` que el cliente utilizó para realizar su solicitud inicial.
+
+El ejemplo a continuación muestra los cuatro componentes mencionados que conforman la base del hash. No se admite relleno ni espacios en blanco antes o después de cada línea, ni un salto de línea adicional al final.
+
+```http title="Example hash base"
+VJLO6A4CATR0KRO
+MBDOFXG4Y5CVJCX821LH
+4IFWWIKYB2PQ6U56NL1
+https://server.example.com/tx
+```
+
+La codificación ASCII de esta cadena se somete a la función de hash con el algoritmo `sha-256`, que es el único admitido actualmente por Open Payments. La matriz de bytes que resulta de la función de hash se codifica luego en Base64 sin relleno. La cadena resultante es el valor de hash.
+
+Con el ejemplo de la cadena base de hash mencionado, a continuación se muestra el hash codificado `sha-256` que usa el algoritmo SHA2 de 256 bits.
+
+```http title="SHA2 256-bit hash example"
+x-gguKWTj8rQf7d7i3w3UhzvuJ5bpOlKyAlVpLxBffY
+```
+
+## Verificación de hash
+
+Cuando el cliente recibe una redirección del servidor de autorización, este incluye el parámetro de hash en la respuesta. El cliente debe calcular exactamente ese valor concatenando los campos a los que se hace referencia anteriormente y aplicando posteriormente el algoritmo de hash `sha-256`. Si el valor de hash coincide con el parámetro enviado por el servidor de autorización, el cliente puede estar seguro de que la redirección proviene del servidor de autorización.
+
+El ejemplo a continuación muestra cómo verificar en JavaScript el hash recibido del servidor de autorización.
+
+```javascript title='JavaScript example'
+function verifyHash(
+  clientNonce,
+  interactNonce,
+  interactRef,
+  authServerUrl,
+  receivedHash
+) {
+  const data = `${clientNonce}\n${interactNonce}\n${interactRef}\n${authServerUrl}/`
+  const hash = createHash('sha-256').update(data).digest('base64')
+
+  return hash === receivedHash
+}
+```
+
+## Lecturas adicionales
+
+Para obtener más información, consulte la sección <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol-20#name-calculating-the-interaction'>Cálculo del hash de interacción</LinkOut> de la especificación de GNAP.

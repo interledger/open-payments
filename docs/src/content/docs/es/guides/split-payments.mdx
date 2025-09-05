@@ -1,0 +1,383 @@
+﻿---
+title: Dividir un pago entrante
+---
+
+import { LinkOut } from '@interledger/docs-design-system'
+import { Tabs, TabItem, Card } from '@astrojs/starlight/components'
+import InteractionReq from '/src/partials/es/interaction-required.mdx'
+import StartInteraction from '/src/partials/es/grant-start-interaction.mdx'
+import FinishInteraction from '/src/partials/es/grant-finish-interaction.mdx'
+
+:::tip[Resumen]
+Conozca cómo tomar un único pago y dividir el valor entre varios destinatarios.
+:::
+
+Imagine realizar una compra en un mercado en línea. Desde su perspectiva, envía un único pago a un comerciante a cambio de un producto. En un segundo plano, el mercado recibe una parte del pago como tarifa por el servicio.
+
+Existen varias formas de que el mercado cobre la tarifa. Por ejemplo, podría recibir el monto completo, deducir la tarifa y, luego, enviar el resto al comerciante. Sin embargo, retener fondos para el comerciante, aunque sea por un segundo, requiere cumplir con ciertas normas y reglamentaciones financieras. Una mejor manera consiste en asegurarse de que ambas partes reciban directamente del usuario solo el monto que les corresponde.
+
+Recuerde que Open Payments no ejecuta pagos ni toca dinero de ninguna manera. Se usa para emitir instrucciones de pago antes de que se produzca cualquier movimiento de dinero. Entre los ejemplos de instrucciones de pago se encuentran: “de la compra de $6, pague $1 al mercado y $5 al comerciante”. De este modo, los fondos destinados a una parte nunca pasan por la otra.
+
+En el marco de esta guía, usted asumirá el rol de operador de una plataforma de mercado en línea. La guía explica cómo dividir el pago de USD 100 de un consumidor en dos pagos entrantes. El comerciante recibirá el 99 % del pago mientras que usted retiene el 1 % como tarifa.
+
+Las tres partes que intervienen en la transacción son las siguientes:
+
+- Consumidor: el comprador de un bien o servicio en el mercado.
+- Comerciante: el vendedor de un bien o servicio en el mercado.
+- Operador de la plataforma: usted, como operador del mercado.
+
+## Puntos finales
+
+- <LinkOut href='https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/'>Cómo obtener una dirección de billetera</LinkOut>
+- <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-request/'>Solicitud de concesiones de autorización</LinkOut>
+- <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-incoming-payment/'>Cómo crear un pago entrante</LinkOut>
+- <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-quote/'>Cómo crear una cotización</LinkOut>
+- <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment/'>Cómo crear un pago saliente</LinkOut>
+
+## Pasos
+
+### 1. Obtener los datos de la dirección de billetera
+
+Cuando un consumidor inicia un pago, su plataforma debe obtener la información de dirección de la billetera del consumidor, del comerciante y de usted, en carácter de operador.
+
+Supongamos que la dirección de la billetera ya se encuentra guardada en su plataforma, al igual que la del comerciante. Supongamos además que el consumidor proporcionó su dirección de billetera al comienzo del proceso de pago.
+
+Llame a la [API Obtener dirección de billetera](/apis/wallet-address-server/operations/get-wallet-address) para cada dirección.
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts
+  const customerWalletAddress = await client.walletAddress.get({
+    url: 'https://cloudninebank.example.com/customer'
+  })
+
+const merchantWalletAddress = await client.walletAddress.get({
+url: 'https://happylifebank.example.com/merchant'
+})
+
+const platformWalletAddress = await client.walletAddress.get({
+url: 'https://coolwallet.example.com/platform'
+})
+
+````
+</TabItem>
+</Tabs>
+
+### 2. Solicitar concesiones de autorización de pagos entrantes
+
+Utilice los datos del comerciante y de la plataforma `authServer`, recibidos en el paso anterior, para llamar a la [API Solicitud de concesión](/apis/auth-server/operations/post-request).
+
+El propósito de estas llamadas consiste en obtener tókenes de acceso que permitan a su plataforma solicitar la creación de un recurso de pago entrante en la cuenta de la billetera del comerciante y en su cuenta de billetera.
+
+:::note[Situación alternativa]
+Si usted y el comerciante utilizan la misma entidad que administra cuentas, y la información del servidor de autorización que se recibió es la misma para ambos, solo necesita una concesión `incomingPayment`.
+:::
+
+<Tabs syncKey="lang">
+<TabItem label='Merchant' icon='seti:javascript'>
+```ts wrap
+const merchantIncomingPaymentGrant = await client.grant.request(
+  {
+    url: merchantWalletAddress.authServer
+  },
+  {
+    access_token: {
+      access: [
+        {
+          type: "incoming-payment",
+          actions: ["read", "create"],
+        },
+      ],
+    },
+  },
+);
+````
+
+</TabItem>
+<TabItem label='Platform' icon='seti:javascript'>
+  ```ts wrap
+  const platformIncomingPaymentGrant = await client.grant.request(
+    {
+      url: platformWalletAddress.authServer
+    },
+    {
+      access_token: {
+        access: [
+          {
+            type: "incoming-payment",
+            actions: ["read", "create"],
+          },
+        ],
+      },
+    },
+  );
+  ```
+</TabItem>
+</Tabs>
+
+### 3. Solicitar la creación de recursos de pagos entrantes
+
+Use los tókenes de acceso devueltos en las respuestas anteriores para llamar a la [API Crear pago entrante](/apis/resource-server/operations/create-incoming-payment).
+
+El propósito de estas llamadas consiste en solicitar la creación de un recurso de pago entrante en la cuenta de la billetera del comerciante y en su cuenta de billetera.
+
+Recuerde que usted retiene el 1 % del pago de USD 100 del consumidor como tarifa.
+
+Incluya lo siguiente en ambas solicitudes, junto con cualquier otro parámetro requerido:
+
+- Objeto `incomingAmount`
+  - `value`: el monto máximo a pagar en una dirección de billetera determinada.
+  - `assetCode`: el código utilizado por la cuenta de la billetera, proporcionado en la respuesta de la API Obtener dirección de billetera.
+  - `assetScale`: la escala utilizada por la cuenta de la billetera, proporcionada en la respuesta de la API Obtener dirección de billetera.
+
+El `value` total de $100 es `10000`. El comerciante recibirá el 99 % (`9900`) y usted recibirá el 1 % (`100`).
+
+<Tabs syncKey="lang">
+<TabItem label='Merchant' icon='seti:javascript'>
+  ```ts wrap
+  const merchantIncomingPayment = await client.incomingPayment.create(
+    {
+      url: merchantWalletAddress.resourceServer,
+      accessToken: merchantIncomingPaymentGrant.access_token.value
+    },
+    {
+      walletAddress: merchantWalletAddress.id,
+      incomingAmount: {
+        value: '9900',
+        assetCode: 'USD',
+        assetScale: 2
+      },
+    },
+  )
+  ```
+</TabItem>
+<TabItem label='Platform' icon='seti:javascript'>
+  ```ts wrap
+  const platformIncomingPayment = await client.incomingPayment.create(
+    {
+      url: platformWalletAddress.resourceServer,
+      accessToken: platformIncomingPaymentGrant.access_token.value
+    },
+    {
+      walletAddress: platformWalletAddress.id,
+      incomingAmount: {
+        value: '100',
+        assetCode: 'USD',
+        assetScale: 2
+      },
+    },
+  )
+  ```
+</TabItem>
+</Tabs>
+
+### 4. Solicitar una concesión de autorización para una cotización
+
+Utilice los datos del consumidor `authServer`, recibidos en el paso 1, para llamar a la [API Solicitud de concesión](/apis/auth-server/operations/post-request).
+
+El propósito de esta llamada consiste en obtener un token de acceso que permita a su plataforma solicitar la creación de recursos de cotización en la cuenta de la billetera del consumidor.
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts wrap
+  const customerQuoteGrant = await client.grant.request(
+    {
+      url: customerWalletAddress.authServer
+    },
+    {
+      access_token: {
+        access: [
+          {
+            type: 'quote',
+            actions: ['create', 'read']
+          }
+        ]
+      }
+    }
+  )
+  ```
+</TabItem>
+</Tabs>
+
+### 5. Solicitar la creación de recursos de cotización
+
+Utilice el token de acceso recibido en el paso anterior para llamar a la [API Crear cotización](/apis/resource-server/operations/create-quote).
+
+El propósito de esta llamada consiste en solicitar la creación de un recurso de cotización en la cuenta de la billetera del consumidor. Dado que el consumidor necesita un recurso de cotización tanto para el comerciante como para la plataforma, llamaremos a la API dos veces usando el mismo token de acceso.
+
+Primero, solicitemos un recurso de cotización asociado con el comerciante. La solicitud debe contener el `receiver`, que es la `id` del pago entrante del comerciante, junto con cualquier otro parámetro requerido. La `id` se indicó en la respuesta de la API Crear pago entrante en el paso 3.
+
+Posteriormente, llame de nuevo a la API Crear cotización y solicite un recurso de cotización asociado con la `id` del pago entrante de la plataforma.
+
+<Tabs syncKey="lang">
+<TabItem label='Merchant' icon='seti:javascript'>
+  ```ts wrap
+  const merchantQuote = await client.quote.create(
+    {
+      url: customerWalletAddress.resourceServer,
+      accessToken: customerQuoteGrant.access_token.value
+    },
+    {
+      method: 'ilp',
+      walletAddress: customerWalletAddress.id,
+      receiver: merchantIncomingPayment.id
+    }
+  )
+  ```
+</TabItem>
+<TabItem label='Platform' icon='seti:javascript'>
+  ```ts wrap
+  const platformQuote = await client.quote.create(
+    {
+      url: customerWalletAddress.resourceServer,
+      accessToken: customerQuoteGrant.access_token.value
+    },
+    {
+      method: 'ilp',
+      walletAddress: customerWalletAddress.id,
+      receiver: platformIncomingPayment.id
+    }
+  )
+  ```
+</TabItem>
+</Tabs>
+
+Cada respuesta devuelve un `receiveAmount`, un `debitAmount` y demás información requerida.
+
+- `receiveAmount`: el valor del `incomingAmount` del recurso de pago entrante.
+- `debitAmount`: el monto que el consumidor debe pagar al recurso de pago entrante (el `receiveAmount` más cualquier tarifa que corresponda).
+
+### 6. Solicitar una concesión de autorización interactiva para un pago saliente
+
+Utilice la información del consumidor `authServer` recibida en el paso 1 para llamar a la [API Solicitud de concesión](/apis/auth-server/operations/post-request).
+
+El propósito de esta llamada consiste en obtener un token de acceso que permita a su plataforma solicitar la creación de recursos de pago saliente en la cuenta de la billetera del consumidor.
+
+<InteractionReq />
+
+Incluya lo siguiente en la solicitud, además de los parámetros requeridos:
+
+- Objeto `limits`
+  - Objeto `receiveAmount`
+    - `value`: el monto total que el consumidor aceptó pagar.
+    - `assetCode`: el código utilizado por la cuenta de la billetera, proporcionado en la respuesta de la API Obtener dirección de billetera.
+    - `assetScale`: la escala utilizada por la cuenta de la billetera, proporcionada en la respuesta de la API Obtener dirección de billetera.
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts wrap
+  const pendingCustomerOutgoingPaymentGrant = await client.grant.request(
+    {
+      url: customerWalletAddress.authServer
+    },
+    {
+      access_token: {
+        access: [
+          {
+            identifier: customerWalletAddress.id,
+            type: 'outgoing-payment',
+            actions: ['read', 'create'],
+            limits: {
+              receiveAmount: {
+                assetCode: 'USD',
+                assetScale: 2,
+                value: '10000'
+              }
+            }
+          }
+        ]
+      },
+      interact: {
+        start: ['redirect'],
+        finish: {
+          method: 'redirect',
+          uri: 'http://localhost:3344',
+          nonce: NONCE
+        }
+      }
+    }
+  )
+  ```
+</TabItem>
+</Tabs>
+
+### 7. Comenzar la interacción con el consumidor
+
+<StartInteraction />
+
+### 8. Finalizar la interacción con el consumidor
+
+<FinishInteraction />
+
+### 9. Solicitar una continuación de la concesión de autorización
+
+En nuestro ejemplo, suponemos que el IdP con el que interactuó el consumidor cuenta con una interfaz de usuario. Cuando la interacción finaliza, el consumidor regresa a su plataforma. Ahora la plataforma puede realizar una solicitud de continuación de la concesión de pago saliente.
+
+:::note
+En una situación hipotética donde una interfaz de usuario no se encuentra disponible, analice la posibilidad de implementar un mecanismo de sondeo para verificar que se haya completado la interacción.
+:::
+
+Llame a la [API Continuación de solicitud de concesión](/apis/auth-server/operations/post-continue). El propósito de esta llamada consiste en solicitar un token de acceso que permita a su plataforma solicitar la creación de recursos de pago saliente en la cuenta de la billetera del consumidor.
+
+Emita la solicitud al `continue uri` proporcionado en la respuesta de concesión de pago saliente inicial (paso 6). Por ejemplo:
+
+`POST https://auth.interledger-test.dev/continue/4CF492MLVMSW9MKMXKHQ`
+
+Incluya la `interact_ref` devuelta en los parámetros de consulta del URI de redirección.
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts wrap
+  const customerOutgoingPaymentGrant = await client.grant.continue(
+    {
+      url: pendingCustomerOutgoingPaymentGrant.continue.uri,
+      accessToken: pendingCustomerOutgoingPaymentGrant.continue.access_token.value
+    },
+    {
+      interact_ref: interactRef
+    }
+  )
+  ```
+</TabItem>
+</Tabs>
+
+### 10. Solicitar la creación de recursos de pagos salientes
+
+Recuerde que las respuestas de la API Crear cotización para el comerciante y para su plataforma (paso 5) incluían un `debitAmount` y un `receiveAmount`. Las respuestas también incluían una `id`, que es una URL para identificar cada cotización.
+
+Dado que las cotizaciones contienen los montos por debitar y recibir, no especificaremos otros montos al realizar una solicitud a la API Crear pago saliente. En su lugar, especificaremos un `quoteId`.
+
+Utilice los tókenes de acceso devueltos en el paso 5 para llamar a la [API Crear pago saliente](/apis/resource-server/operations/create-outgoing-payment).
+
+El propósito de estas llamadas consiste en solicitar la creación de un recurso de pago saliente en la cuenta de la billetera del consumidor: uno para el comerciante y otro para su plataforma. Incluya el `quoteId` correspondiente en cada solicitud.
+
+<Tabs syncKey="lang">
+<TabItem label='Merchant' icon='seti:javascript'>
+  ```ts wrap
+  const customerOutgoingPayment = await client.outgoingPayment.create(
+    {
+      url: customerWalletAddress.resourceServer,
+      accessToken: customerOutgoingPaymentGrant.access_token.value
+    },
+    {
+      walletAddress: customerWalletAddress.id,
+      quoteId: merchantQuote.id
+    }
+  )
+  ```
+</TabItem>
+<TabItem label='Platform' icon='seti:javascript'>
+  ```ts wrap
+  const customerOutgoingPayment = await client.outgoingPayment.create(
+    {
+      url: customerWalletAddress.resourceServer,
+      accessToken: customerOutgoingPaymentGrant.access_token.value
+    },
+    {
+      walletAddress: customerWalletAddress.id,
+      quoteId: platformQuote.id
+    }
+  )
+  ```
+</TabItem>
+</Tabs>
