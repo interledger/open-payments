@@ -404,7 +404,7 @@ This call obtains an access token that allows your platform to request outgoing 
         start: ['redirect'],
         finish: {
           method: 'redirect',
-          uri: 'https://paymentplatform.example/finish/{...}', // finish uri of the customer wallet address' auth server
+          uri: 'https://paymentplatform.example/finish/{...}', // where to redirect the customer after they've completed interaction
           nonce: NONCE
         }
       }
