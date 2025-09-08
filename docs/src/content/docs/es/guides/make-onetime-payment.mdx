@@ -1,0 +1,207 @@
+﻿---
+title: Cómo efectuar un pago único
+---
+
+import { LinkOut } from '@interledger/docs-design-system'
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
+import HttpSig from '/src/partials/es/http-msg-sig-note.mdx'
+import Ts from '/src/partials/ts-import-initialize.mdx'
+import StartInteraction from '/src/partials/es/grant-start-interaction.mdx'
+import FinishInteraction from '/src/partials/es/grant-finish-interaction.mdx'
+
+:::tip[Resumen]
+Agregue compatibilidad con los pagos únicos a su cliente. Un pago único se efectúa por única vez y no es recurrente.
+:::
+
+Las API de Open Payments (estándar de pagos abiertos) facilitan múltiples casos de uso para los pagos únicos desde las billeteras compatibles con Open Payments y hacia ellas. Un ejemplo es un pago que se efectúa de manera directa de una persona a otra, lo que se denomina “pago entre pares”. Otro ejemplo es la compra de un artículo de un comerciante en línea y su pago total.
+
+En esta guía, encontrará los pasos que debe seguir para efectuar un pago único, en el que se utiliza la concesión de autorización de un pago para crear un recurso de pago saliente único.
+
+## Dependencias
+
+- <LinkOut href='https://github.com/interledger/open-payments-node/tree/main/packages/open-payments'>Kit de desarrollo de software (software development kit, SDK) de Open Payments</LinkOut>
+
+<HttpSig />
+
+## Puntos finales
+
+- <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-request/'>Solicitud de concesiones de autorización</LinkOut>
+- <LinkOut href='https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/'>Cómo obtener una dirección de billetera</LinkOut>
+- <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-incoming-payment/'>Cómo crear un pago entrante</LinkOut>
+- <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-quote/'>Cómo crear una cotización</LinkOut>
+- <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment/'>Cómo crear un pago saliente</LinkOut>
+
+<Tabs>
+<TabItem label='TypeScript'>
+<Ts />
+
+## Pasos
+
+### 1. Obtener los datos de la dirección de billetera del destinatario
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-outgoing-payment.ts'
+  chunk='3'
+/>
+
+### 2. Solicitar una concesión de autorización para un pago entrante
+
+Solicitar una concesión de autorización para un `incomingPayment` desde el servidor de autorización de la billetera del destinatario.
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-incoming-payment.ts'
+  chunk='4'
+/>
+
+### 3. Cómo crear un pago entrante
+
+Crear un `incomingPayment` en el servidor de recursos de la billetera del destinatario mediante el uso del token de acceso que devolvió el servidor de autorización en la solicitud de concesión de autorización y especificar la `walletAddress` con la URL de la billetera del destinatario.
+
+Agregar el objeto `incomingAmount` y definir las siguientes propiedades:
+
+- `value`: el monto máximo permitido que se pagará a la dirección de billetera del destinatario.
+- `assetCode`: el código que representa el activo subyacente utilizado para efectuar el pago. Siempre que sea posible, se debe utilizar un código de divisa que siga la norma ISO 4217. Por ejemplo, el código de divisa que la norma ISO 4217 establece para el dólar estadounidense es “USD”.
+- `assetScale`: la cantidad de números decimales que define la escala de la unidad más pequeña para el código de activos dado. Determina cómo se escala un monto entero para obtener el valor monetario real. Por ejemplo, el USD tiene una escala de activo de 2 y la unidad más pequeña es 0,01. Un monto entero de `1000` con un `assetCode` de `USD` y una `assetScale` de `2` se transforma en USD 10,00.
+
+De modo opcional, puede agregar la propiedad `expiresAt`, que es la fecha y la hora a partir de la que ya no se aceptarán pagos entrantes.
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/incoming-payment/incoming-payment-create.ts'
+  chunk='3'
+/>
+
+### 4. Solicitar una concesión de autorización para una cotización
+
+Solicitar una concesión de autorización para una `quote` desde el servidor de autorización de la billetera del remitente.
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-quote.ts'
+  chunk='4'
+/>
+
+### 5. Cómo crear una cotización
+
+Crear una `quote` en el servidor de recursos de la billetera del remitente mediante el uso del token de acceso que devolvió el servidor de autorización en la solicitud de concesión de autorización.
+
+Agregar las siguientes propiedades:
+
+- `method`: el método de pago que se utiliza para facilitar el pago. Configurar esta propiedad para `ilp`, ya que Open Payments solo admite pagos de <LinkOut href='https://interledger.org/es'>Interledger</LinkOut> en la actualidad.
+- `walletAddress`: la URL de la dirección de billetera del remitente.
+- `receiver`: la URL del pago entrante que recibirá el pago.
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/quote/quote-create.ts'
+  chunk='3'
+/>
+
+### 6. Solicitar una concesión de autorización interactiva para un pago saliente
+
+Solicitar una concesión de autorización para un `outgoingPayment` desde el servidor de autorización de la billetera del remitente. Esta solicitud requiere una concesión de autorización interactiva, ya que el remitente tendrá que expresar su consentimiento antes de que se efectúe un `outgoingPayment` de su billetera.
+
+Agregar el objeto `limits` con una de las siguientes propiedades:
+
+- `debitAmount`: el monto máximo que se deducirá de la billetera del remitente.
+- `receiveAmount`: el monto máximo que recibirá la billetera del destinatario.
+
+:::note[Límites]
+
+Los parámetros `debitAmount` y `receiveAmount`, que corresponden al remitente y al destinatario, respectivamente, le permiten definir los límites en los que se puede crear un pago saliente. Seleccione el parámetro más adecuado para su caso de uso en particular. Especifique el `receiveAmount` cuando el destinatario deba recibir un monto definido. Especifique el `debitAmount` para los casos en los que el remitente pueda establecer un límite en el monto que se pueda debitar de su cuenta.
+:::
+
+A continuación, indique que su cliente es capaz de direccionar al usuario a una URI para iniciar una interacción.
+
+1. Agregar el objeto `interact` a su solicitud de concesión de autorización.
+2. Especificar `redirect` como el modo de `start`. En la actualidad, Open Payments solo admite `redirect`. El servidor de autorización proporcionará la URL de redirección en su respuesta.
+
+Ahora indique que su cliente puede recibir una señal del servidor de autorización una vez que la interacción haya finalizado.
+
+1. Agregar el objeto `finish` dentro del objeto `interact`.
+2. Especificar `redirect` como el `method`. En la actualidad, Open Payments solo admite `redirect`.
+3. Especificar la `uri` que el servidor de autorización le enviará al usuario una vez que la interacción haya finalizado.
+4. Crear un `nonce` para que su cliente lo utilice a la hora de verificar que el servidor de autorización sea la misma entidad a lo largo de todo el proceso. Este código puede ser cualquier cadena aleatoria y difícil de descifrar.
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-outgoing-payment.ts'
+  chunk='4'
+/>
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-outgoing-payment.ts'
+  chunk='5'
+/>
+
+### 7. Comenzar la interacción con el usuario
+
+<StartInteraction />
+
+### 8. Finalizar la interacción con el usuario
+
+<FinishInteraction />
+
+### 9. Solicitar una continuación de la concesión de autorización
+
+Una vez que el usuario completó su interacción con el proveedor de identidad (identity provider, IdP), debe ser redirigido de vuelta a la aplicación. Ahora puede hacer la solicitud de continuación de la solicitud de concesión. En situaciones donde una interfaz de usuario no se encuentra disponible, analice la posibilidad de implementar un mecanismo de sondeo para verificar que se haya completado la interacción.
+
+Agregue la referencia a la interacción del servidor de autorización como el valor `interact_ref` al cuerpo de su solicitud de continuación.
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-continuation.ts'
+  chunk='3'
+/>
+
+Emita la solicitud para la `continue uri` que se proporcionó en la respuesta inicial de la concesión que devolvió el servidor de autorización. Por ejemplo:
+
+`POST https://auth.interledger-test.dev/continue/4CF492MLVMSW9MKMXKHQ`
+
+En una respuesta de continuación correcta del servidor de autorización, se proporciona a su cliente el token de acceso y otra información necesaria para continuar con la transacción.
+
+```json title="Respuesta de ejemplo" wrap
+{
+  "access_token": {
+    "value": "OS9M2PMHKUR64TB8N6BW7OZB8CDFONP219RP1LT0",
+    "manage": "https://auth.interledger-test.dev/token/dd17a202-9982-4ed9-ae31-564947fb6379",
+    "expires_in": 3600,
+    "access": [
+      {
+        "type": "outgoing-payment",
+        "actions": ["create", "read", "read-all", "list", "list-all"],
+        "identifier": "https://ilp.interledger-test.dev/alice",
+        "limits": {
+          "receiver": "https://ilp.interledger-test.dev/bob/incoming-payments/48884225-b393-4872-90de-1b737e2491c2",
+          "interval": "R12/2019-08-24T14:15:22Z/P1M",
+          "debitAmount": {
+            "value": "500",
+            "assetCode": "USD",
+            "assetScale": 2
+          }
+        }
+      }
+    ]
+  },
+  "continue": {
+    "access_token": {
+      "value": "33OMUKMKSKU80UPRY5NM"
+    },
+    "uri": "https://auth.interledger-test.dev/continue/4CF492MLVMSW9MKMXKHQ",
+    "wait": 30
+  }
+}
+```
+
+### 10. Cómo crear un pago saliente
+
+Cree un `outgoingPayment` en el servidor de recursos de la billetera del remitente mediante el uso del token de acceso que devolvió el servidor de autorización en la solicitud de concesión de autorización.
+
+Agregar las siguientes propiedades:
+
+- `walletAddress`: la URL de la dirección de billetera del remitente.
+- `quoteId`: la URL de la cotización en la que se especifica el monto del pago.
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/outgoing-payment/outgoing-payment-create.ts'
+  chunk='3'
+/>
+
+</TabItem>
+</Tabs>

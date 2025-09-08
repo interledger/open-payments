@@ -1,0 +1,101 @@
+﻿---
+title: Cómo empezar
+---
+
+import { LinkOut } from '@interledger/docs-design-system'
+
+:::tip[Resumen]
+Open Payments es un estándar de interfaz de programación de aplicaciones (application programming interface, API) para bancos, proveedores de dinero móvil y otras entidades que administran cuentas. Permite que los desarrolladores incorporen capacidades de pago en sus aplicaciones sin la necesidad de utilizar integraciones personalizadas ni procesadores de pago de terceros.
+
+Los desarrolladores pueden optar entre interactuar de forma directa con la API de Open Payments (estándar de pagos abiertos) o utilizar los kits de desarrollo de software (software development kits, SDK) para obtener una experiencia de integración más fluida.
+:::
+
+La gestión de los pagos es una parte crucial de muchas aplicaciones móviles. Ya sea un sitio de comercio electrónico que vende productos, una plataforma de recaudación de fondos que acepta donaciones, un servicio de transmisión continua que cobra por su contenido o un servicio de suscripción con tarifas mensuales, los pagos digitales son fundamentales para sus operaciones. Muchos desarrolladores de aplicaciones dependen de pasarelas de pagos de terceros para gestionar estas transacciones, lo que puede generar gastos adicionales y limitar el control que se tiene sobre la experiencia del usuario.
+
+Open Payments es una API abierta basada en la Transferencia de Estado Representacional (Representational State Transfer, REST) y un estándar de API que permite que los clientes interactúen con cuentas compatibles con Open Payments. En este contexto, un cliente es una aplicación web o móvil que consume un recurso de Open Payments o más, que, por lo general, exige privilegios de acceso de un servidor de autorización o varios. Los [SDK de Open Payments](/es/sdk/before-you-begin) simplifican este proceso al proporcionar funciones desarrolladas previamente para estas interacciones.
+
+El estándar de Open Payments se creó con el fin de que lo implementaran las entidades que administran cuentas (account servicing entities, ASE). Las ASE proporcionan y mantienen cuentas de pago para remitentes y destinatarios, y son entidades reguladas dentro de los países en los que operan. Algunos ejemplos de ASE son los bancos, los proveedores de billeteras digitales y los proveedores de dinero móvil.
+
+## Beneficios de Open Payments
+
+Cuando una ASE implementa el estándar de Open Payments, las cuentas financieras de sus consumidores se vuelven compatibles con Open Payments. Por lo tanto, los clientes pueden recurrir a las API de Open Payments para visualizar el historial de transacciones y determinados datos de una cuenta compatible con Open Payments, y también emitir instrucciones para recibir pagos en una cuenta y enviar pagos desde ella.
+
+Por ejemplo, un desarrollador de aplicaciones puede crear una funcionalidad de pagos en su aplicación sin la necesidad de utilizar integraciones personalizadas con cada ASE. Los usuarios que tengan cuentas compatibles con Open Payments pueden utilizar la aplicación para enviar fondos a otra cuenta compatible con Open Payments, independientemente de que el remitente utilice la misma ASE. Esta aplicación debe ser capaz de conectarse con cualquier ASE que implementa el estándar de Open Payments sin la necesidad de utilizar integraciones personalizadas.
+
+El estándar de Open Payments simplifica la integración al ofrecer un punto de acceso único para varias cuentas financieras, ya sean cuentas bancarias, billeteras digitales o cuentas de dinero móvil. Este enfoque elimina la necesidad de múltiples integraciones personalizadas, lo que se parece a la manera en la que el estándar de correo electrónico facilita la comunicación continua entre diferentes proveedores de correo electrónico.
+
+Consulte la página [Flujo de Open Payments](/es/concepts/op-flow) para obtener más información.
+
+## Control y seguridad del usuario
+
+Con Open Payments, los usuarios mantienen el control pleno de sus transacciones financieras. Cuando una aplicación utiliza Open Payments, comparte de manera segura y criptográfica la información importante sobre la propia aplicación con la institución financiera con la que interactúa. Esta verificación garantiza que el proveedor de la cuenta sabe que la aplicación es legítima al efectuar una solicitud de pago en nombre del usuario. Cabe destacar que cualquier retiro de dinero de su cuenta exige su consentimiento explícito, lo que le brinda un control detallado sobre los permisos y los límites de las transacciones.
+
+## Pagos
+
+Open Payments no ejecuta pagos ni toca los fondos de ninguna manera. En cambio, las API permiten que los clientes emitan instrucciones de pago para las ASE.
+
+Por ejemplo, un cliente puede indicar a una ASE que envíe un pago de USD 20,00 de la cuenta de su consumidor a otra cuenta compatible con Open Payments de una ASE diferente. La ASE que envía el pago es responsable de ejecutar y configurar el pago con la ASE destinataria por fuera de Open Payments. La capacidad de ejecutar pagos entre las ASE compatibles con Open Payments depende de la disponibilidad de una infraestructura de pagos en común entre las ASE.
+
+Al separar las instrucciones de pago de la ejecución/liquidación, los desarrolladores del cliente pueden incluir funcionalidades de pago dentro de sus aplicaciones sin la necesidad, por ejemplo, de registrarse también como una empresa de transferencia de dinero autorizada.
+
+## Identificación de cuentas compatibles con Open Payments
+
+Cada cuenta compatible con Open Payments se identifica por medio de una URL o más. Estas URL no solo identifican a la cuenta, sino también a los puntos finales de servicio de Open Payments que proporcionan el punto de entrada para la API. Estas URL se denominan [direcciones de billetera](/es/concepts/wallet-addresses).
+
+Las direcciones de billetera en el estándar de Open Payments se diseñaron para que sean fáciles de utilizar y que se puedan compartir públicamente. Funcionan como direcciones de correo electrónico y permiten las interacciones directas y seguras con cuentas de diversas instituciones financieras sin exponer los datos confidenciales.
+
+## Negociación y autorización de las concesiones
+
+Los clientes deben recibir concesiones de autorización antes de emitir instrucciones de pago. Las concesiones brindan a los clientes la autorización que necesitan para efectuar una operación o más, por medio de los tókenes de acceso. Las concesiones de autorización representan los derechos que se conceden al cliente, como el de crear una solicitud de pago entrante.
+
+Open Payments aprovecha el Protocolo de Negociación y Autorización de Concesiones <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol'>(Grant Negotiation and Authorization Protocol, GNAP)</LinkOut> para definir el mecanismo estándar mediante el cual los clientes deben solicitar y recibir las concesiones de autorización que necesitan para utilizar las API de Open Payments. Todas las solicitudes exigen firmas, lo que protege su integridad. Las firmas se generan de acuerdo con la <LinkOut href='https://datatracker.ietf.org/doc/draft-ietf-httpbis-message-signatures/'>especificación de firmas HTTP</LinkOut>.
+
+El GNAP permite que los titulares de cuentas tengan un control específico y muy detallado sobre los permisos que conceden a los clientes que se conectan con sus cuentas, lo que incluye el control sobre los montos de las transacciones con límites basados en el tiempo y la velocidad. Esto propicia los casos de uso avanzados, como la iniciación de pagos por parte de terceros y la autorización delegada, sin poner en riesgo la seguridad de las cuentas financieras subyacentes ni de los instrumentos de pago.
+
+Revise la página [Negociación y autorización de las concesiones](/es/identity/grants) para obtener más información.
+
+## Relación con Open Banking
+
+Open Payments tiene como objetivo mejorar los estándares existentes de Open Banking (estándar de banca abierta), tal como se definen en el Reino Unido, la Unión Europea y otras jurisdicciones.
+
+Los agregadores e intermediarios dominan los ecosistemas de Open Banking existentes, lo que imposibilita que terceros independientes, como los pequeños comerciantes, utilicen las API de iniciación de pago de forma directa con las cuentas de pago de los consumidores. Open Payments favorece las situaciones en las que los clientes pueden registrar las API e interactuar con ellas de forma dinámica, sin la necesidad de un registro previo con la ASE. Esto permite que se genere un ecosistema de pagos verdaderamente distribuido y federado, con alcance global y que no depende de ningún tipo de cuenta subyacente o sistema de liquidación en particular.
+
+Asimismo, Open Payments es un estándar mucho más simple, que tiene una cantidad mucho menor de tipos de recursos y un protocolo de autorización más seguro y avanzado.
+
+## Objetivos
+
+El objetivo de Open Payments es definir un estándar que todas las ASE adopten. El estándar no depende de un método de pago, una divisa o un lenguaje de programación en particular, lo que fomenta la interoperabilidad entre las ASE y otras partes.
+
+Cuando una ASE adopta el estándar de Open Payments, los clientes (aplicaciones y otras partes) sabrán cómo interactuar con la ASE y pueden integrar los pagos de forma directa en sus productos sin que sea necesario lo siguiente:
+
+- que los usuarios creen una cuenta de pago nueva para cada aplicación o sitio web que utilizan;
+- que los desarrolladores creen clientes en un lenguaje de programación en particular;
+- que las ASE y los clientes creen e implementen integraciones personalizadas para comunicarse entre sí.
+
+El objetivo de Open Payments es simplificar y democratizar los pagos mediante una solución estandarizada y fácil de integrar. Esto reduce las acciones de desarrollo y aumenta la inclusión financiera, ya que las soluciones de pago se vuelven más asequibles y accesibles para todo el mundo.
+
+## Casos de uso
+
+Open Payments facilita diversos casos de uso, como los siguientes:
+
+### Pagos entre pares
+
+Un pago entre pares es un tipo de pago que se efectúa de manera directa de una persona a otra por medio de una fuente de financiamiento vinculada. Cuando las ASE implementan el estándar de Open Payments, las aplicaciones pueden recurrir a las API de Open Payments para facilitar los pagos entre pares. Tener un estándar implica que los desarrolladores de aplicaciones no necesitan crear integraciones personalizadas para cada ASE. Además, los usuarios de aplicaciones pueden tener cuentas de financiamiento con distintas ASE compatibles con Open Payments e incluso utilizar diferentes aplicaciones compatibles con Open Payments para efectuar pagos entre pares.
+
+Un pago entre pares puede ser único o recurrente. Para obtener más información sobre la manera de crear un cliente de Open Payments que admita ambos tipos de pago entre pares, consulte las guías sobre [pagos únicos](/es/guides/make-onetime-payment) y [pagos recurrentes](/es/guides/make-recurring-payments).
+
+### Plataformas de comercio electrónico
+
+Supongamos que un comerciante acepta Open Payments como un método de pago. En ese caso, su consumidor puede pagar con su dirección de billetera en lugar de ingresar el número de una tarjeta de crédito y otros datos personales en el sitio del comerciante. Open Payments permite que los titulares de cuentas de una ASE utilicen sus direcciones de billetera para pagar sus compras únicas o recurrentes, como las suscripciones. Consulte los siguientes recursos para obtener más información:
+
+- [Guía sobre los pagos únicos](/es/guides/make-onetime-payment)
+- [Guía sobre los pagos recurrentes](/es/guides/make-recurring-payments)
+- <LinkOut href='https://github.com/interledger/open-payments-node/tree/main/packages/open-payments#example'>Ejemplo de comercio electrónico utilizando el SDK de Open Payments</LinkOut>
+
+### Compre ahora y pague después (BNPL)
+
+Los planes de compre ahora y pague después (Buy Now and Pay Later, BNPL) permiten que los consumidores paguen las compras de precios elevados a lo largo del tiempo. El cliente se libera de tener que realizar un pago elevado de una sola vez, ya que los pagos se dividen en intervalos programados. Los desarrolladores pueden crear aplicaciones de Open Payments que admitan los planes de BNPL por medio de los pagos recurrentes. Para obtener más información, consulte la [Guía de pagos recurrentes](/es/guides/make-recurring-payments).
+
+### Web Monetization
+
+La <LinkOut href='https://webmonetization.org'>API de Web Monetization</LinkOut> (estándar de monetización web) permite que los visitantes del sitio web paguen un monto de su elección a un sitio web participante con una interacción mínima o nula, mediante el uso de Open Payments como el método de pago. Tanto el sitio como el visitante deben tener direcciones de billetera compatibles con Open Payments para recibir y enviar pagos.

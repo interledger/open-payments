@@ -1,0 +1,152 @@
+﻿---
+title: Obtener una concesión de pago saliente para pagos futuros
+---
+
+import { LinkOut } from '@interledger/docs-design-system'
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+import InteractionReq from '/src/partials/es/interaction-required.mdx'
+import StartInteraction from '/src/partials/es/grant-start-interaction.mdx'
+import FinishInteraction from '/src/partials/es/grant-finish-interaction.mdx'
+
+:::tip[Resumen]
+Aprenda cómo obtener una concesión de pago saliente para pagos futuros sin especificar destinatarios.
+:::
+
+A menudo, una transacción comienza cuando el cliente obtiene los datos del destinatario y solicita permiso al ASE del destinatario para enviar dinero. Sin embargo, Open Payments también admite un enfoque distinto, en el cual el cliente obtiene permiso del ASE del remitente para enviar dinero antes de saber quién será el destinatario. El modelo “pague a medida que navega” de Web Monetization usa este enfoque.
+
+En este modelo, un usuario instala una extensión del navegador y visita un sitio con monetización web. La extensión utiliza Open Payments para emitir pagos salientes continuos al sitio, en nombre del usuario, mientras el usuario permanezca en el sitio. La extensión no sabe quién será el destinatario hasta que el usuario visita el sitio.
+
+Para configurar la extensión, el usuario debe conectarla a la cuenta de su billetera. Este indica un monto máximo que está dispuesto a gastar y elige si ese monto se renovará de manera mensual. Luego, la extensión recibe una concesión de pago saliente del proveedor de la billetera del usuario, lo que permite que la extensión inicie pagos futuros.
+
+En esta guía, usted asume el rol de desarrollador de una aplicación. La guía lo conduce por los pasos que realizará su aplicación para recibir una concesión de pago saliente con un monto de débito especificado, pero sin destinatarios conocidos. La situación hipotética de ejemplo ilustra cómo permitir que el usuario de su aplicación envíe pagos de hasta CAD 100 por mes durante tres meses.
+
+## Dependencias
+
+- <LinkOut href='https://github.com/interledger/open-payments-node/tree/main/packages/open-payments'>Kit de desarrollo de software (software development kit, SDK) de Open Payments</LinkOut>
+
+## Puntos finales
+
+- <LinkOut href='https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/'>Cómo obtener una dirección de billetera</LinkOut>
+- <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-request/'>Solicitud de concesiones de autorización</LinkOut>
+- <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-continue/'>Continuación de solicitud de concesión de autorización</LinkOut>
+
+## Pasos
+
+### 1. Obtener los datos de la dirección de billetera
+
+Supongamos que su usuario guardó su dirección de billetera en el perfil de su cuenta al configurar la aplicación. Llame a la [API Obtener dirección de billetera](/apis/wallet-address-server/operations/get-wallet-address) para obtener los datos necesarios sobre la cuenta de la billetera del usuario.
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts
+  const userWalletAddress = await client.walletAddress.get({
+    url: 'https://cloudninebank.example.com/user'
+  })
+  ```
+</TabItem>
+</Tabs>
+
+### 2. Solicitar una concesión de autorización interactiva para un pago saliente
+
+Utilice la información del servidor de autorización recibida en el paso anterior para llamar a la [API Solicitud de concesión](/apis/auth-server/operations/post-request). El propósito de esta llamada consiste en obtener un token que permita que el cliente solicite la creación de recursos de pago saliente en la cuenta de la billetera de su usuario.
+
+<InteractionReq />
+
+Además de los parámetros requeridos, en la solicitud incluya lo siguiente:
+
+- Objeto `limits`
+  - `debitAmount`: el monto máximo que el usuario puede enviar por intervalo. Cuando comienza el siguiente intervalo, el valor se restablece.
+  - `interval`: el [intervalo de tiempo](#acerca-del-intervalo) durante el cual la concesión es válida.
+
+El usuario indica que desea realizar pagos de hasta CAD 100 por mes durante tres meses. El monto se restablece todos los meses y las partes no utilizadas no se acumulan.
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts
+  const grant = await client.grant.request(
+    {
+      url: userWalletAddress.authServer,
+    },
+    {
+      access_token: {
+        access: [
+          {
+            identifier: userWalletAddress.id,
+            type: 'outgoing-payment',
+            actions: ['read', 'create'],
+            limits: {
+              interval: 'R3/2025-05-20T13:00:00Z/P1M'
+              debitAmount: {
+                assetCode: 'CAD',
+                assetScale: 2,
+                value: '10000',
+              },
+            },
+          },
+        ],
+      },
+      client: userWalletAddress.id,
+      interact: {
+        start: ['redirect'],
+        finish: {
+          method: 'redirect',
+          uri: 'https://cloudninebank.example.com/finish/T8jw5Xy',
+          nonce: NONCE,
+        },
+      },
+    },
+  );
+  ```
+</TabItem>
+</Tabs>
+
+#### Acerca del intervalo
+
+El intervalo que se emplea en esta guía es `R3/2025-05-20T13:00:00Z/P1M`. Recuerde que el usuario desea enviar pagos de hasta CAD 100 por mes durante tres meses. El intervalo se desglosa del siguiente modo:
+
+- `R[3]/` es la cantidad de repeticiones: tres.
+- `2025-05-20` es la fecha de inicio del intervalo repetido: 20 de mayo de 2025.
+- `T13:00:00Z/` es la hora de inicio del intervalo repetido: 1:00 p. m. UTC.
+- `[P1M]` es el período entre cada intervalo: un mes. Si se emplea con `R[3]`, se obtiene una concesión válida una vez por mes durante tres meses.
+
+En conjunto, el usuario puede enviar hasta CAD 100 en estos períodos:
+
+- De la 1 p. m. UTC del 20 de mayo de 2025 a las 12:59 p. m. UTC del 20 de junio de 2025.
+- De la 1 p. m. UTC del 20 de junio de 2025 a las 12:59 p. m. UTC del 20 de julio de 2025.
+- De la 1 p. m. UTC del 20 de julio de 2025 a las 12:59 p. m. UTC del 20 de agosto de 2025.
+
+### 3. Comenzar la interacción con el usuario
+
+<StartInteraction />
+
+### 4. Finalizar la interacción con el usuario
+
+<FinishInteraction />
+
+### 5. Solicitar una continuación de la concesión de autorización
+
+En esta guía, se supone que el IdP cuenta con una interfaz de usuario en la que el usuario interactúa. Cuando la interacción finaliza, el usuario regresa a su aplicación. Ahora el cliente puede realizar una solicitud de continuación de la concesión.
+
+:::note
+En una situación hipotética donde una interfaz de usuario no se encuentra disponible, analice la posibilidad de implementar un mecanismo de sondeo para verificar que se haya completado la interacción.
+:::
+
+Agregue la `interact_ref` devuelta en los parámetros de consulta del URI de redirección.
+
+<Tabs syncKey='lang'>
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts wrap
+  const grant = await client.grant.continue(
+    {
+      accessToken: CONTINUE_ACCESS_TOKEN,
+      url: CONTINUE_URI,
+    },
+    {
+      interact_ref: INTERACT_REF,
+    },
+  );
+  ```
+  </TabItem>
+</Tabs>
+
+Una respuesta exitosa proporciona a su aplicación un token de acceso. Ahora su aplicación puede emitir solicitudes de pago saliente hacia destinatarios futuros en función de la concesión. Cada solicitud debe hacer referencia al token de acceso.

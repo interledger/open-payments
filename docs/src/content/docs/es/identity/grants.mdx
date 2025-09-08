@@ -1,0 +1,71 @@
+﻿---
+title: Negociación y autorización de las concesiones
+---
+
+import { CodeBlock, LinkOut, Tooltip } from '@interledger/docs-design-system'
+import Interactive from '/src/partials/es/diagram-interactive-grant.mdx'
+
+:::tip[Resumen]
+Una concesión en Open Payments permite que un cliente obtenga autorización de un propietario de recursos para acceder a recursos protegidos y realizar operaciones en ellos. Open Payments utiliza el Protocolo de Negociación y Autorización de Concesiones (Grant Negotiation and Authorization Protocol, GNAP) para facilitar este proceso, lo cual permite que los clientes interactúen de forma segura con la API.
+:::
+
+En Open Payments, una concesión representa una transferencia o delegación de autorización de un propietario de recursos (Resource Owner, RO) a un software. Un RO puede ser una persona física, como el usuario final del software, o bien un proceso, como reglas organizacionales predefinidas. Al delegar la autorización, el RO permite que el software acceda y realice operaciones en recursos protegidos en nombre del RO.
+
+Open Payments aprovecha el Protocolo de Negociación y Autorización de Concesiones <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol'>(Grant Negotiation and Authorization Protocol, GNAP)</LinkOut> como el mecanismo mediante el cual un programa de software, conocido como “instancia de cliente” (o simplemente “cliente”), recibe la delegación de autorización para utilizar las interfaces de programación de aplicaciones (application programming interfaces, API) de Open Payments para interactuar con las cuentas admitidas.
+
+## GNAP frente a OAuth 2.0
+
+GNAP se desarrolla como sucesor de OAuth 2.0 y está diseñado para cubrir muchas de las deficiencias detectadas en el uso de OAuth en Open Banking y demás casos financieros. El <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol#name-compared-to-oauth-20'>Apéndice B</LinkOut> de la especificación del GNAP describe las diferencias de diseño del protocolo en comparación con OAuth 2.0. Algunos ejemplos son los siguientes:
+
+| GNAP                                                                                                                                                                                                                                           | OAuth 2.0                                                                                                                                                                                                    |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| El cliente declara las distintas formas en que puede iniciar y finalizar una interacción, y estas se pueden combinar según sea necesario para diferentes casos de uso. Las interacciones pueden usar un navegador web, pero no es obligatorio. | El tipo de interacción disponible es fijo y depende del tipo de concesión; se supone que el usuario tiene acceso a un navegador web.                                                                         |
+| Permite que la entidad que solicita acceso a los recursos protegidos sea distinta del propietario de recursos, aunque también funciona en el caso optimizado de que ambas sean la misma parte.                                                 | Parte de la suposición de que el usuario es el mismo que interactuará con el servidor de autorización para aprobar el acceso; supone que el propietario de recursos es la persona que solicitó la concesión. |
+| Permite que el cliente presente una clave desconocida al servidor de autorización y use esa clave para proteger la solicitud en curso.                                                                                                         | Exige que todos los clientes estén registrados en el servidor de autorización y usen una `client_id` conocida por el servidor de autorización.                                                               |
+| Siempre comienza en el mismo punto final del servidor de autorización.                                                                                                                                                                         | Los diferentes tipos de concesión comienzan en distintos puntos finales.                                                                                                                                     |
+| Un cliente puede solicitar varios tókenes de acceso en una sola solicitud de concesión.                                                                                                                                                        | Un cliente solo puede solicitar un único token de acceso en cada solicitud.                                                                                                                                  |
+
+## Servidores de autorización de concesiones
+
+Un servidor de autorización otorga privilegios delegados a un cliente en forma de tókenes de acceso. Los tókenes de acceso representan un conjunto de derechos de acceso o atributos concedidos al cliente. Con los tókenes de acceso correspondientes, el cliente puede acceder a las API de Open Payments de un servidor de recursos y realizar las operaciones permitidas, como crear pagos entrantes y enumerar pagos salientes, en nombre del propietario de recursos.
+
+Un servidor de autorización se identifica de forma exclusiva por su URI de punto final de concesión, que es un URI absoluto al que un cliente llama para iniciar una solicitud de concesión.
+
+### Registros de claves
+
+Un registro de claves es una lista de claves asociadas con clientes que requieren acceso a recursos protegidos de Open Payments. Los registros de claves se exponen públicamente mediante un punto final `jwks.json` y permiten que un servidor de autorización verifique que un cliente es quien dice ser.
+
+Un cliente debe generar y agregar su clave a su registro de claves antes de solicitar una concesión por primera vez. Para obtener más información sobre la generación y el registro de claves y sobre cómo funcionan los registros de claves con los servidores de autorización, consulte la página [Claves de clientes](/es/identity/client-keys).
+
+## Solicitudes de concesión
+
+Antes de que un cliente pueda acceder a las API de Open Payments, debe enviar una solicitud de concesión al servidor de autorización. La solicitud debe contener el tipo de recurso con el que quiere trabajar y las acciones que desea realizar sobre ese recurso. Los tipos de recursos incluyen `incoming-payment`, `quote` y `outgoing-payment`. Las acciones disponibles dependen del tipo, pero algunos ejemplos son `create` y `read`. Una solicitud de concesión exitosa hace que el servidor de autorización devuelva uno o más tókenes de acceso.
+
+La secuencia de solicitudes que realiza un cliente al configurar un pago puede seguir uno de los caminos que se indican a continuación.
+
+#### Camino 1 (el más frecuente)
+
+1. Solicitar una concesión de pago entrante al servidor de autorización del lado del destinatario.
+2. Enviar la solicitud para crear un recurso de pago entrante al servidor de recursos del lado del destinatario.
+3. Solicitar una concesión de cotización al servidor de autorización del lado del remitente.
+4. Enviar la solicitud para crear un recurso de cotización al servidor de recursos del lado del remitente.
+5. Solicitar una concesión interactiva `outgoing-payment` al servidor de autorización del lado del remitente.
+6. Enviar la solicitud para crear un recurso de pago saliente al servidor de recursos del lado del remitente.
+
+#### Camino 2
+
+1. Solicitar una concesión `incoming-payment` al servidor de autorización del lado del destinatario.
+2. Enviar la solicitud para crear un recurso de pago entrante al servidor de recursos del lado del destinatario.
+3. Solicitar una única concesión interactiva para `quote` y `outgoing-payment` al servidor de autorización del lado del remitente.
+4. Enviar la solicitud para crear un recurso de cotización al servidor de recursos del lado del remitente.
+5. Enviar la solicitud para crear un recurso de pago saliente al servidor de recursos del lado del remitente.
+
+## Servidores de recursos de Open Payments
+
+Un servidor de recursos proporciona las API de Open Payments a través de las cuales se pueden crear o se puede acceder a recursos del servidor. GNAP no presupone ni requiere un acoplamiento estricto entre un servidor de recursos y un servidor de autorización, y cada vez es más frecuente que ambos se administren y ejecuten de forma independiente.
+
+Las operaciones en las API por parte de un cliente requieren que el cliente tenga un token de acceso válido emitido por un <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol-16#name-trust-relationships'>servidor de autorización confiable</LinkOut>. Cuando el cliente utiliza su token de acceso para llamar al servidor de recursos, este examina el token para determinar si es suficiente para la solicitud. La manera en que un servidor de recursos realiza esta verificación se encuentra fuera del alcance de Open Payments. Si el token es suficiente, el cliente obtiene el derecho de acceder a las operaciones y al recurso asociado a ese token.
+
+:::note
+Actualmente se encuentra en desarrollo una implementación de código abierto de un servidor de recursos de Open Payments llamada <LinkOut href='https://rafiki.dev'>Rafiki</LinkOut>.
+:::

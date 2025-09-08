@@ -1,0 +1,24 @@
+﻿---
+title: Proveedores de identidad
+---
+
+import { CodeBlock, LinkOut } from '@interledger/docs-design-system'
+import Interactive from '/src/partials/es/diagram-interactive-grant.mdx'
+
+:::tip[Resumen]
+Un proveedor de identidad (IdP) es un sistema o servicio que administra la autenticación del usuario y el consentimiento durante el proceso de concesión interactiva.
+:::
+
+Open Payments exige que cualquier servidor de autorización que emita concesiones interactivas se integre en un IdP.
+
+Una concesión interactiva es aquella que requiere la interacción o el consentimiento explícito del propietario de recursos antes de que se pueda emitir un token de acceso. En Open Payments, debe emitirse una concesión interactiva antes de poder crear un recurso de pago saliente.
+
+Después de que se inicia la solicitud de concesión interactiva y el servidor de autorización establece la sesión, el servidor proporciona al cliente el URI del IdP al que debe redirigir al usuario.
+
+El siguiente diagrama ilustra el flujo de una concesión interactiva.
+
+<Interactive />
+
+:::tip[Implementación de referencia]
+Rafiki ofrece una implementación de referencia del <LinkOut href='https://rafiki.dev/es/integration/deployment/services/auth-service/'>servicio de autorización</LinkOut>, que incluye compatibilidad para la integración en un IdP.
+:::

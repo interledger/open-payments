@@ -6,13 +6,9 @@ import { LinkOut } from '@interledger/docs-design-system'
 
 The Open Payments SDKs provide developers with pre-built functions that simplify interactions with the Open Payments API. Currently, we offer the following SDKs, with plans to expand to additional languages and frameworks in the future.
 
-- <LinkOut href='https://github.com/interledger/open-payments-node'>
-    TypeScript/NodeJS
-  </LinkOut>
+- <LinkOut href='https://github.com/interledger/open-payments-node'>TypeScript/NodeJS</LinkOut>
 - <LinkOut href='https://github.com/interledger/open-payments-php'>PHP</LinkOut>
-- <LinkOut href='https://github.com/interledger/open-payments-rust'>
-    Rust
-  </LinkOut>
+- <LinkOut href='https://github.com/interledger/open-payments-rust'>Rust</LinkOut>
 
 ## Using the SDKs
 
@@ -53,57 +49,27 @@ You're now ready to create a test wallet and deposit money!
 
 ## Create and fund a wallet account
 
-1. Click **New account** on the Interledger Wallet dashboard.
-   <img
-     src='/img/snippets/tw-dashboard.png'
-     alt='Test wallet dashboard screen showing the new account option'
-     class='img-outline'
-     style='max-width:500px'
-   />
-2. Enter any account name, select an asset (currency), then click **Create account**.
-   <img
-     src='/img/snippets/tw-create-acct.png'
-     alt='Create a new account screen with account name field and asset drop-down menu'
-     class='img-outline'
-     style='max-width:400px'
-   />
-3. Click **Close**, then click **Accounts** from the left nav bar.
-4. Select the account you just created.
-5. Click **Deposit**.
-   <img
-     src='/img/snippets/tw-acct-options.png'
-     alt='Account options screen showing buttons for deposit and add wallet address'
-     class='img-outline'
-     style='max-width:400px'
-   />
-6. Enter an amount, then click **Deposit**.
+1.  Click **New account** on the Interledger Wallet dashboard.
+    <img src='/img/snippets/tw-dashboard.png' alt='Test wallet dashboard screen showing the new account option' class='img-outline' style='max-width:500px'/>
+2.  Enter any account name, select an asset (currency), then click **Create account**.
+    <img src='/img/snippets/tw-create-acct.png' alt='Create a new account screen with account name field and asset drop-down menu' class='img-outline' style='max-width:400px'/>
+3.  Click **Close**, then click **Accounts** from the left nav bar.
+4.  Select the account you just created.
+5.  Click **Deposit**.
+    <img src='/img/snippets/tw-acct-options.png' alt='Account options screen showing buttons for deposit and add wallet address' class='img-outline' style='max-width:400px'/>
+6.  Enter an amount, then click **Deposit**.
 
-   <img
-     src='/img/snippets/tw-deposit.png'
-     alt='Deposit to account screen with amount field'
-     class='img-outline'
-     style='max-width:400px'
-   />
+    <img src='/img/snippets/tw-deposit.png' alt='Deposit to account screen with amount field' class='img-outline' style='max-width:400px'/>
 
-   You now have a funded test wallet!
+    You now have a funded test wallet!
 
 ## Add a wallet address to your account
 
 1. Select the account from the Test Wallet dashboard.
 2. Click **Add wallet address**.
-   <img
-     src='/img/snippets/tw-acct-options.png'
-     alt='Account options screen showing buttons for add wallet address and deposit'
-     class='img-outline'
-     style='max-width:400px'
-   />
+   <img src='/img/snippets/tw-acct-options.png' alt='Account options screen showing buttons for add wallet address and deposit' class='img-outline' style='max-width:400px'/>
 3. Enter a **Wallet Address name** and a **Public name** of your choosing.
-   <img
-     src='/img/snippets/tw-create-wallet-address.png'
-     alt='Create wallet address screen with fields for wallet address name and public name'
-     class='img-outline'
-     style='max-width:400px'
-   />
+   <img src='/img/snippets/tw-create-wallet-address.png' alt='Create wallet address screen with fields for wallet address name and public name' class='img-outline' style='max-width:400px'/>
 4. Click **Create**. Your account now has a wallet address.
 
 ## Obtain a public-private key pair and key ID
@@ -113,32 +79,12 @@ Before you can initialize an authenticated Open Payments client, you must obtain
 1. Click **Settings** in the left sidebar on the dashboard.
 2. Click the **Developer Keys** tab.
 3. Expand the menu for your wallet account.
-   <img
-     src='/img/snippets/tw-dev-keys-tab.png'
-     alt='Developer keys tab with account expanded, showing the upload key and the generate public and private key buttons'
-     class='img-outline'
-     style='max-width:400px'
-   />
+   <img src='/img/snippets/tw-dev-keys-tab.png' alt='Developer keys tab with account expanded, showing the upload key and the generate public and private key buttons' class='img-outline' style='max-width:400px'/>
 4. Click **Generate public & private key**.
 5. Enter any **nickname** for the key pair, then click **Generate keys**. A file named `private.key` automatically downloads to your machine
-   <img
-     src='/img/snippets/tw-generate-key-pair.png'
-     alt='Generate public and private key screen with nickname field'
-     class='img-outline'
-     style='max-width:400px'
-   />
-   <img
-     src='/img/snippets/tw-key-pair-success.png'
-     alt='Key pair generation success screen'
-     class='img-outline'
-     style='max-width:400px'
-   />
+   <img src='/img/snippets/tw-generate-key-pair.png' alt='Generate public and private key screen with nickname field' class='img-outline' style='max-width:400px'/>
+<img src='/img/snippets/tw-key-pair-success.png' alt='Key pair generation success screen' class='img-outline' style='max-width:400px'/>
 6. Click **Close**. Your key ID appears on the screen, along with a **Show/Hide** option for your public key.
-   <img
-     src='/img/snippets/tw-key-id.png'
-     alt='Developer keys tab with account expanded, showing the newly generated key id and an option to show the public key'
-     class='img-outline'
-     style='max-width:400px'
-   />
+   <img src='/img/snippets/tw-key-id.png' alt='Developer keys tab with account expanded, showing the newly generated key id and an option to show the public key' class='img-outline' style='max-width:400px'/>
 
 You can now use your keys and wallet address to initialize an authenticated Open Payments client.
