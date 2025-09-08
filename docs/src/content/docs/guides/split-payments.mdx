@@ -497,17 +497,15 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
 
 Recall that the Create Quote API responses for the merchant and your platform (Step 5) both included a `debitAmount` and a `receiveAmount`. The responses also included an `id` which is a URL to identify each quote.
 
-Because the quotes contain debit and receive amounts, we won't specify any other amounts when making a Create Outgoing Payment API request. Instead, we will specify a `quoteId`.
+Because the quotes contain debit and receive amounts, we won't specify any other amounts when setting up the outgoing payments. Instead, we will specify a `quoteId`.
 
-Use the access tokens returned in Step 5 to call the [Create Outgoing Payment API](/apis/resource-server/operations/create-outgoing-payment).
-
-The purpose of these calls is to request an outgoing payment resource be created on the customer's wallet account: one for the merchant and one for your platform. Include the appropriate `quoteId` in each request.
+Use the access token returned in Step 5 that's associated with the merchant to call the [Create Outgoing Payment API](/apis/resource-server/operations/create-outgoing-payment). Include the appropriate `quoteId` in the request. Now, do the same with the access token associated with your platform.
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
   ```ts wrap
   // Merchant
-  const customerOutgoingPayment = await client.outgoingPayment.create(
+  const customerOutgoingPaymentToMerchant = await client.outgoingPayment.create(
     {
       url: customerWalletAddress.resourceServer,
       accessToken: customerOutgoingPaymentGrant.access_token.value
@@ -518,7 +516,7 @@ The purpose of these calls is to request an outgoing payment resource be created
     }
   )
   // Platform
-  const customerOutgoingPayment = await client.outgoingPayment.create(
+  const customerOutgoingPaymentToPlatform = await client.outgoingPayment.create(
     {
       url: customerWalletAddress.resourceServer,
       accessToken: customerOutgoingPaymentGrant.access_token.value
