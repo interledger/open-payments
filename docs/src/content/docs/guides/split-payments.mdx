@@ -297,7 +297,7 @@ This call obtains an access token that allows your platform to request quote res
 
 Use the access token, received in the previous step, to call the [Create Quote API](/apis/resource-server/operations/create-quote).
 
-This call requests a quote resource be created on the customer's wallet account. Since the customer needs a quote resource for the merchant and the platform, we'll call the API twice using the same access token.
+This call requests a quote resource be created on the customer's wallet account. Since the customer needs to get a quote for both of the incoming payments at the merchant and the platform, we'll call the API twice using the same access token.
 
 First, let's request a quote resource associated with the merchant. The request must contain the `receiver`, which is the merchant's incoming payment `id`, along with any other required parameters. The `id` was returned in the Create an Incoming Payment API response in Step 3.
 
