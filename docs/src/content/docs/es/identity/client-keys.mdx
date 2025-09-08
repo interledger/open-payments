@@ -1,0 +1,144 @@
+﻿---
+title: Claves de cliente
+---
+
+import {
+  LinkOut,
+  Mermaid,
+  MermaidWrapper
+} from '@interledger/docs-design-system'
+
+:::tip[Resumen]
+Las claves de cliente son identificadores exclusivos que permiten a los clientes firmar solicitudes de Open Payments. Posibilitan la verificación de la identidad de un cliente mediante un registro de claves de acceso público.
+:::
+
+Todas las solicitudes de cliente en Open Payments se firman con una clave exclusiva que identifica al cliente ante los servidores de autorización y de recursos. Todas las solicitudes, salvo las de nuevas concesiones, también incluyen un token de acceso vinculado con la clave.
+
+## Registro de claves
+
+Un registro de claves es una lista de claves, generadas y almacenadas por el cliente, para los casos en que necesite acceder a recursos protegidos de Open Payments. Dado que las solicitudes de concesión se realizan en varias solicitudes HTTP firmadas, resulta importante que el cliente pueda identificarse de manera sistemática en todas esas solicitudes ante el servidor de autorización. El registro de claves permite al servidor de autorización verificar que el cliente es quien dice ser.
+
+Cada cliente se representa con una [dirección de billetera](/es/concepts/wallet-addresses). El registro de claves de un cliente es de acceso público a través de su dirección de billetera mediante un punto final `jwks.json`. El servidor de autorización puede recuperar el registro de claves del cliente accediendo a la `WALLET_ADDRESS/jwks.json`.
+
+```http title="Ejemplo"
+https://wallet.example.com/alice/jwks.json
+```
+
+### Estructura del registro
+
+El registro de claves debe exponer las claves públicas en formato de conjuntos de claves web en JSON (JWKS). Las claves deben generarse con el algoritmo `Ed25519` y el documento JWKS resultante debe contener los siguientes campos y valores.
+
+```
+{
+  alg: 'EdDSA',
+  kty: 'OKP',
+  crv: 'Ed25519'
+}
+```
+
+Además, debe incluir los campos `x` y `kid` (identificador de clave) para que el cliente pueda identificarse en una firma.
+
+```json title="Ejemplo: https://wallet.example.com/alice/jwks.json"
+{
+  "keys": [
+    {
+      "kid": "3724c845-829d-425a-9a0d-194d6f12c336",
+      "x": "_Eg6UcC8G-O4TY2cxGnZyG_lMn0aWF1rVV-Bqn9NmhE",
+      "alg": "EdDSA",
+      "kty": "OKP",
+      "crv": "Ed25519"
+    }
+  ]
+}
+```
+
+### Generación de claves
+
+Antes de que un cliente solicite una concesión por primera vez, debe:
+
+1. Generar un par de claves asimétricas. Las claves deben generarse con el <LinkOut href='https://datatracker.ietf.org/doc/html/rfc8032'>algoritmo ed25519</LinkOut>.
+   :::note
+   Se debe generar una `keyId` para identificar el par. Esto a menudo es responsabilidad de la entidad que administra la cuenta (ASE).
+   :::
+2. Agregar la clave pública a su registro de claves.
+3. Almacenar la clave privada. La clave privada firma el contenido descrito en la sección [Método de validación de claves](#método-de-validación-de-claves) a continuación.
+
+## Solicitudes de clientes
+
+Dado que las solicitudes de clientes se realizan en varias solicitudes HTTP firmadas, es importante que el cliente pueda identificarse de manera sistemática en todas esas solicitudes. Por lo tanto, los clientes deben incluir lo siguiente al realizar solicitudes:
+
+- Encabezados
+  - Un encabezado `Signature-Input` que incluya la `keyId` asociada al par de claves del cliente. Este encabezado es una lista separada por comas de encabezados que corresponden a valores de los datos firmados.
+  - Un encabezado `signature` generado en función de la `Signature-Input`, usando el algoritmo de firma `EdDSA`.
+- Cuerpo
+  - Una propiedad `client` que contenga la dirección de billetera del cliente.
+
+La protección de las solicitudes de clientes sigue un perfil definido en la <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol#name-securing-requests-from-the-'>especificación del GNAP</LinkOut>.
+
+:::note
+Open Payments **no** admite tókenes de portador.
+:::
+
+### Solicitudes de concesión
+
+Al recibir una solicitud de concesión firmada, el servidor de autorización obtiene el dominio del cliente de la propiedad `client`. El servidor de autorización vincula el dominio con la concesión para usarlo al adquirir el conjunto de claves en solicitudes posteriores.
+
+Luego, el servidor obtiene el registro de claves del cliente haciendo una solicitud `GET` al punto final JWKS del cliente en `WALLET_ADDRESS/jwks.json`. Cuando el servidor de autorización encuentra la clave pública que contiene la `keyId` incluida en el encabezado `Signature-Input` de la solicitud, usa esa clave para descifrar y validar la firma de dicha solicitud. Esto vincula al cliente con la concesión y permite que el servidor continúe con el proceso de solicitud de la concesión.
+
+## Método de validación de claves
+
+### Firmas de mensajes HTTP
+
+Open Payments usa el método de validación de claves mediante <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol#name-http-message-signatures'>firmas de mensajes HTTP</LinkOut> (`httpsig`).
+
+Este método de validación `httpsig` debe declararse como parte del material de la clave al usar una clave directamente para solicitar una concesión. El material de claves que se muestra es solo ilustrativo. En Open Payments, se espera que la dirección de la billetera se utilice en la solicitud de concesión.
+
+```json title="Ejemplo"
+"key": {
+    "proof": "httpsig",
+    "jwk": {
+        "kid": "3724c845-829d-425a-9a0d-194d6f12c336",
+        "x": "_Eg6UcC8G-O4TY2cxGnZyG_lMn0aWF1rVV-Bqn9NmhE",
+        "alg": "EdDSA",
+        "kty": "OKP",
+        "crv": "Ed25519"
+    }
+}
+```
+
+Cuando se usa `httpsig`, el firmante (el cliente) crea una firma de mensaje HTTP. Los clientes de Open Payments a menudo protegen sus solicitudes a los servidores presentando un token de acceso y la validación de una clave que poseen. La excepción son las llamadas a un servidor de autorización para iniciar una concesión. En ese caso, se utiliza una validación de clave sin token de acceso y se trata de una solicitud firmada no autorizada.
+
+Consulte la [página de firmas de mensajes HTTP](/es/identity/http-signatures) para obtener más información específica sobre Open Payments. También encontrará información adicional en la <LinkOut href='https://datatracker.ietf.org/doc/html/rfc9421'>especificación</LinkOut> de firmas de mensajes HTTP.
+
+## Diagrama de secuencia
+
+Este diagrama muestra la secuencia de llamadas necesarias entre un cliente y los servidores del lado del emisor para obtener una concesión interactiva destinada a crear un recurso `outgoing-payment`.
+
+<MermaidWrapper diagramName="client-keys">
+
+{/* prettier-ignore */}
+<Mermaid
+  graph={`sequenceDiagram
+    autonumber
+    participant C as Cliente
+    participant AS as Servidor de autorización
+    participant RS as Servidor de recursos
+    C->>C: Genera el par de claves pública/privada,<br/>agrega la clave pública a su registro de claves.
+    C->RS: La clave pública se carga en el servidor de recursos.
+    C->>AS: Envía una solicitud POST de concesión (pago saliente interactivo), <br/>firmada con la clave privada.
+    AS->>AS: Extrae la keyId del encabezado signature-input <br/>de la solicitud de concesión, obtiene el dominio del cliente del cuerpo de la solicitud.
+    AS->>RS: Realiza un GET {client_domain/jwks.json} para obtener las claves públicas<br/> desde el punto final JWKS del cliente.
+    RS-->>AS: 200, documento JWKS encontrado, <br/>devuelve la clave pública.
+    AS->>AS: Valida la firma de la solicitud original del cliente <br/>usando la clave pública, vincula el dominio del cliente con la concesión.
+    AS-->>C: 200 OK
+    note over AS: Se recoge el consentimiento explícito del usuario del cliente, facilitado por el cliente, el servidor de autorización y el IdP (no se muestra).
+    C->>AS: Envía una solicitud POST de continuación de concesión, <br/>firmada con la clave privada.
+    AS->>AS: Extrae la keyId del encabezado <br/>signature-input de la solicitud de concesión, obtiene el dominio del cliente <br/>de la entrada en la base de datos correspondiente a la concesión.
+    AS->>RS: Realiza una solicitud GET {client_domain/jwks.json} de la clave pública vinculada <br/>con el dominio al punto final JWKS del cliente.
+    RS-->>AS: 200, documento JWKS encontrado, <br/>devuelve la clave pública.
+    AS->>AS: Valida la firma con la <br/>clave encontrada en el registro.
+    AS-->>C: 200 correcto, se emite el token de acceso, <br/>solicitud de continuación de concesión completada.
+`}
+/>
+
+</MermaidWrapper>

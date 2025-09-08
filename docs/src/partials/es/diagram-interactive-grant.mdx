@@ -1,0 +1,27 @@
+﻿import { MermaidWrapper, Mermaid } from '@interledger/docs-design-system'
+
+<MermaidWrapper diagramName="interactive-grant">
+
+{/* prettier-ignore */}
+<Mermaid
+  graph={`sequenceDiagram autonumber
+    Cliente->>Servidor de autorización (Authorization server AS): solicitud POST de concesión de autorización (con objeto de interacción)
+    Servidor de autorización (Authorization server AS)-->>Cliente: 200 OK, devuelve el URI de redirección para la interacción y el URI de continuación
+    Cliente->>Servidor de autorización (Authorization server AS): navega al URI de redirección para la interacción
+    Servidor de autorización (Authorization server AS)->>Servidor de autorización (Authorization server AS): comienza la interacción y configura la sesión
+    Servidor de autorización (Authorization server AS)-->>Cliente: redirección temporal 302 hacia el URI del proveedor de identidad <br>con concesión de autorización de información en la cadena de consulta
+    Cliente->>Proveedor de identidad (Identity provider IdP): redirige hacia el proveedor de identidad
+    Proveedor de identidad (Identity provider IdP)->>Proveedor de identidad (Identity provider IdP): el propietario de recursos (p. ej., el usuario cliente) <br>acepta la interacción
+    Proveedor de identidad (Identity provider IdP)->>Servidor de autorización (Authorization server AS): transmite la decisión de interacción
+    Servidor de autorización (Authorization server AS)-->>Proveedor de identidad (Identity provider IdP): decisión 202 aceptada
+    Proveedor de identidad (Identity provider IdP)->>Servidor de autorización (Authorization server AS): solicita finalizar la interacción
+    Servidor de autorización (Authorization server AS)->>Servidor de autorización (Authorization server AS): finaliza la sesión
+    Servidor de autorización (Authorization server AS)-->>Proveedor de identidad (Identity provider IdP): redirección temporal 302 para finalizar el URI <br>(definida en la solicitud de concesión de autorización inicial) <br>protegida con un hash único y <br>interact_ref en la cadena de consulta
+    Proveedor de identidad (Identity provider IdP)->>Cliente: sigue la redirección
+    Cliente->>Cliente: verifica el hash
+    Cliente->>Servidor de autorización (Authorization server AS): solicitud POST de continuación de concesión de autorización con <br>interact_ref en el cuerpo para continuar con el URI
+    Servidor de autorización (Authorization server AS)-->>Cliente: 200 OK, devuelve el token de concesión de autorización de acceso
+`}
+/>
+
+</MermaidWrapper>

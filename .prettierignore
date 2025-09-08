@@ -10,3 +10,4 @@ Dockerfile
 .gitignore
 .prettierignore
 landing
+open-payments-specifications/*
