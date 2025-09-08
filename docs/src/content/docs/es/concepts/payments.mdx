@@ -9,7 +9,7 @@ El método de pago es el medio a través del cual la entidad que administra la c
 
 Cuando un `outgoing-payment` se completa en función de un `incoming-payment` activo, el ASE del remitente tiene la obligación de efectuar el pago utilizando el método que se especificó al inicio en la respuesta del `incoming-payment`.
 
-Aunque Open Payments (estándar de pagos abiertos) se diseñó con el fin de ser una capa de abstracción capaz de emitir instrucciones de pago entre las partes involucradas en una transacción por sobre cualquier método de pago, <LinkOut href='https://interledger.org'>Interledger (ILP) </LinkOut> es actualmente el único método de pago que se integra con Open Payments de manera inmediata.
+Aunque Open Payments (estándar de pagos abiertos) se diseñó con el fin de ser una capa de abstracción capaz de emitir instrucciones de pago entre las partes involucradas en una transacción por sobre cualquier método de pago, <LinkOut href='https://interledger.org/es'>Interledger (ILP) </LinkOut> es actualmente el único método de pago que se integra con Open Payments de manera inmediata.
 
 Al utilizar ILP como un método de pago, se exige la siguiente información a la ASE de destinatario, en el objeto `method` del pago entrante.
 
