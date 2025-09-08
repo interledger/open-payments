@@ -83,7 +83,7 @@ Use the merchant and platform `authServer` details, received in the previous ste
 These calls obtain access tokens that allow your platform to request an incoming payment resource be created on the merchant's wallet account and your wallet account.
 
 :::note[Alternate scenario]
-If you and the merchant use the same account servicing entity, and the authorization server information received is the same for you both, you only need one `incomingPayment` grant.
+If you and the merchant use the same account servicing entity, and as a result, the same authorization server, you only need one `incomingPayment` grant.
 :::
 
 <Tabs syncKey="lang">
@@ -203,7 +203,7 @@ The following shows an example response from the merchant's wallet provider. A s
 
 ```json wrap
 {
-  "id": "https://happylifebank.example.com/incoming-payments/{...}", // url identifying the incoming payment
+  "id": "https://happylifebank.example.com/incoming-payments/{...}",
   "walletAddress": "https://happylifebank.example.com/merchant",
   "incomingAmount": {
     "value": "9900",
@@ -220,8 +220,8 @@ The following shows an example response from the merchant's wallet provider. A s
   "methods": [
     {
       "type": "ilp",
-      "ilpAddress": "...", // ilp address to use when establishing a STREAM connection
-      "sharedSecret": "..." // base64 url-encoded shared secret to use when establishing a STREAM connection
+      "ilpAddress": "...",
+      "sharedSecret": "..."
     }
   ]
 }
@@ -469,7 +469,7 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
 ```json wrap
 {
   "access_token": {
-    "value": "...", // access token value for the outgoing payment grant continuation
+    "value": "...", // final access token required before creating outgoing payments
     "manage": "https://auth.cloudninebank.example.com/token/{...}", // management uri for access token
     "access": [
       {
