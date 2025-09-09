@@ -9,11 +9,9 @@ import { LinkOut, Tooltip } from '@interledger/docs-design-system'
 Amounts in Open Payments define monetary values using asset codes, asset scales, and specific amount types. They provide a standardized way to represent money across different currencies and payment scenarios.
 :::
 
-Amounts represent monetary values and are fundamental to all payment operations. Every amount consists of three key components: a numerical value, an asset code, and an asset scale. Understanding these components is crucial for building Open Payments applications.
+Amounts represent monetary values and are fundamental to all payment operations. Every amount consists of three key components: a numerical `value`, an `assetCode`, and an `assetScale`. Understanding these components is crucial for building Open Payments applications.
 
-Amounts are central to every Open Payments operation. Whether you're creating an incoming payment, requesting a quote, or tracking payment progress, all amounts follow the same three-part structure: a value, asset code, and asset scale.
-
-Every amount in Open Payments consists of three components:
+Amounts are central to every Open Payments operation. Whether you're creating an incoming payment, requesting a quote, or tracking payment progress, all amounts follow the same three-part structure:
 
 ```json
 {
@@ -24,6 +22,10 @@ Every amount in Open Payments consists of three components:
 ```
 
 This consistent structure enables multi-currency payments, precise calculations, and seamless integration between different <Tooltip content="Account servicing entity">ASEs</Tooltip>.
+
+:::note[Wallet address asset constraint]
+[Wallet addresses](/concepts/wallet-addresses) support only one specific asset. Therefore, the amounts that can be sent or received by a particular wallet address will only be in the asset supported by that wallet. For example, a USD wallet address can only accept amounts with `assetCode: "USD"`.
+:::
 
 ## Asset codes
 
@@ -114,7 +116,7 @@ Open Payments uses unsigned 64-bit integers for monetary amounts instead of floa
 
 Asset scales are integers between 0 and 255 that represent the exponent in the conversion formula:
 
-**Monetary Value = Integer Amount ÷ 10^(Asset Scale)**
+**Monetary Value = Integer Amount ÷ 10<sup> `assetScale`</sup>**
 
 For USD with scale 2: $1.00 = 100 cents, so the scale is 2 (10² = 100).
 
