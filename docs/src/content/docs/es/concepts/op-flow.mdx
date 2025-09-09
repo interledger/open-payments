@@ -23,7 +23,7 @@ En esta página, se analizan en profundidad las llamadas e interacciones de la i
 
 ## Cómo obtener los datos de la cuenta
 
-Un cliente recupera los datos públicos sobre la cuenta compatible con Open Payments de un destinatario mediante la emisión de una <LinkOut href='/apis/wallet-address-server/operations/get-wallet-address/'>solicitud GET</LinkOut> para la dirección de billetera del destinatario. Los datos incluyen el código y la escala del activo de la cuenta subyacente, así como las URL de los servidores de autorización y de recursos que el cliente necesita para configurar un pago al destinatario.
+Un cliente recupera los datos públicos sobre la cuenta compatible con Open Payments de un destinatario mediante la emisión de una <LinkOut href='/es/apis/wallet-address-server/operations/get-wallet-address/'>solicitud GET</LinkOut> para la dirección de billetera del destinatario. Los datos incluyen el código y la escala del activo de la cuenta subyacente, así como las URL de los servidores de autorización y de recursos que el cliente necesita para configurar un pago al destinatario.
 
 <MermaidWrapper diagramName="get-account-details">
 
@@ -42,7 +42,7 @@ Un cliente recupera los datos públicos sobre la cuenta compatible con Open Paym
 
 ## Pago entrante
 
-Primero, el cliente <LinkOut href='/apis/auth-server/operations/post-request'>solicita/recibe una concesión de autorización</LinkOut> de parte del servidor de autorización de la <Tooltip content="Entidad que administra la cuenta" client:load>ASE</Tooltip> del destinatario para crear un recurso de `incoming-payment`. El cliente envía una solicitud al servidor de recursos de la ASE para <LinkOut href='/apis/resource-server/operations/create-incoming-payment/'>crear el recurso</LinkOut>. Una vez creado, el servidor de recursos devuelve los datos de pago único que el cliente utilizará para realizar uno o más pagos al destinatario.
+Primero, el cliente <LinkOut href='/es/apis/auth-server/operations/post-request'>solicita/recibe una concesión de autorización</LinkOut> de parte del servidor de autorización de la <Tooltip content="Entidad que administra la cuenta" client:load>ASE</Tooltip> del destinatario para crear un recurso de `incoming-payment`. El cliente envía una solicitud al servidor de recursos de la ASE para <LinkOut href='/es/apis/resource-server/operations/create-incoming-payment/'>crear el recurso</LinkOut>. Una vez creado, el servidor de recursos devuelve los datos de pago único que el cliente utilizará para realizar uno o más pagos al destinatario.
 
 <MermaidWrapper diagramName="incoming-payment">
 
@@ -64,7 +64,7 @@ Primero, el cliente <LinkOut href='/apis/auth-server/operations/post-request'>so
 
 ## Cotización
 
-El cliente <LinkOut href='/apis/auth-server/operations/post-request'>solicita/recibe una concesión de autorización</LinkOut> de parte del servidor de autorización de la <Tooltip content="Entidad que administra la cuenta" client: load><span>ASE</span></Tooltip> del destinatario, para crear un recurso de `quote`. El cliente envía una solicitud al servidor de recursos para <LinkOut href='/apis/resource-server/operations/create-quote'>crear el recurso</LinkOut>. Una vez creado, el servidor de recursos devuelve, entre otros datos, una `id` de cotización y el monto que costará efectuar el pago.
+El cliente <LinkOut href='/es/apis/auth-server/operations/post-request'>solicita/recibe una concesión de autorización</LinkOut> de parte del servidor de autorización de la <Tooltip content="Entidad que administra la cuenta" client: load><span>ASE</span></Tooltip> del destinatario, para crear un recurso de `quote`. El cliente envía una solicitud al servidor de recursos para <LinkOut href='/es/apis/resource-server/operations/create-quote'>crear el recurso</LinkOut>. Una vez creado, el servidor de recursos devuelve, entre otros datos, una `id` de cotización y el monto que costará efectuar el pago.
 
 <MermaidWrapper diagramName="quote">
 
@@ -86,11 +86,11 @@ El cliente <LinkOut href='/apis/auth-server/operations/post-request'>solicita/re
 
 ## Pago saliente
 
-Antes de que se pueda crear un recurso de pago saliente en la cuenta del remitente, Open Payments exige que el cliente envíe una <LinkOut href='/apis/auth-server/operations/post-request'>solicitud interactiva de concesión de autorización</LinkOut> al servidor de autorización de la <Tooltip content="Entidad que administra la cuenta" client: load><span>ASE</span></Tooltip> del remitente.
+Antes de que se pueda crear un recurso de pago saliente en la cuenta del remitente, Open Payments exige que el cliente envíe una <LinkOut href='/es/apis/auth-server/operations/post-request'>solicitud interactiva de concesión de autorización</LinkOut> al servidor de autorización de la <Tooltip content="Entidad que administra la cuenta" client: load><span>ASE</span></Tooltip> del remitente.
 
 Una solicitud interactiva de concesión de autorización exige que se obtenga el consentimiento explícito del remitente antes de que se emita un token de acceso. Aunque el cliente debe facilitar la interacción, el servidor de autorización y el proveedor de identidad (identity provider, IdP) de la ASE del remitente son responsables de la interfaz y de obtener el consentimiento.
 
-Una vez que se obtuvo el consentimiento, el cliente solicita permiso para <LinkOut href='/apis/auth-server/operations/post-continue'>continuar con la solicitud de concesión de autorización</LinkOut> con el fin de obtener un token de acceso.
+Una vez que se obtuvo el consentimiento, el cliente solicita permiso para <LinkOut href='/es/apis/auth-server/operations/post-continue'>continuar con la solicitud de concesión de autorización</LinkOut> con el fin de obtener un token de acceso.
 
 :::note[Cronograma de la solicitud de continuación]
 Para los pagos salientes, se requiere el consentimiento explícito del usuario antes de avanzar con la solicitud de continuación. Una vez que el usuario completó su interacción con el proveedor de identidad (IdP), debe ser redirigido de vuelta a la aplicación. En este punto, usted puede hacer la solicitud de continuación de la concesión. En situaciones donde una interfaz de usuario no se encuentra disponible, analice la posibilidad de implementar un mecanismo de sondeo para verificar que se haya completado la interacción.
@@ -98,7 +98,7 @@ Para los pagos salientes, se requiere el consentimiento explícito del usuario a
 
 <Interactive />
 
-Una vez que se obtiene un token de acceso, el cliente puede solicitar la creación de un <LinkOut href='/apis/resource-server/operations/create-outgoing-payment'>recurso de pago saliente</LinkOut>. La configuración del pago está completa, y el flujo de Open Payments finaliza luego de la creación del recurso.
+Una vez que se obtiene un token de acceso, el cliente puede solicitar la creación de un <LinkOut href='/es/apis/resource-server/operations/create-outgoing-payment'>recurso de pago saliente</LinkOut>. La configuración del pago está completa, y el flujo de Open Payments finaliza luego de la creación del recurso.
 
 <MermaidWrapper diagramName="outgoing-payment">
 
@@ -118,7 +118,7 @@ Una vez que se obtiene un token de acceso, el cliente puede solicitar la creaci�
 
 ## Cómo obtener el historial de transacciones
 
-Para proporcionar a un usuario el historial de sus transacciones, el cliente puede recuperar una lista de los <LinkOut href='/apis/resource-server/operations/list-incoming-payments/'>pagos entrantes (recibidos)</LinkOut> y los <LinkOut href='/apis/resource-server/operations/list-outgoing-payments/'>pagos salientes (enviados)</LinkOut> del usuario.
+Para proporcionar a un usuario el historial de sus transacciones, el cliente puede recuperar una lista de los <LinkOut href='/es/apis/resource-server/operations/list-incoming-payments/'>pagos entrantes (recibidos)</LinkOut> y los <LinkOut href='/es/apis/resource-server/operations/list-outgoing-payments/'>pagos salientes (enviados)</LinkOut> del usuario.
 
 <MermaidWrapper diagramName="get-all-transaction-history">
 
@@ -136,7 +136,7 @@ Para proporcionar a un usuario el historial de sus transacciones, el cliente pue
 
 </MermaidWrapper>
 
-De igual manera, el cliente puede proporcionar al usuario los datos sobre un pago <LinkOut href='/apis/resource-server/operations/get-incoming-payment'>entrante</LinkOut> o <LinkOut href='/apis/resource-server/operations/get-outgoing-payment'>saliente</LinkOut> en específico.
+De igual manera, el cliente puede proporcionar al usuario los datos sobre un pago <LinkOut href='/es/apis/resource-server/operations/get-incoming-payment'>entrante</LinkOut> o <LinkOut href='/es/apis/resource-server/operations/get-outgoing-payment'>saliente</LinkOut> en específico.
 
 <MermaidWrapper diagramName="get-specific-transaction-history">
 

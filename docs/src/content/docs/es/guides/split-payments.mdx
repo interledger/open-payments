@@ -28,11 +28,11 @@ Las tres partes que intervienen en la transacción son las siguientes:
 
 ## Puntos finales
 
-- <LinkOut href='https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/'>Cómo obtener una dirección de billetera</LinkOut>
-- <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-request/'>Solicitud de concesiones de autorización</LinkOut>
-- <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-incoming-payment/'>Cómo crear un pago entrante</LinkOut>
-- <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-quote/'>Cómo crear una cotización</LinkOut>
-- <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment/'>Cómo crear un pago saliente</LinkOut>
+- <LinkOut href='https://openpayments.dev/es/apis/wallet-address-server/operations/get-wallet-address/'>Cómo obtener una dirección de billetera</LinkOut>
+- <LinkOut href='https://openpayments.dev/es/apis/auth-server/operations/post-request/'>Solicitud de concesiones de autorización</LinkOut>
+- <LinkOut href='https://openpayments.dev/es/apis/resource-server/operations/create-incoming-payment/'>Cómo crear un pago entrante</LinkOut>
+- <LinkOut href='https://openpayments.dev/es/apis/resource-server/operations/create-quote/'>Cómo crear una cotización</LinkOut>
+- <LinkOut href='https://openpayments.dev/es/apis/resource-server/operations/create-outgoing-payment/'>Cómo crear un pago saliente</LinkOut>
 
 ## Pasos
 
@@ -42,7 +42,7 @@ Cuando un consumidor inicia un pago, su plataforma debe obtener la información 
 
 Supongamos que la dirección de la billetera ya se encuentra guardada en su plataforma, al igual que la del comerciante. Supongamos además que el consumidor proporcionó su dirección de billetera al comienzo del proceso de pago.
 
-Llame a la [API Obtener dirección de billetera](/apis/wallet-address-server/operations/get-wallet-address) para cada dirección.
+Llame a la [API Obtener dirección de billetera](/es/apis/wallet-address-server/operations/get-wallet-address) para cada dirección.
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -65,7 +65,7 @@ url: 'https://coolwallet.example.com/platform'
 
 ### 2. Solicitar concesiones de autorización de pagos entrantes
 
-Utilice los datos del comerciante y de la plataforma `authServer`, recibidos en el paso anterior, para llamar a la [API Solicitud de concesión](/apis/auth-server/operations/post-request).
+Utilice los datos del comerciante y de la plataforma `authServer`, recibidos en el paso anterior, para llamar a la [API Solicitud de concesión](/es/apis/auth-server/operations/post-request).
 
 El propósito de estas llamadas consiste en obtener tókenes de acceso que permitan a su plataforma solicitar la creación de un recurso de pago entrante en la cuenta de la billetera del comerciante y en su cuenta de billetera.
 
@@ -117,7 +117,7 @@ const merchantIncomingPaymentGrant = await client.grant.request(
 
 ### 3. Solicitar la creación de recursos de pagos entrantes
 
-Use los tókenes de acceso devueltos en las respuestas anteriores para llamar a la [API Crear pago entrante](/apis/resource-server/operations/create-incoming-payment).
+Use los tókenes de acceso devueltos en las respuestas anteriores para llamar a la [API Crear pago entrante](/es/apis/resource-server/operations/create-incoming-payment).
 
 El propósito de estas llamadas consiste en solicitar la creación de un recurso de pago entrante en la cuenta de la billetera del comerciante y en su cuenta de billetera.
 
@@ -173,7 +173,7 @@ El `value` total de $100 es `10000`. El comerciante recibirá el 99 % (`9900`) y
 
 ### 4. Solicitar una concesión de autorización para una cotización
 
-Utilice los datos del consumidor `authServer`, recibidos en el paso 1, para llamar a la [API Solicitud de concesión](/apis/auth-server/operations/post-request).
+Utilice los datos del consumidor `authServer`, recibidos en el paso 1, para llamar a la [API Solicitud de concesión](/es/apis/auth-server/operations/post-request).
 
 El propósito de esta llamada consiste en obtener un token de acceso que permita a su plataforma solicitar la creación de recursos de cotización en la cuenta de la billetera del consumidor.
 
@@ -201,7 +201,7 @@ El propósito de esta llamada consiste en obtener un token de acceso que permita
 
 ### 5. Solicitar la creación de recursos de cotización
 
-Utilice el token de acceso recibido en el paso anterior para llamar a la [API Crear cotización](/apis/resource-server/operations/create-quote).
+Utilice el token de acceso recibido en el paso anterior para llamar a la [API Crear cotización](/es/apis/resource-server/operations/create-quote).
 
 El propósito de esta llamada consiste en solicitar la creación de un recurso de cotización en la cuenta de la billetera del consumidor. Dado que el consumidor necesita un recurso de cotización tanto para el comerciante como para la plataforma, llamaremos a la API dos veces usando el mismo token de acceso.
 
@@ -249,7 +249,7 @@ Cada respuesta devuelve un `receiveAmount`, un `debitAmount` y demás informaci�
 
 ### 6. Solicitar una concesión de autorización interactiva para un pago saliente
 
-Utilice la información del consumidor `authServer` recibida en el paso 1 para llamar a la [API Solicitud de concesión](/apis/auth-server/operations/post-request).
+Utilice la información del consumidor `authServer` recibida en el paso 1 para llamar a la [API Solicitud de concesión](/es/apis/auth-server/operations/post-request).
 
 El propósito de esta llamada consiste en obtener un token de acceso que permita a su plataforma solicitar la creación de recursos de pago saliente en la cuenta de la billetera del consumidor.
 
@@ -317,7 +317,7 @@ En nuestro ejemplo, suponemos que el IdP con el que interactuó el consumidor cu
 En una situación hipotética donde una interfaz de usuario no se encuentra disponible, analice la posibilidad de implementar un mecanismo de sondeo para verificar que se haya completado la interacción.
 :::
 
-Llame a la [API Continuación de solicitud de concesión](/apis/auth-server/operations/post-continue). El propósito de esta llamada consiste en solicitar un token de acceso que permita a su plataforma solicitar la creación de recursos de pago saliente en la cuenta de la billetera del consumidor.
+Llame a la [API Continuación de solicitud de concesión](/es/apis/auth-server/operations/post-continue). El propósito de esta llamada consiste en solicitar un token de acceso que permita a su plataforma solicitar la creación de recursos de pago saliente en la cuenta de la billetera del consumidor.
 
 Emita la solicitud al `continue uri` proporcionado en la respuesta de concesión de pago saliente inicial (paso 6). Por ejemplo:
 
@@ -347,7 +347,7 @@ Recuerde que las respuestas de la API Crear cotización para el comerciante y pa
 
 Dado que las cotizaciones contienen los montos por debitar y recibir, no especificaremos otros montos al realizar una solicitud a la API Crear pago saliente. En su lugar, especificaremos un `quoteId`.
 
-Utilice los tókenes de acceso devueltos en el paso 5 para llamar a la [API Crear pago saliente](/apis/resource-server/operations/create-outgoing-payment).
+Utilice los tókenes de acceso devueltos en el paso 5 para llamar a la [API Crear pago saliente](/es/apis/resource-server/operations/create-outgoing-payment).
 
 El propósito de estas llamadas consiste en solicitar la creación de un recurso de pago saliente en la cuenta de la billetera del consumidor: uno para el comerciante y otro para su plataforma. Incluya el `quoteId` correspondiente en cada solicitud.
 
