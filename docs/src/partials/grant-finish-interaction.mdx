@@ -2,5 +2,5 @@ The user interacts with the authorization server through the server’s interfac
 
 Provided the user approves the grant, the authorization server:
 
-- Sends the user to your client’s previously defined `finish.uri`. The means by which the server sends the user to the URI is out of scope, but common options include redirecting the user from a web page and launching the system browser with the target URI.
-- Secures the redirect by adding a unique hash, allowing your client to validate the `finish` call, and an interaction reference as query parameters to the URI.
+- Sends the user to the `finish.uri` provided in the interactive outgoing payment grant request. The means by which the server sends the user to the URI is out of scope, but common options include redirecting the user from a web page and launching the system browser with the target URI.
+- Secures the redirect by adding a [unique hash](/identity/hash-verification), allowing your client to validate the `finish` call, and an interaction reference as query parameters to the URI.
