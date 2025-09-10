@@ -14,7 +14,7 @@ Learn how an Open Payments-enabled client can be used to send a one-time payment
 
 The Open Payments APIs facilitate multiple use cases for one-time payments to and from Open Payments-enabled wallets. Making a payment directly from one person to another, called a peer-to-peer payment, is one example.
 
-This guide provides the steps an Open Payments-enabled client will take to set up a one-time $10 USD payment from you, the sender, to a recipient.
+This guide provides the steps your Open Payments-enabled client will take to set up a one-time $10 USD payment from a sender to a recipient.
 
 ## Endpoints
 
@@ -28,9 +28,9 @@ This guide provides the steps an Open Payments-enabled client will take to set u
 
 ### 1. Get wallet address information
 
-When you initiate a payment, your client must get wallet address information for both you, as the sender, and the recipient.
+To initiate a payment, the client must get wallet address information for both the sender and recipient.
 
-Let's assume your wallet address is already saved in your client. Let's also assume that you've entered the recipient's wallet address into a payment form in your client.
+Let's assume the sender's wallet address is already saved in your client. The sender is essentially your client's user. Let's also assume the sender has entered the recipient's wallet address into a payment form in your client.
 
 Call the [Get Wallet Address API](/apis/wallet-address-server/operations/get-wallet-address) for each address.
 
@@ -49,7 +49,7 @@ Call the [Get Wallet Address API](/apis/wallet-address-server/operations/get-wal
 
 <details>
 <summary>Example response</summary>
-The following shows an example response from the recipient's wallet provider. A similar response will be returned from your wallet provider.
+The following shows an example response from the recipient's wallet provider. A similar response will be returned from the sender's wallet provider.
 ```json wrap
 {
   "id": "https://happylifebank.example.com/recipient",
@@ -175,9 +175,9 @@ In the example below, the incoming payment will be for $10 USD.
 
 ### 4. Request a quote grant
 
-Use your wallet's `authServer` details, received in Step 1, to call the [Grant Request API](/apis/auth-server/operations/post-request).
+Use the sender wallet's `authServer` details, received in Step 1, to call the [Grant Request API](/apis/auth-server/operations/post-request).
 
-This call obtains an access token that allows your client to request a quote resource be created on your wallet account.
+This call obtains an access token that allows your client to request a quote resource be created on the sender's wallet account.
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -231,7 +231,7 @@ This call obtains an access token that allows your client to request a quote res
 
 Use the access token received in the previous step to call the [Create Quote API](/apis/resource-server/operations/create-quote).
 
-This call requests a quote resource be created on your wallet account. The request must contain the `receiver`, which is the incoming payment `id` returned from the recipient's wallet in Step 3.
+This call requests a quote resource be created on the sender's wallet account. The request must contain the `receiver`, which is the incoming payment `id` returned from the recipient's wallet in Step 3.
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -278,11 +278,13 @@ This call requests a quote resource be created on your wallet account. The reque
 
 ### 6. Request an interactive outgoing payment grant
 
-Use your wallet's `authServer` information, received in Step 1, to call the [Grant Request API](/apis/auth-server/operations/post-request).
+Use the sender wallet's `authServer` information, received in Step 1, to call the [Grant Request API](/apis/auth-server/operations/post-request).
 
-This call obtains an access token that allows your client to request an outgoing payment resource be created on your wallet account.
+This call obtains an access token that allows your client to request an outgoing payment resource be created on the sender's wallet account.
 
-<InteractionReq />
+:::note
+Outgoing payments require an interactive grant. This type of grant will obtain the user's consent before an outgoing payment is made against their wallet account. You can find more information in [Open Payments flow](/concepts/op-flow/#outgoing-payment) and [identity providers](/identity/idp) pages.
+:::
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -312,7 +314,7 @@ This call obtains an access token that allows your client to request an outgoing
         start: ['redirect'],
         finish: {
           method: 'redirect',
-          uri: 'https://paymentplatform.example/finish/{...}', // where your client will redirect you to after you've completed the interaction
+          uri: 'https://paymentplatform.example/finish/{...}', // where the client will redirect the user to after they've completed the interaction
           nonce: NONCE
         }
       }
@@ -328,7 +330,7 @@ This call obtains an access token that allows your client to request an outgoing
 ```json wrap
 {
   "interact": {
-    "redirect": "https://auth.interledger-test.dev/{...}", // uri the client will redirect you to, to begin the interaction
+    "redirect": "https://auth.interledger-test.dev/{...}", // uri the client will redirect the user to, to begin the interaction
     "finish": "..." // unique key to secure the callback
   },
   "continue": {
@@ -343,23 +345,23 @@ This call obtains an access token that allows your client to request an outgoing
 
 </details>
 
-### 7. Start interaction with the user (you, as the sender)
+### 7. Start interaction with the user
 
 <StartInteraction />
 
-### 8. Finish interaction with the user (you, as the sender)
+### 8. Finish interaction with the user
 
 <FinishInteraction />
 
 ### 9. Request a grant continuation
 
-In our example, we're assuming the IdP you interacted with has a user interface. When the interaction completes, you are returned to your client. Now your client can make a continuation request for the outgoing payment grant.
+In our example, we're assuming the IdP the user interacted with has a user interface. When the interaction completes, the user is returned to your client. Now your client can make a continuation request for the outgoing payment grant.
 
 :::note
 In a scenario where a user interface isn't available, consider implementing a polling mechanism in the client to check for the completion of the interaction.
 :::
 
-Call the [Grant Continuation Request API](/apis/auth-server/operations/post-continue). This call requests an access token that allows your client to request an outgoing payment resource be created on your wallet account.
+Call the [Grant Continuation Request API](/apis/auth-server/operations/post-continue). This call requests an access token that allows your client to request an outgoing payment resource be created on the sender's wallet account.
 
 Issue the request to the `continue.uri` provided in the initial outgoing payment grant response (Step 6).
 
