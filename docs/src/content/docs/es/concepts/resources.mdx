@@ -31,7 +31,7 @@ En lugar de especificar el monto que se recibirá, puede especificar la cantidad
 
 El pago saliente se crea y los fondos se envían al recurso de `incoming-payment`. Sin embargo, el `incomingAmount` nunca se estableció, por lo que el destinatario no tiene forma de saber qué monto recibirá. La ASE del destinatario no sabrá cuando se haya completado el pago.
 
-En lugar de esperar hasta el vencimiento de la sesión de pago, el cliente puede emitir una solicitud explícita para <LinkOut href='/apis/resource-server/operations/complete-incoming-payment'>completar el pago entrante</LinkOut> de forma manual, con el fin de indicar que no se enviarán más pagos.
+En lugar de esperar hasta el vencimiento de la sesión de pago, el cliente puede emitir una solicitud explícita para <LinkOut href='/es/apis/resource-server/operations/complete-incoming-payment'>completar el pago entrante</LinkOut> de forma manual, con el fin de indicar que no se enviarán más pagos.
 
 :::tip[Caso de uso: pagos continuos mediante Web Monetization (estándar de monetización web)]
 En los pagos continuos por medio de Web Monetization, la ASE del destinatario desconoce el monto máximo que se va a pagar. Los pagos siguen efectuándose hasta que el agente de Web Monetization finaliza la sesión. En este punto, el agente de Web Monetization puede solicitar que se marque como completado el pago entrante. Esto permite que la ASE del destinatario sea notificada lo antes posible de que no se enviarán más pagos y que se acredite el monto en la cuenta del destinatario.
@@ -45,7 +45,7 @@ El objetivo de una cotización es indicar cuánto costará efectuar el pago, lo 
 
 Existen tres tipos de cotizaciones:
 
-- **Cotización de envío fijo:** se pagará un monto fijo desde la cuenta del _remitente_. Se exige un `debitAmount` para este tipo de cotización. En este caso, un pago entrante no puede completarse automáticamente hasta su vencimiento. Sin embargo, en lugar de esperar hasta su vencimiento, el cliente puede emitir una <LinkOut href='/apis/resource-server/operations/complete-incoming-payment'>solicitud de completar el pago entrante</LinkOut> una vez que el pago saliente se haya completado.
+- **Cotización de envío fijo:** se pagará un monto fijo desde la cuenta del _remitente_. Se exige un `debitAmount` para este tipo de cotización. En este caso, un pago entrante no puede completarse automáticamente hasta su vencimiento. Sin embargo, en lugar de esperar hasta su vencimiento, el cliente puede emitir una <LinkOut href='/es/apis/resource-server/operations/complete-incoming-payment'>solicitud de completar el pago entrante</LinkOut> una vez que el pago saliente se haya completado.
 - **Cotización de recepción fija:** se pagará un monto fijo en la cuenta del _destinatario_. Se exige un `receiveAmount` para este tipo de cotización.
 - **Cotización con monto entrante:** el pago entrante ya tiene un `incomingAmount` definido. Para este tipo de cotización, el `receiver` es la URL del recurso de `incoming-payment` a la que se efectuará el pago, que se indica por la presencia de `/incoming-payments` en la URL.
 

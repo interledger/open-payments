@@ -26,15 +26,15 @@ En esta guía, usted asume el rol de desarrollador de una aplicación. La guía 
 
 ## Puntos finales
 
-- <LinkOut href='https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/'>Cómo obtener una dirección de billetera</LinkOut>
-- <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-request/'>Solicitud de concesiones de autorización</LinkOut>
-- <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-continue/'>Continuación de solicitud de concesión de autorización</LinkOut>
+- <LinkOut href='/es/apis/wallet-address-server/operations/get-wallet-address/'>Cómo obtener una dirección de billetera</LinkOut>
+- <LinkOut href='/es/apis/auth-server/operations/post-request/'>Solicitud de concesiones de autorización</LinkOut>
+- <LinkOut href='/es/apis/auth-server/operations/post-continue/'>Continuación de solicitud de concesión de autorización</LinkOut>
 
 ## Pasos
 
 ### 1. Obtener los datos de la dirección de billetera
 
-Supongamos que su usuario guardó su dirección de billetera en el perfil de su cuenta al configurar la aplicación. Llame a la [API Obtener dirección de billetera](/apis/wallet-address-server/operations/get-wallet-address) para obtener los datos necesarios sobre la cuenta de la billetera del usuario.
+Supongamos que su usuario guardó su dirección de billetera en el perfil de su cuenta al configurar la aplicación. Llame a la [API Obtener dirección de billetera](/es/apis/wallet-address-server/operations/get-wallet-address) para obtener los datos necesarios sobre la cuenta de la billetera del usuario.
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -48,7 +48,7 @@ Supongamos que su usuario guardó su dirección de billetera en el perfil de su 
 
 ### 2. Solicitar una concesión de autorización interactiva para un pago saliente
 
-Utilice la información del servidor de autorización recibida en el paso anterior para llamar a la [API Solicitud de concesión](/apis/auth-server/operations/post-request). El propósito de esta llamada consiste en obtener un token que permita que el cliente solicite la creación de recursos de pago saliente en la cuenta de la billetera de su usuario.
+Utilice la información del servidor de autorización recibida en el paso anterior para llamar a la [API Solicitud de concesión](/es/apis/auth-server/operations/post-request). El propósito de esta llamada consiste en obtener un token que permita que el cliente solicite la creación de recursos de pago saliente en la cuenta de la billetera de su usuario.
 
 <InteractionReq />
 
