@@ -1,0 +1,494 @@
+---
+title: One-time payment with debitAmount
+---
+
+import { LinkOut } from '@interledger/docs-design-system'
+import { Tabs, TabItem, Card } from '@astrojs/starlight/components'
+import InteractionReq from '/src/partials/interaction-required.mdx'
+import StartInteraction from '/src/partials/grant-start-interaction.mdx'
+import FinishInteraction from '/src/partials/grant-finish-interaction.mdx'
+
+:::tip[Summary]
+Learn how to send a direct payment where the sender specifies a fixed amount to send (debitAmount) rather than the recipient receiving a fixed amount.
+:::
+
+Imagine you're sending money to a family member overseas. You want to send exactly $100 USD from your account, regardless of how much they actually receive after fees and exchange rates. This is different from sending money where you specify how much the recipient should receive - in that case, you'd pay whatever fees are necessary to ensure they get the exact amount.
+
+With Open Payments, you can create payment instructions that specify exactly how much should be debited from your account (the `debitAmount`), while the recipient receives whatever amount remains after fees and currency conversion.
+
+Remember, Open Payments doesn't execute payments or touch money in any way. It's used to issue payment instructions before any money movement occurs. An example of a payment instruction is, "debit exactly $100 from the sender's account and send it to the recipient's incoming payment."
+
+## Scenario
+
+For this guide, you'll assume the role of a sender making a direct payment. The guide explains how to send a $100 USD payment where you pay exactly $100 (plus any fees), and the recipient receives the amount after all fees and currency conversion.
+
+The two parties involved in the transaction are the:
+
+- Sender: you, the person sending money
+- Recipient: the person receiving the money
+
+## Endpoints
+
+- <LinkOut href='https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/'>Get a Wallet address</LinkOut>
+- <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-request/'>Grant Request</LinkOut>
+- <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-incoming-payment/'>Create Incoming Payment</LinkOut>
+- <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-quote/'>Create a Quote</LinkOut>
+- <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment/'>Create an Outgoing Payment</LinkOut>
+
+## Steps
+
+### 1. Get wallet address information
+
+When you initiate a payment, you need to get wallet address information for both yourself (the sender) and the recipient.
+
+Let's assume you have the recipient's wallet address. You'll also need your own wallet address information.
+
+Call the [Get Wallet Address API](/apis/wallet-address-server/operations/get-wallet-address) for each address.
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts
+  const senderWalletAddress = await client.walletAddress.get({
+    url: 'https://cloudninebank.example.com/sender'
+  })
+  const recipientWalletAddress = await client.walletAddress.get({
+    url: 'https://happylifebank.example.com/recipient'
+  })
+```
+</TabItem>
+</Tabs>
+
+<details>
+<summary>Example response</summary>
+The following shows an example response from the sender's wallet provider. A similar response will be returned from the recipient's wallet provider.
+```json wrap
+{
+  "id": "https://cloudninebank.example.com/sender",
+  "assetCode": "USD",
+  "assetScale": 2,
+  "authServer": "https://auth.cloudninebank.example.com/",
+  "resourceServer": "https://cloudninebank.example.com/op"
+}
+```
+</details>
+
+### 2. Request incoming payment grant
+
+Use the recipient's `authServer` details, received in the previous step, to call the [Grant Request API](/apis/auth-server/operations/post-request).
+
+This call obtains an access token that allows you to request an incoming payment resource be created on the recipient's wallet account.
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts wrap
+  const recipientIncomingPaymentGrant = await client.grant.request(
+    {
+      url: recipientWalletAddress.authServer
+    },
+    {
+      access_token: {
+        access: [
+          {
+            type: "incoming-payment",
+            actions: ["read", "create"],
+          },
+        ],
+      },
+    },
+  );
+````
+</TabItem>
+</Tabs>
+
+<details>
+<summary>Example response</summary>
+The following shows an example response from the recipient's wallet provider.
+
+```json wrap
+{
+  "access_token": {
+    "value": "...", // access token value for incoming payment grant
+    "manage": "https://happylifebank.example.com/token/{...}", // management uri for access token
+    "access": [
+      {
+        "type": "incoming-payment",
+        "actions": ["create", "read"]
+      }
+    ]
+  },
+  "continue": {
+    "access_token": {
+      "value": "..." // access token for continuing the request
+    },
+    "uri": "https://happylifebank.example.com/continue/{...}" // continuation request uri
+  }
+}
+```
+
+</details>
+
+### 3. Request the creation of incoming payment resource
+
+Use the access token returned in the previous response to call the [Create Incoming Payment API](/apis/resource-server/operations/create-incoming-payment).
+
+This call requests an incoming payment resource be created on the recipient's wallet account. Note that we do NOT specify an `incomingAmount` - this allows the recipient to receive whatever amount remains after fees and currency conversion.
+
+<Tabs syncKey="lang">
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts wrap
+  const recipientIncomingPayment = await client.incomingPayment.create(
+    {
+      url: recipientWalletAddress.resourceServer,
+      accessToken: recipientIncomingPaymentGrant.access_token.value
+    },
+    {
+      walletAddress: recipientWalletAddress.id
+      // Note: No incomingAmount specified - recipient receives whatever amount remains after fees
+    },
+  )
+```
+</TabItem>
+</Tabs>
+
+<details>
+<summary>Example response</summary>
+The following shows an example response from the recipient's wallet provider.
+
+```json wrap
+{
+  "id": "https://happylifebank.example.com/incoming-payments/{...}",
+  "walletAddress": "https://happylifebank.example.com/recipient",
+  "receivedAmount": {
+    "value": "0",
+    "assetCode": "USD",
+    "assetScale": 2
+  },
+  "completed": false,
+  "createdAt": "2025-03-12T23:20:50.52Z",
+  "methods": [
+    {
+      "type": "ilp",
+      "ilpAddress": "...",
+      "sharedSecret": "..."
+    }
+  ]
+}
+```
+
+</details>
+
+### 4. Request a quote grant
+
+Use your `authServer` details, received in Step 1, to call the [Grant Request API](/apis/auth-server/operations/post-request).
+
+This call obtains an access token that allows you to request quote resources be created on your wallet account.
+
+<Tabs syncKey="lang">
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+    ```ts wrap
+    const senderQuoteGrant = await client.grant.request(
+      {
+        url: senderWalletAddress.authServer
+      },
+      {
+        access_token: {
+          access: [
+            {
+              type: 'quote',
+              actions: ['create', 'read']
+            }
+          ]
+        }
+      }
+    )
+    ```
+  </TabItem>
+</Tabs>
+
+<details>
+  <summary>Example response</summary>
+
+```json wrap
+{
+  "access_token": {
+    "value": "...", // access token value for quote grant
+    "manage": "https://cloudninebank.example.com/token/{...}", // management uri for access token
+    "access": [
+      {
+        "type": "quote",
+        "actions": ["create", "read"]
+      }
+    ]
+  },
+  "continue": {
+    "access_token": {
+      "value": "..." // access token for continuing the request
+    },
+    "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
+  }
+}
+```
+
+</details>
+
+### 5. Request the creation of quote resource
+
+Use the access token, received in the previous step, to call the [Create Quote API](/apis/resource-server/operations/create-quote).
+
+This call requests a quote resource be created on your wallet account. The request must contain the `receiver`, which is the recipient's incoming payment `id`, along with the `debitAmount` - the exact amount you want to pay.
+
+The `debitAmount` specifies that you will pay exactly $100 USD (plus any fees), and the recipient will receive whatever amount remains after all fees and currency conversion.
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts wrap
+  const quote = await client.quote.create(
+    {
+      url: senderWalletAddress.resourceServer,
+      accessToken: senderQuoteGrant.access_token.value
+    },
+    {
+      method: 'ilp',
+      walletAddress: senderWalletAddress.id,
+      receiver: recipientIncomingPayment.id,
+      debitAmount: {
+        value: '10000', // $100.00 USD
+        assetCode: 'USD',
+        assetScale: 2
+      }
+    }
+  )
+```
+</TabItem>
+</Tabs>
+
+The response returns a `receiveAmount`, a `debitAmount`, and other required information.
+
+- `debitAmount` - The amount the sender must pay (exactly $100.00 USD in our example)
+- `receiveAmount` - The amount the recipient will actually receive after fees and currency conversion
+
+<details>
+<summary>Example response</summary>
+  The following shows an example response from the sender's wallet provider.
+
+```json wrap
+{
+  "id": "https://cloudninebank.example.com/quotes/{...}", // url identifying the quote
+  "walletAddress": "https://cloudninebank.example.com/sender",
+  "receiver": "https://happylifebank.example.com/incoming-payments/{...}", // url of the incoming payment the quote is created for
+  "debitAmount": {
+    "value": "10000", // Sender pays exactly $100.00 USD
+    "assetCode": "USD",
+    "assetScale": 2
+  },
+  "receiveAmount": {
+    "value": "9500", // Recipient receives $95.00 USD after fees
+    "assetCode": "USD",
+    "assetScale": 2
+  },
+  "method": "ilp",
+  "createdAt": "2025-03-12T23:22:51.50Z"
+}
+```
+
+</details>
+
+### 6. Request an interactive outgoing payment grant
+
+Use your `authServer` information received in Step 1 to call the [Grant Request API](/apis/auth-server/operations/post-request).
+
+This call obtains an access token that allows you to request outgoing payment resources be created on your wallet account.
+
+<InteractionReq />
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts wrap
+  const pendingSenderOutgoingPaymentGrant = await client.grant.request(
+    {
+      url: senderWalletAddress.authServer
+    },
+    {
+      access_token: {
+        access: [
+          {
+            identifier: senderWalletAddress.id,
+            type: 'outgoing-payment',
+            actions: ['read', 'create'],
+            limits: {
+              debitAmount: {
+                assetCode: 'USD',
+                assetScale: 2,
+                value: quote.debitAmount.value, // $100.00 USD
+              }
+            }
+          }
+        ]
+      },
+      interact: {
+        start: ['redirect'],
+        finish: {
+          method: 'redirect',
+          uri: 'https://myapp.example.com/finish/{...}', // where to redirect you after completing interaction
+          nonce: NONCE
+        }
+      }
+    }
+  )
+  ```
+</TabItem>
+</Tabs>
+
+<details>
+  <summary>Example response</summary>
+
+```json wrap
+{
+  "interact": {
+    "redirect": "https://auth.interledger-test.dev/{...}", // uri to redirect the sender to, to begin interaction
+    "finish": "..." // unique key to secure the callback
+  },
+  "continue": {
+    "access_token": {
+      "value": "..." // access token for continuing the outgoing payment grant request
+    },
+    "uri": "https://auth.interledger-test.dev/continue/{...}", // uri for continuing the outgoing payment grant request
+    "wait": 30
+  }
+}
+```
+
+</details>
+
+### 7. Start interaction
+
+<StartInteraction />
+
+### 8. Finish interaction
+
+<FinishInteraction />
+
+### 9. Request a grant continuation
+
+In our example, we're assuming the IdP you interacted with has a user interface. When the interaction completes, you return to your application. Now your application can make a continuation request for the outgoing payment grant.
+
+:::note
+In a scenario where a user interface isn't available, consider implementing a polling mechanism to check for the completion of the interaction.
+:::
+
+Call the [Grant Continuation Request API](/apis/auth-server/operations/post-continue). This call requests an access token that allows you to request outgoing payment resources be created on your wallet account.
+
+Issue the request to the `continue.uri` provided in the initial outgoing payment grant response (Step 6).
+
+Include the `interact_ref` returned in the redirect URI's query parameters.
+
+<Tabs syncKey="lang">
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+    ```ts wrap
+    const senderOutgoingPaymentGrant = await client.grant.continue(
+      {
+        url: pendingSenderOutgoingPaymentGrant.continue.uri,
+        accessToken: pendingSenderOutgoingPaymentGrant.continue.access_token.value
+      },
+      {
+        interact_ref: interactRef
+      }
+    )
+    ```
+  </TabItem>
+</Tabs>
+
+<details>
+  <summary>Example response</summary>
+
+```json wrap
+{
+  "access_token": {
+    "value": "...", // final access token required before creating outgoing payments
+    "manage": "https://auth.cloudninebank.example.com/token/{...}", // management uri for access token
+    "access": [
+      {
+        "type": "outgoing-payment",
+        "actions": ["create", "read"],
+        "identifier": "https://cloudninebank.example.com/sender",
+        "limits": {
+          "receiver": "https://happylifebank.example.com/incoming-payments/{...}" // url of the incoming payment that's being paid
+        }
+      }
+    ]
+  },
+  "continue": {
+    "access_token": {
+      "value": "..." // access token for continuing the request
+    },
+    "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
+  }
+}
+```
+
+</details>
+
+### 10. Request the creation of outgoing payment resource
+
+Recall that the Create Quote API response (Step 5) included a `debitAmount` and a `receiveAmount`. The response also included an `id` which is a URL to identify the quote.
+
+Because the quote contains debit and receive amounts, we won't specify any other amounts when setting up the outgoing payment. Instead, we will specify a `quoteId`.
+
+Use the access token returned in Step 9 to call the [Create Outgoing Payment API](/apis/resource-server/operations/create-outgoing-payment). Include the `quoteId` in the request.
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts wrap
+  const senderOutgoingPayment = await client.outgoingPayment.create(
+    {
+      url: senderWalletAddress.resourceServer,
+      accessToken: senderOutgoingPaymentGrant.access_token.value
+    },
+    {
+      walletAddress: senderWalletAddress.id,
+      quoteId: quote.id
+    }
+  )
+```
+</TabItem>
+</Tabs>
+
+<details>
+<summary>Example response</summary>
+The following shows an example response when an outgoing payment resource is created on the sender's account.
+
+```json wrap
+{
+  "id": "https://cloudninebank.example.com/outgoing-payments/{...}", // url identifying the outgoing payment
+  "walletAddress": "https://cloudninebank.example.com/sender",
+  "receiver": "https://happylifebank.example.com/incoming-payments/{...}", // url of the incoming payment being paid
+  "debitAmount": {
+    "value": "10000", // Sender pays exactly $100.00 USD
+    "assetCode": "USD",
+    "assetScale": 2
+  },
+  "receiveAmount": {
+    "value": "9500", // Recipient receives $95.00 USD after fees
+    "assetCode": "USD",
+    "assetScale": 2
+  },
+  "sentAmount": {
+    "value": "0",
+    "assetCode": "USD",
+    "assetScale": 2
+  },
+  "createdAt": "2022-03-12T23:20:54.52Z"
+}
+```
+
+</details>
+
+## Summary
+
+In this guide, you learned how to create a one-time payment where you specify exactly how much you want to pay (`debitAmount`), rather than how much the recipient should receive. This is particularly useful for direct payment scenarios where:
+
+- You want to pay a fixed amount from your account
+- The recipient receives whatever amount remains after fees and currency conversion
+- You want to avoid the complexity of calculating fees upfront
+
+The key difference from other payment flows is that the incoming payment resource is created without specifying an `incomingAmount`, and the quote is created with a `debitAmount` that specifies exactly how much you will pay.

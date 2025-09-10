@@ -301,6 +301,11 @@ export default defineConfig({
               link: '/guides/split-payments/'
             },
             {
+              label: 'One-time payment with debitAmount',
+              translations: { es: 'Pago único con debitAmount' },
+              link: '/guides/make-onetime-payment-debit/'
+            },
+            {
               label: 'Get an outgoing payment grant for future payments',
               translations: {
                 es: 'Obtener una concesión de pago saliente para pagos futuros'
