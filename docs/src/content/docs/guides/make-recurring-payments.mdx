@@ -8,12 +8,12 @@ import StartInteraction from '/src/partials/grant-start-interaction.mdx'
 import FinishInteraction from '/src/partials/grant-finish-interaction.mdx'
 
 :::tip[Summary]
-Learn how an Open Payments-enabled client can be used to set up a payment of a specific amount that pays out at recurring intervals.
+Learn how an Open Payments-enabled client can be used to set up a payment of a specific amount that pays out at a recurring interval.
 :::
 
-The Open Payments APIs facilitate multiple use cases for recurring payments to and from Open Payments-enabled wallets. Paying a fee for a monthly subscription is one example.
+The Open Payments APIs facilitate multiple use cases for recurring payments to and from Open Payments-enabled wallets. Paying a fee for a monthly subscription service is one example.
 
-This guide provides the steps your Open Payments-enabled client will take to set up a $50 USD payment for a user that recurs once a month for three months.
+This guide provides the steps your Open Payments-enabled client will take to set up a $50 USD payment from a user that recurs once a month for three months.
 
 ## Endpoints
 
@@ -30,7 +30,7 @@ This guide provides the steps your Open Payments-enabled client will take to set
 
 To set up a recurring payment, the client must get the wallet address information for both the sender and recipient.
 
-Let's assume the sender's wallet address is already saved in your client. The sender is essentially your client's user. Let's also assume the sender has entered the recipient's wallet address into a payment form in your client.
+Let's assume the sender's wallet address is already saved in your client. The sender is essentially your client's user. Let's also assume the sender has entered the recipient's wallet address into a payment form in your client application.
 
 Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wallet-address-server/operations/get-wallet-address) for each address.
 
@@ -119,7 +119,7 @@ Use the access token returned in the previous response to call the <Badge text="
 
 This call requests an incoming payment resource be created on the recipient's wallet account.
 
-The `value` is the maximum allowable amount that can be paid into the resource. Since we're setting up a $50 USD payment that recurs once a month for three months, the `value` is `15000` ($150).
+The `value` is the maximum allowable amount that can be paid into the resource. Since we're setting up a $50 USD payment that will recur once a month for three months, the `value` is `15000` ($150).
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -280,13 +280,13 @@ This call obtains an access token that allows your client to request an outgoing
 Outgoing payments require an interactive grant. This type of grant will obtain the user's consent before an outgoing payment is made against their wallet account. You can find more information in the [Open Payments flow](/concepts/op-flow/#outgoing-payment) and [identity providers](/identity/idp) pages.
 :::
 
-In addition to any required parameters, include the following in the request:
+Include the following in the request:
 
 - `limits` object
-  - `debitAmount` - The maximum amount that your user can send per interval. When the next interval begins, the value resets.
+  - `debitAmount` - The maximum amount that the user can send per interval. When the next interval begins, the value resets.
   - `interval` - The [time interval](#about-the-interval) under which the grant is valid.
 
-The sender indicates they want to make payments of $50 a month for three months. The amount resets each month and any unspent portions don't roll over.
+Remember that your user, the sender, wants to make payments of $50 a month for three months. The amount resets each month and any unspent portions don't roll over.
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -303,7 +303,7 @@ The sender indicates they want to make payments of $50 a month for three months.
             type: 'outgoing-payment',
             actions: ['read', 'create'],
             limits: {
-              interval: 'R3/2025-05-20T13:00:00Z/P1M'
+              interval: 'R3/2025-03-12T23:25:00Z/P1M'
               debitAmount: {
                 assetCode: 'USD',
                 assetScale: 2,
@@ -329,18 +329,18 @@ The sender indicates they want to make payments of $50 a month for three months.
 
 #### About the interval
 
-The interval used in this guide is R3/2025-05-20T13:00:00Z/P1M. Remember that your user wants to send payments of $50 USD a month for three months. The interval breaks down like this:
+The interval used in this guide is R3/2025-03-12T23:25:00Z/P1M. Remember that your user wants to send payments of $50 USD a month for three months. The interval breaks down like this:
 
 - `R3/` is the number of repetitions - three.
-- `2025-05-20` is the start date of the repeating interval - 20 May 2025
-- `T13:00:00Z/` is the start time of the repeating interval - 1:00 PM UTC.
+- `2025-03-12` is the start date of the repeating interval - 12 March 2025
+- `T23:25:00Z/` is the start time of the repeating interval - 11:25 PM UTC.
 - `P1M` is the period between each interval - one month. Used with `R3`, you have a grant that's valid once a month for three months.
 
 Altogether, your user can send $50 USD from:
 
-- 1 PM UTC on 20 May 2025 through 12:59 PM UCT on 20 June 2025
-- 1 PM UTC on 20 June 2025 through 12:59 PM UTC on 20 July 2025
-- 1 PM UTC on 20 July 2025 through 12:59 PM UCT on 20 August 2025
+- 11:25 PM UTC on 12 March 2025 through 11:24 PM UCT on 12 April 2025
+- 11:25 PM UTC on 12 April 2025 through 11:24 PM UTC on 12 May 2025
+- 11:25 PM UTC on 12 May 2025 through 11:24 PM UCT on 12 June 2025
 
 <details>
   <summary>Example response</summary>
@@ -377,7 +377,7 @@ In our example, we're assuming the IdP the user interacted with has a user inter
 In a scenario where a user interface isn't available, consider implementing a polling mechanism in the client to check for the completion of the interaction.
 :::
 
-Call the <Badge text="POST" variant="success" /> [Grant Continuation Request API](/apis/auth-server/operations/post-continue). This call requests an access token that allows your client to request an outgoing payment resource be created on the sender's wallet account.
+Call the <Badge text="POST" variant="success" /> [Grant Continuation Request API](/apis/auth-server/operations/post-continue). This call obtains an access token that allows your client to continue the outgoing payment request.
 
 Issue the request to the `continue.uri` provided in the initial outgoing payment grant response (Step 6).
 
@@ -404,7 +404,7 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
   ```json wrap
   {
     "access_token": {
-      "value": "...", // final access token required before creating outgoing payments
+      "value": "...", // final access token required before creating an outgoing payment
       "manage": "https://auth.cloudninebank.example.com/token/{...}", // management uri for access token
       "access": [
         {
@@ -426,7 +426,7 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
 
 ### 10. Request the creation of an outgoing payment resource
 
-Recall that the Create Quote API (Step 5) included a `debitAmount` and a `receiveAmount`. The response also included an `id` which is a URL to identify the quote.
+Recall that the Create Quote API (Step 5) included a `debitAmount` and a `receiveAmount`. The response also included an `id` which is the URL to identify the quote.
 
 Because the quote contains debit and receive amounts, we won't specify any other amounts when setting up the outgoing payment. Instead, we will specify the `quoteId`.
 
@@ -471,49 +471,11 @@ Use the access token returned in Step 6 to call the <Badge text="POST" variant="
       "assetCode": "USD",
       "assetScale": 2
     },
-    "createdAt": "2022-03-12T23:20:54.52Z"
+    "createdAt": "2025-03-12T23:27:54.52Z"
   }
   ```
 </details>
 
-### 11. Rotate the access token (conditional)
+The first of the three recurring payments is set up. When it's time to set up the second and third payments, follow Step 10 again.
 
-:::note
-This step is only required if the original outgoing payment grant's access token has expired.
-:::
-
-Rotate the access token obtained from the previous `outgoingPayment` grant request.
-
-<Tabs syncKey="lang">
-<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-  ```ts
-  ```
-</TabItem>
-</Tabs>
-
-<details>
-  <summary>Example response</summary>
-  ```json wrap
-  ```
-</details>
-
-### 12. Make recurring outgoing payments
-
-Repeat steps 11 and 12 to facilitate as many payments as needed by your application.
-
-When the time comes for the next recurring payment to be made, request the creation of another outgoing payment resource
-
-Create another `outgoingPayment` on the sender wallet's resource server using the new access token returned by the authorization server in the previous step.
-
-<Tabs syncKey="lang">
-<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-  ```ts
-  ```
-</TabItem>
-</Tabs>
-
-<details>
-  <summary>Example response</summary>
-  ```json wrap
-  ```
-</details>
+If you find that the original grant's access token has expired, you can call the <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/auth-server/operations/post-token) to get a new one. Then, use the new token in the subsequent Create Outgoing Payment API request.
