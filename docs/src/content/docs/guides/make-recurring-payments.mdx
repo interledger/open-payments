@@ -73,7 +73,7 @@ Outgoing payments require an interactive grant. This type of grant will obtain t
 Include the following in the request:
 
 - `limits` object
-  - `debitAmount` - The maximum amount that the user can send per interval (for example, per month). When the next interval begins, the value resets.
+  - `debitAmount` - The maximum amount that the user will pay per interval (for example, per month). When the next interval begins, the value resets.
   - `interval` - The [time interval](#about-the-interval) under which the grant is valid.
 
 Remember that your user, the sender, wants to make payments of $50 a month for three months. The amount resets each month and any unspent portions don't roll over.
@@ -93,7 +93,7 @@ Remember that your user, the sender, wants to make payments of $50 a month for t
             type: 'outgoing-payment',
             actions: ['read', 'create'],
             limits: {
-              interval: 'R3/2025-03-12T23:25:00Z/P1M'
+              interval: 'R3/2025-03-12T23:25:00Z/P1M',
               debitAmount: {
                 assetCode: 'USD',
                 assetScale: 2,
