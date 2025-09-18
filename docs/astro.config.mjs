@@ -3,10 +3,16 @@ import starlight from '@astrojs/starlight'
 import starlightOpenAPI from 'starlight-openapi'
 import starlightLinksValidator from 'starlight-links-validator'
 import starlightFullViewMode from 'starlight-fullview-mode'
+import remarkMath from 'remark-math'
+import rehypeKatex from 'rehype-katex'
 
 // https://astro.build/config
 export default defineConfig({
   site: 'https://openpayments.dev',
+  markdown: {
+    remarkPlugins: [remarkMath],
+    rehypePlugins: [rehypeKatex]
+  },
   integrations: [
     starlight({
       title: 'Open Payments',
@@ -30,7 +36,8 @@ export default defineConfig({
       customCss: [
         './node_modules/@interledger/docs-design-system/src/styles/teal-theme.css',
         './node_modules/@interledger/docs-design-system/src/styles/ilf-docs.css',
-        './src/styles/openpayments.css'
+        './src/styles/openpayments.css',
+        'katex/dist/katex.min.css'
       ],
       // defaultLocale: 'root',
       locales: {

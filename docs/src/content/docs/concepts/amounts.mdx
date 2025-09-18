@@ -3,7 +3,12 @@ title: Amounts
 parent: Concepts
 ---
 
-import { LinkOut, Tooltip } from '@interledger/docs-design-system'
+import {
+  LinkOut,
+  Tooltip,
+  StylishHeader
+} from '@interledger/docs-design-system'
+import { Steps } from '@astrojs/starlight/components'
 
 :::tip[Summary]
 Amounts in Open Payments define monetary values using asset codes and asset scales. They provide a standardized way to represent money across different currencies and payment scenarios.
@@ -23,13 +28,19 @@ An example of an ISO 4217 `assetCode` is `USD`, which represents the US Dollar.
 
 ## Asset scales
 
-An asset scale defines the decimal precision for monetary amounts by specifying the power of 10 to divide the integer value by to get the display amount. The smallest useful unit of each currency maps to 1, with all amounts expressed as multiples of that unit.
+An asset scale tells you how many decimal places a currency uses. It's like specifying whether you're counting in dollars, cents, or smaller units.
 
-Asset scales are numbers between 0 and 255 that represent the exponent in the conversion formula:
+Asset scales are numbers between 0 and 255 that indicate decimal precision.
 
-**Value ÷ 10<sup> `assetScale`</sup> = Display amount**
+In the case of `USD` with an `assetScale` of 2, the display amount of $100.00 is stored and represented as 10000 cents.
 
-For USD with scale 2: $1.00 = 100 cents, so the scale is 2 (10² = 100).
+Thus, the conversion formula is:
+
+$$\frac{\text{value}}{10^{\text{assetScale}}} = \text{display amount}$$
+
+Using the preceding example, the formula looks like this:
+
+$$\frac{10000}{10^2} = \frac{10000}{100} = \$100.00$$
 
 ### Examples by currency
 
