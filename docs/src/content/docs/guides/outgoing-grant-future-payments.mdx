@@ -109,20 +109,6 @@ Remember, your user wants to send payments of up to $100 CAD a month for three m
 </TabItem>
 </Tabs>
 
-#### About the interval
-
-The interval used in this guide is `R3/2025-05-20T13:00:00Z/P1M`. Your user wants to send payments up to $100 CAD a month for three months. The interval breaks down like this:
-
-- `R3/` is the number of repetitions - three.
-- `2025-05-20` is the start date of the repeating interval - 20 May 2025
-- `T13:00:00Z/` is the start time of the repeating interval - 1:00 PM UTC.
-- `P1M` is the period between each interval - one month. Used with `R3/`, you have a grant that's valid once a month for three months.
-
-Altogether, your user can send up to $100 CAD from:
-
-- 1 PM UTC on 20 May 2025 through 12:59 PM UTC on 20 June 2025
-- 1 PM UTC on 20 June 2025 through 12:59 PM UTC on 20 July 2025
-- 1 PM UTC on 20 July 2025 through 12:59 PM UTC on 20 August 2025
 
 <details>
   <summary>Example response</summary>
@@ -142,6 +128,21 @@ Altogether, your user can send up to $100 CAD from:
   }
   ```
 </details>
+
+#### About the interval
+
+The interval used in this guide is `R3/2025-05-20T13:00:00Z/P1M`. Your user wants to send payments up to $100 CAD a month for three months. The interval breaks down like this:
+
+- `R3/` is the number of repetitions - three.
+- `2025-05-20` is the start date of the repeating interval - 20 May 2025
+- `T13:00:00Z/` is the start time of the repeating interval - 1:00 PM UTC.
+- `P1M` is the period between each interval - one month. Used with `R3/`, you have a grant that's valid once a month for three months.
+
+Altogether, your user can send up to $100 CAD from:
+
+- 1 PM UTC on 20 May 2025 through 12:59 PM UTC on 20 June 2025
+- 1 PM UTC on 20 June 2025 through 12:59 PM UTC on 20 July 2025
+- 1 PM UTC on 20 July 2025 through 12:59 PM UTC on 20 August 2025
 
 ### 3. Start interaction with your user
 
@@ -207,3 +208,7 @@ A successful response provides your app with an access token. Now your app can i
   }
   ```
 </details>
+
+:::note[Access token expiry]
+If an outgoing payment request fails because the grant's access token has expired, you can call the <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/auth-server/operations/post-token/), then use the new token in the outgoing payment request.
+:::
