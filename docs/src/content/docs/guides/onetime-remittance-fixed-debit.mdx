@@ -1,40 +1,53 @@
 ---
-title: One-time payment with debitAmount
+title: Send a remittance with fixed debit amount
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
-import { Tabs, TabItem, Card } from '@astrojs/starlight/components'
+import { Tabs, TabItem, Badge } from '@astrojs/starlight/components'
 import InteractionReq from '/src/partials/interaction-required.mdx'
 import StartInteraction from '/src/partials/grant-start-interaction.mdx'
 import FinishInteraction from '/src/partials/grant-finish-interaction.mdx'
 
 :::tip[Summary]
-Learn how to send a one-time payment where the sender specifies a fixed amount to send (`debitAmount`) rather than the recipient receiving a fixed amount.
+Learn how to send a one-time remittance payment by debiting the sender's account by a specific amount.
 :::
 
-Imagine someone sending money to a family member overseas. They want to send exactly $100 USD from their account, regardless of how much their family member actually receives after fees and exchange rates. This is different from sending money where the sender specifies exactly how much the recipient should receive. In that case, the sender pays whatever fees are necessary to ensure the receiver gets the exact amount.
+A remittance payment is a transfer of money from one person to another, typically across borders or long distances, often involving currency conversion and fees. In this guide, you will learn how to implement a one-time remittance payment feature where your users can specify exactly how much they want to pay, rather than how much the recipient should receive.
 
-With Open Payments, you can create payment instructions that specify exactly how much should be debited from the sender's account (the `debitAmount`), while the recipient receives whatever amount remains after fees and currency conversion.
+This approach is particularly useful for remittance app scenarios where:
 
-Remember, Open Payments doesn't execute payments or touch money in any way. It's used to issue payment instructions before any money movement occurs. An example of a payment instruction is, "debit exactly $100 from the sender's account and send it to the recipient's incoming payment."
+- Your users want to pay a fixed amount from their account
+- The recipient receives whatever amount remains after fees and currency conversion
+- Your users want to avoid the complexity of calculating fees upfront
 
-## Scenario
+### Scenario
 
-For this guide, you'll assume the role of a developer building a remittance app. The guide explains how to send a $100 USD payment, where the sender pays exactly $100, and the recipient receives the amount after all fees and currency conversion.
+Imagine someone in the US sending money to a family member in Mexico. They want to send exactly $100 US Dollars (`USD`) from their account, regardless of how much their family member actually receives after fees and exchange rates. This is different from sending money where the sender specifies exactly how much the recipient should receive.
 
-The three parties involved in this scenario are the:
+For this guide, you'll assume the role of a developer building a remittance app. The guide explains how to send a $100 `USD` payment, where the sender pays exactly $100, and the recipient receives the amount in Mexican Pesos (`MXN`) after all fees and currency conversion.
 
-- Developer: you, the person building the remittance app
-- Sender: the person using your app to send money
-- Recipient: the person receiving the money
+**Example transaction details:**
+
+- **Sender pays**: $100.00 `USD` (exact amount)
+- **Fees**: $5.00 `USD` (5% processing fee)
+- **Currency conversion**: `USD` to `MXN` at 17.00 exchange rate
+- **Recipient receives**: $1,615.00 `MXN` (($100 - $5) × 17.00)
+
+The three parties involved in this scenario are:
+
+- **Developer**: you, the person building the remittance app
+- **Sender**: the person using your app to send money in `USD`
+- **Recipient**: the person receiving the money in `MXN`
+
+Remember, Open Payments doesn't execute payments or touch money in any way. It's used to issue payment instructions before any money movement occurs. An example of a payment instruction is, "debit exactly $100 from the sender's account and send it to the recipient's account, where they will receive $1,615.00 `MXN` after $5 in fees and `USD` to `MXN` conversion."
 
 ## Endpoints
 
-- <LinkOut href='https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/'>Get a Wallet address</LinkOut>
-- <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-request/'>Grant Request</LinkOut>
-- <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-incoming-payment/'>Create Incoming Payment</LinkOut>
-- <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-quote/'>Create a Quote</LinkOut>
-- <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment/'>Create an Outgoing Payment</LinkOut>
+- <Badge text="GET" variant="note" /> <LinkOut href='https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/'>Get Wallet Address</LinkOut>
+- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-request/'>Grant Request</LinkOut>
+- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-incoming-payment/'>Create Incoming Payment</LinkOut>
+- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-quote/'>Create a Quote</LinkOut>
+- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment/'>Create an Outgoing Payment</LinkOut>
 
 ## Steps
 
@@ -42,9 +55,9 @@ The three parties involved in this scenario are the:
 
 When your user initiates a payment through your remittance app, you need to get wallet address information for both the sender and the recipient.
 
-Let's assume your user has provided the recipient's wallet address. You'll also need the sender's wallet address information.
+Let's assume your user has already provided their own wallet address when they signed up to use your app. Let's also assume the sender entered the recipient's wallet address into your app's payment form when initiating the payment.
 
-Call the [Get Wallet Address API](/apis/wallet-address-server/operations/get-wallet-address) for each address.
+Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wallet-address-server/operations/get-wallet-address) for each address.
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -73,11 +86,11 @@ The following shows an example response from the sender's wallet provider. A sim
 ```
 </details>
 
-### 2. Request incoming payment grant
+### 2. Request an incoming payment grant
 
-Use the recipient's `authServer` details, received in the previous step, to call the [Grant Request API](/apis/auth-server/operations/post-request).
+Use the recipient's `authServer` details, received in the previous step, to call the <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request).
 
-This call obtains an access token that allows your app to request an incoming payment resource be created on the recipient's wallet account.
+This call obtains an access token that allows your app to request that an incoming payment resource be created on the recipient's wallet account.
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -128,11 +141,11 @@ The following shows an example response from the recipient's wallet provider.
 
 </details>
 
-### 3. Request the creation of incoming payment resource
+### 3. Request the creation of an incoming payment resource
 
-Use the access token returned in the previous response to call the [Create Incoming Payment API](/apis/resource-server/operations/create-incoming-payment).
+Use the access token returned in the previous response to call the <Badge text="POST" variant="success" /> [Create Incoming Payment API](/apis/resource-server/operations/create-incoming-payment).
 
-This call requests an incoming payment resource be created on the recipient's wallet account. Note that we do NOT specify an `incomingAmount`, which allows the recipient to receive whatever amount remains after fees and currency conversion.
+This call requests an incoming payment resource be created on the recipient's wallet account.
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -144,7 +157,6 @@ This call requests an incoming payment resource be created on the recipient's wa
     },
     {
       walletAddress: recipientWalletAddress.id
-      // Note: No incomingAmount specified - recipient receives whatever amount remains after fees
     },
   )
 ```
@@ -180,9 +192,9 @@ The following shows an example response from the recipient's wallet provider.
 
 ### 4. Request a quote grant
 
-Use the sender's `authServer` details, received in Step 1, to call the [Grant Request API](/apis/auth-server/operations/post-request).
+Use the sender's `authServer` details, received in Step 1, to call the <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request).
 
-This call obtains an access token that allows your app to request quote resources be created on the sender's wallet account.
+This call obtains an access token that allows your app to request that a quote resource be created on the sender's wallet account.
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -232,18 +244,18 @@ This call obtains an access token that allows your app to request quote resource
 
 </details>
 
-### 5. Request the creation of quote resource
+### 5. Request the creation of a quote resource
 
-Use the access token, received in the previous step, to call the [Create Quote API](/apis/resource-server/operations/create-quote).
+Use the access token, received in the previous step, to call the <Badge text="POST" variant="success" /> [Create Quote API](/apis/resource-server/operations/create-quote).
 
-This call requests a quote resource be created on the sender's wallet account. The request must contain the `receiver`, which is the recipient's incoming payment `id`, along with the `debitAmount`, which is the exact amount the sender wants to pay.
+This call requests that a quote resource be created on the sender's wallet account. The request must contain the `receiver`, which is the recipient's incoming payment `id`, along with the `debitAmount`, which is the exact amount the sender wants to pay.
 
 The `debitAmount` specifies that the sender will pay exactly $100 USD, and the recipient will receive whatever amount remains after all fees and currency conversion.
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
   ```ts wrap
-  const quote = await client.quote.create(
+  const senderQuote = await client.quote.create(
     {
       url: senderWalletAddress.resourceServer,
       accessToken: senderQuoteGrant.access_token.value
@@ -265,8 +277,8 @@ The `debitAmount` specifies that the sender will pay exactly $100 USD, and the r
 
 The response returns a `receiveAmount`, a `debitAmount`, and other required information.
 
-- `debitAmount` - The amount the sender must pay (exactly $100.00 USD in our example)
-- `receiveAmount` - The amount the recipient will actually receive after fees and currency conversion
+- `debitAmount` - The amount the sender must pay (exactly $100.00 USD in our example).
+- `receiveAmount` - The amount the recipient will actually receive ($1,650.00 MXN in our example) after fees and currency conversion.
 
 <details>
 <summary>Example response</summary>
@@ -283,8 +295,8 @@ The response returns a `receiveAmount`, a `debitAmount`, and other required info
     "assetScale": 2
   },
   "receiveAmount": {
-    "value": "9500", // Recipient receives $95.00 USD after fees
-    "assetCode": "USD",
+    "value": "161500", // Recipient receives 1,615.00 MXN after fees and currency conversion
+    "assetCode": "MXN",
     "assetScale": 2
   },
   "method": "ilp",
@@ -296,9 +308,9 @@ The response returns a `receiveAmount`, a `debitAmount`, and other required info
 
 ### 6. Request an interactive outgoing payment grant
 
-Use the sender's `authServer` information received in Step 1 to call the [Grant Request API](/apis/auth-server/operations/post-request).
+Use the sender's `authServer` information received in Step 1 to call the <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request).
 
-This call obtains an access token that allows your app to request outgoing payment resources be created on the sender's wallet account.
+This call obtains an access token that allows your app to request that an outgoing payment resource be created on the sender's wallet account.
 
 <InteractionReq />
 
@@ -320,7 +332,7 @@ This call obtains an access token that allows your app to request outgoing payme
               debitAmount: {
                 assetCode: 'USD',
                 assetScale: 2,
-                value: quote.debitAmount.value, // $100.00 USD
+                value: quote.debitAmount.value, // 10000
               }
             }
           }
@@ -330,7 +342,7 @@ This call obtains an access token that allows your app to request outgoing payme
         start: ['redirect'],
         finish: {
           method: 'redirect',
-          uri: 'https://myapp.example.com/finish/{...}', // where to redirect you after completing interaction
+          uri: 'https://myapp.example.com/finish/{...}', // where to redirect your user after they've completed the interaction
           nonce: NONCE
         }
       }
@@ -361,23 +373,23 @@ This call obtains an access token that allows your app to request outgoing payme
 
 </details>
 
-### 7. Start interaction
+### 7. Start interaction with the user
 
 <StartInteraction />
 
-### 8. Finish interaction
+### 8. Finish interaction with the user
 
 <FinishInteraction />
 
 ### 9. Request a grant continuation
 
-In our example, we're assuming the IdP has a user interface. When the interaction completes, your user returns to your app. Now your app can make a continuation request for the outgoing payment grant.
+In our example, we're assuming the IdP your user interacted with has a user interface. When the interaction completes, your user returns to your app. Now your app can make a continuation request for the outgoing payment grant.
 
 :::note
 In a scenario where a user interface isn't available, consider implementing a polling mechanism to check for the completion of the interaction.
 :::
 
-Call the [Grant Continuation Request API](/apis/auth-server/operations/post-continue). This call requests an access token that allows your app to request outgoing payment resources be created on the sender's wallet account.
+Call the <Badge text="POST" variant="success" /> [Grant Continuation Request API](/apis/auth-server/operations/post-continue). This call requests an access token that allows your app to request that an outgoing payment resource be created on the sender's wallet account.
 
 Issue the request to the `continue.uri` provided in the initial outgoing payment grant response (Step 6).
 
@@ -429,13 +441,13 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
 
 </details>
 
-### 10. Request the creation of outgoing payment resource
+### 10. Request the creation of an outgoing payment resource
 
 Recall that the Create Quote API response (Step 5) included a `debitAmount` and a `receiveAmount`. The response also included an `id` which is a URL to identify the quote.
 
 Because the quote contains debit and receive amounts, we won't specify any other amounts when setting up the outgoing payment. Instead, we will specify a `quoteId`.
 
-Use the access token returned in Step 9 to call the [Create Outgoing Payment API](/apis/resource-server/operations/create-outgoing-payment). Include the `quoteId` in the request.
+Use the access token returned in Step 9 to call the <Badge text="POST" variant="success" /> [Create Outgoing Payment API](/apis/resource-server/operations/create-outgoing-payment). Include the `quoteId` in the request.
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -447,7 +459,7 @@ Use the access token returned in Step 9 to call the [Create Outgoing Payment API
     },
     {
       walletAddress: senderWalletAddress.id,
-      quoteId: quote.id
+      quoteId: senderQuote.id
     }
   )
 ```
@@ -469,8 +481,8 @@ The following shows an example response when an outgoing payment resource is cre
     "assetScale": 2
   },
   "receiveAmount": {
-    "value": "9500", // Recipient receives $95.00 USD after fees
-    "assetCode": "USD",
+    "value": "161500", // Recipient receives 1,615.00 MXN after fees and currency conversion
+    "assetCode": "MXN",
     "assetScale": 2
   },
   "sentAmount": {
@@ -483,13 +495,3 @@ The following shows an example response when an outgoing payment resource is cre
 ```
 
 </details>
-
-## Summary
-
-In this guide, you learned how to implement a one-time payment feature where your users can specify exactly how much they want to pay (`debitAmount`), rather than how much the recipient should receive. This is particularly useful for remittance app scenarios where:
-
-- Your users want to pay a fixed amount from their account
-- The recipient receives whatever amount remains after fees and currency conversion
-- Your users want to avoid the complexity of calculating fees upfront
-
-The key difference from other payment flows is that the incoming payment resource is created without specifying an `incomingAmount`, and the quote is created with a `debitAmount` that specifies exactly how much the sender will pay.

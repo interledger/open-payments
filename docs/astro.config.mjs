@@ -301,9 +301,8 @@ export default defineConfig({
               link: '/guides/split-payments/'
             },
             {
-              label: 'One-time payment with debitAmount',
-              translations: { es: 'Pago único con debitAmount' },
-              link: '/guides/make-onetime-payment-debit/'
+              label: 'Send a remittance payment with fixed debit amount',
+              link: '/guides/onetime-remittance-fixed-debit'
             },
             {
               label: 'Get an outgoing payment grant for future payments',
