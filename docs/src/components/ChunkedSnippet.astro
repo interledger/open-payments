@@ -1,16 +1,27 @@
 ---
+import  fs  from "node:fs/promises"
+import path from "node:path"
+import { execSync } from 'node:child_process';
 import prettier from 'prettier';
 import { Code } from 'astro:components';
 import { CodeBlock } from '@interledger/docs-design-system'
-const {source, chunk} = Astro.props;
+const {source, chunk, l} = Astro.props;
 import * as phpPlugin from '@prettier/plugin-php'
 
-// Retrieve code snippet from GitHub as text
-const getApiData = async () => {
-  const data = await fetch(source).then((response) => response.text());
-  return data;
-};
-const code = await getApiData();
+const gitRoot = execSync('git rev-parse --show-toplevel').toString().trim();
+const snippetsPath = path.join(gitRoot, 'snippets');
+
+const getChunk = async () => {
+  if (source.startsWith('http')) {
+    const data = await fetch(source).then((response) => response.text());
+    return data;
+  }
+
+  const data = await fs.readFile(path.join(snippetsPath, l, source), {encoding: "utf8"})
+  return data
+}
+
+const code = await getChunk()
 
 // Split the text into an array of lines
 const lines = code.split('\n');
