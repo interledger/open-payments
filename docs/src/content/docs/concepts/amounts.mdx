@@ -1,0 +1,138 @@
+---
+title: Amounts
+parent: Concepts
+---
+
+import {
+  LinkOut,
+  Tooltip,
+  StylishHeader
+} from '@interledger/docs-design-system'
+import { Steps } from '@astrojs/starlight/components'
+
+:::tip[Summary]
+Amounts in Open Payments define monetary values using asset codes and asset scales. They provide a standardized way to represent money across different currencies and payment scenarios.
+:::
+
+Amounts represent monetary values and are fundamental to every Open Payments operation. Whether you're creating an incoming payment, requesting a quote, or tracking payment progress, every amount consists of three key components: a numerical `value`, an `assetCode`, and an `assetScale`. Understanding these components is crucial for building Open Payments applications.
+
+## Values
+
+To maximize precision and avoid rounding errors in financial calculations, Open Payments uses numerical data types without decimals to represent values. In the context of programming languages, this means that Open Payments uses unsigned 64-bit integers for monetary amounts instead of floating-point numbers.
+
+An example of a value is the number 10000.
+
+## Asset codes
+
+Asset codes identify the type of currency or asset being used in a payment and should follow the <LinkOut href='https://en.wikipedia.org/wiki/ISO_4217'>ISO 4217</LinkOut> standard for currency representation.
+
+An example of an ISO 4217 `assetCode` is `USD`, which represents the US Dollar.
+
+## Asset scales
+
+An asset scale tells you how many decimal places a currency uses. It's like specifying whether you're counting in dollars, cents, or smaller units.
+
+Asset scales are numbers between 0 and 255 that indicate decimal precision.
+
+In the case of `USD` with an `assetScale` of 2, the display amount of $100.00 is stored and represented as 10000 cents.
+
+Thus, the conversion formula is:
+
+$$\frac{\text{value}}{10^{\text{assetScale}}} = \text{display amount}$$
+
+Using the preceding example, the formula looks like this:
+
+$$\frac{10000}{10^2} = \frac{10000}{100} = \$100.00$$
+
+### Examples by currency
+
+<table style='width: auto; margin: 1;'>
+  <thead>
+    <tr>
+      <th>Currency</th>
+      <th>Asset Code</th>
+      <th>Asset Scale</th>
+      <th>Integer Amount</th>
+      <th>Actual Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>US Dollar</td>
+      <td>
+        <code>USD</code>
+      </td>
+      <td>2</td>
+      <td>10000</td>
+      <td>$100.00</td>
+    </tr>
+    <tr>
+      <td>Euro</td>
+      <td>
+        <code>EUR</code>
+      </td>
+      <td>2</td>
+      <td>2550</td>
+      <td>€25.50</td>
+    </tr>
+    <tr>
+      <td>British Pound</td>
+      <td>
+        <code>GBP</code>
+      </td>
+      <td>2</td>
+      <td>3250</td>
+      <td>£32.50</td>
+    </tr>
+    <tr>
+      <td>Japanese Yen</td>
+      <td>
+        <code>JPY</code>
+      </td>
+      <td>0</td>
+      <td>1000</td>
+      <td>¥1000</td>
+    </tr>
+    <tr>
+      <td>Mexican Peso</td>
+      <td>
+        <code>MXN</code>
+      </td>
+      <td>2</td>
+      <td>18500</td>
+      <td>$185.00</td>
+    </tr>
+    <tr>
+      <td>Jordanian Dinar</td>
+      <td>
+        <code>JOD</code>
+      </td>
+      <td>3</td>
+      <td>1000</td>
+      <td>د.ا1.000</td>
+    </tr>
+    <tr>
+      <td>South African Rand</td>
+      <td>
+        <code>ZAR</code>
+      </td>
+      <td>2</td>
+      <td>1500</td>
+      <td>R15.00</td>
+    </tr>
+  </tbody>
+</table>
+
+## Amounts in Open Payments
+
+Using the three necessary components of `value`, `assetCode`, and `assetScale`, $100 USD would be represented in Open Payments using the following structure:
+
+```json
+{
+  "value": "10000",
+  "assetCode": "USD",
+  "assetScale": 2
+}
+```
+
+This consistent structure enables multi-currency payments, precise calculations, and seamless integration between different <Tooltip content="Account servicing entity">ASEs</Tooltip>.
