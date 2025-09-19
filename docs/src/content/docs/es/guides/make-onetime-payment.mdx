@@ -41,7 +41,8 @@ En esta guía, encontrará los pasos que debe seguir para efectuar un pago únic
 ### 1. Obtener los datos de la dirección de billetera del destinatario
 
 <ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-outgoing-payment.ts'
+  source='grant/grant-outgoing-payment.ts'
+  l='node'
   chunk='3'
 />
 
@@ -50,7 +51,8 @@ En esta guía, encontrará los pasos que debe seguir para efectuar un pago únic
 Solicitar una concesión de autorización para un `incomingPayment` desde el servidor de autorización de la billetera del destinatario.
 
 <ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-incoming-payment.ts'
+  source='grant/grant-incoming-payment.ts'
+  l='node'
   chunk='4'
 />
 
@@ -67,7 +69,8 @@ Agregar el objeto `incomingAmount` y definir las siguientes propiedades:
 De modo opcional, puede agregar la propiedad `expiresAt`, que es la fecha y la hora a partir de la que ya no se aceptarán pagos entrantes.
 
 <ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/incoming-payment/incoming-payment-create.ts'
+  source='incoming-payment/incoming-payment-create.ts'
+  l='node'
   chunk='3'
 />
 
@@ -76,7 +79,8 @@ De modo opcional, puede agregar la propiedad `expiresAt`, que es la fecha y la h
 Solicitar una concesión de autorización para una `quote` desde el servidor de autorización de la billetera del remitente.
 
 <ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-quote.ts'
+  source='grant/grant-quote.ts'
+  l='node'
   chunk='4'
 />
 
@@ -91,7 +95,8 @@ Agregar las siguientes propiedades:
 - `receiver`: la URL del pago entrante que recibirá el pago.
 
 <ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/quote/quote-create.ts'
+  source='/quote/quote-create.ts'
+  l='node'
   chunk='3'
 />
 
@@ -122,12 +127,14 @@ Ahora indique que su cliente puede recibir una señal del servidor de autorizaci
 4. Crear un `nonce` para que su cliente lo utilice a la hora de verificar que el servidor de autorización sea la misma entidad a lo largo de todo el proceso. Este código puede ser cualquier cadena aleatoria y difícil de descifrar.
 
 <ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-outgoing-payment.ts'
+  source='grant/grant-outgoing-payment.ts'
+  l='node'
   chunk='4'
 />
 
 <ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-outgoing-payment.ts'
+  source='grant/grant-outgoing-payment.ts'
+  l='node'
   chunk='5'
 />
 
@@ -146,7 +153,8 @@ Una vez que el usuario completó su interacción con el proveedor de identidad (
 Agregue la referencia a la interacción del servidor de autorización como el valor `interact_ref` al cuerpo de su solicitud de continuación.
 
 <ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/grant/grant-continuation.ts'
+  source='grant/grant-continuation.ts'
+  l='node'
   chunk='3'
 />
 
@@ -199,7 +207,8 @@ Agregar las siguientes propiedades:
 - `quoteId`: la URL de la cotización en la que se especifica el monto del pago.
 
 <ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/outgoing-payment/outgoing-payment-create.ts'
+  source='outgoing-payment/outgoing-payment-create.ts'
+  l='node'
   chunk='3'
 />
 
