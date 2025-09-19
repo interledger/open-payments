@@ -11,125 +11,30 @@ import {
 import { Steps } from '@astrojs/starlight/components'
 
 :::tip[Summary]
-Amounts in Open Payments define monetary values using asset codes, asset scales, and specific amount types. They provide a standardized way to represent money across different currencies and payment scenarios.
+Amounts in Open Payments define monetary values using asset codes and asset scales. They provide a standardized way to represent money across different currencies and payment scenarios.
 :::
 
-Amounts represent monetary values and are fundamental to all payment operations. Every amount consists of three key components: a numerical `value`, an `assetCode`, and an `assetScale`. Understanding these components is crucial for building Open Payments applications.
+Amounts represent monetary values and are fundamental to every Open Payments operation. Whether you're creating an incoming payment, requesting a quote, or tracking payment progress, every amount consists of three key components: a numerical `value`, an `assetCode`, and an `assetScale`. Understanding these components is crucial for building Open Payments applications.
 
-Amounts are central to every Open Payments operation. Whether you're creating an incoming payment, requesting a quote, or tracking payment progress, all amounts follow the same three-part structure:
+## Values
 
-```json
-{
-  "value": "1000",
-  "assetCode": "USD",
-  "assetScale": 2
-}
-```
+To maximize precision and avoid rounding errors in financial calculations, Open Payments uses numerical data types without decimals to represent values. In the context of programming languages, this means that Open Payments uses unsigned 64-bit integers for monetary amounts instead of floating-point numbers.
 
-This consistent structure enables multi-currency payments, precise calculations, and seamless integration between different <Tooltip content="Account servicing entity">ASEs</Tooltip>.
-
-:::note[Wallet address asset constraint]
-[Wallet addresses](/concepts/wallet-addresses) support only one specific asset. Therefore, the amounts that can be sent or received by a particular wallet address will only be in the asset supported by that wallet. For example, a USD wallet address can only accept amounts with `assetCode: "USD"`.
-:::
+An example of a value is the number 10000.
 
 ## Asset codes
 
 Asset codes identify the type of currency or asset being used in a payment and should follow the <LinkOut href='https://en.wikipedia.org/wiki/ISO_4217'>ISO 4217</LinkOut> standard for currency representation.
 
-### Common currency examples
-
-<table style='width: auto; margin: 1;'>
-  <thead>
-    <tr>
-      <th>Asset Code</th>
-      <th>Currency</th>
-      <th>Symbol</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>
-        <code>USD</code>
-      </td>
-      <td>US Dollar</td>
-      <td>$</td>
-    </tr>
-    <tr>
-      <td>
-        <code>EUR</code>
-      </td>
-      <td>Euro</td>
-      <td>€</td>
-    </tr>
-    <tr>
-      <td>
-        <code>GBP</code>
-      </td>
-      <td>British Pound</td>
-      <td>£</td>
-    </tr>
-    <tr>
-      <td>
-        <code>JPY</code>
-      </td>
-      <td>Japanese Yen</td>
-      <td>¥</td>
-    </tr>
-    <tr>
-      <td>
-        <code>MXN</code>
-      </td>
-      <td>Mexican Peso</td>
-      <td>$</td>
-    </tr>
-    <tr>
-      <td>
-        <code>ZAR</code>
-      </td>
-      <td>South African Rand</td>
-      <td>R</td>
-    </tr>
-    <tr>
-      <td>
-        <code>JOD</code>
-      </td>
-      <td>Jordanian Dinar</td>
-      <td>د.ا</td>
-    </tr>
-  </tbody>
-</table>
-
-When building payment applications, you'll specify the asset code to indicate which currency you're working with:
-
-```json
-{
-  "assetCode": "USD",
-  "assetScale": 2,
-  "value": "1000"
-}
-```
+An example of an ISO 4217 `assetCode` is `USD`, which represents the US Dollar.
 
 ## Asset scales
 
-<<<<<<< HEAD
 An asset scale tells you how many decimal places a currency uses. It's like specifying whether you're counting in dollars, cents, or smaller units.
 
 Asset scales are numbers between 0 and 255 that indicate decimal precision.
 
 In the case of `USD` with an `assetScale` of 2, the display amount of $100.00 is stored and represented as 10000 cents.
-=======
-An asset scale defines the decimal precision for monetary amounts by specifying the power of 10 to divide the integer value by to get the display amount.
-
-### Integer representation
-
-Open Payments uses unsigned 64-bit integers for monetary amounts instead of floating-point numbers to maximize precision and avoid rounding errors in financial calculations. The smallest useful unit of each currency maps to 1, with all amounts expressed as multiples of that unit.
-
-### How scales work
-
-Asset scales are integers between 0 and 255 that represent the exponent in the conversion formula:
-
-**Monetary Value = Integer Amount ÷ 10<sup> `assetScale`</sup>**
->>>>>>> parent of 70b2464 (docs: 654/amounts-assets)
 
 Thus, the conversion formula is:
 
@@ -158,8 +63,8 @@ $$\frac{10000}{10^2} = \frac{10000}{100} = \$100.00$$
         <code>USD</code>
       </td>
       <td>2</td>
-      <td>100</td>
-      <td>$1.00</td>
+      <td>10000</td>
+      <td>$100.00</td>
     </tr>
     <tr>
       <td>Euro</td>
@@ -217,3 +122,17 @@ $$\frac{10000}{10^2} = \frac{10000}{100} = \$100.00$$
     </tr>
   </tbody>
 </table>
+
+## Amounts in Open Payments
+
+Using the three necessary components of `value`, `assetCode`, and `assetScale`, $100 USD would be represented in Open Payments using the following structure:
+
+```json
+{
+  "value": "10000",
+  "assetCode": "USD",
+  "assetScale": 2
+}
+```
+
+This consistent structure enables multi-currency payments, precise calculations, and seamless integration between different <Tooltip content="Account servicing entity">ASEs</Tooltip>.
