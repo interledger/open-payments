@@ -26,7 +26,7 @@ curl --request GET \
  	--header 'accept: application/json'
 ```
 
-If the URL is a wallet address, the response will provide details about the underlying Open Payments-enabled account, including the URL of the grant request endpoint (the `authServer`). The grant request endpoint is used to get access tokens to connect to the account via the Open Payments APIs.
+If the URL is a wallet address, the response will provide details about the underlying Open Payments-enabled account.
 
 ```http
 HTTP/1.1 200 Success
@@ -37,9 +37,12 @@ Content-Type: application/json
   "publicName": "Alice",
   "assetCode": "USD",
   "assetScale": 2,
-  "authServer": "https://auth.wallet.example.com"
+  "authServer": "https://auth.wallet.example.com",
+  "resourceServer": "https://wallet.example.com/op"
 }
 ```
+
+Each wallet address supports a single asset code and scale, but Open Payments enables multi-currency transactions. For example, while Alice's wallet details above returns `USD` as the `assetCode`, a sender can initiate payments to Alice in `EUR` or other currencies. The receiving wallet address provider handles currency conversion, so Alice will always receive `USD` at that specific wallet address. For details about how amounts work in Open Payments, refer to the [Amounts](/concepts/amounts) page.
 
 ## Wallet address server
 
