@@ -43,7 +43,7 @@ The three parties involved in the transaction are the:
 
 When the customer initiates the payment, the retailer's site--the client--must get wallet address information for both the customer and themselves.
 
-Let's assume the customer entered their wallet address at the beginning of the checkout flow. Let's also assume that the retailer's wallet address is built into the client in some way.
+Let's assume the customer entered their wallet address into the site's checkout form. Let's also assume that the retailer's wallet address is coded into the checkout form.
 
 Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wallet-address-server/operations/get-wallet-address) for each address.
 
@@ -62,7 +62,7 @@ Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wall
 
 <details>
 <summary>Example response</summary>
-The following shows an example response from the customer's wallet provider. A similar response will be returned from the retailer's wallet provider.
+The following is an example response from the customer's wallet provider. A similar response will be returned from the retailer's wallet provider.
 ```json wrap
 {
   "id": "https://cloudninebank.example.com/customer",
@@ -104,6 +104,7 @@ This call obtains an access token that allows the client to request an incoming 
 
 <details>
 <summary>Example response</summary>
+The following is an example response from the retailer's wallet provider. 
 ```json wrap
 {
   "access_token": {
@@ -157,6 +158,7 @@ Remember that the full amount of the customer's purchase is MXN $1,400.
 
 <details>
 <summary>Example response</summary>
+The following is an example response from the retailer's wallet provider. 
 ```json wrap
 {
   "id": "https://happylifebank.example.com/incoming-payments/{...}",
@@ -214,6 +216,7 @@ This call obtains an access token that allows your client to request a quote res
 
 <details>
 <summary>Example response</summary>
+The following is an example response from the customer's wallet provider. 
 ```json wrap
 {
   "access_token": {
@@ -269,6 +272,7 @@ The response returns a `receiveAmount`, a `debitAmount`, and other required info
 
 <details>
 <summary>Example response</summary>
+The following is an example response from the customer's wallet provider.
 ```json wrap
 {
   "id": "https://cloudninebank.example.com/quotes/{...}", // url identifying the quote
@@ -326,7 +330,7 @@ This call obtains an access token that allows your client to request outgoing pa
         start: ['redirect'],
         finish: {
           method: 'redirect',
-          uri: 'https://paymentplatform.example/finish/{...}', // where to redirect the customer after they've completed interaction
+          uri: 'https://paymentplatform.example/finish/{...}', // where to redirect the customer after they've completed the interaction
           nonce: NONCE
         }
       }
@@ -338,6 +342,7 @@ This call obtains an access token that allows your client to request outgoing pa
 
 <details>
 <summary>Example response</summary>
+The following is an example response from the customer's wallet provider.
 ```json wrap
 {
   "interact": {
@@ -395,6 +400,7 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
 
 <details>
 <summary>Example response</summary>
+The following is an example response from the customer's wallet provider.
 ```json wrap
 {
   "access_token": {
@@ -423,11 +429,7 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
 
 ### 10. Request the creation of an outgoing payment resource
 
-Recall that the Create Quote API response for the retailer (Step 5) included a `debitAmount` and a `receiveAmount`. The response also included an `id`, which is a URL to identify the quote.
-
-Since there's already a debit amount, receive amount, and a quote ID, there's no need to specify any other amounts in the outgoing payment request.
-
-Use the access token returned in Step 5 to call the <Badge text="POST" variant="success" /> [Create Outgoing Payment API](/apis/resource-server/operations/create-outgoing-payment/).
+Use the access token returned in Step 9 to call the <Badge text="POST" variant="success" /> [Create Outgoing Payment API](/apis/resource-server/operations/create-outgoing-payment/). This call requests the creation of an outgoing payment resource be created on the customer's wallet account. Include the `quoteId` in the request. The `quoteId` is the `id` returned in the Create Quote API response (Step 5).
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -448,6 +450,7 @@ Use the access token returned in Step 5 to call the <Badge text="POST" variant="
 
 <details>
 <summary>Example response</summary>
+The following is an example response from the customer's wallet provider.
 ```json wrap
 {
   "id": "https://cloudninebank.example.com/outgoing-payments/{...}", // url identifying the outgoing payment
