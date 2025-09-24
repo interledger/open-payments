@@ -330,6 +330,10 @@ export default defineConfig({
               link: '/guides/split-payments/'
             },
             {
+              label: 'Send a remittance payment with fixed debit amount',
+              link: '/guides/onetime-remittance-fixed-debit'
+            },
+            {
               label: 'Get an outgoing payment grant for future payments',
               translations: {
                 es: 'Obtener una concesión de pago saliente para pagos futuros'
