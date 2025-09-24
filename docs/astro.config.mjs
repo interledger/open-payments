@@ -96,7 +96,8 @@ export default defineConfig({
           errorOnLocalLinks: false,
           errorOnFallbackPages: false,
           exclude: [
-            '/apis/{auth-server,resource-server,wallet-address-server}/**/*'
+            '/apis/{auth-server,resource-server,wallet-address-server}/**/*',
+            '/es/apis/{auth-server,resource-server,wallet-address-server}/**/*'
           ]
         }),
         starlightFullViewMode()
