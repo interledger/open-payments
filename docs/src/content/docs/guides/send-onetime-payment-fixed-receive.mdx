@@ -24,22 +24,22 @@ This approach is particularly useful for remittance app scenarios where:
 
 For this guide, you'll assume the role of a developer building a remittance app. Imagine someone in the US wants to send money to a family member in Mexico, and they want to guarantee that their family member receives _exactly_ 5,000 Mexican Pesos after all fees and currency conversions. This is different from sending money where the sender specifies the exact amount they want to send, regardless of what the recipient receives.
 
-This guide explains how to implement Open Payments in your remittance app so that the recipient receives the specified amount (5,000 MXN in this example), even if the sender has to pay a slightly higher amount in US Dollars to cover fees and currency conversions.
+This guide explains how to implement Open Payments in your remittance app so that the recipient receives the specified amount (MXN $5,000 in this example), even if the sender has to pay a slightly higher amount in US Dollars to cover fees and currency conversions.
 
 **Example transaction details:**
 
-- **Recipient receives**: 5,000.00 `MXN` (exact amount)
+- **Recipient receives**: MXN $5,000.00 (exact amount)
 - **Fees**: To be determined (fees vary based on wallet providers and currency conversions)
-- **Currency conversion**: `USD` to `MXN` (exchange rate varies)
-- **Sender pays**: Amount in `USD` required to cover the 5,000.00 `MXN` plus fees
+- **Currency conversion**: USD to MXN (exchange rate varies)
+- **Sender pays**: Amount in USD required to cover the 5,000.00 MXN plus fees
 
 The three parties involved in this scenario are:
 
 - **Developer**: you, the person building the remittance app
-- **Sender**: the person using your app to send money in `USD`
-- **Recipient**: the person receiving the money in `MXN`
+- **Sender**: the person using your app to send money in USD
+- **Recipient**: the person receiving the money in MXN
 
-Remember, Open Payments doesn't execute payments or touch money in any way. It's used to issue payment instructions before any money movement occurs. In this scenario, the payment instruction is, "Debit an amount in `USD` from the sender's account that is sufficient to ensure the recipient receives exactly 5,000.00 `MXN` after all fees and `USD` to `MXN` conversion."
+Remember, Open Payments doesn't execute payments or touch money in any way. It's used to issue payment instructions before any money movement occurs. In this scenario, the payment instruction is, "Debit an amount in USD from the sender's account that is sufficient to ensure the recipient receives exactly MXN $5,000.00 after all fees and USD to MXN conversion."
 
 ## Endpoints
 
@@ -74,8 +74,9 @@ Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wall
 </Tabs>
 
 <details>
-<summary>Example response</summary>
-The following shows an example response from the sender's wallet provider. A similar response will be returned from the recipient's wallet provider.
+<summary>Example responses</summary>
+The following example shows a response from the sender's wallet provider.
+
 ```json wrap
 {
     "id": "https://cloudninebank.example.com/sender",
@@ -85,6 +86,19 @@ The following shows an example response from the sender's wallet provider. A sim
     "resourceServer": "https://cloudninebank.example.com/op"
 }
 ```
+
+The following example shows a response from the recipient's wallet provider.
+
+```json wrap
+{
+    "id": "https://happylifebank.example.com/recipient",
+    "assetCode": "MXN",
+    "assetScale": 2,
+    "authServer": "https://auth.happylifebank.example.com/",
+    "resourceServer": "https://happylifebank.example.com/op"
+}
+```
+
 </details>
 
 ### 2. Request an incoming payment grant
@@ -247,7 +261,7 @@ Use the access token received in the previous step to call the <Badge text="POST
 
 This call requests that a quote resource be created on the sender's wallet account. The request must contain the `receiver`, which is the recipient's incoming payment `id`, along with the `receiveAmount`, which is the exact amount the sender wants the recipient to receive.
 
-The `receiveAmount` specifies that the recipient will receive exactly 5,000.00 MXN, and the sender will pay whatever amount is required after all fees and currency conversion.
+The `receiveAmount` specifies that the recipient will receive exactly MXN $5,000.00, and the sender will pay whatever amount is required after all fees and currency conversion.
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -262,7 +276,7 @@ The `receiveAmount` specifies that the recipient will receive exactly 5,000.00 M
       walletAddress: senderWalletAddress.id,
       receiver: recipientIncomingPayment.id,
       receiveAmount: {
-        value: '500000', // 5,000.00 MXN
+        value: '500000',
         assetCode: 'MXN',
         assetScale: 2
       }
@@ -276,7 +290,7 @@ The `receiveAmount` specifies that the recipient will receive exactly 5,000.00 M
 The response returns a `receiveAmount`, a `debitAmount`, and other required information.
 
 - `debitAmount` - The amount the sender must pay (in USD in our example) after fees and currency conversion.
-- `receiveAmount` - The amount the recipient will actually receive (exactly 5,000.00 MXN in our example).
+- `receiveAmount` - The amount the recipient will actually receive (exactly MXN $5,000.00 in our example).
 
 <details>
 <summary>Example response</summary>
@@ -292,7 +306,7 @@ The following shows an example response from the sender’s wallet provider.
     "assetScale": 2
   },
   "receiveAmount": {
-    "value": "500000", // Recipient receives 5,000.00 MXN
+    "value": "500000", // Recipient receives MXN $5,000.00
     "assetCode": "MXN",
     "assetScale": 2
   },
@@ -330,7 +344,7 @@ To ensure the sender is authorizing the correct amount, the `receiveAmount` is i
             receiveAmount: {
               assetCode: 'MXN',
               assetScale: 2,
-              value: 500000 // Example value in MXN
+              value: 500000
             }
           }
         }
@@ -439,11 +453,7 @@ The following shows an example response from the sender's wallet provider.
 
 ### 10. Request the creation of an outgoing payment resource
 
-Recall that the Create Quote API response (Step 5) included a `debitAmount` and a `receiveAmount`. The response also included an `id`, which is a URL to identify the quote.
-
-Because the quote contains both the debit and receive amounts, we won't specify any other amounts when setting up the outgoing payment. Instead, we will specify a `quoteId`. **This ensures that the recipient receives the exact `receiveAmount` specified in the quote, even after fees and currency conversions are applied.**
-
-Use the access token returned in Step 9 to call the <Badge text="POST" variant="success" /> [Create Outgoing Payment API](/apis/resource-server/operations/create-outgoing-payment/). Include the `quoteId` in the request.
+Use the access token returned in Step 9 to call the <Badge text="POST" variant="success" /> [Create Outgoing Payment API](/apis/resource-server/operations/create-outgoing-payment/). Include the `quoteId` in the request. The `quoteId` is the `id` returned in the Create Quote API response (Step 5).
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
