@@ -12,26 +12,26 @@ import Finish from '/src/partials/grant-finish-interaction.mdx'
 Learn how to send a one-time remittance payment with a fixed receive amount.
 :::
 
-A remittance payment is a transfer of money from one person to another, typically across borders or long distances, often involving currency conversion and fees. In this guide, you will learn how to implement a one-time remittance payment feature where your users can guarantee exactly how much the recipient will receive, rather than how much the sender will send.
+A remittance payment is a transfer of money from one person to another, typically across borders or long distances, often involving currency conversion and fees. In this guide, you will learn how to implement a one-time remittance payment feature where your user can specify exactly how much the recipient should receive.
 
 This approach is particularly useful for remittance app scenarios where:
 
-- Your users want the recipient to receive a fixed amount in their local currency
-- The sender is willing to pay the amount (in their currency) required to cover the recipient's amount, fees, and currency conversion
-- Your users want to avoid the complexity of calculating fees and conversions manually
+- The sender and the recipient each transact in different currencies
+- The sender wants the recipient to receive a fixed amount denominated in the recipient's local currency
+- The sender is willing to cover the cost of any fees and changes in exchange rate
 
 ## Scenario
 
-For this guide, you'll assume the role of a developer building a remittance app. Imagine someone in the US wants to send money to a family member in Mexico, and they want to guarantee that their family member receives _exactly_ 5,000 Mexican Pesos after all fees and currency conversions. This is different from sending money where the sender specifies the exact amount they want to send, regardless of what the recipient receives.
+Imagine someone in the US wants to send money to a family member in Mexico. They want their family member to receive _exactly_ $5,000 Mexican pesos (MXN), even if it means paying a slightly higher amount in US dollars to cover fees and currency conversion. This is different from a payment where the sender specifies exactly how much to send, regardless of what the recipient will receive.
 
-This guide explains how to implement Open Payments in your remittance app so that the recipient receives the specified amount (MXN $5,000 in this example), even if the sender has to pay a slightly higher amount in US Dollars to cover fees and currency conversions.
+For this guide, you'll assume the role of a developer building a remittance app. The guide explains how to send a payment in USD, where the recipient receives exactly MXN $5,000.
 
 **Example transaction details:**
 
-- **Recipient receives**: MXN $5,000.00 (exact amount)
+- **Recipient receives**: MXN $5,000 (exact amount)
 - **Fees**: To be determined (fees vary based on wallet providers and currency conversions)
 - **Currency conversion**: USD to MXN (exchange rate varies)
-- **Sender pays**: Amount in USD required to cover the MXN $5,000.00 plus fees
+- **Sender pays**: Amount in USD required to cover MXN $5,000 plus fees
 
 The three parties involved in this scenario are:
 
@@ -39,7 +39,7 @@ The three parties involved in this scenario are:
 - **Sender**: the person using your app to send money in USD
 - **Recipient**: the person receiving the money in MXN
 
-Remember, Open Payments doesn't execute payments or touch money in any way. It's used to issue payment instructions before any money movement occurs. In this scenario, the payment instruction is, "Debit an amount in USD from the sender's account that is sufficient to ensure the recipient receives exactly MXN $5,000.00 after all fees and USD to MXN conversion."
+Remember, Open Payments doesn't execute payments or touch money in any way. It's used to issue payment instructions before any money movement occurs. An example of a payment instruction is, "Debit an amount in USD from the sender's account that's sufficient to ensure the recipient receives exactly MXN $5,000 after all fees and USD to MXN conversion."
 
 ## Endpoints
 
@@ -50,7 +50,7 @@ Remember, Open Payments doesn't execute payments or touch money in any way. It's
 - <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-continue/'>Grant Continuation Request</LinkOut>
 - <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment/'>Create an Outgoing Payment</LinkOut>
 
-## Guides
+## Steps
 
 ### 1. Get wallet address information
 
@@ -261,7 +261,7 @@ Use the access token received in the previous step to call the <Badge text="POST
 
 This call requests that a quote resource be created on the sender's wallet account. The request must contain the `receiver`, which is the recipient's incoming payment `id`, along with the `receiveAmount`, which is the exact amount the sender wants the recipient to receive.
 
-The `receiveAmount` specifies that the recipient will receive exactly MXN $5,000.00, and the sender will pay whatever amount is required after all fees and currency conversion.
+The `receiveAmount` specifies that the recipient will receive exactly MXN $5,000.
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -290,7 +290,7 @@ The `receiveAmount` specifies that the recipient will receive exactly MXN $5,000
 The response returns a `receiveAmount`, a `debitAmount`, and other required information.
 
 - `debitAmount` - The amount the sender must pay (in USD in our example) after fees and currency conversion.
-- `receiveAmount` - The amount the recipient will actually receive (exactly MXN $5,000.00 in our example).
+- `receiveAmount` - The amount the recipient will actually receive (exactly MXN $5,000 in our example).
 
 <details>
 <summary>Example response</summary>
@@ -306,7 +306,7 @@ The following shows an example response from the sender’s wallet provider.
     "assetScale": 2
   },
   "receiveAmount": {
-    "value": "500000", // Recipient receives MXN $5,000.00
+    "value": "500000", // Recipient receives MXN $5,000
     "assetCode": "MXN",
     "assetScale": 2
   },
@@ -318,11 +318,11 @@ The following shows an example response from the sender’s wallet provider.
 
 ### 6. Request an interactive outgoing payment grant
 
-Use the sender's `authServer` information to call the <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request).
+Use the sender's `authServer` information received in Step 1 to call the <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request).
 
-This call obtains an access token that allows your app to request outgoing payment resources be created on the sender's wallet account.
+This call obtains an access token that allows your app to request an outgoing payment resource be created on the sender's wallet account.
 
-To ensure the sender is authorizing the correct amount, the `receiveAmount` is included in the `limits` object. This limits the outgoing payment to the specified receive amount. The `receiveAmount` is already defined in the quote resource that will be used in the final "Create Outgoing Payment" step.
+To ensure the sender is authorizing the correct amount, the `receiveAmount` is included in the `limits` object. This limits the outgoing payment to the specified receive amount. The `receiveAmount` is already defined in the quote resource that will be used when requesting the creation of an outgoing payment resource (Step 10).
 
 <InteractionReq />
 
@@ -394,7 +394,7 @@ The following shows an example response from the sender’s wallet provider.
 
 ### 9. Request a grant continuation
 
-In our example, we're assuming the IdP the sender interacted with has a user interface. When the interaction completes, the sender returns to your app. Now your app can make a continuation request for the outgoing payment grant.
+In our example, we're assuming the IdP your user interacted with has a user interface. When the interaction completes, your user returns to your app. Now your app can make a continuation request for the outgoing payment grant.
 
 :::note
 In a scenario where a user interface isn't available, consider implementing a polling mechanism to check for the completion of the interaction.
@@ -442,9 +442,9 @@ The following shows an example response from the sender's wallet provider.
     ]
   },
   "continue": {
-  "access_token": {
-  "value": "..." // access token for continuing the request
-  },
+    "access_token": {
+      "value": "..." // access token for continuing the request
+    },
   "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
   }
 }
@@ -486,7 +486,7 @@ The following shows an example response from the sender's wallet provider.
     "assetScale": 2
   },
   "receiveAmount": {
-    "value": "500000", // Recipient receives 5,000.00 MXN
+    "value": "500000", // Recipient receives 5,000 MXN
     "assetCode": "MXN",
     "assetScale": 2
   },

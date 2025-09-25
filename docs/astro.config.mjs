@@ -302,8 +302,8 @@ export default defineConfig({
               link: '/guides/make-onetime-payment/'
             },
             {
-              label: `Send a remittance payment with fixed receive amount`,
-              link: `/guides/send-onetime-payment-fixed-receive`
+              label: `Send a remittance payment with a fixed receive amount`,
+              link: `/guides/onetime-remittance-fixed-receive`
             },
             {
               label: 'Make recurring payments',
