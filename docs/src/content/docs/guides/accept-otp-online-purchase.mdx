@@ -4,7 +4,6 @@ title: Accept a one-time payment for an online purchase
 
 import { LinkOut } from '@interledger/docs-design-system'
 import { Tabs, TabItem, Badge } from '@astrojs/starlight/components'
-import InteractionReq from '/src/partials/interaction-required.mdx'
 import Start from '/src/partials/grant-start-interaction.mdx'
 import Finish from '/src/partials/grant-finish-interaction.mdx'
 
@@ -16,11 +15,9 @@ In a business-to-consumer (B2C) model, businesses sell their products directly t
 
 Online retailers often employ the B2C model, allowing customers to pay directly for goods and services. In cases where an intermediary or third-party is owed a portion of the sale, the [payment can be split](/guides/split-payments).
 
-Remember, Open Payments doesn't execute payments or touch money in any way. It's used to issue payment instructions before any money movement occurs. A simplified example of a payment instruction is, “debit MXN $500 from my account”.
-
 ## Scenario
 
-For this guide, you'll assume the role of a developer working for an online athletics company. A customer adds a pair of shoes to their shopping cart and begins the checkout process. Their total is MXN $1,400. This guide explains how you can implement Open Payments on the retailer's site so that the retailer receives the full amount of the customer's payment.
+For this guide, you'll assume the role of a developer working for an online athletics company. A customer adds a pair of shoes to their shopping cart and begins the checkout process. Their total is $1,400 MXN. This guide explains how you can implement Open Payments on the retailer's site so that the retailer receives the full amount of the customer's payment.
 
 The three parties involved in the transaction are the:
 
@@ -109,7 +106,7 @@ The following is an example response from the retailer's wallet provider.
 {
   "access_token": {
     "value": "...", // access token value for incoming payment grant
-    "manage": "https://happylifebank.example.com/token/{...}", // management uri for access token
+    "manage": "https://auth.happylifebank.example.com/token/{...}", // management uri for access token
     "access": [
       {
         "type": "incoming-payment",
@@ -121,7 +118,7 @@ The following is an example response from the retailer's wallet provider.
     "access_token": {
       "value": "..." // access token for continuing the request
     },
-    "uri": "https://happylifebank.example.com/continue/{...}" // continuation request uri
+    "uri": "https://auth.happylifebank.example.com/continue/{...}" // continuation request uri
   }
 }
 ```
@@ -133,7 +130,7 @@ Use the access token returned in the previous response to call the <Badge text="
 
 This call requests an incoming payment resource be created on the retailer's wallet account.
 
-Remember that the full amount of the customer's purchase is MXN $1,400.
+Remember that the full amount of the customer's purchase is $1,400 MXN.
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -221,7 +218,7 @@ The following is an example response from the customer's wallet provider.
 {
   "access_token": {
     "value": "...", // access token value for quote grant
-    "manage": "https:/cloudninebank.example.com/token/{...}", // management uri for access token
+    "manage": "https:/auth.cloudninebank.example.com/token/{...}", // management uri for access token
     "access": [
       {
         "type": "quote",
@@ -300,7 +297,9 @@ Use the customer's `authServer` information to call the <Badge text="POST" varia
 
 This call obtains an access token that allows your client to request outgoing payment resources be created on the customer's wallet account.
 
-<InteractionReq />
+:::note
+Outgoing payments require an interactive grant. This type of grant will obtain the customer's consent before an outgoing payment is made against their wallet account. You can find more information in the [Open Payments flow](/concepts/op-flow/#outgoing-payment) and [identity providers](/identity/idp) pages.
+:::
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
