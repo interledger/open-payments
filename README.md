@@ -15,6 +15,7 @@ Open Payments is an open API standard that can be implemented by account servici
 - Subscriptions
 - Invoice Payments
 
+
 The Open Payments APIs are a collection of three sub-systems:
 
 - A **wallet address server** which exposes public information about Open Payments-enabled accounts called "wallet addresses"
