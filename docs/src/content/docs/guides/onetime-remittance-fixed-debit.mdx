@@ -12,26 +12,25 @@ import FinishInteraction from '/src/partials/grant-finish-interaction.mdx'
 Learn how to send a one-time remittance payment by debiting the sender's account by a specific amount.
 :::
 
-A remittance payment is a transfer of money from one person to another, typically across borders or long distances, often involving currency conversion and fees. In this guide, you will learn how to implement a one-time remittance payment feature where your users can specify exactly how much they want to send, rather than how much the recipient should receive.
+A remittance payment is a transfer of money from one person to another, typically across borders or long distances, often involving currency conversion. In this guide, you will learn how to implement a one-time remittance payment feature where your users can specify exactly how much they want to send, rather than how much the recipient should receive.
 
 This approach is particularly useful for remittance app scenarios where:
 
 - Your users want to pay a fixed amount from their account
-- The recipient receives whatever amount remains after fees and currency conversion
-- Your users want to avoid the complexity of calculating fees upfront
+- The recipient receives whatever amount remains after currency conversion
+- Your users want to avoid the complexity of calculating conversion fees upfront
 
 ### Scenario
 
-Imagine someone in the US sending money to a family member in Mexico. They want to send exactly $100 US Dollars (USD) from their account, regardless of how much their family member actually receives after fees and exchange rates. This is different from sending money where the sender specifies exactly how much the recipient should receive.
+Imagine someone in the US sending money to a family member in Mexico. They want to send exactly $100 US Dollars (USD) from their account, regardless of how much their family member actually receives after exchange rates are applied. This is different from where the sender specifies exactly how much the recipient should receive.
 
-For this guide, you'll assume the role of a developer building a remittance app. The guide explains how to send a $100 USD payment, where the sender pays exactly $100, and the recipient receives the amount in Mexican Pesos (MXN) after all fees and currency conversion.
+For this guide, you'll assume the role of a developer building a remittance app. The guide explains how to send a \$100 USD payment, where the sender pays exactly \$100, and the recipient receives the amount in Mexican Pesos (MXN) after currency conversion.
 
 **Example transaction details:**
 
 - **Sender pays**: $100.00 USD (exact amount)
-- **Fees**: $5.00 USD (5% processing fee)
 - **Currency conversion**: USD to MXN at 17.00 exchange rate
-- **Recipient receives**: MXN $1,615.00 (($100 - $5) × 17.00)
+- **Recipient receives**: $1,700 MXN ($100 × 17.00)
 
 The three parties involved in this scenario are:
 
@@ -39,7 +38,7 @@ The three parties involved in this scenario are:
 - **Sender**: the person using your app to send money in USD
 - **Recipient**: the person receiving the money in MXN
 
-Remember, Open Payments doesn't execute payments or touch money in any way. It's used to issue payment instructions before any money movement occurs. An example of a payment instruction is, "debit exactly $100 from the sender's account and keep $5 in fees from the $100 debited from the sender's account".
+Remember, Open Payments doesn't execute payments or touch money in any way. It's used to issue payment instructions before any money movement occurs. An example of a payment instruction is, "debit exactly \$100 from the sender's account and send the amount to the recipient's account after exchange rates are applied".
 
 ## Endpoints
 
@@ -134,7 +133,7 @@ The following shows an example response from the recipient's wallet provider.
 {
   "access_token": {
     "value": "...", // access token value for incoming payment grant
-    "manage": "https://happylifebank.example.com/token/{...}", // management uri for access token
+    "manage": "https://auth.happylifebank.example.com/token/{...}", // management uri for access token
     "access": [
       {
         "type": "incoming-payment",
@@ -146,7 +145,7 @@ The following shows an example response from the recipient's wallet provider.
     "access_token": {
       "value": "..." // access token for continuing the request
     },
-    "uri": "https://happylifebank.example.com/continue/{...}" // continuation request uri
+    "uri": "https://auth.happylifebank.example.com/continue/{...}" // continuation request uri
   }
 }
 ```
@@ -237,7 +236,7 @@ This call obtains an access token that allows your app to request that a quote r
 {
   "access_token": {
     "value": "...", // access token value for quote grant
-    "manage": "https://cloudninebank.example.com/token/{...}", // management uri for access token
+    "manage": "https://auth.cloudninebank.example.com/token/{...}", // management uri for access token
     "access": [
       {
         "type": "quote",
@@ -262,7 +261,7 @@ Use the access token received in the previous step to call the <Badge text="POST
 
 This call requests that a quote resource be created on the sender's wallet account. The request must contain the `receiver`, which is the recipient's incoming payment `id`, along with the `debitAmount`, which is the exact amount the sender wants to pay.
 
-The `debitAmount` specifies that the sender will pay exactly $100 USD, and the recipient will receive whatever amount remains after all fees and currency conversion.
+The `debitAmount` specifies that the sender will pay exactly $100 USD, and the recipient will receive whatever amount remains after currency conversion.
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -290,7 +289,7 @@ The `debitAmount` specifies that the sender will pay exactly $100 USD, and the r
 The response returns a `receiveAmount`, a `debitAmount`, and other required information.
 
 - `debitAmount` - The amount the sender must pay (exactly $100.00 USD in our example).
-- `receiveAmount` - The amount the recipient will actually receive (MXN $1,650.00 in our example) after fees and currency conversion.
+- `receiveAmount` - The amount the recipient will actually receive ($1,700.00 MXN in our example) after currency conversion.
 
 <details>
 <summary>Example response</summary>
@@ -307,7 +306,7 @@ The response returns a `receiveAmount`, a `debitAmount`, and other required info
     "assetScale": 2
   },
   "receiveAmount": {
-    "value": "161500", // Recipient receives MXN 1,615.00  after fees and currency conversion
+    "value": "170000", // Recipient receives $1,700.00 MXN  after currency conversion
     "assetCode": "MXN",
     "assetScale": 2
   },
@@ -489,7 +488,7 @@ The following shows an example response when an outgoing payment resource is cre
     "assetScale": 2
   },
   "receiveAmount": {
-    "value": "161500", // Recipient receives MXN 1,615.00 after fees and currency conversion
+    "value": "170000", // Recipient receives $1,700.00 MXN after currency conversion
     "assetCode": "MXN",
     "assetScale": 2
   },
@@ -503,3 +502,7 @@ The following shows an example response when an outgoing payment resource is cre
 ```
 
 </details>
+
+:::note[Complete the incoming payment (optional)]
+If you want to complete the incoming payment and surface a payment confirmation in your app, then call the <Badge text="POST" variant="success" /> [Complete Incoming Payment API](apis/resource-server/operations/complete-incoming-payment/).
+:::
