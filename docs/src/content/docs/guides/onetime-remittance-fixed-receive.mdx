@@ -9,29 +9,28 @@ import Start from '/src/partials/grant-start-interaction.mdx'
 import Finish from '/src/partials/grant-finish-interaction.mdx'
 
 :::tip[Summary]
-Learn how to send a one-time remittance payment with a fixed receive amount.
+Learn how to send a one-time remittance payment where the recipient will receive a fixed amount.
 :::
 
-A remittance payment is a transfer of money from one person to another, typically across borders or long distances, often involving currency conversion and fees. In this guide, you will learn how to implement a one-time remittance payment feature where your user can specify exactly how much the recipient should receive.
+A remittance payment is a transfer of money from one person to another, typically across borders or long distances, often involving currency conversion. In this guide, you will learn how to implement a one-time remittance payment feature where your user can specify exactly how much the recipient should receive.
 
 This approach is particularly useful for remittance app scenarios where:
 
 - The sender and the recipient each transact in different currencies
 - The sender wants the recipient to receive a fixed amount denominated in the recipient's local currency
-- The sender is willing to cover the cost of any fees and changes in exchange rate
+- The sender is willing to cover any differences in the exchange rate
 
 ## Scenario
 
-Imagine someone in the US wants to send money to a family member in Mexico. They want their family member to receive _exactly_ $5,000 Mexican pesos (MXN), even if it means paying a slightly higher amount in US dollars to cover fees and currency conversion. This is different from a payment where the sender specifies exactly how much to send, regardless of what the recipient will receive.
+Imagine someone in the US wants to send money to a family member in Mexico. They want their family member to receive _exactly_ $5,000 Mexican pesos (MXN), even if it means paying a slightly higher amount in US dollars to cover currency conversion. This is different from a payment where the sender specifies exactly how much to send, regardless of what the recipient will receive.
 
-For this guide, you'll assume the role of a developer building a remittance app. The guide explains how to send a payment in USD, where the recipient receives exactly MXN $5,000.
+For this guide, you'll assume the role of a developer building a remittance app. The guide explains how to send a payment in USD, where the recipient receives exactly $5,000 MXN.
 
 **Example transaction details:**
 
-- **Recipient receives**: MXN $5,000 (exact amount)
-- **Fees**: To be determined (fees vary based on wallet providers and currency conversions)
-- **Currency conversion**: USD to MXN (exchange rate varies)
-- **Sender pays**: Amount in USD required to cover MXN $5,000 plus fees
+- **Recipient receives**: $5,000 MXN (exact amount)
+- **Currency conversion**: USD to MXN at 18.00 exchange rate
+- **Sender pays**: \$277.78 USD ($5000/18.00)
 
 The three parties involved in this scenario are:
 
@@ -39,7 +38,11 @@ The three parties involved in this scenario are:
 - **Sender**: the person using your app to send money in USD
 - **Recipient**: the person receiving the money in MXN
 
-Remember, Open Payments doesn't execute payments or touch money in any way. It's used to issue payment instructions before any money movement occurs. An example of a payment instruction is, "Debit an amount in USD from the sender's account that's sufficient to ensure the recipient receives exactly MXN $5,000 after all fees and USD to MXN conversion."
+### Technical concepts
+
+- `debitAmount`: taken from the sender's account, denominated in the sender's currency (in our example, USD)
+- `receiveAmount`: delivered to the recipient's account, denominated in the recipient's currency (in our example, MXN)
+- See [Amounts](/concepts/amounts/) for more information about asset codes, asset scales, and values.
 
 ## Endpoints
 
@@ -236,7 +239,7 @@ The following shows an example response from the sender's wallet provider.
 {
   "access_token": {
     "value": "...", // access token value for quote grant
-    "manage": "https:/cloudninebank.example.com/token/{...}", // management uri for access token
+    "manage": "https://cloudninebank.example.com/token/{...}", // management uri for access token
     "access": [
       {
         "type": "quote",
@@ -252,7 +255,7 @@ The following shows an example response from the sender's wallet provider.
   }
 }
 
-````
+```
 </details>
 
 ### 5. Request the creation of a quote resource
@@ -261,7 +264,7 @@ Use the access token received in the previous step to call the <Badge text="POST
 
 This call requests that a quote resource be created on the sender's wallet account. The request must contain the `receiver`, which is the recipient's incoming payment `id`, along with the `receiveAmount`, which is the exact amount the sender wants the recipient to receive.
 
-The `receiveAmount` specifies that the recipient will receive exactly MXN $5,000.
+The `receiveAmount` specifies that the recipient will receive exactly $5,000 MXN.
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -282,15 +285,19 @@ The `receiveAmount` specifies that the recipient will receive exactly MXN $5,000
       }
     }
   )
-````
+```
 
   </TabItem>
 </Tabs>
 
 The response returns a `receiveAmount`, a `debitAmount`, and other required information.
 
-- `debitAmount` - The amount the sender must pay (in USD in our example) after fees and currency conversion.
-- `receiveAmount` - The amount the recipient will actually receive (exactly MXN $5,000 in our example).
+- `debitAmount` - The amount the sender must pay (in USD in our example) after currency conversion.
+- `receiveAmount` - The amount the recipient will actually receive (exactly $5,000 MXN in our example).
+
+:::note[Expiring quotes]
+Quotes may include an `expiresAt` timestamp. Create the outgoing payment before the quote expires. If creation fails because the quote expired, request a new quote and try again.
+:::
 
 <details>
 <summary>Example response</summary>
@@ -301,12 +308,12 @@ The following shows an example response from the sender’s wallet provider.
   "walletAddress": "https://cloudninebank.example.com/sender",
   "receiver": "https://happylifebank.example.com/incoming-payments/{...}", // url of the incoming payment the quote is created for
   "debitAmount": {
-    "value": "2750", // Sender pays $ 27.50 USD after fees and currency conversion
+    "value": "27778", // Sender pays $277.78 USD after currency conversion
     "assetCode": "USD",
     "assetScale": 2
   },
   "receiveAmount": {
-    "value": "500000", // Recipient receives MXN $5,000
+    "value": "500000", // Recipient receives $5,000 MXN
     "assetCode": "MXN",
     "assetScale": 2
   },
@@ -344,7 +351,7 @@ To ensure the sender is authorizing the correct amount, the `receiveAmount` is i
             receiveAmount: {
               assetCode: 'MXN',
               assetScale: 2,
-              value: 500000
+              value: '500000'
             }
           }
         }
@@ -472,6 +479,8 @@ Use the access token returned in Step 9 to call the <Badge text="POST" variant="
   </TabItem>
 </Tabs>
 
+If the request fails because of an expired quote, [request a new quote](#5-request-the-creation-of-a-quote-resource) and try again; if it fails because the grant's access token has expired, call the <Badge text="POST" variant="success" /> [Rotate Access Token](/apis/auth-server/operations/post-token/) to obtain a new access token, then retry the request with the new token.
+
 <details>
 <summary>Example response</summary>
 The following shows an example response from the sender's wallet provider.
@@ -481,12 +490,12 @@ The following shows an example response from the sender's wallet provider.
   "walletAddress": "https://cloudninebank.example.com/sender",
   "receiver": "https://happylifebank.example.com/incoming-payments/{...}", // url of the incoming payment being paid
   "debitAmount": {
-    "value": "2750", // Sender pays $ 27.50 USD after fees and currency conversion
+    "value": "27778", // Sender pays $277.78 USD after currency conversion
     "assetCode": "USD",
     "assetScale": 2
   },
   "receiveAmount": {
-    "value": "500000", // Recipient receives 5,000 MXN
+    "value": "500000", // Recipient receives $5,000 MXN
     "assetCode": "MXN",
     "assetScale": 2
   },
@@ -495,7 +504,11 @@ The following shows an example response from the sender's wallet provider.
     "assetCode": "USD",
     "assetScale": 2
   },
-  "createdAt": "2022-03-12T23:20:54.52Z"
+  "createdAt": "2025-03-12T23:20:54.52Z"
 }
 ```
 </details>
+
+:::note[Complete the incoming payment (optional)]
+If you want to complete the incoming payment and surface a payment confirmation in your app, then call the <Badge text="POST" variant="success" /> [Complete Incoming Payment API](/apis/resource-server/operations/complete-incoming-payment/).
+:::
