@@ -4,7 +4,6 @@ title: Send a remittance with a fixed receive amount
 
 import { LinkOut } from '@interledger/docs-design-system'
 import { Tabs, TabItem, Badge } from '@astrojs/starlight/components'
-import InteractionReq from '/src/partials/interaction-required.mdx'
 import Start from '/src/partials/grant-start-interaction.mdx'
 import Finish from '/src/partials/grant-finish-interaction.mdx'
 
@@ -37,12 +36,6 @@ The three parties involved in this scenario are:
 - **Developer**: you, the person building the remittance app
 - **Sender**: the person using your app to send money in USD
 - **Recipient**: the person receiving the money in MXN
-
-### Technical concepts
-
-- `debitAmount`: taken from the sender's account, denominated in the sender's currency (in our example, USD)
-- `receiveAmount`: delivered to the recipient's account, denominated in the recipient's currency (in our example, MXN)
-- See [Amounts](/concepts/amounts/) for more information about asset codes, asset scales, and values.
 
 ## Endpoints
 
@@ -139,7 +132,7 @@ The following shows an example response from the recipient's wallet provider.
 {
   "access_token": {
     "value": "...", // access token value for incoming payment grant
-    "manage": "https://happylifebank.example.com/token/{...}", // management uri for access token
+    "manage": "https://auth.happylifebank.example.com/token/{...}", // management uri for access token
     "access": [
       {
         "type": "incoming-payment",
@@ -151,7 +144,7 @@ The following shows an example response from the recipient's wallet provider.
     "access_token": {
       "value": "..." // access token for continuing the request
     },
-    "uri": "https://happylifebank.example.com/continue/{...}" // continuation request uri
+    "uri": "https://auth.happylifebank.example.com/continue/{...}" // continuation request uri
   }
 }
 ```
@@ -239,7 +232,7 @@ The following shows an example response from the sender's wallet provider.
 {
   "access_token": {
     "value": "...", // access token value for quote grant
-    "manage": "https://cloudninebank.example.com/token/{...}", // management uri for access token
+    "manage": "https://auth.cloudninebank.example.com/token/{...}", // management uri for access token
     "access": [
       {
         "type": "quote",
@@ -295,8 +288,10 @@ The response returns a `receiveAmount`, a `debitAmount`, and other required info
 - `debitAmount` - The amount the sender must pay (in USD in our example) after currency conversion.
 - `receiveAmount` - The amount the recipient will actually receive (exactly $5,000 MXN in our example).
 
+You'll use this same `receiveAmount` in the next step when requesting the outgoing payment grant, so the sender authorizes this exact amount.
+
 :::note[Expiring quotes]
-Quotes may include an `expiresAt` timestamp. Create the outgoing payment before the quote expires. If creation fails because the quote expired, request a new quote and try again.
+Quotes include an `expiresAt` timestamp. Create the outgoing payment before the quote expires. If creation fails because the quote expired, request a new quote and try again.
 :::
 
 <details>
@@ -329,9 +324,12 @@ Use the sender's `authServer` information received in Step 1 to call the <Badge 
 
 This call obtains an access token that allows your app to request an outgoing payment resource be created on the sender's wallet account.
 
-To ensure the sender is authorizing the correct amount, the `receiveAmount` is included in the `limits` object. This limits the outgoing payment to the specified receive amount. The `receiveAmount` is already defined in the quote resource that will be used when requesting the creation of an outgoing payment resource (Step 10).
+To ensure the sender is authorizing the correct amount, include the same `receiveAmount` in the `limits` object. This limits the outgoing payment to the specified receive amount and keeps the grant aligned with the quote from the previous step.
 
-<InteractionReq />
+:::note
+Outgoing payments require an interactive grant. This type of grant will obtain the sender's consent before an outgoing payment is made against their wallet account. You can find more information in the [Open Payments flow](/concepts/op-flow/#outgoing-payment) and [identity providers](/identity/idp) pages.
+:::
+
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -479,7 +477,7 @@ Use the access token returned in Step 9 to call the <Badge text="POST" variant="
   </TabItem>
 </Tabs>
 
-If the request fails because of an expired quote, [request a new quote](#5-request-the-creation-of-a-quote-resource) and try again; if it fails because the grant's access token has expired, call the <Badge text="POST" variant="success" /> [Rotate Access Token](/apis/auth-server/operations/post-token/) to obtain a new access token, then retry the request with the new token.
+If the request fails because of an expired quote, [request a new quote](#5-request-the-creation-of-a-quote-resource) and try again. If it fails because the grant's access token has expired, call the <Badge text="POST" variant="success" /> [Rotate Access Token](/apis/auth-server/operations/post-token/) to obtain a new access token, then retry the request with the new token.
 
 <details>
 <summary>Example response</summary>
@@ -510,5 +508,5 @@ The following shows an example response from the sender's wallet provider.
 </details>
 
 :::note[Complete the incoming payment (optional)]
-If you want to complete the incoming payment and surface a payment confirmation in your app, then call the <Badge text="POST" variant="success" /> [Complete Incoming Payment API](/apis/resource-server/operations/complete-incoming-payment/).
+After your outgoing payment completes, you can call the <Badge text="POST" variant="success" /> [Complete Incoming Payment API](/apis/resource-server/operations/complete-incoming-payment/) to mark the recipient's incoming payment as complete. This instructs the recipient's provider to stop accepting additional payments for that incoming payment. 
 :::
