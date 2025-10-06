@@ -19,11 +19,12 @@ Online retailers often employ the B2C model, allowing customers to pay directly 
 
 For this guide, you'll assume the role of a developer working for an online athletics company. A customer adds a pair of shoes to their shopping cart and begins the checkout process. Their total is $1,400 MXN. This guide explains how you can implement Open Payments on the retailer's site so that the retailer receives the full amount of the customer's payment.
 
-The three parties involved in the transaction are the:
+The parties involved in the transaction are the:
 
-- Developer: you, as the developer working on the client (the retailer's website)
-- Customer: the individual using the retailer's website to make a purchase
-- Retailer: the athletics company
+- **Retailer:** the athletics company
+- **Developer:** you, as the developer working on the client app
+- **Client app:** The retailer's website
+- **Customer:** the individual using the retailer's website to make a purchase
 
 ## Endpoints
 
@@ -38,7 +39,7 @@ The three parties involved in the transaction are the:
 
 ### 1. Get wallet address information
 
-When the customer initiates the payment, the retailer's site--the client--must get wallet address information for both the customer and themselves.
+When the customer initiates the payment, the client app (the retailer's site) must get wallet address information for both the customer and themselves.
 
 Let's assume the customer entered their wallet address into the site's checkout form. Let's also assume that the retailer's wallet address is coded into the checkout form.
 
@@ -48,10 +49,10 @@ Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wall
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
   ```ts wrap
   const customerWalletAddress = await client.walletAddress.get({
-  url: 'https://cloudninebank.example.com/customer'
+    url: 'https://cloudninebank.example.com/customer'
   })
   const retailerWalletAddress = await client.walletAddress.get({
-  url: 'https://happylifebank.example.com/retailer'
+    url: 'https://happylifebank.example.com/retailer'
   })
   ```
   </TabItem>
@@ -75,7 +76,7 @@ The following is an example response from the customer's wallet provider. A simi
 
 Use the retailer's `authServer` details, received in the previous step, to call the <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request/).
 
-This call obtains an access token that allows the client to request an incoming payment resource be created on the retailer's wallet account.
+This call obtains an access token that allows the client app to request an incoming payment resource be created on the retailer's wallet account.
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -187,7 +188,7 @@ The following is an example response from the retailer's wallet provider.
 
 Use the customer's `authServer` details, returned in Step 1, to call the <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request/).
 
-This call obtains an access token that allows your client to request a quote resource be created on the customer's wallet account.
+This call obtains an access token that allows the client app to request a quote resource be created on the customer's wallet account.
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -295,7 +296,7 @@ The following is an example response from the customer's wallet provider.
 
 Use the customer's `authServer` information to call the <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request).
 
-This call obtains an access token that allows your client to request outgoing payment resources be created on the customer's wallet account.
+This call obtains an access token that allows the client app to request outgoing payment resources be created on the customer's wallet account. For this guide, the request will be limited up to the amount of `140000` (\$1400.00)
 
 :::note
 Outgoing payments require an interactive grant. This type of grant will obtain the customer's consent before an outgoing payment is made against their wallet account. You can find more information in the [Open Payments flow](/concepts/op-flow/#outgoing-payment) and [identity providers](/identity/idp) pages.
@@ -319,7 +320,7 @@ Outgoing payments require an interactive grant. This type of grant will obtain t
               debitAmount: {
                 assetCode: 'MXN',
                 assetScale: 2,
-                value: 140000,
+                value: '140000',
               }
             }
           }
@@ -369,13 +370,13 @@ The following is an example response from the customer's wallet provider.
 
 ### 9. Request a grant continuation
 
-In our example, we're assuming the IdP the customer interacted with has a user interface. When the interaction completes, the customer returns to your client. Now your client can make a continuation request for the outgoing payment grant.
+In our example, we're assuming the IdP the customer interacted with has a user interface. When the interaction completes, the customer returns to the client app. Now the app can make a continuation request for the outgoing payment grant.
 
 :::note
 In a scenario where a user interface isn't available, consider implementing a polling mechanism to check for the completion of the interaction.
 :::
 
-Call the <Badge text="POST" variant="success" /> [Grant Continuation Request API](/apis/auth-server/operations/post-continue/). This call requests an access token that allows your client to request an outgoing payment resource be created on the customer's wallet account.
+Call the <Badge text="POST" variant="success" /> [Grant Continuation Request API](/apis/auth-server/operations/post-continue/). This call requests an access token that allows the client app to request an outgoing payment resource be created on the customer's wallet account.
 
 Issue the request to the `continue.uri` provided in the initial outgoing payment grant response (Step 6).
 
