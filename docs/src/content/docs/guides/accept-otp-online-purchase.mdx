@@ -90,7 +90,7 @@ This call obtains an access token that allows the client app to request an incom
         access: [
           {
             type: 'incoming-payment',
-            actions: ['read', 'create'],
+            actions: ['create'],
           },
         ],
       },
@@ -111,7 +111,7 @@ The following is an example response from the retailer's wallet provider.
     "access": [
       {
         "type": "incoming-payment",
-        "actions": ["create", "read"]
+        "actions": ["create"]
       }
     ]
   },
@@ -202,7 +202,7 @@ This call obtains an access token that allows the client app to request a quote 
         access: [
           {
             type: 'quote',
-            actions: ['create', 'read']
+            actions: ['create']
           }
         ]
       }
@@ -223,7 +223,7 @@ The following is an example response from the customer's wallet provider.
     "access": [
       {
         "type": "quote",
-        "actions": ["create", "read"]
+        "actions": ["create"]
       }
     ]
   },
@@ -315,7 +315,7 @@ Outgoing payments require an interactive grant. This type of grant will obtain t
           {
             identifier: customerWalletAddress.id,
             type: 'outgoing-payment',
-            actions: ['read', 'create'],
+            actions: ['create'],
             limits: {
               debitAmount: {
                 assetCode: 'MXN',
@@ -409,7 +409,7 @@ The following is an example response from the customer's wallet provider.
     "access": [
       {
         "type": "outgoing-payment",
-        "actions": ["create", "read"],
+        "actions": ["create"],
         "identifier": "https://cloudninebank.example.com/customer",
         "limits": {
           "receiver": "https://happylifebank.example.com/incoming-payments/{...}" // url of the incoming payment that's being paid
@@ -441,7 +441,7 @@ Use the access token returned in Step 9 to call the <Badge text="POST" variant="
     },
     {
       walletAddress: customerWalletAddress.id,
-      quoteId: retailerQuote.id
+      quoteId: customerQuote.id
     }
   )
   ```

@@ -99,7 +99,7 @@ If you and the merchant use the same account servicing entity, and as a result, 
         access: [
           {
             type: "incoming-payment",
-            actions: ["read", "create"],
+            actions: ["create"],
           },
         ],
       },
@@ -115,7 +115,7 @@ If you and the merchant use the same account servicing entity, and as a result, 
         access: [
           {
             type: "incoming-payment",
-            actions: ["read", "create"],
+            actions: ["create"],
           },
         ],
       },
@@ -137,7 +137,7 @@ The following shows an example response from the merchant's wallet provider. A s
     "access": [
       {
         "type": "incoming-payment",
-        "actions": ["create", "read"]
+        "actions": ["create"]
       }
     ]
   },
@@ -247,7 +247,7 @@ This call obtains an access token that allows your platform to request quote res
           access: [
             {
               type: 'quote',
-              actions: ['create', 'read']
+              actions: ['create']
             }
           ]
         }
@@ -268,7 +268,7 @@ This call obtains an access token that allows your platform to request quote res
     "access": [
       {
         "type": "quote",
-        "actions": ["create", "read"]
+        "actions": ["create"]
       }
     ]
   },
@@ -379,7 +379,7 @@ This call obtains an access token that allows your platform to request outgoing 
           {
             identifier: customerWalletAddress.id,
             type: 'outgoing-payment',
-            actions: ['read', 'create'],
+            actions: ['create'],
             limits: {
               debitAmount: {
                 assetCode: 'USD',
@@ -474,7 +474,7 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
     "access": [
       {
         "type": "outgoing-payment",
-        "actions": ["create", "read"],
+        "actions": ["create"],
         "identifier": "https://cloudninebank.example.com/customer",
         "limits": {
           "receiver": "https://happylifebank.example.com/incoming-payments/{...}" // url of the incoming payment that's being paid
