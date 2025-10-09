@@ -47,8 +47,8 @@ The three parties involved in this scenario are the:
 - <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-quote/'>Create a Quote</LinkOut>
 - <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-continue/'>Grant Continuation Request</LinkOut>
 - <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment/'>Create an Outgoing Payment</LinkOut>
-- <Badge text="GET" variant="note" /> [Get an Outgoing Payment API](/apis/resource-server/operations/get-outgoing-payment/)
-- <Badge text="POST" variant="success" /> [Complete Incoming Payment API](/apis/resource-server/operations/complete-incoming-payment/)
+- <Badge text="GET" variant="note" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/get-outgoing-payment/'>Get an Outgoing Payment</LinkOut>
+- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/complete-incoming-payment/'>Complete Incoming Payment</LinkOut>
 
 ## Steps
 
@@ -62,7 +62,7 @@ Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wall
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-  ```ts
+  ```ts wrap
   const senderWalletAddress = await client.walletAddress.get({
     url: 'https://cloudninebank.example.com/sender'
   })
@@ -133,7 +133,7 @@ Outgoing payments require an interactive grant. This type of grant will obtain t
               receiveAmount: {
                 assetCode: 'MXN',
                 assetScale: 2,
-                value: 400000, 
+                value: '400000', 
               }
             }
           }
@@ -240,7 +240,7 @@ The following shows an example response from the sender's wallet provider.
         "actions": ["create"],
         "identifier": "https://cloudninebank.example.com/sender",
         "limits": {
-          "interval": "R3/2025-10-0323:25:00Z/P1M",
+          "interval": "R3/2025-10-03T23:25:00Z/P1M",
           "receiveAmount": {
             "assetCode": "MXN",
             "assetScale": 2,
@@ -459,7 +459,7 @@ The following shows an example response from the sender's wallet provider.
     "assetScale": 2
   },
   "sentAmount": { // the total amount sent under this outgoing payment
-    "value": "200000",
+    "value": "20000",
     "assetCode": "USD",
     "assetScale": 2
   },
@@ -488,11 +488,6 @@ The following shows an example response from the recipient's wallet provider.
 {
   "id": "https://happylifebank.example.com/incoming-payments/{...}", // url of the incoming payment to complete
   "walletAddress": "https://happylifebank.example.com/recipient",
-  "incomingAmount": { // the maximum amount that should be paid into this incoming payment
-    "value": "400000",
-    "assetCode": "MXN",
-    "assetScale": 2
-  },
   "receivedAmount": { // the total amount paid into this incoming payment
     "value": "400000",
     "assetCode": "MXN",
