@@ -321,7 +321,11 @@ export default defineConfig({
             },
             {
               label: 'Accept a one-time payment for an online purchase',
-              link: '/guides/accept-otp-online-purchase'
+              link: '/guides/accept-otp-online-purchase/'
+            },
+            {
+              label: 'Send a remittance payment with a fixed receive amount',
+              link: '/guides/onetime-remittance-fixed-receive/'
             },
             {
               label: 'Make recurring payments',
