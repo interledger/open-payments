@@ -21,7 +21,7 @@ This approach is particularly useful for remittance app scenarios where:
 
 ## Scenario
 
-Imagine someone in the US wants to send money to a family member in Mexico. They want their family member to receive _exactly_ $5,000 Mexican pesos (MXN), even if it means paying a slightly higher amount in US dollars to cover currency conversion. This is different from a payment where the sender specifies exactly how much to send, regardless of what the recipient will receive.
+Imagine someone in the US wants to send money to a family member in Mexico. They want their family member to receive _exactly_ $5,000 Mexican pesos (MXN), regardless of what the currency conversion will be. This is different from a payment where the sender specifies exactly how much to send, and the amount the recipient receives can vary with the exchange rate.
 
 For this guide, you'll assume the role of a developer building a remittance app. The guide explains how to send a payment in USD, where the recipient receives exactly $5,000 MXN.
 
@@ -45,6 +45,7 @@ The three parties involved in this scenario are:
 - <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-quote/'>Create a Quote</LinkOut>
 - <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-continue/'>Grant Continuation Request</LinkOut>
 - <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment/'>Create an Outgoing Payment</LinkOut>
+- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/complete-incoming-payment/'>Complete Incoming Payment API</LinkOut>
 
 ## Steps
 
@@ -313,7 +314,8 @@ The following shows an example response from the sender’s wallet provider.
     "assetScale": 2
   },
   "method": "ilp",
-  "createdAt": "2025-03-12T23:22:51.50Z"
+  "createdAt": "2025-03-12T23:22:51.50Z",
+  "expiresAt": "2025-03-12T23:24:51.50Z"
 }
 ```
 </details>
