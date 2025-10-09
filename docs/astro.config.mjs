@@ -71,7 +71,19 @@ export default defineConfig({
             sidebar: { label: 'Open Payments' }
           },
           {
+            base: 'es/apis/resource-server',
+            schema:
+              '../open-payments-specifications/openapi/resource-server.yaml',
+            sidebar: { label: 'Open Payments' }
+          },
+          {
             base: 'apis/wallet-address-server',
+            schema:
+              '../open-payments-specifications/openapi/wallet-address-server.yaml',
+            sidebar: { label: 'Wallet Addresses' }
+          },
+          {
+            base: 'es/apis/wallet-address-server',
             schema:
               '../open-payments-specifications/openapi/wallet-address-server.yaml',
             sidebar: { label: 'Wallet Addresses' }
@@ -80,13 +92,19 @@ export default defineConfig({
             base: 'apis/auth-server',
             schema: '../open-payments-specifications/openapi/auth-server.yaml',
             sidebar: { label: 'Open Payments Authorization Server' }
+          },
+          {
+            base: 'es/apis/auth-server',
+            schema: '../open-payments-specifications/openapi/auth-server.yaml',
+            sidebar: { label: 'Open Payments Authorization Server' }
           }
         ]),
         starlightLinksValidator({
           errorOnLocalLinks: false,
           errorOnFallbackPages: false,
           exclude: [
-            '/apis/{auth-server,resource-server,wallet-address-server}/**/*'
+            '/apis/{auth-server,resource-server,wallet-address-server}/**/*',
+            '/es/apis/{auth-server,resource-server,wallet-address-server}/**/*'
           ]
         }),
         starlightFullViewMode()
@@ -302,8 +320,12 @@ export default defineConfig({
               link: '/guides/make-onetime-payment/'
             },
             {
-              label: `Send a remittance payment with a fixed receive amount`,
-              link: `/guides/onetime-remittance-fixed-receive`
+              label: 'Accept a one-time payment for an online purchase',
+              link: '/guides/accept-otp-online-purchase/'
+            },
+            {
+              label: 'Send a remittance payment with a fixed receive amount',
+              link: '/guides/onetime-remittance-fixed-receive/'
             },
             {
               label: 'Make recurring payments',

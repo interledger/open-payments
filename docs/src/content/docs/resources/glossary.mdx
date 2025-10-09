@@ -34,7 +34,7 @@ An [incoming payment resource](/concepts/resources/#incoming-payment) is an obje
 
 ## Open Payments (OP)
 
-Open Payments is an open RESTful API and an API standard that enables clients to interface with Open Payments-enabled accounts. Developers can choose to interact with the Open Payments API directly or use the [Open Payments SDKs](/sdk/before-you-begin) for a more streamlined integration experience.
+Open Payments is a set of open RESTful APIs that enable clients to interface with Open Payments-enabled accounts by sending and receiving payment instructions before any money movement occurs. Developers can choose to interact with the Open Payments APIs directly or use the [Open Payments SDKs](/sdk/before-you-begin) for a more streamlined integration experience.
 
 ## Outgoing payment resource
 
@@ -42,7 +42,11 @@ An [outgoing payment resource](/concepts/resources/#outgoing-payment) is an obje
 
 ## Payment pointer
 
-A <LinkOut href="https://paymentpointers.org/">payment pointer</LinkOut> is a secure, unique identifier that’s assigned to payment accounts that use Interledger’s <LinkOut href='https://interledger.org/developers/rfcs/simple-payment-setup-protocol/'>Simple Payment Setup Protocol (SPSP)</LinkOut> to exchange payment information. The shorthand for a payment pointer starts with $. For example, `$wallet.example.com/alice`.
+A <LinkOut href="https://paymentpointers.org/">payment pointer</LinkOut> is a secure, unique identifier that’s assigned to payment accounts that use Interledger’s <LinkOut href='https://interledger.org/developers/rfcs/simple-payment-setup-protocol/'>Simple Payment Setup Protocol (SPSP)</LinkOut> to exchange payment information. The shorthand for a payment pointer starts with $. For example:
+
+```
+$wallet.example.com/alice
+```
 
 A payment pointer may serve as a [wallet address](/concepts/wallet-addresses) if Interledger is used as the payment method by transacting parties. The wallet address URL will be translated to a payment pointer when a payment is initiated over the Interledger network. However, note that not every wallet address is necessarily a payment pointer.
 
