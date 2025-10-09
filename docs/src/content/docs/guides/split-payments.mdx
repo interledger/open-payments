@@ -3,7 +3,7 @@ title: Split an incoming payment
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
-import { Tabs, TabItem, Card } from '@astrojs/starlight/components'
+import { Tabs, TabItem, Badge } from '@astrojs/starlight/components'
 import InteractionReq from '/src/partials/interaction-required.mdx'
 import StartInteraction from '/src/partials/grant-start-interaction.mdx'
 import FinishInteraction from '/src/partials/grant-finish-interaction.mdx'
@@ -16,7 +16,7 @@ Imagine making a purchase from an online marketplace. From your perspective, you
 
 There's a few ways for the marketplace to collect their fee. For example, it could receive the full amount, deduct the fee, then send the rest to the merchant. However, holding funds for the merchant, even for a second, requires compliance with certain financial rules and regulations. A better way is to ensure both parties only receive the amount they're supposed to receive, directly from the user.
 
-Remember, Open Payments doesn't execute payments or touch money in any way. It's used to issue payment instructions before any money movement occurs. An example of a payment instruction is, "of the $6 purchase, pay the marketplace $1 and the merchant $5." This way, funds meant for one party never pass through the other party.
+Remember, Open Payments doesn't execute payments or touch money in any way. It's used to issue payment instructions before any money movement occurs. An example of a payment instruction is, "of the \$6 purchase, pay the marketplace \$1 and the merchant $5." This way, funds meant for one party never pass through the other party.
 
 ## Scenario
 
@@ -30,11 +30,11 @@ The three parties involved in the transaction are the:
 
 ## Endpoints
 
-- <LinkOut href='https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/'>Get a Wallet address</LinkOut>
-- <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-request/'>Grant Request</LinkOut>
-- <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-incoming-payment/'>Create Incoming Payment</LinkOut>
-- <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-quote/'>Create a Quote</LinkOut>
-- <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment/'>Create an Outgoing Payment</LinkOut>
+- <Badge text="GET" variant="note" /> <LinkOut href='https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/'>Get Wallet Address</LinkOut>
+- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-request/'>Grant Request</LinkOut>
+- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-incoming-payment/'>Create Incoming Payment</LinkOut>
+- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-quote/'>Create a Quote</LinkOut>
+- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment/'>Create an Outgoing Payment</LinkOut>
 
 ## Steps
 
@@ -44,7 +44,7 @@ When a customer initiates a payment, your platform must get wallet address infor
 
 Let's assume your wallet address is already saved to your platform, as is the merchant's. Let's also assume the customer provided their wallet address at the beginning of the checkout flow.
 
-Call the [Get Wallet Address API](/apis/wallet-address-server/operations/get-wallet-address) for each address.
+Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wallet-address-server/operations/get-wallet-address) for each address.
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -78,7 +78,7 @@ The following shows an example response from the customer's wallet provider. Sim
 
 ### 2. Request incoming payment grants
 
-Use the merchant and platform `authServer` details, received in the previous step, to call the [Grant Request API](/apis/auth-server/operations/post-request).
+Use the merchant and platform `authServer` details, received in the previous step, to call the <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request).
 
 These calls obtain access tokens that allow your platform to request an incoming payment resource be created on the merchant's wallet account and your wallet account.
 
@@ -99,7 +99,7 @@ If you and the merchant use the same account servicing entity, and as a result, 
         access: [
           {
             type: "incoming-payment",
-            actions: ["read", "create"],
+            actions: ["create"],
           },
         ],
       },
@@ -115,7 +115,7 @@ If you and the merchant use the same account servicing entity, and as a result, 
         access: [
           {
             type: "incoming-payment",
-            actions: ["read", "create"],
+            actions: ["create"],
           },
         ],
       },
@@ -137,7 +137,7 @@ The following shows an example response from the merchant's wallet provider. A s
     "access": [
       {
         "type": "incoming-payment",
-        "actions": ["create", "read"]
+        "actions": ["create"]
       }
     ]
   },
@@ -154,11 +154,11 @@ The following shows an example response from the merchant's wallet provider. A s
 
 ### 3. Request the creation of incoming payment resources
 
-Use the access tokens returned in the previous responses to call the [Create Incoming Payment API](/apis/resource-server/operations/create-incoming-payment).
+Use the access tokens returned in the previous responses to call the <Badge text="POST" variant="success" /> [Create Incoming Payment API](/apis/resource-server/operations/create-incoming-payment).
 
 This call requests an incoming payment resource be created on the merchant's wallet account and your wallet account.
 
-Remember that the merchant is receiving 99% of the payment ($99.00 or `9900`) while you are keeping 1% as a fee ($1.00 or `100`).
+Remember that the merchant is receiving 99% of the payment (\$99.00 or `9900`) while you are keeping 1% as a fee (\$1.00 or `100`).
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -231,7 +231,7 @@ The following shows an example response from the merchant's wallet provider. A s
 
 ### 4. Request a quote grant
 
-Use the customer's `authServer` details, received in Step 1, to call the [Grant Request API](/apis/auth-server/operations/post-request).
+Use the customer's `authServer` details, received in Step 1, to call the <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request).
 
 This call obtains an access token that allows your platform to request quote resources be created on the customer's wallet account.
 
@@ -247,7 +247,7 @@ This call obtains an access token that allows your platform to request quote res
           access: [
             {
               type: 'quote',
-              actions: ['create', 'read']
+              actions: ['create']
             }
           ]
         }
@@ -268,7 +268,7 @@ This call obtains an access token that allows your platform to request quote res
     "access": [
       {
         "type": "quote",
-        "actions": ["create", "read"]
+        "actions": ["create"]
       }
     ]
   },
@@ -285,13 +285,13 @@ This call obtains an access token that allows your platform to request quote res
 
 ### 5. Request the creation of quote resources
 
-Use the access token, received in the previous step, to call the [Create Quote API](/apis/resource-server/operations/create-quote).
+Use the access token, received in the previous step, to call the <Badge text="POST" variant="success" /> [Create Quote API](/apis/resource-server/operations/create-quote).
 
 This call requests a quote resource be created on the customer's wallet account. Since the customer needs to get a quote for both of the incoming payments at the merchant and the platform, we'll call the API twice using the same access token.
 
 First, let's request a quote resource associated with the merchant. The request must contain the `receiver`, which is the merchant's incoming payment `id`, along with any other required parameters. The `id` was returned in the Create an Incoming Payment API response in Step 3.
 
-Next, call the Create Quote API again and request a quote resource associated with the platform's incoming payment `id`.
+Next, call the <Badge text="POST" variant="success" /> Create Quote API again and request a quote resource associated with the platform's incoming payment `id`.
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -357,7 +357,7 @@ Each response returns a `receiveAmount`, a `debitAmount`, and other required inf
 
 ### 6. Request an interactive outgoing payment grant
 
-Use the customer's `authServer` information received in Step 1 to call the [Grant Request API](/apis/auth-server/operations/post-request).
+Use the customer's `authServer` information received in Step 1 to call the <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request).
 
 This call obtains an access token that allows your platform to request outgoing payment resources be created on the customer's wallet account.
 
@@ -379,7 +379,7 @@ This call obtains an access token that allows your platform to request outgoing 
           {
             identifier: customerWalletAddress.id,
             type: 'outgoing-payment',
-            actions: ['read', 'create'],
+            actions: ['create'],
             limits: {
               debitAmount: {
                 assetCode: 'USD',
@@ -441,7 +441,7 @@ In our example, we're assuming the IdP the customer interacted with has a user i
 In a scenario where a user interface isn't available, consider implementing a polling mechanism to check for the completion of the interaction.
 :::
 
-Call the [Grant Continuation Request API](/apis/auth-server/operations/post-continue). This call requests an access token that allows your platform to request outgoing payment resources be created on the customer's wallet account.
+Call the <Badge text="POST" variant="success" /> [Grant Continuation Request API](/apis/auth-server/operations/post-continue). This call requests an access token that allows your platform to request outgoing payment resources be created on the customer's wallet account.
 
 Issue the request to the `continue.uri` provided in the initial outgoing payment grant response (Step 6).
 
@@ -474,7 +474,7 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
     "access": [
       {
         "type": "outgoing-payment",
-        "actions": ["create", "read"],
+        "actions": ["create"],
         "identifier": "https://cloudninebank.example.com/customer",
         "limits": {
           "receiver": "https://happylifebank.example.com/incoming-payments/{...}" // url of the incoming payment that's being paid
@@ -499,7 +499,7 @@ Recall that the Create Quote API responses for the merchant and your platform (S
 
 Because the quotes contain debit and receive amounts, we won't specify any other amounts when setting up the outgoing payments. Instead, we will specify a `quoteId`.
 
-Use the access token returned in Step 5 that's associated with the merchant to call the [Create Outgoing Payment API](/apis/resource-server/operations/create-outgoing-payment). Include the appropriate `quoteId` in the request. Now, do the same with the access token associated with your platform.
+Use the access token returned in Step 5 that's associated with the merchant to call the <Badge text="POST" variant="success" /> [Create Outgoing Payment API](/apis/resource-server/operations/create-outgoing-payment). Include the appropriate `quoteId` in the request. Now, do the same with the access token associated with your platform.
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>

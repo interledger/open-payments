@@ -3,10 +3,16 @@ import starlight from '@astrojs/starlight'
 import starlightOpenAPI from 'starlight-openapi'
 import starlightLinksValidator from 'starlight-links-validator'
 import starlightFullViewMode from 'starlight-fullview-mode'
+import remarkMath from 'remark-math'
+import rehypeKatex from 'rehype-katex'
 
 // https://astro.build/config
 export default defineConfig({
   site: 'https://openpayments.dev',
+  markdown: {
+    remarkPlugins: [remarkMath],
+    rehypePlugins: [rehypeKatex]
+  },
   integrations: [
     starlight({
       title: 'Open Payments',
@@ -30,7 +36,8 @@ export default defineConfig({
       customCss: [
         './node_modules/@interledger/docs-design-system/src/styles/teal-theme.css',
         './node_modules/@interledger/docs-design-system/src/styles/ilf-docs.css',
-        './src/styles/openpayments.css'
+        './src/styles/openpayments.css',
+        'katex/dist/katex.min.css'
       ],
       // defaultLocale: 'root',
       locales: {
@@ -64,7 +71,19 @@ export default defineConfig({
             sidebar: { label: 'Open Payments' }
           },
           {
+            base: 'es/apis/resource-server',
+            schema:
+              '../open-payments-specifications/openapi/resource-server.yaml',
+            sidebar: { label: 'Open Payments' }
+          },
+          {
             base: 'apis/wallet-address-server',
+            schema:
+              '../open-payments-specifications/openapi/wallet-address-server.yaml',
+            sidebar: { label: 'Wallet Addresses' }
+          },
+          {
+            base: 'es/apis/wallet-address-server',
             schema:
               '../open-payments-specifications/openapi/wallet-address-server.yaml',
             sidebar: { label: 'Wallet Addresses' }
@@ -73,13 +92,19 @@ export default defineConfig({
             base: 'apis/auth-server',
             schema: '../open-payments-specifications/openapi/auth-server.yaml',
             sidebar: { label: 'Open Payments Authorization Server' }
+          },
+          {
+            base: 'es/apis/auth-server',
+            schema: '../open-payments-specifications/openapi/auth-server.yaml',
+            sidebar: { label: 'Open Payments Authorization Server' }
           }
         ]),
         starlightLinksValidator({
           errorOnLocalLinks: false,
           errorOnFallbackPages: false,
           exclude: [
-            '/apis/{auth-server,resource-server,wallet-address-server}/**/*'
+            '/apis/{auth-server,resource-server,wallet-address-server}/**/*',
+            '/es/apis/{auth-server,resource-server,wallet-address-server}/**/*'
           ]
         }),
         starlightFullViewMode()
@@ -113,6 +138,10 @@ export default defineConfig({
                   label: 'Authorization',
                   translations: { es: 'Autorización' },
                   link: '/concepts/auth/'
+                },
+                {
+                  label: 'Amounts',
+                  link: '/concepts/amounts/'
                 },
                 {
                   label: 'Payment methods',
@@ -289,6 +318,14 @@ export default defineConfig({
               label: 'Make a one-time payment',
               translations: { es: 'Cómo efectuar un pago único' },
               link: '/guides/make-onetime-payment/'
+            },
+            {
+              label: 'Accept a one-time payment for an online purchase',
+              link: '/guides/accept-otp-online-purchase/'
+            },
+            {
+              label: 'Send a remittance payment with a fixed receive amount',
+              link: '/guides/onetime-remittance-fixed-receive/'
             },
             {
               label: 'Make recurring payments',
