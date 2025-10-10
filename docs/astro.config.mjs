@@ -315,11 +315,6 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
-              label: 'Make a one-time payment',
-              translations: { es: 'Cómo efectuar un pago único' },
-              link: '/guides/make-onetime-payment/'
-            },
-            {
               label: 'Accept a one-time payment for an online purchase',
               link: '/guides/accept-otp-online-purchase/'
             },
