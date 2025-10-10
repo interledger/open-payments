@@ -324,6 +324,10 @@ export default defineConfig({
               link: '/guides/accept-otp-online-purchase/'
             },
             {
+              label: 'Send a remittance payment with fixed debit amount',
+              link: '/guides/onetime-remittance-fixed-debit'
+            },
+            {
               label: 'Send a remittance payment with a fixed receive amount',
               link: '/guides/onetime-remittance-fixed-receive/'
             },
