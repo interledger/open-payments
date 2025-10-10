@@ -324,6 +324,10 @@ export default defineConfig({
               link: '/guides/accept-otp-online-purchase/'
             },
             {
+              label: 'Send a remittance payment with fixed debit amount',
+              link: '/guides/onetime-remittance-fixed-debit'
+            },
+            {
               label: 'Send a remittance payment with a fixed receive amount',
               link: '/guides/onetime-remittance-fixed-receive/'
             },
@@ -336,10 +340,6 @@ export default defineConfig({
               label: 'Split an incoming payment',
               translations: { es: 'Dividir un pago entrante' },
               link: '/guides/split-payments/'
-            },
-            {
-              label: 'Send a remittance payment with fixed debit amount',
-              link: '/guides/onetime-remittance-fixed-debit'
             },
             {
               label: 'Get an outgoing payment grant for future payments',
