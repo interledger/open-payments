@@ -21,7 +21,7 @@ This approach is particularly useful for remittance app scenarios where:
 
 ## Scenario
 
-Imagine someone in the US wants to send money to a family member in Mexico. They want their family member to receive _exactly_ $5,000 Mexican pesos (MXN), regardless of what the currency conversion will be. This is different from a payment where the sender specifies exactly how much to send, and the amount the recipient receives can vary with the exchange rate.
+Imagine someone in the US wants to send money to a family member in Mexico. They want their family member to receive _exactly_ $5,000 Mexican pesos (MXN), regardless of what the currency conversion will be. This is different from a payment where the [sender specifies exactly how much to send](/guides/onetime-remittance-fixed-debit), and the amount the recipient receives can vary with the exchange rate.
 
 For this guide, you'll assume the role of a developer building a remittance app. The guide explains how to send a payment in USD, where the recipient receives exactly $5,000 MXN.
 
@@ -249,7 +249,7 @@ The following shows an example response from the sender's wallet provider.
   }
 }
 
-```
+````
 </details>
 
 ### 5. Request the creation of a quote resource
@@ -279,7 +279,7 @@ The `receiveAmount` specifies that the recipient will receive exactly $5,000 MXN
       }
     }
   )
-```
+````
 
   </TabItem>
 </Tabs>
@@ -331,7 +331,6 @@ To ensure the sender is authorizing the correct amount, include the same `receiv
 :::note
 Outgoing payments require an interactive grant. This type of grant will obtain the sender's consent before an outgoing payment is made against their wallet account. You can find more information in the [Open Payments flow](/concepts/op-flow/#outgoing-payment) and [identity providers](/identity/idp) pages.
 :::
-
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -510,5 +509,5 @@ The following shows an example response from the sender's wallet provider.
 </details>
 
 :::note[Complete the incoming payment (optional)]
-After your outgoing payment completes, you can call the <Badge text="POST" variant="success" /> [Complete Incoming Payment API](/apis/resource-server/operations/complete-incoming-payment/) to mark the recipient's incoming payment as complete. This instructs the recipient's provider to stop accepting additional payments for that incoming payment. 
+After your outgoing payment completes, you can call the <Badge text="POST" variant="success" /> [Complete Incoming Payment API](/apis/resource-server/operations/complete-incoming-payment/) to mark the recipient's incoming payment as complete. This instructs the recipient's provider to stop accepting additional payments for that incoming payment.
 :::
