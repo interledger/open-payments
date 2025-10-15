@@ -332,6 +332,10 @@ export default defineConfig({
               link: '/guides/make-recurring-payments/'
             },
             {
+              label: 'Send recurring remittances with a fixed debit amount',
+              link: '/guides/recurring-remittance-fixed-debit/'
+            },
+            {
               label: 'Split an incoming payment',
               translations: { es: 'Dividir un pago entrante' },
               link: '/guides/split-payments/'
