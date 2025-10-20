@@ -17,7 +17,7 @@ This approach is particularly useful for remittance app scenarios where:
 
 - The sender and the recipient each transact in different currencies
 - The sender wants to send a fixed amount in their own currency on a recurring schedule
-- The recipient is comfortable that the delivered amount may vary with exchange rate fluctuations
+- The sender and the recipient are comfortable that the delivered amount may vary with exchange rate fluctuations
 
 ## Scenario
 
@@ -210,7 +210,7 @@ Because the sender will pay a fixed amount of $200 USD per month, the request mu
 - `interval` - The [time interval](#about-the-interval) under which the grant is valid.
 
 :::note
-Outgoing payments require an interactive grant. This type of grant will obtain the sender's consent before any outgoing payments associated with this grant are made against their wallet account. You can find more information in the [Open Payments flow](/concepts/op-flow/#outgoing-payment) and [identity providers](/identity/idp) pages.
+Outgoing payments require an interactive grant, which the sender approves once. While the grant (and its access token) is valid and within its limits (`interval` + `debitAmount`), your app can create outgoing payments without re-approval each interval. You can find more information in the [Open Payments flow](/concepts/op-flow/#outgoing-payment) and [identity providers](/identity/idp) pages.
 :::
 
 <Tabs syncKey="lang">
@@ -419,6 +419,79 @@ At the next interval (one month from now), create a new incoming payment (Step 3
 
 If the request fails because the grant's access token has expired, call the <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/auth-server/operations/post-token/) to obtain a new token, then retry the request with the new token.
 
-:::note[Complete the incoming payment (optional)]
-After your outgoing payment completes, you can call the <Badge text="POST" variant="success" /> [Complete Incoming Payment API](/apis/resource-server/operations/complete-incoming-payment/) to mark the recipient's incoming payment as complete. This instructs the recipient's provider to stop accepting additional payments for that incoming payment.
-:::
+### 9. Complete an incoming payment (optional)
+
+When you complete an incoming payment, you are telling the recipient's provider to reject any further payments toward the specific incoming payment resource. If you choose not to complete an incoming payment, the payment will automatically complete after some time.
+
+First, call the <Badge text="GET" variant="note" /> [Get an Outgoing Payment API](/apis/resource-server/operations/get-outgoing-payment/) to check the outgoing payment's status. Consider the payment complete when `sentAmount` equals `debitAmount` and `failed` is false.
+
+<Tabs syncKey="lang">
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts wrap
+  const senderOutgoingPayment = await client.outgoingPayment.get({
+    url: 'https://cloudninebank.example.com/outgoing-payments/{...}',
+    accessToken: senderOutgoingPaymentGrant.access_token.value,
+  });
+  ```
+  </TabItem>
+</Tabs>
+
+<details>
+<summary>Example response</summary>
+The following shows an example response from the sender's wallet provider.
+```json wrap
+{
+  "id": "https://cloudninebank.example.com/outgoing-payments/{...}", // url of the outgoing payment 
+  "walletAddress": "https://cloudninebank.example.com/sender",
+  "failed": false,
+  "receiver": "https://happylifebank.example.com/incoming-payments/{...}", // url of the incoming payment being paid
+  "debitAmount": {
+    "value": "20000", // The amount to debit from the sender's account
+    "assetCode": "USD",
+    "assetScale": 2
+  },
+  "receiveAmount": {
+    "value": "400000", // Recipient to receive $4,000 MXN (actual may vary by rate)
+    "assetCode": "MXN",
+    "assetScale": 2
+  },
+  "sentAmount": { // the total amount sent under this outgoing payment
+    "value": "20000",
+    "assetCode": "USD",
+    "assetScale": 2
+  },
+  "createdAt": "2025-10-03T23:28:13.14Z"
+}
+```
+</details>
+
+When complete, call the <Badge text="POST" variant="success" /> [Complete Incoming Payment API](/apis/resource-server/operations/complete-incoming-payment/).
+
+<Tabs syncKey="lang">
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts wrap
+  const recipientIncomingPayment = await client.incomingPayment.complete({
+    url: 'https://happylifebank.example.com/incoming-payments/{...}',
+    accessToken: recipientIncomingPaymentGrant.access_token.value,
+  });
+  ```
+  </TabItem>
+</Tabs>
+
+<details>
+<summary>Example response</summary>
+The following shows an example response from the recipient's wallet provider.
+```json wrap
+{
+  "id": "https://happylifebank.example.com/incoming-payments/{...}", // url of the incoming payment to complete
+  "walletAddress": "https://happylifebank.example.com/recipient",
+  "receivedAmount": { // the total amount paid into this incoming payment
+    "value": "400000",
+    "assetCode": "MXN",
+    "assetScale": 2
+  },
+  "completed": true,
+  "createdAt": "2025-10-03T23:28:15.00Z"
+}
+```
+</details>
