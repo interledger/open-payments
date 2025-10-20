@@ -337,6 +337,11 @@ export default defineConfig({
               link: '/guides/make-recurring-payments/'
             },
             {
+              label:
+                'Set up recurring subscription payments with a fixed incoming amount',
+              link: '/guides/recurring-subscription-incoming-amount/'
+            },
+            {
               label: 'Split an incoming payment',
               translations: { es: 'Dividir un pago entrante' },
               link: '/guides/split-payments/'
