@@ -29,7 +29,7 @@ The amount debited from the sender's payment account can vary each month dependi
 
 **Example transaction details:**
 
-- **Recipient receives**: $4,000 each month for three months
+- **Recipient receives**: $4,000 MXN each month for three months
 - **Exchange rate**: A static rate of \$1 USD for every \$20 MXN
 - **Sender pays**: $200 USD each month
 
@@ -127,7 +127,7 @@ Outgoing payments require an interactive grant. This type of grant will obtain t
           {
             identifier: senderWalletAddress.id,
             type: 'outgoing-payment',
-            actions: ['create'],
+            actions: ['create', 'read'],
             limits: {
               interval: 'R3/2025-10-03T23:25:00Z/P1M',
               receiveAmount: {
@@ -237,7 +237,7 @@ The following shows an example response from the sender's wallet provider.
     "access": [
       {
         "type": "outgoing-payment",
-        "actions": ["create"],
+        "actions": ["create", "read"],
         "identifier": "https://cloudninebank.example.com/sender",
         "limits": {
           "interval": "R3/2025-10-03T23:25:00Z/P1M",
@@ -360,7 +360,125 @@ The following shows an example response from the recipient's wallet provider.
 ```
 </details>
 
-### 8. Request the creation of an outgoing payment resource
+### 8. Request a quote grant
+
+Use the sender's `authServer` details, received in Step 1, to call the <Badge text="POST" variant= "success" /> [Grant Request API](/apis/auth-server/operations/post-request).
+
+This call obtains an access token that allows your app to request a quote resource be created on the sender's wallet.
+
+<Tabs syncKey="lang">
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts wrap
+  const senderQuoteGrant = await client.grant.request(
+    {
+      url: senderWalletAddress.authServer
+    },
+    {
+      access_token: {
+        access: [
+          {
+            type: 'quote',
+            actions: ['create']
+          }
+        ]
+      }
+    }
+  )
+  ```
+  </TabItem>
+</Tabs>
+
+<details>
+<summary>Example response</summary>
+The following shows an example response from the sender's wallet provider.
+```json wrap
+{
+  "access_token": {
+    "value": "...", // access token value for quote grant
+    "manage": "https://auth.cloudninebank.example.com/token/{...}", // management uri for access token
+    "access": [
+      {
+        "type": "quote",
+        "actions": ["create"]
+      }
+    ]
+  },
+  "continue": {
+    "access_token": {
+      "value": "..." // access token for continuing the request
+    },
+  "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
+  }
+}
+```
+</details>
+
+### 9. Request the creation of a quote resource
+
+Use the access token received in the previous step to call the <Badge text="POST" variant="success" /> [Create Quote API](/apis/resource-server/operations/create-quote).
+
+This call requests that a quote resource be created on the sender's wallet account. The request must contain the `receiver`, which is the recipient's incoming payment `id`, along with the `receiveAmount`, which is the exact amount the sender wants the recipient to receive.
+
+The `receiveAmount` specifies that the recipient will receive exactly $4,000 MXN.
+
+<Tabs syncKey="lang">
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts wrap
+  const senderQuote = await client.quote.create(
+    {
+      url: senderWalletAddress.resourceServer,
+      accessToken: senderQuoteGrant.access_token.value
+    },
+    {
+      method: 'ilp',
+      walletAddress: senderWalletAddress.id,
+      receiver: recipientIncomingPayment.id,
+      receiveAmount: {
+        value: '400000',
+        assetCode: 'MXN',
+        assetScale: 2
+      }
+    }
+  )
+  ```
+  </TabItem>
+</Tabs>
+
+The response returns a `receiveAmount`, a `debitAmount`, and other required information.
+
+- `debitAmount` - The amount the sender must pay (in USD in our example) after currency conversion.
+- `receiveAmount` - The amount the recipient will actually receive (exactly $4,000 MXN in our example).
+
+:::note[Expiring quotes]
+Quotes include an `expiresAt` timestamp. Create the outgoing payment before the quote expires. If creation fails because the quote expired, request a new quote and try again.
+:::
+
+<details>
+<summary>Example response</summary>
+The following shows an example response from the sender's wallet provider.
+```json wrap
+{
+  "id": "https://cloudninebank.example.com/quotes/{...}", // url identifying the quote
+  "walletAddress": "https://cloudninebank.example.com/sender",
+  "receiver": "https://happylifebank.example.com/incoming-payments/{...}", // url of the incoming payment the quote is created for
+  "debitAmount": {
+    "value": "27778", // Sender pays $277.78 USD after currency conversion
+    "assetCode": "USD",
+    "assetScale": 2
+  },
+  "receiveAmount": {
+    "value": "400000", // Recipient receives $4,000 MXN
+    "assetCode": "MXN",
+    "assetScale": 2
+  },
+  "method": "ilp",
+  "createdAt": "2025-10-03T24:22:51.50Z",
+  "expiresAt": "2025-10-03T24:32:51.50Z"
+}
+```
+</details>
+
+### 10. Request the creation of an outgoing payment resource
 
 Use the access token returned in the outgoing payment grant continuation response (Step 5) to call the <Badge text="POST" variant="success" /> [Create Outgoing Payment API](/apis/resource-server/operations/create-outgoing-payment/).
 
@@ -374,12 +492,7 @@ Use the access token returned in the outgoing payment grant continuation respons
     },
     {
       walletAddress: senderWalletAddress.id,
-      incomingPayment: 'https://happylifebank.example.com/incoming-payments/{...}',
-      debitAmount: {
-        assetCode: 'USD',
-        assetScale: 2,
-        value: '20000'
-      },
+      quoteId: senderQuote.id,
     }
   )
   ```
@@ -409,12 +522,12 @@ The following shows an example response from the sender's wallet provider.
     "assetCode": "USD",
     "assetScale": 2
   },
-  "createdAt": "2025-10-03T23:27:45.41Z"
+  "createdAt": "2025-10-03T25:00:45.41Z"
 }
 ```
 </details>
 
-The first payment is now set up. You can optionally [complete the incoming payment](#9-complete-an-incoming-payment-optional).
+The first payment is now set up. You can optionally [complete the incoming payment](#11-complete-an-incoming-payment-optional).
 
 At the next interval (one month from now), repeat steps 6 - 8. Use the access token originally returned in the grant continuation (Step 5) when requesting the next outgoing payment resource. You don't need to request a new outgoing payment grant because the original grant should still be valid.
 
@@ -422,7 +535,7 @@ At the next interval (one month from now), repeat steps 6 - 8. Use the access to
 If an outgoing payment grant or incoming payment grant's access token has expired, call the <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/auth-server/operations/post-token/), then use the new token in the appropriate incoming or outgoing payment request.
 :::
 
-### 9. Complete an incoming payment (optional)
+### 11. Complete an incoming payment (optional)
 
 When you complete an incoming payment, you are telling the recipient's provider to reject any further payments toward the specific incoming payment resource. If you choose not to complete an incoming payment, the payment will automatically complete after some time.
 
@@ -463,7 +576,7 @@ The following shows an example response from the sender's wallet provider.
     "assetCode": "USD",
     "assetScale": 2
   },
-  "createdAt": "2025-10-03T23:28:13.14Z",
+  "createdAt": "2025-10-03T25:33:13.14Z",
 }
 ```
 </details>
@@ -494,7 +607,7 @@ The following shows an example response from the recipient's wallet provider.
     "assetScale": 2
   },
   "completed": true,
-  "createdAt": "2025-10-03T23:28:15.00Z",
+  "createdAt": "2025-10-03T26:01:15.00Z",
 }
 ```
 </details>
