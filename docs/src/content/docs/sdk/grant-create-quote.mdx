@@ -10,6 +10,7 @@ import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
 import TsImport from '/src/partials/ts-import-initialize.mdx'
+import RustImport from '/src/partials/rust-import-initialize.mdx'
 import PhpImport from '/src/partials/php-import-initialize.mdx'
 
 Before a client can call most of the Open Payments APIs, it must receive a grant from the appropriate authorization server.
@@ -60,6 +61,19 @@ The snippets below enable a client to request a grant for a quote. The request t
 For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/grant/grant-quote.ts'>View full TS source</LinkOut>
 
 For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/grant/grant-quote.js'>View full JS source</LinkOut>
+
+</TabItem>
+<TabItem label="Rust" icon='seti:rust'>
+<RustImport />
+
+<ChunkedSnippet
+  source='grant/grant-quote.rs'
+  l='rust'
+  chunk='3'
+/>
+
+{/* prettier-ignore */}
+<p><LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/rust/grant/grant-quote.rs'>View full Rust source</LinkOut></p>
 
 </TabItem>
 <TabItem label="PHP" icon='seti:php'>

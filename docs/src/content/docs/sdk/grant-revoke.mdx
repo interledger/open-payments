@@ -8,6 +8,7 @@ import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
 import TsImport from '/src/partials/ts-import-initialize.mdx'
+import RustImport from '/src/partials/rust-import-initialize.mdx'
 import PhpImport from '/src/partials/php-import-initialize.mdx'
 
 If an authorized client no longer needs access to protected resources, the client can revoke the corresponding grant request.
@@ -40,6 +41,19 @@ These code snippets enable a client to revoke (cancel) a grant that it was previ
 For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/grant/grant-revoke.ts'>View full TS source</LinkOut>
 
 For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/grant/grant-revoke.js'>View full JS source</LinkOut>
+
+</TabItem>
+<TabItem label="Rust" icon='seti:rust'>
+<RustImport />
+
+<ChunkedSnippet
+  source='grant/grant-revoke.rs'
+  l='rust'
+  chunk='3'
+/>
+
+{/* prettier-ignore */}
+<p><LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/rust/grant/grant-revoke.rs'>View full Rust source</LinkOut></p>
 
 </TabItem>
 <TabItem label="PHP" icon='seti:php'>

@@ -8,6 +8,7 @@ import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
 import TsImport from '/src/partials/ts-import-initialize.mdx'
+import RustImport from '/src/partials/rust-import-initialize.mdx'
 import PhpImport from '/src/partials/php-import-initialize.mdx'
 
 While most Open Payments code snippets are intended for clients, getting the keys bound to a wallet address is primarily a function of account servicing entities.
@@ -45,6 +46,34 @@ href="https://github.com/interledger/open-payments-snippets/blob/main/README.md#
 For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/wallet-address/wallet-address-get-keys.ts'>View full TS source</LinkOut>
 
 For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/wallet-address/wallet-address-get-keys.js'>View full JS source</LinkOut>
+
+</TabItem>
+<TabItem label="Rust" icon='seti:rust'>
+<details>
+  <summary>Initial configuration</summary>
+  <RustImport />
+</details>
+
+<ChunkedSnippet
+  source='wallet-address/wallet-address-get-keys.rs'
+  l='rust'
+  chunk='3'
+/>
+
+<ChunkedSnippet
+  source='wallet-address/wallet-address-get-keys.rs'
+  l='rust'
+  chunk='4'
+/>
+
+<ChunkedSnippet
+  source='wallet-address/wallet-address-get-keys.rs'
+  l='rust'
+  chunk='5'
+/>
+
+{/* prettier-ignore */}
+<p><LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/rust/wallet-address/wallet-address-get-keys.rs'>View full Rust source</LinkOut></p>
 
 </TabItem>
 <TabItem label="PHP" icon='seti:php'>

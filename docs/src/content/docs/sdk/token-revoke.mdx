@@ -8,6 +8,7 @@ import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
 import TsImport from '/src/partials/ts-import-initialize.mdx'
+import RustImport from '/src/partials/rust-import-initialize.mdx'
 import PhpImport from '/src/partials/php-import-initialize.mdx'
 
 Revoking an access token consists of the authorization server invalidating the token for all purposes. If, for example, a user indicates to a client that they no longer want the client to have access to something, the client can request the associated token be revoked.
@@ -40,6 +41,19 @@ These code snippets enable the client to call a management endpoint to revoke th
 For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/token/token-revoke.ts'>View full TS source</LinkOut>
 
 For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/token/token-revoke.js'>View full JS source</LinkOut>
+
+</TabItem>
+<TabItem label="Rust" icon='seti:rust'>
+<RustImport />
+
+<ChunkedSnippet
+  source="token/token-revoke.rs"
+  chunk='3'
+  l='rust'
+/>
+
+{/* prettier-ignore */}
+<p><LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/rust/token/token-revoke.rs'>View full Rust source</LinkOut></p>
 
 </TabItem>
 <TabItem label="PHP" icon='seti:php'>

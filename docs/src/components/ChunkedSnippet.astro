@@ -68,7 +68,10 @@ for (const delimiter of delimiterArray) {
   const endIndex = code.indexOf(endLine);
 
   if (startIndex !== -1 && endIndex !== -1) {
-    const codeChunk = code.slice(startIndex + startLine.length, endIndex).trim();
+    // Preserve leading indentation and only strip a single leading newline and trailing whitespace
+    let codeChunk = code.slice(startIndex + startLine.length, endIndex);
+    if (codeChunk.startsWith('\n')) codeChunk = codeChunk.slice(1);
+    codeChunk = codeChunk.replace(/\s+$/,'');
     
     codeChunkArray.push({
       code_chunk: codeChunk,
@@ -96,6 +99,11 @@ const languageConfig: Record<string, LanguageConfig> = {
     parser: 'typescript',
     lang: 'ts',
     plugins: []
+  },
+  '.rs': {
+    parser: '',
+    lang: 'rs',
+    plugins: []
   }
 };
 
@@ -112,8 +120,24 @@ const { parser, lang, plugins } = getLanguageConfig(source) ?? {
   plugins: [],
 };
 
+// Strips the smallest common leading indentation from all lines
+const dedentBlock = (text: string): string => {
+  if (!text) return text
+  const lines = text.split('\n')
+  const nonEmpty = lines.filter((l) => l.trim().length > 0)
+  if (nonEmpty.length === 0) return text
+  const indents = nonEmpty.map((l) => (l.match(/^(\s*)/)?.[1].length ?? 0))
+  const minIndent = Math.min(...indents)
+  if (minIndent === 0) return text
+  return lines
+    .map((l) => (l.length >= minIndent ? l.slice(minIndent) : l.trimStart()))
+    .join('\n')
+}
+
 let output
-if (!parser || !lang || !rawOutput) {
+if (lang === 'rs') {
+  output = rawOutput ? dedentBlock(rawOutput) : 'Code snippet not found.'
+} else if (!rawOutput || !parser || !lang) {
   output = 'Code snippet not found.'
 } else {
   if (lang === 'php') {

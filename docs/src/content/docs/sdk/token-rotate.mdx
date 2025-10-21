@@ -8,6 +8,7 @@ import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
 import TsImport from '/src/partials/ts-import-initialize.mdx'
+import RustImport from '/src/partials/rust-import-initialize.mdx'
 import PhpImport from '/src/partials/php-import-initialize.mdx'
 
 Rotating an access token consists of the authorization server issuing a new token in place of the existing token, with the same rights and properties as the original token. If, for example, an access token expires, an authorized client can request the token be rotated.
@@ -48,6 +49,25 @@ These code snippets enable the client to call a management endpoint to rotate th
 For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/token/token-rotate.ts'>View full TS source</LinkOut>
 
 For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/token/token-rotate.js'>View full JS source</LinkOut>
+
+</TabItem>
+<TabItem label="Rust" icon='seti:rust'>
+<RustImport />
+
+<ChunkedSnippet
+  source='token/token-rotate.rs'
+  l='rust'
+  chunk='3'
+/>
+
+<ChunkedSnippet
+  source='token/token-rotate.rs'
+  l='rust'
+  chunk='4'
+/>
+
+{/* prettier-ignore */}
+<p><LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/rust/token/token-rotate.rs'>View full Rust source</LinkOut></p>
 
 </TabItem>
 <TabItem label="PHP" icon='seti:php'>

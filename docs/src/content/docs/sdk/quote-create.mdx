@@ -8,6 +8,7 @@ import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
 import TsImport from '/src/partials/ts-import-initialize.mdx'
+import RustImport from '/src/partials/rust-import-initialize.mdx'
 import PhpImport from '/src/partials/php-import-initialize.mdx'
 
 A quote is a commitment from an account servicing entity to deliver a particular amount to a recipient when sending a particular amount from a sender. Once an authorized client obtains the requisite grant from the authorization server of the sender's <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip>, the client can create a quote resource against the sender's wallet address. The quote indicates how much it will cost the sender to proceed with the transaction.
@@ -61,6 +62,25 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 />
 {/* prettier-ignore */}
 <p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Quote/QuoteCreate.php'>View full source</LinkOut></p>
+</TabItem>
+<TabItem label="Rust" icon='seti:rust'>
+<RustImport />
+
+<ChunkedSnippet
+  source='quote/quote-create.rs'
+  l='rust'
+  chunk='3'
+/>
+
+<ChunkedSnippet
+  source='quote/quote-create.rs'
+  l='rust'
+  chunk='4'
+/>
+
+{/* prettier-ignore */}
+<p><LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/rust/quote/quote-create.rs'>View full Rust source</LinkOut></p>
+
 </TabItem>
 </Tabs>
 
@@ -120,6 +140,26 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 {/* prettier-ignore */}
 <p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Quote/QuoteCreateDebitAmount.php'>View full source</LinkOut></p>
 </TabItem>
+<TabItem label="Rust" icon='seti:rust'>
+
+<RustImport />
+
+<ChunkedSnippet
+  source='quote/quote-create-debit-amount.rs'
+  l='rust'
+  chunk='3'
+/>
+
+<ChunkedSnippet
+  source='quote/quote-create-debit-amount.rs'
+  l='rust'
+  chunk='4'
+/>
+
+{/* prettier-ignore */}
+<p><LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/rust/quote/quote-create-debit-amount.rs'>View full Rust source</LinkOut></p>
+
+</TabItem>
 </Tabs>
 
 ## Create a quote with a receive amount
@@ -177,6 +217,26 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 />
 {/* prettier-ignore */}
 <p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Quote/QuoteCreateReceiverAmount.php'>View full source</LinkOut></p>
+</TabItem>
+<TabItem label="Rust" icon='seti:rust'>
+
+<RustImport />
+
+<ChunkedSnippet
+  source='quote/quote-create-receive-amount.rs'
+  l='rust'
+  chunk='3'
+/>
+
+<ChunkedSnippet
+  source='quote/quote-create-receive-amount.rs'
+  l='rust'
+  chunk='4'
+/>
+
+{/* prettier-ignore */}
+<p><LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/rust/quote/quote-create-receive-amount.rs'>View full Rust source</LinkOut></p>
+
 </TabItem>
 </Tabs>
 
