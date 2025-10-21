@@ -111,7 +111,7 @@ Because the sender wants the recipient to receive a fixed amount of $4,000 MXN e
 - `interval` - The [time interval](#about-the-interval) under which the grant is valid.
 
 :::note
-Outgoing payments require an interactive grant. This type of grant will obtain the sender's consent before any outgoing payments associated with this grant are made against their wallet account. You can find more information in the [Open Payments flow](/concepts/op-flow/#outgoing-payment) and [identity providers](/identity/idp) pages.
+Outgoing payments require an interactive grant, which the sender approves once. While the grant (and its access token) is valid and within its limits (`interval` + `receiveAmount`), your app can create outgoing payments without re-approval each interval. You can find more information in the [Open Payments flow](/concepts/op-flow/#outgoing-payment) and [identity providers](/identity/idp) pages.
 :::
 
 <Tabs syncKey="lang">
@@ -245,7 +245,7 @@ The following shows an example response from the sender's wallet provider.
             "assetCode": "MXN",
             "assetScale": 2,
             "value": "400000"
-          },
+          }
         }
       }
     ]
@@ -362,7 +362,7 @@ The following shows an example response from the recipient's wallet provider.
 
 ### 8. Request a quote grant
 
-Use the sender's `authServer` details, received in Step 1, to call the <Badge text="POST" variant= "success" /> [Grant Request API](/apis/auth-server/operations/post-request).
+Use the sender's `authServer` details, received in Step 1, to call the <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request).
 
 This call obtains an access token that allows your app to request a quote resource be created on the sender's wallet.
 
@@ -462,7 +462,7 @@ The following shows an example response from the sender's wallet provider.
   "walletAddress": "https://cloudninebank.example.com/sender",
   "receiver": "https://happylifebank.example.com/incoming-payments/{...}", // url of the incoming payment the quote is created for
   "debitAmount": {
-    "value": "27778", // Sender pays $277.78 USD after currency conversion
+    "value": "20000",
     "assetCode": "USD",
     "assetScale": 2
   },
@@ -472,8 +472,8 @@ The following shows an example response from the sender's wallet provider.
     "assetScale": 2
   },
   "method": "ilp",
-  "createdAt": "2025-10-03T24:22:51.50Z",
-  "expiresAt": "2025-10-03T24:32:51.50Z"
+  "createdAt": "2025-10-03T23:28:51.50Z",
+  "expiresAt": "2025-10-03T23:48:51.50Z"
 }
 ```
 </details>
@@ -513,7 +513,7 @@ The following shows an example response from the sender's wallet provider.
     "assetScale": 2
   },
   "receiveAmount": {
-       "value": "400000", // Recipient to receive $4,000 MXN
+    "value": "400000", // Recipient to receive $4,000 MXN
     "assetCode": "MXN",
     "assetScale": 2
   },
@@ -522,7 +522,7 @@ The following shows an example response from the sender's wallet provider.
     "assetCode": "USD",
     "assetScale": 2
   },
-  "createdAt": "2025-10-03T25:00:45.41Z"
+  "createdAt": "2025-10-03T23:29:03.41Z"
 }
 ```
 </details>
@@ -576,7 +576,7 @@ The following shows an example response from the sender's wallet provider.
     "assetCode": "USD",
     "assetScale": 2
   },
-  "createdAt": "2025-10-03T25:33:13.14Z",
+  "createdAt": "2025-10-03T23:31:13.14Z"
 }
 ```
 </details>
@@ -607,7 +607,7 @@ The following shows an example response from the recipient's wallet provider.
     "assetScale": 2
   },
   "completed": true,
-  "createdAt": "2025-10-03T26:01:15.00Z",
+  "createdAt": "2025-10-03T23:32:15.00Z",
 }
 ```
 </details>
