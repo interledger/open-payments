@@ -4,48 +4,44 @@ title: Set up recurring subscription payments with a fixed incoming amount
 
 import { LinkOut } from '@interledger/docs-design-system'
 import { Tabs, TabItem, Badge } from '@astrojs/starlight/components'
-import InteractionReq from '/src/partials/interaction-required.mdx'
 import StartInteraction from '/src/partials/grant-start-interaction.mdx'
 import FinishInteraction from '/src/partials/grant-finish-interaction.mdx'
 
 :::tip[Summary]
-Learn how to set up recurring subscription payments where the recipient receives a fixed amount at regular intervals.
+Learn how to set up recurring subscription payments where the service provider receives a fixed amount at regular intervals.
 :::
 
 A subscription payment is a recurring transfer of money where a customer pays a fixed fee at regular intervals to access a service or product. In this guide, you will learn how to implement a recurring subscription payment feature where the service provider receives exactly the same amount each billing period.
 
 This approach is particularly useful for subscription service scenarios where:
 
-- The service provider charges a fixed monthly fee
-- The recipient (service provider) must receive exactly the subscription price each month
-- The sender (customer) authorizes recurring payments at a set interval
-- The sender wants to avoid manually approving each monthly payment
+- The service provider charges a fixed monthly subscription fee
+- The customer authorizes recurring payments at a set interval
+- The customer wants to avoid manually approving each monthly payment
 
 ## Scenario
 
 Imagine a customer subscribing to a streaming service. They want to authorize monthly payments of exactly \$15 USD for 12 months, and the service provider must receive the full \$15 USD each month to maintain the subscription.
 
-For this guide, you'll assume the role of a developer building a subscription management platform. The guide explains how to set up a \$15 USD monthly subscription payment that recurs for 12 months, where the recipient receives exactly \$15 USD each billing period.
+For this guide, you'll assume the role of a developer working for the service provider. The guide explains how to set up a \$15 USD monthly subscription payment that recurs for 12 months, where the service provider receives exactly \$15 USD each billing period.
 
 **Example transaction details:**
 
-- **Recipient receives**: \$15.00 USD (exact amount each month)
+- **Service provider receives**: \$15.00 USD (exact amount each month)
 - **Payment frequency**: Monthly for 12 months
-- **Sender pays**: \$15.00 USD each month (plus any applicable fees from their wallet provider)
+- **Customer pays**: \$15.00 USD each month
 
-The three parties involved in this scenario are:
+The two parties involved in this scenario are:
 
-- **Developer**: you, the person building the subscription management platform
-- **Sender**: the person subscribing to and paying for the service
-- **Recipient**: the service provider receiving the subscription payments
-
-Remember, Open Payments doesn't execute payments or touch money in any way. It's used to issue payment instructions before any money movement occurs. An example of a payment instruction is, "authorize recurring payments of exactly \$15 to the service provider once a month for 12 months".
+- **Service provider**: Your company receiving the subscription payments
+- **Customer**: the person subscribing to and paying for the service
 
 ## Endpoints
 
 - <Badge text="GET" variant="note" /> <LinkOut href='https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/'>Get Wallet Address</LinkOut>
 - <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-request/'>Grant Request</LinkOut>
 - <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-incoming-payment/'>Create Incoming Payment</LinkOut>
+- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-quote/'>Create a Quote</LinkOut>
 - <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment/'>Create an Outgoing Payment</LinkOut>
 - <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-token/'>Rotate an Access Token</LinkOut>
 
@@ -53,20 +49,20 @@ Remember, Open Payments doesn't execute payments or touch money in any way. It's
 
 ### 1. Get wallet address information
 
-When the sender initiates a subscription, your platform needs to get wallet address information for both the sender and the recipient.
+When the customer initiates a subscription, you need to get wallet address information for both the customer and your service provider.
 
-Let's assume the sender has already provided their wallet address when they signed up to use your platform. Let's also assume the sender has entered the recipient's (service provider's) wallet address during the subscription signup flow.
+Let's assume the customer has already provided their wallet address when they signed up for your service. Let's also assume you already have your company's wallet address configured in your system.
 
 Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wallet-address-server/operations/get-wallet-address) for each address.
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
   ```ts
-  const senderWalletAddress = await client.walletAddress.get({
-    url: 'https://cloudninebank.example.com/sender'
+  const customerWalletAddress = await client.walletAddress.get({
+    url: 'https://cloudninebank.example.com/customer'
   })
-  const recipientWalletAddress = await client.walletAddress.get({
-    url: 'https://happylifebank.example.com/recipient'
+  const serviceProviderWalletAddress = await client.walletAddress.get({
+    url: 'https://happylifebank.example.com/service-provider'
   })
 ```
 </TabItem>
@@ -74,20 +70,20 @@ Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wall
 
 <details>
 <summary>Example responses</summary>
-The following example shows a response from the sender's wallet provider.
+The following example shows a response from the customer's wallet provider.
 ```json wrap
 {
-  "id": "https://cloudninebank.example.com/sender",
+  "id": "https://cloudninebank.example.com/customer",
   "assetCode": "USD",
   "assetScale": 2,
   "authServer": "https://auth.cloudninebank.example.com/",
   "resourceServer": "https://cloudninebank.example.com/op"
 }
 ```
-The following example shows a response from the recipient's wallet provider.
+The following example shows a response from your company's wallet provider.
 ```json wrap
 {
-  "id": "https://happylifebank.example.com/recipient",
+  "id": "https://happylifebank.example.com/service-provider",
   "assetCode": "USD",
   "assetScale": 2,
   "authServer": "https://auth.happylifebank.example.com/",
@@ -98,16 +94,16 @@ The following example shows a response from the recipient's wallet provider.
 
 ### 2. Request an incoming payment grant
 
-Use the recipient's `authServer` details, received in the previous step, to call the <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request).
+Use your company's `authServer` details, received in the previous step, to call the <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request).
 
-This call obtains an access token that allows your platform to request that an incoming payment resource be created on the recipient's wallet account.
+This call obtains an access token that allows you to request that an incoming payment resource be created on your company's wallet account.
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
   ```ts wrap
-  const recipientIncomingPaymentGrant = await client.grant.request(
+  const serviceProviderIncomingPaymentGrant = await client.grant.request(
     {
-      url: recipientWalletAddress.authServer
+      url: serviceProviderWalletAddress.authServer
     },
     {
       access_token: {
@@ -126,7 +122,7 @@ This call obtains an access token that allows your platform to request that an i
 
 <details>
 <summary>Example response</summary>
-The following shows an example response from the recipient's wallet provider.
+The following shows an example response from your company's wallet provider.
 
 ```json wrap
 {
@@ -155,20 +151,20 @@ The following shows an example response from the recipient's wallet provider.
 
 Use the access token returned in the previous response to call the <Badge text="POST" variant="success" /> [Create Incoming Payment API](/apis/resource-server/operations/create-incoming-payment).
 
-This call requests an incoming payment resource be created on the recipient's wallet account.
+This call requests an incoming payment resource be created on your company's wallet account.
 
-The `incomingAmount` specifies the exact amount the service provider (recipient) wants to receive for the subscription. Since the monthly subscription is \$15 USD, the `value` is `1500` (accounting for the asset scale of 2).
+The `incomingAmount` specifies the exact amount your company wants to receive for the subscription. Since the monthly subscription is \$15 USD, the `value` is `1500`.
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
   ```ts wrap
-  const recipientIncomingPayment = await client.incomingPayment.create(
+  const serviceProviderIncomingPayment = await client.incomingPayment.create(
     {
-      url: recipientWalletAddress.resourceServer,
-      accessToken: recipientIncomingPaymentGrant.access_token.value
+      url: serviceProviderWalletAddress.resourceServer,
+      accessToken: serviceProviderIncomingPaymentGrant.access_token.value
     },
     {
-      walletAddress: recipientWalletAddress.id,
+      walletAddress: serviceProviderWalletAddress.id,
       incomingAmount: {
         value: '1500',
         assetCode: 'USD',
@@ -182,12 +178,12 @@ The `incomingAmount` specifies the exact amount the service provider (recipient)
 
 <details>
 <summary>Example response</summary>
-The following shows an example response from the recipient's wallet provider.
+The following shows an example response from your company's wallet provider.
 
 ```json wrap
 {
   "id": "https://happylifebank.example.com/incoming-payments/{...}",
-  "walletAddress": "https://happylifebank.example.com/recipient",
+  "walletAddress": "https://happylifebank.example.com/service-provider",
   "incomingAmount": {
     "value": "1500",
     "assetCode": "USD",
@@ -199,7 +195,7 @@ The following shows an example response from the recipient's wallet provider.
     "assetScale": 2
   },
   "completed": false,
-  "createdAt": "2025-03-12T23:20:50.52Z",
+  "createdAt": "2025-10-14T00:00:50.52Z",
   "methods": [
     {
       "type": "ilp",
@@ -212,28 +208,152 @@ The following shows an example response from the recipient's wallet provider.
 
 </details>
 
-### 4. Request an interactive outgoing payment grant
+### 4. Request a quote grant
 
-Use the sender's `authServer` information received in Step 1 to call the <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request).
+Use the customer's `authServer` details, received in Step 1, to call the <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request).
 
-This call obtains an access token that allows your platform to request that an outgoing payment resource be created on the sender's wallet account.
-
-<InteractionReq />
-
-For recurring payments, include the `interval` property to specify how often the payment should occur. Remember that the sender wants to pay \$15 USD a month for 12 months.
+This call obtains an access token that allows you to request that a quote resource be created on the customer's wallet account.
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
   ```ts wrap
-  const pendingSenderOutgoingPaymentGrant = await client.grant.request(
+  const customerQuoteGrant = await client.grant.request(
     {
-      url: senderWalletAddress.authServer
+      url: customerWalletAddress.authServer
     },
     {
       access_token: {
         access: [
           {
-            identifier: senderWalletAddress.id,
+            type: 'quote',
+            actions: ['create']
+          }
+        ]
+      }
+    }
+  )
+  ```
+</TabItem>
+</Tabs>
+
+<details>
+<summary>Example response</summary>
+The following shows an example response from the customer's wallet provider.
+
+```json wrap
+{
+  "access_token": {
+    "value": "...", // access token value for quote grant
+    "manage": "https://auth.cloudninebank.example.com/token/{...}", // management uri for access token
+    "access": [
+      {
+        "type": "quote",
+        "actions": ["create"]
+      }
+    ]
+  },
+  "continue": {
+    "access_token": {
+      "value": "..." // access token for continuing the request
+    },
+    "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
+  }
+}
+```
+
+</details>
+
+### 5. Request the creation of a quote resource
+
+Use the access token received in the previous step to call the <Badge text="POST" variant="success" /> [Create Quote API](/apis/resource-server/operations/create-quote).
+
+This call requests that a quote resource be created on the customer's wallet account. The request must contain the `receiver`, which is your company's incoming payment `id`, along with the `incomingAmount`, which is the exact amount your company wants to receive.
+
+The `incomingAmount` specifies that your company will receive exactly \$15 USD.
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts wrap
+  const customerQuote = await client.quote.create(
+    {
+      url: customerWalletAddress.resourceServer,
+      accessToken: customerQuoteGrant.access_token.value
+    },
+    {
+      method: 'ilp',
+      walletAddress: customerWalletAddress.id,
+      receiver: serviceProviderIncomingPayment.id,
+      incomingAmount: {
+        value: '1500',
+        assetCode: 'USD',
+        assetScale: 2
+      }
+    }
+  )
+```
+</TabItem>
+</Tabs>
+
+The response returns a `receiveAmount`, a `debitAmount`, and other required information.
+
+- `debitAmount` - The amount the customer must pay.
+- `receiveAmount` - The amount your company will receive.
+
+:::note[Expiring quotes]
+Quotes include an `expiresAt` timestamp. Create the outgoing payment before the quote expires. If creation fails because the quote expired, request a new quote and try again.
+:::
+
+<details>
+<summary>Example response</summary>
+The following shows an example response from the customer's wallet provider.
+
+```json wrap
+{
+  "id": "https://cloudninebank.example.com/quotes/{...}", // url identifying the quote
+  "walletAddress": "https://cloudninebank.example.com/customer",
+  "receiver": "https://happylifebank.example.com/incoming-payments/{...}", // url of the incoming payment the quote is created for
+  "debitAmount": {
+    "value": "1500", // Customer pays \$15.00 USD
+    "assetCode": "USD",
+    "assetScale": 2
+  },
+  "receiveAmount": {
+    "value": "1500", // Service provider receives \$15.00 USD
+    "assetCode": "USD",
+    "assetScale": 2
+  },
+  "method": "ilp",
+  "createdAt": "2025-10-14T00:00:51.50Z",
+  "expiresAt": "2025-10-14T00:02:51.50Z"
+}
+```
+
+</details>
+
+### 6. Request an interactive outgoing payment grant
+
+Use the customer's `authServer` information received in Step 1 to call the <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request).
+
+This call obtains an access token that allows you to request that an outgoing payment resource be created on the customer's wallet account.
+
+:::note
+Outgoing payments require an interactive grant. This type of grant will obtain the customer's consent before an outgoing payment is made against their wallet account. You can find more information in the [Open Payments flow](/concepts/op-flow/#outgoing-payment) and [identity providers](/identity/idp) pages.
+:::
+
+For recurring payments, include the `interval` property to specify how often the payment should occur. Remember that the customer wants to pay \$15 USD a month for 12 months.
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts wrap
+  const pendingCustomerOutgoingPaymentGrant = await client.grant.request(
+    {
+      url: customerWalletAddress.authServer
+    },
+    {
+      access_token: {
+        access: [
+          {
+            identifier: customerWalletAddress.id,
             type: 'outgoing-payment',
             actions: ['create', 'read'],
             limits: {
@@ -251,7 +371,7 @@ For recurring payments, include the `interval` property to specify how often the
         start: ['redirect'],
         finish: {
           method: 'redirect',
-          uri: 'https://myapp.example.com/finish/{...}', // where to redirect the sender after they've completed interaction
+          uri: 'https://myapp.example.com/finish/{...}', // where to redirect the customer after they've completed interaction
           nonce: NONCE
         }
       }
@@ -263,12 +383,12 @@ For recurring payments, include the `interval` property to specify how often the
 
 <details>
   <summary>Example response</summary>
-The following shows an example response from the sender's wallet provider.
+The following shows an example response from the customer's wallet provider.
 
 ```json wrap
 {
   "interact": {
-    "redirect": "https://auth.interledger-test.dev/{...}", // uri to redirect the sender to, to begin interaction
+    "redirect": "https://auth.interledger-test.dev/{...}", // uri to redirect the customer to, to begin interaction
     "finish": "..." // unique key to secure the callback
   },
   "continue": {
@@ -285,44 +405,44 @@ The following shows an example response from the sender's wallet provider.
 
 #### About the interval
 
-The interval used in this guide is `R12/2025-10-14T00:00:00Z/P1M`. Remember that the sender wants to pay \$15 USD a month for 12 months. The interval breaks down like this:
+The interval used in this guide is `R12/2025-10-14T00:00:00Z/P1M`. Remember that the customer wants to pay \$15 USD a month for 12 months. The interval breaks down like this:
 
 - `R12/` is the number of repetitions - twelve
 - `2025-10-14` is the start date of the repeating interval - 14 October 2025
 - `T00:00:00Z/` is the start time of the repeating interval - 12:00 AM UTC
 - `P1M` is the period between each interval - one month. Used with `R12`, you have a grant that's valid once a month for 12 months.
 
-Altogether, this grant will allow the sender to pay \$15 USD twelve times, with the debit amount resetting each month. Any unspent portions don't roll over to the next month.
+Altogether, this grant will allow the customer to pay \$15 USD twelve times.
 
-### 5. Start interaction with the sender
+### 7. Start interaction with the customer
 
 <StartInteraction />
 
-### 6. Finish interaction with the sender
+### 8. Finish interaction with the customer
 
 <FinishInteraction />
 
-### 7. Request a grant continuation
+### 9. Request a grant continuation
 
-In our example, we're assuming the IdP the sender interacted with has a user interface. When the interaction completes, the sender returns to your platform. Now your platform can make a continuation request for the outgoing payment grant.
+In our example, we're assuming the IdP the customer interacted with has a user interface. When the interaction completes, the customer returns to your platform. Now your platform can make a continuation request for the outgoing payment grant.
 
 :::note
 In a scenario where a user interface isn't available, consider implementing a polling mechanism to check for the completion of the interaction.
 :::
 
-Call the <Badge text="POST" variant="success" /> [Grant Continuation Request API](/apis/auth-server/operations/post-continue). This call requests an access token that allows your platform to request that an outgoing payment resource be created on the sender's wallet account.
+Call the <Badge text="POST" variant="success" /> [Grant Continuation Request API](/apis/auth-server/operations/post-continue). This call requests an access token that allows you to request that an outgoing payment resource be created on the customer's wallet account.
 
-Issue the request to the `continue.uri` provided in the initial outgoing payment grant response (Step 4).
+Issue the request to the `continue.uri` provided in the initial outgoing payment grant response in Step 6.
 
 Include the `interact_ref` returned in the redirect URI's query parameters.
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
     ```ts wrap
-    const senderOutgoingPaymentGrant = await client.grant.continue(
+    const customerOutgoingPaymentGrant = await client.grant.continue(
       {
-        url: pendingSenderOutgoingPaymentGrant.continue.uri,
-        accessToken: pendingSenderOutgoingPaymentGrant.continue.access_token.value
+        url: customerOutgoingPaymentGrant.continue.uri,
+        accessToken: customerOutgoingPaymentGrant.continue.access_token.value
       },
       {
         interact_ref: interactRef
@@ -334,7 +454,7 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
 
 <details>
   <summary>Example response</summary>
-The following shows an example response from the sender's wallet provider.
+The following shows an example response from the customer's wallet provider.
 
 ```json wrap
 {
@@ -345,7 +465,7 @@ The following shows an example response from the sender's wallet provider.
       {
         "type": "outgoing-payment",
         "actions": ["create", "read"],
-        "identifier": "https://cloudninebank.example.com/sender",
+        "identifier": "https://cloudninebank.example.com/customer",
         "limits": {
           "debitAmount": {
             "assetCode": "USD",
@@ -368,23 +488,23 @@ The following shows an example response from the sender's wallet provider.
 
 </details>
 
-### 8. Request the creation of an outgoing payment resource
+### 10. Request the creation of an outgoing payment resource
 
-Use the access token returned in Step 7 to call the <Badge text="POST" variant="success" /> [Create Outgoing Payment API](/apis/resource-server/operations/create-outgoing-payment).
+Use the access token returned in Step 9 to call the <Badge text="POST" variant="success" /> [Create Outgoing Payment API](/apis/resource-server/operations/create-outgoing-payment).
 
-Include the `incomingPayment` URL from the incoming payment created in Step 3.
+Include the `quoteId` from the quote created in Step 5.
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
   ```ts wrap
-  const senderOutgoingPayment = await client.outgoingPayment.create(
+  const customerOutgoingPayment = await client.outgoingPayment.create(
     {
-      url: senderWalletAddress.resourceServer,
-      accessToken: senderOutgoingPaymentGrant.access_token.value
+      url: customerWalletAddress.resourceServer,
+      accessToken: customerOutgoingPaymentGrant.access_token.value
     },
     {
-      walletAddress: senderWalletAddress.id,
-      incomingPayment: recipientIncomingPayment.id
+      walletAddress: customerWalletAddress.id,
+      quoteId: customerQuote.id
     }
   )
 ```
@@ -393,12 +513,12 @@ Include the `incomingPayment` URL from the incoming payment created in Step 3.
 
 <details>
 <summary>Example response</summary>
-The following shows an example response from the sender's wallet provider.
+The following shows an example response from the customer's wallet provider.
 
 ```json wrap
 {
   "id": "https://cloudninebank.example.com/outgoing-payments/{...}", // url identifying the outgoing payment
-  "walletAddress": "https://cloudninebank.example.com/sender",
+  "walletAddress": "https://cloudninebank.example.com/customer",
   "receiver": "https://happylifebank.example.com/incoming-payments/{...}", // url of the incoming payment being paid
   "debitAmount": {
     "value": "1500",
@@ -421,7 +541,7 @@ The following shows an example response from the sender's wallet provider.
 
 </details>
 
-The first of the twelve recurring subscription payments is now set up. At the next interval (one month from now), repeat Steps 3 and 8. You don't need to request new outgoing or incoming payment grants because the original grants are still valid for the remaining billing periods.
+The first of the twelve recurring subscription payments is now set up. At the next interval (one month from now), repeat Steps 3, 5, and 10. You don't need to request new outgoing or incoming payment grants because the original grants are still valid for the remaining billing periods.
 
 :::note[Access token expiry]
 If a particular grant's access token has expired, call the <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/auth-server/operations/post-token), then use the new token in the appropriate incoming or outgoing payment request.
