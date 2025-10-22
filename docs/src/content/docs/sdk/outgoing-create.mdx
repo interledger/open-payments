@@ -10,7 +10,6 @@ import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
 import TsImport from '/src/partials/ts-import-initialize.mdx'
-import RustImport from '/src/partials/rust-import-initialize.mdx'
 import PhpImport from '/src/partials/php-import-initialize.mdx'
 
 After a quote is accepted and the authorized client obtains the requisite grant from the authorization server of the sender's <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip>, the client can create an outgoing payment resource against the sender's wallet address.
@@ -52,7 +51,19 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 
 </TabItem>
 <TabItem label="Rust" icon='seti:rust'>
-<RustImport />
+<LinkButton href="https://github.com/interledger/open-payments-rust/tree/main/src/snippets" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+<ChunkedSnippet
+  source='outgoing-payment/outgoing-payment-create.rs'
+  l='rust'
+  chunk='1'
+/>
+
+<ChunkedSnippet
+  source='outgoing-payment/outgoing-payment-create.rs'
+  l='rust'
+  chunk='2'
+/>
 
 <ChunkedSnippet
   source='outgoing-payment/outgoing-payment-create.rs'
@@ -64,6 +75,12 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
   source='outgoing-payment/outgoing-payment-create.rs'
   l='rust'
   chunk='4'
+/>
+
+<ChunkedSnippet
+  source='outgoing-payment/outgoing-payment-create.rs'
+  l='rust'
+  chunk='5'
 />
 
 {/* prettier-ignore */}

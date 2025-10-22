@@ -17,10 +17,12 @@ async fn main() -> open_payments::client::Result<()> {
     let client = create_authenticated_client()?;
     //@! end chunk 2
 
-    //@! start chunk 3 | title=Request quote grant
+    //@! start chunk 3 | title=Get wallet address information
     let wallet_address_url = get_env_var("WALLET_ADDRESS_URL")?;
     let wallet_address = client.wallet_address().get(&wallet_address_url).await?;
+    //@! end chunk 3
 
+    //@! start chunk 4 | title=Request quote grant
     let grant_request = GrantRequest::new(
         AccessTokenRequest {
             access: vec![AccessItem::Quote {
@@ -39,9 +41,9 @@ async fn main() -> open_payments::client::Result<()> {
         .grant()
         .request(&wallet_address.auth_server, &grant_request)
         .await?;
-    //@! end chunk 3
+    //@! end chunk 4
 
-    //@! start chunk 4 | title=Output
+    //@! start chunk 5 | title=Output
     match response {
         GrantResponse::WithToken { access_token, .. } => {
             println!("Received access token: {:#?}", access_token.value);
@@ -54,7 +56,7 @@ async fn main() -> open_payments::client::Result<()> {
             unreachable!("Interaction not required for quotes");
         }
     }
-    //@! end chunk 4
+    //@! end chunk 5
 
     Ok(())
 }

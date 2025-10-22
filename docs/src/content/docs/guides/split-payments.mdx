@@ -59,7 +59,14 @@ Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wall
     url: 'https://coolwallet.example.com/platform'
   })
 ```
-</TabItem>
+ </TabItem>
+ <TabItem label='Rust' icon='seti:rust'>
+ ```rust
+ let customer_wallet_address = client.wallet_address().get("https://cloudninebank.example.com/customer").await?;
+ let merchant_wallet_address = client.wallet_address().get("https://happylifebank.example.com/merchant").await?;
+ let platform_wallet_address = client.wallet_address().get("https://coolwallet.example.com/platform").await?;
+ ```
+ </TabItem>
 </Tabs>
 
 <details>
@@ -122,7 +129,25 @@ If you and the merchant use the same account servicing entity, and as a result, 
     },
   );
 ````
-</TabItem>
+ </TabItem>
+ <TabItem label='Rust' icon='seti:rust'>
+ ```rust
+ use open_payments::types::{AccessTokenRequest, AccessItem, IncomingPaymentAction, GrantRequest};
+ let incoming_access = AccessTokenRequest {
+   access: vec![AccessItem::IncomingPayment { actions: vec![IncomingPaymentAction::Create], identifier: None }],
+ };
+ let merchant_grant_request = GrantRequest::new(incoming_access.clone(), None);
+ let platform_grant_request = GrantRequest::new(incoming_access, None);
+ let merchant_incoming_payment_grant = client
+   .grant()
+   .request(&merchant_wallet_address.auth_server, &merchant_grant_request)
+   .await?;
+ let platform_incoming_payment_grant = client
+   .grant()
+   .request(&platform_wallet_address.auth_server, &platform_grant_request)
+   .await?;
+ ```
+ </TabItem>
 </Tabs>
 
 <details>
@@ -195,6 +220,32 @@ Remember that the merchant is receiving 99% of the payment (\$99.00 or `9900`) w
   )
 ```
 </TabItem>
+
+<TabItem label='Rust' icon='seti:rust'>
+ ```rust
+ use open_payments::types::{IncomingPaymentRequest, Amount};
+ let merchant_request = IncomingPaymentRequest {
+   wallet_address: merchant_wallet_address.id.clone(),
+   incoming_amount: Some(Amount { value: "9900".into(), asset_code: "USD".into(), asset_scale: 2 }),
+   expires_at: None,
+   metadata: None,
+ };
+ let platform_request = IncomingPaymentRequest {
+   wallet_address: platform_wallet_address.id.clone(),
+   incoming_amount: Some(Amount { value: "100".into(), asset_code: "USD".into(), asset_scale: 2 }),
+   expires_at: None,
+   metadata: None,
+ };
+ let merchant_incoming_payment = client
+   .incoming_payments()
+   .create(&merchant_wallet_address.resource_server, &merchant_request, Some(&merchant_incoming_payment_grant.access_token.value))
+   .await?;
+ let platform_incoming_payment = client
+   .incoming_payments()
+   .create(&platform_wallet_address.resource_server, &platform_request, Some(&platform_incoming_payment_grant.access_token.value))
+   .await?;
+ ```
+ </TabItem>
 </Tabs>
 
 <details>
@@ -255,6 +306,21 @@ This call obtains an access token that allows your platform to request quote res
     )
     ```
   </TabItem>
+
+  <TabItem label='Rust' icon='seti:rust'>
+    ```rust
+    use open_payments::types::{AccessTokenRequest, AccessItem, QuoteAction, GrantRequest};
+    let quote_access = AccessTokenRequest {
+      access: vec![AccessItem::Quote { actions: vec![QuoteAction::Create] }],
+    };
+    let customer_grant_request = GrantRequest::new(quote_access, None);
+    let customer_quote_grant = client
+      .grant()
+      .request(&customer_wallet_address.auth_server, &customer_grant_request)
+      .await?;
+    ```
+  </TabItem>
+
 </Tabs>
 
 <details>
@@ -321,7 +387,34 @@ Next, call the <Badge text="POST" variant="success" /> Create Quote API again an
     }
   )
 ```
-</TabItem>
+ </TabItem>
+ <TabItem label='Rust' icon='seti:rust'>
+ ```rust
+ use open_payments::types::{QuoteRequest, QuoteMethod};
+ let merchant_quote_request = QuoteRequest {
+   method: QuoteMethod::Ilp,
+   wallet_address: Some(customer_wallet_address.id.clone()),
+   receiver: Some(merchant_incoming_payment.id.clone()),
+   debit_amount: None,
+   receive_amount: None,
+ };
+ let platform_quote_request = QuoteRequest {
+   method: QuoteMethod::Ilp,
+   wallet_address: Some(customer_wallet_address.id.clone()),
+   receiver: Some(platform_incoming_payment.id.clone()),
+   debit_amount: None,
+   receive_amount: None,
+ };
+ let merchant_quote = client
+   .quotes()
+   .create(&customer_wallet_address.resource_server, &merchant_quote_request, Some(&customer_quote_grant.access_token.value))
+   .await?;
+ let platform_quote = client
+   .quotes()
+   .create(&customer_wallet_address.resource_server, &platform_quote_request, Some(&customer_quote_grant.access_token.value))
+   .await?;
+ ```
+ </TabItem>
 </Tabs>
 
 Each response returns a `receiveAmount`, a `debitAmount`, and other required information.
@@ -401,7 +494,55 @@ This call obtains an access token that allows your platform to request outgoing 
     }
   )
   ```
-</TabItem>
+ </TabItem>
+ <TabItem label='Rust' icon='seti:rust'>
+ ```rust
+ use open_payments::types::{AccessTokenRequest, AccessItem, OutgoingPaymentAction, InteractRequest, InteractStart, InteractFinish, InteractFinishMethod, AccessLimits, Amount, GrantRequest};
+ 
+ let merchant_amount = match merchant_quote.debit_amount.as_ref() {
+   Some(a) => &a.value,
+   None => {
+     eprintln!("Missing debit_amount on merchant quote");
+     return Ok(());
+   }
+ };
+ let platform_amount = match platform_quote.debit_amount.as_ref() {
+   Some(a) => &a.value,
+   None => {
+     eprintln!("Missing debit_amount on platform quote");
+     return Ok(());
+   }
+ };
+ let merchant_value = match merchant_amount.parse::<i64>() {
+   Ok(v) => v,
+   Err(_) => {
+     eprintln!("Invalid merchant debit_amount value");
+     return Ok(());
+   }
+ };
+ let platform_value = match platform_amount.parse::<i64>() {
+   Ok(v) => v,
+   Err(_) => {
+     eprintln!("Invalid platform debit_amount value");
+     return Ok(());
+   }
+ };
+ let combined_quote_amount = merchant_value + platform_value;
+ let outgoing_access = AccessTokenRequest {
+   access: vec![AccessItem::OutgoingPayment {
+     identifier: Some(customer_wallet_address.id.clone()),
+     actions: vec![OutgoingPaymentAction::Create],
+     limits: Some(AccessLimits { debit_amount: Some(Amount { value: combined_quote_amount.to_string(), asset_code: "USD".into(), asset_scale: 2 }), ..Default::default() }),
+   }],
+ };
+ let interact = InteractRequest { start: Some(vec![InteractStart::Redirect]), finish: Some(InteractFinish { method: InteractFinishMethod::Redirect, uri: Some("https://paymentplatform.example/finish/{...}".into()), nonce: Some("NONCE".into()) }) };
+ let outgoing_grant_request = GrantRequest::new(outgoing_access, Some(interact));
+ let pending_customer_outgoing_payment_grant = client
+   .grant()
+   .request(&customer_wallet_address.auth_server, &outgoing_grant_request)
+   .await?;
+ ```
+ </TabItem>
 </Tabs>
 
 <details>
@@ -461,6 +602,18 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
     )
     ```
   </TabItem>
+ <TabItem label='Rust' icon='seti:rust'>
+ ```rust
+ let customer_outgoing_payment_grant = client
+   .grant()
+   .continue_grant(
+     if let Some(continue_field) = &pending_customer_outgoing_payment_grant.continue_field { &continue_field.uri } else { eprintln!("Missing continue field on pending grant"); return Ok(()); },
+     &interact_ref,
+     if let Some(continue_field) = &pending_customer_outgoing_payment_grant.continue_field { Some(&continue_field.access_token.value) } else { None },
+   )
+   .await?;
+ ```
+ </TabItem>
 </Tabs>
 
 <details>
@@ -527,7 +680,34 @@ Use the access token returned in Step 5 that's associated with the merchant to c
     }
   )
 ```
-</TabItem>
+ </TabItem>
+ <TabItem label='Rust' icon='seti:rust'>
+ ```rust
+ use open_payments::types::OutgoingPaymentRequest;
+ let merchant_outgoing_request = OutgoingPaymentRequest {
+   wallet_address: customer_wallet_address.id.clone(),
+   receiver: Some(merchant_incoming_payment.id.clone()),
+   debit_amount: None,
+   receive_amount: None,
+   quote_id: Some(merchant_quote.id.clone()),
+ };
+ let platform_outgoing_request = OutgoingPaymentRequest {
+   wallet_address: customer_wallet_address.id.clone(),
+   receiver: Some(platform_incoming_payment.id.clone()),
+   debit_amount: None,
+   receive_amount: None,
+   quote_id: Some(platform_quote.id.clone()),
+ };
+ let customer_outgoing_payment_to_merchant = client
+   .outgoing_payments()
+   .create(&customer_wallet_address.resource_server, &merchant_outgoing_request, Some(&customer_outgoing_payment_grant.access_token.value))
+   .await?;
+ let customer_outgoing_payment_to_platform = client
+   .outgoing_payments()
+   .create(&customer_wallet_address.resource_server, &platform_outgoing_request, Some(&customer_outgoing_payment_grant.access_token.value))
+   .await?;
+ ```
+ </TabItem>
 </Tabs>
 
 <details>

@@ -43,7 +43,13 @@ Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wall
     url: 'https://happylifebank.example.com/recipient'
   })
   ```
-</TabItem>
+ </TabItem>
+ <TabItem label='Rust' icon='seti:rust'>
+ ```rust
+ let sender_wallet_address = client.wallet_address().get("https://cloudninebank.example.com/sender").await?;
+ let recipient_wallet_address = client.wallet_address().get("https://happylifebank.example.com/recipient").await?;
+ ```
+ </TabItem>
 </Tabs>
 
 <details>
@@ -114,7 +120,29 @@ Remember that your user, the sender, wants to make payments of $50 a month for t
     },
   );
   ```
-</TabItem>
+ </TabItem>
+ <TabItem label='Rust' icon='seti:rust'>
+ ```rust
+ use open_payments::types::{AccessTokenRequest, AccessItem, OutgoingPaymentAction, AccessLimits, Amount, InteractRequest, InteractStart, InteractFinish, InteractFinishMethod, GrantRequest};
+ let outgoing_access = AccessTokenRequest {
+   access: vec![AccessItem::OutgoingPayment {
+     identifier: Some(sender_wallet_address.id.clone()),
+     actions: vec![OutgoingPaymentAction::Create, OutgoingPaymentAction::Read],
+     limits: Some(AccessLimits {
+       interval: Some("R3/2025-03-12T23:25:00Z/P1M".into()),
+       debit_amount: Some(Amount { value: "5000".into(), asset_code: "USD".into(), asset_scale: 2 }),
+       ..Default::default()
+     }),
+   }],
+ };
+ let interact = InteractRequest { start: Some(vec![InteractStart::Redirect]), finish: Some(InteractFinish { method: InteractFinishMethod::Redirect, uri: Some("https://paymentplatform.example/finish/{...}".into()), nonce: Some("NONCE".into()) }) };
+ let outgoing_grant_request = GrantRequest::new(outgoing_access, Some(interact));
+ let pending_sender_outgoing_payment_grant = client
+   .grant()
+   .request(&sender_wallet_address.auth_server, &outgoing_grant_request)
+   .await?;
+ ```
+ </TabItem>
 </Tabs>
 
 <details>
@@ -186,7 +214,26 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
     }
   )
   ```
-</TabItem>
+ </TabItem>
+ <TabItem label='Rust' icon='seti:rust'>
+ ```rust
+ let continue_field = match &pending_sender_outgoing_payment_grant.continue_field {
+   Some(c) => c,
+   None => {
+     eprintln!("Missing continue field on pending grant");
+     return Ok(());
+   }
+ };
+ let sender_outgoing_payment_grant = client
+   .grant()
+   .continue_grant(
+     &continue_field.uri,
+     &interact_ref,
+     Some(&continue_field.access_token.value),
+   )
+   .await?;
+ ```
+ </TabItem>
 </Tabs>
 
 <details>
@@ -247,7 +294,20 @@ This call obtains an access token that allows your client to request an incoming
     },
   );
   ```
-</TabItem>
+ </TabItem>
+ <TabItem label='Rust' icon='seti:rust'>
+ ```rust
+ use open_payments::types::{AccessTokenRequest, AccessItem, IncomingPaymentAction, GrantRequest};
+ let incoming_access = AccessTokenRequest {
+   access: vec![AccessItem::IncomingPayment { actions: vec![IncomingPaymentAction::Create, IncomingPaymentAction::Read], identifier: None }],
+ };
+ let incoming_grant_request = GrantRequest::new(incoming_access, None);
+ let recipient_incoming_payment_grant = client
+   .grant()
+   .request(&recipient_wallet_address.auth_server, &incoming_grant_request)
+   .await?;
+ ```
+ </TabItem>
 </Tabs>
 
 <details>
@@ -300,7 +360,26 @@ The `value` is the maximum allowable amount that can be paid into this resource.
     },
   )
   ```
-</TabItem>
+ </TabItem>
+ <TabItem label='Rust' icon='seti:rust'>
+ ```rust
+ use open_payments::types::{IncomingPaymentRequest, Amount};
+ let incoming_request = IncomingPaymentRequest {
+   wallet_address: recipient_wallet_address.id.clone(),
+   incoming_amount: Some(Amount { value: "5000".into(), asset_code: "USD".into(), asset_scale: 2 }),
+   expires_at: None,
+   metadata: None,
+ };
+ let recipient_incoming_payment = client
+   .incoming_payments()
+   .create(
+     &recipient_wallet_address.resource_server,
+     &incoming_request,
+     Some(&recipient_incoming_payment_grant.access_token.value),
+   )
+   .await?;
+ ```
+ </TabItem>
 </Tabs>
 
 <details>
@@ -350,7 +429,27 @@ Use the access token returned in the grant continuation response (Step 5) to cal
     },
   )
   ```
-</TabItem>
+ </TabItem>
+ <TabItem label='Rust' icon='seti:rust'>
+ ```rust
+ use open_payments::types::OutgoingPaymentRequest;
+ let outgoing_request = OutgoingPaymentRequest {
+   wallet_address: sender_wallet_address.id.clone(),
+   receiver: Some(recipient_incoming_payment.id.clone()),
+   debit_amount: None,
+   receive_amount: None,
+   quote_id: None,
+ };
+ let sender_outgoing_payment_to_recipient = client
+   .outgoing_payments()
+   .create(
+     &sender_wallet_address.resource_server,
+     &outgoing_request,
+     Some(&sender_outgoing_payment_grant.access_token.value),
+   )
+   .await?;
+ ```
+ </TabItem>
 </Tabs>
 
 <details>

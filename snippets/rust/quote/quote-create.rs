@@ -13,7 +13,7 @@ async fn main() -> open_payments::client::Result<()> {
     let client = create_authenticated_client()?;
     //@! end chunk 2
 
-    //@! start chunk 3 | title=Create quote
+    //@! start chunk 3 | title=Prepare quote request
     let gnap_token = get_env_var("QUOTE_ACCESS_TOKEN")?;
     let incoming_payment_url = get_env_var("INCOMING_PAYMENT_URL")?;
     let wallet_address_url = get_env_var("WALLET_ADDRESS_URL")?;
@@ -24,7 +24,9 @@ async fn main() -> open_payments::client::Result<()> {
         receiver: Receiver(incoming_payment_url),
         method: PaymentMethodType::Ilp,
     };
+    //@! end chunk 3
 
+    //@! start chunk 4 | title=Create quote
     println!(
         "Quote create request JSON: {}",
         serde_json::to_string_pretty(&request)?
@@ -34,10 +36,10 @@ async fn main() -> open_payments::client::Result<()> {
         .quotes()
         .create(&resource_server_url, &request, Some(&gnap_token))
         .await?;
-    //@! end chunk 3
-
-    //@! start chunk 4 | title=Output
-    println!("Created quote: {quote:#?}");
     //@! end chunk 4
+
+    //@! start chunk 5 | title=Output
+    println!("Created quote: {quote:#?}");
+    //@! end chunk 5
     Ok(())
 }

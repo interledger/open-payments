@@ -13,7 +13,7 @@ async fn main() -> open_payments::client::Result<()> {
     let client = create_authenticated_client()?;
     //@! end chunk 2
 
-    //@! start chunk 3 | title=Create outgoing payment
+    //@! start chunk 3 | title=Prepare outgoing payment request
     let gnap_token = get_env_var("OUTGOING_PAYMENT_ACCESS_TOKEN")?;
     let quote_url = get_env_var("QUOTE_URL")?;
     let wallet_address_url = get_env_var("WALLET_ADDRESS_URL")?;
@@ -25,6 +25,9 @@ async fn main() -> open_payments::client::Result<()> {
         metadata: None,
     };
 
+    //@! end chunk 3
+
+    //@! start chunk 4 | title=Create outgoing payment
     println!(
         "Outgoing payment create request JSON: {}",
         serde_json::to_string_pretty(&request)?
@@ -34,10 +37,10 @@ async fn main() -> open_payments::client::Result<()> {
         .outgoing_payments()
         .create(&resource_server_url, &request, Some(&gnap_token))
         .await?;
-    //@! end chunk 3
-
-    //@! start chunk 4 | title=Output
-    println!("Created outgoing payment: {payment:#?}");
     //@! end chunk 4
+
+    //@! start chunk 5 | title=Output
+    println!("Created outgoing payment: {payment:#?}");
+    //@! end chunk 5
     Ok(())
 }

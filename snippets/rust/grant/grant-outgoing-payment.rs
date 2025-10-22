@@ -21,13 +21,14 @@ async fn main() -> open_payments::client::Result<()> {
     let client = create_authenticated_client()?;
     //@! end chunk 2
 
-    //@! start chunk 3 | title=Request outgoing payment grant
+    //@! start chunk 3 | title=Get wallet address information
     let wallet_address_url = get_env_var("WALLET_ADDRESS_URL")?;
+    let wallet_address = client.wallet_address().get(&wallet_address_url).await?;
+    //@! end chunk 3
+    
+    //@! start chunk 4 | title=Request outgoing payment grant
     let quote_url = get_env_var("QUOTE_URL")?;
     let gnap_token = get_env_var("QUOTE_ACCESS_TOKEN")?;
-
-    let wallet_address = client.wallet_address().get(&wallet_address_url).await?;
-
     let quote = client.quotes().get(&quote_url, Some(&gnap_token)).await?;
 
     let wallet_id = &wallet_address.id;
@@ -68,9 +69,9 @@ async fn main() -> open_payments::client::Result<()> {
         .grant()
         .request(&wallet_address.auth_server, &grant_request)
         .await?;
-    //@! end chunk 3
+    //@! end chunk 4
 
-    //@! start chunk 4 | title=Output
+    //@! start chunk 5 | title=Output
     match response {
         GrantResponse::WithToken { access_token, .. } => {
             println!("Received access token: {:#?}", access_token.value);
@@ -87,7 +88,7 @@ async fn main() -> open_payments::client::Result<()> {
             println!("Received continue: {continue_:#?}");
         }
     }
-    //@! end chunk 4
+    //@! end chunk 5
 
     Ok(())
 }

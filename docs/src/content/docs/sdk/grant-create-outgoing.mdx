@@ -10,7 +10,6 @@ import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
 import TsImport from '/src/partials/ts-import-initialize.mdx'
-import RustImport from '/src/partials/rust-import-initialize.mdx'
 import PhpImport from '/src/partials/php-import-initialize.mdx'
 
 Before a client can call most of the Open Payments APIs, it must receive a grant from the appropriate authorization server.
@@ -78,12 +77,36 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 
 </TabItem>
 <TabItem label="Rust" icon='seti:rust'>
-<RustImport />
+<LinkButton href="https://github.com/interledger/open-payments-rust/tree/main/src/snippets" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+<ChunkedSnippet
+  source='grant/grant-outgoing-payment.rs'
+  l='rust'
+  chunk='1'
+/>
+
+<ChunkedSnippet
+  source='grant/grant-outgoing-payment.rs'
+  l='rust'
+  chunk='2'
+/>
 
 <ChunkedSnippet
   source='grant/grant-outgoing-payment.rs'
   l='rust'
   chunk='3'
+/>
+
+<ChunkedSnippet
+  source='grant/grant-outgoing-payment.rs'
+  l='rust'
+  chunk='4'
+/>
+
+<ChunkedSnippet
+  source='grant/grant-outgoing-payment.rs'
+  l='rust'
+  chunk='5'
 />
 
 {/* prettier-ignore */}

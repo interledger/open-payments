@@ -8,7 +8,6 @@ import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
 import TsImport from '/src/partials/ts-import-initialize.mdx'
-import RustImport from '/src/partials/rust-import-initialize.mdx'
 import PhpImport from '/src/partials/php-import-initialize.mdx'
 
 For a client to request a grant from an authorization server, the client must first verify the validity of the wallet address and get the URL of the wallet's authorization server.
@@ -25,8 +24,6 @@ These code snippets enable an authenticated client to verify a wallet address, g
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
 <LinkButton 
 href="https://github.com/interledger/open-payments-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
-<details><summary>Initial configuration</summary><Ts /></details>
-
 <TsImport />
 
 <ChunkedSnippet
@@ -45,12 +42,22 @@ For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href='https://git
 
 For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/wallet-address/wallet-address-get.js'>View full JS source</LinkOut>
 
+
 </TabItem>
 <TabItem label="Rust" icon='seti:rust'>
-<details>
-  <summary>Initial configuration</summary>
-  <RustImport />
-</details>
+<LinkButton href="https://github.com/interledger/open-payments-rust/tree/main/src/snippets" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+<ChunkedSnippet
+  source='wallet-address/wallet-address-get.rs'
+  l='rust'
+  chunk='1'
+/>
+
+<ChunkedSnippet
+  source='wallet-address/wallet-address-get.rs'
+  l='rust'
+  chunk='2'
+/>
 
 <ChunkedSnippet
   source='wallet-address/wallet-address-get.rs'

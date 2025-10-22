@@ -8,7 +8,6 @@ import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
 import TsImport from '/src/partials/ts-import-initialize.mdx'
-import RustImport from '/src/partials/rust-import-initialize.mdx'
 import PhpImport from '/src/partials/php-import-initialize.mdx'
 
 A quote is a commitment from an account servicing entity to deliver a particular amount to a recipient when sending a particular amount from a sender. The quote is only valid for a limited time.
@@ -51,27 +50,20 @@ For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href='https://git
 For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/quote/quote-get.js'>View full JS source</LinkOut>
 
 </TabItem>
-<TabItem label="PHP" icon='seti:php'>
-<LinkButton href="https://github.com/interledger/open-payments-php-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
-
-<PhpImport />
-
-<ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/Quote/QuoteGet.php'
-  chunk='3'
-/>
-<ChunkedSnippet
-  source='https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/Quote/QuoteGet.php'
-  chunk='4'
-/>
-{/* prettier-ignore */}
-<p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Quote/QuoteGet.php'>View full source</LinkOut></p>
-</TabItem>
 <TabItem label="Rust" icon='seti:rust'>
-<details>
-  <summary>Initial configuration</summary>
-  <RustImport />
-</details>
+<LinkButton href="https://github.com/interledger/open-payments-rust/tree/main/src/snippets" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+<ChunkedSnippet
+  source='quote/quote-get.rs'
+  l='rust'
+  chunk='1'
+/>
+
+<ChunkedSnippet
+  source='quote/quote-get.rs'
+  l='rust'
+  chunk='2'
+/>
 
 <ChunkedSnippet
   source='quote/quote-get.rs'
@@ -88,6 +80,22 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 {/* prettier-ignore */}
 <p><LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/rust/quote/quote-get.rs'>View full Rust source</LinkOut></p>
 
+</TabItem>
+<TabItem label="PHP" icon='seti:php'>
+<LinkButton href="https://github.com/interledger/open-payments-php-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+<PhpImport />
+
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/Quote/QuoteGet.php'
+  chunk='3'
+/>
+<ChunkedSnippet
+  source='https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/Quote/QuoteGet.php'
+  chunk='4'
+/>
+{/* prettier-ignore */}
+<p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Quote/QuoteGet.php'>View full source</LinkOut></p>
 </TabItem>
 </Tabs>
 
