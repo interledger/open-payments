@@ -186,7 +186,7 @@ The following shows an example response from the recipient's wallet provider.
     "assetScale": 2
   },
   "completed": false,
-  "createdAt": "2025-10-03T23:26:55.52Z",
+  "createdAt": "2025-10-03T23:24:55.52Z",
   "methods": [
     {
       "type": "ilp",
@@ -361,7 +361,7 @@ The following shows an example response from the sender's wallet provider.
 
 ### 8. Request the creation of an outgoing payment resource
 
-Use the access token returned in the outgoing payment grant continuation response (Step 7) to call the <Badge text="POST" variant="success" /> [Create Outgoing Payment API](/apis/resource-server/operations/create-outgoing-payment/). Create this payment by referencing the new `incomingPayment` and the fixed `debitAmount`.
+Use the access token returned in the outgoing payment grant continuation response (Step 7) to call the <Badge text="POST" variant="success" /> [Create Outgoing Payment API](/apis/resource-server/operations/create-outgoing-payment/). Create this payment by referencing the new `incomingPayment` URL and the fixed `debitAmount`.
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -415,9 +415,9 @@ The following shows an example response from the sender's wallet provider.
 
 The first payment is now set up. You can optionally complete the incoming payment below.
 
-At the next interval (one month from now), create a new incoming payment (Step 3), then create another outgoing payment (Step 8) using the existing outgoing payment grant from Step 7. You do not need to request a new outgoing payment grant for each interval as long as the current grant remains valid.
+At the next interval (one month from now), create a new incoming payment (Step 3), then create another outgoing payment (Step 8) using the existing outgoing and incoming payment grants as long as they remain valid. You do not need to request new grants at each interval.
 
-If the request fails because the grant's access token has expired, call the <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/auth-server/operations/post-token/) to obtain a new token, then retry the request with the new token.
+If either request fails because the grant's access token has expired, call the <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/auth-server/operations/post-token/) to obtain a new token, then retry the request with the new token.
 
 ### 9. Complete an incoming payment (optional)
 
