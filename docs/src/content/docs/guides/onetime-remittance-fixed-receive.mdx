@@ -74,28 +74,6 @@ Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wall
   let recipient_wallet_address = client.wallet_address().get("https://happylifebank.example.com/recipient").await?;
   ```
   </TabItem>
-  <TabItem label='Rust' icon='seti:rust'>
-  ```rust wrap
-  use open_payments::types::OutgoingPaymentRequest;
-
-  let outgoing_request = OutgoingPaymentRequest {
-    wallet_address: sender_wallet_address.id.clone(),
-    receiver: Some(recipient_incoming_payment.id.clone()),
-    debit_amount: None,
-    receive_amount: None,
-    quote_id: Some(sender_quote.id.clone()),
-  };
-
-  let sender_outgoing_payment = client
-    .outgoing_payments()
-    .create(
-      &sender_wallet_address.resource_server,
-      &outgoing_request,
-      Some(&sender_outgoing_payment_grant.access_token.value),
-    )
-    .await?;
-  ```
-  </TabItem>
 </Tabs>
 
 <details>
