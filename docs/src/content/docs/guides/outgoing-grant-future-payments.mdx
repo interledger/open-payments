@@ -45,7 +45,7 @@ Let's assume your user saved their wallet address in their account profile when 
   ```
  </TabItem>
  <TabItem label='Rust' icon='seti:rust'>
- ```rust
+ ```rust wrap
  let user_wallet_address = client.wallet_address().get("https://cloudninebank.example.com/user").await?;
  ```
  </TabItem>
@@ -113,7 +113,7 @@ Remember, your user wants to send payments of up to $100 CAD a month for three m
   ```
  </TabItem>
  <TabItem label='Rust' icon='seti:rust'>
- ```rust
+ ```rust wrap
  use open_payments::types::{AccessTokenRequest, AccessItem, OutgoingPaymentAction, AccessLimits, Amount, InteractRequest, InteractStart, InteractFinish, InteractFinishMethod, GrantRequest};
  let outgoing_access = AccessTokenRequest {
    access: vec![AccessItem::OutgoingPayment {
@@ -207,7 +207,7 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
   ```
   </TabItem>
   <TabItem label='Rust' icon='seti:rust'>
-  ```rust
+  ```rust wrap
   let continue_field = match &pending_user_outgoing_payment_grant.continue_field {
     Some(c) => c,
     None => {

@@ -134,27 +134,30 @@ const dedentBlock = (text: string): string => {
     .join('\n')
 }
 
-let output
-if (lang === 'rs') {
-  output = rawOutput ? dedentBlock(rawOutput) : 'Code snippet not found.'
-} else if (!rawOutput || !parser || !lang) {
-  output = 'Code snippet not found.'
-} else {
+const formatByLanguage = async (
+  text: string,
+  lang: string,
+  parser: string,
+  plugins: any[]
+) => {
   if (lang === 'php') {
     // The PHP Prettier plugin requires the <?php opening delimiter for formatting
-    rawOutput = rawOutput.trim().startsWith('<?php')
-      ? rawOutput
-      : `<?php\n${rawOutput}`
+    const input = text.trim().startsWith('<?php') ? text : `<?php\n${text}`
+    const formatted = await prettier.format(input, { parser, tabWidth: 2, plugins })
+    return formatted.replace(/^<\?php\s*/, '')
   }
-  output = await prettier.format(rawOutput, {
-    parser,
-    tabWidth: 2,
-    plugins
-  })
-  if (lang === 'php') {
-    output = output.replace(/^<\?php\s*/, '')
+  if (lang === 'rs') {
+    return dedentBlock(text)
   }
-};
+  if (parser) {
+    return await prettier.format(text, { parser, tabWidth: 2, plugins })
+  }
+  return text
+}
+
+const output = (!rawOutput || !lang)
+  ? 'Code snippet not found.'
+  : await formatByLanguage(rawOutput, lang, parser, plugins)
 
 const codeBlockTitle = codeChunkArray[chunkNumber]?.title;
 ---

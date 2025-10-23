@@ -12,10 +12,10 @@ async fn main() -> open_payments::client::Result<()> {
     //@! end chunk 2
 
     //@! start chunk 3 | title=Get quote
-    let gnap_token = get_env_var("QUOTE_ACCESS_TOKEN")?;
+    let access_token = get_env_var("QUOTE_ACCESS_TOKEN")?;
     let quote_url = get_env_var("QUOTE_URL")?;
 
-    let quote = client.quotes().get(&quote_url, Some(&gnap_token)).await?;
+    let quote = client.quotes().get(&quote_url, Some(&access_token)).await?;
     //@! end chunk 3
 
     //@! start chunk 4 | title=Output

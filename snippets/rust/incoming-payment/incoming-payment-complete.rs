@@ -12,12 +12,12 @@ async fn main() -> open_payments::client::Result<()> {
     //@! end chunk 2
 
     //@! start chunk 3 | title=Complete incoming payment
-    let gnap_token = get_env_var("INCOMING_PAYMENT_ACCESS_TOKEN")?;
+    let access_token = get_env_var("INCOMING_PAYMENT_ACCESS_TOKEN")?;
     let incoming_payment_url = get_env_var("INCOMING_PAYMENT_URL")?;
 
     let payment = client
         .incoming_payments()
-        .complete(&incoming_payment_url, Some(&gnap_token))
+        .complete(&incoming_payment_url, Some(&access_token))
         .await?;
     //@! end chunk 3
 

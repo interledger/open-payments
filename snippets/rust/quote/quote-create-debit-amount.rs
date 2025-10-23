@@ -14,7 +14,7 @@ async fn main() -> open_payments::client::Result<()> {
     //@! end chunk 2
 
     //@! start chunk 3 | title=Create quote with debit amount
-    let gnap_token = get_env_var("QUOTE_ACCESS_TOKEN")?;
+    let access_token = get_env_var("QUOTE_ACCESS_TOKEN")?;
     let incoming_payment_url = get_env_var("INCOMING_PAYMENT_URL")?;
     let wallet_address_url = get_env_var("WALLET_ADDRESS_URL")?;
     let resource_server_url = get_resource_server_url(&wallet_address_url)?;
@@ -37,7 +37,7 @@ async fn main() -> open_payments::client::Result<()> {
 
     let quote = client
         .quotes()
-        .create(&resource_server_url, &request, Some(&gnap_token))
+        .create(&resource_server_url, &request, Some(&access_token))
         .await?;
     //@! end chunk 3
 

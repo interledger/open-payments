@@ -25,11 +25,11 @@ async fn main() -> open_payments::client::Result<()> {
     let wallet_address_url = get_env_var("WALLET_ADDRESS_URL")?;
     let wallet_address = client.wallet_address().get(&wallet_address_url).await?;
     //@! end chunk 3
-    
+
     //@! start chunk 4 | title=Request outgoing payment grant
     let quote_url = get_env_var("QUOTE_URL")?;
-    let gnap_token = get_env_var("QUOTE_ACCESS_TOKEN")?;
-    let quote = client.quotes().get(&quote_url, Some(&gnap_token)).await?;
+    let access_token = get_env_var("QUOTE_ACCESS_TOKEN")?;
+    let quote = client.quotes().get(&quote_url, Some(&access_token)).await?;
 
     let wallet_id = &wallet_address.id;
     let grant_request = GrantRequest::new(

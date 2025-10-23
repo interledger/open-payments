@@ -70,7 +70,7 @@ Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wall
 ```
  </TabItem>
  <TabItem label='Rust' icon='seti:rust'>
- ```rust
+ ```rust wrap
  let sender_wallet_address = client.wallet_address().get("https://cloudninebank.example.com/sender").await?;
  let recipient_wallet_address = client.wallet_address().get("https://happylifebank.example.com/recipient").await?;
  ```
@@ -130,7 +130,7 @@ This call obtains an access token that allows your app to request that an incomi
 ````
  </TabItem>
  <TabItem label='Rust' icon='seti:rust'>
- ```rust
+ ```rust wrap
  use open_payments::types::{AccessTokenRequest, AccessItem, IncomingPaymentAction, GrantRequest};
  let incoming_access = AccessTokenRequest {
    access: vec![AccessItem::IncomingPayment { actions: vec![IncomingPaymentAction::Create, IncomingPaymentAction::Complete], identifier: None }],
@@ -192,7 +192,7 @@ This call requests an incoming payment resource be created on the recipient's wa
 ```
  </TabItem>
  <TabItem label='Rust' icon='seti:rust'>
- ```rust
+ ```rust wrap
  use open_payments::types::IncomingPaymentRequest;
  let incoming_request = IncomingPaymentRequest {
    wallet_address: recipient_wallet_address.id.clone(),
@@ -266,7 +266,7 @@ This call obtains an access token that allows your app to request that a quote r
     ```
   </TabItem>
  <TabItem label='Rust' icon='seti:rust'>
- ```rust
+ ```rust wrap
  use open_payments::types::{AccessTokenRequest, AccessItem, QuoteAction, GrantRequest};
  let quote_access = AccessTokenRequest {
    access: vec![AccessItem::Quote { actions: vec![QuoteAction::Create] }],
@@ -336,7 +336,7 @@ The `debitAmount` specifies that the sender will pay exactly $100 USD, and the r
 ```
  </TabItem>
  <TabItem label='Rust' icon='seti:rust'>
- ```rust
+ ```rust wrap
  use open_payments::types::{QuoteRequest, QuoteMethod, Amount};
  let quote_request = QuoteRequest {
    method: QuoteMethod::Ilp,
@@ -444,7 +444,7 @@ Outgoing payments require an interactive grant. This type of grant will obtain t
   ```
  </TabItem>
  <TabItem label='Rust' icon='seti:rust'>
- ```rust
+ ```rust wrap
  use open_payments::types::{
    AccessTokenRequest,
    AccessItem,
@@ -550,7 +550,7 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
     ```
  </TabItem>
  <TabItem label='Rust' icon='seti:rust'>
- ```rust
+ ```rust wrap
  let continue_field = match &pending_sender_outgoing_payment_grant.continue_field {
    Some(c) => c,
    None => {
@@ -620,7 +620,7 @@ Use the access token returned in Step 9 to call the <Badge text="POST" variant="
 ```
 </TabItem>
  <TabItem label='Rust' icon='seti:rust'>
- ```rust
+ ```rust wrap
  use open_payments::types::OutgoingPaymentRequest;
  let outgoing_request = OutgoingPaymentRequest {
    wallet_address: sender_wallet_address.id.clone(),

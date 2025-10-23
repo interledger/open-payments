@@ -12,12 +12,12 @@ async fn main() -> open_payments::client::Result<()> {
     //@! end chunk 2
 
     //@! start chunk 3 | title=Get outgoing payment
-    let gnap_token = get_env_var("OUTGOING_PAYMENT_ACCESS_TOKEN")?;
+    let access_token = get_env_var("OUTGOING_PAYMENT_ACCESS_TOKEN")?;
     let outgoing_payment_url = get_env_var("OUTGOING_PAYMENT_URL")?;
 
     let payment = client
         .outgoing_payments()
-        .get(&outgoing_payment_url, Some(&gnap_token))
+        .get(&outgoing_payment_url, Some(&access_token))
         .await?;
     //@! end chunk 3
 

@@ -61,7 +61,7 @@ Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wall
 ```
  </TabItem>
  <TabItem label='Rust' icon='seti:rust'>
- ```rust
+ ```rust wrap
  let customer_wallet_address = client.wallet_address().get("https://cloudninebank.example.com/customer").await?;
  let merchant_wallet_address = client.wallet_address().get("https://happylifebank.example.com/merchant").await?;
  let platform_wallet_address = client.wallet_address().get("https://coolwallet.example.com/platform").await?;
@@ -131,7 +131,7 @@ If you and the merchant use the same account servicing entity, and as a result, 
 ````
  </TabItem>
  <TabItem label='Rust' icon='seti:rust'>
- ```rust
+ ```rust wrap
  use open_payments::types::{AccessTokenRequest, AccessItem, IncomingPaymentAction, GrantRequest};
  let incoming_access = AccessTokenRequest {
    access: vec![AccessItem::IncomingPayment { actions: vec![IncomingPaymentAction::Create], identifier: None }],
@@ -222,7 +222,7 @@ Remember that the merchant is receiving 99% of the payment (\$99.00 or `9900`) w
 </TabItem>
 
 <TabItem label='Rust' icon='seti:rust'>
- ```rust
+ ```rust wrap
  use open_payments::types::{IncomingPaymentRequest, Amount};
  let merchant_request = IncomingPaymentRequest {
    wallet_address: merchant_wallet_address.id.clone(),
@@ -308,7 +308,7 @@ This call obtains an access token that allows your platform to request quote res
   </TabItem>
 
   <TabItem label='Rust' icon='seti:rust'>
-    ```rust
+    ```rust wrap
     use open_payments::types::{AccessTokenRequest, AccessItem, QuoteAction, GrantRequest};
     let quote_access = AccessTokenRequest {
       access: vec![AccessItem::Quote { actions: vec![QuoteAction::Create] }],
@@ -389,7 +389,7 @@ Next, call the <Badge text="POST" variant="success" /> Create Quote API again an
 ```
  </TabItem>
  <TabItem label='Rust' icon='seti:rust'>
- ```rust
+ ```rust wrap
  use open_payments::types::{QuoteRequest, QuoteMethod};
  let merchant_quote_request = QuoteRequest {
    method: QuoteMethod::Ilp,
@@ -496,7 +496,7 @@ This call obtains an access token that allows your platform to request outgoing 
   ```
  </TabItem>
  <TabItem label='Rust' icon='seti:rust'>
- ```rust
+ ```rust wrap
  use open_payments::types::{AccessTokenRequest, AccessItem, OutgoingPaymentAction, InteractRequest, InteractStart, InteractFinish, InteractFinishMethod, AccessLimits, Amount, GrantRequest};
  
  let merchant_amount = match merchant_quote.debit_amount.as_ref() {
@@ -603,7 +603,7 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
     ```
   </TabItem>
  <TabItem label='Rust' icon='seti:rust'>
- ```rust
+ ```rust wrap
  let customer_outgoing_payment_grant = client
    .grant()
    .continue_grant(
@@ -682,7 +682,7 @@ Use the access token returned in Step 5 that's associated with the merchant to c
 ```
  </TabItem>
  <TabItem label='Rust' icon='seti:rust'>
- ```rust
+ ```rust wrap
  use open_payments::types::OutgoingPaymentRequest;
  let merchant_outgoing_request = OutgoingPaymentRequest {
    wallet_address: customer_wallet_address.id.clone(),

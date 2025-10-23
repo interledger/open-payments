@@ -17,7 +17,7 @@ async fn main() -> open_payments::client::Result<()> {
     //@! end chunk 2
 
     //@! start chunk 3 | title=Prepare incoming payment request
-    let gnap_token = get_env_var("INCOMING_PAYMENT_ACCESS_TOKEN")?;
+    let access_token = get_env_var("INCOMING_PAYMENT_ACCESS_TOKEN")?;
     let wallet_address_url = get_env_var("WALLET_ADDRESS_URL")?;
     let resource_server_url = get_resource_server_url(&wallet_address_url)?;
 
@@ -46,7 +46,7 @@ async fn main() -> open_payments::client::Result<()> {
 
     let payment = client
         .incoming_payments()
-        .create(&resource_server_url, &request, Some(&gnap_token))
+        .create(&resource_server_url, &request, Some(&access_token))
         .await?;
     //@! end chunk 4
 

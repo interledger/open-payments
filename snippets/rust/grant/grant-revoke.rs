@@ -12,12 +12,12 @@ async fn main() -> open_payments::client::Result<()> {
     //@! end chunk 2
 
     //@! start chunk 3 | title=Revoke grant
-    let gnap_token = get_env_var("CONTINUE_ACCESS_TOKEN")?;
+    let access_token = get_env_var("CONTINUE_ACCESS_TOKEN")?;
     let continue_uri = get_env_var("CONTINUE_URI")?;
 
     client
         .grant()
-        .cancel(&continue_uri, Some(&gnap_token))
+        .cancel(&continue_uri, Some(&access_token))
         .await?;
     //@! end chunk 3
 
