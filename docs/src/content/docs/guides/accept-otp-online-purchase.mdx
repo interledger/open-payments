@@ -56,6 +56,12 @@ Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wall
   })
   ```
   </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
+  ```rust wrap
+  let sender_wallet_address = client.wallet_address().get("https://cloudninebank.example.com/customer").await?;
+  let retailer_wallet_address = client.wallet_address().get("https://happylifebank.example.com/retailer").await?;
+  ```
+  </TabItem>
 </Tabs>
 
 <details>
@@ -96,6 +102,21 @@ This call obtains an access token that allows the client app to request an incom
       },
     },
   );
+  ```
+  </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
+  ```rust wrap
+  use open_payments::types::{AccessTokenRequest, AccessItem, IncomingPaymentAction, GrantRequest};
+
+  let incoming_access = AccessTokenRequest {
+    access: vec![AccessItem::IncomingPayment { actions: vec![IncomingPaymentAction::Create], identifier: None }],
+  };
+  let incoming_grant_request = GrantRequest::new(incoming_access, None);
+
+  let retailer_incoming_payment_grant = client
+    .grant()
+    .request(&retailer_wallet_address.auth_server, &incoming_grant_request)
+    .await?;
   ```
   </TabItem>
 </Tabs>
@@ -150,6 +171,27 @@ Remember that the full amount of the customer's purchase is $1,400 MXN.
       },
     },
   )
+  ```
+  </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
+  ```rust wrap
+  use open_payments::types::{IncomingPaymentRequest, Amount};
+
+  let incoming_request = IncomingPaymentRequest {
+    wallet_address: retailer_wallet_address.id.clone(),
+    incoming_amount: Some(Amount { value: "140000".into(), asset_code: "MXN".into(), asset_scale: 2 }),
+    expires_at: None,
+    metadata: None,
+  };
+
+  let retailer_incoming_payment = client
+    .incoming_payments()
+    .create(
+      &retailer_wallet_address.resource_server,
+      &incoming_request,
+      Some(&retailer_incoming_payment_grant.access_token.value),
+    )
+    .await?;
   ```
   </TabItem>
 </Tabs>
@@ -210,6 +252,20 @@ This call obtains an access token that allows the client app to request a quote 
   )
   ```
   </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
+  ```rust wrap
+  use open_payments::types::{AccessTokenRequest, AccessItem, QuoteAction, GrantRequest};
+
+  let quote_access = AccessTokenRequest {
+    access: vec![AccessItem::Quote { actions: vec![QuoteAction::Create] }],
+  };
+  let quote_grant_request = GrantRequest::new(quote_access, None);
+  let customer_quote_grant = client
+    .grant()
+    .request(&customer_wallet_address.auth_server, &quote_grant_request)
+    .await?;
+  ```
+  </TabItem>
 </Tabs>
 
 <details>
@@ -259,6 +315,28 @@ The request must contain the receiver, which is the `id` of the incoming payment
       receiver: retailerIncomingPayment.id
     }
   )
+  ```
+  </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
+  ```rust wrap
+  use open_payments::types::{QuoteRequest, QuoteMethod};
+
+  let quote_request = QuoteRequest {
+    method: QuoteMethod::Ilp,
+    wallet_address: Some(customer_wallet_address.id.clone()),
+    receiver: Some(retailer_incoming_payment.id.clone()),
+    debit_amount: None,
+    receive_amount: None,
+  };
+
+  let customer_quote = client
+    .quotes()
+    .create(
+      &customer_wallet_address.resource_server,
+      &quote_request,
+      Some(&customer_quote_grant.access_token.value),
+    )
+    .await?;
   ```
   </TabItem>
 </Tabs>
@@ -338,6 +416,37 @@ Outgoing payments require an interactive grant. This type of grant will obtain t
   )
   ```
   </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
+  ```rust wrap
+  use open_payments::types::{AccessTokenRequest, AccessItem, OutgoingPaymentAction, InteractRequest, InteractStart, InteractFinish, InteractFinishMethod, AccessLimits, Amount, GrantRequest};
+  
+  let access_limits = AccessLimits {
+    debit_amount: Some(Amount { value: "140000".into(), asset_code: "MXN".into(), asset_scale: 2 }),
+    ..Default::default()
+  };
+  let access_request = AccessTokenRequest {
+    access: vec![AccessItem::OutgoingPayment {
+      identifier: Some(customer_wallet_address.id.clone()),
+      actions: vec![OutgoingPaymentAction::Create],
+      limits: Some(access_limits),
+    }],
+  };
+  let interact_request = InteractRequest {
+    start: Some(vec![InteractStart::Redirect]),
+    finish: Some(InteractFinish {
+      method: InteractFinishMethod::Redirect,
+      uri: Some("https://paymentplatform.example/finish/{...}".into()),
+      nonce: Some("NONCE".into()),
+    }),
+  };
+  
+  let grant_request = GrantRequest::new(access_request, Some(interact_request));
+  let pending_customer_outgoing_payment_grant = client
+    .grant()
+    .request(&customer_wallet_address.auth_server, &grant_request)
+    .await?;
+  ```
+  </TabItem>
 </Tabs>
 
 <details>
@@ -396,6 +505,26 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
   )
   ```
   </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
+  ```rust wrap
+  let continue_field = match &pending_customer_outgoing_payment_grant.continue_field {
+    Some(c) => c,
+    None => {
+      eprintln!("Missing continue field on pending grant");
+      return Ok(());
+    }
+  };
+
+  let customer_outgoing_payment_grant = client
+    .grant()
+    .continue_grant(
+      &continue_field.uri,
+      &interact_ref,
+      Some(&continue_field.access_token.value),
+    )
+    .await?;
+  ```
+  </TabItem>
 </Tabs>
 
 <details>
@@ -444,6 +573,26 @@ Use the access token returned in Step 9 to call the <Badge text="POST" variant="
       quoteId: customerQuote.id
     }
   )
+  ```
+  </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
+  ```rust wrap
+  use open_payments::types::OutgoingPaymentRequest;
+  let outgoing_request = OutgoingPaymentRequest {
+    wallet_address: customer_wallet_address.id.clone(),
+    receiver: Some(retailer_incoming_payment.id.clone()),
+    debit_amount: None,
+    receive_amount: None,
+    quote_id: Some(customer_quote.id.clone()),
+  };
+  let customer_outgoing_payment_to_retailer = client
+    .outgoing_payments()
+    .create(
+      &customer_wallet_address.resource_server,
+      &outgoing_request,
+      Some(&customer_outgoing_payment_grant.access_token.value),
+    )
+    .await?;
   ```
   </TabItem>
 </Tabs>
