@@ -141,6 +141,7 @@ export default defineConfig({
                 },
                 {
                   label: 'Amounts',
+                  translations: { es: `Montos` },
                   link: '/concepts/amounts/'
                 },
                 {
