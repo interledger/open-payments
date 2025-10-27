@@ -321,6 +321,9 @@ export default defineConfig({
             },
             {
               label: 'Send a remittance payment with fixed debit amount',
+              translations: {
+                es: 'Enviar un pago de remesa con un monto de débito fijo'
+              },
               link: '/guides/onetime-remittance-fixed-debit'
             },
             {
