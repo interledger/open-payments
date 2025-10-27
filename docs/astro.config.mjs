@@ -325,7 +325,9 @@ export default defineConfig({
             },
             {
               label: 'Send a remittance payment with a fixed receive amount',
-              translations: { es: 'Enviar una remesa con un monto de recepción fijo' },
+              translations: {
+                es: 'Enviar una remesa con un monto de recepción fijo'
+              },
               link: '/guides/onetime-remittance-fixed-receive/'
             },
             {
