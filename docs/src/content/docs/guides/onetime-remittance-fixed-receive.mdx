@@ -45,7 +45,6 @@ The three parties involved in this scenario are:
 - <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-quote/'>Create a Quote</LinkOut>
 - <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-continue/'>Grant Continuation Request</LinkOut>
 - <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment/'>Create an Outgoing Payment</LinkOut>
-- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/complete-incoming-payment/'>Complete Incoming Payment API</LinkOut>
 
 ## Steps
 
@@ -122,7 +121,7 @@ This call obtains an access token that allows your app to request an incoming pa
         access: [
           {
             type: 'incoming-payment',
-            actions: ['create', 'complete'],
+            actions: ['create']
           },
         ],
       },
@@ -157,7 +156,7 @@ The following shows an example response from the recipient's wallet provider.
     "access": [
       {
         "type": "incoming-payment",
-        "actions": ["create", "complete"]
+        "actions": ["create"]
       }
     ]
   },
@@ -308,7 +307,7 @@ The following shows an example response from the sender's wallet provider.
   }
 }
 
-````
+```
 </details>
 
 ### 5. Request the creation of a quote resource
@@ -338,7 +337,7 @@ The `receiveAmount` specifies that the recipient will receive exactly $5,000 MXN
       }
     }
   )
-````
+ ```
 
   </TabItem>
   <TabItem label='Rust' icon='seti:rust'>
@@ -666,7 +665,3 @@ The following shows an example response from the sender's wallet provider.
 }
 ```
 </details>
-
-:::note[Complete the incoming payment (optional)]
-After your outgoing payment completes, you can call the <Badge text="POST" variant="success" /> [Complete Incoming Payment API](/apis/resource-server/operations/complete-incoming-payment/) to mark the recipient's incoming payment as complete. This instructs the recipient's provider to stop accepting additional payments for that incoming payment.
-:::
