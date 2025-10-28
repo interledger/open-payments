@@ -315,11 +315,6 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
-              label: 'Make a one-time payment',
-              translations: { es: 'Cómo efectuar un pago único' },
-              link: '/guides/make-onetime-payment/'
-            },
-            {
               label: 'Accept a one-time payment for an online purchase',
               link: '/guides/accept-otp-online-purchase/'
             },
@@ -337,8 +332,7 @@ export default defineConfig({
               link: '/guides/make-recurring-payments/'
             },
             {
-              label:
-                'Set up recurring subscription payments with a fixed incoming amount',
+              label: 'Set up recurring payments with a fixed incoming amount',
               link: '/guides/recurring-subscription-incoming-amount/'
             },
             {
