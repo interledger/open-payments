@@ -317,6 +317,9 @@ export default defineConfig({
           items: [
             {
               label: 'Accept a one-time payment for an online purchase',
+              translations: {
+                es: 'Aceptar un pago único por una compra en línea'
+              },
               link: '/guides/accept-otp-online-purchase/'
             },
             {

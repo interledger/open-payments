@@ -1,0 +1,477 @@
+---
+title: Aceptar un pago único por una compra en línea
+---
+
+import { LinkOut } from '@interledger/docs-design-system'
+import { Tabs, TabItem, Badge } from '@astrojs/starlight/components'
+import Start from '/src/partials/es/grant-start-interaction.mdx'
+import Finish from '/src/partials/es/grant-finish-interaction.mdx'
+
+:::tip[Resumen]
+Aprenda a aceptar un pago único por una cantidad previamente pactada.
+:::
+
+En un modelo de negocio a consumidor (business-to-consumer, B2C), las empresas venden sus productos directamente a los consumidores y evitan cualquier intermediario. Este modelo también se denomina directo al consumidor (direct-to-consumer, D2C).
+
+Los minoristas en línea suelen utilizar el modelo B2C y permiten a los clientes pagar directamente por los bienes y servicios. En los casos en que un intermediario o un tercero deba recibir una parte de la venta, el [pago puede dividirse](/es/guides/split-payments).
+
+## Caso hipotético
+
+Para esta guía, asumirá el papel de un desarrollador que trabaja para una empresa de artículos deportivos en línea. Un cliente agrega un par de zapatillas a su carrito de compras e inicia el proceso de pago. El total es de MXN 1400. En esta guía, se explica cómo puede implementar Open Payments en el sitio web del minorista para que este reciba el monto total del pago del cliente.
+
+Las partes que intervienen en la transacción son las siguientes:
+
+- **Minorista:** la empresa de artículos deportivos
+- **Desarrollador:** usted, como el desarrollador que trabaja en la aplicación cliente
+- **Aplicación cliente:** el sitio web del minorista
+- **Cliente:** la persona que utiliza el sitio web del minorista para hacer una compra
+
+## Puntos finales
+
+- <Badge text="GET" variant="note" /> <LinkOut href='https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/'>Get Wallet Address</LinkOut>
+- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-request/'>Grant Request</LinkOut>
+- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-incoming-payment/'>Create an Incoming Payment</LinkOut>
+- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-quote/'>Create a Quote</LinkOut>
+- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-continue/'>Grant Continuation Request</LinkOut>
+- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment/'>Create an Outgoing Payment</LinkOut>
+
+## Pasos
+
+### 1. Obtener los datos de la dirección de billetera
+
+Cuando el cliente inicia el pago, la aplicación cliente (el sitio web del minorista) debe obtener la información de la dirección de billetera tanto del cliente como la propia.
+
+Asumamos que el cliente ingresó su dirección de billetera en el formulario de pago del sitio. Asumamos también que la dirección de billetera del minorista está codificada en dicho formulario de pago.
+
+Llame a la <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wallet-address-server/operations/get-wallet-address) para cada dirección.
+
+<Tabs syncKey="lang">
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts wrap
+  const customerWalletAddress = await client.walletAddress.get({
+    url: 'https://cloudninebank.example.com/customer'
+  })
+  const retailerWalletAddress = await client.walletAddress.get({
+    url: 'https://happylifebank.example.com/retailer'
+  })
+  ```
+  </TabItem>
+</Tabs>
+
+<details>
+<summary>Ejemplo de respuesta</summary>
+El siguiente es un ejemplo de respuesta proveniente del proveedor de billetera del cliente. El proveedor de billetera del minorista devolverá una respuesta similar.
+```json wrap
+{
+  "id": "https://cloudninebank.example.com/customer",
+  "assetCode": "USD",
+  "assetScale": 2,
+  "authServer": "https://auth.cloudninebank.example.com/",
+  "resourceServer": "https://cloudninebank.example.com/op"
+}
+```
+</details>
+
+### 2. Solicitar una concesión de autorización para un pago entrante
+
+Utilice los datos del minorista `authServer`, recibidos en el paso anterior, para llamar a la <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request/).
+
+Esta llamada obtiene un token de acceso que permite a la aplicación cliente solicitar la creación de un recurso de pago entrante en la cuenta de billetera del minorista.
+
+<Tabs syncKey="lang">
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts wrap
+  const retailerIncomingPaymentGrant = await client.grant.request(
+    {
+      url: retailerWalletAddress.authServer
+    },
+    {
+      access_token: {
+        access: [
+          {
+            type: 'incoming-payment',
+            actions: ['create'],
+          },
+        ],
+      },
+    },
+  );
+  ```
+  </TabItem>
+</Tabs>
+
+<details>
+<summary>Ejemplo de respuesta</summary>
+El siguiente es un ejemplo de respuesta proveniente del proveedor de billetera del minorista. 
+```json wrap
+{
+  "access_token": {
+    "value": "...", // access token value for incoming payment grant
+    "manage": "https://auth.happylifebank.example.com/token/{...}", // management uri for access token
+    "access": [
+      {
+        "type": "incoming-payment",
+        "actions": ["create"]
+      }
+    ]
+  },
+  "continue": {
+    "access_token": {
+      "value": "..." // access token for continuing the request
+    },
+    "uri": "https://auth.happylifebank.example.com/continue/{...}" // continuation request uri
+  }
+}
+```
+</details>
+
+### 3. Solicitar la creación de un recurso de pago entrante
+
+Use el token de acceso devuelto en la respuesta anterior para llamar a la <Badge text="POST" variant="success" /> [Create an Incoming Payment API](/apis/resource-server/operations/create-incoming-payment).
+
+Esta llamada solicita la creación de un recurso de pago entrante en la cuenta de billetera del minorista.
+
+Recuerde que el monto total de la compra del cliente es de MXN 1400.
+
+<Tabs syncKey="lang">
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts wrap
+  const retailerIncomingPayment = await.client.incomingPayment.create(
+    {
+      url: retailerWalletAddress.resourceServer,
+      accessToken: retailerIncomingPaymentGrant.access_token.value
+    },
+    {
+      walletAddress: retailerWalletAddress.id,
+      incomingAmount: {
+        value: '140000',
+        assetCode: 'MXN',
+        assetScale: 2
+      },
+    },
+  )
+  ```
+  </TabItem>
+</Tabs>
+
+<details>
+<summary>Ejemplo de respuesta</summary>
+El siguiente es un ejemplo de respuesta proveniente del proveedor de billetera del minorista. 
+```json wrap
+{
+  "id": "https://happylifebank.example.com/incoming-payments/{...}",
+  "walletAddress": "https://happylifebank.example.com/retailer",
+  "incomingAmount": {
+    "value": "140000",
+    "assetCode": "MXN",
+    "assetScale": 2
+  },
+  "receivedAmount": {
+    "value": "0",
+    "assetCode": "MXN",
+    "assetScale": 2
+  },
+  "completed": false,
+  "createdAt": "2025-03-12T23:20:50.52Z",
+  "methods": [
+    {
+      "type": "ilp",
+      "ilpAddress": "...",
+      "sharedSecret": "..."
+    }
+  ]
+}
+```
+</details>
+
+### 4. Solicitar una concesión de autorización para una cotización
+
+Utilice los datos del consumidor `authServer`, devueltos en el paso 1, para llamar a la <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request/).
+
+Esta llamada obtiene un token de acceso que permite a la aplicación cliente solicitar la creación de un recurso de cotización en la cuenta de billetera del cliente.
+
+<Tabs syncKey="lang">
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts wrap
+  const customerQuoteGrant = await client.grant.request(
+    {
+      url: customerWalletAddress.authServer
+    },
+    {
+      access_token: {
+        access: [
+          {
+            type: 'quote',
+            actions: ['create']
+          }
+        ]
+      }
+    }
+  )
+  ```
+  </TabItem>
+</Tabs>
+
+<details>
+<summary>Ejemplo de respuesta</summary>
+El siguiente es un ejemplo de respuesta proveniente del proveedor de billetera del cliente. 
+```json wrap
+{
+  "access_token": {
+    "value": "...", // access token value for quote grant
+    "manage": "https:/auth.cloudninebank.example.com/token/{...}", // management uri for access token
+    "access": [
+      {
+        "type": "quote",
+        "actions": ["create"]
+      }
+    ]
+  },
+  "continue": {
+    "access_token": {
+      "value": "..." // access token for continuing the request
+    },
+  "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
+  }
+}
+```
+</details>
+
+### 5. Solicitar la creación de un recurso de cotización
+
+Utilice el token de acceso recibido en el paso anterior para llamar a la <Badge text="POST" variant="success" /> [Create Quote API](/apis/resource-server/operations/create-quote/).
+
+Esta llamada solicita la creación de un recurso de cotización en la cuenta de la billetera del consumidor.
+
+La solicitud debe contener el destinatario, que es la `id` del pago entrante. La `id` se indicó en la respuesta de la Create an Incoming Payment API en el paso 3.
+
+<Tabs syncKey="lang">
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts wrap
+  const customerQuote = await client.quote.create(
+    {
+      url: customerWalletAddress.resourceServer,
+      accessToken: customerQuoteGrant.access_token.value
+    },
+    {
+      method: 'ilp',
+      walletAddress: customerWalletAddress.id,
+      receiver: retailerIncomingPayment.id
+    }
+  )
+  ```
+  </TabItem>
+</Tabs>
+
+La respuesta devuelve un `receiveAmount`, un `debitAmount` y demás información requerida.
+
+- `debitAmount`: el monto (expresado en MXN) que se cobrará al cliente.
+- `receiveAmount`: el valor del `incomingAmount` del recurso de pago entrante.
+
+<details>
+<summary>Ejemplo de respuesta</summary>
+El siguiente es un ejemplo de respuesta proveniente del proveedor de billetera del cliente.
+```json wrap
+{
+  "id": "https://cloudninebank.example.com/quotes/{...}", // url identifying the quote
+  "walletAddress": "https://cloudninebank.example.com/customer",
+  "receiver": "https://happylifebank.example.com/incoming-payments/{...}", // url of the incoming payment the quote is created for
+  "debitAmount": {
+    "value": "140000",
+    "assetCode": "MXN",
+    "assetScale": 2
+  },
+  "receiveAmount": {
+    "value": "140000",
+    "assetCode": "MXN",
+    "assetScale": 2
+  },
+  "method": "ilp",
+  "createdAt": "2025-03-12T23:22:51.50Z"
+}
+```
+</details>
+
+### 6. Solicitar una concesión de autorización interactiva para un pago saliente
+
+Utilice la información del consumidor `authServer` para llamar a la <Badge text="POST" variant="success" /> [Grant Request](/apis/auth-server/operations/post-request).
+
+Esta llamada obtiene un token de acceso que permite a la aplicación cliente solicitar la creación de recursos de pago saliente en la cuenta de billetera del cliente. Para esta guía, la solicitud se limitará hasta el monto de `140000` (MXN 1400,00).
+
+:::note
+Los pagos salientes requieren una concesión de autorización interactiva. Este tipo de concesión de autorización obtendrá el consentimiento del cliente antes de que se realice un pago saliente desde su cuenta de billetera. Puede encontrar más información en las páginas del [flujo de Open Payments](/es/concepts/op-flow/#pago-saliente) and [identity providers](/es/identity/idp).
+:::
+
+<Tabs syncKey="lang">
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts wrap
+  const pendingCustomerOutgoingPaymentGrant = await client.grant.request(
+    {
+      url: customerWalletAddress.authServer
+    },
+    {
+      access_token: {
+        access: [
+          {
+            identifier: customerWalletAddress.id,
+            type: 'outgoing-payment',
+            actions: ['create'],
+            limits: {
+              debitAmount: {
+                assetCode: 'MXN',
+                assetScale: 2,
+                value: '140000',
+              }
+            }
+          }
+        ]
+      },
+      interact: {
+        start: ['redirect'],
+        finish: {
+          method: 'redirect',
+          uri: 'https://paymentplatform.example/finish/{...}', // where to redirect the customer after they've completed the interaction
+          nonce: NONCE
+        }
+      }
+    }
+  )
+  ```
+  </TabItem>
+</Tabs>
+
+<details>
+<summary>Ejemplo de respuesta</summary>
+El siguiente es un ejemplo de respuesta proveniente del proveedor de billetera del cliente.
+```json wrap
+{
+  "interact": {
+    "redirect": "https://auth.interledger-test.dev/{...}", // uri to redirect the customer to, to begin interaction
+    "finish": "..." // unique key to secure the callback
+  },
+  "continue": {
+    "access_token": {
+      "value": "..." // access token for continuing the outgoing payment grant request
+    },
+    "uri": "https://auth.interledger-test.dev/continue/{...}", // uri for continuing the outgoing payment grant request
+    "wait": 30
+  }
+}
+```
+</details>
+
+### 7. Comenzar la interacción con el consumidor
+
+<Start />
+
+### 8. Finalizar la interacción con el consumidor
+
+<Finish />
+
+### 9. Solicitar una continuación de la concesión de autorización
+
+En nuestro ejemplo, suponemos que el IdP con el que interactuó el consumidor cuenta con una interfaz de usuario. Cuando la interacción finaliza, el consumidor regresa a la aplicación cliente. Ahora la aplicación puede realizar una solicitud de continuación de la concesión de autorización de pago saliente.
+
+:::note
+En una situación hipotética donde una interfaz de usuario no se encuentra disponible, analice la posibilidad de implementar un mecanismo de sondeo para verificar que se haya completado la interacción.
+:::
+
+Llame a la <Badge text="POST" variant="success" /> [Grant Continuation Request API](/apis/auth-server/operations/post-continue/). Esta llamada solicita un token de acceso que permite a la aplicación cliente solicitar la creación de un recurso de pago saliente en la cuenta de billetera del cliente.
+
+Emita la solicitud al `continue.uri` proporcionado en la respuesta de concesión de autorización de pago saliente inicial (paso 6).
+
+Incluya la `interact_ref` devuelta en los parámetros de consulta del URI de redirección.
+
+<Tabs syncKey="lang">
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts wrap
+  const customerOutgoingPaymentGrant = await client.grant.continue(
+    {
+      url: pendingCustomerOutgoingPaymentGrant.continue.uri,
+      accessToken: pendingCustomerOutgoingPaymentGrant.continue.access_token.value
+    },
+    {
+      interact_ref: interactRef
+    }
+  )
+  ```
+  </TabItem>
+</Tabs>
+
+<details>
+<summary>Ejemplo de respuesta</summary>
+El siguiente es un ejemplo de respuesta proveniente del proveedor de billetera del cliente.
+```json wrap
+{
+  "access_token": {
+    "value": "...", // final access token required before creating outgoing payments
+    "manage": "https://auth.cloudninebank.example.com/token/{...}", // management uri for access token
+    "access": [
+      {
+        "type": "outgoing-payment",
+        "actions": ["create"],
+        "identifier": "https://cloudninebank.example.com/customer",
+        "limits": {
+          "receiver": "https://happylifebank.example.com/incoming-payments/{...}" // url of the incoming payment that's being paid
+        }
+      }
+    ]
+  },
+  "continue": {
+  "access_token": {
+  "value": "..." // access token for continuing the request
+  },
+  "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
+  }
+}
+```
+</details>
+
+### 10. Solicitar la creación de un recurso de pago saliente
+
+Utilice el token de acceso devuelto en el paso 9 para llamar a la <Badge text="POST" variant="success" /> [Create Outgoing Payment API](/apis/resource-server/operations/create-outgoing-payment/). Esta llamada solicita la creación de un recurso de pago saliente en la cuenta de billetera del consumidor. Incluya el `quoteId` en la solicitud. La `quoteId` es la `id` devuelta en la respuesta de Create Quote API (paso 5).
+
+<Tabs syncKey="lang">
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts wrap
+  const customerOutgoingPayment = await client.outgoingPayment.create(
+    {
+      url: customerWalletAddress.resourceServer,
+      accessToken: customerOutgoingPaymentGrant.access_token.value
+    },
+    {
+      walletAddress: customerWalletAddress.id,
+      quoteId: customerQuote.id
+    }
+  )
+  ```
+  </TabItem>
+</Tabs>
+
+<details>
+<summary>Ejemplo de respuesta</summary>
+El siguiente es un ejemplo de respuesta proveniente del proveedor de billetera del cliente.
+```json wrap
+{
+  "id": "https://cloudninebank.example.com/outgoing-payments/{...}", // url identifying the outgoing payment
+  "walletAddress": "https://cloudninebank.example.com/customer",
+  "receiver": "https://happylifebank.example.com/incoming-payments/{...}", // url of the incoming payment being paid
+  "debitAmount": {
+    "value": "140000",
+    "assetCode": "MXN",
+    "assetScale": 2
+  },
+  "receiveAmount": {
+    "value": "140000",
+    "assetCode": "MXN",
+    "assetScale": 2
+  },
+  "sentAmount": {
+    "value": "0",
+    "assetCode": "MXN",
+    "assetScale": 2
+  },
+  "createdAt": "2022-03-12T23:20:54.52Z"
+}
+```
+</details>
