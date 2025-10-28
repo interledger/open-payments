@@ -46,7 +46,6 @@ Remember, Open Payments doesn't execute payments or touch money in any way. It's
 - <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-incoming-payment/'>Create Incoming Payment</LinkOut>
 - <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-quote/'>Create a Quote</LinkOut>
 - <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment/'>Create an Outgoing Payment</LinkOut>
-- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/complete-incoming-payment/'>Complete Incoming Payment API</LinkOut>
 
 ## Steps
 
@@ -121,7 +120,7 @@ This call obtains an access token that allows your app to request that an incomi
         access: [
           {
             type: "incoming-payment",
-            actions: ["create", "complete"],
+            actions: ["create"],
           },
         ],
       },
@@ -156,7 +155,7 @@ The following shows an example response from the recipient's wallet provider.
     "access": [
       {
         "type": "incoming-payment",
-        "actions": ["create", "complete"]
+        "actions": ["create"]
       }
     ]
   },
@@ -458,58 +457,59 @@ Outgoing payments require an interactive grant. This type of grant will obtain t
    GrantRequest,
  };
 
- let outgoing_access = AccessTokenRequest {
-   access: vec![AccessItem::OutgoingPayment {
-     identifier: Some(sender_wallet_address.id.clone()),
-     actions: vec![OutgoingPaymentAction::Create],
-     limits: Some(AccessLimits {
-       debit_amount: Some(Amount {
-         value: "10000".into(),
-         asset_code: "USD".into(),
-         asset_scale: 2,
-       }),
-       ..Default::default()
-     }),
-   }],
- };
+let outgoing_access = AccessTokenRequest {
+access: vec![AccessItem::OutgoingPayment {
+identifier: Some(sender_wallet_address.id.clone()),
+actions: vec![OutgoingPaymentAction::Create],
+limits: Some(AccessLimits {
+debit_amount: Some(Amount {
+value: "10000".into(),
+asset_code: "USD".into(),
+asset_scale: 2,
+}),
+..Default::default()
+}),
+}],
+};
 
- let interact = InteractRequest {
-   start: Some(vec![InteractStart::Redirect]),
-   finish: Some(InteractFinish {
-     method: InteractFinishMethod::Redirect,
-     uri: Some("https://myapp.example.com/finish/{...}".into()),
-     nonce: Some("NONCE".into()),
-   }),
- };
+let interact = InteractRequest {
+start: Some(vec![InteractStart::Redirect]),
+finish: Some(InteractFinish {
+method: InteractFinishMethod::Redirect,
+uri: Some("https://myapp.example.com/finish/{...}".into()),
+nonce: Some("NONCE".into()),
+}),
+};
 
- let outgoing_grant_request = GrantRequest::new(outgoing_access, Some(interact));
+let outgoing_grant_request = GrantRequest::new(outgoing_access, Some(interact));
 
- let pending_sender_outgoing_payment_grant = client
-   .grant()
-   .request(&sender_wallet_address.auth_server, &outgoing_grant_request)
-   .await?;
- ```
- </TabItem>
+let pending_sender_outgoing_payment_grant = client
+.grant()
+.request(&sender_wallet_address.auth_server, &outgoing_grant_request)
+.await?;
+
+````
+</TabItem>
 </Tabs>
 
 <details>
-  <summary>Example response</summary>
+ <summary>Example response</summary>
 
 ```json wrap
 {
-  "interact": {
-    "redirect": "https://auth.cloudninebank.example.com/{...}", // uri to redirect the sender to, to begin interaction
-    "finish": "..." // unique key to secure the callback
-  },
-  "continue": {
-    "access_token": {
-      "value": "..." // access token for continuing the outgoing payment grant request
-    },
-    "uri": "https://auth.cloudninebank.example.com/continue/{...}", // uri for continuing the outgoing payment grant request
-    "wait": 30
-  }
+ "interact": {
+   "redirect": "https://auth.cloudninebank.example.com/{...}", // uri to redirect the sender to, to begin interaction
+   "finish": "..." // unique key to secure the callback
+ },
+ "continue": {
+   "access_token": {
+     "value": "..." // access token for continuing the outgoing payment grant request
+   },
+   "uri": "https://auth.cloudninebank.example.com/continue/{...}", // uri for continuing the outgoing payment grant request
+   "wait": 30
+ }
 }
-```
+````
 
 </details>
 
@@ -670,7 +670,3 @@ The following shows an example response when an outgoing payment resource is cre
 ```
 
 </details>
-
-:::note[Complete the incoming payment (optional)]
-After your outgoing payment completes, you can call the <Badge text="POST" variant="success" /> [Complete Incoming Payment API](/apis/resource-server/operations/complete-incoming-payment/) to mark the recipient's incoming payment as complete. This instructs the recipient's provider to stop accepting additional payments for that incoming payment.
-:::
