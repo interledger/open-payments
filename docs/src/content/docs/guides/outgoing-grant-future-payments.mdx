@@ -43,7 +43,12 @@ Let's assume your user saved their wallet address in their account profile when 
     url: 'https://cloudninebank.example.com/user'
   })
   ```
-</TabItem>
+ </TabItem>
+ <TabItem label='Rust' icon='seti:rust'>
+ ```rust wrap
+ let user_wallet_address = client.wallet_address().get("https://cloudninebank.example.com/user").await?;
+ ```
+ </TabItem>
 </Tabs>
 
 <details>
@@ -106,7 +111,29 @@ Remember, your user wants to send payments of up to $100 CAD a month for three m
     },
   );
   ```
-</TabItem>
+ </TabItem>
+ <TabItem label='Rust' icon='seti:rust'>
+ ```rust wrap
+ use open_payments::types::{AccessTokenRequest, AccessItem, OutgoingPaymentAction, AccessLimits, Amount, InteractRequest, InteractStart, InteractFinish, InteractFinishMethod, GrantRequest};
+ let outgoing_access = AccessTokenRequest {
+   access: vec![AccessItem::OutgoingPayment {
+     identifier: Some(user_wallet_address.id.clone()),
+     actions: vec![OutgoingPaymentAction::Create, OutgoingPaymentAction::Read],
+     limits: Some(AccessLimits {
+       interval: Some("R3/2025-05-20T13:00:00Z/P1M".into()),
+       debit_amount: Some(Amount { value: "10000".into(), asset_code: "CAD".into(), asset_scale: 2 }),
+       ..Default::default()
+     }),
+   }],
+ };
+ let interact = InteractRequest { start: Some(vec![InteractStart::Redirect]), finish: Some(InteractFinish { method: InteractFinishMethod::Redirect, uri: Some("https://paymentplatform.example/finish/{...}".into()), nonce: Some("NONCE".into()) }) };
+ let outgoing_grant_request = GrantRequest::new(outgoing_access, Some(interact));
+ let pending_user_outgoing_payment_grant = client
+   .grant()
+   .request(&user_wallet_address.auth_server, &outgoing_grant_request)
+   .await?;
+ ```
+ </TabItem>
 </Tabs>
 
 <details>
@@ -177,6 +204,25 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
       interact_ref: interactRef,
     },
   );
+  ```
+  </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
+  ```rust wrap
+  let continue_field = match &pending_user_outgoing_payment_grant.continue_field {
+    Some(c) => c,
+    None => {
+      eprintln!("Missing continue field on pending grant");
+      return Ok(());
+    }
+  };
+  let user_outgoing_payment_grant = client
+    .grant()
+    .continue_grant(
+      &continue_field.uri,
+      &interact_ref,
+      Some(&continue_field.access_token.value),
+    )
+    .await?;
   ```
   </TabItem>
 </Tabs>
