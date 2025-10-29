@@ -45,7 +45,6 @@ The three parties involved in this scenario are:
 - <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-quote/'>Create a Quote</LinkOut>
 - <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-continue/'>Grant Continuation Request</LinkOut>
 - <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment/'>Create an Outgoing Payment</LinkOut>
-- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-token/'>Rotate an Access Token</LinkOut>
 
 ## Steps
 
@@ -118,7 +117,7 @@ This call obtains an access token that allows you to request that an incoming pa
       },
     },
   );
-````
+```
 </TabItem>
 </Tabs>
 
@@ -298,8 +297,8 @@ The `incomingAmount` specifies that the service provider will receive exactly \$
 
 The response returns a `receiveAmount`, a `debitAmount`, and other required information.
 
-- `debitAmount` - The amount the customer must pay.
-- `receiveAmount` - The amount the service provider will receive.
+- `debitAmount` - The amount that will be charged to the customer.
+- `receiveAmount` - The `incomingAmount` from the quote request.
 
 :::note[Expiring quotes]
 Quote responses include an `expiresAt` timestamp. Create the outgoing payment before the quote expires. If creation fails because the quote expired, request a new quote and try again.
