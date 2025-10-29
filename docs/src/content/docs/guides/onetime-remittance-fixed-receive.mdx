@@ -21,7 +21,7 @@ This approach is particularly useful for remittance app scenarios where:
 
 ## Scenario
 
-Imagine someone in the US wants to send money to a family member in Mexico. They want their family member to receive _exactly_ $5,000 Mexican pesos (MXN), regardless of what the currency conversion will be. This is different from a payment where the sender specifies exactly how much to send, and the amount the recipient receives can vary with the exchange rate.
+Imagine someone in the US wants to send money to a family member in Mexico. They want their family member to receive _exactly_ $5,000 Mexican pesos (MXN), regardless of what the currency conversion will be. This is different from a payment where the [sender specifies exactly how much to send](/guides/onetime-remittance-fixed-debit), and the amount the recipient receives can vary with the exchange rate.
 
 For this guide, you'll assume the role of a developer building a remittance app. The guide explains how to send a payment in USD, where the recipient receives exactly $5,000 MXN.
 
@@ -45,7 +45,6 @@ The three parties involved in this scenario are:
 - <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-quote/'>Create a Quote</LinkOut>
 - <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-continue/'>Grant Continuation Request</LinkOut>
 - <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment/'>Create an Outgoing Payment</LinkOut>
-- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/complete-incoming-payment/'>Complete Incoming Payment API</LinkOut>
 
 ## Steps
 
@@ -66,6 +65,12 @@ Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wall
   const recipientWalletAddress = await client.walletAddress.get({
     url: 'https://happylifebank.example.com/recipient'
   })
+  ```
+  </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
+  ```rust wrap
+  let sender_wallet_address = client.wallet_address().get("https://cloudninebank.example.com/sender").await?;
+  let recipient_wallet_address = client.wallet_address().get("https://happylifebank.example.com/recipient").await?;
   ```
   </TabItem>
 </Tabs>
@@ -116,12 +121,26 @@ This call obtains an access token that allows your app to request an incoming pa
         access: [
           {
             type: 'incoming-payment',
-            actions: ['create', 'complete'],
+            actions: ['create']
           },
         ],
       },
     },
   );
+  ```
+  </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
+  ```rust wrap
+  use open_payments::types::{AccessTokenRequest, AccessItem, IncomingPaymentAction, GrantRequest};
+
+  let incoming_access = AccessTokenRequest {
+    access: vec![AccessItem::IncomingPayment { actions: vec![IncomingPaymentAction::Create, IncomingPaymentAction::Complete], identifier: None }],
+  };
+  let incoming_grant_request = GrantRequest::new(incoming_access, None);
+  let recipient_incoming_payment_grant = client
+    .grant()
+    .request(&recipient_wallet_address.auth_server, &incoming_grant_request)
+    .await?;
   ```
   </TabItem>
 </Tabs>
@@ -137,7 +156,7 @@ The following shows an example response from the recipient's wallet provider.
     "access": [
       {
         "type": "incoming-payment",
-        "actions": ["create", "complete"]
+        "actions": ["create"]
       }
     ]
   },
@@ -169,6 +188,26 @@ This call requests an incoming payment resource be created on the recipient's wa
       walletAddress: recipientWalletAddress.id,
     },
   )
+  ```
+  </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
+  ```rust wrap
+  use open_payments::types::IncomingPaymentRequest;
+
+  let incoming_request = IncomingPaymentRequest {
+    wallet_address: recipient_wallet_address.id.clone(),
+    incoming_amount: None,
+    expires_at: None,
+    metadata: None,
+  };
+  let recipient_incoming_payment = client
+    .incoming_payments()
+    .create(
+      &recipient_wallet_address.resource_server,
+      &incoming_request,
+      Some(&recipient_incoming_payment_grant.access_token.value),
+    )
+    .await?;
   ```
   </TabItem>
 </Tabs>
@@ -222,6 +261,25 @@ This call obtains an access token that allows your app to request a quote resour
       }
     }
   )
+  ```
+  </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
+  ```rust wrap
+  use open_payments::types::{
+    AccessTokenRequest,
+    AccessItem,
+    QuoteAction,
+    GrantRequest,
+  };
+
+  let quote_access = AccessTokenRequest {
+    access: vec![AccessItem::Quote { actions: vec![QuoteAction::Create] }],
+  };
+  let quote_grant_request = GrantRequest::new(quote_access, None);
+  let sender_quote_grant = client
+    .grant()
+    .request(&sender_wallet_address.auth_server, &quote_grant_request)
+    .await?;
   ```
   </TabItem>
 </Tabs>
@@ -279,8 +337,29 @@ The `receiveAmount` specifies that the recipient will receive exactly $5,000 MXN
       }
     }
   )
-```
+ ```
 
+  </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
+  ```rust wrap
+  use open_payments::types::{QuoteRequest, QuoteMethod, Amount};
+
+  let quote_request = QuoteRequest {
+    method: QuoteMethod::Ilp,
+    wallet_address: Some(sender_wallet_address.id.clone()),
+    receiver: Some(recipient_incoming_payment.id.clone()),
+    debit_amount: None,
+    receive_amount: Some(Amount { value: "500000".into(), asset_code: "MXN".into(), asset_scale: 2 }),
+  };
+  let sender_quote = client
+    .quotes()
+    .create(
+      &sender_wallet_address.resource_server,
+      &quote_request,
+      Some(&sender_quote_grant.access_token.value),
+    )
+    .await?;
+  ```
   </TabItem>
 </Tabs>
 
@@ -332,7 +411,6 @@ To ensure the sender is authorizing the correct amount, include the same `receiv
 Outgoing payments require an interactive grant. This type of grant will obtain the sender's consent before an outgoing payment is made against their wallet account. You can find more information in the [Open Payments flow](/concepts/op-flow/#outgoing-payment) and [identity providers](/identity/idp) pages.
 :::
 
-
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
   ```ts wrap
@@ -367,6 +445,46 @@ Outgoing payments require an interactive grant. This type of grant will obtain t
     }
   }
 )
+  ```
+  </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
+  ```rust wrap
+  use open_payments::types::{
+    AccessTokenRequest,
+    AccessItem,
+    OutgoingPaymentAction,
+    InteractRequest,
+    InteractStart,
+    InteractFinish,
+    InteractFinishMethod,
+    AccessLimits,
+    Amount,
+    GrantRequest,
+  };
+
+  let outgoing_access = AccessTokenRequest {
+    access: vec![AccessItem::OutgoingPayment {
+      identifier: Some(sender_wallet_address.id.clone()),
+      actions: vec![OutgoingPaymentAction::Create],
+      limits: Some(AccessLimits {
+        receive_amount: Some(Amount { value: "500000".into(), asset_code: "MXN".into(), asset_scale: 2 }),
+        ..Default::default()
+      }),
+    }],
+  };
+  let interact = InteractRequest {
+    start: Some(vec![InteractStart::Redirect]),
+    finish: Some(InteractFinish {
+      method: InteractFinishMethod::Redirect,
+      uri: Some("https://myapp.example.com/finish/{...}".into()),
+      nonce: Some("NONCE".into()),
+    }),
+  };
+  let outgoing_grant_request = GrantRequest::new(outgoing_access, Some(interact));
+  let pending_sender_outgoing_payment_grant = client
+    .grant()
+    .request(&sender_wallet_address.auth_server, &outgoing_grant_request)
+    .await?;
   ```
   </TabItem>
 </Tabs>
@@ -427,6 +545,25 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
   )
   ```
   </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
+  ```rust wrap
+  let continue_field = match &pending_sender_outgoing_payment_grant.continue_field {
+    Some(c) => c,
+    None => {
+      eprintln!("Missing continue field on pending grant");
+      return Ok(());
+    }
+  };
+  let sender_outgoing_payment_grant = client
+    .grant()
+    .continue_grant(
+      &continue_field.uri,
+      &interact_ref,
+      Some(&continue_field.access_token.value),
+    )
+    .await?;
+  ```
+  </TabItem>
 </Tabs>
 
 <details>
@@ -477,6 +614,26 @@ Use the access token returned in Step 9 to call the <Badge text="POST" variant="
   )
   ```
   </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
+  ```rust wrap
+  use open_payments::types::OutgoingPaymentRequest;
+  let outgoing_request = OutgoingPaymentRequest {
+    wallet_address: sender_wallet_address.id.clone(),
+    receiver: Some(recipient_incoming_payment.id.clone()),
+    debit_amount: None,
+    receive_amount: None,
+    quote_id: Some(sender_quote.id.clone()),
+  };
+  let sender_outgoing_payment = client
+    .outgoing_payments()
+    .create(
+      &sender_wallet_address.resource_server,
+      &outgoing_request,
+      Some(&sender_outgoing_payment_grant.access_token.value),
+    )
+    .await?;
+  ```
+  </TabItem>
 </Tabs>
 
 If the request fails because of an expired quote, [request a new quote](#5-request-the-creation-of-a-quote-resource) and try again. If it fails because the grant's access token has expired, call the <Badge text="POST" variant="success" /> [Rotate Access Token](/apis/auth-server/operations/post-token/) to obtain a new access token, then retry the request with the new token.
@@ -508,7 +665,3 @@ The following shows an example response from the sender's wallet provider.
 }
 ```
 </details>
-
-:::note[Complete the incoming payment (optional)]
-After your outgoing payment completes, you can call the <Badge text="POST" variant="success" /> [Complete Incoming Payment API](/apis/resource-server/operations/complete-incoming-payment/) to mark the recipient's incoming payment as complete. This instructs the recipient's provider to stop accepting additional payments for that incoming payment. 
-:::
