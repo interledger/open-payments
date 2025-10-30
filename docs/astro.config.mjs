@@ -346,6 +346,10 @@ export default defineConfig({
               link: '/guides/recurring-subscription-incoming-amount/'
             },
             {
+              label: 'Send recurring remittances with a fixed debit amount',
+              link: '/guides/recurring-remittance-fixed-debit/'
+            },
+            {
               label: 'Send recurring remittances with a fixed receive amount',
               link: '/guides/recurring-remittance-fixed-receive/'
             },
