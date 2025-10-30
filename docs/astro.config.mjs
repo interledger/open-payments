@@ -342,6 +342,10 @@ export default defineConfig({
               link: '/guides/make-recurring-payments/'
             },
             {
+              label: 'Set up recurring payments with a fixed incoming amount',
+              link: '/guides/recurring-subscription-incoming-amount/'
+            },
+            {
               label: 'Send recurring remittances with a fixed debit amount',
               link: '/guides/recurring-remittance-fixed-debit/'
             },
