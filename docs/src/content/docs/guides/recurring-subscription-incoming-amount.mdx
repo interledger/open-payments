@@ -11,7 +11,7 @@ import FinishInteraction from '/src/partials/grant-finish-interaction.mdx'
 Learn how to set up recurring subscription payments where the service provider receives a fixed amount at regular intervals.
 :::
 
-A subscription payment is a recurring transfer of money where a customer pays a fixed fee at regular intervals to access a service or product. In this guide, you will learn how to implement a recurring subscription payment feature where the service provider receives exactly the same amount each billing period.
+A subscription payment is a recurring transfer of money where a customer pays a fixed fee at regular intervals to access a service or product. In this guide, you will learn how to implement a recurring subscription payment feature where the service provider receives the same amount each billing period.
 
 This approach is particularly useful for subscription service scenarios where:
 
@@ -154,8 +154,6 @@ Use the access token returned in the previous response to call the <Badge text="
 
 This call requests an incoming payment resource be created on the service provider's wallet account.
 
-The `incomingAmount` specifies the exact amount the service provider wants to receive for the subscription. Since the monthly subscription is \$15 USD for 12 months, the total subscription amount is \$180 USD. The `value` is `18000`.
-
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
   ```ts wrap
@@ -167,7 +165,7 @@ The `incomingAmount` specifies the exact amount the service provider wants to re
     {
       walletAddress: serviceProviderWalletAddress.id,
       incomingAmount: {
-        value: '18000',
+        value: '1500',  // The amount the service provider expects to receive in the first payment
         assetCode: 'USD',
         assetScale: 2
       },
@@ -186,7 +184,7 @@ The following shows an example response from the service provider's wallet provi
   "id": "https://happylifebank.example.com/incoming-payments/{...}",
   "walletAddress": "https://happylifebank.example.com/service-provider",
   "incomingAmount": {
-    "value": "18000",
+    "value": "1500",
     "assetCode": "USD",
     "assetScale": 2
   },
@@ -268,9 +266,9 @@ The following shows an example response from the customer's wallet provider.
 
 Use the access token received in the previous step to call the <Badge text="POST" variant="success" /> [Create Quote API](/apis/resource-server/operations/create-quote).
 
-This call requests that a quote resource be created on the customer's wallet account. The request must contain the `receiver`, which is the service provider's incoming payment `id`, along with the `incomingAmount`, which is the exact amount the service provider wants to receive.
+This call requests that a quote resource be created on the customer's wallet account.
 
-The `incomingAmount` specifies that the service provider will receive exactly \$15 USD.
+The request must contain the `receiver`, which is the `id` of the service provider's incoming payment. The `id` was returned in the Create an Incoming Payment API response in Step 3.
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -284,21 +282,16 @@ The `incomingAmount` specifies that the service provider will receive exactly \$
       method: 'ilp',
       walletAddress: customerWalletAddress.id,
       receiver: serviceProviderIncomingPayment.id,
-      incomingAmount: {
-        value: '1500',
-        assetCode: 'USD',
-        assetScale: 2
-      }
     }
   )
 ```
 </TabItem>
 </Tabs>
 
-The response returns a `receiveAmount`, a `debitAmount`, and other required information.
+The response returns a `debitAmount`, a `receiveAmount`, and other required information.
 
 - `debitAmount` - The amount that will be charged to the customer.
-- `receiveAmount` - The `incomingAmount` from the quote request.
+- `receiveAmount` - The `incomingAmount` value from the incoming payment resource
 
 :::note[Expiring quotes]
 Quote responses include an `expiresAt` timestamp. Create the outgoing payment before the quote expires. If creation fails because the quote expired, request a new quote and try again.
@@ -314,12 +307,12 @@ The following shows an example response from the customer's wallet provider.
   "walletAddress": "https://cloudninebank.example.com/customer",
   "receiver": "https://happylifebank.example.com/incoming-payments/{...}", // url of the incoming payment the quote is created for
   "debitAmount": {
-    "value": "1500", // Customer pays \$15.00 USD
+    "value": "1500",
     "assetCode": "USD",
     "assetScale": 2
   },
   "receiveAmount": {
-    "value": "1500", // Service provider receives \$15.00 USD
+    "value": "1500",
     "assetCode": "USD",
     "assetScale": 2
   },
@@ -542,8 +535,14 @@ The following shows an example response from the customer's wallet provider.
 
 </details>
 
-The first of the twelve recurring subscription payments is now set up. At the next interval (one month from now), repeat Steps 5 and 10. You don't need to request new incoming payment, quote, or outgoing payment grants (Steps 2, 4, and 6) because the original grants are still valid for the remaining billing periods.
+The first of the 12 recurring subscription payments is now set up. At the next interval (one month from now), repeat the following steps to request the creation of:
+
+1. An incoming payment resource ([step 3](#3-request-the-creation-of-an-incoming-payment-resource))
+2. A quote resource ([step 5](#5-request-the-creation-of-a-quote-resource))
+3. An outgoing payment resource ([step 10](#10-request-the-creation-of-an-outgoing-payment-resource))
+
+You don't need to request new grants because the original grants should be valid for the remaining billing periods.
 
 :::note[Access token expiry]
-If a particular grant's access token has expired, call the <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/auth-server/operations/post-token), then use the new token in the appropriate incoming payment request, quote request, or outgoing payment request.
+If a particular grant's access token has expired, call the <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/auth-server/operations/post-token), then use the new token in the appropriate incoming payment, quote, or outgoing payment request.
 :::
