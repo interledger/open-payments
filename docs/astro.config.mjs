@@ -141,6 +141,7 @@ export default defineConfig({
                 },
                 {
                   label: 'Amounts',
+                  translations: { es: `Montos` },
                   link: '/concepts/amounts/'
                 },
                 {
@@ -315,20 +316,24 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
-              label: 'Make a one-time payment',
-              translations: { es: 'Cómo efectuar un pago único' },
-              link: '/guides/make-onetime-payment/'
-            },
-            {
               label: 'Accept a one-time payment for an online purchase',
+              translations: {
+                es: 'Aceptar un pago único por una compra en línea'
+              },
               link: '/guides/accept-otp-online-purchase/'
             },
             {
               label: 'Send a remittance payment with fixed debit amount',
+              translations: {
+                es: 'Enviar un pago de remesa con un monto de débito fijo'
+              },
               link: '/guides/onetime-remittance-fixed-debit'
             },
             {
               label: 'Send a remittance payment with a fixed receive amount',
+              translations: {
+                es: 'Enviar una remesa con un monto de recepción fijo'
+              },
               link: '/guides/onetime-remittance-fixed-receive/'
             },
             {
@@ -339,6 +344,10 @@ export default defineConfig({
             {
               label: 'Send recurring remittances with a fixed debit amount',
               link: '/guides/recurring-remittance-fixed-debit/'
+            },
+            {
+              label: 'Send recurring remittances with a fixed receive amount',
+              link: '/guides/recurring-remittance-fixed-receive/'
             },
             {
               label: 'Split an incoming payment',

@@ -1,0 +1,138 @@
+---
+title: Montos
+parent: Conceptos
+---
+
+import {
+  LinkOut,
+  Tooltip,
+  StylishHeader
+} from '@interledger/docs-design-system'
+import { Steps } from '@astrojs/starlight/components'
+
+:::tip[Resumen]
+Los montos en Open Payments definen valores monetarios mediante códigos de activos y escalas de activos. Proporcionan una forma estandarizada de representar el dinero en distintas monedas y situaciones de pago.
+:::
+
+Los montos representan valores monetarios y son fundamentales para cada operación de Open Payments. Ya sea que esté creando un pago entrante, solicitando una cotización o rastreando el progreso de un pago, cada monto consta de tres componentes clave: un valor numérico `value`, un código de activo `assetCode` y una escala de activo `assetScale`. Comprender estos componentes es crucial para desarrollar aplicaciones de Open Payments.
+
+## Valores
+
+Para maximizar la precisión y evitar errores de redondeo en los cálculos financieros, Open Payments utiliza tipos de datos numéricos sin decimales para representar valores. En el contexto de los lenguajes de programación, esto significa que Open Payments emplea números enteros sin signo de 64 bits para los montos monetarios, en lugar de números de punto flotante.
+
+Un ejemplo de valor es el número 10000.
+
+## Códigos de activo
+
+Los códigos de activo identifican el tipo de moneda o activo que se utiliza en un pago y deben seguir la norma <LinkOut href='https://es.wikipedia.org/wiki/ISO_4217'>ISO 4217</LinkOut> para la representación de monedas.
+
+Un ejemplo de `assetCode` ISO 4217 es `USD`, que representa el dólar estadounidense.
+
+## Escalas de activo
+
+Una escala de activo indica la cantidad de posiciones decimales que utiliza una moneda. Es como especificar si se está contando en dólares, céntimos o unidades más pequeñas.
+
+Las escalas de activo son números entre 0 y 255 que señalan la precisión decimal.
+
+En el caso de `USD` con una `assetScale` de 2, el monto a mostrar de $100.00 se almacena y representa como 10000 céntimos.
+
+Así, la fórmula de conversión es la siguiente:
+
+$$\frac{\text{valor}}{10^{\text{assetScale}}} = \text{monto a mostrar}$$
+
+Utilizando el ejemplo anterior, la fórmula se ve así:
+
+$$\frac{10000}{10^2} = \frac{10000}{100} = \$100.00$$
+
+### Ejemplos por moneda
+
+<table style='width: auto; margin: 1;'>
+  <thead>
+    <tr>
+      <th>Moneda</th>
+      <th>Código de activo</th>
+      <th>Escala de activo</th>
+      <th>Monto entero</th>
+      <th>Valor existente</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Dólar estadounidense</td>
+      <td>
+        <code>USD</code>
+      </td>
+      <td>2</td>
+      <td>10000</td>
+      <td>$100,00</td>
+    </tr>
+    <tr>
+      <td>Euro</td>
+      <td>
+        <code>EUR</code>
+      </td>
+      <td>2</td>
+      <td>2550</td>
+      <td>€25,50</td>
+    </tr>
+    <tr>
+      <td>Libra esterlina</td>
+      <td>
+        <code>GBP</code>
+      </td>
+      <td>2</td>
+      <td>3250</td>
+      <td>£32,50</td>
+    </tr>
+    <tr>
+      <td>Yen japonés</td>
+      <td>
+        <code>JPY</code>
+      </td>
+      <td>0</td>
+      <td>1000</td>
+      <td>¥1000</td>
+    </tr>
+    <tr>
+      <td>Pesos mexicanos</td>
+      <td>
+        <code>MXN</code>
+      </td>
+      <td>2</td>
+      <td>18500</td>
+      <td>$185,00</td>
+    </tr>
+    <tr>
+      <td>Dinar jordano</td>
+      <td>
+        <code>JOD</code>
+      </td>
+      <td>3</td>
+      <td>1000</td>
+      <td>د.ا1000</td>
+    </tr>
+    <tr>
+      <td>Rand sudafricano</td>
+      <td>
+        <code>ZAR</code>
+      </td>
+      <td>2</td>
+      <td>1500</td>
+      <td>R15,00</td>
+    </tr>
+  </tbody>
+</table>
+
+## Montos en Open Payments
+
+Utilizando los tres componentes necesarios de `value`, `assetCode` y `assetScale`, USD 100 se representarían en Open Payments usando la siguiente estructura:
+
+```json
+{
+  "value": "10000",
+  "assetCode": "USD",
+  "assetScale": 2
+}
+```
+
+Esta estructura consistente posibilita pagos en múltiples monedas, cálculos precisos y una integración fluida entre diferentes <Tooltip content="Entidad que administra la cuenta">ASE</Tooltip>.
