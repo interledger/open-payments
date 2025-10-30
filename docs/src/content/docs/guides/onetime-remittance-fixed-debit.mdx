@@ -641,6 +641,8 @@ Use the access token returned in Step 9 to call the <Badge text="POST" variant="
  </TabItem>
 </Tabs>
 
+If the request fails because of an expired quote, [request a new quote](#5-request-the-creation-of-a-quote-resource) and try again.
+
 <details>
 <summary>Example response</summary>
 The following shows an example response when an outgoing payment resource is created on the sender's account.
@@ -670,3 +672,7 @@ The following shows an example response when an outgoing payment resource is cre
 ```
 
 </details>
+
+:::note[Access token expiry]
+If a grant's access token has expired, call the <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/auth-server/operations/post-token/), then use the new token in the appropriate request.
+:::
