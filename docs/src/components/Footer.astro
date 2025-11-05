@@ -1,0 +1,12 @@
+---
+import type { Props } from '@astrojs/starlight/props';
+import Default from '@astrojs/starlight/components/Footer.astro';
+import FeedbackWidget from './FeedbackWidget.astro';
+import { getLangFromUrl } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+---
+
+<FeedbackWidget lang={lang} />
+
+<Default {...Astro.props}><slot /></Default>

@@ -1,0 +1,324 @@
+---
+// Simple feedback widget that works without external services
+// Feedback can be sent via GitHub Issues or collected locally
+const { lang = 'en' } = Astro.props;
+
+const translations = {
+  en: {
+    question: "Was this page helpful?",
+    yes: "Yes",
+    no: "No",
+    thanks: "Thanks for your feedback!",
+    improve: "Help us improve",
+    improvePlaceholder: "What can we improve?",
+    submit: "Submit",
+    submitting: "Submitting...",
+  },
+  es: {
+    question: "¿Fue útil esta página?",
+    yes: "Sí",
+    no: "No",
+    thanks: "¡Gracias por tu comentario!",
+    improve: "Ayúdanos a mejorar",
+    improvePlaceholder: "¿Qué podemos mejorar?",
+    submit: "Enviar",
+    submitting: "Enviando...",
+  }
+};
+
+const t = translations[lang as keyof typeof translations] || translations.en;
+---
+
+<div class="feedback-widget" id="feedback-widget">
+  <div class="feedback-question">
+    <h3>{t.question}</h3>
+    <div class="feedback-buttons">
+      <button class="feedback-btn feedback-yes" data-feedback="yes">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 1.5L12.5 6.5L18 7.5L14 11.5L15 17L10 14.5L5 17L6 11.5L2 7.5L7.5 6.5L10 1.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        {t.yes}
+      </button>
+      <button class="feedback-btn feedback-no" data-feedback="no">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        {t.no}
+      </button>
+    </div>
+  </div>
+
+  <div class="feedback-form hidden" id="feedback-form">
+    <p class="feedback-thanks">{t.thanks}</p>
+    <label for="feedback-text">{t.improve}</label>
+    <textarea
+      id="feedback-text"
+      rows="4"
+      placeholder={t.improvePlaceholder}
+    ></textarea>
+    <button class="feedback-submit" id="submit-feedback">
+      {t.submit}
+    </button>
+  </div>
+
+  <div class="feedback-success hidden" id="feedback-success">
+    <p>{t.thanks}</p>
+  </div>
+</div>
+
+<style>
+  .feedback-widget {
+    margin-top: var(--sl-spacing-2xl, 2rem);
+    padding: var(--sl-spacing-m, 1rem);
+    border-top: 1px solid var(--sl-color-hairline-shade, #e0e0e0);
+  }
+
+  .feedback-question h3 {
+    font-size: var(--sl-text-base, 1rem);
+    font-weight: 600;
+    margin: 0 0 var(--sl-spacing-s, 0.75rem) 0;
+    color: var(--sl-color-text, #333);
+  }
+
+  .feedback-buttons {
+    display: flex;
+    gap: var(--sl-spacing-xs, 0.5rem);
+  }
+
+  .feedback-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--sl-color-hairline-shade, #e0e0e0);
+    background: var(--sl-color-bg, white);
+    color: var(--sl-color-text, #333);
+    border-radius: 0.375rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+  }
+
+  .feedback-btn:hover {
+    background: var(--sl-color-bg-nav, #f5f5f5);
+    border-color: var(--sl-color-text-accent, #0066cc);
+  }
+
+  .feedback-btn svg {
+    flex-shrink: 0;
+  }
+
+  .feedback-yes:hover {
+    color: #16a34a;
+    border-color: #16a34a;
+  }
+
+  .feedback-no:hover {
+    color: #dc2626;
+    border-color: #dc2626;
+  }
+
+  .feedback-form {
+    margin-top: var(--sl-spacing-m, 1rem);
+  }
+
+  .feedback-form label {
+    display: block;
+    margin-bottom: var(--sl-spacing-2xs, 0.25rem);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--sl-color-text, #333);
+  }
+
+  .feedback-form textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--sl-color-hairline-shade, #e0e0e0);
+    border-radius: 0.375rem;
+    font-family: inherit;
+    font-size: 0.875rem;
+    resize: vertical;
+    background: var(--sl-color-bg, white);
+    color: var(--sl-color-text, #333);
+  }
+
+  .feedback-form textarea:focus {
+    outline: none;
+    border-color: var(--sl-color-text-accent, #0066cc);
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+  }
+
+  .feedback-submit {
+    margin-top: var(--sl-spacing-xs, 0.5rem);
+    padding: 0.5rem 1rem;
+    background: var(--sl-color-text-accent, #0066cc);
+    color: white;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: background 0.2s;
+  }
+
+  .feedback-submit:hover {
+    background: var(--sl-color-text-accent-high, #0052a3);
+  }
+
+  .feedback-submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .feedback-thanks {
+    color: #16a34a;
+    font-weight: 500;
+    margin-bottom: var(--sl-spacing-xs, 0.5rem);
+  }
+
+  .feedback-success {
+    color: #16a34a;
+    font-weight: 500;
+    padding: var(--sl-spacing-m, 1rem);
+    text-align: center;
+  }
+
+  .hidden {
+    display: none;
+  }
+</style>
+
+<script>
+  const widget = document.getElementById('feedback-widget');
+  const feedbackBtns = widget?.querySelectorAll('.feedback-btn');
+  const feedbackForm = document.getElementById('feedback-form');
+  const feedbackSuccess = document.getElementById('feedback-success');
+  const submitBtn = document.getElementById('submit-feedback');
+  const feedbackText = document.getElementById('feedback-text') as HTMLTextAreaElement;
+
+  let selectedFeedback: string | null = null;
+
+  feedbackBtns?.forEach(btn => {
+    btn.addEventListener('click', () => {
+      selectedFeedback = btn.getAttribute('data-feedback');
+
+      // Hide buttons, show form
+      document.querySelector('.feedback-question')?.classList.add('hidden');
+      feedbackForm?.classList.remove('hidden');
+
+      // If positive feedback, user can skip writing
+      if (selectedFeedback === 'yes') {
+        feedbackText.placeholder = feedbackText.placeholder;
+      }
+    });
+  });
+
+  submitBtn?.addEventListener('click', async () => {
+    const feedback = feedbackText.value.trim();
+    const page = window.location.pathname;
+
+    // Disable button while submitting
+    submitBtn.disabled = true;
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = submitBtn.getAttribute('data-submitting') || 'Submitting...';
+
+    try {
+      // Send to GitHub Issues API with timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+      const response = await fetch('/developers/api/feedback', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: selectedFeedback,
+          page: page,
+          message: feedback,
+        }),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        // If GitHub token not configured, fall back to opening GitHub issue page
+        if (result.error?.includes('not configured') || result.error?.includes('token')) {
+          const emoji = selectedFeedback === 'yes' ? '👍' : '👎';
+          const title = encodeURIComponent(`[Feedback] ${emoji} ${page}`);
+          const body = encodeURIComponent(`**Page:** ${page}
+**Feedback Type:** ${selectedFeedback === 'yes' ? 'Positive 👍' : 'Negative 👎'}
+**User Message:**
+
+${feedback || '_No additional feedback provided_'}`);
+
+          const issueUrl = `https://github.com/interledger/documentation-feedback/issues/new?title=${title}&body=${body}&labels=feedback,docs`;
+
+          window.open(issueUrl, '_blank');
+
+          feedbackForm?.classList.add('hidden');
+          feedbackSuccess?.classList.remove('hidden');
+          return;
+        }
+
+        throw new Error(result.error || 'Failed to submit feedback');
+      }
+
+      // Log success
+      console.log('Feedback submitted successfully:', {
+        issueNumber: result.issueNumber,
+        issueUrl: result.issueUrl
+      });
+
+      // Show success message
+      feedbackForm?.classList.add('hidden');
+      feedbackSuccess?.classList.remove('hidden');
+
+      // Track with Umami if available
+      if (typeof window !== 'undefined' && (window as any).umami) {
+        (window as any).umami.track('feedback', {
+          type: selectedFeedback,
+          hasMessage: feedback.length > 0,
+          success: true
+        });
+      }
+
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+
+      // Re-enable button
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+
+      // Show error message
+      const errorMsg = error instanceof Error && error.name === 'AbortError'
+        ? 'Request timed out. Opening GitHub issue page instead...'
+        : 'Failed to submit feedback. Opening GitHub issue page...';
+
+      alert(errorMsg);
+
+      // Fallback: Open GitHub issue page
+      const emoji = selectedFeedback === 'yes' ? '👍' : '👎';
+      const title = encodeURIComponent(`[Feedback] ${emoji} ${page}`);
+      const body = encodeURIComponent(`**Page:** ${page}
+**Feedback Type:** ${selectedFeedback === 'yes' ? 'Positive 👍' : 'Negative 👎'}
+**User Message:**
+
+${feedback || '_No additional feedback provided_'}`);
+
+      const issueUrl = `https://github.com/interledger/documentation-feedback/issues/new?title=${title}&body=${body}&labels=feedback,docs`;
+      window.open(issueUrl, '_blank');
+
+      // Track error with Umami if available
+      if (typeof window !== 'undefined' && (window as any).umami) {
+        (window as any).umami.track('feedback-error', {
+          type: selectedFeedback,
+          error: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    }
+  });
+</script>
