@@ -8,6 +8,7 @@ import rehypeKatex from 'rehype-katex'
 
 // https://astro.build/config
 export default defineConfig({
+  output: 'static',          // forces SSG
   site: 'https://openpayments.dev',
   markdown: {
     remarkPlugins: [remarkMath],
