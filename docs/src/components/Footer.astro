@@ -6,10 +6,11 @@ import { getLangFromUrl } from '../i18n/utils';
 
 const lang = getLangFromUrl(Astro.url);
 const pathname = Astro.url.pathname;
+const { id } = Astro.locals.starlightRoute || {};
 
 // Don't show feedback widget on index pages or 404 pages
 const isIndexPage = pathname === '/' || pathname === '/es' || pathname === '/es/';
-const is404Page = pathname.includes('/404');
+const is404Page = id === '404';
 const shouldShowFeedbackWidget = !isIndexPage && !is404Page;
 ---
 
