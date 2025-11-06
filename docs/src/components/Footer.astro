@@ -5,8 +5,14 @@ import FeedbackWidget from './FeedbackWidget.astro';
 import { getLangFromUrl } from '../i18n/utils';
 
 const lang = getLangFromUrl(Astro.url);
+const pathname = Astro.url.pathname;
+
+// Don't show feedback widget on index pages or 404 pages
+const isIndexPage = pathname === '/' || pathname === '/es' || pathname === '/es/';
+const is404Page = pathname.includes('/404');
+const shouldShowFeedbackWidget = !isIndexPage && !is404Page;
 ---
 
-<FeedbackWidget lang={lang} />
+{shouldShowFeedbackWidget && <FeedbackWidget lang={lang} />}
 
 <Default {...Astro.props}><slot /></Default>
