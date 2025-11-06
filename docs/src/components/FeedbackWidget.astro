@@ -227,7 +227,7 @@ const t = translations[lang as keyof typeof translations] || translations.en;
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
-      const response = await fetch('/developers/api/feedback', {
+      const response = await fetch('/.netlify/functions/feedback', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -255,7 +255,7 @@ const t = translations[lang as keyof typeof translations] || translations.en;
 
 ${feedback || '_No additional feedback provided_'}`);
 
-          const issueUrl = `https://github.com/interledger/documentation-feedback/issues/new?title=${title}&body=${body}&labels=feedback,docs`;
+          const issueUrl = `https://github.com/interledger/open-payments-docs-feedback/issues/new?title=${title}&body=${body}&labels=feedback,docs`;
 
           window.open(issueUrl, '_blank');
 
@@ -309,7 +309,7 @@ ${feedback || '_No additional feedback provided_'}`);
 
 ${feedback || '_No additional feedback provided_'}`);
 
-      const issueUrl = `https://github.com/interledger/documentation-feedback/issues/new?title=${title}&body=${body}&labels=feedback,docs`;
+      const issueUrl = `https://github.com/interledger/open-payments-docs-feedback/issues/new?title=${title}&body=${body}&labels=feedback,docs`;
       window.open(issueUrl, '_blank');
 
       // Track error with Umami if available

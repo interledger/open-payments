@@ -1,29 +1,32 @@
-import type { APIRoute } from 'astro';
+import type { Handler, HandlerEvent, HandlerContext } from '@netlify/functions';
 
-// Mark this endpoint as server-rendered
-export const prerender = false;
+const handler: Handler = async (event: HandlerEvent, context: HandlerContext) => {
+  // Only allow POST requests
+  if (event.httpMethod !== 'POST') {
+    return {
+      statusCode: 405,
+      body: JSON.stringify({ error: 'Method not allowed' })
+    };
+  }
 
-export const POST: APIRoute = async ({ request }) => {
   try {
-    const data = await request.json();
+    const data = JSON.parse(event.body || '{}');
     const { type, page, message } = data;
 
     // Get GitHub token from environment variable
-    const GITHUB_TOKEN = import.meta.env.GITHUB_TOKEN;
+    const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
     const GITHUB_REPO = 'interledger/documentation-feedback';
 
     if (!GITHUB_TOKEN) {
       console.error('GITHUB_TOKEN not configured');
-      return new Response(
-        JSON.stringify({
+      return {
+        statusCode: 500,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           success: false,
           error: 'GitHub token not configured'
-        }),
-        {
-          status: 500,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      );
+        })
+      };
     }
 
     // Create issue title and body
@@ -71,29 +74,28 @@ _Submitted via feedback widget on ${new Date().toISOString()}_`;
 
     const issue = await response.json();
 
-    return new Response(
-      JSON.stringify({
+    return {
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
         success: true,
         issueUrl: issue.html_url,
         issueNumber: issue.number
-      }),
-      {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' }
-      }
-    );
+      })
+    };
 
   } catch (error) {
     console.error('Error creating GitHub issue:', error);
-    return new Response(
-      JSON.stringify({
+    return {
+      statusCode: 500,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error'
-      }),
-      {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' }
-      }
-    );
+      })
+    };
   }
 };
+
+export { handler };
+

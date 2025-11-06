@@ -25,6 +25,7 @@
     "starlight-openapi": "^0.19.1"
   },
   "devDependencies": {
+    "@netlify/functions": "^5.1.0",
     "@prettier/plugin-php": "^0.24.0"
   }
 }
