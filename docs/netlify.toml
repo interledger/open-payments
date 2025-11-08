@@ -1,0 +1,11 @@
+[build]
+  command = "pnpm build"
+  publish = "dist"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# Environment variables (set these in Netlify UI)
+# GITHUB_TOKEN = "your-github-personal-access-token"
+

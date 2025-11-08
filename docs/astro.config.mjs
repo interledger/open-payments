@@ -5,9 +5,12 @@ import starlightLinksValidator from 'starlight-links-validator'
 import starlightFullViewMode from 'starlight-fullview-mode'
 import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
+import netlify from '@astrojs/netlify';
 
 // https://astro.build/config
 export default defineConfig({
+  output: 'static',         
+  adapter: netlify(),       
   site: 'https://openpayments.dev',
   markdown: {
     remarkPlugins: [remarkMath],
@@ -31,7 +34,8 @@ export default defineConfig({
       ],
       components: {
         Header: './src/components/Header.astro',
-        PageSidebar: './src/components/PageSidebar.astro'
+        PageSidebar: './src/components/PageSidebar.astro',
+        Footer: "./src/components/Footer.astro",
       },
       customCss: [
         './node_modules/@interledger/docs-design-system/src/styles/teal-theme.css',
