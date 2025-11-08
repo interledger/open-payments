@@ -22,10 +22,10 @@
     "shiki": "3.8.0",
     "starlight-fullview-mode": "^0.2.3",
     "starlight-links-validator": "^0.17.0",
-    "starlight-openapi": "^0.19.1"
+    "starlight-openapi": "^0.19.1",
+    "@netlify/functions": "^5.1.0"
   },
   "devDependencies": {
-    "@netlify/functions": "^5.1.0",
     "@prettier/plugin-php": "^0.24.0"
   }
 }
