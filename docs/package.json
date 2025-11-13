@@ -12,7 +12,7 @@
   "dependencies": {
     "@astrojs/starlight": "^0.34.7",
     "@interledger/docs-design-system": "^0.10.0",
-    "astro": "5.11.1",
+    "astro": "5.15.6",
     "katex": "^0.16.22",
     "mermaid": "^11.8.1",
     "rehype-katex": "^7.0.1",
