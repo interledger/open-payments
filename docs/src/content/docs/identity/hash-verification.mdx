@@ -50,7 +50,7 @@ function verifyHash(
   authServerUrl,
   receivedHash
 ) {
-  const data = `${clientNonce}\n${interactNonce}\n${interactRef}\n${authServerUrl}/`
+  const data = `${clientNonce}\n${interactNonce}\n${interactRef}\n${authServerUrl}`
   const hash = createHash('sha-256').update(data).digest('base64')
 
   return hash === receivedHash
