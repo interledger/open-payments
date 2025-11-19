@@ -80,6 +80,9 @@ pnpm clean
 
 # install dependencies
 pnpm i
+
+# install `open-payments-specifications` submodule
+git submodule update --init
 ```
 
 ### Local Development
