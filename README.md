@@ -82,8 +82,7 @@ pnpm clean
 pnpm i
 
 # install `open-payments-specifications` submodule
-git submodule init
-git submodule update
+git submodule update --init
 ```
 
 ### Local Development
