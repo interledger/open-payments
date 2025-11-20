@@ -24,9 +24,9 @@
     "includes": [
       "**/*.astro",
       "**/*.{js,jsx,ts,tsx,json}",
-      "!**/node_modules/**",
-      "!**/dist/**",
-      "!**/.astro/**"
+      "!**/node_modules",
+      "!**/dist",
+      "!**/.astro"
     ]
   },
   "overrides": [
@@ -34,6 +34,14 @@
       "includes": ["**/*.astro"],
       "formatter": {
         "enabled": true
+      },
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedImports": "off",
+            "noUnusedVariables": "off"
+          }
+        }
       }
     }
   ]

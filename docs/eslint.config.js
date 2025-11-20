@@ -1,8 +1,8 @@
-import eslintPluginAstro from 'eslint-plugin-astro'
+import js from '@eslint/js'
 import tseslintPlugin from '@typescript-eslint/eslint-plugin'
 import tsparser from '@typescript-eslint/parser'
 import prettierConfig from 'eslint-config-prettier'
-import js from '@eslint/js'
+import eslintPluginAstro from 'eslint-plugin-astro'
 import globals from 'globals'
 
 export default [

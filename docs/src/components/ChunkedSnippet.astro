@@ -1,11 +1,13 @@
 ---
+import { Code } from 'astro:components'
+import { execSync } from 'node:child_process'
 import fs from 'node:fs/promises'
 import path from 'node:path'
-import { execSync } from 'node:child_process'
-import prettier from 'prettier'
-import { Code } from 'astro:components'
 import { CodeBlock } from '@interledger/docs-design-system'
+import prettier from 'prettier'
+
 const { source, chunk, l } = Astro.props
+
 import * as phpPlugin from '@prettier/plugin-php'
 
 const gitRoot = execSync('git rev-parse --show-toplevel').toString().trim()
@@ -81,8 +83,8 @@ for (const delimiter of delimiterArray) {
 }
 
 // Handle zero-index situation and format code nicely
-const chunkNumber = parseInt(chunk) - 1
-let rawOutput = codeChunkArray[chunkNumber]?.code_chunk
+const chunkNumber = parseInt(chunk, 10) - 1
+const rawOutput = codeChunkArray[chunkNumber]?.code_chunk
 interface LanguageConfig {
   parser: string
   lang: string
