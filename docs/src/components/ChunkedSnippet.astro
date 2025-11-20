@@ -1,93 +1,93 @@
 ---
-import  fs  from "node:fs/promises"
-import path from "node:path"
-import { execSync } from 'node:child_process';
-import prettier from 'prettier';
-import { Code } from 'astro:components';
+import fs from 'node:fs/promises'
+import path from 'node:path'
+import { execSync } from 'node:child_process'
+import prettier from 'prettier'
+import { Code } from 'astro:components'
 import { CodeBlock } from '@interledger/docs-design-system'
-const {source, chunk, l} = Astro.props;
+const { source, chunk, l } = Astro.props
 import * as phpPlugin from '@prettier/plugin-php'
 
-const gitRoot = execSync('git rev-parse --show-toplevel').toString().trim();
-const snippetsPath = path.join(gitRoot, 'snippets');
+const gitRoot = execSync('git rev-parse --show-toplevel').toString().trim()
+const snippetsPath = path.join(gitRoot, 'snippets')
 
 const getChunk = async () => {
   if (source.startsWith('http')) {
-    const data = await fetch(source).then((response) => response.text());
-    return data;
+    const data = await fetch(source).then((response) => response.text())
+    return data
   }
 
-  const data = await fs.readFile(path.join(snippetsPath, l, source), {encoding: "utf8"})
+  const data = await fs.readFile(path.join(snippetsPath, l, source), { encoding: 'utf8' })
   return data
 }
 
 const code = await getChunk()
 
 // Split the text into an array of lines
-const lines = code.split('\n');
+const lines = code.split('\n')
 
 // Initialize an array to store the delimiter objects
-const delimiterArray = [];
+const delimiterArray = []
 
 // Iterate through the lines, extract "//@!" lines and format them into objects
-let startLine = null;
+let startLine = null
 for (let i = 0; i < lines.length; i++) {
-  if (lines[i].trim().startsWith("//@!")) {
+  if (lines[i].trim().startsWith('//@!')) {
     if (startLine !== null) {
       // Extract the entire "start_line" and the "title"
-      const startLineMatch = startLine.match(/\/\/@!(.*?)\s+\|\s+title=(.*)/);
+      const startLineMatch = startLine.match(/\/\/@!(.*?)\s+\|\s+title=(.*)/)
       if (startLineMatch) {
-        const entireStartLine = startLineMatch[0];
-        const title = startLineMatch[2];
-        
+        const entireStartLine = startLineMatch[0]
+        const title = startLineMatch[2]
+
         // Create an object with "start_line," "title," and "end_line" keys
         const delimiterObject = {
           start_line: entireStartLine,
           title: title,
           end_line: lines[i]
-        };
-        delimiterArray.push(delimiterObject);
+        }
+        delimiterArray.push(delimiterObject)
       }
-      startLine = null;
+      startLine = null
     } else {
-      startLine = lines[i];
+      startLine = lines[i]
     }
   }
 }
 
 // Initialize an array to store the extracted chunks
-const codeChunkArray = [];
+const codeChunkArray = []
 
 // Iterate through the delimiterArray and extract code chunks and titles
 for (const delimiter of delimiterArray) {
-  const startLine = delimiter.start_line;
-  const endLine = delimiter.end_line;
-  
+  const startLine = delimiter.start_line
+  const endLine = delimiter.end_line
+
   // Find the indices of the start and end lines in your longer text file
-  const startIndex = code.indexOf(startLine);
-  const endIndex = code.indexOf(endLine);
+  const startIndex = code.indexOf(startLine)
+  const endIndex = code.indexOf(endLine)
 
   if (startIndex !== -1 && endIndex !== -1) {
     // Preserve leading indentation and only strip a single leading newline and trailing whitespace
-    let codeChunk = code.slice(startIndex + startLine.length, endIndex);
-    if (codeChunk.startsWith('\n')) codeChunk = codeChunk.slice(1);
-    codeChunk = codeChunk.replace(/\s+$/,'');
-    
+    let codeChunk = code.slice(startIndex + startLine.length, endIndex)
+    if (codeChunk.startsWith('\n')) codeChunk = codeChunk.slice(1)
+    codeChunk = codeChunk.replace(/\s+$/, '')
+
     codeChunkArray.push({
       code_chunk: codeChunk,
       title: delimiter.title
-    });
+    })
   }
 }
 
 // Handle zero-index situation and format code nicely
-const chunkNumber = parseInt(chunk) - 1;
-let rawOutput = codeChunkArray[chunkNumber]?.code_chunk;
+const chunkNumber = parseInt(chunk) - 1
+let rawOutput = codeChunkArray[chunkNumber]?.code_chunk
 interface LanguageConfig {
-  parser: string;
-  lang: string;
-  plugins: any[];
-};
+  parser: string
+  lang: string
+  plugins: unknown[]
+}
 
 const languageConfig: Record<string, LanguageConfig> = {
   '.php': {
@@ -105,20 +105,18 @@ const languageConfig: Record<string, LanguageConfig> = {
     lang: 'rs',
     plugins: []
   }
-};
+}
 
 const getLanguageConfig = (url: string): LanguageConfig | null => {
   const ext = Object.keys(languageConfig).find((key) => url.endsWith(key))
-  return ext
-    ? languageConfig[ext]
-    : null
-};
+  return ext ? languageConfig[ext] : null
+}
 
 const { parser, lang, plugins } = getLanguageConfig(source) ?? {
   parser: '',
   lang: '',
-  plugins: [],
-};
+  plugins: []
+}
 
 // Strips the smallest common leading indentation from all lines
 const dedentBlock = (text: string): string => {
@@ -126,20 +124,13 @@ const dedentBlock = (text: string): string => {
   const lines = text.split('\n')
   const nonEmpty = lines.filter((l) => l.trim().length > 0)
   if (nonEmpty.length === 0) return text
-  const indents = nonEmpty.map((l) => (l.match(/^(\s*)/)?.[1].length ?? 0))
+  const indents = nonEmpty.map((l) => l.match(/^(\s*)/)?.[1].length ?? 0)
   const minIndent = Math.min(...indents)
   if (minIndent === 0) return text
-  return lines
-    .map((l) => (l.length >= minIndent ? l.slice(minIndent) : l.trimStart()))
-    .join('\n')
+  return lines.map((l) => (l.length >= minIndent ? l.slice(minIndent) : l.trimStart())).join('\n')
 }
 
-const formatByLanguage = async (
-  text: string,
-  lang: string,
-  parser: string,
-  plugins: any[]
-) => {
+const formatByLanguage = async (text: string, lang: string, parser: string, plugins: unknown[]) => {
   if (lang === 'php') {
     // The PHP Prettier plugin requires the <?php opening delimiter for formatting
     const input = text.trim().startsWith('<?php') ? text : `<?php\n${text}`
@@ -155,11 +146,12 @@ const formatByLanguage = async (
   return text
 }
 
-const output = (!rawOutput || !lang)
-  ? 'Code snippet not found.'
-  : await formatByLanguage(rawOutput, lang, parser, plugins)
+const output =
+  !rawOutput || !lang
+    ? 'Code snippet not found.'
+    : await formatByLanguage(rawOutput, lang, parser, plugins)
 
-const codeBlockTitle = codeChunkArray[chunkNumber]?.title;
+const codeBlockTitle = codeChunkArray[chunkNumber]?.title
 ---
 
 <CodeBlock title={codeBlockTitle} class="chunked-snippet">

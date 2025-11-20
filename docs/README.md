@@ -30,6 +30,17 @@ $ pnpm build
 
 This command generates static content into the build directory and can be served using any static contents hosting service.
 
+### Code Quality
+
+This project uses ESLint and Prettier to maintain consistent code style. Before submitting changes, ensure your code is properly formatted and passes linting checks.
+
+**Commands:**
+
+- Run `pnpm format` (from the `docs` folder) to format code and fix linting issues
+- Run `pnpm lint` (from the `docs` folder) to check formatting and linting
+
+**Note:** The CI pipeline will automatically check formatting and linting on pull requests. Make sure to run `pnpm format` before submitting your PR to avoid CI failures.
+
 ## Editing Content
 
 Starlight looks for `.md` or `.mdx` files in the `src/content/docs/` directory. Each file is exposed as a route based on its file name. Due to the nature of how Starlight deals with content and their generated URLs, all docs content lives in `/src/content/docs/`. For example, the home page of the documentation lives within the `/src/content/docs/` folder and is rendered at openpayments.dev, not openpayments.dev/docs.

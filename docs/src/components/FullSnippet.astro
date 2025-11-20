@@ -1,18 +1,19 @@
 ---
-import prettier from 'prettier';
-import { Code } from 'astro:components';
-const {source} = Astro.props;
+import { Code } from 'astro:components'
+import prettier from 'prettier'
+
+const { source } = Astro.props
 
 const getApiData = async () => {
-  const data = await fetch(source).then((response) => response.text());
-  return data;
-};
-const code = await getApiData();
+  const data = await fetch(source).then((response) => response.text())
+  return data
+}
+const code = await getApiData()
 
 const output = await prettier.format(code, {
   parser: 'typescript',
-  tabWidth: 2,
-});
+  tabWidth: 2
+})
 ---
 
 <Code code={output} lang="ts" theme="css-variables" />

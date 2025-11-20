@@ -1,0 +1,23 @@
+{
+  "semi": false,
+  "singleQuote": true,
+  "jsxSingleQuote": true,
+  "trailingComma": "none",
+  "embeddedLanguageFormatting": "off",
+  "plugins": ["@prettier/plugin-php"],
+  "overrides": [
+    {
+      "files": "*.md",
+      "options": {
+        "proseWrap": "preserve"
+      }
+    },
+    {
+      "files": "*.mdx",
+      "options": {
+        "parser": "mdx",
+        "proseWrap": "preserve"
+      }
+    }
+  ]
+}
