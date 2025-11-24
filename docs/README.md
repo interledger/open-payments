@@ -11,13 +11,13 @@ This website is built with [Starlight](https://starlight.astro.build/), a docume
 - Make sure all the dependencies for the website are installed. Because this is a monorepo, you should run the following command in the root of the project folder:
 
 ```sh
-$ pnpm i
+pnpm i
 ```
 
 - Run the dev server from the /docs folder:
 
 ```sh
-$ pnpm start
+pnpm start
 ```
 
 This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
@@ -25,21 +25,27 @@ This command starts a local development server and opens up a browser window. Mo
 - Build the site, again, this must be run from the /docs folder:
 
 ```sh
-$ pnpm build
+pnpm build
 ```
 
 This command generates static content into the build directory and can be served using any static contents hosting service.
 
 ### Code Quality
 
-This project uses ESLint and Prettier to maintain consistent code style. Before submitting changes, ensure your code is properly formatted and passes linting checks.
+This project uses [Biome](https://biomejs.dev/), ESLint, and Prettier to keep the codebase consistent. Biome handles most JS/TS/JSON linting and formatting, while Prettier covers markdown content and ESLint enforces Astro/TypeScript-specific rules. Before submitting changes, ensure your code is properly formatted and passes linting checks.
 
-**Commands:**
+**Commands (run from the `docs` folder):**
 
-- Run `pnpm format` (from the `docs` folder) to format code and fix linting issues
-- Run `pnpm lint` (from the `docs` folder) to check formatting and linting
+- `pnpm format` &mdash; runs `biome format --write`, `prettier --write` for markdown, and `eslint --fix`
+- `pnpm lint` &mdash; runs `biome check`, `prettier --check`, and `eslint`
 
-**Note:** The CI pipeline will automatically check formatting and linting on pull requests. Make sure to run `pnpm format` before submitting your PR to avoid CI failures.
+**Biome quick reference:**
+
+- Configuration lives in `docs/biome.json`
+- To inspect only certain files you can run Biome directly, e.g. `pnpm biome format --write src/content/docs`
+- Biome uses the same ignore patterns as `.gitignore`, so be sure to add new files there if needed
+
+**Note:** The CI pipeline automatically runs the `lint` script on pull requests. Run `pnpm format` locally before opening a PR to avoid CI failures.
 
 ## Editing Content
 
@@ -101,7 +107,7 @@ The available shared components are documented at our [documentation style guide
 
    Use the `<FullSnippet>` component within your content like so:
 
-   ```
+   ```astro
    <FullSnippet source='https://raw.githubusercontent.com/interledger/open-payments-snippets/main/incoming-payment/incoming-payment-create.ts' />
    ```
 
@@ -117,7 +123,7 @@ The available shared components are documented at our [documentation style guide
 
    Use the `<ChunkedSnippet>` component within your content like so:
 
-   ```
+   ```astro
    <ChunkedSnippet
      source='https://raw.githubusercontent.com/huijing/filerepo/gh-pages/incoming-grant.ts'
      chunk='1'
