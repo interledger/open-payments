@@ -24,10 +24,16 @@ const client = await createAuthenticatedClient({
 });
 //@! end chunk 2
 
-//@! start chunk 3 | title=Create quote
+//@! start chunk 3 | title=Get wallet address information
+const walletAddress = await client.walletAddress.get({
+    url: WALLET_ADDRESS,
+});
+//@! end chunk 3
+
+//@! start chunk 4 | title=Create quote
 const quote = await client.quote.create(
     {
-        url: new URL(WALLET_ADDRESS).origin,
+        url: walletAddress.resourceServer,
         accessToken: QUOTE_ACCESS_TOKEN,
     },
     {
@@ -36,8 +42,8 @@ const quote = await client.quote.create(
         receiver: INCOMING_PAYMENT_URL,
     },
 );
-//@! end chunk 3
-
-//@! start chunk 4 | title=Output
-console.log("QUOTE_URL =", quote.id);
 //@! end chunk 4
+
+//@! start chunk 5 | title=Output
+console.log("QUOTE_URL =", quote.id);
+//@! end chunk 5
