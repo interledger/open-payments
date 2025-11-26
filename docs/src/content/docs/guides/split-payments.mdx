@@ -67,6 +67,19 @@ Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wall
  let platform_wallet_address = client.wallet_address().get("https://coolwallet.example.com/platform").await?;
  ```
  </TabItem>
+ <TabItem label='PHP' icon='seti:php'>
+ ```php wrap
+  $customerWalletAddress = $client->walletAddress()->get([
+    'url' => 'https://cloudninebank.example.com/customer'
+  ]);
+  $merchantWalletAddress = $client->walletAddress()->get([
+    'url' => 'https://happylifebank.example.com/merchant'
+  ]);
+  $platformWalletAddress = $client->walletAddress()->get([
+    'url' => 'https://coolwallet.example.com/platform'
+  ]);
+```
+</TabItem>
 </Tabs>
 
 <details>
@@ -148,6 +161,42 @@ If you and the merchant use the same account servicing entity, and as a result, 
    .await?;
  ```
  </TabItem>
+  <TabItem label='PHP' icon='seti:php'>
+  ```php wrap
+  // Merchant
+  $merchantIncomingPaymentGrant = $client->grant()->request(
+    [
+      'url' => $merchantWalletAddress->authServer
+    ],
+    [
+      'access_token' => [
+        'access' => [
+          [
+            'type' => 'incoming-payment',
+            'actions' => ['create']
+          ]
+        ]
+      ]
+    ]
+  );
+  // Platform
+  $platformIncomingPaymentGrant = $client->grant()->request(
+    [
+      'url' => $platformWalletAddress->authServer
+    ],
+    [
+      'access_token' => [
+        'access' => [
+          [
+            'type' => 'incoming-payment',
+            'actions' => ['create']
+          ]
+        ]
+      ]
+    ]
+  );
+  ```
+  </TabItem>
 </Tabs>
 
 <details>
@@ -246,6 +295,40 @@ Remember that the merchant is receiving 99% of the payment (\$99.00 or `9900`) w
    .await?;
  ```
  </TabItem>
+  <TabItem label='PHP' icon='seti:php'>
+  ```php wrap
+  // Merchant
+  $merchantIncomingPayment = $client->incomingPayment()->create(
+    [
+      'url' => $merchantWalletAddress->resourceServer,
+      'accessToken' => $merchantIncomingPaymentGrant->access_token->value
+    ],
+    [
+      'walletAddress' => $merchantWalletAddress->id,
+      'incomingAmount' => [
+        'value' => '9900',
+        'assetCode' => 'USD',
+        'assetScale' => 2
+      ]
+    ]
+  );
+  // Platform
+  $platformIncomingPayment = $client->incomingPayment()->create(
+    [
+      'url' => $platformWalletAddress->resourceServer,
+      'accessToken' => $platformIncomingPaymentGrant->access_token->value
+    ],
+    [
+      'walletAddress' => $platformWalletAddress->id,
+      'incomingAmount' => [
+        'value' => '100',
+        'assetCode' => 'USD',
+        'assetScale' => 2
+      ]
+    ]
+  );
+  ```
+  </TabItem>
 </Tabs>
 
 <details>
@@ -321,6 +404,25 @@ This call obtains an access token that allows your platform to request quote res
     ```
   </TabItem>
 
+  <TabItem label='PHP' icon='seti:php'>
+  ```php wrap
+    $customerQuoteGrant = $client->grant()->request(
+      [
+        'url' => $customerWalletAddress->authServer
+      ],
+      [
+        'access_token' => [
+          'access' => [
+            [
+              'type' => 'quote',
+              'actions' => ['create']
+            ]
+          ]
+        ]
+      ]
+    );
+    ```
+  </TabItem>
 </Tabs>
 
 <details>
@@ -415,6 +517,34 @@ Next, call the <Badge text="POST" variant="success" /> Create Quote API again an
    .await?;
  ```
  </TabItem>
+  <TabItem label='PHP' icon='seti:php'>
+  ```php wrap
+  // Merchant
+  $merchantQuote = $client->quote()->create(
+    [
+      'url' => $customerWalletAddress->resourceServer,
+      'accessToken' => $customerQuoteGrant->access_token->value
+    ],
+    [
+      'method' => 'ilp',
+      'walletAddress' => $customerWalletAddress->id,
+      'receiver' => $merchantIncomingPayment->id
+    ]
+  );
+  // Platform
+  $platformQuote = $client->quote()->create(
+    [
+      'url' => $customerWalletAddress->resourceServer,
+      'accessToken' => $customerQuoteGrant->access_token->value
+    ],
+    [
+      'method' => 'ilp',
+      'walletAddress' => $customerWalletAddress->id,
+      'receiver' => $platformIncomingPayment->id
+    ]
+  );
+  ```
+  </TabItem>
 </Tabs>
 
 Each response returns a `receiveAmount`, a `debitAmount`, and other required information.
@@ -543,6 +673,43 @@ This call obtains an access token that allows your platform to request outgoing 
    .await?;
  ```
  </TabItem>
+  <TabItem label='PHP' icon='seti:php'>
+  ```php wrap
+  $combinedQuoteAmount = bcadd($merchantQuote->debitAmount->value, $platformQuote->debitAmount->value);
+  
+  $pendingCustomerOutgoingPaymentGrant = $client->grant()->request(
+    [
+      'url' => $customerWalletAddress->authServer
+    ],
+    [
+      'access_token' => [
+        'access' => [
+          [
+            'identifier' => $customerWalletAddress->id,
+            'type' => 'outgoing-payment',
+            'actions' => ['create'],
+            'limits' => [
+              'debitAmount' => [
+                'assetCode' => 'USD',
+                'assetScale' => 2,
+                'value' => $combinedQuoteAmount
+              ]
+            ]
+          ]
+        ]
+      ],
+      'interact' => [
+        'start' => ['redirect'],
+        'finish' => [
+          'method' => 'redirect',
+          'uri' => 'https://paymentplatform.example/finish/{...}', // where to redirect the customer after they've completed interaction
+          'nonce' => 'NONCE'
+        ]
+      ]
+    ]
+  );
+  ```
+  </TabItem>
 </Tabs>
 
 <details>
@@ -614,6 +781,19 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
    .await?;
  ```
  </TabItem>
+ <TabItem label='PHP' icon='seti:php'>
+ ```php wrap
+    $customerOutgoingPaymentGrant = $client->grant()->continue(
+      [
+        'url' => $pendingCustomerOutgoingPaymentGrant->continue->uri,
+        'accessToken' => $pendingCustomerOutgoingPaymentGrant->continue->access_token->value
+      ],
+      [
+        'interact_ref' => $interactRef
+      ]
+    );
+    ```
+  </TabItem>
 </Tabs>
 
 <details>
@@ -708,6 +888,32 @@ Use the access token returned in Step 5 that's associated with the merchant to c
    .await?;
  ```
  </TabItem>
+  <TabItem label='PHP' icon='seti:php'>
+  ```php wrap
+  // Merchant
+  $customerOutgoingPaymentToMerchant = $client->outgoingPayment()->create(
+    [
+      'url' => $customerWalletAddress->resourceServer,
+      'accessToken' => $customerOutgoingPaymentGrant->access_token->value
+    ],
+    [
+      'walletAddress' => $customerWalletAddress->id,
+      'quoteId' => $merchantQuote->id
+    ]
+  );
+  // Platform
+  $customerOutgoingPaymentToPlatform = $client->outgoingPayment()->create(
+    [
+      'url' => $customerWalletAddress->resourceServer,
+      'accessToken' => $customerOutgoingPaymentGrant->access_token->value
+    ],
+    [
+      'walletAddress' => $customerWalletAddress->id,
+      'quoteId' => $platformQuote->id
+    ]
+  );
+  ```
+  </TabItem>
 </Tabs>
 
 <details>
