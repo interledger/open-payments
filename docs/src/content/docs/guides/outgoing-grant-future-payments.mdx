@@ -49,6 +49,13 @@ Let's assume your user saved their wallet address in their account profile when 
  let user_wallet_address = client.wallet_address().get("https://cloudninebank.example.com/user").await?;
  ```
  </TabItem>
+ <TabItem label='PHP' icon='seti:php'>
+  ```php wrap
+  $userWalletAddress = $client->walletAddress()->get([
+    'url' => 'https://cloudninebank.example.com/user'
+  ]);
+  ```
+ </TabItem>
 </Tabs>
 
 <details>
@@ -134,6 +141,43 @@ Remember, your user wants to send payments of up to $100 CAD a month for three m
    .await?;
  ```
  </TabItem>
+  <TabItem label='PHP' icon='seti:php'>
+    ```php wrap
+    $grant = $client->grant()->request(
+      [
+        'url' => $userWalletAddress->authServer,
+      ],
+      [
+        'access_token' => [
+          'access' => [
+            [
+              'identifier' => $userWalletAddress->id,
+              'type' => 'outgoing-payment',
+              'actions' => ['read', 'create'],
+              'limits' => [
+                'interval' => 'R3/2025-05-20T13:00:00Z/P1M',
+                'debitAmount' => [
+                  'assetCode' => 'CAD',
+                  'assetScale' => 2,
+                  'value' => '10000',
+                ],
+              ],
+            ],
+          ],
+        ],
+        'client' => $userWalletAddress->id,
+        'interact' => [
+          'start' => ['redirect'],
+          'finish' => [
+            'method' => 'redirect',
+            'uri' => 'https://paymentplatform.example/finish/{...}', // where to redirect the user to after they've completed the interaction
+            'nonce' => NONCE,
+          ],
+        ],
+      ],
+    );
+    ```
+  </TabItem>
 </Tabs>
 
 <details>
@@ -223,6 +267,19 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
       Some(&continue_field.access_token.value),
     )
     .await?;
+  ```
+  </TabItem>
+  <TabItem label='PHP' icon='seti:php'>
+  ```php wrap
+  $userOutgoingPaymentGrant = $client->grant()->continue(
+    [
+      'accessToken' => $pendingUserOutgoingPaymentGrant->continue->access_token->value,
+      'url' => $pendingUserOutgoingPaymentGrant->continue->uri,
+    ],
+    [
+      'interact_ref' => $interactRef,
+    ],
+  );
   ```
   </TabItem>
 </Tabs>
