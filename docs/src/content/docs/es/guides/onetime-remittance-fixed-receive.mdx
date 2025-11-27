@@ -39,12 +39,30 @@ Las tres partes que intervienen en este caso son las siguientes:
 
 ## Puntos finales
 
-- <Badge text="GET" variant="note" /> <LinkOut href='https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/'>Get Wallet Address</LinkOut>
-- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-request/'>Grant Request</LinkOut>
-- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-incoming-payment/'>Create Incoming Payment</LinkOut>
-- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-quote/'>Create a Quote</LinkOut>
-- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-continue/'>Grant Continuation Request</LinkOut>
-- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment/'>Create an Outgoing Payment</LinkOut>
+- <Badge text="GET" variant="note" />
+  <LinkOut href="https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/">
+    Get Wallet Address
+  </LinkOut>
+- <Badge text="POST" variant="success" />
+  <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-request/">
+    Grant Request
+  </LinkOut>
+- <Badge text="POST" variant="success" />
+  <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-incoming-payment/">
+    Create Incoming Payment
+  </LinkOut>
+- <Badge text="POST" variant="success" />
+  <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-quote/">
+    Create a Quote
+  </LinkOut>
+- <Badge text="POST" variant="success" />
+  <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-continue/">
+    Grant Continuation Request
+  </LinkOut>
+- <Badge text="POST" variant="success" />
+  <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment/">
+    Create an Outgoing Payment
+  </LinkOut>
 
 ## Pasos
 
@@ -75,11 +93,11 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del remite
 
 ```json wrap
 {
-    "id": "https://cloudninebank.example.com/sender",
-    "assetCode": "USD",
-    "assetScale": 2,
-    "authServer": "https://auth.cloudninebank.example.com/",
-    "resourceServer": "https://cloudninebank.example.com/op"
+  "id": "https://cloudninebank.example.com/sender",
+  "assetCode": "USD",
+  "assetScale": 2,
+  "authServer": "https://auth.cloudninebank.example.com/",
+  "resourceServer": "https://cloudninebank.example.com/op"
 }
 ```
 
@@ -87,11 +105,11 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del destin
 
 ```json wrap
 {
-    "id": "https://happylifebank.example.com/recipient",
-    "assetCode": "MXN",
-    "assetScale": 2,
-    "authServer": "https://auth.happylifebank.example.com/",
-    "resourceServer": "https://happylifebank.example.com/op"
+  "id": "https://happylifebank.example.com/recipient",
+  "assetCode": "MXN",
+  "assetScale": 2,
+  "authServer": "https://auth.happylifebank.example.com/",
+  "resourceServer": "https://happylifebank.example.com/op"
 }
 ```
 
