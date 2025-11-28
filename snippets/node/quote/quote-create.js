@@ -20,9 +20,13 @@ const client = await createAuthenticatedClient({
     keyId: KEY_ID,
 });
 
+const walletAddress = await client.walletAddress.get({
+    url: WALLET_ADDRESS,
+});
+
 const quote = await client.quote.create(
     {
-        url: new URL(WALLET_ADDRESS).origin,
+        url: walletAddress.resourceServer,
         accessToken: QUOTE_ACCESS_TOKEN,
     },
     {

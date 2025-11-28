@@ -33,7 +33,7 @@ const walletAddress = await client.walletAddress.get({
 //@! start chunk 4 | title=Create quote with debit amount
 const quote = await client.quote.create(
     {
-        url: new URL(WALLET_ADDRESS).origin,
+        url: walletAddress.resourceServer,
         accessToken: QUOTE_ACCESS_TOKEN,
     },
     {

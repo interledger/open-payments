@@ -19,9 +19,13 @@ const client = await createAuthenticatedClient({
     keyId: KEY_ID,
 });
 
+const walletAddress = await client.walletAddress.get({
+    url: WALLET_ADDRESS,
+});
+
 const incomingPayment = await client.incomingPayment.create(
     {
-        url: new URL(WALLET_ADDRESS).origin,
+        url: walletAddress.resourceServer,
         accessToken: INCOMING_PAYMENT_ACCESS_TOKEN,
     },
     {
