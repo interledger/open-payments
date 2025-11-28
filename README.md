@@ -21,13 +21,14 @@ The Open Payments APIs are a collection of three sub-systems:
 - A **resource server** which exposes APIs for performing functions against the underlying accounts
 - A **authorisation server** which exposes APIs compliant with the [GNAP](https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol) standard for getting grants to access the resource server APIs
 
-The three Open Payments OpenAPI specifications are found in the [open-payments-specifications](https://github.com/interledger/open-payments-specifications) repository, while this repository hosts the documentation for the APIs, published on [openpayments.dev](https://openpayments.dev). 
+The three Open Payments OpenAPI specifications are found in the [open-payments-specifications](https://github.com/interledger/open-payments-specifications) repository, while this repository hosts the documentation for the APIs, published on [openpayments.dev](https://openpayments.dev).
 
 ### Open Payments SDKs
 
 The Open Payments SDKs provide developers with pre-built functions that simplify interactions with the Open Payments API.
 
 Currently, we offer:
+
 - [TypeScript/NodeJS SDK](https://github.com/interledger/open-payments-node/tree/main/packages/open-payments)
 - [PHP SDK](https://github.com/interledger/open-payments-php)
 - [Rust SDK](https://github.com/interledger/open-payments-rust)
