@@ -39,12 +39,24 @@ The three parties involved in this scenario are:
 
 ## Endpoints
 
-- <Badge text="GET" variant="note" /> <LinkOut href='https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/'>Get Wallet Address</LinkOut>
-- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-request/'>Grant Request</LinkOut>
-- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-incoming-payment/'>Create Incoming Payment</LinkOut>
-- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-quote/'>Create a Quote</LinkOut>
-- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-continue/'>Grant Continuation Request</LinkOut>
-- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment/'>Create an Outgoing Payment</LinkOut>
+- <Badge text="GET" variant="note" />
+  {/* prettier-ignore */}
+  <LinkOut href="https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/">Get Wallet Address</LinkOut>
+- <Badge text="POST" variant="success" />
+  {/* prettier-ignore */}
+  <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-request/">Grant Request</LinkOut>
+- <Badge text="POST" variant="success" />
+  {/* prettier-ignore */}
+  <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-incoming-payment/">Create Incoming Payment</LinkOut>
+- <Badge text="POST" variant="success" />
+  {/* prettier-ignore */}
+  <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-quote/">Create a Quote</LinkOut>
+- <Badge text="POST" variant="success" />
+  {/* prettier-ignore */}
+  <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-continue/">Grant Continuation Request</LinkOut>
+- <Badge text="POST" variant="success" />
+  {/* prettier-ignore */}
+  <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment/">Create an Outgoing Payment</LinkOut>
 
 ## Steps
 
@@ -91,11 +103,11 @@ The following example shows a response from the sender's wallet provider.
 
 ```json wrap
 {
-    "id": "https://cloudninebank.example.com/sender",
-    "assetCode": "USD",
-    "assetScale": 2,
-    "authServer": "https://auth.cloudninebank.example.com/",
-    "resourceServer": "https://cloudninebank.example.com/op"
+  "id": "https://cloudninebank.example.com/sender",
+  "assetCode": "USD",
+  "assetScale": 2,
+  "authServer": "https://auth.cloudninebank.example.com/",
+  "resourceServer": "https://cloudninebank.example.com/op"
 }
 ```
 
@@ -103,11 +115,11 @@ The following example shows a response from the recipient's wallet provider.
 
 ```json wrap
 {
-    "id": "https://happylifebank.example.com/recipient",
-    "assetCode": "MXN",
-    "assetScale": 2,
-    "authServer": "https://auth.happylifebank.example.com/",
-    "resourceServer": "https://happylifebank.example.com/op"
+  "id": "https://happylifebank.example.com/recipient",
+  "assetCode": "MXN",
+  "assetScale": 2,
+  "authServer": "https://auth.happylifebank.example.com/",
+  "resourceServer": "https://happylifebank.example.com/op"
 }
 ```
 

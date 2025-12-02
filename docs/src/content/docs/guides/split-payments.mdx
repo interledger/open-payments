@@ -30,11 +30,21 @@ The three parties involved in the transaction are the:
 
 ## Endpoints
 
-- <Badge text="GET" variant="note" /> <LinkOut href='https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/'>Get Wallet Address</LinkOut>
-- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-request/'>Grant Request</LinkOut>
-- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-incoming-payment/'>Create Incoming Payment</LinkOut>
-- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-quote/'>Create a Quote</LinkOut>
-- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment/'>Create an Outgoing Payment</LinkOut>
+- <Badge text="GET" variant="note" />
+  {/* prettier-ignore */}
+  <LinkOut href="https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/">Get Wallet Address</LinkOut>
+- <Badge text="POST" variant="success" />
+  {/* prettier-ignore */}
+  <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-request/">Grant Request</LinkOut>
+- <Badge text="POST" variant="success" />
+  {/* prettier-ignore */}
+  <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-incoming-payment/">Create Incoming Payment</LinkOut>
+- <Badge text="POST" variant="success" />
+  {/* prettier-ignore */}
+  <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-quote/">Create a Quote</LinkOut>
+- <Badge text="POST" variant="success" />
+  {/* prettier-ignore */}
+  <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment/">Create an Outgoing Payment</LinkOut>
 
 ## Steps
 
@@ -584,7 +594,10 @@ Use the customer's `authServer` information received in Step 1 to call the <Badg
 
 This call obtains an access token that allows your platform to request outgoing payment resources be created on the customer's wallet account.
 
+:::note
+
 <InteractionReq />
+:::
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>

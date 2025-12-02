@@ -22,9 +22,15 @@ En esta guía, usted asume el rol de desarrollador de una aplicación. La guía 
 
 ## Puntos finales
 
-- <Badge text="GET" variant="note" /> <LinkOut href='https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/'>Get Wallet Address</LinkOut>
-- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-request/'>Grant Request</LinkOut>
-- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-continue/'>Grant Continuation Request</LinkOut>
+- <Badge text="GET" variant="note" />
+  {/* prettier-ignore */}
+  <LinkOut href="https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/">Get Wallet Address</LinkOut>
+- <Badge text="POST" variant="success" />
+  {/* prettier-ignore */}
+  <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-request/">Grant Request</LinkOut>
+- <Badge text="POST" variant="success" />
+  {/* prettier-ignore */}
+  <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-continue/">Grant Continuation Request</LinkOut>
 
 ## Pasos
 
@@ -46,7 +52,10 @@ Supongamos que su usuario guardó su dirección de billetera en el perfil de su 
 
 Utilice la información del servidor de autorización recibida en el paso anterior para llamar a la [Grant Request API](/es/apis/auth-server/operations/post-request). El propósito de esta llamada consiste en obtener un token que permita que el cliente solicite la creación de recursos de pago saliente en la cuenta de la billetera de su usuario.
 
+:::note
+
 <InteractionReq />
+:::
 
 Además de los parámetros requeridos, en la solicitud incluya lo siguiente:
 

@@ -26,9 +26,15 @@ For this guide, you'll assume the role of an app developer. The guide explains h
 
 ## Endpoints
 
-- <Badge text="GET" variant="note" /> <LinkOut href='https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/'>Get Wallet Address</LinkOut>
-- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-request/'>Grant Request</LinkOut>
-- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-continue/'>Grant Continuation Request</LinkOut>
+- <Badge text="GET" variant="note" />
+  {/* prettier-ignore */}
+  <LinkOut href="https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/">Get Wallet Address</LinkOut>
+- <Badge text="POST" variant="success" />
+  {/* prettier-ignore */}
+  <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-request/">Grant Request</LinkOut>
+- <Badge text="POST" variant="success" />
+  {/* prettier-ignore */}
+  <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-continue/">Grant Continuation Request</LinkOut>
 
 ## Steps
 
@@ -77,7 +83,10 @@ Use the authorization server information received in the previous step to call t
 
 This call obtains a token that allows your app to request outgoing payment resources be created on your user's wallet account.
 
+:::note
+
 <InteractionReq />
+:::
 
 Remember, your user wants to send payments of up to $100 CAD a month for three months. The amount resets each month and any unspent portions don't roll over.
 

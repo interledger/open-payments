@@ -28,11 +28,21 @@ Las tres partes que intervienen en la transacción son las siguientes:
 
 ## Puntos finales
 
-- <Badge text="GET" variant="note" /> <LinkOut href='https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/'>Get Wallet Address</LinkOut>
-- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/auth-server/operations/post-request/'>Grant Request</LinkOut>
-- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-incoming-payment/'>Create an Incoming Payment</LinkOut>
-- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-quote/'>Create a Quote</LinkOut>
-- <Badge text="POST" variant="success" /> <LinkOut href='https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment/'>Create an Outgoing Payment</LinkOut>
+- <Badge text="GET" variant="note" />
+  {/* prettier-ignore */}
+  <LinkOut href="https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/">Get Wallet Address</LinkOut>
+- <Badge text="POST" variant="success" />
+  {/* prettier-ignore */}
+  <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-request/">Grant Request</LinkOut>
+- <Badge text="POST" variant="success" />
+  {/* prettier-ignore */}
+  <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-incoming-payment/">Create an Incoming Payment</LinkOut>
+- <Badge text="POST" variant="success" />
+  {/* prettier-ignore */}
+  <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-quote/">Create a Quote</LinkOut>
+- <Badge text="POST" variant="success" />
+  {/* prettier-ignore */}
+  <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment/">Create an Outgoing Payment</LinkOut>
 
 ## Pasos
 
@@ -253,7 +263,10 @@ Utilice la información del consumidor `authServer` recibida en el paso 1 para l
 
 El propósito de esta llamada consiste en obtener un token de acceso que permita a su plataforma solicitar la creación de recursos de pago saliente en la cuenta de la billetera del consumidor.
 
+:::note
+
 <InteractionReq />
+:::
 
 Incluya lo siguiente en la solicitud, además de los parámetros requeridos:
 

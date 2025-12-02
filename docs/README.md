@@ -30,6 +30,29 @@ $ pnpm build
 
 This command generates static content into the build directory and can be served using any static contents hosting service.
 
+### 🧞 Commands
+
+All commands are run from the `/docs` directory (or with `pnpm --filter docs <command>` from the repo root):
+
+| Command                | Action                                           |
+| :--------------------- | :----------------------------------------------- |
+| `pnpm start`           | Starts local dev server at `localhost:1104`      |
+| `pnpm build`           | Build your production site to `./dist/`          |
+| `pnpm preview`         | Preview your build locally, before deploying     |
+| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
+| `pnpm astro -- --help` | Get help using the Astro CLI                     |
+| `pnpm format`          | Format code and fix linting issues               |
+| `pnpm lint`            | Check code formatting and linting                |
+
+### 🔍 Code Formatting
+
+This project uses [ESLint](https://eslint.org/) for code linting and [Prettier](https://prettier.io/) for code formatting. Before submitting a pull request, please ensure your code is properly formatted:
+
+1. **Fix issues**: Run `pnpm format` to automatically format code and fix linting issues.
+2. **Check before pushing**: Run `pnpm lint` to verify everything passes (CI will also run this).
+
+ESLint is configured to work with TypeScript and Astro files. The configuration extends recommended rules from ESLint, TypeScript ESLint, and Astro ESLint plugins, and integrates with Prettier to avoid conflicts.
+
 ## Editing Content
 
 Starlight looks for `.md` or `.mdx` files in the `src/content/docs/` directory. Each file is exposed as a route based on its file name. Due to the nature of how Starlight deals with content and their generated URLs, all docs content lives in `/src/content/docs/`. For example, the home page of the documentation lives within the `/src/content/docs/` folder and is rendered at openpayments.dev, not openpayments.dev/docs.
