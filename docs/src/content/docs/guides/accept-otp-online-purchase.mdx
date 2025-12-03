@@ -65,6 +65,7 @@ Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wall
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  
   ```ts wrap
   const customerWalletAddress = await client.walletAddress.get({
     url: 'https://cloudninebank.example.com/customer'
@@ -73,18 +74,22 @@ Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wall
     url: 'https://happylifebank.example.com/retailer'
   })
   ```
+
   </TabItem>
   <TabItem label='Rust' icon='seti:rust'>
+  
   ```rust wrap
   let sender_wallet_address = client.wallet_address().get("https://cloudninebank.example.com/customer").await?;
   let retailer_wallet_address = client.wallet_address().get("https://happylifebank.example.com/retailer").await?;
   ```
+
   </TabItem>
 </Tabs>
 
 <details>
 <summary>Example response</summary>
 The following is an example response from the customer's wallet provider. A similar response will be returned from the retailer's wallet provider.
+
 ```json wrap
 {
   "id": "https://cloudninebank.example.com/customer",
@@ -94,6 +99,7 @@ The following is an example response from the customer's wallet provider. A simi
   "resourceServer": "https://cloudninebank.example.com/op"
 }
 ```
+
 </details>
 
 ### 2. Request an incoming payment grant
@@ -104,27 +110,30 @@ This call obtains an access token that allows the client app to request an incom
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-  ```ts wrap
-  const retailerIncomingPaymentGrant = await client.grant.request(
-    {
-      url: retailerWalletAddress.authServer
-    },
-    {
-      access_token: {
-        access: [
-          {
-            type: 'incoming-payment',
-            actions: ['create'],
-          },
-        ],
-      },
-    },
-  );
-  ```
+
+```ts wrap
+const retailerIncomingPaymentGrant = await client.grant.request(
+  {
+    url: retailerWalletAddress.authServer
+  },
+  {
+    access_token: {
+      access: [
+        {
+          type: 'incoming-payment',
+          actions: ['create']
+        }
+      ]
+    }
+  }
+)
+```
+
   </TabItem>
   <TabItem label='Rust' icon='seti:rust'>
-  ```rust wrap
-  use open_payments::types::{AccessTokenRequest, AccessItem, IncomingPaymentAction, GrantRequest};
+
+```rust wrap
+use open_payments::types::{AccessTokenRequest, AccessItem, IncomingPaymentAction, GrantRequest};
 
 let incoming_access = AccessTokenRequest {
 access: vec![AccessItem::IncomingPayment { actions: vec![IncomingPaymentAction::Create], identifier: None }],
@@ -136,33 +145,35 @@ let retailer_incoming_payment_grant = client
 .request(&retailer_wallet_address.auth_server, &incoming_grant_request)
 .await?;
 
-````
+```
+
 </TabItem>
 </Tabs>
 
 <details>
 <summary>Example response</summary>
 The following is an example response from the retailer's wallet provider.
+
 ```json wrap
 {
-"access_token": {
-  "value": "...", // access token value for incoming payment grant
-  "manage": "https://auth.happylifebank.example.com/token/{...}", // management uri for access token
-  "access": [
-    {
-      "type": "incoming-payment",
-      "actions": ["create"]
-    }
-  ]
-},
-"continue": {
   "access_token": {
-    "value": "..." // access token for continuing the request
+    "value": "...", // access token value for incoming payment grant
+    "manage": "https://auth.happylifebank.example.com/token/{...}", // management uri for access token
+    "access": [
+      {
+        "type": "incoming-payment",
+        "actions": ["create"]
+      }
+    ]
   },
-  "uri": "https://auth.happylifebank.example.com/continue/{...}" // continuation request uri
+  "continue": {
+    "access_token": {
+      "value": "..." // access token for continuing the request
+    },
+    "uri": "https://auth.happylifebank.example.com/continue/{...}" // continuation request uri
+  }
 }
-}
-````
+```
 
 </details>
 
@@ -176,26 +187,29 @@ Remember that the full amount of the customer's purchase is $1,400 MXN.
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-  ```ts wrap
-  const retailerIncomingPayment = await.client.incomingPayment.create(
-    {
-      url: retailerWalletAddress.resourceServer,
-      accessToken: retailerIncomingPaymentGrant.access_token.value
-    },
-    {
-      walletAddress: retailerWalletAddress.id,
-      incomingAmount: {
-        value: '140000',
-        assetCode: 'MXN',
-        assetScale: 2
-      },
-    },
-  )
-  ```
+
+```ts wrap
+const retailerIncomingPayment = await.client.incomingPayment.create(
+  {
+    url: retailerWalletAddress.resourceServer,
+    accessToken: retailerIncomingPaymentGrant.access_token.value
+  },
+  {
+    walletAddress: retailerWalletAddress.id,
+    incomingAmount: {
+      value: '140000',
+      assetCode: 'MXN',
+      assetScale: 2
+    }
+  }
+)
+```
+
   </TabItem>
   <TabItem label='Rust' icon='seti:rust'>
-  ```rust wrap
-  use open_payments::types::{IncomingPaymentRequest, Amount};
+
+```rust wrap
+use open_payments::types::{IncomingPaymentRequest, Amount};
 
 let incoming_request = IncomingPaymentRequest {
 wallet_address: retailer_wallet_address.id.clone(),
@@ -213,38 +227,40 @@ Some(&retailer_incoming_payment_grant.access_token.value),
 )
 .await?;
 
-````
+```
+
 </TabItem>
 </Tabs>
 
 <details>
 <summary>Example response</summary>
 The following is an example response from the retailer's wallet provider.
+
 ```json wrap
 {
-"id": "https://happylifebank.example.com/incoming-payments/{...}",
-"walletAddress": "https://happylifebank.example.com/retailer",
-"incomingAmount": {
-  "value": "140000",
-  "assetCode": "MXN",
-  "assetScale": 2
-},
-"receivedAmount": {
-  "value": "0",
-  "assetCode": "MXN",
-  "assetScale": 2
-},
-"completed": false,
-"createdAt": "2025-03-12T23:20:50.52Z",
-"methods": [
-  {
-    "type": "ilp",
-    "ilpAddress": "...",
-    "sharedSecret": "..."
-  }
-]
+  "id": "https://happylifebank.example.com/incoming-payments/{...}",
+  "walletAddress": "https://happylifebank.example.com/retailer",
+  "incomingAmount": {
+    "value": "140000",
+    "assetCode": "MXN",
+    "assetScale": 2
+  },
+  "receivedAmount": {
+    "value": "0",
+    "assetCode": "MXN",
+    "assetScale": 2
+  },
+  "completed": false,
+  "createdAt": "2025-03-12T23:20:50.52Z",
+  "methods": [
+    {
+      "type": "ilp",
+      "ilpAddress": "...",
+      "sharedSecret": "..."
+    }
+  ]
 }
-````
+```
 
 </details>
 
@@ -256,27 +272,30 @@ This call obtains an access token that allows the client app to request a quote 
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-  ```ts wrap
-  const customerQuoteGrant = await client.grant.request(
-    {
-      url: customerWalletAddress.authServer
-    },
-    {
-      access_token: {
-        access: [
-          {
-            type: 'quote',
-            actions: ['create']
-          }
-        ]
-      }
+
+```ts wrap
+const customerQuoteGrant = await client.grant.request(
+  {
+    url: customerWalletAddress.authServer
+  },
+  {
+    access_token: {
+      access: [
+        {
+          type: 'quote',
+          actions: ['create']
+        }
+      ]
     }
-  )
-  ```
+  }
+)
+```
+
   </TabItem>
   <TabItem label='Rust' icon='seti:rust'>
-  ```rust wrap
-  use open_payments::types::{AccessTokenRequest, AccessItem, QuoteAction, GrantRequest};
+
+```rust wrap
+use open_payments::types::{AccessTokenRequest, AccessItem, QuoteAction, GrantRequest};
 
 let quote_access = AccessTokenRequest {
 access: vec![AccessItem::Quote { actions: vec![QuoteAction::Create] }],
@@ -287,33 +306,35 @@ let customer_quote_grant = client
 .request(&customer_wallet_address.auth_server, &quote_grant_request)
 .await?;
 
-````
+```
+
 </TabItem>
 </Tabs>
 
 <details>
 <summary>Example response</summary>
 The following is an example response from the customer's wallet provider.
+
 ```json wrap
 {
-"access_token": {
-  "value": "...", // access token value for quote grant
-  "manage": "https:/auth.cloudninebank.example.com/token/{...}", // management uri for access token
-  "access": [
-    {
-      "type": "quote",
-      "actions": ["create"]
-    }
-  ]
-},
-"continue": {
   "access_token": {
-    "value": "..." // access token for continuing the request
+    "value": "...", // access token value for quote grant
+    "manage": "https:/auth.cloudninebank.example.com/token/{...}", // management uri for access token
+    "access": [
+      {
+        "type": "quote",
+        "actions": ["create"]
+      }
+    ]
   },
-"uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
+  "continue": {
+    "access_token": {
+      "value": "..." // access token for continuing the request
+    },
+    "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
+  }
 }
-}
-````
+```
 
 </details>
 
@@ -327,23 +348,26 @@ The request must contain the receiver, which is the `id` of the incoming payment
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-  ```ts wrap
-  const customerQuote = await client.quote.create(
-    {
-      url: customerWalletAddress.resourceServer,
-      accessToken: customerQuoteGrant.access_token.value
-    },
-    {
-      method: 'ilp',
-      walletAddress: customerWalletAddress.id,
-      receiver: retailerIncomingPayment.id
-    }
-  )
-  ```
+
+```ts wrap
+const customerQuote = await client.quote.create(
+  {
+    url: customerWalletAddress.resourceServer,
+    accessToken: customerQuoteGrant.access_token.value
+  },
+  {
+    method: 'ilp',
+    walletAddress: customerWalletAddress.id,
+    receiver: retailerIncomingPayment.id
+  }
+)
+```
+
   </TabItem>
   <TabItem label='Rust' icon='seti:rust'>
-  ```rust wrap
-  use open_payments::types::{QuoteRequest, QuoteMethod};
+
+```rust wrap
+use open_payments::types::{QuoteRequest, QuoteMethod};
 
 let quote_request = QuoteRequest {
 method: QuoteMethod::Ilp,
@@ -362,7 +386,8 @@ Some(&customer_quote_grant.access_token.value),
 )
 .await?;
 
-````
+```
+
 </TabItem>
 </Tabs>
 
@@ -374,25 +399,26 @@ The response returns a `receiveAmount`, a `debitAmount`, and other required info
 <details>
 <summary>Example response</summary>
 The following is an example response from the customer's wallet provider.
+
 ```json wrap
 {
-"id": "https://cloudninebank.example.com/quotes/{...}", // url identifying the quote
-"walletAddress": "https://cloudninebank.example.com/customer",
-"receiver": "https://happylifebank.example.com/incoming-payments/{...}", // url of the incoming payment the quote is created for
-"debitAmount": {
-  "value": "140000",
-  "assetCode": "MXN",
-  "assetScale": 2
-},
-"receiveAmount": {
-  "value": "140000",
-  "assetCode": "MXN",
-  "assetScale": 2
-},
-"method": "ilp",
-"createdAt": "2025-03-12T23:22:51.50Z"
+  "id": "https://cloudninebank.example.com/quotes/{...}", // url identifying the quote
+  "walletAddress": "https://cloudninebank.example.com/customer",
+  "receiver": "https://happylifebank.example.com/incoming-payments/{...}", // url of the incoming payment the quote is created for
+  "debitAmount": {
+    "value": "140000",
+    "assetCode": "MXN",
+    "assetScale": 2
+  },
+  "receiveAmount": {
+    "value": "140000",
+    "assetCode": "MXN",
+    "assetScale": 2
+  },
+  "method": "ilp",
+  "createdAt": "2025-03-12T23:22:51.50Z"
 }
-````
+```
 
 </details>
 
@@ -408,76 +434,81 @@ Outgoing payments require an interactive grant. This type of grant will obtain t
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-  ```ts wrap
-  const pendingCustomerOutgoingPaymentGrant = await client.grant.request(
-    {
-      url: customerWalletAddress.authServer
-    },
-    {
-      access_token: {
-        access: [
-          {
-            identifier: customerWalletAddress.id,
-            type: 'outgoing-payment',
-            actions: ['create'],
-            limits: {
-              debitAmount: {
-                assetCode: 'MXN',
-                assetScale: 2,
-                value: '140000',
-              }
+
+```ts wrap
+const pendingCustomerOutgoingPaymentGrant = await client.grant.request(
+  {
+    url: customerWalletAddress.authServer
+  },
+  {
+    access_token: {
+      access: [
+        {
+          identifier: customerWalletAddress.id,
+          type: 'outgoing-payment',
+          actions: ['create'],
+          limits: {
+            debitAmount: {
+              assetCode: 'MXN',
+              assetScale: 2,
+              value: '140000'
             }
           }
-        ]
-      },
-      interact: {
-        start: ['redirect'],
-        finish: {
-          method: 'redirect',
-          uri: 'https://paymentplatform.example/finish/{...}', // where to redirect the customer after they've completed the interaction
-          nonce: NONCE
         }
+      ]
+    },
+    interact: {
+      start: ['redirect'],
+      finish: {
+        method: 'redirect',
+        uri: 'https://paymentplatform.example/finish/{...}', // where to redirect the customer after they've completed the interaction
+        nonce: NONCE
       }
     }
-  )
-  ```
+  }
+)
+```
+
   </TabItem>
   <TabItem label='Rust' icon='seti:rust'>
-  ```rust wrap
-  use open_payments::types::{AccessTokenRequest, AccessItem, OutgoingPaymentAction, InteractRequest, InteractStart, InteractFinish, InteractFinishMethod, AccessLimits, Amount, GrantRequest};
-  
-  let access_limits = AccessLimits {
-    debit_amount: Some(Amount { value: "140000".into(), asset_code: "MXN".into(), asset_scale: 2 }),
-    ..Default::default()
-  };
-  let access_request = AccessTokenRequest {
-    access: vec![AccessItem::OutgoingPayment {
-      identifier: Some(customer_wallet_address.id.clone()),
-      actions: vec![OutgoingPaymentAction::Create],
-      limits: Some(access_limits),
-    }],
-  };
-  let interact_request = InteractRequest {
-    start: Some(vec![InteractStart::Redirect]),
-    finish: Some(InteractFinish {
-      method: InteractFinishMethod::Redirect,
-      uri: Some("https://paymentplatform.example/finish/{...}".into()),
-      nonce: Some("NONCE".into()),
-    }),
-  };
-  
-  let grant_request = GrantRequest::new(access_request, Some(interact_request));
-  let pending_customer_outgoing_payment_grant = client
-    .grant()
-    .request(&customer_wallet_address.auth_server, &grant_request)
-    .await?;
-  ```
+
+```rust wrap
+use open_payments::types::{AccessTokenRequest, AccessItem, OutgoingPaymentAction, InteractRequest, InteractStart, InteractFinish, InteractFinishMethod, AccessLimits, Amount, GrantRequest};
+
+let access_limits = AccessLimits {
+  debit_amount: Some(Amount { value: "140000".into(), asset_code: "MXN".into(), asset_scale: 2 }),
+  ..Default::default()
+};
+let access_request = AccessTokenRequest {
+  access: vec![AccessItem::OutgoingPayment {
+    identifier: Some(customer_wallet_address.id.clone()),
+    actions: vec![OutgoingPaymentAction::Create],
+    limits: Some(access_limits),
+  }],
+};
+let interact_request = InteractRequest {
+  start: Some(vec![InteractStart::Redirect]),
+  finish: Some(InteractFinish {
+    method: InteractFinishMethod::Redirect,
+    uri: Some("https://paymentplatform.example/finish/{...}".into()),
+    nonce: Some("NONCE".into()),
+  }),
+};
+
+let grant_request = GrantRequest::new(access_request, Some(interact_request));
+let pending_customer_outgoing_payment_grant = client
+  .grant()
+  .request(&customer_wallet_address.auth_server, &grant_request)
+  .await?;
+```
+
   </TabItem>
 </Tabs>
 
 <details>
 <summary>Example response</summary>
 The following is an example response from the customer's wallet provider.
+
 ```json wrap
 {
   "interact": {
@@ -493,6 +524,7 @@ The following is an example response from the customer's wallet provider.
   }
 }
 ```
+
 </details>
 
 ### 7. Start interaction with the customer
@@ -519,27 +551,30 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-  ```ts wrap
-  const customerOutgoingPaymentGrant = await client.grant.continue(
-    {
-      url: pendingCustomerOutgoingPaymentGrant.continue.uri,
-      accessToken: pendingCustomerOutgoingPaymentGrant.continue.access_token.value
-    },
-    {
-      interact_ref: interactRef
-    }
-  )
-  ```
+
+```ts wrap
+const customerOutgoingPaymentGrant = await client.grant.continue(
+  {
+    url: pendingCustomerOutgoingPaymentGrant.continue.uri,
+    accessToken: pendingCustomerOutgoingPaymentGrant.continue.access_token.value
+  },
+  {
+    interact_ref: interactRef
+  }
+)
+```
+
   </TabItem>
   <TabItem label='Rust' icon='seti:rust'>
-  ```rust wrap
-  let continue_field = match &pending_customer_outgoing_payment_grant.continue_field {
-    Some(c) => c,
-    None => {
-      eprintln!("Missing continue field on pending grant");
-      return Ok(());
-    }
-  };
+
+```rust wrap
+let continue_field = match &pending_customer_outgoing_payment_grant.continue_field {
+  Some(c) => c,
+  None => {
+    eprintln!("Missing continue field on pending grant");
+    return Ok(());
+  }
+};
 
 let customer_outgoing_payment_grant = client
 .grant()
@@ -550,37 +585,39 @@ Some(&continue_field.access_token.value),
 )
 .await?;
 
-````
+```
+
 </TabItem>
 </Tabs>
 
 <details>
 <summary>Example response</summary>
 The following is an example response from the customer's wallet provider.
+
 ```json wrap
 {
-"access_token": {
-  "value": "...", // final access token required before creating outgoing payments
-  "manage": "https://auth.cloudninebank.example.com/token/{...}", // management uri for access token
-  "access": [
-    {
-      "type": "outgoing-payment",
-      "actions": ["create"],
-      "identifier": "https://cloudninebank.example.com/customer",
-      "limits": {
-        "receiver": "https://happylifebank.example.com/incoming-payments/{...}" // url of the incoming payment that's being paid
+  "access_token": {
+    "value": "...", // final access token required before creating outgoing payments
+    "manage": "https://auth.cloudninebank.example.com/token/{...}", // management uri for access token
+    "access": [
+      {
+        "type": "outgoing-payment",
+        "actions": ["create"],
+        "identifier": "https://cloudninebank.example.com/customer",
+        "limits": {
+          "receiver": "https://happylifebank.example.com/incoming-payments/{...}" // url of the incoming payment that's being paid
+        }
       }
-    }
-  ]
-},
-"continue": {
-"access_token": {
-"value": "..." // access token for continuing the request
-},
-"uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
+    ]
+  },
+  "continue": {
+    "access_token": {
+      "value": "..." // access token for continuing the request
+    },
+    "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
+  }
 }
-}
-````
+```
 
 </details>
 
@@ -590,38 +627,42 @@ Use the access token returned in Step 9 to call the <Badge text="POST" variant="
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-  ```ts wrap
-  const customerOutgoingPayment = await client.outgoingPayment.create(
-    {
-      url: customerWalletAddress.resourceServer,
-      accessToken: customerOutgoingPaymentGrant.access_token.value
-    },
-    {
-      walletAddress: customerWalletAddress.id,
-      quoteId: customerQuote.id
-    }
-  )
-  ```
+
+```ts wrap
+const customerOutgoingPayment = await client.outgoingPayment.create(
+  {
+    url: customerWalletAddress.resourceServer,
+    accessToken: customerOutgoingPaymentGrant.access_token.value
+  },
+  {
+    walletAddress: customerWalletAddress.id,
+    quoteId: customerQuote.id
+  }
+)
+```
+
   </TabItem>
   <TabItem label='Rust' icon='seti:rust'>
-  ```rust wrap
-  use open_payments::types::OutgoingPaymentRequest;
-  let outgoing_request = OutgoingPaymentRequest {
-    wallet_address: customer_wallet_address.id.clone(),
-    receiver: Some(retailer_incoming_payment.id.clone()),
-    debit_amount: None,
-    receive_amount: None,
-    quote_id: Some(customer_quote.id.clone()),
-  };
-  let customer_outgoing_payment_to_retailer = client
-    .outgoing_payments()
-    .create(
-      &customer_wallet_address.resource_server,
-      &outgoing_request,
-      Some(&customer_outgoing_payment_grant.access_token.value),
-    )
-    .await?;
-  ```
+
+```rust wrap
+use open_payments::types::OutgoingPaymentRequest;
+let outgoing_request = OutgoingPaymentRequest {
+  wallet_address: customer_wallet_address.id.clone(),
+  receiver: Some(retailer_incoming_payment.id.clone()),
+  debit_amount: None,
+  receive_amount: None,
+  quote_id: Some(customer_quote.id.clone()),
+};
+let customer_outgoing_payment_to_retailer = client
+  .outgoing_payments()
+  .create(
+    &customer_wallet_address.resource_server,
+    &outgoing_request,
+    Some(&customer_outgoing_payment_grant.access_token.value),
+  )
+  .await?;
+```
+
   </TabItem>
 </Tabs>
 
@@ -630,6 +671,7 @@ If the request fails because of an expired quote, [request a new quote](#5-reque
 <details>
 <summary>Example response</summary>
 The following is an example response from the customer's wallet provider.
+
 ```json wrap
 {
   "id": "https://cloudninebank.example.com/outgoing-payments/{...}", // url identifying the outgoing payment
@@ -653,6 +695,7 @@ The following is an example response from the customer's wallet provider.
   "createdAt": "2022-03-12T23:20:54.52Z"
 }
 ```
+
 </details>
 
 :::note[Access token expiry]
