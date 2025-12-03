@@ -338,6 +338,9 @@ export default defineConfig({
             },
             {
               label: 'Set up recurring payments with a fixed incoming amount',
+              translations: {
+                es: 'Configurar pagos recurrentes con un monto entrante fijo'
+              },
               link: '/guides/recurring-subscription-incoming-amount/'
             },
             {
