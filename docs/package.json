@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@astrojs/starlight": "^0.36.2",
-    "@interledger/docs-design-system": "^0.10.1",
+    "@interledger/docs-design-system": "^0.10.3",
     "astro": "5.16.0",
     "katex": "^0.16.25",
     "mermaid": "^11.12.1",
