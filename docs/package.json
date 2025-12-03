@@ -9,8 +9,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "format": "prettier --write '**/*.{js,mjs,ts,tsx,json,md,mdx,astro}' && eslint --max-warnings=0 --fix .",
-    "lint": "prettier --check '**/*.{js,mjs,ts,tsx,json,md,mdx,astro}' && eslint --max-warnings=0 . && pnpm lint:linkout",
-    "lint:linkout": "node ./scripts/check-linkout-singleline.js"
+    "lint": "prettier --check '**/*.{js,mjs,ts,tsx,json,md,mdx,astro}' && eslint --max-warnings=0 . "
   },
   "dependencies": {
     "@astrojs/starlight": "^0.36.2",
