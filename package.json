@@ -9,8 +9,9 @@
   "packageManager": "pnpm@8.15.6",
   "scripts": {
     "lint": "eslint --max-warnings=0 --fix .",
+    "lint:docs": "eslint --max-warnings=0 --fix ./docs",
     "format": "prettier --write . && pnpm lint",
-    "format:docs": "prettier --write ./docs/**/*.md",
+    "format:docs": "prettier --write ./docs",
     "checks": "pnpm check:prettier && pnpm check:lint",
     "check:lint": "eslint --max-warnings=0 .",
     "check:prettier": "prettier --check .",
