@@ -220,10 +220,10 @@ Esta llamada obtiene un token de acceso que permite a su aplicación solicitar l
 Como el remitente pagará un monto fijo de USD 200 al mes, la solicitud debe tener un objeto `limits` que contenga un `debitAmount` y un `interval`.
 
 - `debitAmount` - El monto máximo que se puede debitar al remitente por intervalo. Cuando comienza el siguiente intervalo, el valor se restablece.
-- `interval` - El [intervalo de tiempo](#about-the-interval) durante el cual la concesión es válida.
+- `interval` - El [intervalo de tiempo](#acerca-del-intervalo) durante el cual la concesión es válida.
 
 :::Nota
-Los pagos salientes requieren una concesión de autorización interactiva, que el remitente aprueba una sola vez. Mientras la concesión de autorización (y su token de acceso) sean válidos y estén dentro de sus límites (`interval` + `debitAmount`), su aplicación puede crear pagos salientes sin volver a- aprobar cada intervalo. Puede encontrar más información en las páginas del [flujo de Open Payments](/es/concepts/op-flow/#outgoing-payment) y [proveedores de identidad](/es/identity/idp).
+Los pagos salientes requieren una concesión de autorización interactiva, que el remitente aprueba una sola vez. Mientras la concesión de autorización (y su token de acceso) sean válidos y estén dentro de sus límites (`interval` + `debitAmount`), su aplicación puede crear pagos salientes sin volver a- aprobar cada intervalo. Puede encontrar más información en las páginas del [flujo de Open Payments](/es/concepts/op-flow/#pago-saliente) y [proveedores de identidad](/es/identity/idp).
 :::
 
 <Tabs syncKey="lang">
