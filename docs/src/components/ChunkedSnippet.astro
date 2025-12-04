@@ -107,6 +107,11 @@ const languageConfig: Record<string, LanguageConfig> = {
     parser: '',
     lang: 'rs',
     plugins: []
+  },
+  '.go': {
+    parser: '',
+    lang: 'go',
+    plugins: []
   }
 }
 
@@ -151,7 +156,7 @@ const formatByLanguage = async (
     })
     return formatted.replace(/^<\?php\s*/, '')
   }
-  if (lang === 'rs') {
+  if (lang === 'rs' || lang === 'go') {
     return dedentBlock(text)
   }
   if (parser) {
