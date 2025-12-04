@@ -345,6 +345,9 @@ export default defineConfig({
             },
             {
               label: 'Send recurring remittances with a fixed debit amount',
+              translations: {
+                es: 'Enviar remesas recurrentes con un monto de débito fijo'
+              },
               link: '/guides/recurring-remittance-fixed-debit/'
             },
             {
