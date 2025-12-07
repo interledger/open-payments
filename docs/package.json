@@ -9,12 +9,11 @@
     "preview": "astro preview",
     "astro": "astro",
     "format": "prettier --write '**/*.{js,mjs,ts,tsx,json,md,mdx,astro}' && eslint --max-warnings=0 --fix .",
-    "lint": "prettier --check '**/*.{js,mjs,ts,tsx,json,md,mdx,astro}' && eslint --max-warnings=0 . && pnpm lint:linkout",
-    "lint:linkout": "node ./scripts/check-linkout-singleline.js"
+    "lint": "prettier --check '**/*.{js,mjs,ts,tsx,json,md,mdx,astro}' && eslint --max-warnings=0 . "
   },
   "dependencies": {
     "@astrojs/starlight": "^0.36.2",
-    "@interledger/docs-design-system": "^0.10.1",
+    "@interledger/docs-design-system": "^0.10.3",
     "astro": "5.16.0",
     "katex": "^0.16.25",
     "mermaid": "^11.12.1",

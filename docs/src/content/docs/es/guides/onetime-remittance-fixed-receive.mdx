@@ -4,8 +4,8 @@ title: Enviar una remesa con un monto de recepción fijo
 
 import { LinkOut } from '@interledger/docs-design-system'
 import { Tabs, TabItem, Badge } from '@astrojs/starlight/components'
-import Start from '/src/partials/grant-start-interaction.mdx'
-import Finish from '/src/partials/grant-finish-interaction.mdx'
+import Start from '/src/partials/es/grant-start-interaction.mdx'
+import Finish from '/src/partials/es/grant-finish-interaction.mdx'
 
 :::tip[Resumen]
 Aprenda cómo enviar un pago de remesa único en el que el destinatario recibirá un monto fijo.
@@ -40,23 +40,29 @@ Las tres partes que intervienen en este caso son las siguientes:
 ## Puntos finales
 
 - <Badge text="GET" variant="note" />
-  {/* prettier-ignore */}
-  <LinkOut href="https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/">Get Wallet Address</LinkOut>
+  <LinkOut href="https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/">
+    Get Wallet Address
+  </LinkOut>
 - <Badge text="POST" variant="success" />
-  {/* prettier-ignore */}
-  <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-request/">Grant Request</LinkOut>
+  <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-request/">
+    Grant Request
+  </LinkOut>
 - <Badge text="POST" variant="success" />
-  {/* prettier-ignore */}
-  <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-incoming-payment/">Create Incoming Payment</LinkOut>
+  <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-incoming-payment/">
+    Create Incoming Payment
+  </LinkOut>
 - <Badge text="POST" variant="success" />
-  {/* prettier-ignore */}
-  <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-quote/">Create a Quote</LinkOut>
+  <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-quote/">
+    Create a Quote
+  </LinkOut>
 - <Badge text="POST" variant="success" />
-  {/* prettier-ignore */}
-  <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-continue/">Grant Continuation Request</LinkOut>
+  <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-continue/">
+    Grant Continuation Request
+  </LinkOut>
 - <Badge text="POST" variant="success" />
-  {/* prettier-ignore */}
-  <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment/">Create an Outgoing Payment</LinkOut>
+  <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment/">
+    Create an Outgoing Payment
+  </LinkOut>
 
 ## Pasos
 
