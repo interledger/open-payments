@@ -159,23 +159,23 @@ let retailer_incoming_payment_grant = client
 
 </TabItem>
 <TabItem label="PHP" icon='seti:php'>
-```php wrap
-
-$retailerIncomingPaymentGrant = $client->grant()->request(
-  [
-    'url' => $retailerWalletAddress->authServer
-  ],
-  [
-    'access_token' => [
-      'access' => [
-        [
-          'type' => 'incoming-payment',
-          'actions' => ['create']
+  ```php wrap
+    $retailerIncomingPaymentGrant = $client->grant()->request(
+      [
+        'url' => $retailerWalletAddress->authServer
+      ],
+      [
+        'access_token' => [
+          'access' => [
+            [
+              'type' => 'incoming-payment',
+              'actions' => ['create']
+            ]
+          ]
         ]
       ]
-    ]
-  ]
-```
+    );
+  ```
 </TabItem>
 </Tabs>
 
