@@ -43,23 +43,23 @@ Las tres partes que intervienen en este caso son las siguientes:
 
 - <Badge text="GET" variant="note" />
   <LinkOut href="https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/">
-    Cómo obtener una dirección de billetera
+    Get Wallet Address
   </LinkOut>
 - <Badge text="POST" variant="success" />
   <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-request/">
-    Solicitud de concesiones de autorización
+    Grant Request
   </LinkOut>
 - <Badge text="POST" variant="success" />
   <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-incoming-payment/">
-    Cómo crear un pago entrante
+    Create Incoming Payment
   </LinkOut>
 - <Badge text="POST" variant="success" />
   <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-continue/">
-    Continuación de solicitud de concesión de autorización
+    Grant Continuation Request
   </LinkOut>
 - <Badge text="POST" variant="success" />
   <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment/">
-    Cómo crear un pago saliente
+    Create an Outgoing Payment
   </LinkOut>
 
 ## Pasos
@@ -70,7 +70,7 @@ Cuando el remitente configura un pago recurrente a través de su aplicación, us
 
 Supongamos que el remitente guardó la dirección de su billetera en la configuración de su perfil en su aplicación. Asumamos también que el remitente ha ingresado la dirección de billetera del destinatario en el formulario de pago de su aplicación.
 
-Llame a la <Badge text="GET" variant="note" /> [API Obtener dirección de billetera](/apis/wallet-address-server/operations/get-wallet-address) para cada dirección.
+Llame a la <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wallet-address-server/operations/get-wallet-address) para cada dirección.
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -113,7 +113,7 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del destin
 
 ### 2. Solicitar una concesión de autorización para un pago entrante
 
-Utilice los datos del destinatario `authServer` recibidos en el paso 1 para llamar a la <Badge text="POST" variant="success" /> [API Solicitud de concesión](/apis/auth-server/operations/post-request/).
+Utilice los datos del destinatario `authServer` recibidos en el paso 1 para llamar a la <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request/).
 
 Esta llamada obtiene un token de acceso que permite a su aplicación solicitar la creación de un recurso de pago entrante en la cuenta de billetera del destinatario.
 
@@ -166,7 +166,7 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del destin
 
 ### 3. Solicitar la creación de un recurso de pago entrante
 
-Use el token de acceso devuelto en la respuesta anterior para llamar a la <Badge text="POST" variant="success" /> [API Crear pago entrante](/apis/resource-server/operations/create-incoming-payment).
+Use el token de acceso devuelto en la respuesta anterior para llamar a la <Badge text="POST" variant="success" /> [Create Incoming Payment API](/apis/resource-server/operations/create-incoming-payment).
 
 Esta llamada solicita la creación de un recurso de pago entrante en la cuenta de billetera del destinatario.
 
@@ -213,7 +213,7 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del destin
 
 ### 4. Solicitar una concesión de autorización interactiva para un pago saliente
 
-Utilice la información del remitente `authServer` recibida en el paso 1 para llamar a la <Badge text="POST" variant="success" /> [API Solicitud de concesión](/apis/auth-server/operations/post-request).
+Utilice la información del remitente `authServer` recibida en el paso 1 para llamar a la <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request).
 
 Esta llamada obtiene un token de acceso que permite a su aplicación solicitar la creación de recursos de pago saliente en la cuenta de billetera del remitente.
 
@@ -316,7 +316,7 @@ En nuestro ejemplo, suponemos que el IdP con el que interactuó su usuario (el r
 En una situación hipotética donde una interfaz de usuario no se encuentra disponible, analice la posibilidad de implementar un mecanismo de sondeo para verificar que se haya completado la interacción.
 :::
 
-Llame a la <Badge text="POST" variant="success" /> [API Continuación de solicitud de concesión](/apis/auth-server/operations/post-continue/). Esta llamada obtiene un token de acceso que permite a su aplicación continuar con la solicitud de concesión de autorización de pago saliente.
+Llame a la <Badge text="POST" variant="success" /> [Grant Continuation Request API](/apis/auth-server/operations/post-continue/). Esta llamada obtiene un token de acceso que permite a su aplicación continuar con la solicitud de concesión de autorización de pago saliente.
 
 Emita la solicitud al `continue.uri` proporcionado en la respuesta de concesión de autorización de pago saliente inicial.
 
@@ -374,7 +374,7 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del remite
 
 ### 8. Solicitar la creación de un recurso de pago saliente
 
-Utilice el token de acceso devuelto en la continuación de la concesión de autorización de pago saliente (paso 7) para llamar a la <Badge text="POST" variant="success" /> [API Crear pago saliente](/apis/resource-server/operations/create-outgoing-payment/). Cree este pago haciendo referencia a la nueva URL `incomingPayment` y al `debitAmount` fijo.
+Utilice el token de acceso devuelto en la continuación de la concesión de autorización de pago saliente (paso 7) para llamar a la <Badge text="POST" variant="success" /> [Create Outgoing Payment API](/apis/resource-server/operations/create-outgoing-payment/). Cree este pago haciendo referencia a la nueva URL `incomingPayment` y al `debitAmount` fijo.
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -434,4 +434,4 @@ El primer pago ya está configurado. En el siguiente intervalo (dentro de un mes
 Utilice el token de acceso asociado a la concesión de autorización de cada recurso en las solicitudes. No necesita solicitar nuevas concesiones de autorización porque las concesiones originales deberían seguir siendo válidas.
 
 :::note[Expiración del token de acceso]
-Si el token de acceso de una concesión ha expirado, llame a la <Badge text="POST" variant="success" /> [API Rotación del token de acceso](/apis/auth-server/operations/post-token/) y, luego, utilice el nuevo token en la solicitud correspondiente.
+Si el token de acceso de una concesión ha expirado, llame a la <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/auth-server/operations/post-token/) y, luego, utilice el nuevo token en la solicitud correspondiente.
