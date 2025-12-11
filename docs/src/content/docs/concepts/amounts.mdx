@@ -16,11 +16,19 @@ Amounts in Open Payments define monetary values using asset codes and asset scal
 
 Amounts represent monetary values and are fundamental to every Open Payments operation. Whether you're creating an incoming payment, requesting a quote, or tracking payment progress, every amount consists of three key components: a numerical `value`, an `assetCode`, and an `assetScale`. Understanding these components is crucial for building Open Payments applications.
 
+## Receive and debit amounts
+
+A receive(d) amount is the amount that was or will be paid into the recipient's account in the recipient's asset/currency.
+
+A debit amount can represent one of two amounts. The first is the total amount that was or will be debited (withdrawn) from a sender's account in the sender's asset/currency. For example, in the guide for [fixed-amount recurring payments](/guides/recurring-subscription-incoming-amount), the debit amount is the amount that will be debited from the customer's payment account each month.
+
+A debit amount could also be the maximum amount that can be debited from a sender's account in the sender's asset/currency. For example, in the guide for [getting an outgoing payment grant for future payments](/guides/outgoing-grant-future-payments), the debit amount is the maximum amount that _could_ be debited from a sender's account over one or more payments in a specific interval.
+
 ## Values
 
 To maximize precision and avoid rounding errors in financial calculations, Open Payments uses numerical data types without decimals to represent values. In the context of programming languages, this means that Open Payments uses unsigned 64-bit integers for monetary amounts instead of floating-point numbers.
 
-An example of a value is the number 10000.
+An example of a `value` is the number `10000`.
 
 ## Asset codes
 
@@ -52,7 +60,7 @@ $$\frac{10000}{10^2} = \frac{10000}{100} = \$100.00$$
       <th>Currency</th>
       <th>Asset Code</th>
       <th>Asset Scale</th>
-      <th>Integer Amount</th>
+      <th>Integer Amount (Value)</th>
       <th>Actual Value</th>
     </tr>
   </thead>
