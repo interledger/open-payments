@@ -16,15 +16,16 @@ Amounts in Open Payments define monetary values using asset codes and asset scal
 
 Amounts represent monetary values and are fundamental to every Open Payments operation. Whether you're creating an incoming payment, requesting a quote, or tracking payment progress, every amount consists of three key components: a numerical `value`, an `assetCode`, and an `assetScale`. Understanding these components is crucial for building Open Payments applications.
 
-## Receive and debit amounts
+## Debit and receive amounts
 
-A receive(d) amount is the amount that was or will be paid into the recipient's account in the recipient's asset/currency.
+Before learning about amount components, you should understand the difference between debit and receive amounts.
 
-A debit amount can represent one of two amounts. The first is the total amount that was or will be debited (withdrawn) from a sender's account in the sender's asset/currency. For example, in the guide for [fixed-amount recurring payments](/guides/recurring-subscription-incoming-amount), the debit amount is the amount that will be debited from the customer's payment account each month.
-
-A debit amount could also be the maximum amount that can be debited from a sender's account in the sender's asset/currency. For example, in the guide for [getting an outgoing payment grant for future payments](/guides/outgoing-grant-future-payments), the debit amount is the maximum amount that _could_ be debited from a sender's account over one or more payments in a specific interval.
+- Debit amount - The total amount that a sender will be charged, in their asset/currency, with the completion of an outgoing payment
+- Receive amount - The amount that was or will be paid into the recipient's account in their asset/currency
 
 ## Values
+
+The first component that makes up an amount is a numerical `value`.
 
 To maximize precision and avoid rounding errors in financial calculations, Open Payments uses numerical data types without decimals to represent values. In the context of programming languages, this means that Open Payments uses unsigned 64-bit integers for monetary amounts instead of floating-point numbers.
 
@@ -32,11 +33,15 @@ An example of a `value` is the number `10000`.
 
 ## Asset codes
 
+The second component of an amount is an `assetCode`.
+
 Asset codes identify the type of currency or asset being used in a payment and should follow the <LinkOut href='https://en.wikipedia.org/wiki/ISO_4217'>ISO 4217</LinkOut> standard for currency representation.
 
 An example of an ISO 4217 `assetCode` is `USD`, which represents the US Dollar.
 
 ## Asset scales
+
+The third component of an amount is an `assetScale`.
 
 An asset scale tells you how many decimal places a currency uses. It's like specifying whether you're counting in dollars, cents, or smaller units.
 
