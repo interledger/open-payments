@@ -102,6 +102,52 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 
 <p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/IncomingPayment/IncomingPaymentList.php'>View full source</LinkOut></p>
 </TabItem>
+
+<TabItem label="Go" icon='seti:go'>
+<LinkButton href="https://github.com/interledger/open-payments-go/blob/main/README.md" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+```go
+package main
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
+
+	op "github.com/interledger/open-payments-go"
+)
+
+func main() {
+	// Initialize Open Payments client
+	client, err := op.NewAuthenticatedClient(WALLET_ADDRESS_URL, PRIVATE_KEY_BASE_64, KEY_ID)
+	if err != nil {
+		log.Fatalf("Error creating authenticated client: %v\n", err)
+	}
+
+	// List incoming payments
+	incomingPayments, err := client.IncomingPayment.List(context.TODO(), op.IncomingPaymentListParams{
+		BaseURL:       RESOURCE_SERVER_URL,
+		AccessToken:   INCOMING_PAYMENT_ACCESS_TOKEN,
+		WalletAddress: WALLET_ADDRESS_URL,
+		Pagination: op.Pagination{
+			First: "10",
+		},
+	})
+	if err != nil {
+		log.Fatalf("Error listing incoming payments: %v\n", err)
+	}
+
+	// Output
+	incomingPaymentsJSON, err := json.MarshalIndent(incomingPayments, "", "  ")
+	if err != nil {
+		log.Fatalf("Error marshaling incoming payments: %v\n", err)
+	}
+	fmt.Println("INCOMING PAYMENTS:", string(incomingPaymentsJSON))
+}
+```
+
+</TabItem>
 </Tabs>
 
 ## References
