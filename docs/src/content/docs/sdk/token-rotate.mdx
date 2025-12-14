@@ -76,6 +76,41 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 
 <p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Token/TokenRotate.php'>View full source</LinkOut></p>
 </TabItem>
+<TabItem label="Go" icon='seti:go'>
+<LinkButton href="https://github.com/interledger/open-payments-go/blob/main/README.md" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"log"
+	"os"
+
+	op "github.com/interledger/open-payments-go"
+)
+
+// Initialize Open Payments client
+client, err := op.NewAuthenticatedClient(WALLET_ADDRESS_URL, PRIVATE_KEY_BASE_64, KEY_ID)
+if err != nil {
+	log.Fatalf("Error creating authenticated client: %v\n", err)
+}
+
+// Rotate access token
+rotatedToken, err := client.Token.Rotate(context.TODO(), op.TokenRotateParams{
+	URL:         MANAGE_URL,
+	AccessToken: ACCESS_TOKEN,
+})
+if err != nil {
+	log.Fatalf("Error rotating access token: %v\n", err)
+}
+
+fmt.Printf("Rotated access token: %v\n", rotatedToken)
+
+```
+
+</TabItem>
 </Tabs>
 
 ## References
