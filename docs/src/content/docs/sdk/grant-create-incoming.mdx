@@ -162,6 +162,11 @@ func main() {
 		log.Fatalf("Error marshaling grant: %v\n", err)
 	}
 	fmt.Println("GRANT:", string(grantJSON))
+  fmt.Println("INCOMING_PAYMENT_ACCESS_TOKEN =", grant.AccessToken.Value)
+	fmt.Println(
+		"INCOMING_PAYMENT_ACCESS_TOKEN_MANAGE_URL =",
+		grant.AccessToken.Manage,
+	)
 }
 ```
 
