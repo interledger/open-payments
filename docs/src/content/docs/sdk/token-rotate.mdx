@@ -83,31 +83,42 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 package main
 
 import (
-	"context"
-	"fmt"
-	"log"
-	"os"
+  "context"
+  "encoding/json"
+  "fmt"
+  "log"
 
-	op "github.com/interledger/open-payments-go"
+  op "github.com/interledger/open-payments-go"
 )
 
-// Initialize Open Payments client
-client, err := op.NewAuthenticatedClient(WALLET_ADDRESS_URL, PRIVATE_KEY_BASE_64, KEY_ID)
-if err != nil {
-	log.Fatalf("Error creating authenticated client: %v\n", err)
+func main() {
+  // Initialize Open Payments authenticated client
+  client, err := op.NewAuthenticatedClient(
+    WALLET_ADDRESS_URL,
+    PRIVATE_KEY_BASE_64,
+    KEY_ID,
+  )
+  if err != nil {
+    log.Fatalf("Error creating authenticated client: %v\n", err)
+  }
+
+  // Rotate access token
+  rotatedToken, err := client.Token.Rotate(context.TODO(), op.TokenRotateParams{
+    URL:         MANAGE_URL,
+    AccessToken: ACCESS_TOKEN,
+  })
+  if err != nil {
+    log.Fatalf("Error rotating access token: %v\n", err)
+  }
+
+  // Output as JSON
+  rotatedTokenJSON, err := json.MarshalIndent(rotatedToken, "", "  ")
+  if err != nil {
+    log.Fatalf("Error marshaling rotated token: %v\n", err)
+  }
+
+  fmt.Println("ROTATED ACCESS TOKEN:", string(rotatedTokenJSON))
 }
-
-// Rotate access token
-rotatedToken, err := client.Token.Rotate(context.TODO(), op.TokenRotateParams{
-	URL:         MANAGE_URL,
-	AccessToken: ACCESS_TOKEN,
-})
-if err != nil {
-	log.Fatalf("Error rotating access token: %v\n", err)
-}
-
-fmt.Printf("Rotated access token: %v\n", rotatedToken)
-
 ```
 
 </TabItem>

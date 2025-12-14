@@ -104,31 +104,31 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"os"
 
 	op "github.com/interledger/open-payments-go"
 )
+func main() {
+  // Initialize Open Payments client
+  client, err := op.NewAuthenticatedClient(WALLET_ADDRESS_URL, PRIVATE_KEY_BASE_64, KEY_ID)
+  if err != nil {
+    log.Fatalf("Error creating authenticated client: %v\n", err)
+  }
 
-// Initialize Open Payments client
-client, err := op.NewAuthenticatedClient(WALLET_ADDRESS_URL, PRIVATE_KEY_BASE_64, KEY_ID)
-if err != nil {
-	log.Fatalf("Error creating authenticated client: %v\n", err)
-}
+  // Get wallet address
+  walletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
+    URL: WALLET_ADDRESS_URL,
+  })
+  if err != nil {
+    log.Fatalf("Error fetching wallet address: %v\n", err)
+  }
 
-// Get wallet address
-walletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
-	URL: WALLET_ADDRESS_URL,
-})
-if err != nil {
-	log.Fatalf("Error fetching wallet address: %v\n", err)
+  // Output
+  walletAddressJSON, err := json.MarshalIndent(walletAddress, "", "  ")
+  if err != nil {
+    log.Fatalf("Error marshaling wallet address: %v\n", err)
+  }
+  fmt.Println("WALLET ADDRESS:", string(walletAddressJSON))
 }
-
-// Output
-walletAddressJSON, err := json.MarshalIndent(walletAddress, "", "  ")
-if err != nil {
-	log.Fatalf("Error marshaling wallet address: %v\n", err)
-}
-fmt.Println("WALLET ADDRESS:", string(walletAddressJSON))
 ```
 
 </TabItem>

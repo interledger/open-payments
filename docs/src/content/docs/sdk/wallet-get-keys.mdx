@@ -104,31 +104,41 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 <TabItem label="Go" icon='seti:go'>
 <LinkButton href="https://github.com/interledger/open-payments-go/blob/main/README.md" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-<ChunkedSnippet
-  source="wallet-address/wallet-address-get-keys.go"
-  l="go"
-  chunk="1"
-/>
+```go
+package main
 
-<ChunkedSnippet
-  source="wallet-address/wallet-address-get-keys.go"
-  l="go"
-  chunk="2"
-/>
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
 
-<ChunkedSnippet
-  source="wallet-address/wallet-address-get-keys.go"
-  l="go"
-  chunk="3"
-/>
+  op "github.com/interledger/open-payments-go"
 
-<ChunkedSnippet
-  source="wallet-address/wallet-address-get-keys.go"
-  l="go"
-  chunk="4"
-/>
+)
 
-<p><LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/go/wallet-address/wallet-address-get-keys.go'>View full Go source</LinkOut></p>
+func main() {
+  // Initialize Open Payments client
+  client := op.NewClient()
+
+  // Get wallet address keys
+  walletAddressKeys, err := client.WalletAddress.GetKeys(context.TODO(), op.WalletAddressGetKeysParams{
+    URL: WALLET_ADDRESS_URL,
+  })
+  if err != nil {
+    log.Fatalf("Error fetching wallet address keys: %v\n", err)
+  }
+
+  // Output
+  walletAddressKeysJSON, err := json.MarshalIndent(walletAddressKeys, "", "  ")
+  if err != nil {
+    log.Fatalf("Error marshaling wallet address keys: %v\n", err)
+  }
+  fmt.Println("WALLET ADDRESS KEYS:", string(walletAddressKeysJSON))
+}
+
+```
+
 </TabItem>
 </Tabs>
 
@@ -136,3 +146,7 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 
 - [API specification](/apis/wallet-address-server/operations/get-wallet-address-keys)
 - [Wallet addresses](/concepts/wallet-addresses)
+
+```
+
+```

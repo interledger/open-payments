@@ -78,26 +78,27 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
 
 	op "github.com/interledger/open-payments-go"
 )
 
-// Initialize Open Payments client
-client, err := op.NewAuthenticatedClient(WALLET_ADDRESS_URL, PRIVATE_KEY_BASE_64, KEY_ID)
-if err != nil {
-	log.Fatalf("Error creating authenticated client: %v\n", err)
-}
+func main() {
+	// Initialize Open Payments client
+	client, err := op.NewAuthenticatedClient(WALLET_ADDRESS_URL, PRIVATE_KEY_BASE_64, KEY_ID)
+	if err != nil {
+		log.Fatalf("Error creating authenticated client: %v\n", err)
+	}
 
-// Revoke Token
-if err := client.Token.Revoke(context.TODO(), op.TokenRevokeParams{
-	URL:         MANAGE_URL,
-	AccessToken: ACCESS_TOKEN,
-}); err != nil {
-	log.Fatalf("Error revoking access token: %v\n", err)
-}
+	// Revoke Token
+	if err := client.Token.Revoke(context.TODO(), op.TokenRevokeParams{
+		URL:         MANAGE_URL,
+		AccessToken: ACCESS_TOKEN,
+	}); err != nil {
+		log.Fatalf("Error revoking access token: %v\n", err)
+	}
 
-fmt.Println("Access token revoked successfully")
+	fmt.Println("Access token revoked successfully")
+}
 ```
 
 </TabItem>
