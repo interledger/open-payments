@@ -393,14 +393,14 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del remite
 ```json wrap
 {
   "interact": {
-    "redirect": "https://auth.interledger-test.dev/{...}", // uri to redirect the customer to, to begin interaction
+    "redirect": "https://auth.cloudninebank.example.com/{...}", // uri to redirect the customer to, to begin interaction
     "finish": "..." // unique key to secure the callback
   },
   "continue": {
     "access_token": {
       "value": "..." // access token for continuing the outgoing payment grant request
     },
-    "uri": "https://auth.interledger-test.dev/continue/{...}", // uri for continuing the outgoing payment grant request
+    "uri": "https://auth.cloudninebank.example.com/continue/{...}", // uri for continuing the outgoing payment grant request
     "wait": 30
   }
 }
