@@ -761,6 +761,7 @@ Some(&continue_field.access_token.value),
 customerOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
 	URL:         pendingCustomerOutgoingPaymentGrant.Continue.Uri,
 	AccessToken: pendingCustomerOutgoingPaymentGrant.Continue.AccessToken.Value,
+  InteractRef: INTERACT_REF,
 })
 if err != nil {
 	log.Fatalf("Error continuing grant: %v\n", err)

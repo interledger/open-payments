@@ -316,6 +316,7 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
   senderOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
     URL:         pendingSenderOutgoingPaymentGrant.Continue.Uri,
     AccessToken: pendingSenderOutgoingPaymentGrant.Continue.AccessToken.Value,
+    InteractRef: INTERACT_REF,
   })
   if err != nil {
     log.Fatalf("Error continuing grant: %v\n", err)
