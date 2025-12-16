@@ -753,16 +753,17 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
   </TabItem>
   <TabItem label='Go' icon='seti:go'>
 
-  ```go wrap
-    senderOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
-      URL:         pendingSenderOutgoingPaymentGrant.Continue.Uri,
-      AccessToken: pendingSenderOutgoingPaymentGrant.Continue.AccessToken.Value,
-      InteractRef: INTERACT_REF,
-    })
-    if err != nil {
-      log.Fatalf("Error continuing grant: %v\n", err)
-    }
-  ```
+```go wrap
+  senderOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
+    URL:         pendingSenderOutgoingPaymentGrant.Continue.Uri,
+    AccessToken: pendingSenderOutgoingPaymentGrant.Continue.AccessToken.Value,
+    InteractRef: INTERACT_REF,
+  })
+  if err != nil {
+    log.Fatalf("Error continuing grant: %v\n", err)
+  }
+```
+
   </TabItem>
 </Tabs>
 
@@ -836,24 +837,24 @@ Use the access token returned in Step 9 to call the <Badge text="POST" variant="
   </TabItem>
   <TabItem label='Go' icon='seti:go'>
 
-  ```go wrap
-  var outgoingPayload rs.CreateOutgoingPaymentRequest
-  if err := outgoingPayload.FromCreateOutgoingPaymentWithQuote(rs.CreateOutgoingPaymentWithQuote{
-    WalletAddressSchema: *senderWalletAddress.Id,
-    QuoteId:             *senderQuote.Id,
-  }); err != nil {
-    log.Fatalf("Error creating payload: %v\n", err)
-  }
+```go wrap
+var outgoingPayload rs.CreateOutgoingPaymentRequest
+if err := outgoingPayload.FromCreateOutgoingPaymentWithQuote(rs.CreateOutgoingPaymentWithQuote{
+  WalletAddressSchema: *senderWalletAddress.Id,
+  QuoteId:             *senderQuote.Id,
+}); err != nil {
+  log.Fatalf("Error creating payload: %v\n", err)
+}
 
-  senderOutgoingPayment, err := client.OutgoingPayment.Create(context.TODO(), op.OutgoingPaymentCreateParams{
-    BaseURL: *senderWalletAddress.ResourceServer,
-    AccessToken: senderOutgoingPaymentGrant.AccessToken.Value,
-    Payload: outgoingPayload,
-  })
-  if err != nil {
-    log.Fatalf("Error creating outgoing payment: %v\n", err)
-  }
-````
+senderOutgoingPayment, err := client.OutgoingPayment.Create(context.TODO(), op.OutgoingPaymentCreateParams{
+BaseURL: *senderWalletAddress.ResourceServer,
+AccessToken: senderOutgoingPaymentGrant.AccessToken.Value,
+Payload: outgoingPayload,
+})
+if err != nil {
+log.Fatalf("Error creating outgoing payment: %v\n", err)
+}
+```
 
   </TabItem>
 </Tabs>

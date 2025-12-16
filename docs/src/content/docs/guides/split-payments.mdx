@@ -91,14 +91,12 @@ Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wall
   if err != nil {
     log.Fatalf("Error fetching customer wallet address: %v\n", err)
   }
-
   merchantWalletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
     URL: "https://happylifebank.example.com/merchant",
   })
   if err != nil {
     log.Fatalf("Error fetching merchant wallet address: %v\n", err)
   }
-
   platformWalletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
     URL: "https://coolwallet.example.com/platform",
   })
@@ -121,6 +119,7 @@ The following shows an example response from the customer's wallet provider. Sim
   "resourceServer": "https://cloudninebank.example.com/op"
 }
 ```
+
 </details>
 
 ### 2. Request incoming payment grants
@@ -168,7 +167,7 @@ If you and the merchant use the same account servicing entity, and as a result, 
       },
     },
   );
-````
+  ```
  </TabItem>
  <TabItem label='Rust' icon='seti:rust'>
  ```rust wrap
@@ -189,42 +188,41 @@ If you and the merchant use the same account servicing entity, and as a result, 
  ```
  </TabItem>
 
- <TabItem label='Go' icon='seti:go'>
+  <TabItem label='Go' icon='seti:go'>
 
-  ```go wrap
-  incomingAccess := as.AccessIncoming{
-    Type:    as.IncomingPayment,
-    Actions: []as.AccessIncomingActions{as.AccessIncomingActionsCreate},
-  }
-  accessItem := as.AccessItem{}
-  if err := accessItem.FromAccessIncoming(incomingAccess); err != nil {
-    log.Fatalf("Error creating AccessItem: %v\n", err)
-  }
-  accessToken := struct {
-    Access as.Access `json:"access"`
-  }{
-    Access: []as.AccessItem{accessItem},
-  }
+```go wrap
+incomingAccess := as.AccessIncoming{
+  Type:    as.IncomingPayment,
+  Actions: []as.AccessIncomingActions{as.AccessIncomingActionsCreate},
+}
+accessItem := as.AccessItem{}
+if err := accessItem.FromAccessIncoming(incomingAccess); err != nil {
+  log.Fatalf("Error creating AccessItem: %v\n", err)
+}
+accessToken := struct {
+  Access as.Access `json:"access"`
+}{
+  Access: []as.AccessItem{accessItem},
+}
+// Merchant
+merchantIncomingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
+  URL:         *merchantWalletAddress.AuthServer,
+  RequestBody: as.GrantRequestWithAccessToken{AccessToken: accessToken},
+})
+if err != nil {
+  log.Fatalf("Error requesting merchant incoming payment grant: %v\n", err)
+}
+// Platform
+platformIncomingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
+  URL:         *platformWalletAddress.AuthServer,
+  RequestBody: as.GrantRequestWithAccessToken{AccessToken: accessToken},
+})
+if err != nil {
+  log.Fatalf("Error requesting platform incoming payment grant: %v\n", err)
+}
+```
 
-  // Merchant
-  merchantIncomingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
-    URL:         *merchantWalletAddress.AuthServer,
-    RequestBody: as.GrantRequestWithAccessToken{AccessToken: accessToken},
-  })
-  if err != nil {
-    log.Fatalf("Error requesting merchant incoming payment grant: %v\n", err)
-  }
-
-  // Platform
-  platformIncomingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
-    URL:         *platformWalletAddress.AuthServer,
-    RequestBody: as.GrantRequestWithAccessToken{AccessToken: accessToken},
-  })
-  if err != nil {
-    log.Fatalf("Error requesting platform incoming payment grant: %v\n", err)
-  }
-  ```
-</TabItem>
+  </TabItem>
 </Tabs>
 
 <details>
@@ -343,7 +341,6 @@ Remember that the merchant is receiving 99% of the payment (\$99.00 or `9900`) w
   if err != nil {
     log.Fatalf("Error creating merchant incoming payment: %v\n", err)
   }
-
   // Platform
   platformIncomingPayment, err := client.IncomingPayment.Create(context.TODO(), op.IncomingPaymentCreateParams{
     BaseURL:     *platformWalletAddress.ResourceServer,
@@ -453,7 +450,6 @@ This call obtains an access token that allows your platform to request quote res
   }{
     Access: []as.AccessItem{quoteAccessItem},
   }
-
   customerQuoteGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
     URL:         *customerWalletAddress.AuthServer,
     RequestBody: as.GrantRequestWithAccessToken{AccessToken: quoteAccessToken},
@@ -573,7 +569,6 @@ Next, call the <Badge text="POST" variant="success" /> Create Quote API again an
   if err != nil {
     log.Fatalf("Error creating merchant quote: %v\n", err)
   }
-
   // Platform
   platformQuote, err := client.Quote.Create(context.TODO(), op.QuoteCreateParams{
     BaseURL:     *customerWalletAddress.ResourceServer,
@@ -725,7 +720,6 @@ This call obtains an access token that allows your platform to request outgoing 
   
   ```go wrap
   combinedQuoteAmount := "10000" // merchantQuote.DebitAmount.Value + platformQuote.DebitAmount.Value
-
   limits := as.LimitsOutgoing{}
   if err := limits.FromLimitsOutgoing1(as.LimitsOutgoing1{
     DebitAmount: as.Amount{
@@ -736,7 +730,6 @@ This call obtains an access token that allows your platform to request outgoing 
   }); err != nil {
     log.Fatalf("Error creating limits: %v\n", err)
   }
-
   outgoingAccess := as.AccessOutgoing{
     Type:       as.OutgoingPayment,
     Actions:    []as.AccessOutgoingActions{as.AccessOutgoingActionsCreate},
@@ -760,7 +753,6 @@ This call obtains an access token that allows your platform to request outgoing 
       Nonce:  NONCE,
     },
   }
-
   pendingCustomerOutgoingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
     URL: *customerWalletAddress.AuthServer,
     RequestBody: as.GrantRequestWithAccessToken{
@@ -964,7 +956,6 @@ Use the access token returned in Step 5 that's associated with the merchant to c
   }); err != nil {
     log.Fatalf("Error creating merchant payload: %v\n", err)
   }
-
   customerOutgoingPaymentToMerchant, err := client.OutgoingPayment.Create(context.TODO(), op.OutgoingPaymentCreateParams{
     BaseURL:     *customerWalletAddress.ResourceServer,
     AccessToken: customerOutgoingPaymentGrant.AccessToken.Value,
@@ -973,7 +964,6 @@ Use the access token returned in Step 5 that's associated with the merchant to c
   if err != nil {
     log.Fatalf("Error creating outgoing payment to merchant: %v\n", err)
   }
-
   // Platform
   var platformOutgoingPayload rs.CreateOutgoingPaymentRequest
   if err := platformOutgoingPayload.FromCreateOutgoingPaymentWithQuote(rs.CreateOutgoingPaymentWithQuote{
@@ -982,7 +972,6 @@ Use the access token returned in Step 5 that's associated with the merchant to c
   }); err != nil {
     log.Fatalf("Error creating platform payload: %v\n", err)
   }
-
   customerOutgoingPaymentToPlatform, err := client.OutgoingPayment.Create(context.TODO(), op.OutgoingPaymentCreateParams{
     BaseURL:     *customerWalletAddress.ResourceServer,
     AccessToken: customerOutgoingPaymentGrant.AccessToken.Value,
