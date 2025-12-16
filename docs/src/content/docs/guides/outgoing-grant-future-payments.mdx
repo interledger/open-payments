@@ -215,21 +215,21 @@ if err != nil {
 
 <details>
   <summary>Example response</summary>
-  ```json wrap
-  {
-    "interact": {
-      "redirect": "https://auth.interledger-test.dev/{...}", // uri to redirect the user to, to begin interaction
-      "finish": "..." // unique key to secure the callback
+```json wrap
+{
+  "interact": {
+    "redirect": "https://auth.cloudninebank.example.com/{...}", // uri to redirect the user to, to begin interaction
+    "finish": "..." // unique key to secure the callback
+  },
+  "continue": {
+    "access_token": {
+      "value": "..." // access token for continuing the outgoing payment grant request
     },
-    "continue": {
-      "access_token": {
-        "value": "..." // access token for continuing the outgoing payment grant request
-      },
-      "uri": "https://auth.interledger-test.dev/continue/{...}", // uri for continuing the outgoing payment grant request
-      "wait": 30
-    }
+    "uri": "https://auth.cloudninebank.example.com/continue/{...}", // uri for continuing the outgoing payment grant request
+    "wait": 30
   }
-  ```
+}
+```
 </details>
 
 #### About the interval

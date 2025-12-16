@@ -26,7 +26,7 @@ const walletAddress = await client.walletAddress.get({
 
 const quote = await client.quote.create(
     {
-        url: new URL(WALLET_ADDRESS).origin,
+        url: walletAddress.resourceServer,
         accessToken: QUOTE_ACCESS_TOKEN,
     },
     {

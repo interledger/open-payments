@@ -1,0 +1,572 @@
+---
+title: Enviar remesas recurrentes con un monto de recepción fijo
+---
+
+import { LinkOut } from '@interledger/docs-design-system'
+import { Tabs, TabItem, Badge } from '@astrojs/starlight/components'
+import Start from '/src/partials/es/grant-start-interaction.mdx'
+import Finish from '/src/partials/es/grant-finish-interaction.mdx'
+
+:::tip[Resumen]
+Aprenda cómo enviar pagos de remesa recurrentes en los que el destinatario recibirá un monto fijo en cada pago.
+:::
+
+Un pago de remesa es una transferencia de dinero de una persona a otra, normalmente entre países o a larga distancia, que a menudo implica una conversión de monedas y tarifas. En esta guía, aprenderá cómo configurar un pago recurrente de un remitente en el que el destinatario recibe un monto fijo.
+
+Este enfoque es útil en particular para situaciones de aplicaciones de remesas en estos casos:
+
+- El remitente y el destinatario efectúan operaciones, cada uno, en monedas distintas.
+- El remitente busca que el destinatario reciba un monto fijo expresado en la moneda local del destinatario de forma recurrente.
+- El emisor está dispuesto a asumir cualquier diferencia generada por el tipo de cambio.
+
+## Caso hipotético
+
+Imagine que alguien en EE. UU. quiere enviar dinero a un familiar en México. Esta persona quiere que su familiar reciba un monto exacto en pesos mexicanos (MXN) cada mes.
+
+Para esta guía, asumirá el papel de un desarrollador que está creando una aplicación de remesas. Esta guía explica cómo configurar un pago recurrente en dólares estadounidenses, en el que el destinatario recibirá exactamente MXN 4.000 cada mes durante tres meses.
+
+El monto debitado de la cuenta de pago del remitente puede variar cada mes según los cambios en el tipo de cambio. Para simplificar, esta guía parte de un tipo de cambio estático de \$1 USD por cada MXN 20.
+
+**Detalles de la transacción de ejemplo:**
+
+- **El destinatario recibe**: MXN 4.000 cada mes durante tres meses
+- **Tipo de cambio**: Un cambio estático de \$1 USD por cada MXN 20
+- **El remitente paga**: \$200 USD cada mes
+
+Las tres partes que intervienen en este caso son las siguientes:
+
+- **Desarrollador**: usted, la persona que construye la aplicación de remesas.
+- **Remitente**: la persona que utiliza su aplicación para enviar dinero en USD.
+- **Destinatario**: la persona que recibe el dinero en MXN.
+
+## Puntos finales
+
+- <Badge text="GET" variant="note" />
+  <LinkOut href="https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/">
+    Get Wallet Address
+  </LinkOut>
+- <Badge text="POST" variant="success" />
+  <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-request/">
+    Grant Request
+  </LinkOut>
+- <Badge text="POST" variant="success" />
+  <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-incoming-payment/">
+    Create Incoming Payment
+  </LinkOut>
+- <Badge text="POST" variant="success" />
+  <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-quote/">
+    Create a Quote
+  </LinkOut>
+- <Badge text="POST" variant="success" />
+  <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-continue/">
+    Grant Continuation Request
+  </LinkOut>
+- <Badge text="POST" variant="success" />
+  <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment/">
+    Create an Outgoing Payment
+  </LinkOut>
+
+## Pasos
+
+### 1. Obtener los datos de la dirección de billetera
+
+Cuando el remitente inicia un pago a través de su aplicación, usted debe obtener la información de la dirección de billetera tanto del remitente como del destinatario.
+
+Supongamos que el remitente guardó la dirección de su billetera en la configuración de su perfil en su aplicación. Asumamos también que el remitente ha ingresado la dirección de billetera del destinatario en el formulario de pago de su aplicación.
+
+Llame a la <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wallet-address-server/operations/get-wallet-address) para cada dirección.
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts wrap
+  const senderWalletAddress = await client.walletAddress.get({
+    url: 'https://cloudninebank.example.com/sender'
+  })
+  const recipientWalletAddress = await client.walletAddress.get({
+    url: 'https://happylifebank.example.com/recipient'
+  })
+```
+</TabItem>
+</Tabs>
+
+<details>
+<summary>Respuestas de ejemplo</summary>
+El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente. 
+```json wrap
+{
+  "id": "https://cloudninebank.example.com/sender",
+  "assetCode": "USD",
+  "assetScale": 2,
+  "authServer": "https://auth.cloudninebank.example.com/",
+  "resourceServer": "https://cloudninebank.example.com/op"
+}
+```
+El siguiente ejemplo muestra una respuesta del proveedor de billetera del destinatario.
+
+```json wrap
+{
+  "id": "https://happylifebank.example.com/recipient",
+  "assetCode": "MXN",
+  "assetScale": 2,
+  "authServer": "https://auth.happylifebank.example.com/",
+  "resourceServer": "https://happylifebank.example.com/op"
+}
+```
+
+</details>
+
+### 2. Solicitar una concesión de autorización interactiva para un pago saliente
+
+Utilice la información del remitente `authServer` recibida en el paso anterior para llamar a la <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request).
+
+Esta llamada obtiene un token de acceso que permite a su aplicación solicitar la creación de recursos de pago saliente en la cuenta de billetera del remitente.
+
+Como el remitente desea que el destinatario reciba un monto fijo de MXN 4.000 cada mes, la solicitud debe tener un objeto `limits` que contenga un `receiveAmount` y un `interval`.
+
+- `receiveAmount` - El monto máximo que el destinatario puede recibir por intervalo. Cuando comienza el siguiente intervalo, el valor se restablece.
+
+- `interval` - El [intervalo de tiempo](#acerca-del-intervalo) durante el cual la concesión es válida.
+
+:::note
+Los pagos salientes requieren una concesión de autorización interactiva, que el remitente aprueba una sola vez. Mientras la concesión de autorización (y su token de acceso) sean válidos y estén dentro de sus límites (`interval` + `receiveAmount`), su aplicación puede crear pagos salientes sin volver a aprobar cada intervalo. Puede encontrar más información en las páginas del [flujo de Open Payments](/concepts/op-flow/#outgoing-payment) y [proveedores de identidad](/identity/idp).
+:::
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts wrap
+  const pendingSenderOutgoingPaymentGrant = await client.grant.request(
+    {
+      url: senderWalletAddress.authServer
+    },
+    {
+      access_token: {
+        access: [
+          {
+            identifier: senderWalletAddress.id,
+            type: 'outgoing-payment',
+            actions: ['create'],
+            limits: {
+              interval: 'R3/2025-10-03T23:25:00Z/P1M',
+              receiveAmount: {
+                assetCode: 'MXN',
+                assetScale: 2,
+                value: '400000', 
+              }
+            }
+          }
+        ]
+      },
+      interact: {
+        start: ['redirect'],
+        finish: {
+          method: 'redirect',
+          uri: 'https://myapp.example.com/finish/{...}', // where to redirect your user after they've completed the interaction
+          nonce: NONCE
+        }
+      }
+    }
+  )
+  ```
+</TabItem>
+</Tabs>
+
+<details>
+<summary>Ejemplo de respuesta</summary>
+El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
+
+```json wrap
+{
+  "interact": {
+    "redirect": "https://auth.cloudninebank.example.com/{...}", // uri to redirect your user to, to begin interaction
+    "finish": "..." // unique key to secure the callback
+  },
+  "continue": {
+    "access_token": {
+      "value": "..." // access token for continuing the outgoing payment grant request
+    },
+    "uri": "https://auth.cloudninebank.example.com/continue/{...}", // uri for continuing the outgoing payment grant request
+    "wait": 30
+  }
+}
+```
+
+</details>
+
+#### Acerca del intervalo
+
+El intervalo que se emplea en esta guía es `R3/2025-10-03T23:25:00Z/P1M`. Recuerde que el remitente desea que el destinatario reciba MXN 4.000 al mes durante tres meses. El intervalo se desglosa del siguiente modo:
+
+- `R3/` es la cantidad de repeticiones: tres.
+- `2025-10-03` es la fecha de inicio del intervalo repetido: 3 de octubre de 2025.
+- `T23:25:00Z/` es la hora de inicio del intervalo repetido: 11:25 p. m. UTC.
+- `P1M` es el período entre cada intervalo: un mes. Si se emplea con `R3`, se obtiene una concesión válida una vez por mes durante tres meses.
+
+En total, esta concesión de autorización permitirá al remitente realizar cualquier cantidad de pagos salientes dentro del límite definido desde:
+
+- las 11:25 p. m. UTC del 3 de octubre de 2025 hasta las 11:24 p. m. UTC del 3 de noviembre de 2025.
+- las 11:25 p. m. UTC del 3 de noviembre de 2025 hasta las 11:24 p. m. UTC del 3 de diciembre de 2025.
+- las 11:25 p. m. UTC del 3 de diciembre de 2025 hasta las 11:24 p. m. UTC del 3 de enero de 2026.
+
+### 3. Comenzar la interacción con el remitente
+
+<Start />
+
+### 4. Finalizar la interacción con el remitente
+
+<Finish />
+
+### 5. Solicitar una continuación de la concesión de autorización
+
+En nuestro ejemplo, suponemos que el IdP con el que interactuó su usuario (el remitente) cuenta con una interfaz de usuario. Cuando la interacción finaliza, el usuario regresa a su aplicación. Ahora su aplicación puede realizar una solicitud de continuación de la concesión de autorización de pago saliente.
+
+:::note
+En una situación hipotética donde una interfaz de usuario no se encuentra disponible, analice la posibilidad de implementar un mecanismo de sondeo para verificar que se haya completado la interacción.
+:::
+
+Llame a la <Badge text="POST" variant="success" /> [Grant Continuation Request API](/apis/auth-server/operations/post-continue). Esta llamada obtiene un token de acceso que permite a su aplicación continuar con la solicitud de concesión de autorización de pago saliente.
+
+Emita la solicitud al `continue.uri` proporcionado en la respuesta de concesión de autorización de pago saliente inicial.
+
+Incluya la `interact_ref` devuelta en los parámetros de consulta del URI de redirección.
+
+<Tabs syncKey="lang">
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts wrap
+  const senderOutgoingPaymentGrant = await client.grant.continue(
+    {
+      url: pendingSenderOutgoingPaymentGrant.continue.uri,
+      accessToken: pendingSenderOutgoingPaymentGrant.continue.access_token.value
+    },
+    {
+      interact_ref: interactRef
+    }
+  )
+  ```
+  </TabItem>
+</Tabs>
+
+<details>
+<summary>Ejemplo de respuesta</summary>
+El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
+
+```json wrap
+{
+  "access_token": {
+    "value": "...", // final access token required before creating outgoing payments
+    "manage": "https://auth.cloudninebank.example.com/token/{...}", // management uri for access token
+    "access": [
+      {
+        "type": "outgoing-payment",
+        "actions": ["create"],
+        "identifier": "https://cloudninebank.example.com/sender",
+        "limits": {
+          "interval": "R3/2025-10-03T23:25:00Z/P1M",
+          "receiveAmount": {
+            "assetCode": "MXN",
+            "assetScale": 2,
+            "value": "400000"
+          }
+        }
+      }
+    ]
+  },
+  "continue": {
+    "access_token": {
+      "value": "..." // access token for continuing the request
+    },
+    "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
+  }
+}
+```
+
+</details>
+
+### 6. Solicitar una concesión de autorización para un pago entrante
+
+Utilice los datos del destinatario `authServer` recibidos en el paso 1 para llamar a la <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request).
+
+Esta llamada obtiene un token de acceso que permite a su aplicación solicitar la creación de un recurso de pago entrante en la cuenta de billetera del destinatario.
+
+<Tabs syncKey="lang">
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts wrap
+  const recipientIncomingPaymentGrant = await client.grant.request(
+    {
+      url: recipientWalletAddress.authServer
+    },
+    {
+      access_token: {
+        access: [
+          {
+            type: 'incoming-payment',
+            actions: ['create'],
+          },
+        ],
+      },
+    },
+  );
+  ```
+  </TabItem>
+</Tabs>
+
+<details>
+<summary>Ejemplo de respuesta</summary>
+El siguiente ejemplo muestra una respuesta del proveedor de billetera del destinatario.
+
+```json wrap
+{
+  "access_token": {
+    "value": "...", // access token value for incoming payment grant
+    "manage": "https://auth.happylifebank.example.com/token/{...}", // management uri for access token
+    "access": [
+      {
+        "type": "incoming-payment",
+        "actions": ["create"]
+      }
+    ]
+  },
+  "continue": {
+    "access_token": {
+      "value": "..." // access token for continuing the request
+    },
+    "uri": "https://auth.happylifebank.example.com/continue/{...}" // continuation request uri
+  }
+}
+```
+
+</details>
+
+### 7. Solicitar la creación de un recurso de pago entrante
+
+Use el token de acceso devuelto en la respuesta anterior para llamar a la <Badge text="POST" variant="success" /> [Create Incoming Payment API](/apis/resource-server/operations/create-incoming-payment).
+
+Esta llamada solicita la creación de un recurso de pago entrante en la cuenta de billetera del destinatario.
+
+<Tabs syncKey="lang">
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts wrap
+  const recipientIncomingPayment = await client.incomingPayment.create(
+    {
+      url: recipientWalletAddress.resourceServer,
+      accessToken: recipientIncomingPaymentGrant.access_token.value
+    },
+    {
+      walletAddress: recipientWalletAddress.id,
+    },
+  )
+  ```
+  </TabItem>
+</Tabs>
+
+<details>
+<summary>Ejemplo de respuesta</summary>
+El siguiente ejemplo muestra una respuesta del proveedor de billetera del destinatario.
+
+```json wrap
+{
+  "id": "https://happylifebank.example.com/incoming-payments/{...}",
+  "walletAddress": "https://happylifebank.example.com/recipient",
+  "receivedAmount": {
+    "value": "0",
+    "assetCode": "MXN",
+    "assetScale": 2
+  },
+  "completed": false,
+  "createdAt": "2025-10-03T23:26:55.52Z",
+  "methods": [
+    {
+      "type": "ilp",
+      "ilpAddress": "...",
+      "sharedSecret": "..."
+    }
+  ]
+}
+```
+
+</details>
+
+### 8. Solicitar una concesión de autorización para una cotización
+
+Utilice los datos del remitente `authServer` recibidos en el paso 1 para llamar a la <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request).
+
+Esta llamada obtiene un token de acceso que permite a su aplicación solicitar la creación de un recurso de cotización en la billetera del remitente.
+
+<Tabs syncKey="lang">
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts wrap
+  const senderQuoteGrant = await client.grant.request(
+    {
+      url: senderWalletAddress.authServer
+    },
+    {
+      access_token: {
+        access: [
+          {
+            type: 'quote',
+            actions: ['create']
+          }
+        ]
+      }
+    }
+  )
+  ```
+  </TabItem>
+</Tabs>
+
+<details>
+<summary>Ejemplo de respuesta</summary>
+El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
+
+```json wrap
+{
+  "access_token": {
+    "value": "...", // access token value for quote grant
+    "manage": "https://auth.cloudninebank.example.com/token/{...}", // management uri for access token
+    "access": [
+      {
+        "type": "quote",
+        "actions": ["create"]
+      }
+    ]
+  },
+  "continue": {
+    "access_token": {
+      "value": "..." // access token for continuing the request
+    },
+    "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
+  }
+}
+```
+
+</details>
+
+### 9. Solicitar la creación de un recurso de cotización
+
+Utilice el token de acceso recibido en el paso anterior para llamar a la <Badge text="POST" variant="success" /> [Create Quote API](/apis/resource-server/operations/create-quote).
+
+Esta llamada solicita la creación de un recurso de cotización en la cuenta de la billetera del remitente. La solicitud debe contener el `receiver`, que es la `id` de pago entrante del destinatario, junto con el `receiveAmount`, que es el monto exacto que el remitente quiere que reciba el destinatario.
+
+El `receiveAmount` especifica que el destinatario recibirá exactamente MXN 4.000.
+
+<Tabs syncKey="lang">
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts wrap
+  const senderQuote = await client.quote.create(
+    {
+      url: senderWalletAddress.resourceServer,
+      accessToken: senderQuoteGrant.access_token.value
+    },
+    {
+      method: 'ilp',
+      walletAddress: senderWalletAddress.id,
+      receiver: recipientIncomingPayment.id,
+      receiveAmount: {
+        value: '400000',
+        assetCode: 'MXN',
+        assetScale: 2
+      }
+    }
+  )
+  ```
+  </TabItem>
+</Tabs>
+
+La respuesta devuelve un `receiveAmount`, un `debitAmount` y demás información requerida.
+
+- `debitAmount` - El monto que el remitente debe pagar (en USD en nuestro ejemplo) después de la conversión de moneda.
+
+- `receiveAmount` - El monto que el destinatario recibirá realmente (exactamente MXN 4.000 en nuestro ejemplo).
+
+:::note[Cotizaciones con vencimiento]
+Las respuestas de cotización incluyen una marca de tiempo `expiresAt`. Cree el pago saliente antes de que la cotización expire. Si la creación falla porque la cotización expiró, solicite una nueva e intente otra vez.
+:::
+
+<details>
+<summary>Ejemplo de respuesta</summary>
+El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
+
+```json wrap
+{
+  "id": "https://cloudninebank.example.com/quotes/{...}", // url identifying the quote
+  "walletAddress": "https://cloudninebank.example.com/sender",
+  "receiver": "https://happylifebank.example.com/incoming-payments/{...}", // url of the incoming payment the quote is created for
+  "debitAmount": {
+    "value": "20000",
+    "assetCode": "USD",
+    "assetScale": 2
+  },
+  "receiveAmount": {
+    "value": "400000", // Recipient receives $4,000 MXN
+    "assetCode": "MXN",
+    "assetScale": 2
+  },
+  "method": "ilp",
+  "createdAt": "2025-10-03T23:28:51.50Z",
+  "expiresAt": "2025-10-03T23:48:51.50Z"
+}
+```
+
+</details>
+
+### 10. Solicitar la creación de un recurso de pago saliente
+
+Utilice el token de acceso devuelto en la continuación de la concesión de autorización de pago saliente (paso 5) para llamar a la <Badge text="POST" variant="success" /> [Create Outgoing Payment API](/apis/resource-server/operations/create-outgoing-payment).
+
+<Tabs syncKey="lang">
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  ```ts wrap
+  const senderOutgoingPayment = await client.outgoingPayment.create(
+    {
+      url: senderWalletAddress.resourceServer,
+      accessToken: senderOutgoingPaymentGrant.access_token.value
+    },
+    {
+      walletAddress: senderWalletAddress.id,
+      quoteId: senderQuote.id,
+    }
+  )
+  ```
+  </TabItem>
+</Tabs>
+
+<details>
+<summary>Ejemplo de respuesta</summary>
+El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
+
+```json wrap
+{
+  "id": "https://cloudninebank.example.com/outgoing-payments/{...}", // url of the outgoing payment
+  "walletAddress": "https://cloudninebank.example.com/sender",
+  "receiver": "https://happylifebank.example.com/incoming-payments/{...}", // url of the incoming payment being paid
+  "debitAmount": {
+    "value": "20000", // The amount to debit from the sender's account
+    "assetCode": "USD",
+    "assetScale": 2
+  },
+  "receiveAmount": {
+    "value": "400000", // Recipient to receive $4,000 MXN
+    "assetCode": "MXN",
+    "assetScale": 2
+  },
+  "sentAmount": {
+    "value": "0",
+    "assetCode": "USD",
+    "assetScale": 2
+  },
+  "createdAt": "2025-10-03T23:29:03.41Z"
+}
+```
+
+</details>
+
+El primer pago ya está configurado. En el siguiente intervalo (dentro de un mes), repita los siguientes pasos para solicitar la creación de los siguientes:
+
+1. Un recurso de pago entrante ([paso 7](#7-solicitar-la-creación-de-un-recurso-de-pago-entrante))
+2. Un recurso de cotización ([paso 9](#9-solicitar-la-creación-de-un-recurso-de-cotización))
+3. Un recurso de pago saliente ([paso 10](#10-solicitar-la-creación-de-un-recurso-de-pago-saliente))
+
+Utilice el token de acceso asociado a la concesión de autorización de cada recurso en las solicitudes. No necesita solicitar nuevas concesiones de autorización porque las concesiones originales deberían seguir siendo válidas.
+
+:::note[Expiración del token de acceso]
+Si el token de acceso de una concesión ha expirado, llame a la <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/auth-server/operations/post-token/) y, luego, utilice el nuevo token en la solicitud correspondiente.
+:::
