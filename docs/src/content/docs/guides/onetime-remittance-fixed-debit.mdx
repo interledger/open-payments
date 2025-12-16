@@ -325,24 +325,23 @@ This call obtains an access token that allows your app to request that a quote r
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-    
-  ```ts wrap
-  const senderQuoteGrant = await client.grant.request(
-    {
-      url: senderWalletAddress.authServer
-    },
-    {
-      access_token: {
-        access: [
-          {
-            type: 'quote',
-            actions: ['create']
-          }
-        ]
+    ```ts wrap
+    const senderQuoteGrant = await client.grant.request(
+      {
+        url: senderWalletAddress.authServer
+      },
+      {
+        access_token: {
+          access: [
+            {
+              type: 'quote',
+              actions: ['create']
+            }
+          ]
+        }
       }
-    }
-  )
-  ```
+    )
+    ```
   </TabItem>
  <TabItem label='Rust' icon='seti:rust'>
  
