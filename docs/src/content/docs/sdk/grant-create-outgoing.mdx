@@ -116,6 +116,89 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 <p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Grant/GrantOutgoingPayment.php'>View full source without interval</LinkOut></p>
 <p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Grant/GrantOutgoingPaymentInterval.php'>View full source with interval</LinkOut></p>
 </TabItem>
+<TabItem label="Go" icon='seti:go'>
+<LinkButton href="https://github.com/interledger/open-payments-go/blob/main/README.md" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+```go
+package main
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
+
+	op "github.com/interledger/open-payments-go"
+	as "github.com/interledger/open-payments-go/generated/authserver"
+)
+
+func main() {
+	// Initialize Open Payments client
+	client, err := op.NewAuthenticatedClient(WALLET_ADDRESS_URL, PRIVATE_KEY_BASE_64, KEY_ID)
+	if err != nil {
+		log.Fatalf("Error creating authenticated client: %v\n", err)
+	}
+
+	// Get wallet address information
+	walletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
+		URL: WALLET_ADDRESS_URL,
+	})
+	if err != nil {
+		log.Fatalf("Error fetching wallet address: %v\n", err)
+	}
+
+	// Request outgoing payment grant
+	outgoingAccess := as.AccessOutgoing{
+		Type: as.OutgoingPayment,
+		Actions: []as.AccessOutgoingActions{
+			as.AccessOutgoingActionsCreate,
+			as.AccessOutgoingActionsRead,
+			as.AccessOutgoingActionsList,
+		},
+		Identifier: *walletAddress.Id,
+	}
+	accessItem := as.AccessItem{}
+	if err := accessItem.FromAccessOutgoing(outgoingAccess); err != nil {
+		log.Fatalf("Error creating AccessItem: %v\n", err)
+	}
+	accessToken := struct {
+		Access as.Access `json:"access"`
+	}{
+		Access: []as.AccessItem{accessItem},
+	}
+	interact := &as.InteractRequest{
+		Start: []as.InteractRequestStart{as.InteractRequestStartRedirect},
+	}
+
+	grant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
+		URL: *walletAddress.AuthServer,
+		RequestBody: as.GrantRequestWithAccessToken{
+			AccessToken: accessToken,
+			Interact:    interact,
+		},
+	})
+	if err != nil {
+		log.Fatalf("Error requesting grant: %v\n", err)
+	}
+
+	// Check grant state (interaction is required for outgoing payments)
+	if !grant.IsInteractive() {
+		log.Fatalf("Expected interactive grant")
+	}
+
+	// Output
+	grantJSON, err := json.MarshalIndent(grant, "", "  ")
+	if err != nil {
+		log.Fatalf("Error marshaling grant: %v\n", err)
+	}
+	fmt.Println("GRANT:", string(grantJSON))
+	fmt.Println("Please interact at the following URL:", grant.Interact.Redirect)
+	fmt.Println("CONTINUE_ACCESS_TOKEN =", grant.Continue.AccessToken.Value)
+	fmt.Println("CONTINUE_URI =", grant.Continue.Uri)
+}
+```
+
+</TabItem>
 </Tabs>
 
 ## References

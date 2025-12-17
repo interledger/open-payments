@@ -68,6 +68,40 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 
 <p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Token/TokenRevoke.php'>View full source</LinkOut></p>
 </TabItem>
+<TabItem label="Go" icon='seti:go'>
+<LinkButton href="https://github.com/interledger/open-payments-go/blob/main/README.md" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"log"
+
+	op "github.com/interledger/open-payments-go"
+)
+
+func main() {
+	// Initialize Open Payments client
+	client, err := op.NewAuthenticatedClient(WALLET_ADDRESS_URL, PRIVATE_KEY_BASE_64, KEY_ID)
+	if err != nil {
+		log.Fatalf("Error creating authenticated client: %v\n", err)
+	}
+
+	// Revoke Token
+	if err := client.Token.Revoke(context.TODO(), op.TokenRevokeParams{
+		URL:         MANAGE_URL,
+		AccessToken: ACCESS_TOKEN,
+	}); err != nil {
+		log.Fatalf("Error revoking access token: %v\n", err)
+	}
+
+	fmt.Println("Access token revoked successfully")
+}
+```
+
+</TabItem>
 </Tabs>
 
 ## References

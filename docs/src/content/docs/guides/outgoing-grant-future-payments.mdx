@@ -58,6 +58,17 @@ Let's assume your user saved their wallet address in their account profile when 
  let user_wallet_address = client.wallet_address().get("https://cloudninebank.example.com/user").await?;
  ```
  </TabItem>
+ <TabItem label='Go' icon='seti:go'>
+ 
+ ```go wrap
+ userWalletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
+   URL: "https://cloudninebank.example.com/user",
+ })
+ if err != nil {
+   log.Fatalf("Error fetching user wallet address: %v\n", err)
+ }
+```
+</TabItem>
 </Tabs>
 
 <details>
@@ -146,6 +157,59 @@ Remember, your user wants to send payments of up to $100 CAD a month for three m
    .await?;
  ```
  </TabItem>
+<TabItem label='Go' icon='seti:go'>
+
+```go wrap
+interval := "R3/2025-05-20T13:00:00Z/P1M"
+limits := as.LimitsOutgoing{}
+if err := limits.FromLimitsOutgoing1(as.LimitsOutgoing1{
+  Interval: &interval,
+  DebitAmount: as.Amount{
+    Value:      "10000",
+    AssetCode:  "CAD",
+    AssetScale: 2,
+  },
+}); err != nil {
+  log.Fatalf("Error creating limits: %v\n", err)
+}
+
+outgoingAccess := as.AccessOutgoing{
+  Type: as.OutgoingPayment,
+  Actions: []as.AccessOutgoingActions{as.AccessOutgoingActionsCreate, as.AccessOutgoingActionsRead},
+  Identifier: *userWalletAddress.Id,
+  Limits: &limits,
+}
+outgoingAccessItem := as.AccessItem{}
+if err := outgoingAccessItem.FromAccessOutgoing(outgoingAccess); err != nil {
+  log.Fatalf("Error creating AccessItem: %v\n", err)
+}
+outgoingAccessToken := struct {
+  Access as.Access `json:"access"`
+}{
+  Access: []as.AccessItem{outgoingAccessItem},
+}
+interact := &as.InteractRequest{
+  Start: []as.InteractRequestStart{as.InteractRequestStartRedirect},
+  Finish: &as.InteractRequestFinish{
+  Method: as.Redirect,
+  Uri: "https://paymentplatform.example/finish/{...}",
+  Nonce: NONCE,
+  },
+}
+
+pendingUserOutgoingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
+  URL: *userWalletAddress.AuthServer,
+  RequestBody: as.GrantRequestWithAccessToken{
+    AccessToken: outgoingAccessToken,
+    Interact: interact,
+  },
+})
+if err != nil {
+  log.Fatalf("Error requesting outgoing payment grant: %v\n", err)
+}
+```
+
+</TabItem>
 </Tabs>
 
 <details>
@@ -235,6 +299,20 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
       Some(&continue_field.access_token.value),
     )
     .await?;
+  ```
+  </TabItem>
+
+  <TabItem label='Go' icon='seti:go'>
+  
+  ```go wrap
+  userOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
+    URL:         pendingUserOutgoingPaymentGrant.Continue.Uri,
+    AccessToken: pendingUserOutgoingPaymentGrant.Continue.AccessToken.Value,
+    InteractRef: INTERACT_REF,
+  })
+  if err != nil {
+    log.Fatalf("Error continuing grant: %v\n", err)
+  }
   ```
   </TabItem>
 </Tabs>
