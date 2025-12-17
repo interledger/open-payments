@@ -76,6 +76,38 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 
 <p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Quote/QuoteCreate.php'>View full source</LinkOut></p>
 </TabItem>
+<TabItem label='Java' icon='seti:java'>
+<LinkButton
+href="https://github.com/interledger/open-payments-java?tab=readme-ov-file#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+    ```java wrap
+    // 1. Import:
+    import org.interledger.openpayments.httpclient.OpenPaymentsHttpClient;
+    import org.interledger.openpayments.IOpenPaymentsClient;
+
+    // 2. Client instance using HTTP:
+    IOpenPaymentsClient client = OpenPaymentsHttpClient.defaultClient(
+        "WalletAddress",
+        "PrivateKeyPEM",
+        "KeyId"
+    );
+
+    // 3. Retrieve the wallets:
+    var receiverWallet = client.getWalletAddress("https://cloudninebank.example.com/merchant");
+    var senderWallet = client.getWalletAddress("https://cloudninebank.example.com/customer");
+
+    // 4. Create incoming payment:
+    var grantRequest = this.client.createGrantIncomingPayment(receiverWallet);
+    var incomingPayment = this.client.createIncomingPayment(receiverWallet, grantRequest, BigDecimal.valueOf(11.25));
+
+    // 5. Create quote:
+    var quoteRequest = this.client.createGrantQuote(senderWallet);
+    var quote = client.createQuote(quoteRequest.getAccess().getToken(), senderWallet, incomingPayment);
+
+    // 6. Logging:
+    log.info("QUOTE: {}", incomingPayment);
+    ```
+</TabItem>
 </Tabs>
 
 ## Create a quote with a debit amount

@@ -99,6 +99,7 @@ href="https://github.com/interledger/open-payments-java?tab=readme-ov-file#prere
     // 1. Import:
     import org.interledger.openpayments.httpclient.OpenPaymentsHttpClient;
     import org.interledger.openpayments.IOpenPaymentsClient;
+    import org.interledger.openpayments.model.grant.AccessAction;
 
     // 2. Client instance using HTTP:
     IOpenPaymentsClient client = OpenPaymentsHttpClient.defaultClient(
@@ -110,8 +111,11 @@ href="https://github.com/interledger/open-payments-java?tab=readme-ov-file#prere
     // 3. Retrieve the wallet
     var receiverWallet = client.getWalletAddress("https://cloudninebank.example.com/customer");
 
-    // 4. Grant for incoming payment:
+    // 4.1. Grant for incoming payment (default):
     var grantRequest = this.client.createGrantIncomingPayment(receiverWallet);
+
+    // 4.2. Grant for incoming payment (specifying actions):
+    var grantRequest = this.client.createGrantIncomingPayment(receiverWallet, AccessAction.read, AccessAction.complete, AccessAction.create);
 
     // 5. Logging:
     log.info("INCOMING_PAYMENT_GRANT: {}", grantRequest);
