@@ -84,6 +84,46 @@ Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wall
   ```
 
   </TabItem>
+  <TabItem label='Java' icon='seti:java'>
+
+      ```java wrap
+      // 1. Import:
+      import org.interledger.openpayments.httpclient.OpenPaymentsHttpClient;
+      import org.interledger.openpayments.IOpenPaymentsClient;
+
+      // 2. Client instance using HTTP:
+      IOpenPaymentsClient client = OpenPaymentsHttpClient.defaultClient(
+          "WalletAddress",
+          "PrivateKeyPEM",
+          "KeyId"
+      );
+
+      // 3. Retrieve the wallets:
+      var senderWallet = client.getWalletAddress("https://cloudninebank.example.com/customer");
+      var receiverWallet = client.getWalletAddress("https://cloudninebank.example.com/merchant");
+
+      // 4. Create incoming payment:
+      var grantRequest = this.client.createGrantIncomingPayment(receiverWallet);
+      var incomingPayment = this.client.createIncomingPayment(receiverWallet, grantRequest, BigDecimal.valueOf(11.25));
+
+      // 5. Create quote:
+      var quoteRequest = this.client.createGrantQuote(senderWallet);
+      var quote = this.client.createQuote(quoteRequest.getAccess().getToken(), senderWallet, incomingPayment);
+
+      var urlToOpen = "http://localhost:%d?paymentId=1234".formatted(port);
+
+      // 6. Create outing payment from quote:
+      var opContinueInteract = this.client.createGrantContinuation(
+              senderWallet,
+              quote.getDebitAmount(),
+              URI.create(urlToOpen),
+              "test"
+      );
+
+      // 5. Logging:
+      log.info("OUTGOING_PAYMENT_GRANT: {}", opContinueInteract);
+      ```
+  </TabItem>
 </Tabs>
 
 <details>
@@ -144,6 +184,15 @@ let retailer_incoming_payment_grant = client
 .grant()
 .request(&retailer_wallet_address.auth_server, &incoming_grant_request)
 .await?;
+
+```
+
+</TabItem>
+<TabItem label='Java' icon='seti:java'>
+
+```java wrap
+
+var incoming_access = client.createGrantIncomingPayment(retailer_wallet_address);
 
 ```
 
