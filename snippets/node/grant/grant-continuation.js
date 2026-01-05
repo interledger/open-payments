@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import { join } from "path";
 import { fileURLToPath } from "url";
+import { isFinalizedGrant } from "@interledger/open-payments";
 
 dotenv.config({
     path: fileURLToPath(join(import.meta.url, "..", "..", ".env")),
