@@ -49,6 +49,22 @@ Supongamos que su usuario guardó su dirección de billetera en el perfil de su 
   })
   ```
 </TabItem>
+<TabItem label='Rust' icon='seti:rust'>
+ ```rust wrap
+ let user_wallet_address = client.wallet_address().get("https://cloudninebank.example.com/user").await?;
+ ```
+ </TabItem>
+ <TabItem label='Go' icon='seti:go'>
+ 
+ ```go wrap
+ userWalletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
+   URL: "https://cloudninebank.example.com/user",
+ })
+ if err != nil {
+   log.Fatalf("Error fetching user wallet address: %v\n", err)
+ }
+```
+</TabItem>
 </Tabs>
 
 ### 2. Solicitar una concesión de autorización interactiva para un pago saliente
@@ -106,6 +122,81 @@ El usuario indica que desea realizar pagos de hasta CAD 100 por mes durante tres
   );
   ```
 </TabItem>
+<TabItem label='Rust' icon='seti:rust'>
+ ```rust wrap
+ use open_payments::types::{AccessTokenRequest, AccessItem, OutgoingPaymentAction, AccessLimits, Amount, InteractRequest, InteractStart, InteractFinish, InteractFinishMethod, GrantRequest};
+ let outgoing_access = AccessTokenRequest {
+   access: vec![AccessItem::OutgoingPayment {
+     identifier: Some(user_wallet_address.id.clone()),
+     actions: vec![OutgoingPaymentAction::Create, OutgoingPaymentAction::Read],
+     limits: Some(AccessLimits {
+       interval: Some("R3/2025-05-20T13:00:00Z/P1M".into()),
+       debit_amount: Some(Amount { value: "10000".into(), asset_code: "CAD".into(), asset_scale: 2 }),
+       ..Default::default()
+     }),
+   }],
+ };
+ let interact = InteractRequest { start: Some(vec![InteractStart::Redirect]), finish: Some(InteractFinish { method: InteractFinishMethod::Redirect, uri: Some("https://paymentplatform.example/finish/{...}".into()), nonce: Some("NONCE".into()) }) };
+ let outgoing_grant_request = GrantRequest::new(outgoing_access, Some(interact));
+ let pending_user_outgoing_payment_grant = client
+   .grant()
+   .request(&user_wallet_address.auth_server, &outgoing_grant_request)
+   .await?;
+ ```
+ </TabItem>
+<TabItem label='Go' icon='seti:go'>
+
+```go wrap
+interval := "R3/2025-05-20T13:00:00Z/P1M"
+limits := as.LimitsOutgoing{}
+if err := limits.FromLimitsOutgoing1(as.LimitsOutgoing1{
+  Interval: &interval,
+  DebitAmount: as.Amount{
+    Value:      "10000",
+    AssetCode:  "CAD",
+    AssetScale: 2,
+  },
+}); err != nil {
+  log.Fatalf("Error creating limits: %v\n", err)
+}
+
+outgoingAccess := as.AccessOutgoing{
+  Type: as.OutgoingPayment,
+  Actions: []as.AccessOutgoingActions{as.AccessOutgoingActionsCreate, as.AccessOutgoingActionsRead},
+  Identifier: *userWalletAddress.Id,
+  Limits: &limits,
+}
+outgoingAccessItem := as.AccessItem{}
+if err := outgoingAccessItem.FromAccessOutgoing(outgoingAccess); err != nil {
+  log.Fatalf("Error creating AccessItem: %v\n", err)
+}
+outgoingAccessToken := struct {
+  Access as.Access `json:"access"`
+}{
+  Access: []as.AccessItem{outgoingAccessItem},
+}
+interact := &as.InteractRequest{
+  Start: []as.InteractRequestStart{as.InteractRequestStartRedirect},
+  Finish: &as.InteractRequestFinish{
+  Method: as.Redirect,
+  Uri: "https://paymentplatform.example/finish/{...}",
+  Nonce: NONCE,
+  },
+}
+
+pendingUserOutgoingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
+  URL: *userWalletAddress.AuthServer,
+  RequestBody: as.GrantRequestWithAccessToken{
+    AccessToken: outgoingAccessToken,
+    Interact: interact,
+  },
+})
+if err != nil {
+  log.Fatalf("Error requesting outgoing payment grant: %v\n", err)
+}
+```
+
+</TabItem>
 </Tabs>
 
 #### Acerca del intervalo
@@ -153,6 +244,39 @@ Agregue la `interact_ref` devuelta en los parámetros de consulta del URI de red
       interact_ref: INTERACT_REF,
     },
   );
+  ```
+  </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
+  ```rust wrap
+  let continue_field = match &pending_user_outgoing_payment_grant.continue_field {
+    Some(c) => c,
+    None => {
+      eprintln!("Missing continue field on pending grant");
+      return Ok(());
+    }
+  };
+  let user_outgoing_payment_grant = client
+    .grant()
+    .continue_grant(
+      &continue_field.uri,
+      &interact_ref,
+      Some(&continue_field.access_token.value),
+    )
+    .await?;
+  ```
+  </TabItem>
+
+  <TabItem label='Go' icon='seti:go'>
+  
+  ```go wrap
+  userOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
+    URL:         pendingUserOutgoingPaymentGrant.Continue.Uri,
+    AccessToken: pendingUserOutgoingPaymentGrant.Continue.AccessToken.Value,
+    InteractRef: INTERACT_REF,
+  })
+  if err != nil {
+    log.Fatalf("Error continuing grant: %v\n", err)
+  }
   ```
   </TabItem>
 </Tabs>
