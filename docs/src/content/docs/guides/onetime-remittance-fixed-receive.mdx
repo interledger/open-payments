@@ -94,19 +94,19 @@ Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wall
   <TabItem label='Go' icon='seti:go'>
 
 ```go wrap
-  senderWalletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
-    URL: "https://cloudninebank.example.com/sender",
-  })
-  if err != nil {
-    log.Fatalf("Error fetching sender wallet address: %v\n", err)
-  }
+senderWalletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
+  URL: "https://cloudninebank.example.com/sender",
+})
+if err != nil {
+  log.Fatalf("Error fetching sender wallet address: %v\n", err)
+}
 
-  recipientWalletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
-    URL: "https://happylifebank.example.com/recipient",
-  })
-  if err != nil {
-    log.Fatalf("Error fetching recipient wallet address: %v\n", err)
-  }
+recipientWalletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
+  URL: "https://happylifebank.example.com/recipient",
+})
+if err != nil {
+  log.Fatalf("Error fetching recipient wallet address: %v\n", err)
+}
 ```
 
   </TabItem>
@@ -185,27 +185,27 @@ let recipient_incoming_payment_grant = client
   <TabItem label='Go' icon='seti:go'>
 
   ```go wrap
-    incomingAccess := as.AccessIncoming{
-      Type:    as.IncomingPayment,
-      Actions: []as.AccessIncomingActions{as.AccessIncomingActionsCreate},
-    }
-    accessItem := as.AccessItem{}
-    if err := accessItem.FromAccessIncoming(incomingAccess); err != nil {
-      log.Fatalf("Error creating AccessItem: %v\n", err)
-    }
-    accessToken := struct {
-      Access as.Access `json:"access"`
-    }{
-      Access: []as.AccessItem{accessItem},
-    }
+  incomingAccess := as.AccessIncoming{
+    Type:    as.IncomingPayment,
+    Actions: []as.AccessIncomingActions{as.AccessIncomingActionsCreate},
+  }
+  accessItem := as.AccessItem{}
+  if err := accessItem.FromAccessIncoming(incomingAccess); err != nil {
+    log.Fatalf("Error creating AccessItem: %v\n", err)
+  }
+  accessToken := struct {
+    Access as.Access `json:"access"`
+  }{
+    Access: []as.AccessItem{accessItem},
+  }
 
-    recipientIncomingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
-      URL:         *recipientWalletAddress.AuthServer,
-      RequestBody: as.GrantRequestWithAccessToken{AccessToken: accessToken},
-    })
-    if err != nil {
-      log.Fatalf("Error requesting incoming payment grant: %v\n", err)
-    }
+  recipientIncomingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
+    URL:         *recipientWalletAddress.AuthServer,
+    RequestBody: as.GrantRequestWithAccessToken{AccessToken: accessToken},
+  })
+  if err != nil {
+    log.Fatalf("Error requesting incoming payment grant: %v\n", err)
+  }
   ```
 
   </TabItem>
@@ -282,16 +282,16 @@ Some(&recipient_incoming_payment_grant.access_token.value),
   <TabItem label='Go' icon='seti:go'>
 
   ```go wrap
-    recipientIncomingPayment, err := client.IncomingPayment.Create(context.TODO(), op.IncomingPaymentCreateParams{
-      BaseURL:     *recipientWalletAddress.ResourceServer,
-      AccessToken: recipientIncomingPaymentGrant.AccessToken.Value,
-      Payload: rs.CreateIncomingPaymentJSONBody{
-        WalletAddressSchema: *recipientWalletAddress.Id,
-      },
-    })
-    if err != nil {
-      log.Fatalf("Error creating incoming payment: %v\n", err)
-    }
+  recipientIncomingPayment, err := client.IncomingPayment.Create(context.TODO(), op.IncomingPaymentCreateParams{
+    BaseURL:     *recipientWalletAddress.ResourceServer,
+    AccessToken: recipientIncomingPaymentGrant.AccessToken.Value,
+    Payload: rs.CreateIncomingPaymentJSONBody{
+      WalletAddressSchema: *recipientWalletAddress.Id,
+    },
+  })
+  if err != nil {
+    log.Fatalf("Error creating incoming payment: %v\n", err)
+  }
   ```
   </TabItem>
 </Tabs>
@@ -480,23 +480,23 @@ Some(&sender_quote_grant.access_token.value),
 <TabItem label='Go' icon='seti:go'>
 
 ```go wrap
-  senderQuote, err := client.Quote.Create(context.TODO(), op.QuoteCreateParams{
-  	BaseURL:     *senderWalletAddress.ResourceServer,
-  	AccessToken: senderQuoteGrant.AccessToken.Value,
-  	Payload: rs.CreateQuoteJSONBody2{
-  		WalletAddressSchema: *senderWalletAddress.Id,
-  		Receiver:            *recipientIncomingPayment.Id,
-  		Method:              "ilp",
-  		ReceiveAmount: rs.Amount{
-  			Value:      "500000",
-  			AssetCode:  "MXN",
-  			AssetScale: 2,
-  		},
-  	},
-  })
-  if err != nil {
-  	log.Fatalf("Error creating quote: %v\n", err)
-  }
+senderQuote, err := client.Quote.Create(context.TODO(), op.QuoteCreateParams{
+  BaseURL:     *senderWalletAddress.ResourceServer,
+  AccessToken: senderQuoteGrant.AccessToken.Value,
+  Payload: rs.CreateQuoteJSONBody2{
+    WalletAddressSchema: *senderWalletAddress.Id,
+    Receiver:            *recipientIncomingPayment.Id,
+    Method:              "ilp",
+    ReceiveAmount: rs.Amount{
+      Value:      "500000",
+      AssetCode:  "MXN",
+      AssetScale: 2,
+    },
+  },
+})
+if err != nil {
+  log.Fatalf("Error creating quote: %v\n", err)
+}
 ```
 
   </TabItem>
@@ -631,46 +631,46 @@ let pending_sender_outgoing_payment_grant = client
   <TabItem label='Go' icon='seti:go'>
 
 ```go wrap
-  outgoingAccess := as.AccessOutgoing{
-  	Type:       as.OutgoingPayment,
-  	Actions:    []as.AccessOutgoingActions{as.AccessOutgoingActionsCreate},
-  	Identifier: *senderWalletAddress.Id,
-  	Limits: &as.LimitsOutgoing{
-  		ReceiveAmount: &as.Amount{
-  			Value:      "500000",
-  			AssetCode:  "MXN",
-  			AssetScale: 2,
-  		},
-  	},
-  }
-  outgoingAccessItem := as.AccessItem{}
-  if err := outgoingAccessItem.FromAccessOutgoing(outgoingAccess); err != nil {
-  	log.Fatalf("Error creating AccessItem: %v\n", err)
-  }
-  outgoingAccessToken := struct {
-  	Access as.Access `json:"access"`
-  }{
-  	Access: []as.AccessItem{outgoingAccessItem},
-  }
-  interact := &as.InteractRequest{
-  	Start: []as.InteractRequestStart{as.InteractRequestStartRedirect},
-  	Finish: &as.InteractRequestFinish{
-  		Method: as.Redirect,
-  		Uri:    "https://myapp.example.com/finish/{...}",
-  		Nonce:  NONCE,
-  	},
-  }
+outgoingAccess := as.AccessOutgoing{
+  Type:       as.OutgoingPayment,
+  Actions:    []as.AccessOutgoingActions{as.AccessOutgoingActionsCreate},
+  Identifier: *senderWalletAddress.Id,
+  Limits: &as.LimitsOutgoing{
+    ReceiveAmount: &as.Amount{
+      Value:      "500000",
+      AssetCode:  "MXN",
+      AssetScale: 2,
+    },
+  },
+}
+outgoingAccessItem := as.AccessItem{}
+if err := outgoingAccessItem.FromAccessOutgoing(outgoingAccess); err != nil {
+  log.Fatalf("Error creating AccessItem: %v\n", err)
+}
+outgoingAccessToken := struct {
+  Access as.Access `json:"access"`
+}{
+  Access: []as.AccessItem{outgoingAccessItem},
+}
+interact := &as.InteractRequest{
+  Start: []as.InteractRequestStart{as.InteractRequestStartRedirect},
+  Finish: &as.InteractRequestFinish{
+    Method: as.Redirect,
+    Uri:    "https://myapp.example.com/finish/{...}",
+    Nonce:  NONCE,
+  },
+}
 
-  pendingSenderOutgoingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
-  	URL: *senderWalletAddress.AuthServer,
-  	RequestBody: as.GrantRequestWithAccessToken{
-  		AccessToken: outgoingAccessToken,
-  		Interact:    interact,
-  	},
-  })
-  if err != nil {
-  	log.Fatalf("Error requesting outgoing payment grant: %v\n", err)
-  }
+pendingSenderOutgoingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
+  URL: *senderWalletAddress.AuthServer,
+  RequestBody: as.GrantRequestWithAccessToken{
+    AccessToken: outgoingAccessToken,
+    Interact:    interact,
+  },
+})
+if err != nil {
+  log.Fatalf("Error requesting outgoing payment grant: %v\n", err)
+}
 ```
   </TabItem>
 </Tabs>
@@ -754,14 +754,14 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
   <TabItem label='Go' icon='seti:go'>
 
 ```go wrap
-  senderOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
-    URL:         pendingSenderOutgoingPaymentGrant.Continue.Uri,
-    AccessToken: pendingSenderOutgoingPaymentGrant.Continue.AccessToken.Value,
-    InteractRef: INTERACT_REF,
-  })
-  if err != nil {
-    log.Fatalf("Error continuing grant: %v\n", err)
-  }
+senderOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
+  URL:         pendingSenderOutgoingPaymentGrant.Continue.Uri,
+  AccessToken: pendingSenderOutgoingPaymentGrant.Continue.AccessToken.Value,
+  InteractRef: INTERACT_REF,
+})
+if err != nil {
+  log.Fatalf("Error continuing grant: %v\n", err)
+}
 ```
 
   </TabItem>

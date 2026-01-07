@@ -742,8 +742,8 @@ Incluya la `interact_ref` devuelta en los parámetros de consulta del URI de red
 
 ```go wrap
 senderOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
- 	URL:         pendingSenderOutgoingPaymentGrant.Continue.Uri,
- 	AccessToken: pendingSenderOutgoingPaymentGrant.Continue.AccessToken.Value,
+  URL:         pendingSenderOutgoingPaymentGrant.Continue.Uri,
+  AccessToken: pendingSenderOutgoingPaymentGrant.Continue.AccessToken.Value,
   InteractRef: INTERACT_REF,
 })
 if err != nil {

@@ -631,8 +631,7 @@ This call obtains an access token that allows your platform to request outgoing 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
   ```ts wrap
-  const combinedQuoteAmount = quote1.debitAmount.value + // '9900'
-                              quote2.debitAmount.value // '100'
+  combinedQuoteAmount = '10000' // 9900 + 100`
   
   const pendingCustomerOutgoingPaymentGrant = await client.grant.request(
     {
