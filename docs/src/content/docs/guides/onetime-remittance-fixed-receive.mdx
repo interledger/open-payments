@@ -847,12 +847,12 @@ if err := outgoingPayload.FromCreateOutgoingPaymentWithQuote(rs.CreateOutgoingPa
 }
 
 senderOutgoingPayment, err := client.OutgoingPayment.Create(context.TODO(), op.OutgoingPaymentCreateParams{
-BaseURL: *senderWalletAddress.ResourceServer,
-AccessToken: senderOutgoingPaymentGrant.AccessToken.Value,
-Payload: outgoingPayload,
+  BaseURL: *senderWalletAddress.ResourceServer,
+  AccessToken: senderOutgoingPaymentGrant.AccessToken.Value,
+  Payload: outgoingPayload,
 })
 if err != nil {
-log.Fatalf("Error creating outgoing payment: %v\n", err)
+  log.Fatalf("Error creating outgoing payment: %v\n", err)
 }
 ```
 
