@@ -66,6 +66,42 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 
 <p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Grant/CancelGrant.php'>View full source</LinkOut></p>
 </TabItem>
+
+<TabItem label="Go" icon='seti:go'>
+<LinkButton href="https://github.com/interledger/open-payments-go/blob/main/README.md" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"log"
+
+	op "github.com/interledger/open-payments-go"
+)
+
+func main() {
+	// Initialize Open Payments client
+	client, err := op.NewAuthenticatedClient(WALLET_ADDRESS_URL, PRIVATE_KEY_BASE_64, KEY_ID)
+	if err != nil {
+		log.Fatalf("Error creating authenticated client: %v\n", err)
+	}
+
+	// Revoke grant
+	if err := client.Grant.Cancel(context.TODO(), op.GrantCancelParams{
+		URL:         CONTINUE_URI,
+		AccessToken: CONTINUE_ACCESS_TOKEN,
+	}); err != nil {
+		log.Fatalf("Error revoking grant: %v\n", err)
+	}
+
+	// Output
+	fmt.Println("Grant revoked successfully")
+}
+```
+
+</TabItem>
 </Tabs>
 
 ## References

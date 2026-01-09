@@ -93,8 +93,46 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 
 <p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/WalletAddress/PublicGetWalletAddress.php'>View full source</LinkOut></p>
 </TabItem>
-</Tabs>
+<TabItem label="Go" icon='seti:go'>
+<LinkButton href="https://github.com/interledger/open-payments-go/blob/main/README.md" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
+```go
+package main
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
+
+	op "github.com/interledger/open-payments-go"
+)
+func main() {
+  // Initialize Open Payments client
+  client, err := op.NewAuthenticatedClient(WALLET_ADDRESS_URL, PRIVATE_KEY_BASE_64, KEY_ID)
+  if err != nil {
+    log.Fatalf("Error creating authenticated client: %v\n", err)
+  }
+
+  // Get wallet address
+  walletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
+    URL: WALLET_ADDRESS_URL,
+  })
+  if err != nil {
+    log.Fatalf("Error fetching wallet address: %v\n", err)
+  }
+
+  // Output
+  walletAddressJSON, err := json.MarshalIndent(walletAddress, "", "  ")
+  if err != nil {
+    log.Fatalf("Error marshaling wallet address: %v\n", err)
+  }
+  fmt.Println("WALLET ADDRESS:", string(walletAddressJSON))
+}
+```
+
+</TabItem>
+</Tabs>
 ## References
 
 - [API specification](/apis/wallet-address-server/operations/get-wallet-address)
