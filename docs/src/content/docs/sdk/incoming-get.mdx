@@ -162,7 +162,7 @@ href="https://github.com/interledger/open-payments-java?tab=readme-ov-file#prere
     var incomingPayment = this.client.createIncomingPayment(receiverWallet, grantRequest, BigDecimal.valueOf(11.25));
 
     // 6. Get the newly created incoming payment (fetch by ID):
-    var incomingPaymentFetched = this.client.getIncomingPayment(incomingPayment, grantRequest);
+    var incomingPaymentFetched = this.client.getIncomingPayment(incomingPayment.getId(), grantRequest);
 
     // 7. Logging:
     log.info("INCOMING_PAYMENT: {}", incomingPaymentFetched);

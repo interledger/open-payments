@@ -76,43 +76,23 @@ href="https://github.com/interledger/open-payments-java?tab=readme-ov-file#prere
     import org.interledger.openpayments.IOpenPaymentsClient;
 
     // 2. Client instance using HTTP:
-    IOpenPaymentsClient client = OpenPaymentsHttpClient.defaultClient(
+    var client = OpenPaymentsHttpClient.defaultClient(
         "WalletAddress",
         "PrivateKeyPEM",
         "KeyId"
     );
 
     // 3. Retrieve the wallets:
-    var senderWallet = client.getWalletAddress("https://cloudninebank.example.com/customer");
     var receiverWallet = client.getWalletAddress("https://cloudninebank.example.com/merchant");
 
     // 4. Create incoming payment:
     var grantRequest = this.client.createGrantIncomingPayment(receiverWallet);
-    var incomingPayment = this.client.createIncomingPayment(receiverWallet, grantRequest, BigDecimal.valueOf(11.25));
 
-    // 5. Create quote:
-    var quoteRequest = this.client.createGrantQuote(senderWallet);
-    var quote = this.client.createQuote(quoteRequest.getAccess().getToken(), senderWallet, incomingPayment);
+    // 5. Revoke the grant.
+    this.client.createGrantCancel(grantRequest);
 
-    var urlToOpen = "http://localhost:%d?paymentId=1234".formatted(port);
-
-    // 6. Create outing payment from quote:
-    var opContinueInteract = this.client.createGrantContinuation(
-            senderWallet,
-            quote.getDebitAmount(),
-            URI.create(urlToOpen),
-            "test"
-    );
-
-    // 7. USER APPROVES REQUEST.
-
-    // 8. Finalize/Continue
-    var finalized = this.client.createGrantFinalize(opContinueInteract, "Reference from USER interaction.");
-
-    // 9. TODO: Revoke the finalised grant.
-
-    // 10. Logging:
-    log.info("FINALIZED: {}", finalized);
+    // 6. Logging:
+    log.info("CANCELLED: {}", grantRequest);
     ```
 </TabItem>
 </Tabs>

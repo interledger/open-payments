@@ -102,7 +102,7 @@ href="https://github.com/interledger/open-payments-java?tab=readme-ov-file#prere
     import org.interledger.openpayments.model.grant.AccessAction;
 
     // 2. Client instance using HTTP:
-    IOpenPaymentsClient client = OpenPaymentsHttpClient.defaultClient(
+    var client = OpenPaymentsHttpClient.defaultClient(
         "WalletAddress",
         "PrivateKeyPEM",
         "KeyId"
