@@ -101,9 +101,47 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 
 <p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/WalletAddress/PublicGetWalletAddressKeys.php'>View full source</LinkOut></p>
 </TabItem>
+<TabItem label="Go" icon='seti:go'>
+<LinkButton href="https://github.com/interledger/open-payments-go/blob/main/README.md" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+```go
+package main
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
+
+  op "github.com/interledger/open-payments-go"
+
+)
+
+func main() {
+  // Initialize Open Payments client
+  client := op.NewClient()
+
+  // Get wallet address keys
+  walletAddressKeys, err := client.WalletAddress.GetKeys(context.TODO(), op.WalletAddressGetKeysParams{
+    URL: WALLET_ADDRESS_URL,
+  })
+  if err != nil {
+    log.Fatalf("Error fetching wallet address keys: %v\n", err)
+  }
+
+  // Output
+  walletAddressKeysJSON, err := json.MarshalIndent(walletAddressKeys, "", "  ")
+  if err != nil {
+    log.Fatalf("Error marshaling wallet address keys: %v\n", err)
+  }
+  fmt.Println("WALLET ADDRESS KEYS:", string(walletAddressKeysJSON))
+}
+
+```
+
+</TabItem>
 <TabItem label='Java' icon='seti:java'>
-<LinkButton
-href="https://github.com/interledger/open-payments-java?tab=readme-ov-file#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+<LinkButton href="https://github.com/interledger/open-payments-java?tab=readme-ov-file#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
     ```java wrap
     // 1. Import:
@@ -112,9 +150,9 @@ href="https://github.com/interledger/open-payments-java?tab=readme-ov-file#prere
 
     // 2. Client instance using HTTP:
     var client = OpenPaymentsHttpClient.defaultClient(
-        "WalletAddress",
-        "PrivateKeyPEM",
-        "KeyId"
+    "WalletAddress",
+    "PrivateKeyPEM",
+    "KeyId"
     );
 
     // 3. Retrieve the wallet address public keys:

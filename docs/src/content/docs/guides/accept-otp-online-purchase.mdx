@@ -84,45 +84,66 @@ Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wall
   ```
 
   </TabItem>
+  <TabItem label='Go' icon='seti:go'>
+
+```go wrap
+customerWalletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
+  URL: "https://cloudninebank.example.com/customer",
+})
+if err != nil {
+  log.Fatalf("Error fetching customer wallet address: %v\n", err)
+}
+
+retailerWalletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
+  URL: "https://happylifebank.example.com/retailer",
+})
+if err != nil {
+  log.Fatalf("Error fetching retailer wallet address: %v\n", err)
+}
+
+```
+
+  </TabItem>
   <TabItem label='Java' icon='seti:java'>
 
-      ```java wrap
-      // 1. Import:
-      import org.interledger.openpayments.httpclient.OpenPaymentsHttpClient;
-      import org.interledger.openpayments.IOpenPaymentsClient;
+    ```java wrap
+    // 1. Import:
+    import org.interledger.openpayments.httpclient.OpenPaymentsHttpClient;
+    import org.interledger.openpayments.IOpenPaymentsClient;
 
-      // 2. Client instance using HTTP:
-      IOpenPaymentsClient client = OpenPaymentsHttpClient.defaultClient(
-          "WalletAddress",
-          "PrivateKeyPEM",
-          "KeyId"
-      );
+    // 2. Client instance using HTTP:
+    IOpenPaymentsClient client = OpenPaymentsHttpClient.defaultClient(
+    "WalletAddress",
+    "PrivateKeyPEM",
+    "KeyId"
+    );
 
-      // 3. Retrieve the wallets:
-      var senderWallet = client.getWalletAddress("https://cloudninebank.example.com/customer");
-      var receiverWallet = client.getWalletAddress("https://cloudninebank.example.com/merchant");
+    // 3. Retrieve the wallets:
+    var senderWallet = client.getWalletAddress("https://cloudninebank.example.com/customer");
+    var receiverWallet = client.getWalletAddress("https://cloudninebank.example.com/merchant");
 
-      // 4. Create incoming payment:
-      var grantRequest = this.client.createGrantIncomingPayment(receiverWallet);
-      var incomingPayment = this.client.createIncomingPayment(receiverWallet, grantRequest, BigDecimal.valueOf(11.25));
+    // 4. Create incoming payment:
+    var grantRequest = this.client.createGrantIncomingPayment(receiverWallet);
+    var incomingPayment = this.client.createIncomingPayment(receiverWallet, grantRequest, BigDecimal.valueOf(11.25));
 
-      // 5. Create quote:
-      var quoteRequest = this.client.createGrantQuote(senderWallet);
-      var quote = this.client.createQuote(quoteRequest.getAccess().getToken(), senderWallet, incomingPayment);
+    // 5. Create quote:
+    var quoteRequest = this.client.createGrantQuote(senderWallet);
+    var quote = this.client.createQuote(quoteRequest.getAccess().getToken(), senderWallet, incomingPayment);
 
-      var urlToOpen = "http://localhost:%d?paymentId=1234".formatted(port);
+    var urlToOpen = "http://localhost:%d?paymentId=1234".formatted(port);
 
-      // 6. Create outing payment from quote:
-      var opContinueInteract = this.client.createGrantContinuation(
-              senderWallet,
-              quote.getDebitAmount(),
-              URI.create(urlToOpen),
-              "test"
-      );
+    // 6. Create outing payment from quote:
+    var opContinueInteract = this.client.createGrantContinuation(
+    senderWallet,
+    quote.getDebitAmount(),
+    URI.create(urlToOpen),
+    "test"
+    );
 
-      // 5. Logging:
-      log.info("OUTGOING_PAYMENT_GRANT: {}", opContinueInteract);
-      ```
+    // 5. Logging:
+    log.info("OUTGOING_PAYMENT_GRANT: {}", opContinueInteract);
+    ```
+
   </TabItem>
 </Tabs>
 
@@ -188,15 +209,43 @@ let retailer_incoming_payment_grant = client
 ```
 
 </TabItem>
-<TabItem label='Java' icon='seti:java'>
 
-```java wrap
+<TabItem label='Go' icon='seti:go'>
 
-var incoming_access = client.createGrantIncomingPayment(retailer_wallet_address);
+```go wrap
+incomingAccess := as.AccessIncoming{
+	Type:    as.IncomingPayment,
+	Actions: []as.AccessIncomingActions{as.AccessIncomingActionsCreate},
+}
+accessItem := as.AccessItem{}
+if err := accessItem.FromAccessIncoming(incomingAccess); err != nil {
+	log.Fatalf("Error creating AccessItem: %v\n", err)
+}
+accessToken := struct {
+	Access as.Access `json:"access"`
+}{
+	Access: []as.AccessItem{accessItem},
+}
 
+retailerIncomingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
+	URL:         *retailerWalletAddress.AuthServer,
+	RequestBody: as.GrantRequestWithAccessToken{AccessToken: accessToken},
+})
+if err != nil {
+	log.Fatalf("Error requesting incoming payment grant: %v\n", err)
+}
 ```
 
 </TabItem>
+  <TabItem label='Java' icon='seti:java'>
+
+    ```java wrap
+
+    var incoming_access = client.createGrantIncomingPayment(retailer_wallet_address);
+
+    ```
+
+  </TabItem>
 </Tabs>
 
 <details>
@@ -279,6 +328,27 @@ Some(&retailer_incoming_payment_grant.access_token.value),
 ```
 
 </TabItem>
+
+<TabItem label='Go' icon='seti:go'>
+```go wrap
+incomingPayment, err := client.IncomingPayment.Create(context.TODO(), op.IncomingPaymentCreateParams{
+	BaseURL:     *retailerWalletAddress.ResourceServer,
+	AccessToken: retailerIncomingPaymentGrant.AccessToken.Value,
+	Payload: rs.CreateIncomingPaymentJSONBody{
+		WalletAddressSchema: *retailerWalletAddress.Id,
+		IncomingAmount: &rs.Amount{
+			Value:      "140000",
+			AssetCode:  "MXN",
+			AssetScale: 2,
+		},
+	},
+})
+if err != nil {
+	log.Fatalf("Error creating incoming payment: %v\n", err)
+}
+```
+
+</TabItem>
 </Tabs>
 
 <details>
@@ -358,6 +428,35 @@ let customer_quote_grant = client
 ```
 
 </TabItem>
+
+<TabItem label='Go' icon='seti:go'>
+
+```go wrap
+quoteAccess := as.AccessQuote{
+	Type:    as.Quote,
+	Actions: []as.AccessQuoteActions{as.Create},
+}
+quoteAccessItem := as.AccessItem{}
+if err := quoteAccessItem.FromAccessQuote(quoteAccess); err != nil {
+	log.Fatalf("Error creating AccessItem: %v\n", err)
+}
+quoteAccessToken := struct {
+	Access as.Access `json:"access"`
+}{
+	Access: []as.AccessItem{quoteAccessItem},
+}
+
+customerQuoteGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
+	URL:         *customerWalletAddress.AuthServer,
+	RequestBody: as.GrantRequestWithAccessToken{AccessToken: quoteAccessToken},
+})
+if err != nil {
+	log.Fatalf("Error requesting quote grant: %v\n", err)
+}
+```
+
+</TabItem>
+
 </Tabs>
 
 <details>
@@ -438,6 +537,26 @@ Some(&customer_quote_grant.access_token.value),
 ```
 
 </TabItem>
+
+<TabItem label='Go' icon='seti:go'>
+
+```go wrap
+customerQuote, err := client.Quote.Create(context.TODO(), op.QuoteCreateParams{
+	BaseURL:     *customerWalletAddress.ResourceServer,
+	AccessToken: customerQuoteGrant.AccessToken.Value,
+	Payload: rs.CreateQuoteJSONBody0{
+		WalletAddressSchema: *customerWalletAddress.Id,
+		Receiver:            *incomingPayment.Id,
+		Method:              "ilp",
+	},
+})
+if err != nil {
+	log.Fatalf("Error creating quote: %v\n", err)
+}
+```
+
+</TabItem>
+
 </Tabs>
 
 The response returns a `receiveAmount`, a `debitAmount`, and other required information.
@@ -552,6 +671,54 @@ let pending_customer_outgoing_payment_grant = client
 ```
 
   </TabItem>
+  <TabItem label='Go' icon='seti:go'>
+
+```go wrap
+outgoingAccess := as.AccessOutgoing{
+  Type:       as.OutgoingPayment,
+  Actions:    []as.AccessOutgoingActions{as.AccessOutgoingActionsCreate},
+  Identifier: *customerWalletAddress.Id,
+  Limits: &as.LimitsOutgoing{
+    DebitAmount: &as.Amount{
+      Value:      "140000",
+      AssetCode:  "MXN",
+      AssetScale: 2,
+    },
+  },
+}
+outgoingAccessItem := as.AccessItem{}
+if err := outgoingAccessItem.FromAccessOutgoing(outgoingAccess); err != nil {
+  log.Fatalf("Error creating AccessItem: %v\n", err)
+}
+outgoingAccessToken := struct {
+  Access as.Access `json:"access"`
+}{
+  Access: []as.AccessItem{outgoingAccessItem},
+}
+interact := &as.InteractRequest{
+  Start: []as.InteractRequestStart{as.InteractRequestStartRedirect},
+  Finish: &as.InteractRequestFinish{
+    Method: as.Redirect,
+    Uri:    "https://paymentplatform.example/finish/{...}",
+    Nonce:  NONCE,
+  },
+}
+
+pendingCustomerOutgoingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
+  URL: *customerWalletAddress.AuthServer,
+  RequestBody: as.GrantRequestWithAccessToken{
+    AccessToken: outgoingAccessToken,
+    Interact: interact,
+  },
+})
+
+if err != nil {
+  log.Fatalf("Error requesting outgoing payment grant: %v\n", err)
+}
+```
+
+</TabItem>
+
 </Tabs>
 
 <details>
@@ -637,6 +804,21 @@ Some(&continue_field.access_token.value),
 ```
 
 </TabItem>
+
+<TabItem label='Go' icon='seti:go'>
+
+```go wrap
+customerOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
+	URL:         pendingCustomerOutgoingPaymentGrant.Continue.Uri,
+	AccessToken: pendingCustomerOutgoingPaymentGrant.Continue.AccessToken.Value,
+  InteractRef: INTERACT_REF,
+})
+if err != nil {
+	log.Fatalf("Error continuing grant: %v\n", err)
+}
+```
+
+</TabItem>
 </Tabs>
 
 <details>
@@ -713,6 +895,28 @@ let customer_outgoing_payment_to_retailer = client
 ```
 
   </TabItem>
+  <TabItem label='Go' icon='seti:go'>
+
+```go
+var outgoingPayload rs.CreateOutgoingPaymentRequest
+if err := outgoingPayload.FromCreateOutgoingPaymentWithQuote(rs.CreateOutgoingPaymentWithQuote{
+  WalletAddressSchema: *customerWalletAddress.Id,
+  QuoteId:             *customerQuote.Id,
+}); err != nil {
+  log.Fatalf("Error creating payload: %v\n", err)
+}
+
+customerOutgoingPayment, err := client.OutgoingPayment.Create(context.TODO(), op.OutgoingPaymentCreateParams{
+  BaseURL: customerWalletAddress.ResourceServer,
+  AccessToken: customerOutgoingPaymentGrant.AccessToken.Value,
+  Payload: outgoingPayload
+})
+if err != nil {
+  log.Fatalf("Error creating outgoing payment: %v\n", err)
+}
+```
+
+</TabItem>
 </Tabs>
 
 If the request fails because of an expired quote, [request a new quote](#5-request-the-creation-of-a-quote-resource) and try again.

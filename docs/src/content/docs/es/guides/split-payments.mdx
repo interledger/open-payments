@@ -76,6 +76,36 @@ url: 'https://coolwallet.example.com/platform'
 
 ````
 </TabItem>
+ <TabItem label='Rust' icon='seti:rust'>
+ ```rust wrap
+ let customer_wallet_address = client.wallet_address().get("https://cloudninebank.example.com/customer").await?;
+ let merchant_wallet_address = client.wallet_address().get("https://happylifebank.example.com/merchant").await?;
+ let platform_wallet_address = client.wallet_address().get("https://coolwallet.example.com/platform").await?;
+ ```
+ </TabItem>
+  <TabItem label='Go' icon='seti:go'>
+
+  ```go wrap
+  customerWalletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
+    URL: "https://cloudninebank.example.com/customer",
+  })
+  if err != nil {
+    log.Fatalf("Error fetching customer wallet address: %v\n", err)
+  }
+  merchantWalletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
+    URL: "https://happylifebank.example.com/merchant",
+  })
+  if err != nil {
+    log.Fatalf("Error fetching merchant wallet address: %v\n", err)
+  }
+  platformWalletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
+    URL: "https://coolwallet.example.com/platform",
+  })
+  if err != nil {
+    log.Fatalf("Error fetching platform wallet address: %v\n", err)
+  }
+  ```
+  </TabItem>
 </Tabs>
 
 ### 2. Solicitar concesiones de autorización de pagos entrantes
@@ -128,6 +158,61 @@ const merchantIncomingPaymentGrant = await client.grant.request(
   );
   ```
 </TabItem>
+
+<TabItem label='Rust' icon='seti:rust'>
+ ```rust wrap
+ use open_payments::types::{AccessTokenRequest, AccessItem, IncomingPaymentAction, GrantRequest};
+ let incoming_access = AccessTokenRequest {
+   access: vec![AccessItem::IncomingPayment { actions: vec![IncomingPaymentAction::Create], identifier: None }],
+ };
+ let merchant_grant_request = GrantRequest::new(incoming_access.clone(), None);
+ let platform_grant_request = GrantRequest::new(incoming_access, None);
+ let merchant_incoming_payment_grant = client
+   .grant()
+   .request(&merchant_wallet_address.auth_server, &merchant_grant_request)
+   .await?;
+ let platform_incoming_payment_grant = client
+   .grant()
+   .request(&platform_wallet_address.auth_server, &platform_grant_request)
+   .await?;
+ ```
+ </TabItem>
+
+  <TabItem label='Go' icon='seti:go'>
+
+```go wrap
+incomingAccess := as.AccessIncoming{
+  Type:    as.IncomingPayment,
+  Actions: []as.AccessIncomingActions{as.AccessIncomingActionsCreate},
+}
+accessItem := as.AccessItem{}
+if err := accessItem.FromAccessIncoming(incomingAccess); err != nil {
+  log.Fatalf("Error creating AccessItem: %v\n", err)
+}
+accessToken := struct {
+  Access as.Access `json:"access"`
+}{
+  Access: []as.AccessItem{accessItem},
+}
+// Merchant
+merchantIncomingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
+  URL:         *merchantWalletAddress.AuthServer,
+  RequestBody: as.GrantRequestWithAccessToken{AccessToken: accessToken},
+})
+if err != nil {
+  log.Fatalf("Error requesting merchant incoming payment grant: %v\n", err)
+}
+// Platform
+platformIncomingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
+  URL:         *platformWalletAddress.AuthServer,
+  RequestBody: as.GrantRequestWithAccessToken{AccessToken: accessToken},
+})
+if err != nil {
+  log.Fatalf("Error requesting platform incoming payment grant: %v\n", err)
+}
+```
+
+  </TabItem>
 </Tabs>
 
 ### 3. Solicitar la creación de recursos de pagos entrantes
@@ -184,6 +269,69 @@ El `value` total de $100 es `10000`. El comerciante recibirá el 99 % (`9900`) y
   )
   ```
 </TabItem>
+<TabItem label='Rust' icon='seti:rust'>
+ ```rust wrap
+ use open_payments::types::{IncomingPaymentRequest, Amount};
+ let merchant_request = IncomingPaymentRequest {
+   wallet_address: merchant_wallet_address.id.clone(),
+   incoming_amount: Some(Amount { value: "9900".into(), asset_code: "USD".into(), asset_scale: 2 }),
+   expires_at: None,
+   metadata: None,
+ };
+ let platform_request = IncomingPaymentRequest {
+   wallet_address: platform_wallet_address.id.clone(),
+   incoming_amount: Some(Amount { value: "100".into(), asset_code: "USD".into(), asset_scale: 2 }),
+   expires_at: None,
+   metadata: None,
+ };
+ let merchant_incoming_payment = client
+   .incoming_payments()
+   .create(&merchant_wallet_address.resource_server, &merchant_request, Some(&merchant_incoming_payment_grant.access_token.value))
+   .await?;
+ let platform_incoming_payment = client
+   .incoming_payments()
+   .create(&platform_wallet_address.resource_server, &platform_request, Some(&platform_incoming_payment_grant.access_token.value))
+   .await?;
+ ```
+ </TabItem>
+
+  <TabItem label='Go' icon='seti:go'>
+  
+  ```go wrap
+  // Merchant
+  merchantIncomingPayment, err := client.IncomingPayment.Create(context.TODO(), op.IncomingPaymentCreateParams{
+    BaseURL:     *merchantWalletAddress.ResourceServer,
+    AccessToken: merchantIncomingPaymentGrant.AccessToken.Value,
+    Payload: rs.CreateIncomingPaymentJSONBody{
+      WalletAddressSchema: *merchantWalletAddress.Id,
+      IncomingAmount: &rs.Amount{
+        Value:      "9900",
+        AssetCode:  "USD",
+        AssetScale: 2,
+      },
+    },
+  })
+  if err != nil {
+    log.Fatalf("Error creating merchant incoming payment: %v\n", err)
+  }
+  // Platform
+  platformIncomingPayment, err := client.IncomingPayment.Create(context.TODO(), op.IncomingPaymentCreateParams{
+    BaseURL:     *platformWalletAddress.ResourceServer,
+    AccessToken: platformIncomingPaymentGrant.AccessToken.Value,
+    Payload: rs.CreateIncomingPaymentJSONBody{
+      WalletAddressSchema: *platformWalletAddress.Id,
+      IncomingAmount: &rs.Amount{
+        Value:      "100",
+        AssetCode:  "USD",
+        AssetScale: 2,
+      },
+    },
+  })
+  if err != nil {
+    log.Fatalf("Error creating platform incoming payment: %v\n", err)
+  }
+  ```
+  </TabItem>
 </Tabs>
 
 ### 4. Solicitar una concesión de autorización para una cotización
@@ -212,6 +360,45 @@ El propósito de esta llamada consiste en obtener un token de acceso que permita
   )
   ```
 </TabItem>
+<TabItem label='Rust' icon='seti:rust'>
+    ```rust wrap
+    use open_payments::types::{AccessTokenRequest, AccessItem, QuoteAction, GrantRequest};
+    let quote_access = AccessTokenRequest {
+      access: vec![AccessItem::Quote { actions: vec![QuoteAction::Create] }],
+    };
+    let customer_grant_request = GrantRequest::new(quote_access, None);
+    let customer_quote_grant = client
+      .grant()
+      .request(&customer_wallet_address.auth_server, &customer_grant_request)
+      .await?;
+    ```
+  </TabItem>
+
+  <TabItem label='Go' icon='seti:go'>
+  
+  ```go wrap
+  quoteAccess := as.AccessQuote{
+    Type:    as.Quote,
+    Actions: []as.AccessQuoteActions{as.Create},
+  }
+  quoteAccessItem := as.AccessItem{}
+  if err := quoteAccessItem.FromAccessQuote(quoteAccess); err != nil {
+    log.Fatalf("Error creating AccessItem: %v\n", err)
+  }
+  quoteAccessToken := struct {
+    Access as.Access `json:"access"`
+  }{
+    Access: []as.AccessItem{quoteAccessItem},
+  }
+  customerQuoteGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
+    URL:         *customerWalletAddress.AuthServer,
+    RequestBody: as.GrantRequestWithAccessToken{AccessToken: quoteAccessToken},
+  })
+  if err != nil {
+    log.Fatalf("Error requesting quote grant: %v\n", err)
+  }
+  ```
+  </TabItem>
 </Tabs>
 
 ### 5. Solicitar la creación de recursos de cotización
@@ -253,6 +440,64 @@ Posteriormente, llame de nuevo a la Create Quote API y solicite un recurso de co
       receiver: platformIncomingPayment.id
     }
   )
+  ```
+</TabItem>
+<TabItem label='Rust' icon='seti:rust'>
+ ```rust wrap
+ use open_payments::types::{QuoteRequest, QuoteMethod};
+ let merchant_quote_request = QuoteRequest {
+   method: QuoteMethod::Ilp,
+   wallet_address: Some(customer_wallet_address.id.clone()),
+   receiver: Some(merchant_incoming_payment.id.clone()),
+   debit_amount: None,
+   receive_amount: None,
+ };
+ let platform_quote_request = QuoteRequest {
+   method: QuoteMethod::Ilp,
+   wallet_address: Some(customer_wallet_address.id.clone()),
+   receiver: Some(platform_incoming_payment.id.clone()),
+   debit_amount: None,
+   receive_amount: None,
+ };
+ let merchant_quote = client
+   .quotes()
+   .create(&customer_wallet_address.resource_server, &merchant_quote_request, Some(&customer_quote_grant.access_token.value))
+   .await?;
+ let platform_quote = client
+   .quotes()
+   .create(&customer_wallet_address.resource_server, &platform_quote_request, Some(&customer_quote_grant.access_token.value))
+   .await?;
+ ```
+ </TabItem>
+ <TabItem label='Go' icon='seti:go'>
+  
+  ```go wrap
+  // Merchant
+  merchantQuote, err := client.Quote.Create(context.TODO(), op.QuoteCreateParams{
+    BaseURL:     *customerWalletAddress.ResourceServer,
+    AccessToken: customerQuoteGrant.AccessToken.Value,
+    Payload: rs.CreateQuoteJSONBody0{
+      WalletAddressSchema: *customerWalletAddress.Id,
+      Receiver:            *merchantIncomingPayment.Id,
+      Method:              "ilp",
+    },
+  })
+  if err != nil {
+    log.Fatalf("Error creating merchant quote: %v\n", err)
+  }
+  // Platform
+  platformQuote, err := client.Quote.Create(context.TODO(), op.QuoteCreateParams{
+    BaseURL:     *customerWalletAddress.ResourceServer,
+    AccessToken: customerQuoteGrant.AccessToken.Value,
+    Payload: rs.CreateQuoteJSONBody0{
+      WalletAddressSchema: *customerWalletAddress.Id,
+      Receiver:            *platformIncomingPayment.Id,
+      Method:              "ilp",
+    },
+  })
+  if err != nil {
+    log.Fatalf("Error creating platform quote: %v\n", err)
+  }
   ```
 </TabItem>
 </Tabs>
@@ -317,6 +562,104 @@ Incluya lo siguiente en la solicitud, además de los parámetros requeridos:
   )
   ```
 </TabItem>
+<TabItem label='Rust' icon='seti:rust'>
+ ```rust wrap
+ use open_payments::types::{AccessTokenRequest, AccessItem, OutgoingPaymentAction, InteractRequest, InteractStart, InteractFinish, InteractFinishMethod, AccessLimits, Amount, GrantRequest};
+ 
+ let merchant_amount = match merchant_quote.debit_amount.as_ref() {
+   Some(a) => &a.value,
+   None => {
+     eprintln!("Missing debit_amount on merchant quote");
+     return Ok(());
+   }
+ };
+ let platform_amount = match platform_quote.debit_amount.as_ref() {
+   Some(a) => &a.value,
+   None => {
+     eprintln!("Missing debit_amount on platform quote");
+     return Ok(());
+   }
+ };
+ let merchant_value = match merchant_amount.parse::<i64>() {
+   Ok(v) => v,
+   Err(_) => {
+     eprintln!("Invalid merchant debit_amount value");
+     return Ok(());
+   }
+ };
+ let platform_value = match platform_amount.parse::<i64>() {
+   Ok(v) => v,
+   Err(_) => {
+     eprintln!("Invalid platform debit_amount value");
+     return Ok(());
+   }
+ };
+ let combined_quote_amount = merchant_value + platform_value;
+ let outgoing_access = AccessTokenRequest {
+   access: vec![AccessItem::OutgoingPayment {
+     identifier: Some(customer_wallet_address.id.clone()),
+     actions: vec![OutgoingPaymentAction::Create],
+     limits: Some(AccessLimits { debit_amount: Some(Amount { value: combined_quote_amount.to_string(), asset_code: "USD".into(), asset_scale: 2 }), ..Default::default() }),
+   }],
+ };
+ let interact = InteractRequest { start: Some(vec![InteractStart::Redirect]), finish: Some(InteractFinish { method: InteractFinishMethod::Redirect, uri: Some("https://paymentplatform.example/finish/{...}".into()), nonce: Some("NONCE".into()) }) };
+ let outgoing_grant_request = GrantRequest::new(outgoing_access, Some(interact));
+ let pending_customer_outgoing_payment_grant = client
+   .grant()
+   .request(&customer_wallet_address.auth_server, &outgoing_grant_request)
+   .await?;
+ ```
+ </TabItem>
+
+  <TabItem label='Go' icon='seti:go'>
+  
+  ```go wrap
+  combinedQuoteAmount := "10000" // merchantQuote.DebitAmount.Value + platformQuote.DebitAmount.Value
+  limits := as.LimitsOutgoing{}
+  if err := limits.FromLimitsOutgoing1(as.LimitsOutgoing1{
+    DebitAmount: as.Amount{
+      Value:      combinedQuoteAmount,
+      AssetCode:  "USD",
+      AssetScale: 2,
+    },
+  }); err != nil {
+    log.Fatalf("Error creating limits: %v\n", err)
+  }
+  outgoingAccess := as.AccessOutgoing{
+    Type:       as.OutgoingPayment,
+    Actions:    []as.AccessOutgoingActions{as.AccessOutgoingActionsCreate},
+    Identifier: *customerWalletAddress.Id,
+    Limits:     &limits,
+  }
+  outgoingAccessItem := as.AccessItem{}
+  if err := outgoingAccessItem.FromAccessOutgoing(outgoingAccess); err != nil {
+    log.Fatalf("Error creating AccessItem: %v\n", err)
+  }
+  outgoingAccessToken := struct {
+    Access as.Access `json:"access"`
+  }{
+    Access: []as.AccessItem{outgoingAccessItem},
+  }
+  interact := &as.InteractRequest{
+    Start: []as.InteractRequestStart{as.InteractRequestStartRedirect},
+    Finish: &as.InteractRequestFinish{
+      Method: as.Redirect,
+      Uri:    "https://paymentplatform.example/finish/{...}", // where to redirect the customer after they've completed interaction
+      Nonce:  NONCE,
+    },
+  }
+  pendingCustomerOutgoingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
+    URL: *customerWalletAddress.AuthServer,
+    RequestBody: as.GrantRequestWithAccessToken{
+      AccessToken: outgoingAccessToken,
+      Interact:    interact,
+    },
+  })
+  if err != nil {
+    log.Fatalf("Error requesting outgoing payment grant: %v\n", err)
+  }
+  ```
+  </TabItem>
 </Tabs>
 
 ### 7. Comenzar la interacción con el consumidor
@@ -357,6 +700,32 @@ Incluya la `interact_ref` devuelta en los parámetros de consulta del URI de red
   )
   ```
 </TabItem>
+<TabItem label='Rust' icon='seti:rust'>
+ ```rust wrap
+ let customer_outgoing_payment_grant = client
+   .grant()
+   .continue_grant(
+     if let Some(continue_field) = &pending_customer_outgoing_payment_grant.continue_field { &continue_field.uri } else { eprintln!("Missing continue field on pending grant"); return Ok(()); },
+     &interact_ref,
+     if let Some(continue_field) = &pending_customer_outgoing_payment_grant.continue_field { Some(&continue_field.access_token.value) } else { None },
+   )
+   .await?;
+ ```
+ </TabItem>
+
+ <TabItem label='Go' icon='seti:go'>
+  
+  ```go wrap
+  customerOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
+    URL:         pendingCustomerOutgoingPaymentGrant.Continue.Uri,
+    AccessToken: pendingCustomerOutgoingPaymentGrant.Continue.AccessToken.Value,
+    InteractRef: INTERACT_REF
+  })
+  if err != nil {
+    log.Fatalf("Error continuing grant: %v\n", err)
+  }
+  ```
+  </TabItem>
 </Tabs>
 
 ### 10. Solicitar la creación de recursos de pagos salientes
@@ -398,4 +767,69 @@ El propósito de estas llamadas consiste en solicitar la creación de un recurso
   )
   ```
 </TabItem>
+<TabItem label='Rust' icon='seti:rust'>
+ ```rust wrap
+ use open_payments::types::OutgoingPaymentRequest;
+ let merchant_outgoing_request = OutgoingPaymentRequest {
+   wallet_address: customer_wallet_address.id.clone(),
+   receiver: Some(merchant_incoming_payment.id.clone()),
+   debit_amount: None,
+   receive_amount: None,
+   quote_id: Some(merchant_quote.id.clone()),
+ };
+ let platform_outgoing_request = OutgoingPaymentRequest {
+   wallet_address: customer_wallet_address.id.clone(),
+   receiver: Some(platform_incoming_payment.id.clone()),
+   debit_amount: None,
+   receive_amount: None,
+   quote_id: Some(platform_quote.id.clone()),
+ };
+ let customer_outgoing_payment_to_merchant = client
+   .outgoing_payments()
+   .create(&customer_wallet_address.resource_server, &merchant_outgoing_request, Some(&customer_outgoing_payment_grant.access_token.value))
+   .await?;
+ let customer_outgoing_payment_to_platform = client
+   .outgoing_payments()
+   .create(&customer_wallet_address.resource_server, &platform_outgoing_request, Some(&customer_outgoing_payment_grant.access_token.value))
+   .await?;
+ ```
+ </TabItem>
+
+  <TabItem label='Go' icon='seti:go'>
+  
+  ```go wrap
+  // Merchant
+  var merchantOutgoingPayload rs.CreateOutgoingPaymentRequest
+  if err := merchantOutgoingPayload.FromCreateOutgoingPaymentWithQuote(rs.CreateOutgoingPaymentWithQuote{
+    WalletAddressSchema: *customerWalletAddress.Id,
+    QuoteId:             *merchantQuote.Id,
+  }); err != nil {
+    log.Fatalf("Error creating merchant payload: %v\n", err)
+  }
+  customerOutgoingPaymentToMerchant, err := client.OutgoingPayment.Create(context.TODO(), op.OutgoingPaymentCreateParams{
+    BaseURL:     *customerWalletAddress.ResourceServer,
+    AccessToken: customerOutgoingPaymentGrant.AccessToken.Value,
+    Payload:     merchantOutgoingPayload,
+  })
+  if err != nil {
+    log.Fatalf("Error creating outgoing payment to merchant: %v\n", err)
+  }
+  // Platform
+  var platformOutgoingPayload rs.CreateOutgoingPaymentRequest
+  if err := platformOutgoingPayload.FromCreateOutgoingPaymentWithQuote(rs.CreateOutgoingPaymentWithQuote{
+    WalletAddressSchema: *customerWalletAddress.Id,
+    QuoteId:             *platformQuote.Id,
+  }); err != nil {
+    log.Fatalf("Error creating platform payload: %v\n", err)
+  }
+  customerOutgoingPaymentToPlatform, err := client.OutgoingPayment.Create(context.TODO(), op.OutgoingPaymentCreateParams{
+    BaseURL:     *customerWalletAddress.ResourceServer,
+    AccessToken: customerOutgoingPaymentGrant.AccessToken.Value,
+    Payload:     platformOutgoingPayload,
+  })
+  if err != nil {
+    log.Fatalf("Error creating outgoing payment to platform: %v\n", err)
+  }
+  ```
+  </TabItem>
 </Tabs>

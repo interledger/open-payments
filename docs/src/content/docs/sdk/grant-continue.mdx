@@ -85,9 +85,59 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 />
 <p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Grant/GrantContinuation.php'>View full source</LinkOut></p>
 </TabItem>
-<TabItem label='Java' icon='seti:java'>
-<LinkButton
-href="https://github.com/interledger/open-payments-java?tab=readme-ov-file#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+<TabItem label="Go" icon='seti:go'>
+<LinkButton href="https://github.com/interledger/open-payments-go/blob/main/README.md" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+```go
+package main
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
+
+	op "github.com/interledger/open-payments-go"
+)
+
+func main() {
+	// Initialize Open Payments client
+	client, err := op.NewAuthenticatedClient(WALLET_ADDRESS_URL, PRIVATE_KEY_BASE_64, KEY_ID)
+	if err != nil {
+		log.Fatalf("Error creating authenticated client: %v\n", err)
+	}
+
+	// Continue grant
+	grant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
+		URL:         CONTINUE_URI,
+		AccessToken: CONTINUE_ACCESS_TOKEN,
+    InteractRef: INTERACT_REF,
+	})
+	if err != nil {
+		log.Fatalf("Error continuing grant: %v\n", err)
+	}
+
+  // Ensure the grant is finalized
+  if grant.AccessToken == nil {
+    log.Fatal("Expected finalized grant. Received non-finalized grant.")
+  }
+
+	// Output
+	grantJSON, err := json.MarshalIndent(grant, "", "  ")
+	if err != nil {
+		log.Fatalf("Error marshaling grant: %v\n", err)
+	}
+	fmt.Println("GRANT:", string(grantJSON))
+	fmt.Println("OUTGOING_PAYMENT_ACCESS_TOKEN =", grant.AccessToken.Value)
+	fmt.Println("OUTGOING_PAYMENT_ACCESS_TOKEN_MANAGE_URL =", grant.AccessToken.Manage)
+}
+```
+
+  </TabItem>
+  <TabItem label='Java' icon='seti:java'>
+    <LinkButton
+      href="https://github.com/interledger/open-payments-java?tab=readme-ov-file#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
     ```java wrap
     // 1. Import:
@@ -96,9 +146,9 @@ href="https://github.com/interledger/open-payments-java?tab=readme-ov-file#prere
 
     // 2. Client instance using HTTP:
     var client = OpenPaymentsHttpClient.defaultClient(
-        "WalletAddress",
-        "PrivateKeyPEM",
-        "KeyId"
+    "WalletAddress",
+    "PrivateKeyPEM",
+    "KeyId"
     );
 
     // 3. Retrieve the wallets:
@@ -117,10 +167,10 @@ href="https://github.com/interledger/open-payments-java?tab=readme-ov-file#prere
 
     // 6. Create outing payment from quote:
     var opContinueInteract = this.client.createGrantContinuation(
-            senderWallet,
-            quote.getDebitAmount(),
-            URI.create(urlToOpen),
-            "test"
+    senderWallet,
+    quote.getDebitAmount(),
+    URI.create(urlToOpen),
+    "test"
     );
 
     // 7. USER APPROVES REQUEST.
@@ -131,7 +181,7 @@ href="https://github.com/interledger/open-payments-java?tab=readme-ov-file#prere
     // 9. Logging:
     log.info("FINALIZED: {}", finalized);
     ```
-</TabItem>
+  </TabItem>
 </Tabs>
 
 ## References
