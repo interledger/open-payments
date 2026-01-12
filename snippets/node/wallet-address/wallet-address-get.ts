@@ -1,33 +1,33 @@
-import dotenv from "dotenv";
-import { join } from "path";
-import { fileURLToPath } from "url";
+import dotenv from 'dotenv'
+import { join } from 'path'
+import { fileURLToPath } from 'url'
 
 dotenv.config({
-    path: fileURLToPath(join(import.meta.url, "..", "..", ".env")),
-});
+  path: fileURLToPath(join(import.meta.url, '..', '..', '.env'))
+})
 
-const KEY_ID = process.env.KEY_ID;
-const WALLET_ADDRESS = process.env.WALLET_ADDRESS;
-const PRIVATE_KEY_PATH = process.env.PRIVATE_KEY_PATH;
+const KEY_ID = process.env.KEY_ID
+const WALLET_ADDRESS = process.env.WALLET_ADDRESS
+const PRIVATE_KEY_PATH = process.env.PRIVATE_KEY_PATH
 
 //@! start chunk 1 | title=Import dependencies
-import { createAuthenticatedClient } from "@interledger/open-payments";
+import { createAuthenticatedClient } from '@interledger/open-payments'
 //@! end chunk 1
 
 //@! start chunk 2 | title=Initialize Open Payments client
 const client = await createAuthenticatedClient({
-    walletAddressUrl: WALLET_ADDRESS,
-    privateKey: PRIVATE_KEY_PATH,
-    keyId: KEY_ID,
-});
+  walletAddressUrl: WALLET_ADDRESS,
+  privateKey: PRIVATE_KEY_PATH,
+  keyId: KEY_ID
+})
 //@! end chunk 2
 
 //@! start chunk 3 | title=Get wallet address
 const walletAddress = await client.walletAddress.get({
-    url: WALLET_ADDRESS,
-});
+  url: WALLET_ADDRESS
+})
 //@! end chunk 3
 
 //@! start chunk 4 | title=Output
-console.log("WALLET ADDRESS:", walletAddress);
+console.log('WALLET ADDRESS:', walletAddress)
 //@! end chunk 4

@@ -173,27 +173,28 @@ func main() {
   <LinkButton
     href="https://github.com/interledger/open-payments-java?tab=readme-ov-file#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-  ```java wrap
-  // 1. Import:
-  import org.interledger.openpayments.httpclient.OpenPaymentsHttpClient;
-  import org.interledger.openpayments.IOpenPaymentsClient;
+```java wrap
+// 1. Import:
+import org.interledger.openpayments.httpclient.OpenPaymentsHttpClient;
+import org.interledger.openpayments.IOpenPaymentsClient;
 
-  // 2. Client instance using HTTP:
-  var client = OpenPaymentsHttpClient.defaultClient(
-  "WalletAddress",
-  "PrivateKeyPEM",
-  "KeyId"
-  );
+// 2. Client instance using HTTP:
+var client = OpenPaymentsHttpClient.defaultClient(
+"WalletAddress",
+"PrivateKeyPEM",
+"KeyId"
+);
 
-  // 3. Retrieve the wallet
-  var senderWallet = client.getWalletAddress("https://cloudninebank.example.com/customer");
+// 3. Retrieve the wallet
+var senderWallet = client.getWalletAddress("https://cloudninebank.example.com/customer");
 
-  // 4. Grant for quote:
-  var grantRequest = this.client.createGrantQuote(senderWallet);
+// 4. Grant for quote:
+var grantRequest = this.client.createGrantQuote(senderWallet);
 
-  // 5. Logging:
-  log.info("QUOTE_GRANT: {}", grantRequest);
-  ```
+// 5. Logging:
+log.info("QUOTE_GRANT: {}", grantRequest);
+```
+
 </TabItem>
 </Tabs>
 
