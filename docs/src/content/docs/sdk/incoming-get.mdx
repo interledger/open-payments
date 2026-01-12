@@ -139,6 +139,54 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 <p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/IncomingPayment/IncomingPaymentGet.php'>View full source with authentication</LinkOut></p>
 <p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/IncomingPayment/PublicIncomingPaymentGet.php'>View full source without authentication</LinkOut></p>
 </TabItem>
+
+<TabItem label="Go" icon='seti:go'>
+<LinkButton href="https://github.com/interledger/open-payments-go/blob/main/README.md" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+```go
+package main
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
+
+	op "github.com/interledger/open-payments-go"
+)
+
+func main() {
+	// Initialize Open Payments client
+	client, err := op.NewAuthenticatedClient(WALLET_ADDRESS_URL, PRIVATE_KEY_BASE_64, KEY_ID)
+	if err != nil {
+		log.Fatalf("Error creating authenticated client: %v\n", err)
+	}
+
+	// Get incoming payment
+	incomingPayment, err := client.IncomingPayment.Get(context.TODO(), op.IncomingPaymentGetParams{
+		URL:         INCOMING_PAYMENT_URL,
+		AccessToken: ACCESS_TOKEN,
+	})
+
+  // Or, get public incoming payment without authenticating
+	// incomingPayment, err := client.IncomingPayment.GetPublic(context.TODO(), op.IncomingPaymentGetPublicParams{
+	// 	URL: INCOMING_PAYMENT_URL,
+	// })
+
+	if err != nil {
+		log.Fatalf("Error fetching incoming payment: %v\n", err)
+	}
+
+	// Output
+	incomingPaymentJSON, err := json.MarshalIndent(incomingPayment, "", "  ")
+	if err != nil {
+		log.Fatalf("Error marshaling incoming payment: %v\n", err)
+	}
+	fmt.Println("INCOMING PAYMENT:", string(incomingPaymentJSON))
+}
+```
+
+</TabItem>
 </Tabs>
 
 ## References

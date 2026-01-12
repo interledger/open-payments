@@ -78,6 +78,85 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 
 <p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Grant/GrantQuote.php'>View full source</LinkOut></p>
 </TabItem>
+
+<TabItem label="Go" icon='seti:go'>
+<LinkButton href="https://github.com/interledger/open-payments-go/blob/main/README.md" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+```go
+package main
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
+
+	op "github.com/interledger/open-payments-go"
+	as "github.com/interledger/open-payments-go/generated/authserver"
+)
+
+func main() {
+	// Initialize Open Payments client
+	client, err := op.NewAuthenticatedClient(WALLET_ADDRESS_URL, PRIVATE_KEY_BASE_64, KEY_ID)
+	if err != nil {
+		log.Fatalf("Error creating authenticated client: %v\n", err)
+	}
+
+	// Get wallet address information
+	walletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
+		URL: WALLET_ADDRESS_URL,
+	})
+	if err != nil {
+		log.Fatalf("Error fetching wallet address: %v\n", err)
+	}
+
+	// Request quote grant
+	quoteAccess := as.AccessQuote{
+		Type: as.Quote,
+		Actions: []as.AccessQuoteActions{
+			as.Create,
+			as.Read,
+		},
+	}
+	accessItem := as.AccessItem{}
+	if err := accessItem.FromAccessQuote(quoteAccess); err != nil {
+		log.Fatalf("Error creating AccessItem: %v\n", err)
+	}
+	accessToken := struct {
+		Access as.Access `json:"access"`
+	}{
+		Access: []as.AccessItem{accessItem},
+	}
+
+	grant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
+		URL:         *walletAddress.AuthServer,
+		RequestBody: as.GrantRequestWithAccessToken{AccessToken: accessToken},
+	})
+	if err != nil {
+		log.Fatalf("Error requesting grant: %v\n", err)
+	}
+
+	// Check grant state
+	if grant.IsInteractive() {
+		log.Fatalf("Expected non-interactive grant")
+	}
+
+	// Output
+	grantJSON, err := json.MarshalIndent(grant, "", "  ")
+	if err != nil {
+		log.Fatalf("Error marshaling grant: %v\n", err)
+	}
+	fmt.Println("GRANT:", string(grantJSON))
+  fmt.Println("QUOTE_ACCESS_TOKEN =", grant.AccessToken.Value)
+	fmt.Println(
+		"QUOTE_ACCESS_TOKEN_MANAGE_URL =",
+		grant.AccessToken.Manage,
+	)
+
+}
+```
+
+</TabItem>
 </Tabs>
 
 ## References

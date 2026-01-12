@@ -23,10 +23,16 @@ const client = await createAuthenticatedClient({
 });
 //@! end chunk 2
 
-//@! start chunk 3 | title=List outgoing payments
+//@! start chunk 3 | title=Get wallet address information
+const walletAddress = await client.walletAddress.get({
+    url: WALLET_ADDRESS,
+});
+//@! end chunk 3
+
+//@! start chunk 4 | title=List outgoing payments
 const outgoingPayments = await client.outgoingPayment.list(
     {
-        url: new URL(WALLET_ADDRESS).origin,
+        url: walletAddress.resourceServer,
         walletAddress: WALLET_ADDRESS,
         accessToken: OUTGOING_PAYMENT_ACCESS_TOKEN,
     },
@@ -34,10 +40,11 @@ const outgoingPayments = await client.outgoingPayment.list(
         first: 10,
         last: undefined,
         cursor: undefined,
+        "wallet-address": WALLET_ADDRESS,
     },
 );
-//@! end chunk 3
-
-//@! start chunk 4 | title=Output
-console.log("OUTGOING PAYMENTS:", JSON.stringify(outgoingPayments, null, 2));
 //@! end chunk 4
+
+//@! start chunk 5 | title=Output
+console.log("OUTGOING PAYMENTS:", JSON.stringify(outgoingPayments, null, 2));
+//@! end chunk 5

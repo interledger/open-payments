@@ -45,6 +45,12 @@ These code snippets create an outgoing payment to a given wallet address. The am
   chunk="4"
 />
 
+<ChunkedSnippet
+  source="outgoing-payment/outgoing-payment-create.ts"
+  l="node"
+  chunk="5"
+/>
+
 For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/outgoing-payment/outgoing-payment-create.ts'>View full TS source</LinkOut>
 
 For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/outgoing-payment/outgoing-payment-create.js'>View full JS source</LinkOut>
@@ -127,6 +133,60 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
     View full source with amount
   </LinkOut>
 </p>
+
+</TabItem>
+
+<TabItem label="Go" icon='seti:go'>
+<LinkButton href="https://github.com/interledger/open-payments-go/blob/main/README.md" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+```go
+package main
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
+
+  op "github.com/interledger/open-payments-go"
+  rs "github.com/interledger/open-payments-go/generated/resourceserver"
+
+)
+
+func main() {
+  // Initialize Open Payments client
+  client, err := op.NewAuthenticatedClient(WALLET_ADDRESS_URL, PRIVATE_KEY_BASE_64, KEY_ID)
+  if err != nil {
+    log.Fatalf("Error creating authenticated client: %v\n", err)
+  }
+
+  // Create outgoing payment
+  var payload rs.CreateOutgoingPaymentRequest
+  if err := payload.FromCreateOutgoingPaymentWithQuote(rs.CreateOutgoingPaymentWithQuote{
+    WalletAddressSchema: WALLET_ADDRESS_URL,
+    QuoteId:             QUOTE_URL,
+  }); err != nil {
+    log.Fatalf("Error creating payload: %v\n", err)
+  }
+
+  outgoingPayment, err := client.OutgoingPayment.Create(context.TODO(), op.OutgoingPaymentCreateParams{
+    BaseURL:     RESOURCE_SERVER_URL,
+    AccessToken: OUTGOING_PAYMENT_ACCESS_TOKEN,
+    Payload:     payload,
+  })
+  if err != nil {
+    log.Fatalf("Error creating outgoing payment: %v\n", err)
+  }
+
+  // Output
+  outgoingPaymentJSON, err := json.MarshalIndent(outgoingPayment, "", "  ")
+  if err != nil {
+    log.Fatalf("Error marshaling outgoing payment: %v\n", err)
+  }
+  fmt.Println("OUTGOING PAYMENT:", string(outgoingPaymentJSON))
+  fmt.Println("OUTGOING_PAYMENT_URL:", *outgoingPayment.Id)
+}
+```
 
 </TabItem>
 </Tabs>

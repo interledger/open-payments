@@ -35,6 +35,8 @@ This code snippet allows a client to create a quote with an `incomingAmount` whe
 
 <ChunkedSnippet source="quote/quote-create.ts" l="node" chunk="4" />
 
+<ChunkedSnippet source="quote/quote-create.ts" l="node" chunk="5" />
+
 For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/quote/quote-create.ts'>View full TS source</LinkOut>
 
 For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/quote/quote-create.js'>View full JS source</LinkOut>
@@ -69,6 +71,55 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 <ChunkedSnippet source="quote/quote-create.php" l="php" chunk="2" />
 
 <p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Quote/QuoteCreate.php'>View full source</LinkOut></p>
+</TabItem>
+
+<TabItem label="Go" icon='seti:go'>
+<LinkButton href="https://github.com/interledger/open-payments-go/blob/main/README.md" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+```go
+package main
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
+
+	op "github.com/interledger/open-payments-go"
+	rs "github.com/interledger/open-payments-go/generated/resourceserver"
+)
+
+func main() {
+	// Initialize Open Payments client
+	client, err := op.NewAuthenticatedClient(WALLET_ADDRESS_URL, PRIVATE_KEY_BASE_64, KEY_ID)
+	if err != nil {
+		log.Fatalf("Error creating authenticated client: %v\n", err)
+	}
+
+	// Create quote
+	quote, err := client.Quote.Create(context.TODO(), op.QuoteCreateParams{
+		BaseURL:     RESOURCE_SERVER_URL,
+		AccessToken: QUOTE_ACCESS_TOKEN,
+		Payload: rs.CreateQuoteJSONBody0{
+			WalletAddressSchema: WALLET_ADDRESS_URL,
+			Receiver:            INCOMING_PAYMENT_URL,
+			Method:              "ilp",
+		},
+	})
+	if err != nil {
+		log.Fatalf("Error creating quote: %v\n", err)
+	}
+
+	// Output
+	quoteJSON, err := json.MarshalIndent(quote, "", "  ")
+	if err != nil {
+		log.Fatalf("Error marshaling quote: %v\n", err)
+	}
+	fmt.Println("QUOTE:", string(quoteJSON))
+	fmt.Println("QUOTE_URL:", *quote.Id)
+}
+```
+
 </TabItem>
 </Tabs>
 
@@ -166,6 +217,68 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 {/* prettier-ignore */}
 <p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Quote/QuoteCreateDebitAmount.php'>View full source</LinkOut></p>
 </TabItem>
+
+<TabItem label="Go" icon='seti:go'>
+<LinkButton href="https://github.com/interledger/open-payments-go/blob/main/README.md" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+```go
+package main
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
+
+	op "github.com/interledger/open-payments-go"
+	rs "github.com/interledger/open-payments-go/generated/resourceserver"
+)
+
+func main() {
+	// Initialize Open Payments client
+	client, err := op.NewAuthenticatedClient(WALLET_ADDRESS_URL, PRIVATE_KEY_BASE_64, KEY_ID)
+	if err != nil {
+		log.Fatalf("Error creating authenticated client: %v\n", err)
+	}
+
+	// Get wallet address
+  walletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
+    URL: WALLET_ADDRESS_URL,
+  })
+  if err != nil {
+    log.Fatalf("Error fetching wallet address: %v\n", err)
+  }
+
+	// Create quote with debit amount
+	quote, err := client.Quote.Create(context.TODO(), op.QuoteCreateParams{
+		BaseURL:     walletAddress.ResourceServer,
+		AccessToken: QUOTE_ACCESS_TOKEN,
+		Payload: rs.CreateQuoteJSONBody1{
+			WalletAddressSchema: WALLET_ADDRESS_URL,
+			Receiver:            INCOMING_PAYMENT_URL,
+			Method:              "ilp",
+			DebitAmount: rs.Amount{
+				Value:      "500",
+				AssetCode:  walletAddress.AssetCode,
+				AssetScale: walletAddress.AssetScale,
+			},
+		},
+	})
+	if err != nil {
+		log.Fatalf("Error creating quote: %v\n", err)
+	}
+
+	// Output
+	quoteJSON, err := json.MarshalIndent(quote, "", "  ")
+	if err != nil {
+		log.Fatalf("Error marshaling quote: %v\n", err)
+	}
+	fmt.Println("QUOTE:", string(quoteJSON))
+	fmt.Println("QUOTE_URL:", *quote.Id)
+}
+```
+
+</TabItem>
 </Tabs>
 
 ## Create a quote with a receive amount
@@ -262,6 +375,68 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 />
 {/* prettier-ignore */}
 <p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Quote/QuoteCreateReceiverAmount.php'>View full source</LinkOut></p>
+</TabItem>
+
+<TabItem label="Go" icon='seti:go'>
+<LinkButton href="https://github.com/interledger/open-payments-go/blob/main/README.md" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+```go
+package main
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
+
+	op "github.com/interledger/open-payments-go"
+	rs "github.com/interledger/open-payments-go/generated/resourceserver"
+)
+
+func main() {
+	// Initialize Open Payments client
+	client, err := op.NewAuthenticatedClient(WALLET_ADDRESS_URL, PRIVATE_KEY_BASE_64, KEY_ID)
+	if err != nil {
+		log.Fatalf("Error creating authenticated client: %v\n", err)
+	}
+
+	// Get wallet address
+  walletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
+    URL: WALLET_ADDRESS_URL,
+  })
+  if err != nil {
+    log.Fatalf("Error fetching wallet address: %v\n", err)
+  }
+
+	// Create quote with receive amount
+	quote, err := client.Quote.Create(context.TODO(), op.QuoteCreateParams{
+		BaseURL:     walletAddress.ResourceServer,
+		AccessToken: QUOTE_ACCESS_TOKEN,
+		Payload: rs.CreateQuoteJSONBody2{
+			WalletAddressSchema: WALLET_ADDRESS_URL,
+			Receiver:            INCOMING_PAYMENT_URL,
+			Method:              "ilp",
+			ReceiveAmount: rs.Amount{
+				Value:      "500",
+				AssetCode:  walletAddress.AssetCode,
+				AssetScale: walletAddress.AssetScale,
+			},
+		},
+	})
+	if err != nil {
+		log.Fatalf("Error creating quote: %v\n", err)
+	}
+
+	// Output
+	quoteJSON, err := json.MarshalIndent(quote, "", "  ")
+	if err != nil {
+		log.Fatalf("Error marshaling quote: %v\n", err)
+	}
+	fmt.Println("QUOTE:", string(quoteJSON))
+	fmt.Println("QUOTE_URL:", *quote.Id)
+}
+```
+
 </TabItem>
 </Tabs>
 

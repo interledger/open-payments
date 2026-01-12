@@ -43,6 +43,12 @@ These code snippets create an incoming payment of \$10 USD at a given wallet add
   chunk="4"
 />
 
+<ChunkedSnippet
+  source="incoming-payment/incoming-payment-create.ts"
+  l="node"
+  chunk="5"
+/>
+
 For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/incoming-payment/incoming-payment-create.ts'>View full TS source</LinkOut>
 
 For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/incoming-payment/incoming-payment-create.js'>View full JS source</LinkOut>
@@ -105,6 +111,63 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 />
 
 <p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/IncomingPayment/IncomingPaymentCreate.php'>View full source</LinkOut></p>
+</TabItem>
+
+<TabItem label="Go" icon='seti:go'>
+<LinkButton href="https://github.com/interledger/open-payments-go/blob/main/README.md" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+```go
+package main
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
+	"time"
+
+  op "github.com/interledger/open-payments-go"
+  rs "github.com/interledger/open-payments-go/generated/resourceserver"
+
+)
+
+func main() {
+  // Initialize Open Payments client
+  client, err := op.NewAuthenticatedClient(WALLET_ADDRESS_URL, PRIVATE_KEY_BASE_64, KEY_ID)
+  if err != nil {
+    log.Fatalf("Error creating authenticated client: %v\n", err)
+  }
+
+  // Create incoming payment
+  expiresAt := time.Now().Add(10 * time.Minute)
+  incomingPayment, err := client.IncomingPayment.Create(context.TODO(), op.IncomingPaymentCreateParams{
+    BaseURL:     RESOURCE_SERVER_URL,
+    AccessToken: ACCESS_TOKEN,
+    Payload: rs.CreateIncomingPaymentJSONBody{
+      WalletAddressSchema: WALLET_ADDRESS_URL,
+      IncomingAmount: &rs.Amount{
+        Value:      "1000",
+        AssetCode:  "USD",
+        AssetScale: 2,
+      },
+      ExpiresAt: &expiresAt,
+    },
+  })
+  if err != nil {
+    log.Fatalf("Error creating incoming payment: %v\n", err)
+  }
+
+  // Output
+  incomingPaymentJSON, err := json.MarshalIndent(incomingPayment, "", "  ")
+  if err != nil {
+    log.Fatalf("Error marshaling incoming payment: %v\n", err)
+  }
+  fmt.Println("INCOMING PAYMENT:", string(incomingPaymentJSON))
+  fmt.Println("INCOMING PAYMENT URL =", *incomingPayment.Id)
+}
+
+```
+
 </TabItem>
 </Tabs>
 

@@ -1,45 +1,45 @@
 ---
-title: Send recurring remittances with a fixed receive amount
+title: Enviar remesas recurrentes con un monto de recepción fijo
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
 import { Tabs, TabItem, Badge } from '@astrojs/starlight/components'
-import Start from '/src/partials/grant-start-interaction.mdx'
-import Finish from '/src/partials/grant-finish-interaction.mdx'
+import Start from '/src/partials/es/grant-start-interaction.mdx'
+import Finish from '/src/partials/es/grant-finish-interaction.mdx'
 
-:::tip[Summary]
-Learn how to send recurring remittance payments where the recipient will receive a fixed amount with each payment.
+:::tip[Resumen]
+Aprenda cómo enviar pagos de remesa recurrentes en los que el destinatario recibirá un monto fijo en cada pago.
 :::
 
-A remittance payment is a transfer of money from one person to another, typically across borders or long distances, often involving currency conversion and fees. In this guide, you will learn how to set up a recurring payment from a sender in which the recipient receives a fixed amount.
+Un pago de remesa es una transferencia de dinero de una persona a otra, normalmente entre países o a larga distancia, que a menudo implica una conversión de monedas y tarifas. En esta guía, aprenderá cómo configurar un pago recurrente de un remitente en el que el destinatario recibe un monto fijo.
 
-This approach is particularly useful for remittance app scenarios where:
+Este enfoque es útil en particular para situaciones de aplicaciones de remesas en estos casos:
 
-- The sender and the recipient each transact in different currencies
-- The sender wants the recipient to receive a fixed amount, denominated in the recipient's local currency, on a recurring basis
-- The sender is willing to cover any differences in the exchange rate
+- El remitente y el destinatario efectúan operaciones, cada uno, en monedas distintas.
+- El remitente busca que el destinatario reciba un monto fijo expresado en la moneda local del destinatario de forma recurrente.
+- El emisor está dispuesto a asumir cualquier diferencia generada por el tipo de cambio.
 
-## Scenario
+## Caso hipotético
 
-Imagine someone in the US wants to send money to a family member in Mexico. They want their family member to receive an exact amount in Mexican pesos (MXN) each month.
+Imagine que alguien en EE. UU. quiere enviar dinero a un familiar en México. Esta persona quiere que su familiar reciba un monto exacto en pesos mexicanos (MXN) cada mes.
 
-For this guide, you'll assume the role of a developer building a remittance app. This guide explains how to set up a recurring payment in US dollars, where the recipient will receive exactly $4,000 MXN each month for three months.
+Para esta guía, asumirá el papel de un desarrollador que está creando una aplicación de remesas. Esta guía explica cómo configurar un pago recurrente en dólares estadounidenses, en el que el destinatario recibirá exactamente MXN 4.000 cada mes durante tres meses.
 
-The amount debited from the sender's payment account can vary each month depending on changes to the exchange rate. For simplicity, this guide assumes a static exchange rate of \$1 USD for every $20 MXN.
+El monto debitado de la cuenta de pago del remitente puede variar cada mes según los cambios en el tipo de cambio. Para simplificar, esta guía parte de un tipo de cambio estático de \$1 USD por cada MXN 20.
 
-**Example transaction details:**
+**Detalles de la transacción de ejemplo:**
 
-- **Recipient receives**: $4,000 MXN each month for three months
-- **Exchange rate**: A static rate of \$1 USD for every \$20 MXN
-- **Sender pays**: $200 USD each month
+- **El destinatario recibe**: MXN 4.000 cada mes durante tres meses
+- **Tipo de cambio**: Un cambio estático de \$1 USD por cada MXN 20
+- **El remitente paga**: \$200 USD cada mes
 
-The three parties involved in this scenario are the:
+Las tres partes que intervienen en este caso son las siguientes:
 
-- **Developer**: you, the person building the remittance app
-- **Sender**: the person using your app to send money in USD
-- **Recipient**: the person receiving the money in MXN
+- **Desarrollador**: usted, la persona que construye la aplicación de remesas.
+- **Remitente**: la persona que utiliza su aplicación para enviar dinero en USD.
+- **Destinatario**: la persona que recibe el dinero en MXN.
 
-## Endpoints
+## Puntos finales
 
 - <Badge text="GET" variant="note" />
   <LinkOut href="https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/">
@@ -66,15 +66,15 @@ The three parties involved in this scenario are the:
     Create an Outgoing Payment
   </LinkOut>
 
-## Steps
+## Pasos
 
-### 1. Get wallet address information
+### 1. Obtener los datos de la dirección de billetera
 
-When the sender initiates a payment through your app, you must get wallet address information for both the sender and the recipient.
+Cuando el remitente inicia un pago a través de su aplicación, usted debe obtener la información de la dirección de billetera tanto del remitente como del destinatario.
 
-Let's assume the sender saved their wallet address to their profile settings in your app. Let's also assume the sender entered the recipient's wallet address into your app's payment form.
+Supongamos que el remitente guardó la dirección de su billetera en la configuración de su perfil en su aplicación. Asumamos también que el remitente ha ingresado la dirección de billetera del destinatario en el formulario de pago de su aplicación.
 
-Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wallet-address-server/operations/get-wallet-address) for each address.
+Llame a la <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wallet-address-server/operations/get-wallet-address) para cada dirección.
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -106,21 +106,11 @@ if err != nil {
 ```
 
 </TabItem>
-<TabItem label="PHP" icon='seti:php'>
-  ```php wrap
-  $senderWalletAddress = $client->walletAddress()->get([
-    'url' => 'https://cloudninebank.example.com/sender'
-  ]);
-  $recipientWalletAddress = $client->walletAddress()->get([
-    'url' => 'https://happylifebank.example.com/recipient'
-  ]);
-  ```
-</TabItem>
 </Tabs>
 
 <details>
-<summary>Example responses</summary>
-The following example shows a response from the sender's wallet provider. 
+<summary>Respuestas de ejemplo</summary>
+El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente. 
 ```json wrap
 {
   "id": "https://cloudninebank.example.com/sender",
@@ -130,7 +120,7 @@ The following example shows a response from the sender's wallet provider.
   "resourceServer": "https://cloudninebank.example.com/op"
 }
 ```
-The following example shows a response from the recipient's wallet provider.
+El siguiente ejemplo muestra una respuesta del proveedor de billetera del destinatario.
 
 ```json wrap
 {
@@ -144,19 +134,20 @@ The following example shows a response from the recipient's wallet provider.
 
 </details>
 
-### 2. Request an interactive outgoing payment grant
+### 2. Solicitar una concesión de autorización interactiva para un pago saliente
 
-Use the sender's `authServer` information received in the previous step to call the <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request).
+Utilice la información del remitente `authServer` recibida en el paso anterior para llamar a la <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request).
 
-This call obtains an access token that allows your app to request outgoing payment resources be created on the sender's wallet account.
+Esta llamada obtiene un token de acceso que permite a su aplicación solicitar la creación de recursos de pago saliente en la cuenta de billetera del remitente.
 
-Because the sender wants the recipient to receive a fixed amount of $4,000 MXN each month, the request must have a `limits` object containing a `receiveAmount` and an `interval`.
+Como el remitente desea que el destinatario reciba un monto fijo de MXN 4.000 cada mes, la solicitud debe tener un objeto `limits` que contenga un `receiveAmount` y un `interval`.
 
-- `receiveAmount` - The maximum amount that the recipient can receive per interval. When the next interval begins, the value resets.
-- `interval` - The [time interval](#about-the-interval) under which the grant is valid.
+- `receiveAmount` - El monto máximo que el destinatario puede recibir por intervalo. Cuando comienza el siguiente intervalo, el valor se restablece.
+
+- `interval` - El [intervalo de tiempo](#acerca-del-intervalo) durante el cual la concesión es válida.
 
 :::note
-Outgoing payments require an interactive grant, which the sender approves once. While the grant (and its access token) is valid and within its limits (`interval` + `receiveAmount`), your app can create outgoing payments without re-approval each interval. You can find more information in the [Open Payments flow](/concepts/op-flow/#outgoing-payment) and [identity providers](/identity/idp) pages.
+Los pagos salientes requieren una concesión de autorización interactiva, que el remitente aprueba una sola vez. Mientras la concesión de autorización (y su token de acceso) sean válidos y estén dentro de sus límites (`interval` + `receiveAmount`), su aplicación puede crear pagos salientes sin volver a aprobar cada intervalo. Puede encontrar más información en las páginas del [flujo de Open Payments](/concepts/op-flow/#outgoing-payment) y [proveedores de identidad](/identity/idp).
 :::
 
 <Tabs syncKey="lang">
@@ -249,47 +240,12 @@ if err != nil {
 ```
 
 </TabItem>
-<TabItem label="PHP" icon='seti:php'>
-  ```php wrap
-  $pendingSenderOutgoingPaymentGrant = $client->grant()->request(
-    [
-      'url' => $senderWalletAddress->authServer
-    ],
-    [
-      'access_token' => [
-        'access' => [
-          [
-            'identifier' => $senderWalletAddress->id,
-            'type' => 'outgoing-payment',
-            'actions' => ['create'],
-            'limits' => [
-              'interval' => 'R3/2025-10-03T23:25:00Z/P1M',
-              'receiveAmount' => [
-                'assetCode' => 'MXN',
-                'assetScale' => 2,
-                'value' => '400000',
-              ]
-            ]
-          ]
-        ]
-      ],
-      'interact' => [
-        'start' => ['redirect'],
-        'finish' => [
-          'method' => 'redirect',
-          'uri' => 'https://myapp.example.com/finish/{...}', // where to redirect your user after they've completed the interaction
-          'nonce' => NONCE
-        ]
-      ]
-    ]
-  );
-  ```
-</TabItem>
 </Tabs>
 
 <details>
-<summary>Example response</summary>
-The following shows an example response from the sender's wallet provider.
+<summary>Ejemplo de respuesta</summary>
+El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
+
 ```json wrap
 {
   "interact": {
@@ -305,44 +261,45 @@ The following shows an example response from the sender's wallet provider.
   }
 }
 ```
+
 </details>
 
-#### About the interval
+#### Acerca del intervalo
 
-The interval used in this guide is `R3/2025-10-03T23:25:00Z/P1M`. Remember that the sender wants the recipient to receive $4,000 MXN a month for three months. The interval breaks down like this:
+El intervalo que se emplea en esta guía es `R3/2025-10-03T23:25:00Z/P1M`. Recuerde que el remitente desea que el destinatario reciba MXN 4.000 al mes durante tres meses. El intervalo se desglosa del siguiente modo:
 
-- `R3/` is the number of repetitions - three
-- `2025-10-03` is the start date of the repeating interval - 03 October 2025
-- `T23:25:00Z/` is the start time of the repeating interval - 11:25 PM UTC
-- `P1M` is the period between each interval - one month. Used with `R3`, you have a grant that's valid once a month for three months.
+- `R3/` es la cantidad de repeticiones: tres.
+- `2025-10-03` es la fecha de inicio del intervalo repetido: 3 de octubre de 2025.
+- `T23:25:00Z/` es la hora de inicio del intervalo repetido: 11:25 p. m. UTC.
+- `P1M` es el período entre cada intervalo: un mes. Si se emplea con `R3`, se obtiene una concesión válida una vez por mes durante tres meses.
 
-Altogether, this grant will allow the sender to make any number of outgoing payments within the defined limit from:
+En total, esta concesión de autorización permitirá al remitente realizar cualquier cantidad de pagos salientes dentro del límite definido desde:
 
-- 11:25 PM UTC on 03 October 2025 through 11:24 PM UTC on 03 November 2025
-- 11:25 PM UTC on 03 November 2025 through 11:24 PM UTC on 03 December 2025
-- 11:25 PM UTC on 03 December 2025 through 11:24 PM UTC on 03 January 2026
+- las 11:25 p. m. UTC del 3 de octubre de 2025 hasta las 11:24 p. m. UTC del 3 de noviembre de 2025.
+- las 11:25 p. m. UTC del 3 de noviembre de 2025 hasta las 11:24 p. m. UTC del 3 de diciembre de 2025.
+- las 11:25 p. m. UTC del 3 de diciembre de 2025 hasta las 11:24 p. m. UTC del 3 de enero de 2026.
 
-### 3. Start interaction with the sender
+### 3. Comenzar la interacción con el remitente
 
 <Start />
 
-### 4. Finish interaction with the sender
+### 4. Finalizar la interacción con el remitente
 
 <Finish />
 
-### 5. Request a grant continuation
+### 5. Solicitar una continuación de la concesión de autorización
 
-In our example, we're assuming the IdP your user (the sender) interacted with has a user interface. When the interaction completes, your user returns to your app. Now your app can make a continuation request for the outgoing payment grant.
+En nuestro ejemplo, suponemos que el IdP con el que interactuó su usuario (el remitente) cuenta con una interfaz de usuario. Cuando la interacción finaliza, el usuario regresa a su aplicación. Ahora su aplicación puede realizar una solicitud de continuación de la concesión de autorización de pago saliente.
 
 :::note
-In a scenario where a user interface isn't available, consider implementing a polling mechanism to check for the completion of the interaction.
+En una situación hipotética donde una interfaz de usuario no se encuentra disponible, analice la posibilidad de implementar un mecanismo de sondeo para verificar que se haya completado la interacción.
 :::
 
-Call the <Badge text="POST" variant="success" /> [Grant Continuation Request API](/apis/auth-server/operations/post-continue/). This call obtains an access token that allows your app to continue the outgoing payment grant request.
+Llame a la <Badge text="POST" variant="success" /> [Grant Continuation Request API](/apis/auth-server/operations/post-continue). Esta llamada obtiene un token de acceso que permite a su aplicación continuar con la solicitud de concesión de autorización de pago saliente.
 
-Issue the request to the `continue.uri` provided in the initial outgoing payment grant response.
+Emita la solicitud al `continue.uri` proporcionado en la respuesta de concesión de autorización de pago saliente inicial.
 
-Include the `interact_ref` returned in the redirect URI's query parameters.
+Incluya la `interact_ref` devuelta en los parámetros de consulta del URI de redirección.
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -358,7 +315,7 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
   )
   ```
   </TabItem>
-  <TabItem label='Go' icon='seti:go'>
+    <TabItem label='Go' icon='seti:go'>
   
   ```go wrap
   senderOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
@@ -371,24 +328,12 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
   }
   ```
   </TabItem>
-  <TabItem label="PHP" icon='seti:php'>
-  ```php wrap
-  $senderOutgoingPaymentGrant = $client->grant()->continue(
-    [
-      'url' => $pendingSenderOutgoingPaymentGrant->continue->uri,
-      'accessToken' => $pendingSenderOutgoingPaymentGrant->continue->access_token->value
-    ],
-    [
-      'interact_ref' => $interactRef
-    ]
-  );
-  ```
-  </TabItem>
 </Tabs>
 
 <details>
-<summary>Example response</summary>
-The following shows an example response from the sender's wallet provider.
+<summary>Ejemplo de respuesta</summary>
+El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
+
 ```json wrap
 {
   "access_token": {
@@ -414,17 +359,18 @@ The following shows an example response from the sender's wallet provider.
     "access_token": {
       "value": "..." // access token for continuing the request
     },
-  "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
+    "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
   }
 }
 ```
+
 </details>
 
-### 6. Request an incoming payment grant
+### 6. Solicitar una concesión de autorización para un pago entrante
 
-Use the recipient's `authServer` details, received in Step 1, to call the <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request/).
+Utilice los datos del destinatario `authServer` recibidos en el paso 1 para llamar a la <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request).
 
-This call obtains an access token that allows your app to request an incoming payment resource be created on the recipient's wallet account.
+Esta llamada obtiene un token de acceso que permite a su aplicación solicitar la creación de un recurso de pago entrante en la cuenta de billetera del destinatario.
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -471,30 +417,12 @@ This call obtains an access token that allows your app to request an incoming pa
   }
   ```
   </TabItem>
-  <TabItem label="PHP" icon='seti:php'>
-  ```php wrap
-  $recipientIncomingPaymentGrant = $client->grant()->request(
-    [
-      'url' => $recipientWalletAddress->authServer
-    ],
-    [
-      'access_token' => [
-        'access' => [
-          [
-            'type' => 'incoming-payment',
-            'actions' => ['create'],
-          ],
-        ],
-      ],
-    ]
-  );
-  ```
-  </TabItem>
 </Tabs>
 
 <details>
-<summary>Example response</summary>
-The following shows an example response from the recipient's wallet provider.
+<summary>Ejemplo de respuesta</summary>
+El siguiente ejemplo muestra una respuesta del proveedor de billetera del destinatario.
+
 ```json wrap
 {
   "access_token": {
@@ -518,11 +446,11 @@ The following shows an example response from the recipient's wallet provider.
 
 </details>
 
-### 7. Request the creation of an incoming payment resource
+### 7. Solicitar la creación de un recurso de pago entrante
 
-Use the access token returned in the previous response to call the <Badge text="POST" variant="success" /> [Create Incoming Payment API](/apis/resource-server/operations/create-incoming-payment).
+Use el token de acceso devuelto en la respuesta anterior para llamar a la <Badge text="POST" variant="success" /> [Create Incoming Payment API](/apis/resource-server/operations/create-incoming-payment).
 
-This call requests an incoming payment resource be created on the recipient's wallet account.
+Esta llamada solicita la creación de un recurso de pago entrante en la cuenta de billetera del destinatario.
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -553,24 +481,12 @@ This call requests an incoming payment resource be created on the recipient's wa
   }
   ```
   </TabItem>
-  <TabItem label="PHP" icon='seti:php'>
-  ```php wrap
-  $recipientIncomingPayment = $client->incomingPayment()->create(
-    [
-      'url' => $recipientWalletAddress->resourceServer,
-      'accessToken' => $recipientIncomingPaymentGrant->access_token->value
-    ],
-    [
-      'walletAddress' => $recipientWalletAddress->id,
-    ]
-  );
-  ```
-  </TabItem>
 </Tabs>
 
 <details>
-<summary>Example response</summary>
-The following shows an example response from the recipient's wallet provider.
+<summary>Ejemplo de respuesta</summary>
+El siguiente ejemplo muestra una respuesta del proveedor de billetera del destinatario.
+
 ```json wrap
 {
   "id": "https://happylifebank.example.com/incoming-payments/{...}",
@@ -591,13 +507,14 @@ The following shows an example response from the recipient's wallet provider.
   ]
 }
 ```
+
 </details>
 
-### 8. Request a quote grant
+### 8. Solicitar una concesión de autorización para una cotización
 
-Use the sender's `authServer` details, received in Step 1, to call the <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request).
+Utilice los datos del remitente `authServer` recibidos en el paso 1 para llamar a la <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request).
 
-This call obtains an access token that allows your app to request a quote resource be created on the sender's wallet.
+Esta llamada obtiene un token de acceso que permite a su aplicación solicitar la creación de un recurso de cotización en la billetera del remitente.
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -644,60 +561,42 @@ This call obtains an access token that allows your app to request a quote resour
   }
   ```
   </TabItem>
-  <TabItem label="PHP" icon='seti:php'>
-  ```php wrap
-  $senderQuoteGrant = $client->grant()->request(
-    [
-      'url' => $senderWalletAddress->authServer
-    ],
-    [
-      'access_token' => [
-        'access' => [
-          [
-            'type' => 'quote',
-            'actions' => ['create']
-          ]
-        ]
-      ]
-    ]
-  );
-  ```
-  </TabItem>
 </Tabs>
 
 <details>
-<summary>Example response</summary>
-The following shows an example response from the sender's wallet provider.
+<summary>Ejemplo de respuesta</summary>
+El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
+
 ```json wrap
 {
   "access_token": {
-  "value": "...", // access token value for quote grant
-  "manage": "https://auth.cloudninebank.example.com/token/{...}", // management uri for access token
-  "access": [
-    {
-      "type": "quote",
-      "actions": ["create"]
-    }
-  ]
+    "value": "...", // access token value for quote grant
+    "manage": "https://auth.cloudninebank.example.com/token/{...}", // management uri for access token
+    "access": [
+      {
+        "type": "quote",
+        "actions": ["create"]
+      }
+    ]
   },
   "continue": {
-  "access_token": {
-    "value": "..." // access token for continuing the request
-  },
-  "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
+    "access_token": {
+      "value": "..." // access token for continuing the request
+    },
+    "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
   }
 }
 ```
 
 </details>
 
-### 9. Request the creation of a quote resource
+### 9. Solicitar la creación de un recurso de cotización
 
-Use the access token received in the previous step to call the <Badge text="POST" variant="success" /> [Create Quote API](/apis/resource-server/operations/create-quote).
+Utilice el token de acceso recibido en el paso anterior para llamar a la <Badge text="POST" variant="success" /> [Create Quote API](/apis/resource-server/operations/create-quote).
 
-This call requests that a quote resource be created on the sender's wallet account. The request must contain the `receiver`, which is the recipient's incoming payment `id`, along with the `receiveAmount`, which is the exact amount the sender wants the recipient to receive.
+Esta llamada solicita la creación de un recurso de cotización en la cuenta de la billetera del remitente. La solicitud debe contener el `receiver`, que es la `id` de pago entrante del destinatario, junto con el `receiveAmount`, que es el monto exacto que el remitente quiere que reciba el destinatario.
 
-The `receiveAmount` specifies that the recipient will receive exactly $4,000 MXN.
+El `receiveAmount` especifica que el destinatario recibirá exactamente MXN 4.000.
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -720,20 +619,44 @@ The `receiveAmount` specifies that the recipient will receive exactly $4,000 MXN
   )
   ```
   </TabItem>
+  <TabItem label='Go' icon='seti:go'>
+  
+  ```go wrap
+  senderQuote, err := client.Quote.Create(context.TODO(), op.QuoteCreateParams{
+    BaseURL:     *senderWalletAddress.ResourceServer,
+    AccessToken: senderQuoteGrant.AccessToken.Value,
+    Payload: rs.CreateQuoteJSONBody1{
+      WalletAddressSchema: *senderWalletAddress.Id,
+      Receiver:            *recipientIncomingPayment.Id,
+      Method:              "ilp",
+      ReceiveAmount: rs.Amount{
+        Value:      "400000",
+        AssetCode:  "MXN",
+        AssetScale: 2,
+      },
+    },
+  })
+  if err != nil {
+    log.Fatalf("Error creating quote: %v\n", err)
+  }
+  ```
+  </TabItem>
 </Tabs>
 
-The response returns a `receiveAmount`, a `debitAmount`, and other required information.
+La respuesta devuelve un `receiveAmount`, un `debitAmount` y demás información requerida.
 
-- `debitAmount` - The amount the sender must pay (in USD in our example) after currency conversion.
-- `receiveAmount` - The amount the recipient will actually receive (exactly $4,000 MXN in our example).
+- `debitAmount` - El monto que el remitente debe pagar (en USD en nuestro ejemplo) después de la conversión de moneda.
 
-:::note[Expiring quotes]
-Quote responses include an `expiresAt` timestamp. Create the outgoing payment before the quote expires. If creation fails because the quote expired, request a new quote and try again.
+- `receiveAmount` - El monto que el destinatario recibirá realmente (exactamente MXN 4.000 en nuestro ejemplo).
+
+:::note[Cotizaciones con vencimiento]
+Las respuestas de cotización incluyen una marca de tiempo `expiresAt`. Cree el pago saliente antes de que la cotización expire. Si la creación falla porque la cotización expiró, solicite una nueva e intente otra vez.
 :::
 
 <details>
-<summary>Example response</summary>
-The following shows an example response from the sender's wallet provider.
+<summary>Ejemplo de respuesta</summary>
+El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
+
 ```json wrap
 {
   "id": "https://cloudninebank.example.com/quotes/{...}", // url identifying the quote
@@ -754,11 +677,12 @@ The following shows an example response from the sender's wallet provider.
   "expiresAt": "2025-10-03T23:48:51.50Z"
 }
 ```
+
 </details>
 
-### 10. Request the creation of an outgoing payment resource
+### 10. Solicitar la creación de un recurso de pago saliente
 
-Use the access token returned in the outgoing payment grant continuation response (Step 5) to call the <Badge text="POST" variant="success" /> [Create Outgoing Payment API](/apis/resource-server/operations/create-outgoing-payment/).
+Utilice el token de acceso devuelto en la continuación de la concesión de autorización de pago saliente (paso 5) para llamar a la <Badge text="POST" variant="success" /> [Create Outgoing Payment API](/apis/resource-server/operations/create-outgoing-payment).
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -775,11 +699,33 @@ Use the access token returned in the outgoing payment grant continuation respons
   )
   ```
   </TabItem>
+  <TabItem label='Go' icon='seti:go'>
+  
+  ```go wrap
+  var outgoingPayload rs.CreateOutgoingPaymentRequest
+  if err := outgoingPayload.FromCreateOutgoingPaymentWithQuote(rs.CreateOutgoingPaymentWithQuote{
+    WalletAddressSchema: *senderWalletAddress.Id,
+    QuoteId:             *senderQuote.Id,
+  }); err != nil {
+    log.Fatalf("Error creating payload: %v\n", err)
+  }
+  
+  senderOutgoingPayment, err := client.OutgoingPayment.Create(context.TODO(), op.OutgoingPaymentCreateParams{
+    BaseURL:     *senderWalletAddress.ResourceServer,
+    AccessToken: senderOutgoingPaymentGrant.AccessToken.Value,
+    Payload:     outgoingPayload,
+  })
+  if err != nil {
+    log.Fatalf("Error creating outgoing payment: %v\n", err)
+  }
+  ```
+  </TabItem>
 </Tabs>
 
 <details>
-<summary>Example response</summary>
-The following shows an example response from the sender's wallet provider.
+<summary>Ejemplo de respuesta</summary>
+El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
+
 ```json wrap
 {
   "id": "https://cloudninebank.example.com/outgoing-payments/{...}", // url of the outgoing payment
@@ -803,16 +749,17 @@ The following shows an example response from the sender's wallet provider.
   "createdAt": "2025-10-03T23:29:03.41Z"
 }
 ```
+
 </details>
 
-The first payment is now set up. At the next interval (one month from now), repeat the following steps to request the creation of:
+El primer pago ya está configurado. En el siguiente intervalo (dentro de un mes), repita los siguientes pasos para solicitar la creación de los siguientes:
 
-1. An incoming payment resource ([step 7](#7-request-the-creation-of-an-incoming-payment-resource))
-2. A quote resource ([step 9](#9-request-the-creation-of-a-quote-resource))
-3. An outgoing payment resource ([step 10](#10-request-the-creation-of-an-outgoing-payment-resource))
+1. Un recurso de pago entrante ([paso 7](#7-solicitar-la-creación-de-un-recurso-de-pago-entrante))
+2. Un recurso de cotización ([paso 9](#9-solicitar-la-creación-de-un-recurso-de-cotización))
+3. Un recurso de pago saliente ([paso 10](#10-solicitar-la-creación-de-un-recurso-de-pago-saliente))
 
-Use the access token associated with each resource's grant in the requests. You don't need to request new grants because the original grants should still be valid.
+Utilice el token de acceso asociado a la concesión de autorización de cada recurso en las solicitudes. No necesita solicitar nuevas concesiones de autorización porque las concesiones originales deberían seguir siendo válidas.
 
-:::note[Access token expiry]
-If a grant's access token has expired, call the <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/auth-server/operations/post-token/), then use the new token in the appropriate request.
+:::note[Expiración del token de acceso]
+Si el token de acceso de una concesión ha expirado, llame a la <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/auth-server/operations/post-token/) y, luego, utilice el nuevo token en la solicitud correspondiente.
 :::

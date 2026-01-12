@@ -43,6 +43,12 @@ These code snippets retrieve the first ten outgoing payments on the given wallet
   chunk="4"
 />
 
+<ChunkedSnippet
+  source="outgoing-payment/outgoing-payment-list.ts"
+  l="node"
+  chunk="5"
+/>
+
 For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/outgoing-payment/outgoing-payment-list.ts'>View full TS source</LinkOut>
 
 For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/outgoing-payment/outgoing-payment-list.js'>View full JS source</LinkOut>
@@ -99,6 +105,52 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 />
 
 <p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/OutgoingPayment/OutgoingPaymentList.php'>View full source</LinkOut></p>
+</TabItem>
+
+<TabItem label="Go" icon='seti:go'>
+<LinkButton href="https://github.com/interledger/open-payments-go/blob/main/README.md" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+```go
+package main
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
+
+	op "github.com/interledger/open-payments-go"
+)
+
+func main() {
+	// Initialize Open Payments client
+	client, err := op.NewAuthenticatedClient(WALLET_ADDRESS_URL, PRIVATE_KEY_BASE_64, KEY_ID)
+	if err != nil {
+		log.Fatalf("Error creating authenticated client: %v\n", err)
+	}
+
+	// List outgoing payments
+	outgoingPayments, err := client.OutgoingPayment.List(context.TODO(), op.OutgoingPaymentListParams{
+		BaseURL:       RESOURCE_SERVER_URL,
+		AccessToken:   OUTGOING_PAYMENT_ACCESS_TOKEN,
+		WalletAddress: WALLET_ADDRESS_URL,
+		Pagination: op.Pagination{
+			First: "10",
+		},
+	})
+	if err != nil {
+		log.Fatalf("Error listing outgoing payments: %v\n", err)
+	}
+
+	// Output
+	outgoingPaymentsJSON, err := json.MarshalIndent(outgoingPayments, "", "  ")
+	if err != nil {
+		log.Fatalf("Error marshaling outgoing payments: %v\n", err)
+	}
+	fmt.Println("OUTGOING PAYMENTS:", string(outgoingPaymentsJSON))
+}
+```
+
 </TabItem>
 </Tabs>
 

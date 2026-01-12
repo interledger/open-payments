@@ -24,7 +24,7 @@ export default defineConfig({
           attrs: {
             defer: true,
             'data-website-id': '76afa57f-78bb-48ab-a9e4-095a32d8a1b9',
-            src: 'https://umami-analytics-395917053417.us-east4.run.app/script.js',
+            src: 'https://uwa.interledger.org/script.js',
             'data-domains': 'openpayments.dev'
           }
         }
@@ -345,10 +345,16 @@ export default defineConfig({
             },
             {
               label: 'Send recurring remittances with a fixed debit amount',
+              translations: {
+                es: 'Enviar remesas recurrentes con un monto de débito fijo'
+              },
               link: '/guides/recurring-remittance-fixed-debit/'
             },
             {
               label: 'Send recurring remittances with a fixed receive amount',
+              translations: {
+                es: 'Enviar remesas recurrentes con un monto de recepción fijo'
+              },
               link: '/guides/recurring-remittance-fixed-receive/'
             },
             {

@@ -82,6 +82,29 @@ Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wall
  let platform_wallet_address = client.wallet_address().get("https://coolwallet.example.com/platform").await?;
  ```
  </TabItem>
+  <TabItem label='Go' icon='seti:go'>
+  
+  ```go wrap
+  customerWalletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
+    URL: "https://cloudninebank.example.com/customer",
+  })
+  if err != nil {
+    log.Fatalf("Error fetching customer wallet address: %v\n", err)
+  }
+  merchantWalletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
+    URL: "https://happylifebank.example.com/merchant",
+  })
+  if err != nil {
+    log.Fatalf("Error fetching merchant wallet address: %v\n", err)
+  }
+  platformWalletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
+    URL: "https://coolwallet.example.com/platform",
+  })
+  if err != nil {
+    log.Fatalf("Error fetching platform wallet address: %v\n", err)
+  }
+  ```
+  </TabItem>
  <TabItem label='PHP' icon='seti:php'>
  ```php wrap
   $customerWalletAddress = $client->walletAddress()->get([
@@ -109,6 +132,7 @@ The following shows an example response from the customer's wallet provider. Sim
   "resourceServer": "https://cloudninebank.example.com/op"
 }
 ```
+
 </details>
 
 ### 2. Request incoming payment grants
@@ -156,7 +180,7 @@ If you and the merchant use the same account servicing entity, and as a result, 
       },
     },
   );
-````
+  ```
  </TabItem>
  <TabItem label='Rust' icon='seti:rust'>
  ```rust wrap
@@ -211,7 +235,43 @@ If you and the merchant use the same account servicing entity, and as a result, 
     ]
   );
   ```
-  </TabItem>
+ </TabItem>
+
+  <TabItem label='Go' icon='seti:go'>
+
+```go wrap
+incomingAccess := as.AccessIncoming{
+  Type:    as.IncomingPayment,
+  Actions: []as.AccessIncomingActions{as.AccessIncomingActionsCreate},
+}
+accessItem := as.AccessItem{}
+if err := accessItem.FromAccessIncoming(incomingAccess); err != nil {
+  log.Fatalf("Error creating AccessItem: %v\n", err)
+}
+accessToken := struct {
+  Access as.Access `json:"access"`
+}{
+  Access: []as.AccessItem{accessItem},
+}
+// Merchant
+merchantIncomingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
+  URL:         *merchantWalletAddress.AuthServer,
+  RequestBody: as.GrantRequestWithAccessToken{AccessToken: accessToken},
+})
+if err != nil {
+  log.Fatalf("Error requesting merchant incoming payment grant: %v\n", err)
+}
+// Platform
+platformIncomingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
+  URL:         *platformWalletAddress.AuthServer,
+  RequestBody: as.GrantRequestWithAccessToken{AccessToken: accessToken},
+})
+if err != nil {
+  log.Fatalf("Error requesting platform incoming payment grant: %v\n", err)
+}
+```
+
+   </TabItem>
 </Tabs>
 
 <details>
@@ -310,6 +370,44 @@ Remember that the merchant is receiving 99% of the payment (\$99.00 or `9900`) w
    .await?;
  ```
  </TabItem>
+
+  <TabItem label='Go' icon='seti:go'>
+  
+  ```go wrap
+  // Merchant
+  merchantIncomingPayment, err := client.IncomingPayment.Create(context.TODO(), op.IncomingPaymentCreateParams{
+    BaseURL:     *merchantWalletAddress.ResourceServer,
+    AccessToken: merchantIncomingPaymentGrant.AccessToken.Value,
+    Payload: rs.CreateIncomingPaymentJSONBody{
+      WalletAddressSchema: *merchantWalletAddress.Id,
+      IncomingAmount: &rs.Amount{
+        Value:      "9900",
+        AssetCode:  "USD",
+        AssetScale: 2,
+      },
+    },
+  })
+  if err != nil {
+    log.Fatalf("Error creating merchant incoming payment: %v\n", err)
+  }
+  // Platform
+  platformIncomingPayment, err := client.IncomingPayment.Create(context.TODO(), op.IncomingPaymentCreateParams{
+    BaseURL:     *platformWalletAddress.ResourceServer,
+    AccessToken: platformIncomingPaymentGrant.AccessToken.Value,
+    Payload: rs.CreateIncomingPaymentJSONBody{
+      WalletAddressSchema: *platformWalletAddress.Id,
+      IncomingAmount: &rs.Amount{
+        Value:      "100",
+        AssetCode:  "USD",
+        AssetScale: 2,
+      },
+    },
+  })
+  if err != nil {
+    log.Fatalf("Error creating platform incoming payment: %v\n", err)
+  }
+  ```
+ </TabItem>
   <TabItem label='PHP' icon='seti:php'>
   ```php wrap
   // Merchant
@@ -343,7 +441,7 @@ Remember that the merchant is receiving 99% of the payment (\$99.00 or `9900`) w
     ]
   );
   ```
-  </TabItem>
+   </TabItem>
 </Tabs>
 
 <details>
@@ -419,6 +517,31 @@ This call obtains an access token that allows your platform to request quote res
     ```
   </TabItem>
 
+  <TabItem label='Go' icon='seti:go'>
+  
+  ```go wrap
+  quoteAccess := as.AccessQuote{
+    Type:    as.Quote,
+    Actions: []as.AccessQuoteActions{as.Create},
+  }
+  quoteAccessItem := as.AccessItem{}
+  if err := quoteAccessItem.FromAccessQuote(quoteAccess); err != nil {
+    log.Fatalf("Error creating AccessItem: %v\n", err)
+  }
+  quoteAccessToken := struct {
+    Access as.Access `json:"access"`
+  }{
+    Access: []as.AccessItem{quoteAccessItem},
+  }
+  customerQuoteGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
+    URL:         *customerWalletAddress.AuthServer,
+    RequestBody: as.GrantRequestWithAccessToken{AccessToken: quoteAccessToken},
+  })
+  if err != nil {
+    log.Fatalf("Error requesting quote grant: %v\n", err)
+  }
+  ```
+  </TabItem>
   <TabItem label='PHP' icon='seti:php'>
   ```php wrap
     $customerQuoteGrant = $client->grant()->request(
@@ -532,6 +655,37 @@ Next, call the <Badge text="POST" variant="success" /> Create Quote API again an
    .await?;
  ```
  </TabItem>
+ <TabItem label='Go' icon='seti:go'>
+  
+  ```go wrap
+  // Merchant
+  merchantQuote, err := client.Quote.Create(context.TODO(), op.QuoteCreateParams{
+    BaseURL:     *customerWalletAddress.ResourceServer,
+    AccessToken: customerQuoteGrant.AccessToken.Value,
+    Payload: rs.CreateQuoteJSONBody0{
+      WalletAddressSchema: *customerWalletAddress.Id,
+      Receiver:            *merchantIncomingPayment.Id,
+      Method:              "ilp",
+    },
+  })
+  if err != nil {
+    log.Fatalf("Error creating merchant quote: %v\n", err)
+  }
+  // Platform
+  platformQuote, err := client.Quote.Create(context.TODO(), op.QuoteCreateParams{
+    BaseURL:     *customerWalletAddress.ResourceServer,
+    AccessToken: customerQuoteGrant.AccessToken.Value,
+    Payload: rs.CreateQuoteJSONBody0{
+      WalletAddressSchema: *customerWalletAddress.Id,
+      Receiver:            *platformIncomingPayment.Id,
+      Method:              "ilp",
+    },
+  })
+  if err != nil {
+    log.Fatalf("Error creating platform quote: %v\n", err)
+  }
+  ```
+ </TabItem>
   <TabItem label='PHP' icon='seti:php'>
   ```php wrap
   // Merchant
@@ -559,7 +713,7 @@ Next, call the <Badge text="POST" variant="success" /> Create Quote API again an
     ]
   );
   ```
-  </TabItem>
+ </TabItem>
 </Tabs>
 
 Each response returns a `receiveAmount`, a `debitAmount`, and other required information.
@@ -607,8 +761,7 @@ This call obtains an access token that allows your platform to request outgoing 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
   ```ts wrap
-  const combinedQuoteAmount = quote1.debitAmount.value + // '9900'
-                              quote2.debitAmount.value // '100'
+  combinedQuoteAmount = '10000' // 9900 + 100
   
   const pendingCustomerOutgoingPaymentGrant = await client.grant.request(
     {
@@ -691,6 +844,56 @@ This call obtains an access token that allows your platform to request outgoing 
    .await?;
  ```
  </TabItem>
+
+  <TabItem label='Go' icon='seti:go'>
+  
+  ```go wrap
+  combinedQuoteAmount := "10000" // merchantQuote.DebitAmount.Value + platformQuote.DebitAmount.Value
+  limits := as.LimitsOutgoing{}
+  if err := limits.FromLimitsOutgoing1(as.LimitsOutgoing1{
+    DebitAmount: as.Amount{
+      Value:      combinedQuoteAmount,
+      AssetCode:  "USD",
+      AssetScale: 2,
+    },
+  }); err != nil {
+    log.Fatalf("Error creating limits: %v\n", err)
+  }
+  outgoingAccess := as.AccessOutgoing{
+    Type:       as.OutgoingPayment,
+    Actions:    []as.AccessOutgoingActions{as.AccessOutgoingActionsCreate},
+    Identifier: *customerWalletAddress.Id,
+    Limits:     &limits,
+  }
+  outgoingAccessItem := as.AccessItem{}
+  if err := outgoingAccessItem.FromAccessOutgoing(outgoingAccess); err != nil {
+    log.Fatalf("Error creating AccessItem: %v\n", err)
+  }
+  outgoingAccessToken := struct {
+    Access as.Access `json:"access"`
+  }{
+    Access: []as.AccessItem{outgoingAccessItem},
+  }
+  interact := &as.InteractRequest{
+    Start: []as.InteractRequestStart{as.InteractRequestStartRedirect},
+    Finish: &as.InteractRequestFinish{
+      Method: as.Redirect,
+      Uri:    "https://paymentplatform.example/finish/{...}", // where to redirect the customer after they've completed interaction
+      Nonce:  NONCE,
+    },
+  }
+  pendingCustomerOutgoingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
+    URL: *customerWalletAddress.AuthServer,
+    RequestBody: as.GrantRequestWithAccessToken{
+      AccessToken: outgoingAccessToken,
+      Interact:    interact,
+    },
+  })
+  if err != nil {
+    log.Fatalf("Error requesting outgoing payment grant: %v\n", err)
+  }
+  ```
+ </TabItem>
   <TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $combinedQuoteAmount = bcadd($merchantQuote->debitAmount->value, $platformQuote->debitAmount->value);
@@ -727,7 +930,7 @@ This call obtains an access token that allows your platform to request outgoing 
     ]
   );
   ```
-  </TabItem>
+   </TabItem>
 </Tabs>
 
 <details>
@@ -736,14 +939,14 @@ This call obtains an access token that allows your platform to request outgoing 
 ```json wrap
 {
   "interact": {
-    "redirect": "https://auth.interledger-test.dev/{...}", // uri to redirect the customer to, to begin interaction
+    "redirect": "https://auth.cloudninebank.example.com/{...}", // uri to redirect the customer to, to begin interaction
     "finish": "..." // unique key to secure the callback
   },
   "continue": {
     "access_token": {
       "value": "..." // access token for continuing the outgoing payment grant request
     },
-    "uri": "https://auth.interledger-test.dev/continue/{...}", // uri for continuing the outgoing payment grant request
+    "uri": "https://auth.cloudninebank.example.com/continue/{...}", // uri for continuing the outgoing payment grant request
     "wait": 30
   }
 }
@@ -799,6 +1002,20 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
    .await?;
  ```
  </TabItem>
+
+ <TabItem label='Go' icon='seti:go'>
+  
+  ```go wrap
+  customerOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
+    URL:         pendingCustomerOutgoingPaymentGrant.Continue.Uri,
+    AccessToken: pendingCustomerOutgoingPaymentGrant.Continue.AccessToken.Value,
+    InteractRef: INTERACT_REF
+  })
+  if err != nil {
+    log.Fatalf("Error continuing grant: %v\n", err)
+  }
+  ```
+ </TabItem>
  <TabItem label='PHP' icon='seti:php'>
  ```php wrap
     $customerOutgoingPaymentGrant = $client->grant()->continue(
@@ -811,7 +1028,7 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
       ]
     );
     ```
-  </TabItem>
+   </TabItem>
 </Tabs>
 
 <details>
@@ -906,6 +1123,44 @@ Use the access token returned in Step 5 that's associated with the merchant to c
    .await?;
  ```
  </TabItem>
+
+  <TabItem label='Go' icon='seti:go'>
+  
+  ```go wrap
+  // Merchant
+  var merchantOutgoingPayload rs.CreateOutgoingPaymentRequest
+  if err := merchantOutgoingPayload.FromCreateOutgoingPaymentWithQuote(rs.CreateOutgoingPaymentWithQuote{
+    WalletAddressSchema: *customerWalletAddress.Id,
+    QuoteId:             *merchantQuote.Id,
+  }); err != nil {
+    log.Fatalf("Error creating merchant payload: %v\n", err)
+  }
+  customerOutgoingPaymentToMerchant, err := client.OutgoingPayment.Create(context.TODO(), op.OutgoingPaymentCreateParams{
+    BaseURL:     *customerWalletAddress.ResourceServer,
+    AccessToken: customerOutgoingPaymentGrant.AccessToken.Value,
+    Payload:     merchantOutgoingPayload,
+  })
+  if err != nil {
+    log.Fatalf("Error creating outgoing payment to merchant: %v\n", err)
+  }
+  // Platform
+  var platformOutgoingPayload rs.CreateOutgoingPaymentRequest
+  if err := platformOutgoingPayload.FromCreateOutgoingPaymentWithQuote(rs.CreateOutgoingPaymentWithQuote{
+    WalletAddressSchema: *customerWalletAddress.Id,
+    QuoteId:             *platformQuote.Id,
+  }); err != nil {
+    log.Fatalf("Error creating platform payload: %v\n", err)
+  }
+  customerOutgoingPaymentToPlatform, err := client.OutgoingPayment.Create(context.TODO(), op.OutgoingPaymentCreateParams{
+    BaseURL:     *customerWalletAddress.ResourceServer,
+    AccessToken: customerOutgoingPaymentGrant.AccessToken.Value,
+    Payload:     platformOutgoingPayload,
+  })
+  if err != nil {
+    log.Fatalf("Error creating outgoing payment to platform: %v\n", err)
+  }
+  ```
+ </TabItem>
   <TabItem label='PHP' icon='seti:php'>
   ```php wrap
   // Merchant
@@ -931,7 +1186,7 @@ Use the access token returned in Step 5 that's associated with the merchant to c
     ]
   );
   ```
-  </TabItem>
+   </TabItem>
 </Tabs>
 
 <details>

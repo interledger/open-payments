@@ -70,6 +70,48 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 
 <p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Quote/QuoteGet.php'>View full source</LinkOut></p>
 </TabItem>
+
+<TabItem label="Go" icon='seti:go'>
+<LinkButton href="https://github.com/interledger/open-payments-go/blob/main/README.md" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+```go
+package main
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
+
+	op "github.com/interledger/open-payments-go"
+)
+
+func main() {
+	// Initialize Open Payments client
+	client, err := op.NewAuthenticatedClient(WALLET_ADDRESS_URL, PRIVATE_KEY_BASE_64, KEY_ID)
+	if err != nil {
+		log.Fatalf("Error creating authenticated client: %v\n", err)
+	}
+
+	// Get quote
+	quote, err := client.Quote.Get(context.TODO(), op.QuoteGetParams{
+		URL:         QUOTE_URL,
+		AccessToken: QUOTE_ACCESS_TOKEN,
+	})
+	if err != nil {
+		log.Fatalf("Error fetching quote: %v\n", err)
+	}
+
+	// Output
+	quoteJSON, err := json.MarshalIndent(quote, "", "  ")
+	if err != nil {
+		log.Fatalf("Error marshaling quote: %v\n", err)
+	}
+	fmt.Println("QUOTE:", string(quoteJSON))
+}
+```
+
+</TabItem>
 </Tabs>
 
 ## References
