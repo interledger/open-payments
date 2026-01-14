@@ -8,7 +8,6 @@ import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
 import TsImport from '/src/partials/ts-import-initialize.mdx'
-import PhpImport from '/src/partials/php-import-initialize.mdx'
 
 Once an authorized client obtains the requisite grant from the recipient’s authentication server, the client must create an incoming payment resource before any payments can be sent to the recipient’s wallet address.
 
@@ -97,18 +96,44 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 <TabItem label="PHP" icon='seti:php'>
 <LinkButton href="https://github.com/interledger/open-payments-php-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-<PhpImport />
+```php
+// Import dependencies
+use OpenPayments\AuthClient;
+use OpenPayments\Config\Config;
 
-<ChunkedSnippet
-  source="incoming-payment/incoming-payment-create.php"
-  l="php"
-  chunk="3"
-/>
-<ChunkedSnippet
-  source="incoming-payment/incoming-payment-create.php"
-  l="php"
-  chunk="4"
-/>
+// Initialize Open Payments client
+$config = new Config(
+    $WALLET_ADDRESS,
+    $PRIVATE_KEY,
+    $KEY_ID
+);
+$opClient = new AuthClient($config);
+
+// Create incoming payment
+$newIncomingPayment = $opClient->incomingPayment()->create(
+    [
+        'url' => $wallet->resourceServer,
+        'access_token' => $INCOMING_PAYMENT_GRANT_ACCESS_TOKEN
+    ],
+    [
+        'walletAddress' => $config->getWalletAddressUrl(),
+        'incomingAmount' => [
+            'value' => "130",
+            'assetCode' => 'USD',
+            'assetScale' => 2
+        ],
+        'metadata' => [
+            'description' => 'Test php snippets transaction with $1,30 amount',
+            'externalRef' => 'INVOICE-' . uniqid()
+        ],
+        'expiresAt' => (new \DateTime())->add(new \DateInterval('PT59M'))->format("Y-m-d\TH:i:s.v\Z")
+    ]
+);
+
+// Output
+echo 'INCOMING_PAYMENT_URL: ' . $newIncomingPayment->id . PHP_EOL;
+echo 'INCOMING PAYMENT OBJECT:' . PHP_EOL . print_r($newIncomingPayment, true);
+```
 
 <p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/IncomingPayment/IncomingPaymentCreate.php'>View full source</LinkOut></p>
 </TabItem>

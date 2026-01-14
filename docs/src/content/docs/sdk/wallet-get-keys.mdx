@@ -87,29 +87,23 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 <TabItem label="PHP" icon='seti:php'>
 <LinkButton href="https://github.com/interledger/open-payments-php-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-<ChunkedSnippet
-  source="wallet-address/wallet-address-get-keys.php"
-  l="php"
-  chunk="1"
-/>
+```php
+// Import dependencies
+use OpenPayments\AuthClient;
+use OpenPayments\Config\Config;
 
-<ChunkedSnippet
-  source="wallet-address/wallet-address-get-keys.php"
-  l="php"
-  chunk="2"
-/>
+// Initialize Open Payments unauthenticated client
+$config = new Config($WALLET_ADDRESS);
+$opClient = new AuthClient($config);
 
-<ChunkedSnippet
-  source="wallet-address/wallet-address-get-keys.php"
-  l="php"
-  chunk="3"
-/>
+// Get wallet address keys
+$walletKeys = $opClient->walletAddress()->getKeys([
+    'url' => $config->getWalletAddressUrl()
+]);
 
-<ChunkedSnippet
-  source="wallet-address/wallet-address-get-keys.php"
-  l="php"
-  chunk="4"
-/>
+// Output wallet address keys
+echo 'WALLET ADDRESS KEYS: ' . PHP_EOL . print_r($walletKeys, true);
+```
 
 {/* prettier-ignore */}
 <p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/WalletAddress/PublicGetWalletAddressKeys.php'>View full source</LinkOut></p>

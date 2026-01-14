@@ -8,7 +8,6 @@ import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
 import TsImport from '/src/partials/ts-import-initialize.mdx'
-import PhpImport from '/src/partials/php-import-initialize.mdx'
 
 A quote is a commitment from an account servicing entity to deliver a particular amount to a recipient when sending a particular amount from a sender. The quote is only valid for a limited time.
 
@@ -63,10 +62,35 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 <TabItem label="PHP" icon='seti:php'>
 <LinkButton href="https://github.com/interledger/open-payments-php-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-<PhpImport />
+```php
+// Import dependencies
+use OpenPayments\AuthClient;
+use OpenPayments\Config\Config;
 
-<ChunkedSnippet source="quote/quote-get.php" l="php" chunk="1" />
-<ChunkedSnippet source="quote/quote-get.php" l="php" chunk="2" />
+// Initialize Open Payments client
+$config = new Config(
+    $WALLET_ADDRESS,
+    $PRIVATE_KEY,
+    $KEY_ID
+);
+$opClient = new AuthClient($config);
+
+$wallet = $opClient->walletAddress()->get([
+    'url' => $config->getWalletAddressUrl()
+]);
+
+// Create quote
+$quote = $opClient->quote()->get(
+    [
+        'access_token' => $QUOTE_GRANT_ACCESS_TOKEN,
+        'url' => $QUOTE_URL
+    ]
+);
+
+// Output
+echo 'QUOTE_URL ' . $quote->id . PHP_EOL;
+echo 'QUOTE ' . print_r($quote, true) . PHP_EOL;
+```
 
 <p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Quote/QuoteGet.php'>View full source</LinkOut></p>
 </TabItem>

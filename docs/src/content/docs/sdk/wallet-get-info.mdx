@@ -8,7 +8,6 @@ import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
 import TsImport from '/src/partials/ts-import-initialize.mdx'
-import PhpImport from '/src/partials/php-import-initialize.mdx'
 
 For a client to request a grant from an authorization server, the client must first verify the validity of the wallet address and get the URL of the wallet's authorization server.
 
@@ -80,29 +79,23 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 <TabItem label="PHP" icon='seti:php'>
 <LinkButton href="https://github.com/interledger/open-payments-php-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-<ChunkedSnippet
-  source="wallet-address/wallet-address-get.php"
-  l="php"
-  chunk="1"
-/>
+```php
+// Import dependencies
+use OpenPayments\AuthClient;
+use OpenPayments\Config\Config;
 
-<ChunkedSnippet
-  source="wallet-address/wallet-address-get.php"
-  l="php"
-  chunk="2"
-/>
+// Initialize Open Payments unauthenticated client
+$config = new Config($WALLET_ADDRESS);
+$opClient = new AuthClient($config); // because of missing keys in config, this will be an unauthenticated client
 
-<ChunkedSnippet
-  source="wallet-address/wallet-address-get.php"
-  l="php"
-  chunk="3"
-/>
+// Get wallet address
+$wallet = $opClient->walletAddress()->get([
+    'url' => $config->getWalletAddressUrl()
+]);
 
-<ChunkedSnippet
-  source="wallet-address/wallet-address-get.php"
-  l="php"
-  chunk="4"
-/>
+// Output wallet address information
+echo 'WALLET ADDRESS: ' . PHP_EOL . print_r($wallet, true);
+```
 
 {/* prettier-ignore */}
 <p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/WalletAddress/PublicGetWalletAddress.php'>View full source</LinkOut></p>
