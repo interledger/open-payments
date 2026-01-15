@@ -85,6 +85,18 @@ Llame a la <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wa
   })
 ```
 </TabItem>
+
+<TabItem label="PHP" icon='seti:php'>
+  ```php wrap
+  $customerWalletAddress = $client->walletAddress()->get([
+    'url' => 'https://cloudninebank.example.com/customer'
+  ]);
+  $serviceProviderWalletAddress = $client->walletAddress()->get([
+    'url' => 'https://happylifebank.example.com/service-provider'
+  ]);
+  ```
+</TabItem>
+
 <TabItem label='Go' icon='seti:go'>
 
 ```go wrap
@@ -156,6 +168,27 @@ Esta llamada obtiene un token de acceso que le permite solicitar la creación de
   );
 ```
 </TabItem>
+
+<TabItem label="PHP" icon='seti:php'>
+  ```php wrap
+  $serviceProviderIncomingPaymentGrant = $client->grant()->request(
+    [
+      'url' => $serviceProviderWalletAddress->authServer
+    ],
+    [
+      'access_token' => [
+        'access' => [
+          [
+            'type' => 'incoming-payment',
+            'actions' => ['create']
+          ]
+        ]
+      ]
+    ]
+  );
+  ```
+</TabItem>
+
 <TabItem label='Go' icon='seti:go'>
 
 ```go wrap
@@ -238,6 +271,25 @@ Esta llamada solicita la creación de un recurso de pago entrante en la cuenta d
 ```
 </TabItem>
 
+  <TabItem label="PHP" icon='seti:php'>
+  ```php wrap
+  $serviceProviderIncomingPayment = $client->incomingPayment()->create(
+    [
+      'url' => $serviceProviderWalletAddress->resourceServer,
+      'accessToken' => $serviceProviderIncomingPaymentGrant->access_token->value
+    ],
+    [
+      'walletAddress' => $serviceProviderWalletAddress->id,
+      'incomingAmount' => [
+        'value' => '1500',  // The amount the service provider expects to receive in the first payment
+        'assetCode' => 'USD',
+        'assetScale' => 2
+      ],
+    ]
+  );
+  ```
+  </TabItem>
+
 <TabItem label='Go' icon='seti:go'>
 
 ```go wrap
@@ -319,6 +371,27 @@ Esta llamada obtiene un token de acceso que le permite solicitar la creación de
   )
   ```
 </TabItem>
+
+<TabItem label="PHP" icon='seti:php'>
+  ```php wrap
+  $customerQuoteGrant = $client->grant()->request(
+    [
+      'url' => $customerWalletAddress->authServer
+    ],
+    [
+      'access_token' => [
+        'access' => [
+          [
+            'type' => 'quote',
+            'actions' => ['create']
+          ]
+        ]
+      ]
+    ]
+  );
+  ```
+</TabItem>
+
 <TabItem label='Go' icon='seti:go'>
 
 ```go wrap
@@ -399,6 +472,23 @@ La solicitud debe contener el `receiver`, que es la `id` del pago entrante del p
   )
 ```
 </TabItem>
+
+<TabItem label="PHP" icon='seti:php'>
+  ```php wrap
+  $customerQuote = $client->quote()->create(
+    [
+      'url' => $customerWalletAddress->resourceServer,
+      'accessToken' => $customerQuoteGrant->access_token->value
+    ],
+    [
+      'method' => 'ilp',
+      'walletAddress' => $customerWalletAddress->id,
+      'receiver' => $serviceProviderIncomingPayment->id,
+    ]
+  );
+  ```
+</TabItem>
+
 <TabItem label='Go' icon='seti:go'>
 
 ```go wrap
@@ -504,6 +594,44 @@ Para los pagos recurrentes, incluya la propiedad `interval` para especificar la 
   )
   ```
 </TabItem>
+
+<TabItem label="PHP" icon='seti:php'>
+  ```php wrap
+  $pendingCustomerOutgoingPaymentGrant = $client->grant()->request(
+    [
+      'url' => $customerWalletAddress->authServer
+    ],
+    [
+      'access_token' => [
+        'access' => [
+          [
+            'identifier' => $customerWalletAddress->id,
+            'type' => 'outgoing-payment',
+            'actions' => ['create', 'read'],
+            'limits' => [
+              'debitAmount' => [
+                'assetCode' => 'USD',
+                'assetScale' => 2,
+                'value' => '1500',
+              ],
+              'interval' => 'R12/2025-10-14T00:03:00Z/P1M'
+            ]
+          ]
+        ]
+      ],
+      'interact' => [
+        'start' => ['redirect'],
+        'finish' => [
+          'method' => 'redirect',
+          'uri' => 'https://myapp.example.com/finish/{...}', // where to redirect the customer after they've completed interaction
+          'nonce' => NONCE
+        ]
+      ]
+    ]
+  );
+  ```
+</TabItem>
+
 <TabItem label='Go' icon='seti:go'>
 
 ```go wrap
@@ -628,6 +756,21 @@ Incluya la `interact_ref` devuelta en los parámetros de consulta del URI de red
     )
     ```
   </TabItem>
+
+  <TabItem label="PHP" icon='seti:php'>
+    ```php wrap
+    $customerOutgoingPaymentGrant = $client->grant()->continue(
+      [
+        'url' => $pendingCustomerOutgoingPaymentGrant->continue->uri,
+        'accessToken' => $pendingCustomerOutgoingPaymentGrant->continue->access_token->value
+      ],
+      [
+        'interact_ref' => $interactRef
+      ]
+    );
+    ```
+  </TabItem>
+
   <TabItem label='Go' icon='seti:go'>
   
   ```go wrap
@@ -700,6 +843,22 @@ Incluya el `quoteId` de la cotización creada en el paso 5.
   )
 ```
 </TabItem>
+
+<TabItem label="PHP" icon='seti:php'>
+  ```php wrap
+  $customerOutgoingPayment = $client->outgoingPayment()->create(
+    [
+      'url' => $customerWalletAddress->resourceServer,
+      'accessToken' => $customerOutgoingPaymentGrant->access_token->value
+    ],
+    [
+      'walletAddress' => $customerWalletAddress->id,
+      'quoteId' => $customerQuote->id
+    ]
+  );
+  ```
+</TabItem>
+
 <TabItem label='Go' icon='seti:go'>
 
 ```go wrap

@@ -87,6 +87,18 @@ Llame a la <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wa
   })
 ```
 </TabItem>
+
+<TabItem label="PHP" icon='seti:php'>
+  ```php wrap
+  $senderWalletAddress = $client->walletAddress()->get([
+    'url' => 'https://cloudninebank.example.com/sender'
+  ]);
+  $recipientWalletAddress = $client->walletAddress()->get([
+    'url' => 'https://happylifebank.example.com/recipient'
+  ]);
+  ```
+</TabItem>
+
 <TabItem label='Go' icon='seti:go'>
 
 ```go wrap
@@ -187,6 +199,44 @@ Los pagos salientes requieren una concesión de autorización interactiva, que e
   )
   ```
 </TabItem>
+
+<TabItem label="PHP" icon='seti:php'>
+  ```php wrap
+  $pendingSenderOutgoingPaymentGrant = $client->grant()->request(
+    [
+      'url' => $senderWalletAddress->authServer
+    ],
+    [
+      'access_token' => [
+        'access' => [
+          [
+            'identifier' => $senderWalletAddress->id,
+            'type' => 'outgoing-payment',
+            'actions' => ['create'],
+            'limits' => [
+              'interval' => 'R3/2025-10-03T23:25:00Z/P1M',
+              'receiveAmount' => [
+                'assetCode' => 'MXN',
+                'assetScale' => 2,
+                'value' => '400000',
+              ]
+            ]
+          ]
+        ]
+      ],
+      'interact' => [
+        'start' => ['redirect'],
+        'finish' => [
+          'method' => 'redirect',
+          'uri' => 'https://myapp.example.com/finish/{...}', // where to redirect your user after they've completed the interaction
+          'nonce' => NONCE
+        ]
+      ]
+    ]
+  );
+  ```
+</TabItem>
+
 <TabItem label='Go' icon='seti:go'>
 
 ```go wrap
@@ -315,6 +365,21 @@ Incluya la `interact_ref` devuelta en los parámetros de consulta del URI de red
   )
   ```
   </TabItem>
+
+  <TabItem label="PHP" icon='seti:php'>
+  ```php wrap
+  $senderOutgoingPaymentGrant = $client->grant()->continue(
+    [
+      'url' => $pendingSenderOutgoingPaymentGrant->continue->uri,
+      'accessToken' => $pendingSenderOutgoingPaymentGrant->continue->access_token->value
+    ],
+    [
+      'interact_ref' => $interactRef
+    ]
+  );
+  ```
+  </TabItem>
+
     <TabItem label='Go' icon='seti:go'>
   
   ```go wrap
@@ -392,6 +457,27 @@ Esta llamada obtiene un token de acceso que permite a su aplicación solicitar l
   );
   ```
   </TabItem>
+
+  <TabItem label="PHP" icon='seti:php'>
+  ```php wrap
+  $recipientIncomingPaymentGrant = $client->grant()->request(
+    [
+      'url' => $recipientWalletAddress->authServer
+    ],
+    [
+      'access_token' => [
+        'access' => [
+          [
+            'type' => 'incoming-payment',
+            'actions' => ['create'],
+          ],
+        ],
+      ],
+    ]
+  );
+  ```
+  </TabItem>
+
   <TabItem label='Go' icon='seti:go'>
   
   ```go wrap
@@ -466,6 +552,21 @@ Esta llamada solicita la creación de un recurso de pago entrante en la cuenta d
   )
   ```
   </TabItem>
+
+  <TabItem label="PHP" icon='seti:php'>
+  ```php wrap
+  $recipientIncomingPayment = $client->incomingPayment()->create(
+    [
+      'url' => $recipientWalletAddress->resourceServer,
+      'accessToken' => $recipientIncomingPaymentGrant->access_token->value
+    ],
+    [
+      'walletAddress' => $recipientWalletAddress->id,
+    ]
+  );
+  ```
+  </TabItem>
+
   <TabItem label='Go' icon='seti:go'>
   
   ```go wrap
@@ -536,6 +637,27 @@ Esta llamada obtiene un token de acceso que permite a su aplicación solicitar l
   )
   ```
   </TabItem>
+
+  <TabItem label="PHP" icon='seti:php'>
+  ```php wrap
+  $senderQuoteGrant = $client->grant()->request(
+    [
+      'url' => $senderWalletAddress->authServer
+    ],
+    [
+      'access_token' => [
+        'access' => [
+          [
+            'type' => 'quote',
+            'actions' => ['create']
+          ]
+        ]
+      ]
+    ]
+  );
+  ```
+  </TabItem>
+
   <TabItem label='Go' icon='seti:go'>
   
   ```go wrap
@@ -619,6 +741,28 @@ El `receiveAmount` especifica que el destinatario recibirá exactamente MXN 4.00
   )
   ```
   </TabItem>
+
+  <TabItem label="PHP" icon='seti:php'>
+  ```php wrap
+  $senderQuote = $client->quote()->create(
+    [
+      'url' => $senderWalletAddress->resourceServer,
+      'accessToken' => $senderQuoteGrant->access_token->value
+    ],
+    [
+      'method' => 'ilp',
+      'walletAddress' => $senderWalletAddress->id,
+      'receiver' => $recipientIncomingPayment->id,
+      'receiveAmount' => [
+        'value' => '400000',
+        'assetCode' => 'MXN',
+        'assetScale' => 2
+      ]
+    ]
+  );
+  ```
+  </TabItem>
+
   <TabItem label='Go' icon='seti:go'>
   
   ```go wrap
@@ -699,6 +843,22 @@ Utilice el token de acceso devuelto en la continuación de la concesión de auto
   )
   ```
   </TabItem>
+
+  <TabItem label="PHP" icon='seti:php'>
+  ```php wrap
+  $senderOutgoingPayment = $client->outgoingPayment()->create(
+    [
+      'url' => $senderWalletAddress->resourceServer,
+      'accessToken' => $senderOutgoingPaymentGrant->access_token->value
+    ],
+    [
+      'walletAddress' => $senderWalletAddress->id,
+      'quoteId' => $senderQuote->id,
+    ]
+  );
+  ```
+  </TabItem>
+  
   <TabItem label='Go' icon='seti:go'>
   
   ```go wrap
