@@ -195,7 +195,7 @@ func main() {
     // 9. Outgoing payment (The token will be extracted from [finalized]):
     var finalizedOutgoingPayment = this.client.createFinalizePayment(finalized, senderWallet, quote);
 
-    // 10. Retrieve the created outgoing payments(by walletAddress:
+    // 10. Retrieve the created outgoing payments (by walletAddress):
     var outgoingPaymentsFetched = this.client.getOutgoingPayments(senderWallet.getId(), grantRequest);
 
     // 11. Logging:
