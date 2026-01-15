@@ -85,6 +85,18 @@ Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wall
   })
 ```
 </TabItem>
+
+<TabItem label="PHP" icon='seti:php'>
+  ```php wrap
+  $customerWalletAddress = $client->walletAddress()->get([
+    'url' => 'https://cloudninebank.example.com/customer'
+  ]);
+  $serviceProviderWalletAddress = $client->walletAddress()->get([
+    'url' => 'https://happylifebank.example.com/service-provider'
+  ]);
+  ```
+</TabItem>
+
 <TabItem label='Go' icon='seti:go'>
 
 ```go wrap
@@ -103,16 +115,6 @@ if err != nil {
 }
 ```
 
-</TabItem>
-<TabItem label="PHP" icon='seti:php'>
-  ```php wrap
-  $customerWalletAddress = $client->walletAddress()->get([
-    'url' => 'https://cloudninebank.example.com/customer'
-  ]);
-  $serviceProviderWalletAddress = $client->walletAddress()->get([
-    'url' => 'https://happylifebank.example.com/service-provider'
-  ]);
-  ```
 </TabItem>
 </Tabs>
 
@@ -367,6 +369,26 @@ This call obtains an access token that allows you to request that a quote resour
   ```
 </TabItem>
 
+<TabItem label="PHP" icon='seti:php'>
+  ```php wrap
+  $customerQuoteGrant = $client->grant()->request(
+    [
+      'url' => $customerWalletAddress->authServer
+    ],
+    [
+      'access_token' => [
+        'access' => [
+          [
+            'type' => 'quote',
+            'actions' => ['create']
+          ]
+        ]
+      ]
+    ]
+  );
+  ```
+</TabItem>
+
 <TabItem label='Go' icon='seti:go'>
 
 ```go wrap
@@ -393,25 +415,6 @@ if err != nil {
 }
 ```
 
-</TabItem>
-<TabItem label="PHP" icon='seti:php'>
-  ```php wrap
-  $customerQuoteGrant = $client->grant()->request(
-    [
-      'url' => $customerWalletAddress->authServer
-    ],
-    [
-      'access_token' => [
-        'access' => [
-          [
-            'type' => 'quote',
-            'actions' => ['create']
-          ]
-        ]
-      ]
-    ]
-  );
-  ```
 </TabItem>
 </Tabs>
 
@@ -586,6 +589,44 @@ For recurring payments, include the `interval` property to specify how often the
   )
   ```
 </TabItem>
+
+<TabItem label="PHP" icon='seti:php'>
+  ```php wrap
+  $pendingCustomerOutgoingPaymentGrant = $client->grant()->request(
+    [
+      'url' => $customerWalletAddress->authServer
+    ],
+    [
+      'access_token' => [
+        'access' => [
+          [
+            'identifier' => $customerWalletAddress->id,
+            'type' => 'outgoing-payment',
+            'actions' => ['create', 'read'],
+            'limits' => [
+              'debitAmount' => [
+                'assetCode' => 'USD',
+                'assetScale' => 2,
+                'value' => '1500',
+              ],
+              'interval' => 'R12/2025-10-14T00:03:00Z/P1M'
+            ]
+          ]
+        ]
+      ],
+      'interact' => [
+        'start' => ['redirect'],
+        'finish' => [
+          'method' => 'redirect',
+          'uri' => 'https://myapp.example.com/finish/{...}', // where to redirect the customer after they've completed interaction
+          'nonce' => NONCE
+        ]
+      ]
+    ]
+  );
+  ```
+</TabItem>
+
 <TabItem label='Go' icon='seti:go'>
 
 ```go wrap
@@ -638,42 +679,6 @@ if err != nil {
 }
 ```
 
-</TabItem>
-<TabItem label="PHP" icon='seti:php'>
-  ```php wrap
-  $pendingCustomerOutgoingPaymentGrant = $client->grant()->request(
-    [
-      'url' => $customerWalletAddress->authServer
-    ],
-    [
-      'access_token' => [
-        'access' => [
-          [
-            'identifier' => $customerWalletAddress->id,
-            'type' => 'outgoing-payment',
-            'actions' => ['create', 'read'],
-            'limits' => [
-              'debitAmount' => [
-                'assetCode' => 'USD',
-                'assetScale' => 2,
-                'value' => '1500',
-              ],
-              'interval' => 'R12/2025-10-14T00:03:00Z/P1M'
-            ]
-          ]
-        ]
-      ],
-      'interact' => [
-        'start' => ['redirect'],
-        'finish' => [
-          'method' => 'redirect',
-          'uri' => 'https://myapp.example.com/finish/{...}', // where to redirect the customer after they've completed interaction
-          'nonce' => NONCE
-        ]
-      ]
-    ]
-  );
-  ```
 </TabItem>
 </Tabs>
 
@@ -746,32 +751,7 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
     )
     ```
   </TabItem>
-  <TabItem label='Go' icon='seti:go'>
-  
-  ```go wrap
-  customerOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
-    URL:         pendingCustomerOutgoingPaymentGrant.Continue.Uri,
-    AccessToken: pendingCustomerOutgoingPaymentGrant.Continue.AccessToken.Value,
-    InteractRef: INTERACT_REF,
-  })
-  if err != nil {
-    log.Fatalf("Error continuing grant: %v\n", err)
-  }
-  ```
-  </TabItem>
-  <TabItem label='Go' icon='seti:go'>
-  
-  ```go wrap
-  customerOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
-    URL:         pendingCustomerOutgoingPaymentGrant.Continue.Uri,
-    AccessToken: pendingCustomerOutgoingPaymentGrant.Continue.AccessToken.Value,
-    InteractRef: INTERACT_REF,
-  })
-  if err != nil {
-    log.Fatalf("Error continuing grant: %v\n", err)
-  }
-  ```
-  </TabItem>
+
   <TabItem label="PHP" icon='seti:php'>
     ```php wrap
     $customerOutgoingPaymentGrant = $client->grant()->continue(
@@ -785,6 +765,21 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
     );
     ```
   </TabItem>
+
+  <TabItem label='Go' icon='seti:go'>
+  
+  ```go wrap
+  customerOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
+    URL:         pendingCustomerOutgoingPaymentGrant.Continue.Uri,
+    AccessToken: pendingCustomerOutgoingPaymentGrant.Continue.AccessToken.Value,
+    InteractRef: INTERACT_REF,
+  })
+  if err != nil {
+    log.Fatalf("Error continuing grant: %v\n", err)
+  }
+  ```
+  </TabItem>
+
 </Tabs>
 
 <details>

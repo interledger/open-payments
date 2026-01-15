@@ -87,6 +87,18 @@ Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wall
   })
 ```
 </TabItem>
+
+<TabItem label="PHP" icon='seti:php'>
+  ```php wrap
+  $senderWalletAddress = $client->walletAddress()->get([
+    'url' => 'https://cloudninebank.example.com/sender'
+  ]);
+  $recipientWalletAddress = $client->walletAddress()->get([
+    'url' => 'https://happylifebank.example.com/recipient'
+  ]);
+  ```
+</TabItem>
+
 <TabItem label='Go' icon='seti:go'>
 
 ```go wrap
@@ -105,16 +117,6 @@ if err != nil {
 }
 ```
 
-</TabItem>
-<TabItem label="PHP" icon='seti:php'>
-  ```php wrap
-  $senderWalletAddress = $client->walletAddress()->get([
-    'url' => 'https://cloudninebank.example.com/sender'
-  ]);
-  $recipientWalletAddress = $client->walletAddress()->get([
-    'url' => 'https://happylifebank.example.com/recipient'
-  ]);
-  ```
 </TabItem>
 </Tabs>
 
@@ -196,6 +198,44 @@ Outgoing payments require an interactive grant, which the sender approves once. 
   )
   ```
 </TabItem>
+
+<TabItem label="PHP" icon='seti:php'>
+  ```php wrap
+  $pendingSenderOutgoingPaymentGrant = $client->grant()->request(
+    [
+      'url' => $senderWalletAddress->authServer
+    ],
+    [
+      'access_token' => [
+        'access' => [
+          [
+            'identifier' => $senderWalletAddress->id,
+            'type' => 'outgoing-payment',
+            'actions' => ['create'],
+            'limits' => [
+              'interval' => 'R3/2025-10-03T23:25:00Z/P1M',
+              'receiveAmount' => [
+                'assetCode' => 'MXN',
+                'assetScale' => 2,
+                'value' => '400000',
+              ]
+            ]
+          ]
+        ]
+      ],
+      'interact' => [
+        'start' => ['redirect'],
+        'finish' => [
+          'method' => 'redirect',
+          'uri' => 'https://myapp.example.com/finish/{...}', // where to redirect your user after they've completed the interaction
+          'nonce' => NONCE
+        ]
+      ]
+    ]
+  );
+  ```
+</TabItem>
+
 <TabItem label='Go' icon='seti:go'>
 
 ```go wrap
@@ -248,42 +288,6 @@ if err != nil {
 }
 ```
 
-</TabItem>
-<TabItem label="PHP" icon='seti:php'>
-  ```php wrap
-  $pendingSenderOutgoingPaymentGrant = $client->grant()->request(
-    [
-      'url' => $senderWalletAddress->authServer
-    ],
-    [
-      'access_token' => [
-        'access' => [
-          [
-            'identifier' => $senderWalletAddress->id,
-            'type' => 'outgoing-payment',
-            'actions' => ['create'],
-            'limits' => [
-              'interval' => 'R3/2025-10-03T23:25:00Z/P1M',
-              'receiveAmount' => [
-                'assetCode' => 'MXN',
-                'assetScale' => 2,
-                'value' => '400000',
-              ]
-            ]
-          ]
-        ]
-      ],
-      'interact' => [
-        'start' => ['redirect'],
-        'finish' => [
-          'method' => 'redirect',
-          'uri' => 'https://myapp.example.com/finish/{...}', // where to redirect your user after they've completed the interaction
-          'nonce' => NONCE
-        ]
-      ]
-    ]
-  );
-  ```
 </TabItem>
 </Tabs>
 
@@ -358,19 +362,7 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
   )
   ```
   </TabItem>
-  <TabItem label='Go' icon='seti:go'>
-  
-  ```go wrap
-  senderOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
-    URL:         pendingSenderOutgoingPaymentGrant.Continue.Uri,
-    AccessToken: pendingSenderOutgoingPaymentGrant.Continue.AccessToken.Value,
-    InteractRef: INTERACT_REF,
-  })
-  if err != nil {
-    log.Fatalf("Error continuing grant: %v\n", err)
-  }
-  ```
-  </TabItem>
+
   <TabItem label="PHP" icon='seti:php'>
   ```php wrap
   $senderOutgoingPaymentGrant = $client->grant()->continue(
@@ -382,6 +374,20 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
       'interact_ref' => $interactRef
     ]
   );
+  ```
+  </TabItem>
+
+  <TabItem label='Go' icon='seti:go'>
+  
+  ```go wrap
+  senderOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
+    URL:         pendingSenderOutgoingPaymentGrant.Continue.Uri,
+    AccessToken: pendingSenderOutgoingPaymentGrant.Continue.AccessToken.Value,
+    InteractRef: INTERACT_REF,
+  })
+  if err != nil {
+    log.Fatalf("Error continuing grant: %v\n", err)
+  }
   ```
   </TabItem>
 </Tabs>
@@ -446,6 +452,27 @@ This call obtains an access token that allows your app to request an incoming pa
   );
   ```
   </TabItem>
+
+  <TabItem label="PHP" icon='seti:php'>
+  ```php wrap
+  $recipientIncomingPaymentGrant = $client->grant()->request(
+    [
+      'url' => $recipientWalletAddress->authServer
+    ],
+    [
+      'access_token' => [
+        'access' => [
+          [
+            'type' => 'incoming-payment',
+            'actions' => ['create'],
+          ],
+        ],
+      ],
+    ]
+  );
+  ```
+  </TabItem>
+
   <TabItem label='Go' icon='seti:go'>
   
   ```go wrap
@@ -469,25 +496,6 @@ This call obtains an access token that allows your app to request an incoming pa
   if err != nil {
     log.Fatalf("Error requesting incoming payment grant: %v\n", err)
   }
-  ```
-  </TabItem>
-  <TabItem label="PHP" icon='seti:php'>
-  ```php wrap
-  $recipientIncomingPaymentGrant = $client->grant()->request(
-    [
-      'url' => $recipientWalletAddress->authServer
-    ],
-    [
-      'access_token' => [
-        'access' => [
-          [
-            'type' => 'incoming-payment',
-            'actions' => ['create'],
-          ],
-        ],
-      ],
-    ]
-  );
   ```
   </TabItem>
 </Tabs>
@@ -538,6 +546,21 @@ This call requests an incoming payment resource be created on the recipient's wa
   )
   ```
   </TabItem>
+
+  <TabItem label="PHP" icon='seti:php'>
+  ```php wrap
+  $recipientIncomingPayment = $client->incomingPayment()->create(
+    [
+      'url' => $recipientWalletAddress->resourceServer,
+      'accessToken' => $recipientIncomingPaymentGrant->access_token->value
+    ],
+    [
+      'walletAddress' => $recipientWalletAddress->id,
+    ]
+  );
+  ```
+  </TabItem>
+
   <TabItem label='Go' icon='seti:go'>
   
   ```go wrap
@@ -551,19 +574,6 @@ This call requests an incoming payment resource be created on the recipient's wa
   if err != nil {
     log.Fatalf("Error creating incoming payment: %v\n", err)
   }
-  ```
-  </TabItem>
-  <TabItem label="PHP" icon='seti:php'>
-  ```php wrap
-  $recipientIncomingPayment = $client->incomingPayment()->create(
-    [
-      'url' => $recipientWalletAddress->resourceServer,
-      'accessToken' => $recipientIncomingPaymentGrant->access_token->value
-    ],
-    [
-      'walletAddress' => $recipientWalletAddress->id,
-    ]
-  );
   ```
   </TabItem>
 </Tabs>
@@ -619,6 +629,27 @@ This call obtains an access token that allows your app to request a quote resour
   )
   ```
   </TabItem>
+
+  <TabItem label="PHP" icon='seti:php'>
+  ```php wrap
+  $senderQuoteGrant = $client->grant()->request(
+    [
+      'url' => $senderWalletAddress->authServer
+    ],
+    [
+      'access_token' => [
+        'access' => [
+          [
+            'type' => 'quote',
+            'actions' => ['create']
+          ]
+        ]
+      ]
+    ]
+  );
+  ```
+  </TabItem>
+
   <TabItem label='Go' icon='seti:go'>
   
   ```go wrap
@@ -642,25 +673,6 @@ This call obtains an access token that allows your app to request a quote resour
   if err != nil {
     log.Fatalf("Error requesting quote grant: %v\n", err)
   }
-  ```
-  </TabItem>
-  <TabItem label="PHP" icon='seti:php'>
-  ```php wrap
-  $senderQuoteGrant = $client->grant()->request(
-    [
-      'url' => $senderWalletAddress->authServer
-    ],
-    [
-      'access_token' => [
-        'access' => [
-          [
-            'type' => 'quote',
-            'actions' => ['create']
-          ]
-        ]
-      ]
-    ]
-  );
   ```
   </TabItem>
 </Tabs>
@@ -720,6 +732,26 @@ The `receiveAmount` specifies that the recipient will receive exactly $4,000 MXN
   )
   ```
   </TabItem>
+  <TabItem label="PHP" icon='seti:php'>
+  ```php wrap
+  $senderQuote = $client->quote()->create(
+    [
+      'url' => $senderWalletAddress->resourceServer,
+      'accessToken' => $senderQuoteGrant->access_token->value
+    ],
+    [
+      'method' => 'ilp',
+      'walletAddress' => $senderWalletAddress->id,
+      'receiver' => $recipientIncomingPayment->id,
+      'receiveAmount' => [
+        'value' => '400000',
+        'assetCode' => 'MXN',
+        'assetScale' => 2
+      ]
+    ]
+  );
+  ```
+</TabItem>
 </Tabs>
 
 The response returns a `receiveAmount`, a `debitAmount`, and other required information.
@@ -773,6 +805,20 @@ Use the access token returned in the outgoing payment grant continuation respons
       quoteId: senderQuote.id,
     }
   )
+  ```
+  </TabItem>
+  <TabItem label="PHP" icon='seti:php'>
+  ```php wrap
+  $senderOutgoingPayment = $client->outgoingPayment()->create(
+    [
+      'url' => $senderWalletAddress->resourceServer,
+      'accessToken' => $senderOutgoingPaymentGrant->access_token->value
+    ],
+    [
+      'walletAddress' => $senderWalletAddress->id,
+      'quoteId' => $senderQuote->id,
+    ]
+  );
   ```
   </TabItem>
 </Tabs>

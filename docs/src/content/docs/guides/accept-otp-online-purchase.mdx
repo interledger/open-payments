@@ -94,16 +94,7 @@ Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wall
   ]);
   ```
   </TabItem>
-  <TabItem label="PHP" icon='seti:php'>
-  ```php wrap
-  $customerWalletAddress = $client->walletAddress()->get([
-    'url' => 'https://cloudninebank.example.com/customer'
-  ]);
-  $retailerWalletAddress = $client->walletAddress()->get([
-    'url' => 'https://happylifebank.example.com/retailer'
-  ]);
-  ```
-  </TabItem>
+
   <TabItem label='Go' icon='seti:go'>
 
 ```go wrap
@@ -189,61 +180,6 @@ let retailer_incoming_payment_grant = client
 
 </TabItem>
 
-<TabItem label='Go' icon='seti:go'>
-
-```go wrap
-incomingAccess := as.AccessIncoming{
-	Type:    as.IncomingPayment,
-	Actions: []as.AccessIncomingActions{as.AccessIncomingActionsCreate},
-}
-accessItem := as.AccessItem{}
-if err := accessItem.FromAccessIncoming(incomingAccess); err != nil {
-	log.Fatalf("Error creating AccessItem: %v\n", err)
-}
-accessToken := struct {
-	Access as.Access `json:"access"`
-}{
-	Access: []as.AccessItem{accessItem},
-}
-
-retailerIncomingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
-	URL:         *retailerWalletAddress.AuthServer,
-	RequestBody: as.GrantRequestWithAccessToken{AccessToken: accessToken},
-})
-if err != nil {
-	log.Fatalf("Error requesting incoming payment grant: %v\n", err)
-}
-```
-
-</TabItem>
-
-<TabItem label='Go' icon='seti:go'>
-
-```go wrap
-incomingAccess := as.AccessIncoming{
-	Type:    as.IncomingPayment,
-	Actions: []as.AccessIncomingActions{as.AccessIncomingActionsCreate},
-}
-accessItem := as.AccessItem{}
-if err := accessItem.FromAccessIncoming(incomingAccess); err != nil {
-	log.Fatalf("Error creating AccessItem: %v\n", err)
-}
-accessToken := struct {
-	Access as.Access `json:"access"`
-}{
-	Access: []as.AccessItem{accessItem},
-}
-
-retailerIncomingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
-	URL:         *retailerWalletAddress.AuthServer,
-	RequestBody: as.GrantRequestWithAccessToken{AccessToken: accessToken},
-})
-if err != nil {
-	log.Fatalf("Error requesting incoming payment grant: %v\n", err)
-}
-```
-
-</TabItem>
 <TabItem label="PHP" icon='seti:php'>
   ```php wrap
     $retailerIncomingPaymentGrant = $client->grant()->request(
@@ -263,6 +199,35 @@ if err != nil {
     );
   ```
 </TabItem>
+
+<TabItem label='Go' icon='seti:go'>
+
+```go wrap
+incomingAccess := as.AccessIncoming{
+	Type:    as.IncomingPayment,
+	Actions: []as.AccessIncomingActions{as.AccessIncomingActionsCreate},
+}
+accessItem := as.AccessItem{}
+if err := accessItem.FromAccessIncoming(incomingAccess); err != nil {
+	log.Fatalf("Error creating AccessItem: %v\n", err)
+}
+accessToken := struct {
+	Access as.Access `json:"access"`
+}{
+	Access: []as.AccessItem{accessItem},
+}
+
+retailerIncomingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
+	URL:         *retailerWalletAddress.AuthServer,
+	RequestBody: as.GrantRequestWithAccessToken{AccessToken: accessToken},
+})
+if err != nil {
+	log.Fatalf("Error requesting incoming payment grant: %v\n", err)
+}
+```
+
+</TabItem>
+
 </Tabs>
 
 <details>
@@ -346,47 +311,6 @@ Some(&retailer_incoming_payment_grant.access_token.value),
 
 </TabItem>
 
-<TabItem label='Go' icon='seti:go'>
-```go wrap
-incomingPayment, err := client.IncomingPayment.Create(context.TODO(), op.IncomingPaymentCreateParams{
-	BaseURL:     *retailerWalletAddress.ResourceServer,
-	AccessToken: retailerIncomingPaymentGrant.AccessToken.Value,
-	Payload: rs.CreateIncomingPaymentJSONBody{
-		WalletAddressSchema: *retailerWalletAddress.Id,
-		IncomingAmount: &rs.Amount{
-			Value:      "140000",
-			AssetCode:  "MXN",
-			AssetScale: 2,
-		},
-	},
-})
-if err != nil {
-	log.Fatalf("Error creating incoming payment: %v\n", err)
-}
-```
-
-</TabItem>
-
-<TabItem label='Go' icon='seti:go'>
-```go wrap
-incomingPayment, err := client.IncomingPayment.Create(context.TODO(), op.IncomingPaymentCreateParams{
-	BaseURL:     *retailerWalletAddress.ResourceServer,
-	AccessToken: retailerIncomingPaymentGrant.AccessToken.Value,
-	Payload: rs.CreateIncomingPaymentJSONBody{
-		WalletAddressSchema: *retailerWalletAddress.Id,
-		IncomingAmount: &rs.Amount{
-			Value:      "140000",
-			AssetCode:  "MXN",
-			AssetScale: 2,
-		},
-	},
-})
-if err != nil {
-	log.Fatalf("Error creating incoming payment: %v\n", err)
-}
-```
-
-</TabItem>
 <TabItem label="PHP" icon='seti:php'>
 ```php wrap
 $retailerIncomingPayment = $client->incomingPayment()->create(
@@ -404,6 +328,27 @@ $retailerIncomingPayment = $client->incomingPayment()->create(
   ]
 );
 ```
+</TabItem>
+
+<TabItem label='Go' icon='seti:go'>
+```go wrap
+incomingPayment, err := client.IncomingPayment.Create(context.TODO(), op.IncomingPaymentCreateParams{
+	BaseURL:     *retailerWalletAddress.ResourceServer,
+	AccessToken: retailerIncomingPaymentGrant.AccessToken.Value,
+	Payload: rs.CreateIncomingPaymentJSONBody{
+		WalletAddressSchema: *retailerWalletAddress.Id,
+		IncomingAmount: &rs.Amount{
+			Value:      "140000",
+			AssetCode:  "MXN",
+			AssetScale: 2,
+		},
+	},
+})
+if err != nil {
+	log.Fatalf("Error creating incoming payment: %v\n", err)
+}
+```
+
 </TabItem>
 </Tabs>
 
@@ -483,25 +428,6 @@ let customer_quote_grant = client
 
 ```
 
-</TabItem>
-<TabItem label="PHP" icon='seti:php'>
-```php wrap
-$customerQuoteGrant = $client->grant()->request(
-  [
-    'url' => $customerWalletAddress->authServer
-  ],
-  [
-    'access_token' => [
-      'access' => [
-        [
-          'type' => 'quote',
-          'actions' => ['create']
-        ]
-      ]
-    ]
-  ]
-);
-```
 </TabItem>
 <TabItem label="PHP" icon='seti:php'>
 ```php wrap
@@ -630,21 +556,6 @@ Some(&customer_quote_grant.access_token.value),
 
 ```
 
-</TabItem>
-<TabItem label="PHP" icon='seti:php'>
-```php wrap
-$customerQuote = $client->quote()->create(
-  [
-    'url' => $customerWalletAddress->resourceServer,
-    'accessToken' => $customerQuoteGrant->access_token->value
-  ],
-  [
-    'method' => 'ilp',
-    'walletAddress' => $customerWalletAddress->id,
-    'receiver' => $retailerIncomingPayment->id
-  ]
-);
-```
 </TabItem>
 <TabItem label="PHP" icon='seti:php'>
 ```php wrap
@@ -830,41 +741,7 @@ let pending_customer_outgoing_payment_grant = client
   );
   ```
   </TabItem>
-  <TabItem label="PHP" icon='seti:php'>
-  ```php wrap
-  $pendingCustomerOutgoingPaymentGrant = $client->grant()->request(
-    [
-      'url' => $customerWalletAddress->authServer
-    ],
-    [
-      'access_token' => [
-        'access' => [
-          [
-            'identifier' => $customerWalletAddress->id,
-            'type' => 'outgoing-payment',
-            'actions' => ['create'],
-            'limits' => [
-              'debitAmount' => [
-                'assetCode' => 'MXN',
-                'assetScale' => 2,
-                'value' => '140000'
-              ]
-            ]
-          ]
-        ]
-      ],
-      'interact' => [
-        'start' => ['redirect'],
-        'finish' => [
-          'method' => 'redirect',
-          'uri' => 'https://paymentplatform.example/finish/{...}', // where to redirect the customer after they've completed the interaction
-          'nonce' => 'NONCE'
-        ]
-      ]
-    ]
-  );
-  ```
-  </TabItem>
+
   <TabItem label='Go' icon='seti:go'>
 
 ```go wrap
@@ -999,35 +876,6 @@ Some(&continue_field.access_token.value),
 
 </TabItem>
 
-<TabItem label='Go' icon='seti:go'>
-
-```go wrap
-customerOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
-	URL:         pendingCustomerOutgoingPaymentGrant.Continue.Uri,
-	AccessToken: pendingCustomerOutgoingPaymentGrant.Continue.AccessToken.Value,
-  InteractRef: INTERACT_REF,
-})
-if err != nil {
-	log.Fatalf("Error continuing grant: %v\n", err)
-}
-```
-
-</TabItem>
-
-<TabItem label='Go' icon='seti:go'>
-
-```go wrap
-customerOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
-	URL:         pendingCustomerOutgoingPaymentGrant.Continue.Uri,
-	AccessToken: pendingCustomerOutgoingPaymentGrant.Continue.AccessToken.Value,
-  InteractRef: INTERACT_REF,
-})
-if err != nil {
-	log.Fatalf("Error continuing grant: %v\n", err)
-}
-```
-
-</TabItem>
 <TabItem label="PHP" icon='seti:php'>
 ```php wrap
 $customerOutgoingPaymentGrant = $client->grant()->continue(
@@ -1041,6 +889,22 @@ $customerOutgoingPaymentGrant = $client->grant()->continue(
 );
 ```
 </TabItem>
+
+<TabItem label='Go' icon='seti:go'>
+
+```go wrap
+customerOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
+	URL:         pendingCustomerOutgoingPaymentGrant.Continue.Uri,
+	AccessToken: pendingCustomerOutgoingPaymentGrant.Continue.AccessToken.Value,
+  InteractRef: INTERACT_REF,
+})
+if err != nil {
+	log.Fatalf("Error continuing grant: %v\n", err)
+}
+```
+
+</TabItem>
+
 </Tabs>
 
 <details>
@@ -1117,6 +981,22 @@ let customer_outgoing_payment_to_retailer = client
 ```
 
   </TabItem>
+
+  <TabItem label="PHP" icon='seti:php'>
+  ```php wrap
+  $customerOutgoingPayment = $client->outgoingPayment()->create(
+    [
+      'url' => $customerWalletAddress->resourceServer,
+      'accessToken' => $customerOutgoingPaymentGrant->access_token->value
+    ],
+    [
+      'walletAddress' => $customerWalletAddress->id,
+      'quoteId' => $customerQuote->id
+    ]
+  );
+  ```
+  </TabItem>
+
   <TabItem label='Go' icon='seti:go'>
 
 ```go
@@ -1139,20 +1019,6 @@ if err != nil {
 ```
 
   </TabItem>
-  <TabItem label="PHP" icon='seti:php'>
-  ```php wrap
-  $customerOutgoingPayment = $client->outgoingPayment()->create(
-    [
-      'url' => $customerWalletAddress->resourceServer,
-      'accessToken' => $customerOutgoingPaymentGrant->access_token->value
-    ],
-    [
-      'walletAddress' => $customerWalletAddress->id,
-      'quoteId' => $customerQuote->id
-    ]
-  );
-  ```
-</TabItem>
 </Tabs>
 
 If the request fails because of an expired quote, [request a new quote](#5-request-the-creation-of-a-quote-resource) and try again.

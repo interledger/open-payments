@@ -90,6 +90,17 @@ Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wall
  ```
  </TabItem>
 
+<TabItem label="PHP" icon='seti:php'>
+  ```php wrap
+  $senderWalletAddress = $client->walletAddress()->get([
+    'url' => 'https://cloudninebank.example.com/sender'
+  ]);
+  $recipientWalletAddress = $client->walletAddress()->get([
+    'url' => 'https://happylifebank.example.com/recipient'
+  ]);
+  ```
+</TabItem>
+
  <TabItem label='Go' icon='seti:go'>
 
 ```go wrap
@@ -109,16 +120,6 @@ if err != nil {
 ```
 
  </TabItem>
- <TabItem label="PHP" icon='seti:php'>
-  ```php wrap
-  $senderWalletAddress = $client->walletAddress()->get([
-    'url' => 'https://cloudninebank.example.com/sender'
-  ]);
-  $recipientWalletAddress = $client->walletAddress()->get([
-    'url' => 'https://happylifebank.example.com/recipient'
-  ]);
-  ```
-  </TabItem>
 </Tabs>
 
 <details>
@@ -186,6 +187,24 @@ This call obtains an access token that allows your app to request that an incomi
    .await?;
  ```
  </TabItem>
+
+ <TabItem label="PHP" icon='seti:php'>
+ ```php wrap
+  $recipientIncomingPaymentGrant = $client->grant()->request([
+    'url' => $recipientWalletAddress->authServer
+  ], [
+    'access_token' => [
+      'access' => [
+        [
+          'type' => 'incoming-payment',
+          'actions' => ['create']
+        ]
+      ]
+    ]
+  ]);
+ ```
+ </TabItem>
+
  <TabItem label='Go' icon='seti:go'>
 
 ```go wrap
@@ -214,22 +233,6 @@ if err != nil {
 ```
 
 </TabItem>
- <TabItem label="PHP" icon='seti:php'>
- ```php wrap
-  $recipientIncomingPaymentGrant = $client->grant()->request([
-    'url' => $recipientWalletAddress->authServer
-  ], [
-    'access_token' => [
-      'access' => [
-        [
-          'type' => 'incoming-payment',
-          'actions' => ['create']
-        ]
-      ]
-    ]
-  ]);
- ```
- </TabItem>
 </Tabs>
 
 <details>
@@ -298,7 +301,7 @@ This call requests an incoming payment resource be created on the recipient's wa
    .await?;
  ```
  </TabItem>
- <TabItem label="PHP" icon='seti:php'>
+  <TabItem label="PHP" icon='seti:php'>
   ```php wrap
     $recipientIncomingPayment = $client->incomingPayment()->create([
       'url' => $recipientWalletAddress->resourceServer,
@@ -308,6 +311,7 @@ This call requests an incoming payment resource be created on the recipient's wa
     ]);
   ```
   </TabItem>
+
  <TabItem label='Go' icon='seti:go'>
 
 ```go wrap
@@ -700,6 +704,42 @@ let pending_sender_outgoing_payment_grant = client
 
 </TabItem>
 
+<TabItem label="PHP" icon='seti:php'>
+  ```php wrap
+    $pendingSenderOutgoingPaymentGrant = $client->grant()->request(
+      [
+        'url' => $senderWalletAddress->authServer
+      ],
+      [
+        'access_token' => [
+          'access' => [
+            [
+              'identifier' => $senderWalletAddress->id,
+              'type' => 'outgoing-payment',
+              'actions' => ['create'],
+              'limits' => [
+                'debitAmount' => [
+                  'assetCode' => 'USD',
+                  'assetScale' => 2,
+                  'value' => '10000'
+                ]
+              ]
+            ]
+          ]
+        ],
+        'interact' => [
+          'start' => ['redirect'],
+          'finish' => [
+            'method' => 'redirect',
+            'uri' => 'https://myapp.example.com/finish/{...}', // where to redirect your user after they've completed the interaction
+            'nonce' => 'NONCE'
+          ]
+        ]
+      ]
+    );
+  ```
+  </TabItem>
+
 <TabItem label='Go' icon='seti:go'>
 
 ```go wrap
@@ -746,41 +786,7 @@ if err != nil {
 ````
 
 </TabItem>
-<TabItem label="PHP" icon='seti:php'>
-  ```php wrap
-    $pendingSenderOutgoingPaymentGrant = $client->grant()->request(
-      [
-        'url' => $senderWalletAddress->authServer
-      ],
-      [
-        'access_token' => [
-          'access' => [
-            [
-              'identifier' => $senderWalletAddress->id,
-              'type' => 'outgoing-payment',
-              'actions' => ['create'],
-              'limits' => [
-                'debitAmount' => [
-                  'assetCode' => 'USD',
-                  'assetScale' => 2,
-                  'value' => '10000'
-                ]
-              ]
-            ]
-          ]
-        ],
-        'interact' => [
-          'start' => ['redirect'],
-          'finish' => [
-            'method' => 'redirect',
-            'uri' => 'https://myapp.example.com/finish/{...}', // where to redirect your user after they've completed the interaction
-            'nonce' => 'NONCE'
-          ]
-        ]
-      ]
-    );
-  ```
-  </TabItem>
+
 </Tabs>
 
 <details>
