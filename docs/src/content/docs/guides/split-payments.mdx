@@ -84,17 +84,19 @@ Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wall
  </TabItem>
 
 <TabItem label='PHP' icon='seti:php'>
- ```php wrap
-  $customerWalletAddress = $client->walletAddress()->get([
-    'url' => 'https://cloudninebank.example.com/customer'
-  ]);
-  $merchantWalletAddress = $client->walletAddress()->get([
-    'url' => 'https://happylifebank.example.com/merchant'
-  ]);
-  $platformWalletAddress = $client->walletAddress()->get([
-    'url' => 'https://coolwallet.example.com/platform'
-  ]);
+
+```php wrap
+ $customerWalletAddress = $client->walletAddress()->get([
+   'url' => 'https://cloudninebank.example.com/customer'
+ ]);
+ $merchantWalletAddress = $client->walletAddress()->get([
+   'url' => 'https://happylifebank.example.com/merchant'
+ ]);
+ $platformWalletAddress = $client->walletAddress()->get([
+   'url' => 'https://coolwallet.example.com/platform'
+ ]);
 ```
+
 </TabItem>
 
   <TabItem label='Go' icon='seti:go'>
@@ -203,7 +205,8 @@ If you and the merchant use the same account servicing entity, and as a result, 
  ```
  </TabItem>
   <TabItem label='PHP' icon='seti:php'>
-  ```php wrap
+
+```php wrap
   // Merchant
   $merchantIncomingPaymentGrant = $client->grant()->request(
     [
@@ -236,7 +239,8 @@ If you and the merchant use the same account servicing entity, and as a result, 
       ]
     ]
   );
-  ```
+```
+
  </TabItem>
 
   <TabItem label='Go' icon='seti:go'>
@@ -374,7 +378,8 @@ Remember that the merchant is receiving 99% of the payment (\$99.00 or `9900`) w
  </TabItem>
 
   <TabItem label='PHP' icon='seti:php'>
-  ```php wrap
+
+```php wrap
   // Merchant
   $merchantIncomingPayment = $client->incomingPayment()->create(
     [
@@ -405,7 +410,8 @@ Remember that the merchant is receiving 99% of the payment (\$99.00 or `9900`) w
       ]
     ]
   );
-  ```
+```
+
   </TabItem>
 
   <TabItem label='Go' icon='seti:go'>
@@ -521,7 +527,8 @@ This call obtains an access token that allows your platform to request quote res
   </TabItem>
 
   <TabItem label='PHP' icon='seti:php'>
-  ```php wrap
+
+```php wrap
     $customerQuoteGrant = $client->grant()->request(
       [
         'url' => $customerWalletAddress->authServer
@@ -537,7 +544,8 @@ This call obtains an access token that allows your platform to request quote res
         ]
       ]
     );
-    ```
+```
+
   </TabItem>
 
   <TabItem label='Go' icon='seti:go'>
@@ -564,6 +572,7 @@ This call obtains an access token that allows your platform to request quote res
     log.Fatalf("Error requesting quote grant: %v\n", err)
   }
   ```
+
   </TabItem>
 </Tabs>
 
@@ -661,7 +670,8 @@ Next, call the <Badge text="POST" variant="success" /> Create Quote API again an
  </TabItem>
 
 <TabItem label='PHP' icon='seti:php'>
-  ```php wrap
+
+```php wrap
   // Merchant
   $merchantQuote = $client->quote()->create(
     [
@@ -686,7 +696,8 @@ Next, call the <Badge text="POST" variant="success" /> Create Quote API again an
       'receiver' => $platformIncomingPayment->id
     ]
   );
-  ```
+```
+
  </TabItem>
 
  <TabItem label='Go' icon='seti:go'>
@@ -852,9 +863,10 @@ This call obtains an access token that allows your platform to request outgoing 
  </TabItem>
 
 <TabItem label='PHP' icon='seti:php'>
-  ```php wrap
+
+```php wrap
   $combinedQuoteAmount = bcadd($merchantQuote->debitAmount->value, $platformQuote->debitAmount->value);
-  
+
   $pendingCustomerOutgoingPaymentGrant = $client->grant()->request(
     [
       'url' => $customerWalletAddress->authServer
@@ -886,7 +898,8 @@ This call obtains an access token that allows your platform to request outgoing 
       ]
     ]
   );
-  ```
+```
+
 </TabItem>
 
   <TabItem label='Go' icon='seti:go'>
@@ -1011,7 +1024,8 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
  </TabItem>
 
  <TabItem label='PHP' icon='seti:php'>
- ```php wrap
+
+```php wrap
     $customerOutgoingPaymentGrant = $client->grant()->continue(
       [
         'url' => $pendingCustomerOutgoingPaymentGrant->continue->uri,
@@ -1021,7 +1035,8 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
         'interact_ref' => $interactRef
       ]
     );
-    ```
+```
+
 </TabItem>
 
  <TabItem label='Go' icon='seti:go'>
@@ -1133,7 +1148,8 @@ Use the access token returned in Step 5 that's associated with the merchant to c
  </TabItem>
 
   <TabItem label='PHP' icon='seti:php'>
-  ```php wrap
+
+```php wrap
   // Merchant
   $customerOutgoingPaymentToMerchant = $client->outgoingPayment()->create(
     [
@@ -1156,7 +1172,8 @@ Use the access token returned in Step 5 that's associated with the merchant to c
       'quoteId' => $platformQuote->id
     ]
   );
-  ```
+```
+
   </TabItem>
 
   <TabItem label='Go' icon='seti:go'>

@@ -87,14 +87,16 @@ Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wall
 </TabItem>
 
 <TabItem label='PHP' icon='seti:php'>
-  ```php wrap
-  $customerWalletAddress = $client->walletAddress()->get([
-    'url' => 'https://cloudninebank.example.com/customer'
-  ]);
-  $serviceProviderWalletAddress = $client->walletAddress()->get([
-    'url' => 'https://happylifebank.example.com/service-provider'
-  ]);
-  ```
+
+```php wrap
+$customerWalletAddress = $client->walletAddress()->get([
+  'url' => 'https://cloudninebank.example.com/customer'
+]);
+$serviceProviderWalletAddress = $client->walletAddress()->get([
+  'url' => 'https://happylifebank.example.com/service-provider'
+]);
+```
+
 </TabItem>
 
 <TabItem label='Go' icon='seti:go'>
@@ -169,23 +171,25 @@ This call obtains an access token that allows you to request that an incoming pa
 ```
 </TabItem>
 <TabItem label='PHP' icon='seti:php'>
-  ```php wrap
-  $serviceProviderIncomingPaymentGrant = $client->grant()->request(
-    [
-      'url' => $serviceProviderWalletAddress->authServer
-    ],
-    [
-      'access_token' => [
-        'access' => [
-          [
-            'type' => 'incoming-payment',
-            'actions' => ['create']
-          ]
+
+```php wrap
+$serviceProviderIncomingPaymentGrant = $client->grant()->request(
+  [
+    'url' => $serviceProviderWalletAddress->authServer
+  ],
+  [
+    'access_token' => [
+      'access' => [
+        [
+          'type' => 'incoming-payment',
+          'actions' => ['create']
         ]
       ]
     ]
-  );
-  ```
+  ]
+);
+```
+
 </TabItem>
 <TabItem label='Go' icon='seti:go'>
 
@@ -269,22 +273,24 @@ This call requests an incoming payment resource be created on the service provid
 ```
 </TabItem>
   <TabItem label='PHP' icon='seti:php'>
-  ```php wrap
-  $serviceProviderIncomingPayment = $client->incomingPayment()->create(
-    [
-      'url' => $serviceProviderWalletAddress->resourceServer,
-      'accessToken' => $serviceProviderIncomingPaymentGrant->access_token->value
+
+```php wrap
+$serviceProviderIncomingPayment = $client->incomingPayment()->create(
+  [
+    'url' => $serviceProviderWalletAddress->resourceServer,
+    'accessToken' => $serviceProviderIncomingPaymentGrant->access_token->value
+  ],
+  [
+    'walletAddress' => $serviceProviderWalletAddress->id,
+    'incomingAmount' => [
+      'value' => '1500',  // The amount the service provider expects to receive in the first payment
+      'assetCode' => 'USD',
+      'assetScale' => 2
     ],
-    [
-      'walletAddress' => $serviceProviderWalletAddress->id,
-      'incomingAmount' => [
-        'value' => '1500',  // The amount the service provider expects to receive in the first payment
-        'assetCode' => 'USD',
-        'assetScale' => 2
-      ],
-    ]
-  );
-  ```
+  ]
+);
+```
+
 </TabItem>
 
 <TabItem label='Go' icon='seti:go'>
@@ -370,23 +376,25 @@ This call obtains an access token that allows you to request that a quote resour
 </TabItem>
 
 <TabItem label='PHP' icon='seti:php'>
-  ```php wrap
-  $customerQuoteGrant = $client->grant()->request(
-    [
-      'url' => $customerWalletAddress->authServer
-    ],
-    [
-      'access_token' => [
-        'access' => [
-          [
-            'type' => 'quote',
-            'actions' => ['create']
-          ]
+
+```php wrap
+$customerQuoteGrant = $client->grant()->request(
+  [
+    'url' => $customerWalletAddress->authServer
+  ],
+  [
+    'access_token' => [
+      'access' => [
+        [
+          'type' => 'quote',
+          'actions' => ['create']
         ]
       ]
     ]
-  );
-  ```
+  ]
+);
+```
+
 </TabItem>
 
 <TabItem label='Go' icon='seti:go'>
@@ -470,19 +478,21 @@ The request must contain the `receiver`, which is the `id` of the service provid
 ```
 </TabItem>
 <TabItem label='PHP' icon='seti:php'>
-  ```php wrap
-  $customerQuote = $client->quote()->create(
-    [
-      'url' => $customerWalletAddress->resourceServer,
-      'accessToken' => $customerQuoteGrant->access_token->value
-    ],
-    [
-      'method' => 'ilp',
-      'walletAddress' => $customerWalletAddress->id,
-      'receiver' => $serviceProviderIncomingPayment->id,
-    ]
-  );
-  ```
+
+```php wrap
+$customerQuote = $client->quote()->create(
+  [
+    'url' => $customerWalletAddress->resourceServer,
+    'accessToken' => $customerQuoteGrant->access_token->value
+  ],
+  [
+    'method' => 'ilp',
+    'walletAddress' => $customerWalletAddress->id,
+    'receiver' => $serviceProviderIncomingPayment->id,
+  ]
+);
+```
+
 </TabItem>
 <TabItem label='Go' icon='seti:go'>
 
@@ -591,40 +601,42 @@ For recurring payments, include the `interval` property to specify how often the
 </TabItem>
 
 <TabItem label='PHP' icon='seti:php'>
-  ```php wrap
-  $pendingCustomerOutgoingPaymentGrant = $client->grant()->request(
-    [
-      'url' => $customerWalletAddress->authServer
-    ],
-    [
-      'access_token' => [
-        'access' => [
-          [
-            'identifier' => $customerWalletAddress->id,
-            'type' => 'outgoing-payment',
-            'actions' => ['create', 'read'],
-            'limits' => [
-              'debitAmount' => [
-                'assetCode' => 'USD',
-                'assetScale' => 2,
-                'value' => '1500',
-              ],
-              'interval' => 'R12/2025-10-14T00:03:00Z/P1M'
-            ]
+
+```php wrap
+$pendingCustomerOutgoingPaymentGrant = $client->grant()->request(
+  [
+    'url' => $customerWalletAddress->authServer
+  ],
+  [
+    'access_token' => [
+      'access' => [
+        [
+          'identifier' => $customerWalletAddress->id,
+          'type' => 'outgoing-payment',
+          'actions' => ['create', 'read'],
+          'limits' => [
+            'debitAmount' => [
+              'assetCode' => 'USD',
+              'assetScale' => 2,
+              'value' => '1500',
+            ],
+            'interval' => 'R12/2025-10-14T00:03:00Z/P1M'
           ]
         ]
-      ],
-      'interact' => [
-        'start' => ['redirect'],
-        'finish' => [
-          'method' => 'redirect',
-          'uri' => 'https://myapp.example.com/finish/{...}', // where to redirect the customer after they've completed interaction
-          'nonce' => NONCE
-        ]
+      ]
+    ],
+    'interact' => [
+      'start' => ['redirect'],
+      'finish' => [
+        'method' => 'redirect',
+        'uri' => 'https://myapp.example.com/finish/{...}', // where to redirect the customer after they've completed interaction
+        'nonce' => NONCE
       ]
     ]
-  );
-  ```
+  ]
+);
+```
+
 </TabItem>
 
 <TabItem label='Go' icon='seti:go'>
@@ -753,6 +765,7 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
   </TabItem>
 
   <TabItem label='PHP' icon='seti:php'>
+
     ```php wrap
     $customerOutgoingPaymentGrant = $client->grant()->continue(
       [
@@ -764,6 +777,7 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
       ]
     );
     ```
+
   </TabItem>
 
   <TabItem label='Go' icon='seti:go'>
@@ -840,18 +854,20 @@ Include the `quoteId` from the quote created in Step 5.
 ```
 </TabItem>
 <TabItem label='PHP' icon='seti:php'>
-  ```php wrap
-  $customerOutgoingPayment = $client->outgoingPayment()->create(
-    [
-      'url' => $customerWalletAddress->resourceServer,
-      'accessToken' => $customerOutgoingPaymentGrant->access_token->value
-    ],
-    [
-      'walletAddress' => $customerWalletAddress->id,
-      'quoteId' => $customerQuote->id
-    ]
-  );
-  ```
+
+```php wrap
+$customerOutgoingPayment = $client->outgoingPayment()->create(
+  [
+    'url' => $customerWalletAddress->resourceServer,
+    'accessToken' => $customerOutgoingPaymentGrant->access_token->value
+  ],
+  [
+    'walletAddress' => $customerWalletAddress->id,
+    'quoteId' => $customerQuote->id
+  ]
+);
+```
+
 </TabItem>
 <TabItem label='Go' icon='seti:go'>
 

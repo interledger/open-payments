@@ -191,7 +191,8 @@ Si usted y el comerciante utilizan la misma entidad que administra cuentas, y la
  </TabItem>
 
   <TabItem label='PHP' icon='seti:php'>
-  ```php wrap
+
+```php wrap
   // Merchant
   $merchantIncomingPaymentGrant = $client->grant()->request(
     [
@@ -224,7 +225,8 @@ Si usted y el comerciante utilizan la misma entidad que administra cuentas, y la
       ]
     ]
   );
-  ```
+```
+
  </TabItem>
 
   <TabItem label='Go' icon='seti:go'>
@@ -345,7 +347,8 @@ El `value` total de $100 es `10000`. El comerciante recibirá el 99 % (`9900`) y
  </TabItem>
 
   <TabItem label='PHP' icon='seti:php'>
-  ```php wrap
+
+```php wrap
   // Merchant
   $merchantIncomingPayment = $client->incomingPayment()->create(
     [
@@ -376,11 +379,11 @@ El `value` total de $100 es `10000`. El comerciante recibirá el 99 % (`9900`) y
       ]
     ]
   );
-  ```
+```
+
   </TabItem>
 
   <TabItem label='Go' icon='seti:go'>
-  
   ```go wrap
   // Merchant
   merchantIncomingPayment, err := client.IncomingPayment.Create(context.TODO(), op.IncomingPaymentCreateParams{
@@ -459,7 +462,8 @@ El propósito de esta llamada consiste en obtener un token de acceso que permita
   </TabItem>
 
   <TabItem label='PHP' icon='seti:php'>
-  ```php wrap
+
+```php wrap
     $customerQuoteGrant = $client->grant()->request(
       [
         'url' => $customerWalletAddress->authServer
@@ -475,11 +479,11 @@ El propósito de esta llamada consiste en obtener un token de acceso que permita
         ]
       ]
     );
-    ```
+```
+
   </TabItem>
 
   <TabItem label='Go' icon='seti:go'>
-  
   ```go wrap
   quoteAccess := as.AccessQuote{
     Type:    as.Quote,
@@ -575,7 +579,8 @@ Posteriormente, llame de nuevo a la Create Quote API y solicite un recurso de co
  </TabItem>
 
 <TabItem label='PHP' icon='seti:php'>
-  ```php wrap
+
+```php wrap
   // Merchant
   $merchantQuote = $client->quote()->create(
     [
@@ -600,11 +605,12 @@ Posteriormente, llame de nuevo a la Create Quote API y solicite un recurso de co
       'receiver' => $platformIncomingPayment->id
     ]
   );
-  ```
+```
+
  </TabItem>
 
  <TabItem label='Go' icon='seti:go'>
-  
+
   ```go wrap
   // Merchant
   merchantQuote, err := client.Quote.Create(context.TODO(), op.QuoteCreateParams{
@@ -699,7 +705,7 @@ Incluya lo siguiente en la solicitud, además de los parámetros requeridos:
 <TabItem label='Rust' icon='seti:rust'>
  ```rust wrap
  use open_payments::types::{AccessTokenRequest, AccessItem, OutgoingPaymentAction, InteractRequest, InteractStart, InteractFinish, InteractFinishMethod, AccessLimits, Amount, GrantRequest};
- 
+
  let merchant_amount = match merchant_quote.debit_amount.as_ref() {
    Some(a) => &a.value,
    None => {
@@ -746,9 +752,10 @@ Incluya lo siguiente en la solicitud, además de los parámetros requeridos:
  </TabItem>
 
   <TabItem label='PHP' icon='seti:php'>
-  ```php wrap
+
+```php wrap
   $combinedQuoteAmount = bcadd($merchantQuote->debitAmount->value, $platformQuote->debitAmount->value);
-  
+
   $pendingCustomerOutgoingPaymentGrant = $client->grant()->request(
     [
       'url' => $customerWalletAddress->authServer
@@ -780,11 +787,12 @@ Incluya lo siguiente en la solicitud, además de los parámetros requeridos:
       ]
     ]
   );
-  ```
+```
+
   </TabItem>
 
   <TabItem label='Go' icon='seti:go'>
-  
+
   ```go wrap
   combinedQuoteAmount := "10000" // merchantQuote.DebitAmount.Value + platformQuote.DebitAmount.Value
   limits := as.LimitsOutgoing{}
@@ -886,7 +894,8 @@ Incluya la `interact_ref` devuelta en los parámetros de consulta del URI de red
  </TabItem>
 
  <TabItem label='PHP' icon='seti:php'>
- ```php wrap
+
+```php wrap
     $customerOutgoingPaymentGrant = $client->grant()->continue(
       [
         'url' => $pendingCustomerOutgoingPaymentGrant->continue->uri,
@@ -896,11 +905,11 @@ Incluya la `interact_ref` devuelta en los parámetros de consulta del URI de red
         'interact_ref' => $interactRef
       ]
     );
-    ```
-  </TabItem>
+```
+ </TabItem>
 
  <TabItem label='Go' icon='seti:go'>
-  
+
   ```go wrap
   customerOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
     URL:         pendingCustomerOutgoingPaymentGrant.Continue.Uri,
@@ -980,7 +989,8 @@ El propósito de estas llamadas consiste en solicitar la creación de un recurso
  </TabItem>
 
   <TabItem label='PHP' icon='seti:php'>
-  ```php wrap
+
+```php wrap
   // Merchant
   $customerOutgoingPaymentToMerchant = $client->outgoingPayment()->create(
     [
@@ -1003,11 +1013,12 @@ El propósito de estas llamadas consiste en solicitar la creación de un recurso
       'quoteId' => $platformQuote->id
     ]
   );
-  ```
+```
+
   </TabItem>
 
   <TabItem label='Go' icon='seti:go'>
-  
+
   ```go wrap
   // Merchant
   var merchantOutgoingPayload rs.CreateOutgoingPaymentRequest
@@ -1044,3 +1055,4 @@ El propósito de estas llamadas consiste en solicitar la creación de un recurso
   ```
   </TabItem>
 </Tabs>
+````

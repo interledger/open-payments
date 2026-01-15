@@ -93,14 +93,16 @@ Llame a la <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wa
   </TabItem>
 
   <TabItem label='PHP' icon='seti:php'>
-  ```php wrap
-  $senderWalletAddress = $client->walletAddress()->get([
-    'url' => 'https://cloudninebank.example.com/sender'
-  ]);
-  $recipientWalletAddress = $client->walletAddress()->get([
-    'url' => 'https://happylifebank.example.com/recipient'
-  ]);
-  ```
+
+```php wrap
+$senderWalletAddress = $client->walletAddress()->get([
+  'url' => 'https://cloudninebank.example.com/sender'
+]);
+$recipientWalletAddress = $client->walletAddress()->get([
+  'url' => 'https://happylifebank.example.com/recipient'
+]);
+```
+
   </TabItem>
 
   <TabItem label='Go' icon='seti:go'>
@@ -195,6 +197,7 @@ let recipient_incoming_payment_grant = client
   </TabItem>
 
   <TabItem label='PHP' icon='seti:php'>
+
   ```php wrap
   $recipientIncomingPaymentGrant = $client->grant()->request(
     [
@@ -212,6 +215,7 @@ let recipient_incoming_payment_grant = client
     ]
   );
   ```
+
   </TabItem>
 
   <TabItem label='Go' icon='seti:go'>
@@ -312,17 +316,19 @@ Some(&recipient_incoming_payment_grant.access_token.value),
 </TabItem>
 
   <TabItem label='PHP' icon='seti:php'>
-  ```php wrap
-  $recipientIncomingPayment = $client->incomingPayment()->create(
-    [
-      'url' => $recipientWalletAddress->resourceServer,
-      'accessToken' => $recipientIncomingPaymentGrant->access_token->value
-    ],
-    [
-      'walletAddress' => $recipientWalletAddress->id,
-    ]
-  );
-  ```
+
+```php wrap
+$recipientIncomingPayment = $client->incomingPayment()->create(
+  [
+    'url' => $recipientWalletAddress->resourceServer,
+    'accessToken' => $recipientIncomingPaymentGrant->access_token->value
+  ],
+  [
+    'walletAddress' => $recipientWalletAddress->id,
+  ]
+);
+```
+
   </TabItem>
 
   <TabItem label='Go' icon='seti:go'>
@@ -416,6 +422,7 @@ let sender_quote_grant = client
 </TabItem>
 
 <TabItem label='PHP' icon='seti:php'>
+
   ```php wrap
   $senderQuoteGrant = $client->grant()->request(
     [
@@ -433,6 +440,7 @@ let sender_quote_grant = client
     ]
   );
   ```
+
 </TabItem>
 
 <TabItem label='Go' icon='seti:go'>
@@ -546,6 +554,7 @@ Some(&sender_quote_grant.access_token.value),
 </TabItem>
 
 <TabItem label='PHP' icon='seti:php'>
+
   ```php wrap
   $senderQuote = $client->quote()->create(
     [
@@ -564,6 +573,7 @@ Some(&sender_quote_grant.access_token.value),
     ]
   );
   ```
+
 </TabItem>
 
 <TabItem label='Go' icon='seti:go'>
@@ -719,6 +729,7 @@ let pending_sender_outgoing_payment_grant = client
 </TabItem>
 
 <TabItem label='PHP' icon='seti:php'>
+
   ```php wrap
   $pendingSenderOutgoingPaymentGrant = $client->grant()->request(
     [
@@ -752,6 +763,7 @@ let pending_sender_outgoing_payment_grant = client
     ]
   );
   ```
+
 </TabItem>
 
   <TabItem label='Go' icon='seti:go'>
@@ -879,6 +891,7 @@ Incluya la `interact_ref` devuelta en los parámetros de consulta del URI de red
   </TabItem>
 
   <TabItem label='PHP' icon='seti:php'>
+
     ```php wrap
     $senderOutgoingPaymentGrant = $client->grant()->continue(
       [
@@ -890,6 +903,7 @@ Incluya la `interact_ref` devuelta en los parámetros de consulta del URI de red
       ]
     );
     ```
+
   </TabItem>
 
   <TabItem label='Go' icon='seti:go'>
@@ -978,6 +992,7 @@ Utilice el token de acceso devuelto en el paso 9 para llamar a la <Badge text="P
   </TabItem>
 
   <TabItem label='PHP' icon='seti:php'>
+
   ```php wrap
   $senderOutgoingPayment = $client->outgoingPayment()->create(
     [
@@ -990,6 +1005,7 @@ Utilice el token de acceso devuelto en el paso 9 para llamar a la <Badge text="P
     ]
   );
   ```
+
   </TabItem>
 
   <TabItem label='Go' icon='seti:go'>

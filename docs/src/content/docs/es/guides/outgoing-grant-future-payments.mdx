@@ -51,11 +51,13 @@ Supongamos que su usuario guardó su dirección de billetera en el perfil de su 
 </TabItem>
 
  <TabItem label='PHP' icon='seti:php'>
-  ```php wrap
-  $userWalletAddress = $client->walletAddress()->get([
-    'url' => 'https://cloudninebank.example.com/user'
-  ]);
-  ```
+
+```php wrap
+$userWalletAddress = $client->walletAddress()->get([
+  'url' => 'https://cloudninebank.example.com/user'
+]);
+```
+
  </TabItem>
 
 <TabItem label='Rust' icon='seti:rust'>
@@ -155,6 +157,7 @@ El usuario indica que desea realizar pagos de hasta CAD 100 por mes durante tres
  </TabItem>
 
   <TabItem label='PHP' icon='seti:php'>
+
     ```php wrap
     $grant = $client->grant()->request(
       [
@@ -190,6 +193,7 @@ El usuario indica que desea realizar pagos de hasta CAD 100 por mes durante tres
       ],
     );
     ```
+
  </TabItem>
 
 <TabItem label='Go' icon='seti:go'>
@@ -315,17 +319,19 @@ Agregue la `interact_ref` devuelta en los parámetros de consulta del URI de red
   </TabItem>
 
   <TabItem label='PHP' icon='seti:php'>
-  ```php wrap
-  $userOutgoingPaymentGrant = $client->grant()->continue(
-    [
-      'accessToken' => $pendingUserOutgoingPaymentGrant->continue->access_token->value,
-      'url' => $pendingUserOutgoingPaymentGrant->continue->uri,
-    ],
-    [
-      'interact_ref' => $interactRef,
-    ],
-  );
-  ```
+
+```php wrap
+$userOutgoingPaymentGrant = $client->grant()->continue(
+  [
+    'accessToken' => $pendingUserOutgoingPaymentGrant->continue->access_token->value,
+    'url' => $pendingUserOutgoingPaymentGrant->continue->uri,
+  ],
+  [
+    'interact_ref' => $interactRef,
+  ],
+);
+```
+
   </TabItem>
   
   <TabItem label='Go' icon='seti:go'>
