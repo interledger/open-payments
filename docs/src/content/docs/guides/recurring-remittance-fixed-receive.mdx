@@ -88,7 +88,7 @@ Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wall
 ```
 </TabItem>
 
-<TabItem label="PHP" icon='seti:php'>
+<TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $senderWalletAddress = $client->walletAddress()->get([
     'url' => 'https://cloudninebank.example.com/sender'
@@ -199,7 +199,7 @@ Outgoing payments require an interactive grant, which the sender approves once. 
   ```
 </TabItem>
 
-<TabItem label="PHP" icon='seti:php'>
+<TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $pendingSenderOutgoingPaymentGrant = $client->grant()->request(
     [
@@ -363,7 +363,7 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
   ```
   </TabItem>
 
-  <TabItem label="PHP" icon='seti:php'>
+  <TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $senderOutgoingPaymentGrant = $client->grant()->continue(
     [
@@ -453,7 +453,7 @@ This call obtains an access token that allows your app to request an incoming pa
   ```
   </TabItem>
 
-  <TabItem label="PHP" icon='seti:php'>
+  <TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $recipientIncomingPaymentGrant = $client->grant()->request(
     [
@@ -547,7 +547,7 @@ This call requests an incoming payment resource be created on the recipient's wa
   ```
   </TabItem>
 
-  <TabItem label="PHP" icon='seti:php'>
+  <TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $recipientIncomingPayment = $client->incomingPayment()->create(
     [
@@ -630,7 +630,7 @@ This call obtains an access token that allows your app to request a quote resour
   ```
   </TabItem>
 
-  <TabItem label="PHP" icon='seti:php'>
+  <TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $senderQuoteGrant = $client->grant()->request(
     [
@@ -733,7 +733,7 @@ The `receiveAmount` specifies that the recipient will receive exactly $4,000 MXN
   ```
   </TabItem>
 
-  <TabItem label="PHP" icon='seti:php'>
+  <TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $senderQuote = $client->quote()->create(
     [
@@ -831,7 +831,7 @@ Use the access token returned in the outgoing payment grant continuation respons
   )
   ```
   </TabItem>
-  <TabItem label="PHP" icon='seti:php'>
+  <TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $senderOutgoingPayment = $client->outgoingPayment()->create(
     [

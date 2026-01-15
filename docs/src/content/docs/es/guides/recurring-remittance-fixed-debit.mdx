@@ -84,7 +84,7 @@ Llame a la <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wa
 ```
 </TabItem>
 
-<TabItem label="PHP" icon='seti:php'>
+<TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $senderWalletAddress = $client->walletAddress()->get([
     'url' => 'https://cloudninebank.example.com/sender'
@@ -169,7 +169,7 @@ Esta llamada obtiene un token de acceso que permite a su aplicación solicitar l
   ```
   </TabItem>
 
-  <TabItem label="PHP" icon='seti:php'>
+  <TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $recipientIncomingPaymentGrant = $client->grant()->request(
     [
@@ -264,7 +264,7 @@ Esta llamada solicita la creación de un recurso de pago entrante en la cuenta d
   ```
   </TabItem>
 
-  <TabItem label="PHP" icon='seti:php'>
+  <TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $recipientIncomingPayment = $client->incomingPayment()->create(
     [
@@ -373,7 +373,7 @@ Los pagos salientes requieren una concesión de autorización interactiva, que e
   ```
 </TabItem>
 
-<TabItem label="PHP" icon='seti:php'>
+<TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $pendingSenderOutgoingPaymentGrant = $client->grant()->request(
     [
@@ -537,7 +537,7 @@ Incluya la `interact_ref` devuelta en los parámetros de consulta del URI de red
   ```
   </TabItem>
 
-  <TabItem label="PHP" icon='seti:php'>
+  <TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $senderOutgoingPaymentGrant = $client->grant()->continue(
     [
@@ -625,7 +625,7 @@ Utilice el token de acceso devuelto en la continuación de la concesión de auto
   ```
   </TabItem>
 
-  <TabItem label="PHP" icon='seti:php'>
+  <TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $senderOutgoingPayment = $client->outgoingPayment()->create(
     [

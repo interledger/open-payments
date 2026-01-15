@@ -92,7 +92,7 @@ Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wall
   ```
   </TabItem>
 
-  <TabItem label="PHP" icon='seti:php'>
+  <TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $senderWalletAddress = $client->walletAddress()->get([
     'url' => 'https://cloudninebank.example.com/sender'
@@ -193,7 +193,7 @@ let recipient_incoming_payment_grant = client
 ````
   </TabItem>
 
-  <TabItem label="PHP" icon='seti:php'>
+  <TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $recipientIncomingPaymentGrant = $client->grant()->request(
     [
@@ -309,7 +309,7 @@ Some(&recipient_incoming_payment_grant.access_token.value),
 ````
 </TabItem>
 
-  <TabItem label="PHP" icon='seti:php'>
+  <TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $recipientIncomingPayment = $client->incomingPayment()->create(
     [
@@ -413,7 +413,7 @@ let sender_quote_grant = client
 ````
 </TabItem>
 
-<TabItem label="PHP" icon='seti:php'>
+<TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $senderQuoteGrant = $client->grant()->request(
     [
@@ -540,7 +540,7 @@ Some(&sender_quote_grant.access_token.value),
 
 </TabItem>
 
-<TabItem label="PHP" icon='seti:php'>
+<TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $senderQuote = $client->quote()->create(
     [
@@ -711,7 +711,7 @@ let pending_sender_outgoing_payment_grant = client
 ```
 </TabItem>
 
-<TabItem label="PHP" icon='seti:php'>
+<TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $pendingSenderOutgoingPaymentGrant = $client->grant()->request(
     [
@@ -871,7 +871,7 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
   ```
   </TabItem>
 
-<TabItem label="PHP" icon='seti:php'>
+<TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $senderOutgoingPaymentGrant = $client->grant()->continue(
     [
@@ -969,7 +969,7 @@ Use the access token returned in Step 9 to call the <Badge text="POST" variant="
   ```
   </TabItem>
 
-  <TabItem label="PHP" icon='seti:php'>
+  <TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $senderOutgoingPayment = $client->outgoingPayment()->create(
     [

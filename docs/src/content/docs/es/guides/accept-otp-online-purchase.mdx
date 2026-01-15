@@ -83,7 +83,7 @@ Llame a la <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wa
 
   </TabItem>
 
-  <TabItem label="PHP" icon='seti:php'>
+  <TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $customerWalletAddress = $client->walletAddress()->get([
     'url' => 'https://cloudninebank.example.com/customer'
@@ -175,7 +175,7 @@ let retailer_incoming_payment_grant = client
 
 </TabItem>
 
-<TabItem label="PHP" icon='seti:php'>
+<TabItem label='PHP' icon='seti:php'>
   ```php wrap
     $retailerIncomingPaymentGrant = $client->grant()->request(
       [
@@ -301,7 +301,7 @@ Some(&retailer_incoming_payment_grant.access_token.value),
 
 </TabItem>
 
-<TabItem label="PHP" icon='seti:php'>
+<TabItem label='PHP' icon='seti:php'>
 ```php wrap
 $retailerIncomingPayment = $client->incomingPayment()->create(
   [
@@ -416,7 +416,7 @@ let customer_quote_grant = client
 
 </TabItem>
 
-<TabItem label="PHP" icon='seti:php'>
+<TabItem label='PHP' icon='seti:php'>
 ```php wrap
 $customerQuoteGrant = $client->grant()->request(
   [
@@ -540,7 +540,7 @@ Some(&customer_quote_grant.access_token.value),
 
 </TabItem>
 
-<TabItem label="PHP" icon='seti:php'>
+<TabItem label='PHP' icon='seti:php'>
 ```php wrap
 $customerQuote = $client->quote()->create(
   [
@@ -685,7 +685,7 @@ let pending_customer_outgoing_payment_grant = client
 
   </TabItem>
 
-  <TabItem label="PHP" icon='seti:php'>
+  <TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $pendingCustomerOutgoingPaymentGrant = $client->grant()->request(
     [
@@ -851,7 +851,7 @@ Some(&continue_field.access_token.value),
 
 </TabItem>
 
-<TabItem label="PHP" icon='seti:php'>
+<TabItem label='PHP' icon='seti:php'>
 ```php wrap
 $customerOutgoingPaymentGrant = $client->grant()->continue(
   [
@@ -952,7 +952,7 @@ let customer_outgoing_payment_to_retailer = client
 
   </TabItem>
 
-  <TabItem label="PHP" icon='seti:php'>
+  <TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $customerOutgoingPayment = $client->outgoingPayment()->create(
     [

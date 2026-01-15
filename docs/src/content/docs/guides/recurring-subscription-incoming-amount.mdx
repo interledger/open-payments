@@ -86,7 +86,7 @@ Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wall
 ```
 </TabItem>
 
-<TabItem label="PHP" icon='seti:php'>
+<TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $customerWalletAddress = $client->walletAddress()->get([
     'url' => 'https://cloudninebank.example.com/customer'
@@ -168,7 +168,7 @@ This call obtains an access token that allows you to request that an incoming pa
   );
 ```
 </TabItem>
-<TabItem label="PHP" icon='seti:php'>
+<TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $serviceProviderIncomingPaymentGrant = $client->grant()->request(
     [
@@ -268,7 +268,7 @@ This call requests an incoming payment resource be created on the service provid
   )
 ```
 </TabItem>
-  <TabItem label="PHP" icon='seti:php'>
+  <TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $serviceProviderIncomingPayment = $client->incomingPayment()->create(
     [
@@ -369,7 +369,7 @@ This call obtains an access token that allows you to request that a quote resour
   ```
 </TabItem>
 
-<TabItem label="PHP" icon='seti:php'>
+<TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $customerQuoteGrant = $client->grant()->request(
     [
@@ -469,7 +469,7 @@ The request must contain the `receiver`, which is the `id` of the service provid
   )
 ```
 </TabItem>
-<TabItem label="PHP" icon='seti:php'>
+<TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $customerQuote = $client->quote()->create(
     [
@@ -590,7 +590,7 @@ For recurring payments, include the `interval` property to specify how often the
   ```
 </TabItem>
 
-<TabItem label="PHP" icon='seti:php'>
+<TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $pendingCustomerOutgoingPaymentGrant = $client->grant()->request(
     [
@@ -752,7 +752,7 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
     ```
   </TabItem>
 
-  <TabItem label="PHP" icon='seti:php'>
+  <TabItem label='PHP' icon='seti:php'>
     ```php wrap
     $customerOutgoingPaymentGrant = $client->grant()->continue(
       [
@@ -839,7 +839,7 @@ Include the `quoteId` from the quote created in Step 5.
   )
 ```
 </TabItem>
-<TabItem label="PHP" icon='seti:php'>
+<TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $customerOutgoingPayment = $client->outgoingPayment()->create(
     [

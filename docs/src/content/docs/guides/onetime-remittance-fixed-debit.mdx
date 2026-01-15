@@ -90,7 +90,7 @@ Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wall
  ```
  </TabItem>
 
-<TabItem label="PHP" icon='seti:php'>
+<TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $senderWalletAddress = $client->walletAddress()->get([
     'url' => 'https://cloudninebank.example.com/sender'
@@ -188,7 +188,7 @@ This call obtains an access token that allows your app to request that an incomi
  ```
  </TabItem>
 
- <TabItem label="PHP" icon='seti:php'>
+ <TabItem label='PHP' icon='seti:php'>
  ```php wrap
   $recipientIncomingPaymentGrant = $client->grant()->request([
     'url' => $recipientWalletAddress->authServer
@@ -301,7 +301,7 @@ This call requests an incoming payment resource be created on the recipient's wa
    .await?;
  ```
  </TabItem>
-  <TabItem label="PHP" icon='seti:php'>
+  <TabItem label='PHP' icon='seti:php'>
   ```php wrap
     $recipientIncomingPayment = $client->incomingPayment()->create([
       'url' => $recipientWalletAddress->resourceServer,
@@ -397,7 +397,7 @@ This call obtains an access token that allows your app to request that a quote r
    .await?;
  ```
  </TabItem>
-  <TabItem label="PHP" icon='seti:php'>
+  <TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $senderQuoteGrant = $client->grant()->request(
     [
@@ -525,7 +525,7 @@ The `debitAmount` specifies that the sender will pay exactly $100 USD, and the r
    .await?;
  ```
  </TabItem>
- <TabItem label="PHP" icon='seti:php'>
+ <TabItem label='PHP' icon='seti:php'>
   ```php wrap
   $senderQuote = $client->quote()->create(
     [
@@ -704,7 +704,7 @@ let pending_sender_outgoing_payment_grant = client
 
 </TabItem>
 
-<TabItem label="PHP" icon='seti:php'>
+<TabItem label='PHP' icon='seti:php'>
   ```php wrap
     $pendingSenderOutgoingPaymentGrant = $client->grant()->request(
       [
@@ -865,7 +865,7 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
    .await?;
  ```
  </TabItem>
-  <TabItem label="PHP" icon='seti:php'>
+  <TabItem label='PHP' icon='seti:php'>
   ```php wrap
     $senderOutgoingPaymentGrant = $client->grant()->continue(
       [
@@ -963,7 +963,7 @@ Use the access token returned in Step 9 to call the <Badge text="POST" variant="
    .await?;
  ```
  </TabItem>
- <TabItem label="PHP" icon='seti:php'>
+ <TabItem label='PHP' icon='seti:php'>
   ```php wrap
     $senderOutgoingPayment = $client->outgoingPayment()->create(
       [
