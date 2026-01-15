@@ -16,7 +16,7 @@ A quote is a commitment from an account servicing entity to deliver a particular
 
 <Begin />
 
-## Create a quote with an incomingAmount
+## Create a quote with an incomingAmount _(from incoming payment)_
 
 This code snippet allows a client to create a quote with an `incomingAmount` when one is specified in the `INCOMING_PAYMENT_URL`.
 
@@ -123,6 +123,38 @@ func main() {
 	fmt.Println("QUOTE_URL:", *quote.Id)
 }
 ```
+
+</TabItem>
+<TabItem label='Java' icon='seti:java'>
+<LinkButton href="https://github.com/interledger/open-payments-java?tab=readme-ov-file#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+    ```java wrap
+    // 1. Import:
+    import org.interledger.openpayments.httpclient.OpenPaymentsHttpClient;
+    import org.interledger.openpayments.IOpenPaymentsClient;
+
+    // 2. Client instance using HTTP:
+    IOpenPaymentsClient client = OpenPaymentsHttpClient.defaultClient(
+    "WalletAddress",
+    "PrivateKeyPEM",
+    "KeyId"
+    );
+
+    // 3. Retrieve the wallets:
+    var receiverWallet = client.getWalletAddress("https://cloudninebank.example.com/merchant");
+    var senderWallet = client.getWalletAddress("https://cloudninebank.example.com/customer");
+
+    // 4. Create incoming payment:
+    var grantRequest = this.client.createGrantIncomingPayment(receiverWallet);
+    var incomingPayment = this.client.createIncomingPayment(receiverWallet, grantRequest, BigDecimal.valueOf(11.25));
+
+    // 5. Create quote:
+    var quoteRequest = this.client.createGrantQuote(senderWallet);
+    var quote = client.createQuote(quoteRequest.getAccess().getToken(), senderWallet, incomingPayment, Optional.empty(), Optional.empty());
+
+    // 6. Logging:
+    log.info("QUOTE: {}", incomingPayment);
+    ```
 
 </TabItem>
 </Tabs>
@@ -279,6 +311,46 @@ func main() {
 ```
 
 </TabItem>
+<TabItem label='Java' icon='seti:java'>
+<LinkButton href="https://github.com/interledger/open-payments-java?tab=readme-ov-file#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+    ```java wrap
+    // 1. Import:
+    import org.interledger.openpayments.httpclient.OpenPaymentsHttpClient;
+    import org.interledger.openpayments.IOpenPaymentsClient;
+    import org.interledger.openpayments.IOpenPaymentsClient;
+    import org.interledger.openpayments.model.common.Amount;
+
+    // 2. Client instance using HTTP:
+    IOpenPaymentsClient client = OpenPaymentsHttpClient.defaultClient(
+    "WalletAddress",
+    "PrivateKeyPEM",
+    "KeyId"
+    );
+
+    // 3. Retrieve the wallets:
+    var receiverWallet = client.getWalletAddress("https://cloudninebank.example.com/merchant");
+    var senderWallet = client.getWalletAddress("https://cloudninebank.example.com/customer");
+
+    // 4. Create incoming payment:
+    var grantRequest = this.client.createGrantIncomingPayment(receiverWallet);
+    var incomingPayment = this.client.createIncomingPayment(receiverWallet, grantRequest, BigDecimal.valueOf(11.50));
+
+    // 5. Create quote:
+    var quoteRequest = this.client.createGrantQuote(senderWallet);
+    var quote = client.createQuote(
+    quoteRequest.getAccess().getToken(),
+    senderWallet,
+    incomingPayment,
+    Optional.of(Amount.build(BigDecimal.valueOf(12.34), "USD")),// Debit Amount - Not the same as incoming payment amount.
+    Optional.empty()
+    );
+
+    // 6. Logging:
+    log.info("QUOTE: {}", incomingPayment);
+    ```
+
+</TabItem>
 </Tabs>
 
 ## Create a quote with a receive amount
@@ -431,6 +503,45 @@ func main() {
 	fmt.Println("QUOTE_URL:", *quote.Id)
 }
 ```
+
+</TabItem>
+<TabItem label='Java' icon='seti:java'>
+<LinkButton href="https://github.com/interledger/open-payments-java?tab=readme-ov-file#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+    ```java wrap
+    // 1. Import:
+    import org.interledger.openpayments.httpclient.OpenPaymentsHttpClient;
+    import org.interledger.openpayments.IOpenPaymentsClient;
+    import org.interledger.openpayments.model.common.Amount;
+
+    // 2. Client instance using HTTP:
+    IOpenPaymentsClient client = OpenPaymentsHttpClient.defaultClient(
+    "WalletAddress",
+    "PrivateKeyPEM",
+    "KeyId"
+    );
+
+    // 3. Retrieve the wallets:
+    var receiverWallet = client.getWalletAddress("https://cloudninebank.example.com/merchant");
+    var senderWallet = client.getWalletAddress("https://cloudninebank.example.com/customer");
+
+    // 4. Create incoming payment:
+    var grantRequest = this.client.createGrantIncomingPayment(receiverWallet);
+    var incomingPayment = this.client.createIncomingPayment(receiverWallet, grantRequest, BigDecimal.valueOf(11.50));
+
+    // 5. Create quote:
+    var quoteRequest = this.client.createGrantQuote(senderWallet);
+    var quote = client.createQuote(
+    quoteRequest.getAccess().getToken(),
+    senderWallet,
+    incomingPayment,
+    Optional.empty(),
+    Optional.of(Amount.build(BigDecimal.valueOf(12.34), "USD")),// Receive Amount - Not the same as incoming payment amount.
+    );
+
+    // 6. Logging:
+    log.info("QUOTE: {}", incomingPayment);
+    ```
 
 </TabItem>
 </Tabs>

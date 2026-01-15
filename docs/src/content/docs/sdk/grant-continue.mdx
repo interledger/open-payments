@@ -134,6 +134,53 @@ func main() {
 }
 ```
 
+  </TabItem>
+  <TabItem label='Java' icon='seti:java'>
+  <LinkButton href="https://github.com/interledger/open-payments-java?tab=readme-ov-file#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+    ```java wrap
+    // 1. Import:
+    import org.interledger.openpayments.httpclient.OpenPaymentsHttpClient;
+    import org.interledger.openpayments.IOpenPaymentsClient;
+
+    // 2. Client instance using HTTP:
+    var client = OpenPaymentsHttpClient.defaultClient(
+    "WalletAddress",
+    "PrivateKeyPEM",
+    "KeyId"
+    );
+
+    // 3. Retrieve the wallets:
+    var senderWallet = client.getWalletAddress("https://cloudninebank.example.com/customer");
+    var receiverWallet = client.getWalletAddress("https://cloudninebank.example.com/merchant");
+
+    // 4. Create incoming payment:
+    var grantRequest = this.client.createGrantIncomingPayment(receiverWallet);
+    var incomingPayment = this.client.createIncomingPayment(receiverWallet, grantRequest, BigDecimal.valueOf(11.25));
+
+    // 5. Create quote:
+    var quoteRequest = this.client.createGrantQuote(senderWallet);
+    var quote = this.client.createQuote(quoteRequest.getAccess().getToken(), senderWallet, incomingPayment);
+
+    var urlToOpen = "http://localhost:%d?paymentId=1234".formatted(port);
+
+    // 6. Create outing payment from quote:
+    var opContinueInteract = this.client.createGrantContinuation(
+    senderWallet,
+    quote.getDebitAmount(),
+    URI.create(urlToOpen),
+    "test"
+    );
+
+    // 7. USER APPROVES REQUEST.
+
+    // 8. Finalize/Continue
+    var finalized = this.client.createGrantFinalize(opContinueInteract, "Reference from USER interaction.");
+
+    // 9. Logging:
+    log.info("FINALIZED: {}", finalized);
+    ```
+
 </TabItem>
 </Tabs>
 
