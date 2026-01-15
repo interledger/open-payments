@@ -732,6 +732,7 @@ The `receiveAmount` specifies that the recipient will receive exactly $4,000 MXN
   )
   ```
   </TabItem>
+
   <TabItem label="PHP" icon='seti:php'>
   ```php wrap
   $senderQuote = $client->quote()->create(
@@ -751,7 +752,30 @@ The `receiveAmount` specifies that the recipient will receive exactly $4,000 MXN
     ]
   );
   ```
-</TabItem>
+  </TabItem>
+
+  <TabItem label='Go' icon='seti:go'>
+  
+  ```go wrap
+  senderQuote, err := client.Quote.Create(context.TODO(), op.QuoteCreateParams{
+    BaseURL:     *senderWalletAddress.ResourceServer,
+    AccessToken: senderQuoteGrant.AccessToken.Value,
+    Payload: rs.CreateQuoteJSONBody1{
+      WalletAddressSchema: *senderWalletAddress.Id,
+      Receiver:            *recipientIncomingPayment.Id,
+      Method:              "ilp",
+      ReceiveAmount: rs.Amount{
+        Value:      "400000",
+        AssetCode:  "MXN",
+        AssetScale: 2,
+      },
+    },
+  })
+  if err != nil {
+    log.Fatalf("Error creating quote: %v\n", err)
+  }
+  ```
+  </TabItem>
 </Tabs>
 
 The response returns a `receiveAmount`, a `debitAmount`, and other required information.
@@ -819,6 +843,29 @@ Use the access token returned in the outgoing payment grant continuation respons
       'quoteId' => $senderQuote->id,
     ]
   );
+  ```
+  </TabItem>
+
+
+  <TabItem label='Go' icon='seti:go'>
+  
+  ```go wrap
+  var outgoingPayload rs.CreateOutgoingPaymentRequest
+  if err := outgoingPayload.FromCreateOutgoingPaymentWithQuote(rs.CreateOutgoingPaymentWithQuote{
+    WalletAddressSchema: *senderWalletAddress.Id,
+    QuoteId:             *senderQuote.Id,
+  }); err != nil {
+    log.Fatalf("Error creating payload: %v\n", err)
+  }
+  
+  senderOutgoingPayment, err := client.OutgoingPayment.Create(context.TODO(), op.OutgoingPaymentCreateParams{
+    BaseURL:     *senderWalletAddress.ResourceServer,
+    AccessToken: senderOutgoingPaymentGrant.AccessToken.Value,
+    Payload:     outgoingPayload,
+  })
+  if err != nil {
+    log.Fatalf("Error creating outgoing payment: %v\n", err)
+  }
   ```
   </TabItem>
 </Tabs>
