@@ -423,7 +423,7 @@ $config = new Config(
 );
 $opClient = new AuthClient($config);
 
- // Get wallet address information
+// Get wallet address information
 $wallet = $opClient->walletAddress()->get([
     'url' => $config->getWalletAddressUrl()
 ]);

@@ -170,41 +170,41 @@ Remember, your user wants to send payments of up to $100 CAD a month for three m
  </TabItem>
   <TabItem label='PHP' icon='seti:php'>
 
-    ```php wrap
-    $grant = $client->grant()->request(
-      [
-        'url' => $userWalletAddress->authServer,
-      ],
-      [
-        'access_token' => [
-          'access' => [
-            [
-              'identifier' => $userWalletAddress->id,
-              'type' => 'outgoing-payment',
-              'actions' => ['read', 'create'],
-              'limits' => [
-                'interval' => 'R3/2025-05-20T13:00:00Z/P1M',
-                'debitAmount' => [
-                  'assetCode' => 'CAD',
-                  'assetScale' => 2,
-                  'value' => '10000',
-                ],
-              ],
+```php wrap
+$grant = $client->grant()->request(
+  [
+    'url' => $userWalletAddress->authServer,
+  ],
+  [
+    'access_token' => [
+      'access' => [
+        [
+          'identifier' => $userWalletAddress->id,
+          'type' => 'outgoing-payment',
+          'actions' => ['read', 'create'],
+          'limits' => [
+            'interval' => 'R3/2025-05-20T13:00:00Z/P1M',
+            'debitAmount' => [
+              'assetCode' => 'CAD',
+              'assetScale' => 2,
+              'value' => '10000',
             ],
           ],
         ],
-        'client' => $userWalletAddress->id,
-        'interact' => [
-          'start' => ['redirect'],
-          'finish' => [
-            'method' => 'redirect',
-            'uri' => 'https://paymentplatform.example/finish/{...}', // where to redirect the user to after they've completed the interaction
-            'nonce' => NONCE,
-          ],
-        ],
       ],
-    );
-    ```
+    ],
+    'client' => $userWalletAddress->id,
+    'interact' => [
+      'start' => ['redirect'],
+      'finish' => [
+        'method' => 'redirect',
+        'uri' => 'https://paymentplatform.example/finish/{...}', // where to redirect the user to after they've completed the interaction
+        'nonce' => NONCE,
+      ],
+    ],
+  ],
+);
+```
 
  </TabItem>
 <TabItem label='Go' icon='seti:go'>

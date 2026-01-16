@@ -180,21 +180,21 @@ let retailer_incoming_payment_grant = client
 <TabItem label='PHP' icon='seti:php'>
 
 ```php wrap
-  $retailerIncomingPaymentGrant = $client->grant()->request(
-    [
-      'url' => $retailerWalletAddress->authServer
-    ],
-    [
-      'access_token' => [
-        'access' => [
-          [
-            'type' => 'incoming-payment',
-            'actions' => ['create']
-          ]
+$retailerIncomingPaymentGrant = $client->grant()->request(
+  [
+    'url' => $retailerWalletAddress->authServer
+  ],
+  [
+    'access_token' => [
+      'access' => [
+        [
+          'type' => 'incoming-payment',
+          'actions' => ['create']
         ]
       ]
     ]
-  );
+  ]
+);
 ```
 
 </TabItem>
@@ -308,20 +308,20 @@ Some(&retailer_incoming_payment_grant.access_token.value),
 <TabItem label='PHP' icon='seti:php'>
 
 ```php wrap
-  $retailerIncomingPayment = $client->incomingPayment()->create(
-    [
-      'url' => $retailerWalletAddress->resourceServer,
-      'accessToken' => $retailerIncomingPaymentGrant->access_token->value
-    ],
-    [
-      'walletAddress' => $retailerWalletAddress->id,
-      'incomingAmount' => [
-        'value' => '140000',
-        'assetCode' => 'MXN',
-        'assetScale' => 2
-      ]
+$retailerIncomingPayment = $client->incomingPayment()->create(
+  [
+    'url' => $retailerWalletAddress->resourceServer,
+    'accessToken' => $retailerIncomingPaymentGrant->access_token->value
+  ],
+  [
+    'walletAddress' => $retailerWalletAddress->id,
+    'incomingAmount' => [
+      'value' => '140000',
+      'assetCode' => 'MXN',
+      'assetScale' => 2
     ]
-  );
+  ]
+);
 ```
 
 </TabItem>

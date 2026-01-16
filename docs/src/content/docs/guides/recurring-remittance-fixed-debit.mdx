@@ -87,12 +87,12 @@ Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wall
 <TabItem label='PHP' icon='seti:php'>
 
 ```php wrap
-  $senderWalletAddress = $client->walletAddress()->get([
-    'url' => 'https://cloudninebank.example.com/sender'
-  ]);
-  $recipientWalletAddress = $client->walletAddress()->get([
-    'url' => 'https://happylifebank.example.com/recipient'
-  ]);
+$senderWalletAddress = $client->walletAddress()->get([
+  'url' => 'https://cloudninebank.example.com/sender'
+]);
+$recipientWalletAddress = $client->walletAddress()->get([
+  'url' => 'https://happylifebank.example.com/recipient'
+]);
 ```
 
 </TabItem>
@@ -174,21 +174,21 @@ This call obtains an access token that allows your app to request an incoming pa
   <TabItem label='PHP' icon='seti:php'>
 
 ```php wrap
-  $recipientIncomingPaymentGrant = $client->grant()->request(
-    [
-      'url' => $recipientWalletAddress->authServer
-    ],
-    [
-      'access_token' => [
-        'access' => [
-          [
-            'type' => 'incoming-payment',
-            'actions' => ['create'],
-          ],
+$recipientIncomingPaymentGrant = $client->grant()->request(
+  [
+    'url' => $recipientWalletAddress->authServer
+  ],
+  [
+    'access_token' => [
+      'access' => [
+        [
+          'type' => 'incoming-payment',
+          'actions' => ['create'],
         ],
       ],
-    ]
-  );
+    ],
+  ]
+);
 ```
 
   </TabItem>
@@ -272,15 +272,15 @@ This call requests an incoming payment resource be created on the recipient's wa
   <TabItem label='PHP' icon='seti:php'>
 
 ```php wrap
-  $recipientIncomingPayment = $client->incomingPayment()->create(
-    [
-      'url' => $recipientWalletAddress->resourceServer,
-      'accessToken' => $recipientIncomingPaymentGrant->access_token->value
-    ],
-    [
-      'walletAddress' => $recipientWalletAddress->id
-    ]
-  );
+$recipientIncomingPayment = $client->incomingPayment()->create(
+  [
+    'url' => $recipientWalletAddress->resourceServer,
+    'accessToken' => $recipientIncomingPaymentGrant->access_token->value
+  ],
+  [
+    'walletAddress' => $recipientWalletAddress->id
+  ]
+);
 ```
 
   </TabItem>
@@ -383,38 +383,38 @@ Outgoing payments require an interactive grant, which the sender approves once. 
 <TabItem label='PHP' icon='seti:php'>
 
 ```php wrap
-  $pendingSenderOutgoingPaymentGrant = $client->grant()->request(
-    [
-      'url' => $senderWalletAddress->authServer
-    ],
-    [
-      'access_token' => [
-        'access' => [
-          [
-            'identifier' => $senderWalletAddress->id,
-            'type' => 'outgoing-payment',
-            'actions' => ['create'],
-            'limits' => [
-              'interval' => 'R3/2025-10-03T23:25:00Z/P1M',
-              'debitAmount' => [
-                'assetCode' => 'USD',
-                'assetScale' => 2,
-                'value' => '20000', // $200.00 USD per interval
-              ]
+$pendingSenderOutgoingPaymentGrant = $client->grant()->request(
+  [
+    'url' => $senderWalletAddress->authServer
+  ],
+  [
+    'access_token' => [
+      'access' => [
+        [
+          'identifier' => $senderWalletAddress->id,
+          'type' => 'outgoing-payment',
+          'actions' => ['create'],
+          'limits' => [
+            'interval' => 'R3/2025-10-03T23:25:00Z/P1M',
+            'debitAmount' => [
+              'assetCode' => 'USD',
+              'assetScale' => 2,
+              'value' => '20000', // $200.00 USD per interval
             ]
           ]
         ]
-      ],
-      'interact' => [
-        'start' => ['redirect'],
-        'finish' => [
-          'method' => 'redirect',
-          'uri' => 'https://myapp.example.com/finish/{...}', // where to redirect your user after they've completed the interaction
-          'nonce' => NONCE
-        ]
+      ]
+    ],
+    'interact' => [
+      'start' => ['redirect'],
+      'finish' => [
+        'method' => 'redirect',
+        'uri' => 'https://myapp.example.com/finish/{...}', // where to redirect your user after they've completed the interaction
+        'nonce' => NONCE
       ]
     ]
-  );
+  ]
+);
 ```
 
 </TabItem>
@@ -549,15 +549,15 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
   <TabItem label='PHP' icon='seti:php'>
 
 ```php wrap
-  $senderOutgoingPaymentGrant = $client->grant()->continue(
-    [
-      'url' => $pendingSenderOutgoingPaymentGrant->continue->uri,
-      'accessToken' => $pendingSenderOutgoingPaymentGrant->continue->access_token->value
-    ],
-    [
-      'interact_ref' => $interactRef
-    ]
-  );
+$senderOutgoingPaymentGrant = $client->grant()->continue(
+  [
+    'url' => $pendingSenderOutgoingPaymentGrant->continue->uri,
+    'accessToken' => $pendingSenderOutgoingPaymentGrant->continue->access_token->value
+  ],
+  [
+    'interact_ref' => $interactRef
+  ]
+);
 ```
 
   </TabItem>
@@ -639,21 +639,21 @@ Use the access token returned in the outgoing payment grant continuation respons
   <TabItem label='PHP' icon='seti:php'>
 
 ```php wrap
-  $senderOutgoingPayment = $client->outgoingPayment()->create(
-    [
-      'url' => $senderWalletAddress->resourceServer,
-      'accessToken' => $senderOutgoingPaymentGrant->access_token->value
+$senderOutgoingPayment = $client->outgoingPayment()->create(
+  [
+    'url' => $senderWalletAddress->resourceServer,
+    'accessToken' => $senderOutgoingPaymentGrant->access_token->value
+  ],
+  [
+    'walletAddress' => $senderWalletAddress->id,
+    'incomingPayment' => $recipientIncomingPayment->id,
+    'debitAmount' => [
+      'assetCode' => 'USD',
+      'assetScale' => 2,
+      'value' => '20000'
     ],
-    [
-      'walletAddress' => $senderWalletAddress->id,
-      'incomingPayment' => $recipientIncomingPayment->id,
-      'debitAmount' => [
-        'assetCode' => 'USD',
-        'assetScale' => 2,
-        'value' => '20000'
-      ],
-    ]
-  );
+  ]
+ );
 ```
 
   </TabItem>

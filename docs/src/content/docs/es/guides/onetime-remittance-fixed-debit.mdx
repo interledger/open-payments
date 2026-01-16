@@ -192,18 +192,18 @@ Esta llamada obtiene un token de acceso que permite a su aplicación solicitar l
  <TabItem label='PHP' icon='seti:php'>
 
 ```php wrap
- $recipientIncomingPaymentGrant = $client->grant()->request([
-   'url' => $recipientWalletAddress->authServer
- ], [
-   'access_token' => [
-     'access' => [
-       [
-         'type' => 'incoming-payment',
-         'actions' => ['create']
-       ]
-     ]
-   ]
- ]);
+$recipientIncomingPaymentGrant = $client->grant()->request([
+  'url' => $recipientWalletAddress->authServer
+], [
+  'access_token' => [
+    'access' => [
+      [
+        'type' => 'incoming-payment',
+        'actions' => ['create']
+      ]
+    ]
+  ]
+]);
 ```
 
  </TabItem>
@@ -307,12 +307,12 @@ Esta llamada solicita la creación de un recurso de pago entrante en la cuenta d
   <TabItem label='PHP' icon='seti:php'>
 
 ```php wrap
-  $recipientIncomingPayment = $client->incomingPayment()->create([
-    'url' => $recipientWalletAddress->resourceServer,
-    'accessToken' => $recipientIncomingPaymentGrant->access_token->value
-  ], [
-    'walletAddress' => $recipientWalletAddress->id
-  ]);
+$recipientIncomingPayment = $client->incomingPayment()->create([
+  'url' => $recipientWalletAddress->resourceServer,
+  'accessToken' => $recipientIncomingPaymentGrant->access_token->value
+], [
+  'walletAddress' => $recipientWalletAddress->id
+]);
 ```
 
   </TabItem>
@@ -418,7 +418,8 @@ $senderQuoteGrant = $client->grant()->request(
         ]
       ]
     ]
-  ]);
+  ]
+);
 ```
 
 </TabItem>
@@ -712,39 +713,39 @@ let pending_sender_outgoing_payment_grant = client
 
 <TabItem label='PHP' icon='seti:php'>
 
-  ```php wrap
-    $pendingSenderOutgoingPaymentGrant = $client->grant()->request(
-      [
-        'url' => $senderWalletAddress->authServer
-      ],
-      [
-        'access_token' => [
-          'access' => [
-            [
-              'identifier' => $senderWalletAddress->id,
-              'type' => 'outgoing-payment',
-              'actions' => ['create'],
-              'limits' => [
-                'debitAmount' => [
-                  'assetCode' => 'USD',
-                  'assetScale' => 2,
-                  'value' => '10000'
-                ]
-              ]
+```php wrap
+$pendingSenderOutgoingPaymentGrant = $client->grant()->request(
+  [
+    'url' => $senderWalletAddress->authServer
+  ],
+  [
+    'access_token' => [
+      'access' => [
+        [
+          'identifier' => $senderWalletAddress->id,
+          'type' => 'outgoing-payment',
+          'actions' => ['create'],
+          'limits' => [
+            'debitAmount' => [
+              'assetCode' => 'USD',
+              'assetScale' => 2,
+              'value' => '10000'
             ]
-          ]
-        ],
-        'interact' => [
-          'start' => ['redirect'],
-          'finish' => [
-            'method' => 'redirect',
-            'uri' => 'https://myapp.example.com/finish/{...}', // where to redirect your user after they've completed the interaction
-            'nonce' => 'NONCE'
           ]
         ]
       ]
-    );
-  ```
+    ],
+    'interact' => [
+      'start' => ['redirect'],
+      'finish' => [
+        'method' => 'redirect',
+        'uri' => 'https://myapp.example.com/finish/{...}', // where to redirect your user after they've completed the interaction
+        'nonce' => 'NONCE'
+      ]
+    ]
+  ]
+);
+```
 
 </TabItem>
 
@@ -873,15 +874,15 @@ Incluya la `interact_ref` devuelta en los parámetros de consulta del URI de red
 <TabItem label='PHP' icon='seti:php'>
 
 ```php wrap
-  $senderOutgoingPaymentGrant = $client->grant()->continue(
-    [
-      'url' => $pendingSenderOutgoingPaymentGrant->continue->uri,
-      'accessToken' => $pendingSenderOutgoingPaymentGrant->continue->access_token->value
-    ],
-    [
-      'interact_ref' => $interactRef
-    ]
-  );
+$senderOutgoingPaymentGrant = $client->grant()->continue(
+  [
+    'url' => $pendingSenderOutgoingPaymentGrant->continue->uri,
+    'accessToken' => $pendingSenderOutgoingPaymentGrant->continue->access_token->value
+  ],
+  [
+    'interact_ref' => $interactRef
+  ]
+);
 ```
 
 </TabItem>
@@ -972,16 +973,16 @@ Utilice el token de acceso devuelto en el paso 9 para llamar a la <Badge text="P
  <TabItem label='PHP' icon='seti:php'>
 
 ```php wrap
-  $senderOutgoingPayment = $client->outgoingPayment()->create(
-    [
-      'url' => $senderWalletAddress->resourceServer,
-      'accessToken' => $senderOutgoingPaymentGrant->access_token->value
-    ],
-    [
-      'walletAddress' => $senderWalletAddress->id,
-      'quoteId' => $senderQuote->id
-    ]
-  );
+$senderOutgoingPayment = $client->outgoingPayment()->create(
+  [
+    'url' => $senderWalletAddress->resourceServer,
+    'accessToken' => $senderOutgoingPaymentGrant->access_token->value
+  ],
+  [
+    'walletAddress' => $senderWalletAddress->id,
+    'quoteId' => $senderQuote->id
+  ]
+);
 ```
 
  </TabItem>

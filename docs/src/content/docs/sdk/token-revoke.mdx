@@ -74,7 +74,7 @@ $opClient = new AuthClient($config);
 // Revoke token
 $tokenResponse = $opClient->token()->revoke(
     [
-            'access_token' => $ACCESS_TOKEN,
+        'access_token' => $ACCESS_TOKEN,
         'url' => $TOKEN_MANAGE_URL
     ]
 );

@@ -766,17 +766,17 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
 
   <TabItem label='PHP' icon='seti:php'>
 
-    ```php wrap
-    $customerOutgoingPaymentGrant = $client->grant()->continue(
-      [
-        'url' => $pendingCustomerOutgoingPaymentGrant->continue->uri,
-        'accessToken' => $pendingCustomerOutgoingPaymentGrant->continue->access_token->value
-      ],
-      [
-        'interact_ref' => $interactRef
-      ]
-    );
-    ```
+```php wrap
+$customerOutgoingPaymentGrant = $client->grant()->continue(
+  [
+    'url' => $pendingCustomerOutgoingPaymentGrant->continue->uri,
+    'accessToken' => $pendingCustomerOutgoingPaymentGrant->continue->access_token->value
+  ],
+  [
+    'interact_ref' => $interactRef
+  ]
+);
+```
 
   </TabItem>
 

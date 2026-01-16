@@ -105,7 +105,7 @@ $grant = $opClient->grant()->request(
 );
 
 // Check grant state
- if ($grant instanceof \OpenPayments\Models\PendingGrant) {
+if ($grant instanceof \OpenPayments\Models\PendingGrant) {
     throw new \Error('Expected non-interactive grant');
 }
 

@@ -112,10 +112,10 @@ $config = new Config(
 $opClient = new AuthClient($config);
 ```
 
-#### Without amount
+#### With quote
 
 ```php
- // Create outgoing payment without amount
+// Create outgoing payment without amount
 $newOutgoingPayment = $opClient->outgoingPayment()->create(
     [
         'url' => $wallet->resourceServer,
@@ -137,7 +137,7 @@ $newOutgoingPayment = $opClient->outgoingPayment()->create(
 );
 ```
 
-#### With amount
+#### With incoming payment
 
 ```php
 // Create outgoing payment with amount
