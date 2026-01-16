@@ -8,7 +8,6 @@ import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
 import TsImport from '/src/partials/ts-import-initialize.mdx'
-import PhpImport from '/src/partials/php-import-initialize.mdx'
 
 During a grant request flow, an authorization server can require an individual (typically a client's end user) to approve the grant by interacting directly with the server. For example, by tapping an Approve button on a web page provided by the auth server.
 
@@ -66,23 +65,45 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 </p>
 
 </TabItem>
-<TabItem label="PHP" icon='seti:php'>
+<TabItem label='PHP' icon='seti:php'>
 <LinkButton href="https://github.com/interledger/open-payments-php-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-<PhpImport />
+```php
+// Import dependencies
+use OpenPayments\AuthClient;
+use OpenPayments\Config\Config;
 
-<ChunkedSnippet
-  source="https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/Grant/GrantContinuation.php"
-  chunk="3"
-/>
-<ChunkedSnippet
-  source="https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/Grant/GrantContinuation.php"
-  chunk="4"
-/>
-<ChunkedSnippet
-  source="https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/Grant/GrantContinuation.php"
-  chunk="5"
-/>
+// Initialize Open Payments client
+$config = new Config(
+    $WALLET_ADDRESS,
+    $PRIVATE_KEY,
+    $KEY_ID
+);
+$opClient = new AuthClient($config);
+
+// Continue grant
+$grant = $opClient->grant()->continue(
+    [
+        'access_token' => $CONTINUE_ACCESS_TOKEN,
+        'url' => $CONTINUE_URI
+    ],
+    [
+        'interact_ref' => $interactRef,
+    ]
+);
+
+// Check grant state
+if (!$grant instanceof \OpenPayments\Models\Grant) {
+    throw new \Error('Expected finalized grant. Received non-finalized grant.');
+}
+
+// Output
+echo 'OUTGOING_PAYMENT_GRANT_ACCES_TOKEN: ' . $grant->access_token->value . PHP_EOL;
+echo 'OUTGOING_PAYMENT_ACCESS_TOKEN_MANAGE_URL: ' . $grant->access_token->manage . PHP_EOL;
+echo 'GRANT OBJECT: ' . PHP_EOL . print_r($grant, true);
+```
+
+{/* prettier-ignore */}
 <p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Grant/GrantContinuation.php'>View full source</LinkOut></p>
 </TabItem>
 

@@ -8,7 +8,6 @@ import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
 import TsImport from '/src/partials/ts-import-initialize.mdx'
-import PhpImport from '/src/partials/php-import-initialize.mdx'
 
 If an authorized client no longer needs access to protected resources, the client can revoke the corresponding grant request.
 
@@ -54,15 +53,30 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 </p>
 
 </TabItem>
-<TabItem label="PHP" icon='seti:php'>
+<TabItem label='PHP' icon='seti:php'>
 <LinkButton href="https://github.com/interledger/open-payments-php-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-<PhpImport />
+```php
+// Import dependencies
+use OpenPayments\AuthClient;
+use OpenPayments\Config\Config;
 
-<ChunkedSnippet
-  source="https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/Grant/CancelGrant.php"
-  chunk="3"
-/>
+// Initialize Open Payments client
+$config = new Config(
+    $WALLET_ADDRESS,
+    $PRIVATE_KEY,
+    $KEY_ID
+);
+$opClient = new AuthClient($config);
+
+// Revoke grant
+$response = $opClient->grant()->cancel(
+    [
+        'access_token'=> $ACCESS_TOKEN,
+        'url' => $CONTINUE_URI
+    ]
+);
+```
 
 <p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Grant/CancelGrant.php'>View full source</LinkOut></p>
 </TabItem>

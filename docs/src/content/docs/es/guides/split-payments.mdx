@@ -83,6 +83,23 @@ url: 'https://coolwallet.example.com/platform'
  let platform_wallet_address = client.wallet_address().get("https://coolwallet.example.com/platform").await?;
  ```
  </TabItem>
+
+<TabItem label='PHP' icon='seti:php'>
+
+```php wrap
+$customerWalletAddress = $client->walletAddress()->get([
+  'url' => 'https://cloudninebank.example.com/customer'
+]);
+$merchantWalletAddress = $client->walletAddress()->get([
+  'url' => 'https://happylifebank.example.com/merchant'
+]);
+$platformWalletAddress = $client->walletAddress()->get([
+  'url' => 'https://coolwallet.example.com/platform'
+]);
+```
+
+</TabItem>
+
   <TabItem label='Go' icon='seti:go'>
 
   ```go wrap
@@ -119,28 +136,25 @@ Si usted y el comerciante utilizan la misma entidad que administra cuentas, y la
 :::
 
 <Tabs syncKey="lang">
-<TabItem label='Merchant' icon='seti:javascript'>
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
 ```ts wrap
-const merchantIncomingPaymentGrant = await client.grant.request(
-  {
-    url: merchantWalletAddress.authServer
-  },
-  {
-    access_token: {
-      access: [
-        {
-          type: "incoming-payment",
-          actions: ["read", "create"],
-        },
-      ],
+  // Merchant
+  const merchantIncomingPaymentGrant = await client.grant.request(
+    {
+      url: merchantWalletAddress.authServer
     },
-  },
-);
-````
-
-</TabItem>
-<TabItem label='Platform' icon='seti:javascript'>
-  ```ts wrap
+    {
+      access_token: {
+        access: [
+          {
+            type: "incoming-payment",
+            actions: ["read", "create"],
+          },
+        ],
+      },
+    },
+  );
+  // Platform
   const platformIncomingPaymentGrant = await client.grant.request(
     {
       url: platformWalletAddress.authServer
@@ -176,6 +190,45 @@ const merchantIncomingPaymentGrant = await client.grant.request(
    .request(&platform_wallet_address.auth_server, &platform_grant_request)
    .await?;
  ```
+ </TabItem>
+
+  <TabItem label='PHP' icon='seti:php'>
+
+```php wrap
+// Merchant
+$merchantIncomingPaymentGrant = $client->grant()->request(
+  [
+    'url' => $merchantWalletAddress->authServer
+  ],
+  [
+    'access_token' => [
+      'access' => [
+        [
+          'type' => 'incoming-payment',
+          'actions' => ['create']
+        ]
+      ]
+    ]
+  ]
+);
+// Platform
+$platformIncomingPaymentGrant = $client->grant()->request(
+  [
+    'url' => $platformWalletAddress->authServer
+  ],
+  [
+    'access_token' => [
+      'access' => [
+        [
+          'type' => 'incoming-payment',
+          'actions' => ['create']
+        ]
+      ]
+    ]
+  ]
+);
+```
+
  </TabItem>
 
   <TabItem label='Go' icon='seti:go'>
@@ -295,8 +348,44 @@ El `value` total de $100 es `10000`. El comerciante recibirá el 99 % (`9900`) y
  ```
  </TabItem>
 
+  <TabItem label='PHP' icon='seti:php'>
+
+```php wrap
+// Merchant
+$merchantIncomingPayment = $client->incomingPayment()->create(
+  [
+    'url' => $merchantWalletAddress->resourceServer,
+    'accessToken' => $merchantIncomingPaymentGrant->access_token->value
+  ],
+  [
+    'walletAddress' => $merchantWalletAddress->id,
+    'incomingAmount' => [
+      'value' => '9900',
+      'assetCode' => 'USD',
+      'assetScale' => 2
+    ]
+  ]
+);
+// Platform
+$platformIncomingPayment = $client->incomingPayment()->create(
+  [
+    'url' => $platformWalletAddress->resourceServer,
+    'accessToken' => $platformIncomingPaymentGrant->access_token->value
+  ],
+  [
+    'walletAddress' => $platformWalletAddress->id,
+    'incomingAmount' => [
+      'value' => '100',
+      'assetCode' => 'USD',
+      'assetScale' => 2
+    ]
+  ]
+);
+```
+
+  </TabItem>
+
   <TabItem label='Go' icon='seti:go'>
-  
   ```go wrap
   // Merchant
   merchantIncomingPayment, err := client.IncomingPayment.Create(context.TODO(), op.IncomingPaymentCreateParams{
@@ -374,8 +463,29 @@ El propósito de esta llamada consiste en obtener un token de acceso que permita
     ```
   </TabItem>
 
+  <TabItem label='PHP' icon='seti:php'>
+
+```php wrap
+$customerQuoteGrant = $client->grant()->request(
+  [
+    'url' => $customerWalletAddress->authServer
+  ],
+  [
+    'access_token' => [
+      'access' => [
+        [
+          'type' => 'quote',
+          'actions' => ['create']
+        ]
+      ]
+    ]
+  ]
+);
+```
+
+  </TabItem>
+
   <TabItem label='Go' icon='seti:go'>
-  
   ```go wrap
   quoteAccess := as.AccessQuote{
     Type:    as.Quote,
@@ -469,8 +579,40 @@ Posteriormente, llame de nuevo a la Create Quote API y solicite un recurso de co
    .await?;
  ```
  </TabItem>
+
+<TabItem label='PHP' icon='seti:php'>
+
+```php wrap
+// Merchant
+$merchantQuote = $client->quote()->create(
+  [
+    'url' => $customerWalletAddress->resourceServer,
+    'accessToken' => $customerQuoteGrant->access_token->value
+  ],
+  [
+    'method' => 'ilp',
+    'walletAddress' => $customerWalletAddress->id,
+    'receiver' => $merchantIncomingPayment->id
+  ]
+);
+// Platform
+$platformQuote = $client->quote()->create(
+  [
+    'url' => $customerWalletAddress->resourceServer,
+    'accessToken' => $customerQuoteGrant->access_token->value
+  ],
+  [
+    'method' => 'ilp',
+    'walletAddress' => $customerWalletAddress->id,
+    'receiver' => $platformIncomingPayment->id
+  ]
+);
+```
+
+ </TabItem>
+
  <TabItem label='Go' icon='seti:go'>
-  
+
   ```go wrap
   // Merchant
   merchantQuote, err := client.Quote.Create(context.TODO(), op.QuoteCreateParams{
@@ -565,7 +707,7 @@ Incluya lo siguiente en la solicitud, además de los parámetros requeridos:
 <TabItem label='Rust' icon='seti:rust'>
  ```rust wrap
  use open_payments::types::{AccessTokenRequest, AccessItem, OutgoingPaymentAction, InteractRequest, InteractStart, InteractFinish, InteractFinishMethod, AccessLimits, Amount, GrantRequest};
- 
+
  let merchant_amount = match merchant_quote.debit_amount.as_ref() {
    Some(a) => &a.value,
    None => {
@@ -611,8 +753,48 @@ Incluya lo siguiente en la solicitud, además de los parámetros requeridos:
  ```
  </TabItem>
 
+  <TabItem label='PHP' icon='seti:php'>
+
+```php wrap
+$combinedQuoteAmount = bcadd($merchantQuote->debitAmount->value, $platformQuote->debitAmount->value);
+
+$pendingCustomerOutgoingPaymentGrant = $client->grant()->request(
+  [
+    'url' => $customerWalletAddress->authServer
+  ],
+  [
+    'access_token' => [
+      'access' => [
+        [
+          'identifier' => $customerWalletAddress->id,
+          'type' => 'outgoing-payment',
+          'actions' => ['create'],
+          'limits' => [
+            'debitAmount' => [
+              'assetCode' => 'USD',
+              'assetScale' => 2,
+              'value' => $combinedQuoteAmount
+            ]
+          ]
+        ]
+      ]
+    ],
+    'interact' => [
+      'start' => ['redirect'],
+      'finish' => [
+        'method' => 'redirect',
+        'uri' => 'https://paymentplatform.example/finish/{...}', // where to redirect the customer after they've completed interaction
+        'nonce' => 'NONCE'
+      ]
+    ]
+  ]
+);
+```
+
+  </TabItem>
+
   <TabItem label='Go' icon='seti:go'>
-  
+
   ```go wrap
   combinedQuoteAmount := "10000" // merchantQuote.DebitAmount.Value + platformQuote.DebitAmount.Value
   limits := as.LimitsOutgoing{}
@@ -713,8 +895,23 @@ Incluya la `interact_ref` devuelta en los parámetros de consulta del URI de red
  ```
  </TabItem>
 
+ <TabItem label='PHP' icon='seti:php'>
+
+```php wrap
+$customerOutgoingPaymentGrant = $client->grant()->continue(
+  [
+    'url' => $pendingCustomerOutgoingPaymentGrant->continue->uri,
+    'accessToken' => $pendingCustomerOutgoingPaymentGrant->continue->access_token->value
+  ],
+  [
+    'interact_ref' => $interactRef
+  ]
+);
+```
+ </TabItem>
+
  <TabItem label='Go' icon='seti:go'>
-  
+
   ```go wrap
   customerOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
     URL:         pendingCustomerOutgoingPaymentGrant.Continue.Uri,
@@ -739,9 +936,10 @@ Utilice los tókenes de acceso devueltos en el paso 5 para llamar a la <Badge te
 El propósito de estas llamadas consiste en solicitar la creación de un recurso de pago saliente en la cuenta de la billetera del consumidor: uno para el comerciante y otro para su plataforma. Incluya el `quoteId` correspondiente en cada solicitud.
 
 <Tabs syncKey="lang">
-<TabItem label='Merchant' icon='seti:javascript'>
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
   ```ts wrap
-  const customerOutgoingPayment = await client.outgoingPayment.create(
+  // Merchant
+  const customerOutgoingPaymentToMerchant = await client.outgoingPayment.create(
     {
       url: customerWalletAddress.resourceServer,
       accessToken: customerOutgoingPaymentGrant.access_token.value
@@ -751,11 +949,8 @@ El propósito de estas llamadas consiste en solicitar la creación de un recurso
       quoteId: merchantQuote.id
     }
   )
-  ```
-</TabItem>
-<TabItem label='Platform' icon='seti:javascript'>
-  ```ts wrap
-  const customerOutgoingPayment = await client.outgoingPayment.create(
+  // Platform
+  const customerOutgoingPaymentToPlatform = await client.outgoingPayment.create(
     {
       url: customerWalletAddress.resourceServer,
       accessToken: customerOutgoingPaymentGrant.access_token.value
@@ -795,8 +990,37 @@ El propósito de estas llamadas consiste en solicitar la creación de un recurso
  ```
  </TabItem>
 
+  <TabItem label='PHP' icon='seti:php'>
+
+```php wrap
+// Merchant
+$customerOutgoingPaymentToMerchant = $client->outgoingPayment()->create(
+  [
+    'url' => $customerWalletAddress->resourceServer,
+    'accessToken' => $customerOutgoingPaymentGrant->access_token->value
+  ],
+  [
+    'walletAddress' => $customerWalletAddress->id,
+    'quoteId' => $merchantQuote->id
+  ]
+);
+// Platform
+$customerOutgoingPaymentToPlatform = $client->outgoingPayment()->create(
+  [
+    'url' => $customerWalletAddress->resourceServer,
+    'accessToken' => $customerOutgoingPaymentGrant->access_token->value
+  ],
+  [
+    'walletAddress' => $customerWalletAddress->id,
+    'quoteId' => $platformQuote->id
+  ]
+);
+```
+
+  </TabItem>
+
   <TabItem label='Go' icon='seti:go'>
-  
+
   ```go wrap
   // Merchant
   var merchantOutgoingPayload rs.CreateOutgoingPaymentRequest
@@ -833,3 +1057,4 @@ El propósito de estas llamadas consiste en solicitar la creación de un recurso
   ```
   </TabItem>
 </Tabs>
+````

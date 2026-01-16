@@ -8,7 +8,6 @@ import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
 import TsImport from '/src/partials/ts-import-initialize.mdx'
-import PhpImport from '/src/partials/php-import-initialize.mdx'
 
 After one or more incoming payments are created on a wallet address, an authorized client can look up active and pending incoming payments on that wallet address.
 
@@ -88,23 +87,43 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 </p>
 
 </TabItem>
-<TabItem label="PHP" icon='seti:php'>
+<TabItem label='PHP' icon='seti:php'>
 <LinkButton href="https://github.com/interledger/open-payments-php-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-<PhpImport />
+```php
+// Import dependencies
+use OpenPayments\AuthClient;
+use OpenPayments\Config\Config;
 
-<ChunkedSnippet
-  source="https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/IncomingPayment/IncomingPaymentList.php"
-  chunk="3"
-/>
-<ChunkedSnippet
-  source="https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/IncomingPayment/IncomingPaymentList.php"
-  chunk="4"
-/>
-<ChunkedSnippet
-  source="https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/IncomingPayment/IncomingPaymentList.php"
-  chunk="5"
-/>
+// Initialize Open Payments client
+$config = new Config(
+    $WALLET_ADDRESS,
+    $PRIVATE_KEY,
+    $KEY_ID
+);
+$opClient = new AuthClient($config);
+
+// Get wallet address
+$wallet = $opClient->walletAddress()->get([
+    'url' => $config->getWalletAddressUrl()
+]);
+
+// List incoming payments
+$incomingPaymentsList = $opClient->incomingPayment()->list(
+    [
+        'url' => $wallet->resourceServer,
+        'access_token' => $INCOMING_PAYMENT_GRANT_ACCESS_TOKEN
+    ],
+    [
+        'wallet-address' => $config->getWalletAddressUrl(),
+        'first' => 10,
+        'start'=> '96d964f0-3421-4df0-bb04-cb8d653bc571'
+    ]
+);
+
+// Output
+echo 'INCOMING PAYMENTS ' . PHP_EOL . print_r($incomingPaymentsList, true);
+```
 
 <p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/IncomingPayment/IncomingPaymentList.php'>View full source</LinkOut></p>
 </TabItem>
