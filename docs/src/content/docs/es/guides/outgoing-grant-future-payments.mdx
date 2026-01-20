@@ -89,7 +89,7 @@ El usuario indica que desea realizar pagos de hasta CAD 100 por mes durante tres
   ```ts
   const grant = await client.grant.request(
     {
-      url: userWalletAddress.authServer,
+      url: userWalletAddress.authServer
     },
     {
       access_token: {
@@ -99,26 +99,26 @@ El usuario indica que desea realizar pagos de hasta CAD 100 por mes durante tres
             type: 'outgoing-payment',
             actions: ['read', 'create'],
             limits: {
-              interval: 'R3/2025-05-20T13:00:00Z/P1M'
+              interval: 'R3/2025-05-20T13:00:00Z/P1M',
               debitAmount: {
                 assetCode: 'CAD',
                 assetScale: 2,
-                value: '10000',
-              },
-            },
-          },
-        ],
+                value: '10000'
+              }
+            }
+          }
+        ]
       },
       client: userWalletAddress.id,
       interact: {
         start: ['redirect'],
         finish: {
           method: 'redirect',
-          uri: 'https://cloudninebank.example.com/finish/T8jw5Xy',
-          nonce: NONCE,
-        },
-      },
-    },
+          uri: 'https://paymentplatform.example/finish/{...}', // where to redirect the user to after they've completed the interaction
+          nonce: NONCE
+        }
+      }
+    }
   );
   ```
 </TabItem>
@@ -235,14 +235,14 @@ Agregue la `interact_ref` devuelta en los parámetros de consulta del URI de red
 <Tabs syncKey='lang'>
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
   ```ts wrap
-  const grant = await client.grant.continue(
+  const userOutgoingPaymentGrant = await client.grant.continue(
     {
-      accessToken: CONTINUE_ACCESS_TOKEN,
-      url: CONTINUE_URI,
+      accessToken: pendingUserOutgoingPaymentGrant.continue.access_token.value,
+      url: pendingUserOutgoingPaymentGrant.continue.uri
     },
     {
-      interact_ref: INTERACT_REF,
-    },
+      interact_ref: interactRef
+    }
   );
   ```
   </TabItem>
@@ -282,3 +282,7 @@ Agregue la `interact_ref` devuelta en los parámetros de consulta del URI de red
 </Tabs>
 
 Una respuesta exitosa proporciona a su aplicación un token de acceso. Ahora su aplicación puede emitir solicitudes de pago saliente hacia destinatarios futuros en función de la concesión. Cada solicitud debe hacer referencia al token de acceso.
+
+:::note[Expiración del token de acceso]
+Si una solicitud de pago saliente falla porque el token de acceso de la concesión ha expirado, puede llamar a la <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/auth-server/operations/post-token/), luego utilice el nuevo token en la solicitud de pago saliente.
+:::

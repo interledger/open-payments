@@ -159,10 +159,10 @@ Esta llamada obtiene un token de acceso que permite a su aplicación solicitar l
           {
             type: 'incoming-payment',
             actions: ['create']
-          },
-        ],
-      },
-    },
+          }
+        ]
+      }
+    }
   );
   ```
   </TabItem>
@@ -251,8 +251,8 @@ Esta llamada solicita la creación de un recurso de pago entrante en la cuenta d
       accessToken: recipientIncomingPaymentGrant.access_token.value
     },
     {
-      walletAddress: recipientWalletAddress.id,
-    },
+      walletAddress: recipientWalletAddress.id
+    }
   )
   ```
   </TabItem>
@@ -464,14 +464,14 @@ method: QuoteMethod::Ilp,
 wallet_address: Some(sender_wallet_address.id.clone()),
 receiver: Some(recipient_incoming_payment.id.clone()),
 debit_amount: None,
-receive_amount: Some(Amount { value: "500000".into(), asset_code: "MXN".into(), asset_scale: 2 }),
+receive_amount: Some(Amount { value: "500000".into(), asset_code: "MXN".into(), asset_scale: 2 })
 };
 let sender_quote = client
 .quotes()
 .create(
 &sender_wallet_address.resource_server,
 &quote_request,
-Some(&sender_quote_grant.access_token.value),
+Some(&sender_quote_grant.access_token.value)
 )
 .await?;
 
@@ -492,9 +492,9 @@ Some(&sender_quote_grant.access_token.value),
   		ReceiveAmount: rs.Amount{
   			Value:      "500000",
   			AssetCode:  "MXN",
-  			AssetScale: 2,
-  		},
-  	},
+  			AssetScale: 2
+  		}
+  	}
   })
   if err != nil {
   	log.Fatalf("Error creating quote: %v\n", err)
@@ -862,7 +862,7 @@ if err != nil {
   </TabItem>
 </Tabs>
 
-Si la solicitud falla porque la cotización expiró, [solicite una nueva](#5-solicitar-la-creación-de-un-recurso-de-cotización) e intente otra vez. Si falla porque el token de acceso de la concesión de autorización ha expirado, llame a <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/auth-server/operations/post-token/) para obtener un nuevo token de acceso y, luego, vuelva a probar la solicitud con el nuevo token.
+Si la solicitud falla porque la cotización expiró, [solicite una nueva](#5-solicitar-la-creación-de-un-recurso-de-cotización) e intente otra vez.
 
 <details>
 <summary>Ejemplo de respuesta</summary>
@@ -891,4 +891,7 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del remite
 }
 ```
 </details>
-````
+
+:::note[Expiración del token de acceso]
+Si el token de acceso de una concesión ha expirado, llame a la <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/auth-server/operations/post-token/), luego utilice el nuevo token en la solicitud correspondiente.
+:::

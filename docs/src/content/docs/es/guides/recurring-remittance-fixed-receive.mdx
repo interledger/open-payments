@@ -169,7 +169,7 @@ Los pagos salientes requieren una concesión de autorización interactiva, que e
               receiveAmount: {
                 assetCode: 'MXN',
                 assetScale: 2,
-                value: '400000', 
+                value: '400000'
               }
             }
           }
@@ -384,11 +384,11 @@ Esta llamada obtiene un token de acceso que permite a su aplicación solicitar l
         access: [
           {
             type: 'incoming-payment',
-            actions: ['create'],
-          },
-        ],
-      },
-    },
+            actions: ['create']
+          }
+        ]
+      }
+    }
   );
   ```
   </TabItem>
@@ -461,8 +461,8 @@ Esta llamada solicita la creación de un recurso de pago entrante en la cuenta d
       accessToken: recipientIncomingPaymentGrant.access_token.value
     },
     {
-      walletAddress: recipientWalletAddress.id,
-    },
+      walletAddress: recipientWalletAddress.id
+    }
   )
   ```
   </TabItem>
@@ -694,7 +694,7 @@ Utilice el token de acceso devuelto en la continuación de la concesión de auto
     },
     {
       walletAddress: senderWalletAddress.id,
-      quoteId: senderQuote.id,
+      quoteId: senderQuote.id
     }
   )
   ```
