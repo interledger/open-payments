@@ -148,11 +148,11 @@ This call obtains an access token that allows you to request that an incoming pa
         access: [
           {
             type: "incoming-payment",
-            actions: ["create"],
-          },
-        ],
-      },
-    },
+            actions: ["create"]
+          }
+        ]
+      }
+    }
   );
 ```
 </TabItem>
@@ -232,8 +232,8 @@ This call requests an incoming payment resource be created on the service provid
         value: '1500',  // The amount the service provider expects to receive in the first payment
         assetCode: 'USD',
         assetScale: 2
-      },
-    },
+      }
+    }
   )
 ```
 </TabItem>
@@ -395,7 +395,7 @@ The request must contain the `receiver`, which is the `id` of the service provid
     {
       method: 'ilp',
       walletAddress: customerWalletAddress.id,
-      receiver: serviceProviderIncomingPayment.id,
+      receiver: serviceProviderIncomingPayment.id
     }
   )
 ```
@@ -486,7 +486,7 @@ For recurring payments, include the `interval` property to specify how often the
               debitAmount: {
                 assetCode: 'USD',
                 assetScale: 2,
-                value: '1500',
+                value: '1500'
               },
               interval: 'R12/2025-10-14T00:03:00Z/P1M'
             }

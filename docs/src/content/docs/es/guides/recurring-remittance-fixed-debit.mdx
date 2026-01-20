@@ -105,7 +105,7 @@ if err != nil {
 </Tabs>
 
 <details>
-<summary>Respuestas de ejemplo</summary>
+<summary>Ejemplo de respuesta</summary>
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente. 
 ```json wrap
 {
@@ -148,11 +148,11 @@ Esta llamada obtiene un token de acceso que permite a su aplicación solicitar l
         access: [
           {
             type: 'incoming-payment',
-            actions: ['create'],
-          },
-        ],
-      },
-    },
+            actions: ['create']
+          }
+        ]
+      }
+    }
   );
   ```
   </TabItem>
@@ -225,8 +225,8 @@ Esta llamada solicita la creación de un recurso de pago entrante en la cuenta d
       accessToken: recipientIncomingPaymentGrant.access_token.value
     },
     {
-      walletAddress: recipientWalletAddress.id,
-    },
+      walletAddress: recipientWalletAddress.id
+    }
   )
   ```
   </TabItem>
@@ -426,7 +426,7 @@ En total, esta concesión de autorización permitirá al remitente realizar pago
 
 En nuestro ejemplo, suponemos que el IdP con el que interactuó su usuario (el remitente) cuenta con una interfaz de usuario. Cuando la interacción finaliza, el usuario regresa a su aplicación. Ahora su aplicación puede realizar una solicitud de continuación de la concesión de autorización de pago saliente.
 
-:::Nota
+:::note
 En una situación hipotética donde una interfaz de usuario no se encuentra disponible, analice la posibilidad de implementar un mecanismo de sondeo para verificar que se haya completado la interacción.
 :::
 
@@ -518,7 +518,7 @@ Utilice el token de acceso devuelto en la continuación de la concesión de auto
         assetCode: 'USD',
         assetScale: 2,
         value: '20000'
-      },
+      }
     }
   )
   ```

@@ -168,7 +168,7 @@ Outgoing payments require an interactive grant, which the sender approves once. 
               receiveAmount: {
                 assetCode: 'MXN',
                 assetScale: 2,
-                value: '400000', 
+                value: '400000'
               }
             }
           }
@@ -379,11 +379,11 @@ This call obtains an access token that allows your app to request an incoming pa
         access: [
           {
             type: 'incoming-payment',
-            actions: ['create'],
-          },
-        ],
-      },
-    },
+            actions: ['create']
+          }
+        ]
+      }
+    }
   );
   ```
   </TabItem>
@@ -455,8 +455,8 @@ This call requests an incoming payment resource be created on the recipient's wa
       accessToken: recipientIncomingPaymentGrant.access_token.value
     },
     {
-      walletAddress: recipientWalletAddress.id,
-    },
+      walletAddress: recipientWalletAddress.id
+    }
   )
   ```
   </TabItem>
@@ -682,7 +682,7 @@ Use the access token returned in the outgoing payment grant continuation respons
     },
     {
       walletAddress: senderWalletAddress.id,
-      quoteId: senderQuote.id,
+      quoteId: senderQuote.id
     }
   )
   ```

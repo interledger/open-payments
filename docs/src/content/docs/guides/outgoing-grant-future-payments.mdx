@@ -102,7 +102,7 @@ Remember, your user wants to send payments of up to $100 CAD a month for three m
   ```ts
   const grant = await client.grant.request(
     {
-      url: userWalletAddress.authServer,
+      url: userWalletAddress.authServer
     },
     {
       access_token: {
@@ -112,15 +112,15 @@ Remember, your user wants to send payments of up to $100 CAD a month for three m
             type: 'outgoing-payment',
             actions: ['read', 'create'],
             limits: {
-              interval: 'R3/2025-05-20T13:00:00Z/P1M'
+              interval: 'R3/2025-05-20T13:00:00Z/P1M',
               debitAmount: {
                 assetCode: 'CAD',
                 assetScale: 2,
-                value: '10000',
-              },
-            },
-          },
-        ],
+                value: '10000'
+              }
+            }
+          }
+        ]
       },
       client: userWalletAddress.id,
       interact: {
@@ -128,10 +128,10 @@ Remember, your user wants to send payments of up to $100 CAD a month for three m
         finish: {
           method: 'redirect',
           uri: 'https://paymentplatform.example/finish/{...}', // where to redirect the user to after they've completed the interaction
-          nonce: NONCE,
-        },
-      },
-    },
+          nonce: NONCE
+        }
+      }
+    }
   );
   ```
  </TabItem>
@@ -273,12 +273,12 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
   ```ts wrap
   const userOutgoingPaymentGrant = await client.grant.continue(
     {
-      accessToken: pendingUserOutgoingPaymentGrant.continue.acces_token.value,
-      url: pendingUserOutgoingPaymentGrant.continue.uri,
+      accessToken: pendingUserOutgoingPaymentGrant.continue.access_token.value,
+      url: pendingUserOutgoingPaymentGrant.continue.uri
     },
     {
-      interact_ref: interactRef,
-    },
+      interact_ref: interactRef
+    }
   );
   ```
   </TabItem>
@@ -330,7 +330,7 @@ A successful response provides your app with an access token. Now your app can i
         {
           "type": "outgoing-payment",
           "actions": ["create", "read"],
-          "identifier": "https://cloudninebank.example.com/user",
+          "identifier": "https://cloudninebank.example.com/user"
         }
       ]
     },

@@ -145,11 +145,11 @@ If you and the merchant use the same account servicing entity, and as a result, 
         access: [
           {
             type: "incoming-payment",
-            actions: ["create"],
-          },
-        ],
-      },
-    },
+            actions: ["create"]
+          }
+        ]
+      }
+    }
   );
   // Platform
   const platformIncomingPaymentGrant = await client.grant.request(
@@ -161,11 +161,11 @@ If you and the merchant use the same account servicing entity, and as a result, 
         access: [
           {
             type: "incoming-payment",
-            actions: ["create"],
-          },
-        ],
-      },
-    },
+            actions: ["create"]
+          }
+        ]
+      }
+    }
   );
   ```
  </TabItem>
@@ -275,8 +275,8 @@ Remember that the merchant is receiving 99% of the payment (\$99.00 or `9900`) w
         value: '9900',
         assetCode: 'USD',
         assetScale: 2
-      },
-    },
+      }
+    }
   )
   // Platform
   const platformIncomingPayment = await client.incomingPayment.create(
@@ -290,8 +290,8 @@ Remember that the merchant is receiving 99% of the payment (\$99.00 or `9900`) w
         value: '100',
         assetCode: 'USD',
         assetScale: 2
-      },
-    },
+      }
+    }
   )
 ```
 </TabItem>
@@ -648,7 +648,7 @@ This call obtains an access token that allows your platform to request outgoing 
               debitAmount: {
                 assetCode: 'USD',
                 assetScale: 2,
-                value: combinedQuoteAmount,
+                value: combinedQuoteAmount
               }
             }
           }

@@ -111,7 +111,7 @@ if err != nil {
  </TabItem>
 </Tabs>
 <details>
-<summary>Respuestas de ejemplo</summary>
+<summary>Ejemplo de respuesta</summary>
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
 ```json wrap
 {
@@ -154,19 +154,19 @@ Esta llamada obtiene un token de acceso que permite a su aplicación solicitar l
         access: [
           {
             type: "incoming-payment",
-            actions: ["create"],
-          },
-        ],
-      },
-    },
-  );
+            actions: ["create"]
+          }
+        ]
+      }
+    }
+  )
 ````
  </TabItem>
  <TabItem label='Rust' icon='seti:rust'>
  ```rust wrap
  use open_payments::types::{AccessTokenRequest, AccessItem, IncomingPaymentAction, GrantRequest};
  let incoming_access = AccessTokenRequest {
-   access: vec![AccessItem::IncomingPayment { actions: vec![IncomingPaymentAction::Create, IncomingPaymentAction::Complete], identifier: None }],
+   access: vec![AccessItem::IncomingPayment { actions: vec![IncomingPaymentAction::Create, IncomingPaymentAction::Complete], identifier: None }]
  };
  let incoming_grant_request = GrantRequest::new(incoming_access, None);
  let recipient_incoming_payment_grant = client
@@ -247,7 +247,7 @@ Esta llamada solicita la creación de un recurso de pago entrante en la cuenta d
     },
     {
       walletAddress: recipientWalletAddress.id
-    },
+    }
   )
 ```
  </TabItem>
@@ -549,7 +549,7 @@ Los pagos salientes requieren una concesión de autorización interactiva. Este 
               debitAmount: {
                 assetCode: 'USD',
                 assetScale: 2,
-                value: '10000', 
+                value: '10000'
               }
             }
           }
@@ -873,3 +873,7 @@ El siguiente ejemplo muestra una respuesta cuando se crea un recurso de pago sal
 ```
 
 </details>
+
+:::note[Expiración del token de acceso]
+Si el token de acceso de una concesión ha expirado, llame a la <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/auth-server/operations/post-token/), luego utilice el nuevo token en la solicitud correspondiente.
+:::

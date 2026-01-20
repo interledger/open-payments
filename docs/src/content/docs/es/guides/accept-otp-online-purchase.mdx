@@ -136,12 +136,12 @@ Esta llamada obtiene un token de acceso que permite a la aplicación cliente sol
         access: [
           {
             type: 'incoming-payment',
-            actions: ['create'],
-          },
-        ],
-      },
-    },
-  );
+            actions: ['create']
+          }
+        ]
+      }
+    }
+  )
   ```
   </TabItem>
   <TabItem label='Rust' icon='seti:rust'>
@@ -228,7 +228,7 @@ Recuerde que el monto total de la compra del cliente es de MXN 1400.
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
   ```ts wrap
-  const retailerIncomingPayment = await.client.incomingPayment.create(
+  const retailerIncomingPayment = await client.incomingPayment.create(
     {
       url: retailerWalletAddress.resourceServer,
       accessToken: retailerIncomingPaymentGrant.access_token.value
@@ -239,8 +239,8 @@ Recuerde que el monto total de la compra del cliente es de MXN 1400.
         value: '140000',
         assetCode: 'MXN',
         assetScale: 2
-      },
-    },
+      }
+    }
   )
   ```
   </TabItem>
@@ -546,7 +546,7 @@ Los pagos salientes requieren una concesión de autorización interactiva. Este 
               debitAmount: {
                 assetCode: 'MXN',
                 assetScale: 2,
-                value: '140000',
+                value: '140000'
               }
             }
           }
@@ -864,3 +864,7 @@ El siguiente es un ejemplo de respuesta proveniente del proveedor de billetera d
 }
 ```
 </details>
+
+:::note[Expiración del token de acceso]
+Si el token de acceso de una concesión ha expirado, llame a la <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/auth-server/operations/post-token/), luego utilice el nuevo token en la solicitud correspondiente.
+:::

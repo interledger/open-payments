@@ -107,7 +107,7 @@ if err != nil {
 </Tabs>
 
 <details>
-<summary>Respuestas de ejemplo</summary>
+<summary>Ejemplo de respuesta</summary>
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del cliente.
 ```json wrap
 {
@@ -148,11 +148,11 @@ Esta llamada obtiene un token de acceso que le permite solicitar la creación de
         access: [
           {
             type: "incoming-payment",
-            actions: ["create"],
-          },
-        ],
-      },
-    },
+            actions: ["create"]
+          }
+        ]
+      }
+    }
   );
 ```
 </TabItem>
@@ -232,8 +232,8 @@ Esta llamada solicita la creación de un recurso de pago entrante en la cuenta d
         value: '1500',  // The amount the service provider expects to receive in the first payment
         assetCode: 'USD',
         assetScale: 2
-      },
-    },
+      }
+    }
   )
 ```
 </TabItem>
@@ -394,7 +394,7 @@ La solicitud debe contener el `receiver`, que es la `id` del pago entrante del p
     {
       method: 'ilp',
       walletAddress: customerWalletAddress.id,
-      receiver: serviceProviderIncomingPayment.id,
+      receiver: serviceProviderIncomingPayment.id
     }
   )
 ```
@@ -485,7 +485,7 @@ Para los pagos recurrentes, incluya la propiedad `interval` para especificar la 
               debitAmount: {
                 assetCode: 'USD',
                 assetScale: 2,
-                value: '1500',
+                value: '1500'
               },
               interval: 'R12/2025-10-14T00:03:00Z/P1M'
             }
