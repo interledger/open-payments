@@ -67,6 +67,19 @@ Supongamos que su usuario guardó su dirección de billetera en el perfil de su 
 </TabItem>
 </Tabs>
 
+<details>
+  <summary>Ejemplo de respuesta</summary>
+  ```json wrap
+  {
+    "id": "https://cloudninebank.example.com/user",
+    "assetCode": "CAD",
+    "assetScale": 2,
+    "authServer": "https://auth.cloudninebank.example.com/",
+    "resourceServer": "https://cloudninebank.example.com/op"
+  }
+  ```
+</details>
+
 ### 2. Solicitar una concesión de autorización interactiva para un pago saliente
 
 Utilice la información del servidor de autorización recibida en el paso anterior para llamar a la [Grant Request API](/es/apis/auth-server/operations/post-request). El propósito de esta llamada consiste en obtener un token que permita que el cliente solicite la creación de recursos de pago saliente en la cuenta de la billetera de su usuario.
@@ -199,6 +212,25 @@ if err != nil {
 </TabItem>
 </Tabs>
 
+<details>
+  <summary>Ejemplo de respuesta</summary>
+```json wrap
+{
+  "interact": {
+    "redirect": "https://auth.cloudninebank.example.com/{...}", // uri to redirect the user to, to begin interaction
+    "finish": "..." // unique key to secure the callback
+  },
+  "continue": {
+    "access_token": {
+      "value": "..." // access token for continuing the outgoing payment grant request
+    },
+    "uri": "https://auth.cloudninebank.example.com/continue/{...}", // uri for continuing the outgoing payment grant request
+    "wait": 30
+  }
+}
+```
+</details>
+
 #### Acerca del intervalo
 
 El intervalo que se emplea en esta guía es `R3/2025-05-20T13:00:00Z/P1M`. Recuerde que el usuario desea enviar pagos de hasta CAD 100 por mes durante tres meses. El intervalo se desglosa del siguiente modo:
@@ -282,6 +314,31 @@ Agregue la `interact_ref` devuelta en los parámetros de consulta del URI de red
 </Tabs>
 
 Una respuesta exitosa proporciona a su aplicación un token de acceso. Ahora su aplicación puede emitir solicitudes de pago saliente hacia destinatarios futuros en función de la concesión. Cada solicitud debe hacer referencia al token de acceso.
+
+<details>
+  <summary>Ejemplo de respuesta</summary>
+  ```json wrap
+  {
+    "access_token": {
+      "value": "...", // final access token required before creating outgoing payments
+      "manage": "https://auth.cloudninebank.example.com/token/{...}", // management uri for access token
+      "access": [
+        {
+          "type": "outgoing-payment",
+          "actions": ["create", "read"],
+          "identifier": "https://cloudninebank.example.com/user"
+        }
+      ]
+    },
+    "continue": {
+      "access_token": {
+        "value": "..." // access token for continuing the request
+      },
+      "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
+    }
+  }
+  ```
+</details>
 
 :::note[Expiración del token de acceso]
 Si una solicitud de pago saliente falla porque el token de acceso de la concesión ha expirado, puede llamar a la <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/auth-server/operations/post-token/), luego utilice el nuevo token en la solicitud de pago saliente.
