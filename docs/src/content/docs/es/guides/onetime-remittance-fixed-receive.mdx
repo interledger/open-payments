@@ -194,9 +194,9 @@ let recipient_incoming_payment_grant = client
 .await?;
 
 ````
-  </TabItem>
+</TabItem>
 
-  <TabItem label='PHP' icon='seti:php'>
+<TabItem label='PHP' icon='seti:php'>
 
 ```php wrap
 $recipientIncomingPaymentGrant = $client->grant()->request(
@@ -216,33 +216,33 @@ $recipientIncomingPaymentGrant = $client->grant()->request(
 );
   ```
 
-  </TabItem>
+</TabItem>
 
-  <TabItem label='Go' icon='seti:go'>
+<TabItem label='Go' icon='seti:go'>
 
-  ```go wrap
-    incomingAccess := as.AccessIncoming{
-      Type:    as.IncomingPayment,
-      Actions: []as.AccessIncomingActions{as.AccessIncomingActionsCreate},
-    }
-    accessItem := as.AccessItem{}
-    if err := accessItem.FromAccessIncoming(incomingAccess); err != nil {
-      log.Fatalf("Error creating AccessItem: %v\n", err)
-    }
-    accessToken := struct {
-      Access as.Access `json:"access"`
-    }{
-      Access: []as.AccessItem{accessItem},
-    }
+```go wrap
+  incomingAccess := as.AccessIncoming{
+    Type:    as.IncomingPayment,
+    Actions: []as.AccessIncomingActions{as.AccessIncomingActionsCreate},
+  }
+  accessItem := as.AccessItem{}
+  if err := accessItem.FromAccessIncoming(incomingAccess); err != nil {
+    log.Fatalf("Error creating AccessItem: %v\n", err)
+  }
+  accessToken := struct {
+    Access as.Access `json:"access"`
+  }{
+    Access: []as.AccessItem{accessItem},
+  }
 
-    recipientIncomingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
-      URL:         *recipientWalletAddress.AuthServer,
-      RequestBody: as.GrantRequestWithAccessToken{AccessToken: accessToken},
-    })
-    if err != nil {
-      log.Fatalf("Error requesting incoming payment grant: %v\n", err)
-    }
-  ```
+  recipientIncomingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
+    URL:         *recipientWalletAddress.AuthServer,
+    RequestBody: as.GrantRequestWithAccessToken{AccessToken: accessToken},
+  })
+  if err != nil {
+    log.Fatalf("Error requesting incoming payment grant: %v\n", err)
+  }
+````
 
   </TabItem>
 </Tabs>
@@ -315,7 +315,7 @@ Some(&recipient_incoming_payment_grant.access_token.value),
 
 </TabItem>
 
-  <TabItem label='PHP' icon='seti:php'>
+<TabItem label='PHP' icon='seti:php'>
 
 ```php wrap
 $recipientIncomingPayment = $client->incomingPayment()->create(
@@ -327,7 +327,7 @@ $recipientIncomingPayment = $client->incomingPayment()->create(
     'walletAddress' => $recipientWalletAddress->id,
   ]
 );
-```
+````
 
   </TabItem>
 
@@ -438,7 +438,7 @@ let sender_quote_grant = client
       ]
     ]
   );
-  ```
+````
 
 </TabItem>
 
@@ -494,7 +494,7 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del remite
   }
 }
 
-```
+````
 
 </details>
 
@@ -525,7 +525,7 @@ El `receiveAmount` especifica que el destinatario recibirá exactamente MXN 5000
       }
     }
   )
-```
+````
 
   </TabItem>
   <TabItem label='Rust' icon='seti:rust'>
@@ -548,7 +548,7 @@ Some(&sender_quote_grant.access_token.value),
 )
 .await?;
 
-```
+````
 
 </TabItem>
 
@@ -571,7 +571,7 @@ $senderQuote = $client->quote()->create(
     ]
   ]
 );
-```
+````
 
 </TabItem>
 
@@ -723,7 +723,7 @@ let pending_sender_outgoing_payment_grant = client
 .request(&sender_wallet_address.auth_server, &outgoing_grant_request)
 .await?;
 
-```
+````
 
 </TabItem>
 
@@ -761,7 +761,7 @@ $pendingSenderOutgoingPaymentGrant = $client->grant()->request(
     ]
   ]
 );
-```
+````
 
 </TabItem>
 
@@ -1060,4 +1060,3 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del remite
 }
 ```
 </details>
-````
