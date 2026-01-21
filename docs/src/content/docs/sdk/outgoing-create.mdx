@@ -10,7 +10,6 @@ import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
 import TsImport from '/src/partials/ts-import-initialize.mdx'
-import PhpImport from '/src/partials/php-import-initialize.mdx'
 
 After a quote is accepted and the authorized client obtains the requisite grant from the authorization server of the sender's <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip>, the client can create an outgoing payment resource against the sender's wallet address.
 
@@ -96,29 +95,83 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 </p>
 
 </TabItem>
-<TabItem label="PHP" icon='seti:php'>
+<TabItem label='PHP' icon='seti:php'>
 <LinkButton href="https://github.com/interledger/open-payments-php-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-<PhpImport />
+```php
+// Import dependencies
+use OpenPayments\AuthClient;
+use OpenPayments\Config\Config;
 
-#### Without amount
+// Initialize Open Payments client
+$config = new Config(
+    $WALLET_ADDRESS,
+    $PRIVATE_KEY,
+    $KEY_ID
+);
+$opClient = new AuthClient($config);
+```
 
-<ChunkedSnippet
-  source="https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/OutgoingPayment/OutgoingPaymentCreate.php"
-  chunk="3"
-/>
+#### With quote
 
-#### With amount
+```php
+// Create outgoing payment without amount
+$newOutgoingPayment = $opClient->outgoingPayment()->create(
+    [
+        'url' => $wallet->resourceServer,
+        'access_token' => $OUTGOING_PAYMENT_GRANT_ACCESS_TOKEN
+    ],
+    [
+        'walletAddress' => $config->getWalletAddressUrl(),
+        'quoteId' => $QUOTE_URL,
+        'metadata' => [
+            'description' => 'Test outgoing payment',
+            'reference' => '1234567890',
+            'invoiceId' => '1234567890',
+            'customData' => [
+                'key1' => 'value1',
+                'key2' => 'value2'
+            ]
+        ],
+    ]
+);
+```
 
-<ChunkedSnippet
-  source="https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/OutgoingPayment/OutgoingPaymentCreateAmount.php"
-  chunk="3"
-/>
+#### With incoming payment
 
-<ChunkedSnippet
-  source="https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/OutgoingPayment/OutgoingPaymentCreate.php"
-  chunk="4"
-/>
+```php
+// Create outgoing payment with amount
+$newOutgoingPayment = $opClient->outgoingPayment()->create(
+    [
+        'url' => $wallet->resourceServer,
+        'access_token' => $OUTGOING_PAYMENT_GRANT_ACCESS_TOKEN
+    ],
+    [
+        'walletAddress' => $config->getWalletAddressUrl(),
+        'incomingPayment' => $INCOMING_PAYMENT_URL,
+        'debitAmount' => [
+            'value' => '9',
+            'assetCode' => 'USD',
+            'assetScale' => 2
+        ],
+        'metadata' => [
+            'description' => 'Test outgoing payment',
+            'reference' => '1234567890',
+            'invoiceId' => '1234567890',
+            'customData' => [
+                'key1' => 'value1',
+                'key2' => 'value2'
+            ]
+        ],
+    ]
+);
+```
+
+```php
+// Output
+echo 'OUTGOING_PAYMENT_URL: '.$newOutgoingPayment->id . PHP_EOL;
+echo 'OUTGOING_PAYMENT OBJECT: ' . PHP_EOL . print_r($newOutgoingPayment, true) . PHP_EOL;
+```
 
 <p>
   <LinkOut href="https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/OutgoingPayment/OutgoingPaymentCreate.php">

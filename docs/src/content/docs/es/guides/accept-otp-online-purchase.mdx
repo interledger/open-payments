@@ -82,6 +82,20 @@ Llame a la <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wa
   ```
 
   </TabItem>
+
+  <TabItem label='PHP' icon='seti:php'>
+
+```php wrap
+$customerWalletAddress = $client->walletAddress()->get([
+  'url' => 'https://cloudninebank.example.com/customer'
+]);
+$retailerWalletAddress = $client->walletAddress()->get([
+  'url' => 'https://happylifebank.example.com/retailer'
+]);
+```
+
+  </TabItem>
+
   <TabItem label='Go' icon='seti:go'>
 
 ```go wrap
@@ -159,6 +173,28 @@ let retailer_incoming_payment_grant = client
 .request(&retailer_wallet_address.auth_server, &incoming_grant_request)
 .await?;
 
+```
+
+</TabItem>
+
+<TabItem label='PHP' icon='seti:php'>
+
+```php wrap
+$retailerIncomingPaymentGrant = $client->grant()->request(
+  [
+    'url' => $retailerWalletAddress->authServer
+  ],
+  [
+    'access_token' => [
+      'access' => [
+        [
+          'type' => 'incoming-payment',
+          'actions' => ['create']
+        ]
+      ]
+    ]
+  ]
+);
 ```
 
 </TabItem>
@@ -269,6 +305,27 @@ Some(&retailer_incoming_payment_grant.access_token.value),
 
 </TabItem>
 
+<TabItem label='PHP' icon='seti:php'>
+
+```php wrap
+$retailerIncomingPayment = $client->incomingPayment()->create(
+  [
+    'url' => $retailerWalletAddress->resourceServer,
+    'accessToken' => $retailerIncomingPaymentGrant->access_token->value
+  ],
+  [
+    'walletAddress' => $retailerWalletAddress->id,
+    'incomingAmount' => [
+      'value' => '140000',
+      'assetCode' => 'MXN',
+      'assetScale' => 2
+    ]
+  ]
+);
+```
+
+</TabItem>
+
 <TabItem label='Go' icon='seti:go'>
 ```go wrap
 incomingPayment, err := client.IncomingPayment.Create(context.TODO(), op.IncomingPaymentCreateParams{
@@ -361,6 +418,28 @@ let customer_quote_grant = client
 .request(&customer_wallet_address.auth_server, &quote_grant_request)
 .await?;
 
+```
+
+</TabItem>
+
+<TabItem label='PHP' icon='seti:php'>
+
+```php wrap
+$customerQuoteGrant = $client->grant()->request(
+  [
+    'url' => $customerWalletAddress->authServer
+  ],
+  [
+    'access_token' => [
+      'access' => [
+        [
+          'type' => 'quote',
+          'actions' => ['create']
+        ]
+      ]
+    ]
+  ]
+);
 ```
 
 </TabItem>
@@ -465,6 +544,24 @@ Some(&customer_quote_grant.access_token.value),
 )
 .await?;
 
+```
+
+</TabItem>
+
+<TabItem label='PHP' icon='seti:php'>
+
+```php wrap
+$customerQuote = $client->quote()->create(
+  [
+    'url' => $customerWalletAddress->resourceServer,
+    'accessToken' => $customerQuoteGrant->access_token->value
+  ],
+  [
+    'method' => 'ilp',
+    'walletAddress' => $customerWalletAddress->id,
+    'receiver' => $retailerIncomingPayment->id
+  ]
+);
 ```
 
 </TabItem>
@@ -597,6 +694,45 @@ let pending_customer_outgoing_payment_grant = client
 ```
 
   </TabItem>
+
+  <TabItem label='PHP' icon='seti:php'>
+
+```php wrap
+$pendingCustomerOutgoingPaymentGrant = $client->grant()->request(
+  [
+    'url' => $customerWalletAddress->authServer
+  ],
+  [
+    'access_token' => [
+      'access' => [
+        [
+          'identifier' => $customerWalletAddress->id,
+          'type' => 'outgoing-payment',
+          'actions' => ['create'],
+          'limits' => [
+            'debitAmount' => [
+              'assetCode' => 'MXN',
+              'assetScale' => 2,
+              'value' => '140000'
+            ]
+          ]
+        ]
+      ]
+    ],
+    'interact' => [
+      'start' => ['redirect'],
+      'finish' => [
+        'method' => 'redirect',
+        'uri' => 'https://paymentplatform.example/finish/{...}', // where to redirect the customer after they've completed the interaction
+        'nonce' => 'NONCE'
+      ]
+    ]
+  ]
+);
+```
+
+  </TabItem>
+
   <TabItem label='Go' icon='seti:go'>
 
 ```go wrap
@@ -727,6 +863,22 @@ Some(&continue_field.access_token.value),
 
 </TabItem>
 
+<TabItem label='PHP' icon='seti:php'>
+
+```php wrap
+$customerOutgoingPaymentGrant = $client->grant()->continue(
+  [
+    'url' => $pendingCustomerOutgoingPaymentGrant->continue->uri,
+    'accessToken' => $pendingCustomerOutgoingPaymentGrant->continue->access_token->value
+  ],
+  [
+    'interact_ref' => $interactRef
+  ]
+);
+```
+
+</TabItem>
+
 <TabItem label='Go' icon='seti:go'>
 
 ```go wrap
@@ -813,6 +965,24 @@ let customer_outgoing_payment_to_retailer = client
 ```
 
   </TabItem>
+
+  <TabItem label='PHP' icon='seti:php'>
+
+```php wrap
+$customerOutgoingPayment = $client->outgoingPayment()->create(
+  [
+    'url' => $customerWalletAddress->resourceServer,
+    'accessToken' => $customerOutgoingPaymentGrant->access_token->value
+  ],
+  [
+    'walletAddress' => $customerWalletAddress->id,
+    'quoteId' => $customerQuote->id
+  ]
+);
+```
+
+  </TabItem>
+
   <TabItem label='Go' icon='seti:go'>
 
 ```go

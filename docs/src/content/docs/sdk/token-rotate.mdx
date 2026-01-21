@@ -8,7 +8,6 @@ import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
 import TsImport from '/src/partials/ts-import-initialize.mdx'
-import PhpImport from '/src/partials/php-import-initialize.mdx'
 
 Rotating an access token consists of the authorization server issuing a new token in place of the existing token, with the same rights and properties as the original token. If, for example, an access token expires, an authorized client can request the token be rotated.
 
@@ -60,19 +59,34 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 </p>
 
 </TabItem>
-<TabItem label="PHP" icon='seti:php'>
+<TabItem label='PHP' icon='seti:php'>
 <LinkButton href="https://github.com/interledger/open-payments-php-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-<PhpImport />
+```php
+// Import dependencies
+use OpenPayments\AuthClient;
+use OpenPayments\Config\Config;
 
-<ChunkedSnippet
-  source="https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/Token/TokenRotate.php"
-  chunk="3"
-/>
-<ChunkedSnippet
-  source="https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/Token/TokenRotate.php"
-  chunk="4"
-/>
+// Initialize Open Payments client
+$config = new Config(
+    $WALLET_ADDRESS,
+    $PRIVATE_KEY,
+    $KEY_ID
+);
+$opClient = new AuthClient($config);
+
+// Revoke token
+$token = $opClient->token()->rotate(
+    [
+        'access_token' => $ACCESS_TOKEN,
+        'url' => $TOKEN_MANAGE_URL
+    ]
+);
+
+// Output
+echo 'ACCESS_TOKEN: ' . $token->value . PHP_EOL;
+echo 'MANAGE_URL: ' . $token->manage . PHP_EOL;
+```
 
 <p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Token/TokenRotate.php'>View full source</LinkOut></p>
 </TabItem>

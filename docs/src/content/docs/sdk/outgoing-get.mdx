@@ -8,7 +8,6 @@ import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
 import TsImport from '/src/partials/ts-import-initialize.mdx'
-import PhpImport from '/src/partials/php-import-initialize.mdx'
 
 An authorized client can look up the state of an outgoing payment on a wallet address. This is useful when a client must determine if an outgoing payment is still active and pending payment.
 
@@ -82,19 +81,33 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 </p>
 
 </TabItem>
-<TabItem label="PHP" icon='seti:php'>
+<TabItem label='PHP' icon='seti:php'>
 <LinkButton href="https://github.com/interledger/open-payments-php-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-<PhpImport />
+```php
+// Import dependencies
+use OpenPayments\AuthClient;
+use OpenPayments\Config\Config;
 
-<ChunkedSnippet
-  source="https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/OutgoingPayment/OutgoingPaymentGet.php"
-  chunk="3"
-/>
-<ChunkedSnippet
-  source="https://raw.githubusercontent.com/interledger/open-payments-php-snippets/refs/heads/main/src/Command/OutgoingPayment/OutgoingPaymentGet.php"
-  chunk="4"
-/>
+// Initialize Open Payments client
+$config = new Config(
+    $WALLET_ADDRESS,
+    $PRIVATE_KEY,
+    $KEY_ID
+);
+$opClient = new AuthClient($config);
+
+// Get outgoing payment
+$outgoingPayment = $opClient->outgoingPayment()->get(
+    [
+        'access_token' => $OUTGOING_PAYMENT_GRANT_ACCESS_TOKEN,
+        'url' => $OUTGOING_PAYMENT_URL
+    ]
+);
+
+// Output
+echo 'OUTGOING PAYMENT: ' . PHP_EOL . print_r($outgoingPayment, true);
+```
 
 <p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/OutgoingPayment/OutgoingPaymentGet.php'>View full source</LinkOut></p>
 </TabItem>
