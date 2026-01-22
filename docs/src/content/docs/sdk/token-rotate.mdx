@@ -159,7 +159,7 @@ func main() {
 
     // 5. Rotate grant request:
     // Auth server will be retrieved from [receiverWallet].
-    var rotatedGrant = this.client.rotateToken(receiverWallet, grantRequest.getToken());
+    var rotatedGrant = this.client.rotateToken(receiverWallet, grant.getAccess().getToken(), grantRequest);
 
     // 6. Logging:
     log.info("GRANT: {}", rotatedGrant);

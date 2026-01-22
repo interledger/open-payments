@@ -139,7 +139,7 @@ func main() {
 
     // 5. Revoke grant request:
     // Auth server will be retrieved from [receiverWallet].
-    this.client.revokeToken(receiverWallet, grantRequest.getToken());
+    this.client.revokeToken(receiverWallet, grant.getAccess().getToken(), grantRequest);
 
     // 6. Logging:
     log.info("REVOKED GRANT: {}", grantRequest);
