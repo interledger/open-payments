@@ -218,11 +218,11 @@ func main() {
     var finalizedOutgoingPayment = this.client.createFinalizePayment(finalized, senderWallet, quote);
 
     // 10. Retrieve the created outgoing payments (by walletAddress):
-    var outgoingPaymentsFetched = this.client.getOutgoingPayments(senderWallet.getId(), grantRequest);
+    var outgoingPaymentsFetched = this.client.getOutgoingPayments(senderWallet, senderWallet.getId(), grantRequest);
 
     // 11. Logging:
-    log.info("OUTGOING_PAYMENTS: {}", outgoingPaymentsFetched.size());
-    outgoingPaymentsFetched.forEach(p -> log.info("OUTGOING_PAYMENT: {}", p));
+    log.info("OUTGOING_PAYMENT_RESULT: {}", outgoingPaymentsFetched.getResult().size());
+    outgoingPaymentsFetched.getResult().forEach(p -> log.info("OUTGOING_PAYMENT: {}", p));
     ```
 
 </TabItem>

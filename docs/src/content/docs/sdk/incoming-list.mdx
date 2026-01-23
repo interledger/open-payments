@@ -197,11 +197,11 @@ func main() {
     var incomingPayment = this.client.createIncomingPayment(receiverWallet, grantRequest, BigDecimal.valueOf(11.25));
 
     // 5. Retrieve the created incoming payments (by walletAddress):
-    var incomingPaymentsFetched = this.client.getIncomingPayments(senderWallet.getId(), grantRequest);
+    var incomingPaymentsFetched = this.client.getIncomingPayments(senderWallet, senderWallet.getId(), grantRequest);
 
     // 6. Logging:
-    log.info("INCOMING_PAYMENTS: {}", incomingPaymentsFetched.size());
-    incomingPaymentsFetched.forEach(p -> log.info("INCOMING_PAYMENT: {}", p));
+    log.info("INCOMING_PAYMENT_RESULT: {}", incomingPaymentsFetched.getResult().size());
+    incomingPaymentsFetched.getResult().forEach(p -> log.info("INCOMING_PAYMENT: {}", p));
     ```
 
 </TabItem>
