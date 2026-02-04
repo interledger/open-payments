@@ -78,7 +78,7 @@ div.key div.tags {
   margin-top: var(--space-2xs);
 }
 
-.panel b + span,
+.panel b+span,
 div.description span,
 div.tags span {
   border-color: var(--sl-color-gray-5);
@@ -89,13 +89,121 @@ div.description p {
   margin-bottom: var(--space-2xs);
 }
 
-div > span.type {
+div>span.type {
   color: var(--sl-color-text);
 }
 
 .description details {
   border-inline-start-color: var(--sl-color-gray-5);
 }
+
+/*
+ * Starlight OpenAPI Details Fix
+ * ===================================
+ * Fixes conflicts between docs-design-system and starlight-openapi.
+ * See: https://github.com/interledger/docs-design-system/issues/66
+ */
+
+/* 1. Neutralize the design system's "card" styling */
+.sl-markdown-content .not-content details {
+  border: none;
+  border-left: 1px solid var(--sl-color-gray-5);
+  background: transparent;
+  border-radius: 0;
+}
+
+/* Reduced left padding on mobile to prevent overflow */
+@media (max-width: 50rem) {
+  .sl-markdown-content .not-content details {
+    padding-left: 0.5rem;
+  }
+}
+
+/* Prevent cumulative borders for deeply nested schema details to save horizontal space */
+.sl-markdown-content .not-content details details {
+  border-left: 1px solid var(--sl-color-gray-5);
+}
+
+/* 2. Special handling for the top-level Operation Panel */
+.sl-markdown-content details.operation-description-urls {
+  background-color: var(--sl-color-gray-7);
+  border: 1px solid var(--sl-color-hairline-light);
+  border-radius: var(--border-radius);
+  padding: 0;
+}
+
+/* 3. Hide the pseudo-arrow ONLY on panels that have their own SVG caret (double arrow fix) */
+.sl-markdown-content details.operation-description-urls>summary::before {
+  display: none;
+}
+
+/* 4. Fix vertical spacing and alignment issues for ALL plugin details */
+.sl-markdown-content .not-content details summary {
+  padding: 0.8rem 1rem;
+  margin: 0;
+  gap: 0.5rem;
+}
+
+.sl-markdown-content .not-content details details summary {
+  padding: 0;
+  margin-bottom: 0.8rem;
+}
+
+.sl-markdown-content div[data-openapi-content-type="application/json"] details details summary {
+  padding: 0;
+}
+
+.sl-markdown-content div[data-openapi-content-type="application/json"] details details[open] summary {
+  margin-bottom: 0.8rem;
+}
+
+.sl-markdown-content div[data-openapi-content-type="application/json"] details details {
+  padding: 0;
+  padding-inline-start: 0.8rem;
+}
+
+/* 5. Ensure the pseudo-arrow is properly aligned and reflects the open state correctly */
+.sl-markdown-content .not-content details:not(.operation-description-urls)>summary::before {
+  margin-inline: 0;
+  transform: rotate(0deg);
+  transition: transform 0.2s ease;
+}
+
+.sl-markdown-content .not-content details:not(.operation-description-urls)[open]>summary::before {
+  transform: rotate(90deg);
+}
+
+/* 6. Fix open state shifts */
+.sl-markdown-content .not-content details[open] {
+  padding-bottom: 0.5rem;
+}
+
+/* Ensure schema keys allow content to wrap on small screens */
+.not-content .key {
+  gap: 1rem;
+}
+
+.not-content .key .name {
+  min-width: 5rem;
+}
+
+@media (max-width: 50rem) {
+  .not-content .key {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .not-content .key .name,
+  .not-content .key .description {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .not-content .key .description {
+    padding-left: 0.5rem;
+  }
+}
+
 
 /* To remove after re-upgrade of Starlight */
 .site-title {
