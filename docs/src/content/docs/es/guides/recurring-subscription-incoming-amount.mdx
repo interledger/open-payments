@@ -85,7 +85,12 @@ Llame a la <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wa
   })
 ```
 </TabItem>
-
+<TabItem label='Rust' icon='seti:rust'>
+```rust wrap
+let customer_wallet_address = client.wallet_address().get("https://cloudninebank.example.com/customer").await?;
+let service_provider_wallet_address = client.wallet_address().get("https://happylifebank.example.com/service-provider").await?;
+```
+</TabItem>
 <TabItem label='PHP' icon='seti:php'>
 
 ```php wrap
@@ -121,7 +126,7 @@ if err != nil {
 </Tabs>
 
 <details>
-<summary>Respuestas de ejemplo</summary>
+<summary>Ejemplo de respuesta</summary>
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del cliente.
 ```json wrap
 {
@@ -170,7 +175,19 @@ Esta llamada obtiene un token de acceso que le permite solicitar la creación de
   );
 ```
 </TabItem>
-
+<TabItem label='Rust' icon='seti:rust'>
+```rust wrap
+use open_payments::types::{AccessTokenRequest, AccessItem, IncomingPaymentAction, GrantRequest};
+let incoming_access = AccessTokenRequest {
+  access: vec![AccessItem::IncomingPayment { actions: vec![IncomingPaymentAction::Create], identifier: None }],
+};
+let incoming_grant_request = GrantRequest::new(incoming_access, None);
+let service_provider_incoming_payment_grant = client
+  .grant()
+  .request(&service_provider_wallet_address.auth_server, &incoming_grant_request)
+  .await?;
+```
+</TabItem>
 <TabItem label='PHP' icon='seti:php'>
 
 ```php wrap
@@ -274,6 +291,29 @@ Esta llamada solicita la creación de un recurso de pago entrante en la cuenta d
   )
 ```
 </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
+```rust wrap
+use open_payments::types::{IncomingPaymentRequest, Amount};
+let incoming_request = IncomingPaymentRequest {
+  wallet_address: service_provider_wallet_address.id.clone(),
+  incoming_amount: Some(Amount {
+    value: "1500".into(),
+    asset_code: "USD".into(),
+    asset_scale: 2,
+  }),
+  expires_at: None,
+  metadata: None,
+};
+let service_provider_incoming_payment = client
+  .incoming_payments()
+  .create(
+    &service_provider_wallet_address.resource_server,
+    &incoming_request,
+    Some(&service_provider_incoming_payment_grant.access_token.value),
+  )
+  .await?;
+```
+  </TabItem>
 
   <TabItem label='PHP' icon='seti:php'>
 
@@ -376,6 +416,19 @@ Esta llamada obtiene un token de acceso que le permite solicitar la creación de
     }
   )
   ```
+</TabItem>
+<TabItem label='Rust' icon='seti:rust'>
+```rust wrap
+use open_payments::types::{AccessTokenRequest, AccessItem, QuoteAction, GrantRequest};
+let quote_access = AccessTokenRequest {
+  access: vec![AccessItem::Quote { actions: vec![QuoteAction::Create] }],
+};
+let quote_grant_request = GrantRequest::new(quote_access, None);
+let customer_quote_grant = client
+  .grant()
+  .request(&customer_wallet_address.auth_server, &quote_grant_request)
+  .await?;
+```
 </TabItem>
 
 <TabItem label='PHP' icon='seti:php'>
@@ -480,6 +533,24 @@ La solicitud debe contener el `receiver`, que es la `id` del pago entrante del p
   )
 ```
 </TabItem>
+<TabItem label='Rust' icon='seti:rust'>
+```rust wrap
+use open_payments::types::{CreateQuoteRequest, PaymentMethodType, Receiver};
+let quote_request = CreateQuoteRequest::NoAmountQuote {
+  wallet_address: customer_wallet_address.id.clone(),
+  receiver: Receiver(service_provider_incoming_payment.id.clone()),
+  method: PaymentMethodType::Ilp,
+};
+let customer_quote = client
+  .quotes()
+  .create(
+    &customer_wallet_address.resource_server,
+    &quote_request,
+    Some(&customer_quote_grant.access_token.value),
+  )
+  .await?;
+```
+</TabItem>
 
 <TabItem label='PHP' icon='seti:php'>
 
@@ -562,7 +633,7 @@ Utilice la información del cliente `authServer` recibida en el paso 1 para llam
 Esta llamada obtiene un token de acceso que le permite solicitar la creación de un recurso de pago saliente en la cuenta de billetera del cliente.
 
 :::note
-Los pagos salientes requieren una concesión de autorización interactiva. Este tipo de concesión de autorización obtendrá el consentimiento del cliente antes de que se realice un pago saliente desde su cuenta de billetera. Puede encontrar más información en las páginas del [flujo de Open Payments](/concepts/op-flow/#outgoing-payment) y [proveedores de identidad](/identity/idp).
+Los pagos salientes requieren una concesión de autorización interactiva. Este tipo de concesión de autorización obtendrá el consentimiento del cliente antes de que se realice un pago saliente desde su cuenta de billetera. Puede encontrar más información en las páginas del [flujo de Open Payments](/es/concepts/op-flow/#pago-saliente) y [proveedores de identidad](/es/identity/idp).
 :::
 
 Para los pagos recurrentes, incluya la propiedad `interval` para especificar la frecuencia con la que debe realizarse el pago. Recuerde que el cliente quiere pagar $15 USD al mes durante 12 meses.
@@ -603,6 +674,55 @@ Para los pagos recurrentes, incluya la propiedad `interval` para especificar la 
     }
   )
   ```
+</TabItem>
+<TabItem label='Rust' icon='seti:rust'>
+```rust wrap
+use open_payments::types::{
+  AccessTokenRequest,
+  AccessItem,
+  OutgoingPaymentAction,
+  LimitsOutgoing,
+  Amount,
+  Interval,
+  InteractRequest,
+  InteractFinish,
+  GrantRequest,
+};
+use uuid::Uuid;
+
+let outgoing_access = AccessTokenRequest {
+  access: vec![AccessItem::OutgoingPayment {
+    identifier: customer_wallet_address.id.clone(),
+    actions: vec![OutgoingPaymentAction::Create, OutgoingPaymentAction::Read],
+    limits: Some(LimitsOutgoing {
+      receiver: None,
+      debit_amount: Some(Amount {
+        value: "1500".into(),
+        asset_code: "USD".into(),
+        asset_scale: 2,
+      }),
+      receive_amount: None,
+      interval: Some(Interval("R12/2025-10-14T00:03:00Z/P1M".to_string())),
+    }),
+  }],
+};
+
+let interact = InteractRequest {
+  start: vec!["redirect".to_string()],
+  finish: Some(InteractFinish {
+    method: "redirect".to_string(),
+    uri: "https://myapp.example.com/finish/{...}".to_string(),
+    nonce: Uuid::new_v4().to_string(),
+  }),
+};
+
+let outgoing_grant_request = GrantRequest::new(outgoing_access, Some(interact));
+
+let pending_customer_outgoing_payment_grant = client
+  .grant()
+  .request(&customer_wallet_address.auth_server, &outgoing_grant_request)
+  .await?;
+```
 </TabItem>
 
 <TabItem label='PHP' icon='seti:php'>
@@ -768,6 +888,24 @@ Incluya la `interact_ref` devuelta en los parámetros de consulta del URI de red
     )
     ```
   </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
+  ```rust wrap
+  use open_payments::types::GrantResponse;
+  let (continue_uri, continue_token) = match &pending_customer_outgoing_payment_grant {
+    GrantResponse::WithInteraction { continue_, .. } | GrantResponse::WithToken { continue_, .. } => {
+      (&continue_.uri, &continue_.access_token.value)
+    }
+  };
+  let customer_outgoing_payment_grant = client
+    .grant()
+    .continue_grant(
+      continue_uri,
+      &interact_ref,
+      Some(continue_token),
+    )
+    .await?;
+  ```
+  </TabItem>
 
   <TabItem label='PHP' icon='seti:php'>
 
@@ -855,6 +993,24 @@ Incluya el `quoteId` de la cotización creada en el paso 5.
       quoteId: customerQuote.id
     }
   )
+```
+</TabItem>
+<TabItem label='Rust' icon='seti:rust'>
+```rust wrap
+use open_payments::types::OutgoingPaymentRequest;
+let outgoing_request = OutgoingPaymentRequest::FromQuote {
+  wallet_address: customer_wallet_address.id.clone(),
+  quote_id: customer_quote.id.clone(),
+  metadata: None,
+};
+let customer_outgoing_payment = client
+  .outgoing_payments()
+  .create(
+    &customer_wallet_address.resource_server,
+    &outgoing_request,
+    Some(&customer_outgoing_payment_grant.access_token.value),
+  )
+  .await?;
 ```
 </TabItem>
 

@@ -21,7 +21,7 @@ Este enfoque es útil en particular para situaciones de aplicaciones de remesas 
 
 ## Caso hipotético
 
-Imagine que alguien en EE. UU. quiere enviar dinero a un familiar en México. Esta persona quiere que su familiar reciba exactamente 5000 pesos mexicanos (MXN), independientemente de cuál sea la conversión de monedas. Esto difiere de un pago en el que el remitente especifica exactamente cuánto enviar, y el monto que el destinatario recibe puede variar con el tipo de cambio.
+Imagine que alguien en EE. UU. quiere enviar dinero a un familiar en México. Esta persona quiere que su familiar reciba exactamente 5000 pesos mexicanos (MXN), independientemente de cuál sea la conversión de monedas. Esto difiere de un pago en el que el [remitente especifica exactamente cuánto enviar](/es/guides/onetime-remittance-fixed-debit), y el monto que el destinatario recibe puede variar con el tipo de cambio.
 
 Para esta guía, asumirá el papel de un desarrollador que está creando una aplicación de remesas. La guía explica la forma de enviar un pago en USD, en la que el destinatario recibe exactamente MXN 5000.
 
@@ -127,7 +127,7 @@ $recipientWalletAddress = $client->walletAddress()->get([
 </Tabs>
 
 <details>
-<summary>Respuestas de ejemplo</summary>
+<summary>Ejemplo de respuesta</summary>
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
 
 ```json wrap
@@ -645,7 +645,7 @@ Esta llamada obtiene un token de acceso que permite a su aplicación solicitar l
 Para asegurar que el remitente autorice el monto correcto, incluya el `receiveAmount` en el objeto `limits`. Esto limita el pago saliente al monto de recepción especificado y mantiene la concesión de autorización alineada con la cotización del paso anterior.
 
 :::note
-Los pagos salientes requieren una concesión de autorización interactiva. Este tipo de concesión de autorización obtendrá el consentimiento del remitente antes de que se realice un pago saliente desde su cuenta de billetera. Puede encontrar más información en las páginas del [flujo de Open Payments](/concepts/op-flow/#outgoing-payment) y [proveedores de identidad](/identity/idp).
+Los pagos salientes requieren una concesión de autorización interactiva. Este tipo de concesión de autorización obtendrá el consentimiento del remitente antes de que se realice un pago saliente desde su cuenta de billetera. Puede encontrar más información en las páginas del [flujo de Open Payments](/es/concepts/op-flow/#pago-saliente) y [proveedores de identidad](/es/identity/idp).
 :::
 
 <Tabs syncKey="lang">
@@ -698,7 +698,7 @@ Los pagos salientes requieren una concesión de autorización interactiva. Este 
     Amount,
     GrantRequest,
   };
-
+  
 let outgoing_access = AccessTokenRequest {
 access: vec![AccessItem::OutgoingPayment {
 identifier: Some(sender_wallet_address.id.clone()),
@@ -1031,7 +1031,7 @@ if err != nil {
   </TabItem>
 </Tabs>
 
-Si la solicitud falla porque la cotización expiró, [solicite una nueva](#5-solicitar-la-creación-de-un-recurso-de-cotización) e intente otra vez. Si falla porque el token de acceso de la concesión de autorización ha expirado, llame a <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/auth-server/operations/post-token/) para obtener un nuevo token de acceso y, luego, vuelva a probar la solicitud con el nuevo token.
+Si la solicitud falla debido a una cotización caducada, [solicite una nueva cotización](#5-solicitar-la-creación-de-un-recurso-de-cotización) e intente de nuevo.
 
 <details>
 <summary>Ejemplo de respuesta</summary>
@@ -1060,3 +1060,7 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del remite
 }
 ```
 </details>
+
+:::note[Expiración del token de acceso]
+Si el token de acceso de una concesión de autorización ha expirado, llame a la <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/auth-server/operations/post-token/) y, luego, utilice el nuevo token en la solicitud correspondiente.
+:::

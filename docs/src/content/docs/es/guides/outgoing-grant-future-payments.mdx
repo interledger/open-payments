@@ -1,4 +1,4 @@
-﻿---
+---
 title: Obtener una concesión de pago saliente para pagos futuros
 ---
 
@@ -50,6 +50,12 @@ Supongamos que su usuario guardó su dirección de billetera en el perfil de su 
   ```
 </TabItem>
 
+<TabItem label='Rust' icon='seti:rust'>
+ ```rust wrap
+ let user_wallet_address = client.wallet_address().get("https://cloudninebank.example.com/user").await?;
+ ```
+ </TabItem>
+
  <TabItem label='PHP' icon='seti:php'>
 
 ```php wrap
@@ -60,11 +66,6 @@ $userWalletAddress = $client->walletAddress()->get([
 
  </TabItem>
 
-<TabItem label='Rust' icon='seti:rust'>
- ```rust wrap
- let user_wallet_address = client.wallet_address().get("https://cloudninebank.example.com/user").await?;
- ```
- </TabItem>
  <TabItem label='Go' icon='seti:go'>
  
  ```go wrap
@@ -350,3 +351,32 @@ $userOutgoingPaymentGrant = $client->grant()->continue(
 </Tabs>
 
 Una respuesta exitosa proporciona a su aplicación un token de acceso. Ahora su aplicación puede emitir solicitudes de pago saliente hacia destinatarios futuros en función de la concesión. Cada solicitud debe hacer referencia al token de acceso.
+
+<details>
+  <summary>Ejemplo de respuesta</summary>
+  ```json wrap
+  {
+    "access_token": {
+      "value": "...", // final access token required before creating outgoing payments
+      "manage": "https://auth.cloudninebank.example.com/token/{...}", // management uri for access token
+      "access": [
+        {
+          "type": "outgoing-payment",
+          "actions": ["create", "read"],
+          "identifier": "https://cloudninebank.example.com/user",
+        }
+      ]
+    },
+    "continue": {
+      "access_token": {
+        "value": "..." // access token for continuing the request
+      },
+      "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
+    }
+  }
+  ```
+</details>
+
+:::note[Expiración del token de acceso]
+Si una solicitud de pago saliente falla porque el token de acceso de la concesión de autorización ha expirado, puede llamar a la <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/auth-server/operations/post-token/) y, luego, utilizar el nuevo token en la solicitud de pago saliente.
+:::

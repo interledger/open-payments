@@ -18,6 +18,8 @@ Existen varias formas de que el mercado cobre la tarifa. Por ejemplo, podría re
 
 Recuerde que Open Payments no ejecuta pagos ni toca dinero de ninguna manera. Se usa para emitir instrucciones de pago antes de que se produzca cualquier movimiento de dinero. Entre los ejemplos de instrucciones de pago se encuentran: “de la compra de \$6, pague \$1 al mercado y $5 al comerciante”. De este modo, los fondos destinados a una parte nunca pasan por la otra.
 
+## Caso hipotético
+
 En el marco de esta guía, usted asumirá el rol de operador de una plataforma de mercado en línea. La guía explica cómo dividir el pago de USD 100 de un consumidor en dos pagos entrantes. El comerciante recibirá el 99 % del pago mientras que usted retiene el 1 % como tarifa.
 
 Las tres partes que intervienen en la transacción son las siguientes:
@@ -76,13 +78,13 @@ Llame a la <Badge text="GET" variant="note" /> [Get Wallet Address](/es/apis/wal
     ```
 
   </TabItem>
-  <TabItem label='Rust' icon='seti:rust'>
-    ```rust wrap
-    let customer_wallet_address = client.wallet_address().get("https://cloudninebank.example.com/customer").await?;
-    let merchant_wallet_address = client.wallet_address().get("https://happylifebank.example.com/merchant").await?;
-    let platform_wallet_address = client.wallet_address().get("https://coolwallet.example.com/platform").await?;
-    ```
-  </TabItem>
+ <TabItem label='Rust' icon='seti:rust'>
+ ```rust wrap
+ let customer_wallet_address = client.wallet_address().get("https://cloudninebank.example.com/customer").await?;
+ let merchant_wallet_address = client.wallet_address().get("https://happylifebank.example.com/merchant").await?;
+ let platform_wallet_address = client.wallet_address().get("https://coolwallet.example.com/platform").await?;
+ ```
+ </TabItem>
   <TabItem label='PHP' icon='seti:php'>
     ```php wrap
     $customerWalletAddress = $client->walletAddress()->get([
@@ -119,6 +121,38 @@ Llame a la <Badge text="GET" variant="note" /> [Get Wallet Address](/es/apis/wal
     ```
   </TabItem>
 </Tabs>
+
+<details>
+<summary>Ejemplo de respuesta</summary>
+El siguiente ejemplo muestra respuestas de los proveedores de billetera del consumidor, del comerciante y de la plataforma.
+
+```json wrap
+[
+  {
+    "id": "https://cloudninebank.example.com/customer",
+    "assetCode": "USD",
+    "assetScale": 2,
+    "authServer": "https://auth.cloudninebank.example.com/",
+    "resourceServer": "https://cloudninebank.example.com/op"
+  },
+  {
+    "id": "https://happylifebank.example.com/merchant",
+    "assetCode": "USD",
+    "assetScale": 2,
+    "authServer": "https://auth.happylifebank.example.com/",
+    "resourceServer": "https://happylifebank.example.com/op"
+  },
+  {
+    "id": "https://coolwallet.example.com/platform",
+    "assetCode": "USD",
+    "assetScale": 2,
+    "authServer": "https://auth.coolwallet.example.com/",
+    "resourceServer": "https://coolwallet.example.com/op"
+  }
+]
+```
+
+</details>
 
 ### 2. Solicitar concesiones de autorización de pagos entrantes
 
@@ -263,6 +297,33 @@ if err != nil {
   </TabItem>
 </Tabs>
 
+<details>
+<summary>Ejemplo de respuesta</summary>
+El siguiente ejemplo muestra una respuesta del proveedor de billetera del comerciante. Se devolverá una respuesta similar desde su proveedor de billetera.
+
+```json wrap
+{
+  "access_token": {
+    "value": "...", // access token value for incoming payment grant
+    "manage": "https://happylifebank.example.com/token/{...}", // management uri for access token
+    "access": [
+      {
+        "type": "incoming-payment",
+        "actions": ["create"]
+      }
+    ]
+  },
+  "continue": {
+    "access_token": {
+      "value": "..." // access token for continuing the request
+    },
+    "uri": "https://happylifebank.example.com/continue/{...}" // continuation request uri
+  }
+}
+```
+
+</details>
+
 ### 3. Solicitar la creación de recursos de pagos entrantes
 
 Use los tókenes de acceso devueltos en las respuestas anteriores para llamar a la <Badge text="POST" variant="success" /> [Create an Incoming Payment API](/es/apis/resource-server/operations/create-incoming-payment).
@@ -281,8 +342,9 @@ Incluya lo siguiente en ambas solicitudes, junto con cualquier otro parámetro r
 El `value` total de $100 es `10000`. El comerciante recibirá el 99 % (`9900`) y usted recibirá el 1 % (`100`).
 
 <Tabs syncKey="lang">
-<TabItem label='Merchant' icon='seti:javascript'>
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
   ```ts wrap
+  // Merchant
   const merchantIncomingPayment = await client.incomingPayment.create(
     {
       url: merchantWalletAddress.resourceServer,
@@ -297,10 +359,7 @@ El `value` total de $100 es `10000`. El comerciante recibirá el 99 % (`9900`) y
       },
     },
   )
-  ```
-</TabItem>
-<TabItem label='Platform' icon='seti:javascript'>
-  ```ts wrap
+  // Platform
   const platformIncomingPayment = await client.incomingPayment.create(
     {
       url: platformWalletAddress.resourceServer,
@@ -316,7 +375,7 @@ El `value` total de $100 es `10000`. El comerciante recibirá el 99 % (`9900`) y
     },
   )
   ```
-</TabItem>
+  </TabItem>
 <TabItem label='Rust' icon='seti:rust'>
  ```rust wrap
  use open_payments::types::{IncomingPaymentRequest, Amount};
@@ -418,6 +477,38 @@ $platformIncomingPayment = $client->incomingPayment()->create(
   </TabItem>
 </Tabs>
 
+<details>
+<summary>Ejemplo de respuesta</summary>
+El siguiente ejemplo muestra una respuesta del proveedor de billetera del comerciante. Se devolverá una respuesta similar desde su proveedor de billetera, pero el `value` de su `incomingAmount` será `100`.
+
+```json wrap
+{
+  "id": "https://happylifebank.example.com/incoming-payments/{...}",
+  "walletAddress": "https://happylifebank.example.com/merchant",
+  "incomingAmount": {
+    "value": "9900",
+    "assetCode": "USD",
+    "assetScale": 2
+  },
+  "receivedAmount": {
+    "value": "0",
+    "assetCode": "USD",
+    "assetScale": 2
+  },
+  "completed": false,
+  "createdAt": "2025-03-12T23:20:50.52Z",
+  "methods": [
+    {
+      "type": "ilp",
+      "ilpAddress": "...",
+      "sharedSecret": "..."
+    }
+  ]
+}
+```
+
+</details>
+
 ### 4. Solicitar una concesión de autorización para una cotización
 
 Utilice los datos del consumidor `authServer`, recibidos en el paso 1, para llamar a la <Badge text="POST" variant="success" /> [Grant Request API](/es/apis/auth-server/operations/post-request).
@@ -444,7 +535,7 @@ El propósito de esta llamada consiste en obtener un token de acceso que permita
   )
   ```
 </TabItem>
-<TabItem label='Rust' icon='seti:rust'>
+  <TabItem label='Rust' icon='seti:rust'>
     ```rust wrap
     use open_payments::types::{AccessTokenRequest, AccessItem, QuoteAction, GrantRequest};
     let quote_access = AccessTokenRequest {
@@ -506,6 +597,33 @@ $customerQuoteGrant = $client->grant()->request(
   </TabItem>
 </Tabs>
 
+<details>
+<summary>Ejemplo de respuesta</summary>
+El siguiente ejemplo muestra una respuesta del proveedor de billetera del consumidor.
+
+```json wrap
+{
+  "access_token": {
+    "value": "...", // access token value for quote grant
+    "manage": "https:/cloudninebank.example.com/token/{...}", // management uri for access token
+    "access": [
+      {
+        "type": "quote",
+        "actions": ["create"]
+      }
+    ]
+  },
+  "continue": {
+    "access_token": {
+      "value": "..." // access token for continuing the request
+    },
+    "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
+  }
+}
+```
+
+</details>
+
 ### 5. Solicitar la creación de recursos de cotización
 
 Utilice el token de acceso recibido en el paso anterior para llamar a la <Badge text="POST" variant="success" />[Create Quote API](/es/apis/resource-server/operations/create-quote).
@@ -517,8 +635,9 @@ Primero, solicitemos un recurso de cotización asociado con el comerciante. La s
 Posteriormente, llame de nuevo a la Create Quote API y solicite un recurso de cotización asociado con la `id` del pago entrante de la plataforma.
 
 <Tabs syncKey="lang">
-<TabItem label='Merchant' icon='seti:javascript'>
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
   ```ts wrap
+  // Merchant
   const merchantQuote = await client.quote.create(
     {
       url: customerWalletAddress.resourceServer,
@@ -530,10 +649,7 @@ Posteriormente, llame de nuevo a la Create Quote API y solicite un recurso de co
       receiver: merchantIncomingPayment.id
     }
   )
-  ```
-</TabItem>
-<TabItem label='Platform' icon='seti:javascript'>
-  ```ts wrap
+  // Platform
   const platformQuote = await client.quote.create(
     {
       url: customerWalletAddress.resourceServer,
@@ -645,6 +761,32 @@ Cada respuesta devuelve un `receiveAmount`, un `debitAmount` y demás informaci�
 - `receiveAmount`: el valor del `incomingAmount` del recurso de pago entrante.
 - `debitAmount`: el monto que el consumidor debe pagar al recurso de pago entrante (el `receiveAmount` más cualquier tarifa que corresponda).
 
+<details>
+<summary>Ejemplo de respuesta</summary>
+El siguiente ejemplo muestra una respuesta del proveedor de billetera del comerciante. Se devolverá una respuesta similar desde su proveedor de billetera.
+
+```json wrap
+{
+  "id": "https://cloudninebank.example.com/quotes/{...}", // url identifying the quote
+  "walletAddress": "https://cloudninebank.example.com/customer",
+  "receiver": "https://happylifebank.example.com/incoming-payments/{...}", // url of the incoming payment the quote is created for
+  "debitAmount": {
+    "value": "9900",
+    "assetCode": "USD",
+    "assetScale": 2
+  },
+  "receiveAmount": {
+    "value": "9900",
+    "assetCode": "USD",
+    "assetScale": 2
+  },
+  "method": "ilp",
+  "createdAt": "2025-03-12T23:22:51.50Z"
+}
+```
+
+</details>
+
 ### 6. Solicitar una concesión de autorización interactiva para un pago saliente
 
 Utilice la información del consumidor `authServer` recibida en el paso 1 para llamar a la <Badge text="POST" variant="success" /> [Grant Request API](/es/apis/auth-server/operations/post-request).
@@ -655,14 +797,6 @@ El propósito de esta llamada consiste en obtener un token de acceso que permita
 
 <InteractionReq />
 :::
-
-Incluya lo siguiente en la solicitud, además de los parámetros requeridos:
-
-- Objeto `limits`
-  - Objeto `receiveAmount`
-    - `value`: el monto total que el consumidor aceptó pagar.
-    - `assetCode`: el código utilizado por la cuenta de la billetera, proporcionado en la respuesta de la Get Wallet Address API.
-    - `assetScale`: la escala utilizada por la cuenta de la billetera, proporcionada en la respuesta de la Get Wallet Address API.
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -700,55 +834,54 @@ Incluya lo siguiente en la solicitud, además de los parámetros requeridos:
     )
     ```
   </TabItem>
-  <TabItem label='Rust' icon='seti:rust'>
-    ```rust wrap
-    use open_payments::types::{AccessTokenRequest, AccessItem, OutgoingPaymentAction, InteractRequest, InteractStart, InteractFinish, InteractFinishMethod, AccessLimits, Amount, GrantRequest};
-
-    let merchant*amount = match merchant_quote.debit_amount.as_ref() {
-    Some(a) => &a.value,
-    None => {
-    eprintln!("Missing debit_amount on merchant quote");
-    return Ok(());
-    }
-    };
-    let platform_amount = match platform_quote.debit_amount.as_ref() {
-    Some(a) => &a.value,
-    None => {
-    eprintln!("Missing debit_amount on platform quote");
-    return Ok(());
-    }
-    };
-    let merchant_value = match merchant_amount.parse::<i64>() {
-    Ok(v) => v,
-    Err(*) => {
-    eprintln!("Invalid merchant debit*amount value");
-    return Ok(());
-    }
-    };
-    let platform_value = match platform_amount.parse::<i64>() {
-    Ok(v) => v,
-    Err(*) => {
-    eprintln!("Invalid platform debit_amount value");
-    return Ok(());
-    }
-    };
-    let combined_quote_amount = merchant_value + platform_value;
-    let outgoing_access = AccessTokenRequest {
-    access: vec![AccessItem::OutgoingPayment {
-    identifier: Some(customer_wallet_address.id.clone()),
-    actions: vec![OutgoingPaymentAction::Create],
-    limits: Some(AccessLimits { debit_amount: Some(Amount { value: combined_quote_amount.to_string(), asset_code: "USD".into(), asset_scale: 2 }), ..Default::default() }),
-    }],
-    };
-    let interact = InteractRequest { start: Some(vec![InteractStart::Redirect]), finish: Some(InteractFinish { method: InteractFinishMethod::Redirect, uri: Some("https://paymentplatform.example/finish/{...}".into()), nonce: Some("NONCE".into()) }) };
-    let outgoing_grant_request = GrantRequest::new(outgoing_access, Some(interact));
-    let pending_customer_outgoing_payment_grant = client
-    .grant()
-    .request(&customer_wallet_address.auth_server, &outgoing_grant_request)
-    .await?;
-    ```
-
-  </TabItem>
+ <TabItem label='Rust' icon='seti:rust'>
+ ```rust wrap
+ use open_payments::types::{AccessTokenRequest, AccessItem, OutgoingPaymentAction, InteractRequest, InteractStart, InteractFinish, InteractFinishMethod, AccessLimits, Amount, GrantRequest};
+ 
+ let merchant_amount = match merchant_quote.debit_amount.as_ref() {
+   Some(a) => &a.value,
+   None => {
+     eprintln!("Missing debit_amount on merchant quote");
+     return Ok(());
+   }
+ };
+ let platform_amount = match platform_quote.debit_amount.as_ref() {
+   Some(a) => &a.value,
+   None => {
+     eprintln!("Missing debit_amount on platform quote");
+     return Ok(());
+   }
+ };
+ let merchant_value = match merchant_amount.parse::<i64>() {
+   Ok(v) => v,
+   Err(_) => {
+     eprintln!("Invalid merchant debit_amount value");
+     return Ok(());
+   }
+ };
+ let platform_value = match platform_amount.parse::<i64>() {
+   Ok(v) => v,
+   Err(_) => {
+     eprintln!("Invalid platform debit_amount value");
+     return Ok(());
+   }
+ };
+ let combined_quote_amount = merchant_value + platform_value;
+ let outgoing_access = AccessTokenRequest {
+   access: vec![AccessItem::OutgoingPayment {
+     identifier: Some(customer_wallet_address.id.clone()),
+     actions: vec![OutgoingPaymentAction::Create],
+     limits: Some(AccessLimits { debit_amount: Some(Amount { value: combined_quote_amount.to_string(), asset_code: "USD".into(), asset_scale: 2 }), ..Default::default() }),
+   }],
+ };
+ let interact = InteractRequest { start: Some(vec![InteractStart::Redirect]), finish: Some(InteractFinish { method: InteractFinishMethod::Redirect, uri: Some("https://paymentplatform.example/finish/{...}".into()), nonce: Some("NONCE".into()) }) };
+ let outgoing_grant_request = GrantRequest::new(outgoing_access, Some(interact));
+ let pending_customer_outgoing_payment_grant = client
+   .grant()
+   .request(&customer_wallet_address.auth_server, &outgoing_grant_request)
+   .await?;
+ ```
+ </TabItem>
   <TabItem label='PHP' icon='seti:php'>
 
     ```php wrap
@@ -841,6 +974,27 @@ if err != nil {
   </TabItem>
 </Tabs>
 
+<details>
+  <summary>Ejemplo de respuesta</summary>
+
+```json wrap
+{
+  "interact": {
+    "redirect": "https://auth.cloudninebank.example.com/{...}", // uri to redirect the customer to, to begin interaction
+    "finish": "..." // unique key to secure the callback
+  },
+  "continue": {
+    "access_token": {
+      "value": "..." // access token for continuing the outgoing payment grant request
+    },
+    "uri": "https://auth.cloudninebank.example.com/continue/{...}", // uri for continuing the outgoing payment grant request
+    "wait": 30
+  }
+}
+```
+
+</details>
+
 ### 7. Comenzar la interacción con el consumidor
 
 <StartInteraction />
@@ -924,6 +1078,35 @@ if err != nil {
   </TabItem>
 </Tabs>
 
+<details>
+  <summary>Ejemplo de respuesta</summary>
+
+```json wrap
+{
+  "access_token": {
+    "value": "...", // final access token required before creating outgoing payments
+    "manage": "https://auth.cloudninebank.example.com/token/{...}", // management uri for access token
+    "access": [
+      {
+        "type": "outgoing-payment",
+        "actions": ["create"],
+        "identifier": "https://cloudninebank.example.com/customer",
+        "limits": {
+          "receiver": "https://happylifebank.example.com/incoming-payments/{...}" // url of the incoming payment that's being paid
+        }
+      }
+    ]
+  },
+  "continue": {
+    "access_token": {
+      "value": "..." // access token for continuing the request
+    },
+    "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
+  }
+}
+```
+
+</details>
 ### 10. Solicitar la creación de recursos de pagos salientes
 
 Recuerde que las respuestas de la Create Quote API para el comerciante y para su plataforma (paso 5) incluían un `debitAmount` y un `receiveAmount`. Las respuestas también incluían una `id`, que es una URL para identificar cada cotización.
@@ -961,33 +1144,33 @@ El propósito de estas llamadas consiste en solicitar la creación de un recurso
     )
     ```
   </TabItem>
-  <TabItem label='Rust' icon='seti:rust'>
-    ```rust wrap
-    use open_payments::types::OutgoingPaymentRequest;
-    let merchant_outgoing_request = OutgoingPaymentRequest {
-      wallet_address: customer_wallet_address.id.clone(),
-      receiver: Some(merchant_incoming_payment.id.clone()),
-      debit_amount: None,
-      receive_amount: None,
-      quote_id: Some(merchant_quote.id.clone()),
-    };
-    let platform_outgoing_request = OutgoingPaymentRequest {
-      wallet_address: customer_wallet_address.id.clone(),
-      receiver: Some(platform_incoming_payment.id.clone()),
-      debit_amount: None,
-      receive_amount: None,
-      quote_id: Some(platform_quote.id.clone()),
-    };
-    let customer_outgoing_payment_to_merchant = client
-      .outgoing_payments()
-      .create(&customer_wallet_address.resource_server, &merchant_outgoing_request, Some(&customer_outgoing_payment_grant.access_token.value))
-      .await?;
-    let customer_outgoing_payment_to_platform = client
-      .outgoing_payments()
-      .create(&customer_wallet_address.resource_server, &platform_outgoing_request, Some(&customer_outgoing_payment_grant.access_token.value))
-      .await?;
-    ```
-  </TabItem>
+ <TabItem label='Rust' icon='seti:rust'>
+ ```rust wrap
+ use open_payments::types::OutgoingPaymentRequest;
+ let merchant_outgoing_request = OutgoingPaymentRequest {
+   wallet_address: customer_wallet_address.id.clone(),
+   receiver: Some(merchant_incoming_payment.id.clone()),
+   debit_amount: None,
+   receive_amount: None,
+   quote_id: Some(merchant_quote.id.clone()),
+ };
+ let platform_outgoing_request = OutgoingPaymentRequest {
+   wallet_address: customer_wallet_address.id.clone(),
+   receiver: Some(platform_incoming_payment.id.clone()),
+   debit_amount: None,
+   receive_amount: None,
+   quote_id: Some(platform_quote.id.clone()),
+ };
+ let customer_outgoing_payment_to_merchant = client
+   .outgoing_payments()
+   .create(&customer_wallet_address.resource_server, &merchant_outgoing_request, Some(&customer_outgoing_payment_grant.access_token.value))
+   .await?;
+ let customer_outgoing_payment_to_platform = client
+   .outgoing_payments()
+   .create(&customer_wallet_address.resource_server, &platform_outgoing_request, Some(&customer_outgoing_payment_grant.access_token.value))
+   .await?;
+ ```
+ </TabItem>
 
   <TabItem label='PHP' icon='seti:php'>
 
@@ -1057,3 +1240,33 @@ El propósito de estas llamadas consiste en solicitar la creación de un recurso
 
   </TabItem>
 </Tabs>
+
+<details>
+<summary>Ejemplo de respuesta</summary>
+El siguiente ejemplo muestra una respuesta cuando se crea un recurso de pago saliente en la cuenta del cliente para el comerciante. Se devolverá una respuesta similar cuando se cree un recurso de pago saliente para usted, como proveedor de billetera.
+
+```json wrap
+{
+  "id": "https://cloudninebank.example.com/outgoing-payments/{...}", // url identifying the outgoing payment
+  "walletAddress": "https://cloudninebank.example.com/customer",
+  "receiver": "https://happylifebank.example.com/incoming-payments/{...}", // url of the incoming payment being paid
+  "debitAmount": {
+    "value": "9900",
+    "assetCode": "USD",
+    "assetScale": 2
+  },
+  "receiveAmount": {
+    "value": "9900",
+    "assetCode": "USD",
+    "assetScale": 2
+  },
+  "sentAmount": {
+    "value": "0",
+    "assetCode": "USD",
+    "assetScale": 2
+  },
+  "createdAt": "2022-03-12T23:20:54.52Z"
+}
+```
+
+</details>
