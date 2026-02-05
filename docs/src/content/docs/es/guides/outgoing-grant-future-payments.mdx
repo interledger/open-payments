@@ -79,6 +79,19 @@ $userWalletAddress = $client->walletAddress()->get([
 </TabItem>
 </Tabs>
 
+<details>
+  <summary>Ejemplo de respuesta</summary>
+  ```json wrap
+  {
+    "id": "https://cloudninebank.example.com/user",
+    "assetCode": "CAD",
+    "assetScale": 2,
+    "authServer": "https://auth.cloudninebank.example.com/",
+    "resourceServer": "https://cloudninebank.example.com/op"
+  }
+  ```
+</details>
+
 ### 2. Solicitar una concesión de autorización interactiva para un pago saliente
 
 Utilice la información del servidor de autorización recibida en el paso anterior para llamar a la [Grant Request API](/es/apis/auth-server/operations/post-request). El propósito de esta llamada consiste en obtener un token que permita que el cliente solicite la creación de recursos de pago saliente en la cuenta de la billetera de su usuario.
@@ -251,6 +264,25 @@ if err != nil {
 
 </TabItem>
 </Tabs>
+
+<details>
+  <summary>Ejemplo de respuesta</summary>
+  ```json wrap
+  {
+    "interact": {
+      "redirect": "https://auth.cloudninebank.example.com/{...}", // uri to redirect the user to, to begin interaction
+      "finish": "..." // unique key to secure the callback
+    },
+    "continue": {
+      "access_token": {
+        "value": "..." // access token for continuing the outgoing payment grant request
+      },
+      "uri": "https://auth.cloudninebank.example.com/continue/{...}", // uri for continuing the outgoing payment grant request
+      "wait": 30
+    }
+  }
+  ```
+</details>
 
 #### Acerca del intervalo
 
