@@ -687,38 +687,39 @@ use open_payments::types::{
 use uuid::Uuid;
 
 let outgoing_access = AccessTokenRequest {
-  access: vec![AccessItem::OutgoingPayment {
-    identifier: customer_wallet_address.id.clone(),
-    actions: vec![OutgoingPaymentAction::Create, OutgoingPaymentAction::Read],
-    limits: Some(LimitsOutgoing {
-      receiver: None,
-      debit_amount: Some(Amount {
-        value: "1500".into(),
-        asset_code: "USD".into(),
-        asset_scale: 2,
-      }),
-      receive_amount: None,
-      interval: Some(Interval("R12/2025-10-14T00:03:00Z/P1M".to_string())),
-    }),
-  }],
+access: vec![AccessItem::OutgoingPayment {
+identifier: customer_wallet_address.id.clone(),
+actions: vec![OutgoingPaymentAction::Create, OutgoingPaymentAction::Read],
+limits: Some(LimitsOutgoing {
+receiver: None,
+debit_amount: Some(Amount {
+value: "1500".into(),
+asset_code: "USD".into(),
+asset_scale: 2,
+}),
+receive_amount: None,
+interval: Some(Interval("R12/2025-10-14T00:03:00Z/P1M".to_string())),
+}),
+}],
 };
 
 let interact = InteractRequest {
-  start: vec!["redirect".to_string()],
-  finish: Some(InteractFinish {
-    method: "redirect".to_string(),
-    uri: "https://myapp.example.com/finish/{...}".to_string(),
-    nonce: Uuid::new_v4().to_string(),
-  }),
+start: vec!["redirect".to_string()],
+finish: Some(InteractFinish {
+method: "redirect".to_string(),
+uri: "https://myapp.example.com/finish/{...}".to_string(),
+nonce: Uuid::new_v4().to_string(),
+}),
 };
 
 let outgoing_grant_request = GrantRequest::new(outgoing_access, Some(interact));
 
 let pending_customer_outgoing_payment_grant = client
-  .grant()
-  .request(&customer_wallet_address.auth_server, &outgoing_grant_request)
-  .await?;
-```
+.grant()
+.request(&customer_wallet_address.auth_server, &outgoing_grant_request)
+.await?;
+
+````
 </TabItem>
 
 <TabItem label='PHP' icon='seti:php'>
@@ -756,7 +757,7 @@ $pendingCustomerOutgoingPaymentGrant = $client->grant()->request(
     ]
   ]
 );
-```
+````
 
 </TabItem>
 
