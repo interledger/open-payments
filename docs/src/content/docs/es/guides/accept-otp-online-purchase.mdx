@@ -622,7 +622,7 @@ Utilice la información del consumidor `authServer` para llamar a la <Badge text
 Esta llamada obtiene un token de acceso que permite a la aplicación cliente solicitar la creación de recursos de pago saliente en la cuenta de billetera del cliente. Para esta guía, la solicitud se limitará hasta el monto de `140000` (MXN 1400,00).
 
 :::note
-Los pagos salientes requieren una concesión de autorización interactiva. Este tipo de concesión de autorización obtendrá el consentimiento del cliente antes de que se realice un pago saliente desde su cuenta de billetera. Puede encontrar más información en las páginas del [flujo de Open Payments](/es/concepts/op-flow/#pago-saliente) and [identity providers](/es/identity/idp).
+Los pagos salientes requieren una concesión de autorización interactiva. Este tipo de concesión de autorización obtendrá el consentimiento del cliente antes de que se realice un pago saliente desde su cuenta de billetera. Puede encontrar más información en las páginas del [flujo de Open Payments](/es/concepts/op-flow/#pago-saliente) y [proveedores de identidad](/es/identity/idp).
 :::
 
 <Tabs syncKey="lang">
@@ -1007,6 +1007,8 @@ if err != nil {
 </TabItem>
 </Tabs>
 
+Si la solicitud falla debido a una cotización caducada, [solicite una nueva cotización](#5-solicitar-la-creación-de-un-recurso-de-cotización) e intente de nuevo.
+
 <details>
 <summary>Ejemplo de respuesta</summary>
 El siguiente es un ejemplo de respuesta proveniente del proveedor de billetera del cliente.
@@ -1034,3 +1036,7 @@ El siguiente es un ejemplo de respuesta proveniente del proveedor de billetera d
 }
 ```
 </details>
+
+:::note[Expiración del token de acceso]
+Si el token de acceso de una concesión de autorización ha expirado, llame a la <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/auth-server/operations/post-token/) y, luego, utilice el nuevo token en la solicitud correspondiente.
+:::

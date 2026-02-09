@@ -83,7 +83,12 @@ Llame a la <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wa
   })
 ```
 </TabItem>
-
+<TabItem label='Rust' icon='seti:rust'>
+```rust wrap
+let sender_wallet_address = client.wallet_address().get("https://cloudninebank.example.com/sender").await?;
+let recipient_wallet_address = client.wallet_address().get("https://happylifebank.example.com/recipient").await?;
+```
+</TabItem>
 <TabItem label='PHP' icon='seti:php'>
 
 ```php wrap
@@ -119,7 +124,7 @@ if err != nil {
 </Tabs>
 
 <details>
-<summary>Respuestas de ejemplo</summary>
+<summary>Ejemplo de respuesta</summary>
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente. 
 ```json wrap
 {
@@ -168,6 +173,19 @@ Esta llamada obtiene un token de acceso que permite a su aplicación solicitar l
       },
     },
   );
+  ```
+  </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
+  ```rust wrap
+  use open_payments::types::{AccessTokenRequest, AccessItem, IncomingPaymentAction, GrantRequest};
+  let incoming_access = AccessTokenRequest {
+    access: vec![AccessItem::IncomingPayment { actions: vec![IncomingPaymentAction::Create], identifier: None }],
+  };
+  let incoming_grant_request = GrantRequest::new(incoming_access, None);
+  let recipient_incoming_payment_grant = client
+    .grant()
+    .request(&recipient_wallet_address.auth_server, &incoming_grant_request)
+    .await?;
   ```
   </TabItem>
 
@@ -267,6 +285,25 @@ Esta llamada solicita la creación de un recurso de pago entrante en la cuenta d
   )
   ```
   </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
+  ```rust wrap
+  use open_payments::types::IncomingPaymentRequest;
+  let incoming_request = IncomingPaymentRequest {
+    wallet_address: recipient_wallet_address.id.clone(),
+    incoming_amount: None,
+    expires_at: None,
+    metadata: None,
+  };
+  let recipient_incoming_payment = client
+    .incoming_payments()
+    .create(
+      &recipient_wallet_address.resource_server,
+      &incoming_request,
+      Some(&recipient_incoming_payment_grant.access_token.value),
+    )
+    .await?;
+  ```
+  </TabItem>
 
   <TabItem label='PHP' icon='seti:php'>
 
@@ -337,8 +374,8 @@ Como el remitente pagará un monto fijo de USD 200 al mes, la solicitud debe ten
 - `debitAmount` - El monto máximo que se puede debitar al remitente por intervalo. Cuando comienza el siguiente intervalo, el valor se restablece.
 - `interval` - El [intervalo de tiempo](#acerca-del-intervalo) durante el cual la concesión es válida.
 
-:::Nota
-Los pagos salientes requieren una concesión de autorización interactiva, que el remitente aprueba una sola vez. Mientras la concesión de autorización (y su token de acceso) sean válidos y estén dentro de sus límites (`interval` + `debitAmount`), su aplicación puede crear pagos salientes sin volver a- aprobar cada intervalo. Puede encontrar más información en las páginas del [flujo de Open Payments](/es/concepts/op-flow/#pago-saliente) y [proveedores de identidad](/es/identity/idp).
+:::note
+Los pagos salientes requieren una concesión de autorización interactiva, que el remitente aprueba una sola vez. Mientras la concesión de autorización (y su token de acceso) sean válidos y estén dentro de sus límites (`interval` + `debitAmount`), su aplicación puede crear pagos salientes sin volver a aprobar cada intervalo. Puede encontrar más información en las páginas del [flujo de Open Payments](/es/concepts/op-flow/#pago-saliente) y [proveedores de identidad](/es/identity/idp).
 :::
 
 <Tabs syncKey="lang">
@@ -378,6 +415,56 @@ Los pagos salientes requieren una concesión de autorización interactiva, que e
   )
   ```
 </TabItem>
+<TabItem label='Rust' icon='seti:rust'>
+```rust wrap
+use open_payments::types::{
+  AccessTokenRequest,
+  AccessItem,
+  OutgoingPaymentAction,
+  LimitsOutgoing,
+  Amount,
+  Interval,
+  InteractRequest,
+  InteractFinish,
+  GrantRequest,
+};
+use uuid::Uuid;
+
+let outgoing_access = AccessTokenRequest {
+access: vec![AccessItem::OutgoingPayment {
+identifier: sender_wallet_address.id.clone(),
+actions: vec![OutgoingPaymentAction::Create],
+limits: Some(LimitsOutgoing {
+receiver: None,
+debit_amount: Some(Amount {
+value: "20000".into(),
+asset_code: "USD".into(),
+asset_scale: 2,
+}),
+receive_amount: None,
+interval: Some(Interval("R3/2025-10-03T23:25:00Z/P1M".to_string())),
+}),
+}],
+};
+
+let interact = InteractRequest {
+start: vec!["redirect".to_string()],
+finish: Some(InteractFinish {
+method: "redirect".to_string(),
+uri: "https://myapp.example.com/finish/{...}".to_string(),
+nonce: Uuid::new_v4().to_string(),
+}),
+};
+
+let outgoing_grant_request = GrantRequest::new(outgoing_access, Some(interact));
+
+let pending_sender_outgoing_payment_grant = client
+.grant()
+.request(&sender_wallet_address.auth_server, &outgoing_grant_request)
+.await?;
+
+````
+</TabItem>
 
 <TabItem label='PHP' icon='seti:php'>
 
@@ -414,7 +501,7 @@ $pendingSenderOutgoingPaymentGrant = $client->grant()->request(
     ]
   ]
 );
-```
+````
 
 </TabItem>
 
@@ -520,7 +607,7 @@ En total, esta concesión de autorización permitirá al remitente realizar pago
 
 En nuestro ejemplo, suponemos que el IdP con el que interactuó su usuario (el remitente) cuenta con una interfaz de usuario. Cuando la interacción finaliza, el usuario regresa a su aplicación. Ahora su aplicación puede realizar una solicitud de continuación de la concesión de autorización de pago saliente.
 
-:::Nota
+:::note
 En una situación hipotética donde una interfaz de usuario no se encuentra disponible, analice la posibilidad de implementar un mecanismo de sondeo para verificar que se haya completado la interacción.
 :::
 
@@ -542,6 +629,24 @@ Incluya la `interact_ref` devuelta en los parámetros de consulta del URI de red
       interact_ref: interactRef
     }
   )
+  ```
+  </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
+  ```rust wrap
+  use open_payments::types::GrantResponse;
+  let (continue_uri, continue_token) = match &pending_sender_outgoing_payment_grant {
+    GrantResponse::WithInteraction { continue_, .. } | GrantResponse::WithToken { continue_, .. } => {
+      (&continue_.uri, &continue_.access_token.value)
+    }
+  };
+  let sender_outgoing_payment_grant = client
+    .grant()
+    .continue_grant(
+      continue_uri,
+      &interact_ref,
+      Some(continue_token),
+    )
+    .await?;
   ```
   </TabItem>
 
@@ -632,6 +737,29 @@ Utilice el token de acceso devuelto en la continuación de la concesión de auto
       },
     }
   )
+  ```
+  </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
+  ```rust wrap
+  use open_payments::types::{OutgoingPaymentRequest, Amount};
+  let outgoing_request = OutgoingPaymentRequest::FromIncomingPayment {
+    wallet_address: sender_wallet_address.id.clone(),
+    incoming_payment_id: recipient_incoming_payment.id.clone(),
+    debit_amount: Amount {
+      value: "20000".into(),
+      asset_code: "USD".into(),
+      asset_scale: 2,
+    },
+    metadata: None,
+  };
+  let sender_outgoing_payment = client
+    .outgoing_payments()
+    .create(
+      &sender_wallet_address.resource_server,
+      &outgoing_request,
+      Some(&sender_outgoing_payment_grant.access_token.value),
+    )
+    .await?;
   ```
   </TabItem>
 

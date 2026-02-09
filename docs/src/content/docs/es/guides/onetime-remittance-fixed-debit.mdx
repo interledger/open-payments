@@ -21,7 +21,7 @@ Este enfoque es útil en particular para situaciones de aplicaciones de remesas 
 
 ### Caso hipotético
 
-Imagine que alguien en EE. UU. envía dinero a un familiar en México. Esta persona quiere enviar exactamente 100 dólares estadounidenses (USD) desde su cuenta, independientemente de cuánto reciba realmente su familiar después de que se apliquen los tipos de cambio. Esto difiere de los casos en los que el remitente especifica exactamente cuánto debe recibir el destinatario.
+Imagine que alguien en EE. UU. envía dinero a un familiar en México. Esta persona quiere enviar exactamente 100 dólares estadounidenses (USD) desde su cuenta, independientemente de cuánto reciba realmente su familiar después de que se apliquen los tipos de cambio. Esto difiere de los casos en los que el remitente especifica [exactamente cuánto debe recibir el destinatario](/es/guides/onetime-remittance-fixed-receive).
 
 Para esta guía, asumirá el papel de un desarrollador que está creando una aplicación de remesas. La guía explica cómo enviar un pago de \$100 USD, en el que el remitente paga exactamente \$100, y el destinatario recibe el monto en pesos mexicanos (MXN) después de la conversión de monedas.
 
@@ -124,7 +124,7 @@ if err != nil {
  </TabItem>
 </Tabs>
 <details>
-<summary>Respuestas de ejemplo</summary>
+<summary>Ejemplo de respuesta</summary>
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
 ```json wrap
 {
@@ -622,7 +622,7 @@ Utilice la información del remitente `authServer` recibida en el paso 1 para ll
 Esta llamada obtiene un token de acceso que permite a su aplicación solicitar la creación de un recurso de pago saliente en la cuenta de billetera del remitente.
 
 :::note
-Los pagos salientes requieren una concesión de autorización interactiva. Este tipo de concesión de autorización obtendrá el consentimiento del remitente antes de que se realice un pago saliente desde su cuenta de billetera. Puede encontrar más información en las páginas del [flujo de Open Payments](/concepts/op-flow/#outgoing-payment) y [proveedores de identidad](/identity/idp).
+Los pagos salientes requieren una concesión de autorización interactiva. Este tipo de concesión de autorización obtendrá el consentimiento del remitente antes de que se realice un pago saliente desde su cuenta de billetera. Puede encontrar más información en las páginas del [flujo de Open Payments](/es/concepts/op-flow/#pago-saliente) y [proveedores de identidad](/es/identity/idp).
 :::
 
 <Tabs syncKey="lang">
@@ -1011,6 +1011,9 @@ if err != nil {
 
  </TabItem>
 </Tabs>
+
+Si la solicitud falla debido a una cotización caducada, [solicite una nueva cotización](#5-solicitar-la-creación-de-un-recurso-de-cotización) e intente de nuevo.
+
 <details>
 <summary>Ejemplo de respuesta</summary>
 El siguiente ejemplo muestra una respuesta cuando se crea un recurso de pago saliente en la cuenta del remitente.
@@ -1040,3 +1043,7 @@ El siguiente ejemplo muestra una respuesta cuando se crea un recurso de pago sal
 ```
 
 </details>
+
+:::note[Expiración del token de acceso]
+Si el token de acceso de una concesión de autorización ha expirado, llame a la <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/auth-server/operations/post-token/) y, luego, utilice el nuevo token en la solicitud correspondiente.
+:::

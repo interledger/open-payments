@@ -126,15 +126,31 @@ $platformWalletAddress = $client->walletAddress()->get([
 
 <details>
 <summary>Example response</summary>
-The following shows an example response from the customer's wallet provider. Similar responses will be returned from the merchant's and platform's wallet provider.
+The following shows example responses from the customer's, merchant's, and platform's wallet providers.
 ```json wrap
-{
-  "id": "https://cloudninebank.example.com/customer",
-  "assetCode": "USD",
-  "assetScale": 2,
-  "authServer": "https://auth.cloudninebank.example.com/",
-  "resourceServer": "https://cloudninebank.example.com/op"
-}
+[
+  {
+    "id": "https://cloudninebank.example.com/customer",
+    "assetCode": "USD",
+    "assetScale": 2,
+    "authServer": "https://auth.cloudninebank.example.com/",
+    "resourceServer": "https://cloudninebank.example.com/op"
+  },
+  {
+    "id": "https://happylifebank.example.com/merchant",
+    "assetCode": "USD",
+    "assetScale": 2,
+    "authServer": "https://auth.happylifebank.example.com/",
+    "resourceServer": "https://happylifebank.example.com/op"
+  },
+  {
+    "id": "https://coolwallet.example.com/platform",
+    "assetCode": "USD",
+    "assetScale": 2,
+    "authServer": "https://auth.coolwallet.example.com/",
+    "resourceServer": "https://coolwallet.example.com/op"
+  }
+]
 ```
 
 </details>
