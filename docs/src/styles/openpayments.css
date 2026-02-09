@@ -78,7 +78,7 @@ div.key div.tags {
   margin-top: var(--space-2xs);
 }
 
-.panel b+span,
+.panel b + span,
 div.description span,
 div.tags span {
   border-color: var(--sl-color-gray-5);
@@ -89,7 +89,7 @@ div.description p {
   margin-bottom: var(--space-2xs);
 }
 
-div>span.type {
+div > span.type {
   color: var(--sl-color-text);
 }
 
@@ -133,7 +133,7 @@ div>span.type {
 }
 
 /* 3. Hide the pseudo-arrow ONLY on panels that have their own SVG caret (double arrow fix) */
-.sl-markdown-content details.operation-description-urls>summary::before {
+.sl-markdown-content details.operation-description-urls > summary::before {
   display: none;
 }
 
@@ -146,30 +146,50 @@ div>span.type {
 
 .sl-markdown-content .not-content details details summary {
   padding: 0;
+  margin: 0;
+}
+
+.sl-markdown-content .not-content details[open] > summary {
   margin-bottom: 0.8rem;
 }
 
-.sl-markdown-content div[data-openapi-content-type="application/json"] details details summary {
+.sl-markdown-content
+  div[data-openapi-content-type='application/json']
+  details
+  details
+  summary {
   padding: 0;
 }
 
-.sl-markdown-content div[data-openapi-content-type="application/json"] details details[open] summary {
+.sl-markdown-content
+  div[data-openapi-content-type='application/json']
+  details[open]
+  > summary {
   margin-bottom: 0.8rem;
 }
 
-.sl-markdown-content div[data-openapi-content-type="application/json"] details details {
+.sl-markdown-content
+  div[data-openapi-content-type='application/json']
+  details
+  details {
   padding: 0;
   padding-inline-start: 0.8rem;
 }
 
 /* 5. Ensure the pseudo-arrow is properly aligned and reflects the open state correctly */
-.sl-markdown-content .not-content details:not(.operation-description-urls)>summary::before {
+.sl-markdown-content
+  .not-content
+  details:not(.operation-description-urls)
+  > summary::before {
   margin-inline: 0;
   transform: rotate(0deg);
   transition: transform 0.2s ease;
 }
 
-.sl-markdown-content .not-content details:not(.operation-description-urls)[open]>summary::before {
+.sl-markdown-content
+  .not-content
+  details:not(.operation-description-urls)[open]
+  > summary::before {
   transform: rotate(90deg);
 }
 
@@ -204,6 +224,122 @@ div>span.type {
   }
 }
 
+/* Fix: Details inside Tabs inside Details overflow issue */
+/* Prevent nested details from extending beyond parent container */
+.sl-markdown-content starlight-tabs [role='tabpanel'] .not-content details {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* Remove left border from nested details inside tabs to prevent overflow */
+.sl-markdown-content
+  starlight-tabs
+  [role='tabpanel']
+  .not-content
+  details
+  details {
+  border-left: none;
+  padding-left: 0;
+}
+
+/* Ensure tab panel itself doesn't overflow */
+.sl-markdown-content starlight-tabs [role='tabpanel'] {
+  overflow-x: hidden;
+  min-width: 0;
+}
+
+/* Fix for long content in tags/spans inside tabs - allow text to break */
+.sl-markdown-content starlight-tabs [role='tabpanel'] .not-content .tags {
+  min-width: 0;
+}
+
+.sl-markdown-content starlight-tabs [role='tabpanel'] .not-content .tags span {
+  word-break: break-all;
+  overflow-wrap: anywhere;
+  min-width: 0;
+  max-width: 100%;
+  display: inline;
+  white-space: normal;
+}
+
+/* Ensure description text and paragraphs wrap properly in tabs */
+.sl-markdown-content starlight-tabs [role='tabpanel'] .not-content .description,
+.sl-markdown-content
+  starlight-tabs
+  [role='tabpanel']
+  .not-content
+  .description
+  p,
+.sl-markdown-content starlight-tabs [role='tabpanel'] .not-content .key .name,
+.sl-markdown-content
+  starlight-tabs
+  [role='tabpanel']
+  .not-content
+  .key
+  .description {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+}
+
+/* Aggressive fix for all inline-block spans in tab panels - force wrapping */
+.sl-markdown-content starlight-tabs [role='tabpanel'] .not-content span {
+  word-break: break-all !important;
+  overflow-wrap: anywhere !important;
+  white-space: normal !important;
+  display: inline !important;
+}
+
+/* Fix flex container overflow in key elements */
+.sl-markdown-content starlight-tabs [role='tabpanel'] .not-content .key {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+.sl-markdown-content starlight-tabs [role='tabpanel'] .not-content .key > * {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+/* Deep nesting fix - apply min-width: 0 to ALL flex children in tab panels */
+/* This is needed for deeply nested schemas (4-5 levels) like list-outgoing-payments */
+.sl-markdown-content starlight-tabs [role='tabpanel'] .not-content * {
+  min-width: 0;
+}
+
+/* Ensure all flex containers in tab panels can shrink */
+.sl-markdown-content starlight-tabs [role='tabpanel'] .not-content .description,
+.sl-markdown-content starlight-tabs [role='tabpanel'] .not-content .tags,
+.sl-markdown-content starlight-tabs [role='tabpanel'] .not-content .name,
+.sl-markdown-content
+  starlight-tabs
+  [role='tabpanel']
+  .not-content
+  div[class^='astro-'] {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+/* BROAD FIX: Apply to ALL not-content elements, not just inside tabs */
+/* This fixes overflow in regular details and deeply nested structures */
+.sl-markdown-content .not-content .description,
+.sl-markdown-content .not-content .description p,
+.sl-markdown-content .not-content .tags,
+.sl-markdown-content .not-content .tags span,
+.sl-markdown-content .not-content .key,
+.sl-markdown-content .not-content .key > * {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.sl-markdown-content .not-content span {
+  word-break: break-all;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
 
 /* To remove after re-upgrade of Starlight */
 .site-title {
