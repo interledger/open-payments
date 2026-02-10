@@ -466,6 +466,12 @@ export default defineConfig({
                       label: 'Get an outgoing payment',
                       link: '/apis/resource-server/operations/get-outgoing-payment',
                       badge: { text: 'GET', variant: 'note' }
+                    },
+                    {
+                      label:
+                        'Get spent amounts for current outgoing payment grant',
+                      link: '/apis/resource-server/operations/get-outgoing-payment-grant',
+                      badge: { text: 'GET', variant: 'note' }
                     }
                   ]
                 },
