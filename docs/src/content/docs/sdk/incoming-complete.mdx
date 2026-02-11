@@ -2,12 +2,10 @@
 title: Complete an incoming payment
 ---
 
-import { CodeBlock, LinkOut } from '@interledger/docs-design-system'
+import { LinkOut } from '@interledger/docs-design-system'
 import { Tabs, TabItem, LinkButton } from '@astrojs/starlight/components'
-import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
-import TsImport from '/src/partials/ts-import-initialize.mdx'
 
 An authorized client can complete an unexpired incoming payment to indicate it will not send any additional payments to the wallet address.
 
@@ -20,7 +18,7 @@ These code snippets pass the wallet address and incoming payment URL to the reso
 ## Mark an incoming payment as complete
 
 <Tabs>
-<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+<TabItem label='TypeScript/NodeJS' icon='node'>
 <LinkButton href="https://github.com/interledger/open-payments-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
 <details>
@@ -28,19 +26,26 @@ These code snippets pass the wallet address and incoming payment URL to the reso
   <Ts />
 </details>
 
-<TsImport />
+```ts wrap
+// Import dependencies
+import { createAuthenticatedClient } from '@interledger/open-payments'
 
-<ChunkedSnippet
-  source="incoming-payment/incoming-payment-complete.ts"
-  l="node"
-  chunk="3"
-/>
+// Initialize client
+const client = await createAuthenticatedClient({
+  walletAddressUrl: WALLET_ADDRESS,
+  privateKey: PRIVATE_KEY_PATH,
+  keyId: KEY_ID
+})
 
-<ChunkedSnippet
-  source="incoming-payment/incoming-payment-complete.ts"
-  l="node"
-  chunk="4"
-/>
+// Complete incoming payment
+const incomingPayment = await client.incomingPayment.complete({
+  url: INCOMING_PAYMENT_URL,
+  accessToken: INCOMING_PAYMENT_ACCESS_TOKEN
+})
+
+// Output
+console.log('INCOMING PAYMENT:', JSON.stringify(incomingPayment, null, 2))
+```
 
 For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/incoming-payment/incoming-payment-complete.ts'>View full TS source</LinkOut>
 
@@ -50,46 +55,42 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 <TabItem label="Rust" icon='seti:rust'>
 <LinkButton href="https://github.com/interledger/open-payments-rust/tree/main/src/snippets#readme" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-<ChunkedSnippet
-  source="incoming-payment/incoming-payment-complete.rs"
-  l="rust"
-  chunk="1"
-/>
+```rust wrap
+// Import dependencies
+use open_payments::client::api::AuthenticatedResources;
+use open_payments::snippets::utils::{create_authenticated_client, get_env_var, load_env};
 
-<ChunkedSnippet
-  source="incoming-payment/incoming-payment-complete.rs"
-  l="rust"
-  chunk="2"
-/>
+// Initialize client
+let client = create_authenticated_client()?;
 
-<ChunkedSnippet
-  source="incoming-payment/incoming-payment-complete.rs"
-  l="rust"
-  chunk="3"
-/>
+// Complete incoming payment
+let access_token = get_env_var("INCOMING_PAYMENT_ACCESS_TOKEN")?;
+let incoming_payment_url = get_env_var("INCOMING_PAYMENT_URL")?;
 
-<ChunkedSnippet
-  source="incoming-payment/incoming-payment-complete.rs"
-  l="rust"
-  chunk="4"
-/>
+let payment = client
+    .incoming_payments()
+    .complete(&incoming_payment_url, Some(&access_token))
+    .await?;
 
-<p>
-  <LinkOut href="https://github.com/interledger/open-payments/blob/main/snippets/rust/incoming-payment/incoming-payment-complete.rs">
-    View full Rust source
-  </LinkOut>
-</p>
+// Output
+println!("Completed incoming payment: {payment:#?}");
+
+```
+
+<LinkOut href="https://github.com/interledger/open-payments/blob/main/snippets/rust/incoming-payment/incoming-payment-complete.rs">
+  View full source
+</LinkOut>
 
 </TabItem>
 <TabItem label='PHP' icon='seti:php'>
 <LinkButton href="https://github.com/interledger/open-payments-php-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-```php
+```php wrap
 // Import dependencies
 use OpenPayments\AuthClient;
 use OpenPayments\Config\Config;
 
-// Initialize Open Payments client
+// Initialize client
 $config = new Config(
     $WALLET_ADDRESS,
     $PRIVATE_KEY,
@@ -109,15 +110,16 @@ $incomingPayment = $opClient->incomingPayment()->complete(
 echo 'COMPLETE INCOMING PAYMENT: '. PHP_EOL . print_r($incomingPayment, true);
 ```
 
-<p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/IncomingPayment/IncomingPaymentComplete.php'>View full source</LinkOut></p>
+<LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/IncomingPayment/IncomingPaymentComplete.php'>View full source</LinkOut>
 </TabItem>
 
 <TabItem label="Go" icon='seti:go'>
 <LinkButton href="https://github.com/interledger/open-payments-go/blob/main/README.md" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-```go
+```go wrap
 package main
 
+// Import dependencies
 import (
 	"context"
 	"encoding/json"
@@ -128,7 +130,7 @@ import (
 )
 
 func main() {
-	// Initialize Open Payments client
+	// Initialize client
 	client, err := op.NewAuthenticatedClient(WALLET_ADDRESS_URL, PRIVATE_KEY_BASE_64, KEY_ID)
 	if err != nil {
 		log.Fatalf("Error creating authenticated client: %v\n", err)
@@ -156,33 +158,33 @@ func main() {
 <TabItem label='Java' icon='seti:java'>
 <LinkButton href="https://github.com/interledger/open-payments-java?tab=readme-ov-file#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-    ```java wrap
-    // 1. Import:
-    import org.interledger.openpayments.httpclient.OpenPaymentsHttpClient;
-    import org.interledger.openpayments.IOpenPaymentsClient;
+```java wrap
+// Import dependencies
+import org.interledger.openpayments.httpclient.OpenPaymentsHttpClient;
+import org.interledger.openpayments.IOpenPaymentsClient;
 
-    // 2. Client instance using HTTP:
-    IOpenPaymentsClient client = OpenPaymentsHttpClient.defaultClient(
-    "WalletAddress",
-    "PrivateKeyPEM",
-    "KeyId"
-    );
+// Initialize client
+IOpenPaymentsClient client = OpenPaymentsHttpClient.defaultClient(
+"WalletAddress",
+"PrivateKeyPEM",
+"KeyId"
+);
 
-    // 3. Retrieve the wallet:
-    var receiverWallet = client.getWalletAddress("https://cloudninebank.example.com/customer");
+// Retrieve the wallet
+var receiverWallet = client.getWalletAddress("https://cloudninebank.example.com/customer");
 
-    // 4. Grant for incoming payment (default):
-    var grantRequest = this.client.createGrantIncomingPayment(receiverWallet);
+// Grant for incoming payment (default)
+var grantRequest = this.client.createGrantIncomingPayment(receiverWallet);
 
-    // 5. Create the incoming payment:
-    var incomingPayment = this.client.createIncomingPayment(receiverWallet, grantRequest, BigDecimal.valueOf(11.25));
+// Create the incoming payment
+var incomingPayment = this.client.createIncomingPayment(receiverWallet, grantRequest, BigDecimal.valueOf(11.25));
 
-    // 6. Complete the incoming payment:
-    var incomingPaymentComplete = this.client.createIncomingPaymentComplete(incomingPayment, grantRequest);
+// Complete the incoming payment
+var incomingPaymentComplete = this.client.createIncomingPaymentComplete(incomingPayment, grantRequest);
 
-    // 7. Logging:
-    log.info("INCOMING_PAYMENT: {}", incomingPaymentComplete);
-    ```
+// Output
+log.info("INCOMING_PAYMENT: {}", incomingPaymentComplete);
+```
 
 </TabItem>
 </Tabs>

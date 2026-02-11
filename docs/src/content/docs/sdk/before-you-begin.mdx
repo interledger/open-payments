@@ -2,25 +2,24 @@
 title: Before you begin
 ---
 
+import { Tabs, TabItem, LinkButton } from '@astrojs/starlight/components'
 import { LinkOut } from '@interledger/docs-design-system'
 
-The Open Payments SDKs provide developers with pre-built functions that simplify interactions with the Open Payments API. Currently, we offer the following SDKs, with plans to expand to additional languages and frameworks in the future.
+The Open Payments SDKs provide developers with pre-built functions that simplify interactions with the Open Payments API.
 
-- <LinkOut href="https://github.com/interledger/open-payments-node">
-    TypeScript/NodeJS
-  </LinkOut>
-- <LinkOut href="https://github.com/interledger/open-payments-php">PHP</LinkOut>
-- <LinkOut href="https://github.com/interledger/open-payments-rust">
-    Rust
-  </LinkOut>
-- <LinkOut href="https://github.com/interledger/open-payments-go">Go</LinkOut>
-- <LinkOut href="https://github.com/interledger/open-payments-java">
-    Java
-  </LinkOut>
+| SDK               | Status      | Repo                                                                                                       |
+| ----------------- | ----------- | ---------------------------------------------------------------------------------------------------------- |
+| C# (.NET)         | In progress | <LinkOut href="https://github.com/interledger/open-payments-dotnet">open-payments-dotnet</LinkOut>         |
+| Go                | Done        | <LinkOut href="https://github.com/interledger/open-payments-go">open-payments-go</LinkOut>                 |
+| Java              | Done        | <LinkOut href="https://github.com/interledger/open-payments-java">open-payments-java</LinkOut>             |
+| PHP               | Done        | <LinkOut href="https://github.com/interledger/open-payments-php">open-payments-php</LinkOut>               |
+| Python            | In Progress | <LinkOut href="https://github.com/interledger/open-payments-python-sdk">open-payments-python-sdk</LinkOut> |
+| Rust              | Done        | <LinkOut href="https://github.com/interledger/open-payments-rust">open-payments-rust</LinkOut>             |
+| TypeScript/NodeJS | Done        | <LinkOut href="https://github.com/interledger/open-payments-node">open-payments-node</LinkOut>             |
 
 ## Using the SDKs
 
-Each SDK snippet page uses a tabbed interface to support multiple programming languages. This means you can find the relevant code snippets for the language of your choice with ease, without needing individual pages for each language. The basic structure of each page is as follows:
+Each SDK snippet page in this section uses a tabbed interface to support multiple programming languages. This means you can find the relevant code snippets for the language of your choice with ease, without needing individual pages for each language. The basic structure of each page is as follows:
 
 - The page title reflects the operation, function, or action being performed.
 - A few overview paragraphs provide context about the function, its role in the Open Payments flow, and any general information that may be helpful.
@@ -31,8 +30,8 @@ In the tabbed interface, you'll notice the following sections:
 
 - A "Prerequisites" button that links to the respective SDK's README on GitHub for setup instructions.
 - Any additional configuration steps required for the selected language.
-- Code blocks for each step in the process, broken down into manageable chunks.
-- After the code snippets, any other commands that need to be run are mentioned, along with links to the relevant API reference documentation or other pertinent resources.
+- A single code block with all steps in the process for easy copying and pasting.
+- After the code block, any other commands that need to be run are mentioned, along with links to the relevant API reference documentation or other pertinent resources.
 
 This consistent structure across all SDK snippet pages allow you to quickly grasp the functionality and implementation details, making it easier to work with the Open Payments SDKs.
 

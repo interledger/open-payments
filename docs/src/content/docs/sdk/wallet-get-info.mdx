@@ -2,16 +2,13 @@
 title: Get wallet address information
 ---
 
-import { Disclosure, CodeBlock, LinkOut } from '@interledger/docs-design-system'
+import { LinkOut } from '@interledger/docs-design-system'
 import { Tabs, TabItem, LinkButton } from '@astrojs/starlight/components'
-import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Begin from '/src/partials/before-you-begin.mdx'
-import Ts from '/src/partials/ts-init-config.mdx'
-import TsImport from '/src/partials/ts-import-initialize.mdx'
 
 For a client to request a grant from an authorization server, the client must first verify the validity of the wallet address and get the URL of the wallet's authorization server.
 
-These code snippets enable an authenticated client to verify a wallet address, get the basic information required to construct a new transaction, and discover the auth server’s URL. Note that unauthenticated clients can also call the Wallet Address API to get wallet address information.
+These code snippets enable an authenticated client to verify a wallet address, get the basic information required to construct a new transaction, and discover the auth server's URL. Note that unauthenticated clients can also call the Wallet Address API to get wallet address information.
 
 ## Before you begin
 
@@ -20,22 +17,28 @@ These code snippets enable an authenticated client to verify a wallet address, g
 ## Retrieve public information for a wallet address
 
 <Tabs>
-<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-<LinkButton 
-href="https://github.com/interledger/open-payments-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
-<TsImport />
+<TabItem label='TypeScript/NodeJS' icon='node'>
+<LinkButton href="https://github.com/interledger/open-payments-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-<ChunkedSnippet
-  source="wallet-address/wallet-address-get.ts"
-  l="node"
-  chunk="3"
-/>
+```ts wrap
+// Import dependencies
+import { createAuthenticatedClient } from '@interledger/open-payments'
 
-<ChunkedSnippet
-  source="wallet-address/wallet-address-get.ts"
-  l="node"
-  chunk="4"
-/>
+// Initialize client
+const client = await createAuthenticatedClient({
+  walletAddressUrl: WALLET_ADDRESS,
+  privateKey: PRIVATE_KEY_PATH,
+  keyId: KEY_ID
+})
+
+// Get wallet address
+const walletAddress = await client.walletAddress.get({
+  url: WALLET_ADDRESS
+})
+
+// Output
+console.log('WALLET ADDRESS:', walletAddress)
+```
 
 For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/wallet-address/wallet-address-get.ts'>View full TS source</LinkOut>
 
@@ -45,124 +48,118 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 <TabItem label="Rust" icon='seti:rust'>
 <LinkButton href="https://github.com/interledger/open-payments-rust/tree/main/src/snippets#readme" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-<ChunkedSnippet
-  source="wallet-address/wallet-address-get.rs"
-  l="rust"
-  chunk="1"
-/>
+```rust wrap
+// Import dependencies
+use open_payments::client::api::UnauthenticatedResources;
+use open_payments::snippets::utils::{create_unauthenticated_client, get_env_var, load_env};
 
-<ChunkedSnippet
-  source="wallet-address/wallet-address-get.rs"
-  l="rust"
-  chunk="2"
-/>
+// Initialize client
+let client = create_unauthenticated_client();
 
-<ChunkedSnippet
-  source="wallet-address/wallet-address-get.rs"
-  l="rust"
-  chunk="3"
-/>
+// Get wallet address
+let wallet_address_url = get_env_var("WALLET_ADDRESS_URL")?;
+let wallet_address = client.wallet_address().get(&wallet_address_url).await?;
 
-<ChunkedSnippet
-  source="wallet-address/wallet-address-get.rs"
-  l="rust"
-  chunk="4"
-/>
+// Output
+println!("Retrieved wallet address: {wallet_address:#?}");
 
-<p>
-  <LinkOut href="https://github.com/interledger/open-payments/blob/main/snippets/rust/wallet-address/wallet-address-get.rs">
-    View full Rust source
-  </LinkOut>
-</p>
+```
 
+<LinkOut href="https://github.com/interledger/open-payments/blob/main/snippets/rust/wallet-address/wallet-address-get.rs">
+  View full source
+</LinkOut>
 </TabItem>
 <TabItem label='PHP' icon='seti:php'>
 <LinkButton href="https://github.com/interledger/open-payments-php-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-```php
+```php wrap
 // Import dependencies
 use OpenPayments\AuthClient;
 use OpenPayments\Config\Config;
 
-// Initialize Open Payments unauthenticated client
+// Initialize client
 $config = new Config($WALLET_ADDRESS);
 $opClient = new AuthClient($config); // because of missing keys in config, this will be an unauthenticated client
 
 // Get wallet address
 $wallet = $opClient->walletAddress()->get([
-    'url' => $config->getWalletAddressUrl()
+'url' => $config->getWalletAddressUrl()
 ]);
 
-// Output wallet address information
+// Output
 echo 'WALLET ADDRESS: ' . PHP_EOL . print_r($wallet, true);
+
 ```
 
-{/* prettier-ignore */}
-<p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/WalletAddress/PublicGetWalletAddress.php'>View full source</LinkOut></p>
+<LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/WalletAddress/PublicGetWalletAddress.php'>View full source</LinkOut>
 </TabItem>
 <TabItem label="Go" icon='seti:go'>
 <LinkButton href="https://github.com/interledger/open-payments-go/blob/main/README.md" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-```go
+```go wrap
 package main
 
+// Import dependencies
 import (
-	"context"
-	"encoding/json"
-	"fmt"
-	"log"
+"context"
+"encoding/json"
+"fmt"
+"log"
 
-	op "github.com/interledger/open-payments-go"
+op "github.com/interledger/open-payments-go"
 )
 func main() {
-  // Initialize Open Payments client
-  client, err := op.NewAuthenticatedClient(WALLET_ADDRESS_URL, PRIVATE_KEY_BASE_64, KEY_ID)
-  if err != nil {
-    log.Fatalf("Error creating authenticated client: %v\n", err)
-  }
-
-  // Get wallet address
-  walletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
-    URL: WALLET_ADDRESS_URL,
-  })
-  if err != nil {
-    log.Fatalf("Error fetching wallet address: %v\n", err)
-  }
-
-  // Output
-  walletAddressJSON, err := json.MarshalIndent(walletAddress, "", "  ")
-  if err != nil {
-    log.Fatalf("Error marshaling wallet address: %v\n", err)
-  }
-  fmt.Println("WALLET ADDRESS:", string(walletAddressJSON))
+// Initialize client
+client, err := op.NewAuthenticatedClient(WALLET_ADDRESS_URL, PRIVATE_KEY_BASE_64, KEY_ID)
+if err != nil {
+log.Fatalf("Error creating authenticated client: %v\n", err)
 }
+
+// Get wallet address
+walletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
+URL: WALLET_ADDRESS_URL,
+})
+if err != nil {
+log.Fatalf("Error fetching wallet address: %v\n", err)
+}
+
+// Output
+walletAddressJSON, err := json.MarshalIndent(walletAddress, "", " ")
+if err != nil {
+log.Fatalf("Error marshaling wallet address: %v\n", err)
+}
+fmt.Println("WALLET ADDRESS:", string(walletAddressJSON))
+}
+
 ```
 
 </TabItem>
 <TabItem label='Java' icon='seti:java'>
 <LinkButton href="https://github.com/interledger/open-payments-java?tab=readme-ov-file#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-    ```java wrap
-    // 1. Import:
-    import org.interledger.openpayments.httpclient.OpenPaymentsHttpClient;
-    import org.interledger.openpayments.IOpenPaymentsClient;
+```java wrap
+// Import dependencies
+import org.interledger.openpayments.httpclient.OpenPaymentsHttpClient;
+import org.interledger.openpayments.IOpenPaymentsClient;
 
-    // 2. Client instance using HTTP:
-    var client = OpenPaymentsHttpClient.defaultClient(
-    "WalletAddress",
-    "PrivateKeyPEM",
-    "KeyId"
-    );
+// Initialize client
+var client = OpenPaymentsHttpClient.defaultClient(
+"WalletAddress",
+"PrivateKeyPEM",
+"KeyId"
+);
 
-    // 3. Retrieve the wallet
-    var walletAddress = client.getWalletAddress("https://cloudninebank.example.com/customer");
+// Get wallet address
+var walletAddress = client.getWalletAddress("https://cloudninebank.example.com/customer");
 
-    // 4. Log wallet info:
-    log.info("WALLET_ADDRESS: {}", walletAddress);
-    ```
+// Output
+log.info("WALLET_ADDRESS: {}", walletAddress);
+
+```
 
 </TabItem>
 </Tabs>
+
 ## References
 
 - [API specification](/apis/wallet-address-server/operations/get-wallet-address)

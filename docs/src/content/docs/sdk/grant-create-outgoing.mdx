@@ -4,12 +4,10 @@ tableOfContents:
   maxHeadingLevel: 2
 ---
 
-import { CodeBlock, LinkOut, Tooltip } from '@interledger/docs-design-system'
+import { LinkOut } from '@interledger/docs-design-system'
 import { Tabs, TabItem, LinkButton } from '@astrojs/starlight/components'
-import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
-import TsImport from '/src/partials/ts-import-initialize.mdx'
 
 Before a client can call most of the Open Payments APIs, it must receive a grant from the appropriate authorization server.
 
@@ -26,7 +24,7 @@ In Open Payments, outgoing payments require explicit consent, usually by the cli
 Open Payments also requires any authorization server that issues interactive grants to integrate with an [identity provider (IdP)](/identity/idp). When the client requests the outgoing payment grant, the authorization server provides the client with the IdP URI the client should redirect to.
 
 <Tabs syncKey="langs">
-<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+<TabItem label='TypeScript/NodeJS' icon='node'>
 <LinkButton href="https://github.com/interledger/open-payments-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
 <details>
@@ -34,25 +32,130 @@ Open Payments also requires any authorization server that issues interactive gra
   <Ts />
 </details>
 
-<TsImport />
-
-<ChunkedSnippet source="grant/grant-outgoing-payment.ts" l="node" chunk="3" />
-
 #### Generate without an interval
 
-<ChunkedSnippet source="grant/grant-outgoing-payment.ts" l="node" chunk="4" />
+```ts wrap
+// Import dependencies
+import { createAuthenticatedClient } from '@interledger/open-payments'
+
+// Initialize client
+const client = await createAuthenticatedClient({
+  walletAddressUrl: WALLET_ADDRESS,
+  privateKey: PRIVATE_KEY_PATH,
+  keyId: KEY_ID
+})
+
+// Get wallet address information
+const walletAddress = await client.walletAddress.get({
+  url: WALLET_ADDRESS
+})
+
+// Request outgoing payment grant
+const grant = await client.grant.request(
+  {
+    url: walletAddress.authServer
+  },
+  {
+    access_token: {
+      access: [
+        {
+          identifier: walletAddress.id,
+          type: 'outgoing-payment',
+          actions: ['list', 'list-all', 'read', 'read-all', 'create'],
+          limits: {
+            debitAmount: {
+              assetCode: quote.debitAmount.assetCode,
+              assetScale: quote.debitAmount.assetScale,
+              value: quote.debitAmount.value
+            }
+          }
+        }
+      ]
+    },
+    interact: {
+      start: ['redirect'],
+      finish: {
+        method: 'redirect',
+        uri: 'http://localhost:3344',
+        nonce: NONCE
+      }
+    }
+  }
+)
+
+// Check grant state
+if (!isPendingGrant(grant)) {
+  throw new Error('Expected interactive grant')
+}
+
+// Output
+console.log('Please interact at the following URL:', grant.interact.redirect)
+console.log('CONTINUE_ACCESS_TOKEN =', grant.continue.access_token.value)
+console.log('CONTINUE_URI =', grant.continue.uri)
+```
 
 #### Generate with an interval
 
-<ChunkedSnippet
-  source="grant/grant-outgoing-payment-interval.ts"
-  l="node"
-  chunk="4"
-/>
+```ts wrap
+// Import dependencies
+import { createAuthenticatedClient } from '@interledger/open-payments'
 
-<ChunkedSnippet source="grant/grant-outgoing-payment.ts" l="node" chunk="5" />
+// Initialize client
+const client = await createAuthenticatedClient({
+  walletAddressUrl: WALLET_ADDRESS,
+  privateKey: PRIVATE_KEY_PATH,
+  keyId: KEY_ID
+})
 
-<ChunkedSnippet source="grant/grant-outgoing-payment.ts" l="node" chunk="6" />
+// Get wallet address information
+const walletAddress = await client.walletAddress.get({
+  url: WALLET_ADDRESS
+})
+
+// Request outgoing payment grant
+const grant = await client.grant.request(
+  {
+    url: walletAddress.authServer
+  },
+  {
+    access_token: {
+      access: [
+        {
+          identifier: walletAddress.id,
+          type: 'outgoing-payment',
+          actions: ['list', 'list-all', 'read', 'read-all', 'create'],
+          limits: {
+            debitAmount: {
+              assetCode: quote.debitAmount.assetCode,
+              assetScale: quote.debitAmount.assetScale,
+              value: quote.debitAmount.value
+            },
+            interval: 'R/2016-08-24T08:00:00Z/P1D'
+          }
+        }
+      ]
+    },
+    interact: {
+      start: ['redirect'],
+      finish: {
+        method: 'redirect',
+        uri: 'http://localhost:3344',
+        nonce: NONCE
+      }
+    }
+  }
+)
+
+// Check grant state
+if (!isPendingGrant(grant)) {
+  throw new Error('Expected interactive grant')
+}
+
+// Output
+console.log('Please interact at the following URL:', grant.interact.redirect)
+console.log('CONTINUE_ACCESS_TOKEN =', grant.continue.access_token.value)
+console.log('CONTINUE_URI =', grant.continue.uri)
+```
 
 For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/grant/grant-outgoing-payment.ts'>View full TS source</LinkOut>
 
@@ -62,50 +165,120 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 <TabItem label="Rust" icon='seti:rust'>
 <LinkButton href="https://github.com/interledger/open-payments-rust/tree/main/src/snippets#readme" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-<ChunkedSnippet source="grant/grant-outgoing-payment.rs" l="rust" chunk="1" />
+```rust wrap
+// Import dependencies
+use open_payments::client::api::UnauthenticatedResources;
+use open_payments::client::AuthenticatedResources;
+use open_payments::snippets::utils::{create_authenticated_client, get_env_var, load_env};
+use open_payments::types::{
+    auth::{
+        AccessItem, AccessTokenRequest, GrantRequest, InteractFinish, InteractRequest,
+        LimitsOutgoing, OutgoingPaymentAction,
+    },
+    GrantResponse,
+};
+use uuid::Uuid;
 
-<ChunkedSnippet source="grant/grant-outgoing-payment.rs" l="rust" chunk="2" />
+// Initialize client
+// Authenticated client can be also used for unauthenticated resources
+let client = create_authenticated_client()?;
 
-<ChunkedSnippet source="grant/grant-outgoing-payment.rs" l="rust" chunk="3" />
+// Get wallet address information
+let wallet_address_url = get_env_var("WALLET_ADDRESS_URL")?;
+let wallet_address = client.wallet_address().get(&wallet_address_url).await?;
 
-<ChunkedSnippet source="grant/grant-outgoing-payment.rs" l="rust" chunk="4" />
+// Request outgoing payment grant
+let quote_url = get_env_var("QUOTE_URL")?;
+let access_token = get_env_var("QUOTE_ACCESS_TOKEN")?;
+let quote = client.quotes().get(&quote_url, Some(&access_token)).await?;
 
-<ChunkedSnippet source="grant/grant-outgoing-payment.rs" l="rust" chunk="5" />
+let wallet_id = &wallet_address.id;
+let grant_request = GrantRequest::new(
+    AccessTokenRequest {
+        access: vec![AccessItem::OutgoingPayment {
+            actions: vec![
+                OutgoingPaymentAction::Read,
+                OutgoingPaymentAction::ReadAll,
+                OutgoingPaymentAction::List,
+                OutgoingPaymentAction::Create,
+            ],
+            identifier: wallet_id.to_string(),
+            limits: Some(LimitsOutgoing {
+                receiver: None,
+                debit_amount: Some(quote.debit_amount),
+                receive_amount: None,
+                interval: None,
+            }),
+        }],
+    },
+    Some(InteractRequest {
+        start: vec!["redirect".to_string()],
+        finish: Some(InteractFinish {
+            method: "redirect".to_string(),
+            uri: "http://localhost".to_string(),
+            nonce: Uuid::new_v4().to_string(),
+        }),
+    }),
+);
 
-<p>
-  <LinkOut href="https://github.com/interledger/open-payments/blob/main/snippets/rust/grant/grant-outgoing-payment.rs">
-    View full Rust source
-  </LinkOut>
-</p>
+println!(
+    "Grant request JSON: {}",
+    serde_json::to_string_pretty(&grant_request)?
+);
+
+let response = client
+    .grant()
+    .request(&wallet_address.auth_server, &grant_request)
+    .await?;
+
+// Output
+match response {
+    GrantResponse::WithToken { access_token, .. } => {
+        println!("Received access token: {:#?}", access_token.value);
+        println!(
+            "Received access token manage URL: {:#?}",
+            access_token.manage
+        );
+    }
+    GrantResponse::WithInteraction {
+        interact,
+        continue_,
+    } => {
+        println!("Received interact: {interact:#?}");
+        println!("Received continue: {continue_:#?}");
+    }
+}
+
+```
+
+<LinkOut href="https://github.com/interledger/open-payments/blob/main/snippets/rust/grant/grant-outgoing-payment.rs">
+  View full source
+</LinkOut>
 
 </TabItem>
 <TabItem label='PHP' icon='seti:php'>
 <LinkButton href="https://github.com/interledger/open-payments-php-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-```php
+#### Generate without an interval
+
+```php wrap
 // Import dependencies
 use OpenPayments\AuthClient;
 use OpenPayments\Config\Config;
 
-// Initialize Open Payments client
+// Initialize client
 $config = new Config(
     $WALLET_ADDRESS,
     $PRIVATE_KEY,
     $KEY_ID
 );
 $opClient = new AuthClient($config);
-```
 
-```php
 // Get wallet address information
 $wallet  = $opClient->walletAddress()->get([
     'url' => $config->getWalletAddressUrl()
 ]);
-```
 
-#### Generate without an interval
-
-```php
 // Request outgoing payment grant
 $grant = $opClient->grant()->request(
     [
@@ -140,12 +313,45 @@ $grant = $opClient->grant()->request(
         ]
     ]
 );
+
+// Check grant state
+if (!$grant instanceof \OpenPayments\Models\PendingGrant) {
+    throw new \Error('Expected interactive grant');
+}
+
+// Output
+echo 'Please interact at the following URL: ' . $grant->interact->redirect . PHP_EOL;
+echo 'CONTINUE_ACCESS_TOKEN = ' . $grant->continue->access_token->value . PHP_EOL;
+echo 'CONTINUE_URI = ' . $grant->continue->uri . PHP_EOL;
+echo 'GRANT OBJECT: ' . PHP_EOL . print_r($grant, true);
+
 ```
 
-#### Generate with an interval
+<LinkOut href="https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Grant/GrantOutgoingPayment.php">
+  View full source without interval
+</LinkOut>
 
-```php
-// Request outgoing payment grant with interval
+#### Generate with an interval and output
+
+```php wrap
+// Import dependencies
+use OpenPayments\AuthClient;
+use OpenPayments\Config\Config;
+
+// Initialize client
+$config = new Config(
+    $WALLET_ADDRESS,
+    $PRIVATE_KEY,
+    $KEY_ID
+);
+$opClient = new AuthClient($config);
+
+// Get wallet address information
+$wallet  = $opClient->walletAddress()->get([
+    'url' => $config->getWalletAddressUrl()
+]);
+
+// Request outgoing payment grant
 $grant = $opClient->grant()->request(
     [
         'url' => $wallet->authServer
@@ -179,9 +385,7 @@ $grant = $opClient->grant()->request(
         ]
     ]
 );
-```
 
-```php
 // Check grant state
 if (!$grant instanceof \OpenPayments\Models\PendingGrant) {
     throw new \Error('Expected interactive grant');
@@ -194,15 +398,15 @@ echo 'CONTINUE_URI = ' . $grant->continue->uri . PHP_EOL;
 echo 'GRANT OBJECT: ' . PHP_EOL . print_r($grant, true);
 ```
 
-<p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Grant/GrantOutgoingPayment.php'>View full source without interval</LinkOut></p>
-<p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Grant/GrantOutgoingPaymentInterval.php'>View full source with interval</LinkOut></p>
+<LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Grant/GrantOutgoingPaymentInterval.php'>View full source with interval</LinkOut>
 </TabItem>
 <TabItem label="Go" icon='seti:go'>
 <LinkButton href="https://github.com/interledger/open-payments-go/blob/main/README.md" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-```go
+```go wrap
 package main
 
+// Import dependencies
 import (
 	"context"
 	"encoding/json"
@@ -214,7 +418,7 @@ import (
 )
 
 func main() {
-	// Initialize Open Payments client
+	// Initialize client
 	client, err := op.NewAuthenticatedClient(WALLET_ADDRESS_URL, PRIVATE_KEY_BASE_64, KEY_ID)
 	if err != nil {
 		log.Fatalf("Error creating authenticated client: %v\n", err)
@@ -262,7 +466,7 @@ func main() {
 		log.Fatalf("Error requesting grant: %v\n", err)
 	}
 
-	// Check grant state (interaction is required for outgoing payments)
+	// Check grant state
 	if !grant.IsInteractive() {
 		log.Fatalf("Expected interactive grant")
 	}
@@ -283,43 +487,44 @@ func main() {
 <TabItem label='Java' icon='seti:java'>
 <LinkButton href="https://github.com/interledger/open-payments-java?tab=readme-ov-file#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-    ```java wrap
-    // 1. Import:
-    import org.interledger.openpayments.httpclient.OpenPaymentsHttpClient;
-    import org.interledger.openpayments.IOpenPaymentsClient;
+```java wrap
+// Import dependencies
+import org.interledger.openpayments.httpclient.OpenPaymentsHttpClient;
+import org.interledger.openpayments.IOpenPaymentsClient;
 
-    // 2. Client instance using HTTP:
-    var client = OpenPaymentsHttpClient.defaultClient(
-    "WalletAddress",
-    "PrivateKeyPEM",
-    "KeyId"
-    );
+// Initialize client
+var client = OpenPaymentsHttpClient.defaultClient(
+"WalletAddress",
+"PrivateKeyPEM",
+"KeyId"
+);
 
-    // 3. Retrieve the wallets:
-    var senderWallet = client.getWalletAddress("https://cloudninebank.example.com/customer");
-    var receiverWallet = client.getWalletAddress("https://cloudninebank.example.com/merchant");
+// Get wallet address information
+var senderWallet = client.getWalletAddress("https://cloudninebank.example.com/customer");
+var receiverWallet = client.getWalletAddress("https://cloudninebank.example.com/merchant");
 
-    // 4. Create incoming payment:
-    var grantRequest = this.client.createGrantIncomingPayment(receiverWallet);
-    var incomingPayment = this.client.createIncomingPayment(receiverWallet, grantRequest, BigDecimal.valueOf(11.25));
+// Create an incoming payment
+var grantRequest = this.client.createGrantIncomingPayment(receiverWallet);
+var incomingPayment = this.client.createIncomingPayment(receiverWallet, grantRequest, BigDecimal.valueOf(11.25));
 
-    // 5. Create quote:
-    var quoteRequest = this.client.createGrantQuote(senderWallet);
-    var quote = this.client.createQuote(quoteRequest.getAccess().getToken(), senderWallet, incomingPayment);
+// Create a quote
+var quoteRequest = this.client.createGrantQuote(senderWallet);
+var quote = this.client.createQuote(quoteRequest.getAccess().getToken(), senderWallet, incomingPayment);
 
-    var urlToOpen = "http://localhost:%d?paymentId=1234".formatted(port);
+var urlToOpen = "http://localhost:%d?paymentId=1234".formatted(port);
 
-    // 6. Create outing payment from quote:
-    var opContinueInteract = this.client.createGrantContinuation(
-    senderWallet,
-    quote.getDebitAmount(),
-    URI.create(urlToOpen),
-    "test"
-    );
+// Create an outgoing payment from quote
+var opContinueInteract = this.client.createGrantContinuation(
+senderWallet,
+quote.getDebitAmount(),
+URI.create(urlToOpen),
+"test"
+);
 
-    // 7. Logging:
-    log.info("OUTGOING_PAYMENT_GRANT: {}", opContinueInteract);
-    ```
+// Output
+log.info("OUTGOING_PAYMENT_GRANT: {}", opContinueInteract);
+
+```
 
 </TabItem>
 </Tabs>

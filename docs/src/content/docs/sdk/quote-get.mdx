@@ -2,16 +2,14 @@
 title: Get a quote
 ---
 
-import { CodeBlock, LinkOut } from '@interledger/docs-design-system'
+import { LinkOut } from '@interledger/docs-design-system'
 import { Tabs, TabItem, LinkButton } from '@astrojs/starlight/components'
-import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
-import TsImport from '/src/partials/ts-import-initialize.mdx'
 
 A quote is a commitment from an account servicing entity to deliver a particular amount to a recipient when sending a particular amount from a sender. The quote is only valid for a limited time.
 
-An authorized client can get a quote to check the quote’s state (e.g., is the quote valid or expired), as well as other payment details, such as the total amount that should be received by the recipient and the total amount that should be sent by the sender.
+An authorized client can get a quote to check the quote's state (for example, is the quote valid or expired), as well as other payment details, such as the total amount that should be received by the recipient and the total amount that should be sent by the sender.
 
 These code snippets return the state and details of a specific quote, if found.
 
@@ -22,7 +20,7 @@ These code snippets return the state and details of a specific quote, if found.
 ## Get the state of a quote
 
 <Tabs>
-<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+<TabItem label='TypeScript/NodeJS' icon='node'>
 <LinkButton href="https://github.com/interledger/open-payments-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
 <details>
@@ -30,11 +28,26 @@ These code snippets return the state and details of a specific quote, if found.
   <Ts />
 </details>
 
-<TsImport />
+```ts wrap
+// Import dependencies
+import { createAuthenticatedClient } from '@interledger/open-payments'
 
-<ChunkedSnippet source="quote/quote-get.ts" l="node" chunk="3" />
+// Initialize client
+const client = await createAuthenticatedClient({
+  walletAddressUrl: WALLET_ADDRESS,
+  privateKey: PRIVATE_KEY_PATH,
+  keyId: KEY_ID
+})
 
-<ChunkedSnippet source="quote/quote-get.ts" l="node" chunk="4" />
+// Get quote
+const quote = await client.quote.get({
+  url: QUOTE_URL,
+  accessToken: QUOTE_ACCESS_TOKEN
+})
+
+// Output
+console.log('QUOTE:', JSON.stringify(quote, null, 2))
+```
 
 For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/quote/quote-get.ts'>View full TS source</LinkOut>
 
@@ -44,30 +57,39 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 <TabItem label="Rust" icon='seti:rust'>
 <LinkButton href="https://github.com/interledger/open-payments-rust/tree/main/src/snippets#readme" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-<ChunkedSnippet source="quote/quote-get.rs" l="rust" chunk="1" />
+```rust wrap
+// Import dependencies
+use open_payments::client::api::AuthenticatedResources;
+use open_payments::snippets::utils::{create_authenticated_client, get_env_var, load_env};
 
-<ChunkedSnippet source="quote/quote-get.rs" l="rust" chunk="2" />
+// Initialize client
+let client = create_authenticated_client()?;
 
-<ChunkedSnippet source="quote/quote-get.rs" l="rust" chunk="3" />
+// Get quote
+let access_token = get_env_var("QUOTE_ACCESS_TOKEN")?;
+let quote_url = get_env_var("QUOTE_URL")?;
 
-<ChunkedSnippet source="quote/quote-get.rs" l="rust" chunk="4" />
+let quote = client.quotes().get(&quote_url, Some(&access_token)).await?;
 
-<p>
-  <LinkOut href="https://github.com/interledger/open-payments/blob/main/snippets/rust/quote/quote-get.rs">
-    View full Rust source
-  </LinkOut>
-</p>
+// Output
+println!("Quote: {quote:#?}");
+
+```
+
+<LinkOut href="https://github.com/interledger/open-payments/blob/main/snippets/rust/quote/quote-get.rs">
+  View full source
+</LinkOut>
 
 </TabItem>
 <TabItem label='PHP' icon='seti:php'>
 <LinkButton href="https://github.com/interledger/open-payments-php-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-```php
+```php wrap
 // Import dependencies
 use OpenPayments\AuthClient;
 use OpenPayments\Config\Config;
 
-// Initialize Open Payments client
+// Initialize client
 $config = new Config(
     $WALLET_ADDRESS,
     $PRIVATE_KEY,
@@ -79,7 +101,7 @@ $wallet = $opClient->walletAddress()->get([
     'url' => $config->getWalletAddressUrl()
 ]);
 
-// Create quote
+// Get quote
 $quote = $opClient->quote()->get(
     [
         'access_token' => $QUOTE_GRANT_ACCESS_TOKEN,
@@ -92,15 +114,16 @@ echo 'QUOTE_URL ' . $quote->id . PHP_EOL;
 echo 'QUOTE ' . print_r($quote, true) . PHP_EOL;
 ```
 
-<p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Quote/QuoteGet.php'>View full source</LinkOut></p>
+<LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Quote/QuoteGet.php'>View full source</LinkOut>
 </TabItem>
 
 <TabItem label="Go" icon='seti:go'>
 <LinkButton href="https://github.com/interledger/open-payments-go/blob/main/README.md" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-```go
+```go wrap
 package main
 
+// Import dependencies
 import (
 	"context"
 	"encoding/json"
@@ -111,7 +134,7 @@ import (
 )
 
 func main() {
-	// Initialize Open Payments client
+	// Initialize client
 	client, err := op.NewAuthenticatedClient(WALLET_ADDRESS_URL, PRIVATE_KEY_BASE_64, KEY_ID)
 	if err != nil {
 		log.Fatalf("Error creating authenticated client: %v\n", err)
@@ -139,36 +162,36 @@ func main() {
 <TabItem label='Java' icon='seti:java'>
 <LinkButton href="https://github.com/interledger/open-payments-java?tab=readme-ov-file#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-    ```java wrap
-    // 1. Import:
-    import org.interledger.openpayments.httpclient.OpenPaymentsHttpClient;
-    import org.interledger.openpayments.IOpenPaymentsClient;
+```java wrap
+// Import dependencies
+import org.interledger.openpayments.httpclient.OpenPaymentsHttpClient;
+import org.interledger.openpayments.IOpenPaymentsClient;
 
-    // 2. Client instance using HTTP:
-    IOpenPaymentsClient client = OpenPaymentsHttpClient.defaultClient(
-    "WalletAddress",
-    "PrivateKeyPEM",
-    "KeyId"
-    );
+// Initialize client
+IOpenPaymentsClient client = OpenPaymentsHttpClient.defaultClient(
+"WalletAddress",
+"PrivateKeyPEM",
+"KeyId"
+);
 
-    // 3. Retrieve the wallets:
-    var receiverWallet = client.getWalletAddress("https://cloudninebank.example.com/merchant");
-    var senderWallet = client.getWalletAddress("https://cloudninebank.example.com/customer");
+// Get wallet address information
+var receiverWallet = client.getWalletAddress("https://cloudninebank.example.com/merchant");
+var senderWallet = client.getWalletAddress("https://cloudninebank.example.com/customer");
 
-    // 4. Create incoming payment:
-    var grantRequest = this.client.createGrantIncomingPayment(receiverWallet);
-    var incomingPayment = this.client.createIncomingPayment(receiverWallet, grantRequest, BigDecimal.valueOf(11.25));
+// Create incoming payment
+var grantRequest = this.client.createGrantIncomingPayment(receiverWallet);
+var incomingPayment = this.client.createIncomingPayment(receiverWallet, grantRequest, BigDecimal.valueOf(11.25));
 
-    // 5. Create quote:
-    var quoteRequest = this.client.createGrantQuote(senderWallet);
-    var quote = client.createQuote(quoteRequest.getAccess().getToken(), senderWallet, incomingPayment, Optional.empty(), Optional.empty());
+// Create quote
+var quoteRequest = this.client.createGrantQuote(senderWallet);
+var quote = client.createQuote(quoteRequest.getAccess().getToken(), senderWallet, incomingPayment, Optional.empty(), Optional.empty());
 
-    // 6. Get the newly created quote (fetch by ID):
-    var quoteFetched = this.client.getQuote(quote.getId(), grantRequest);
+// Get the newly created quote (fetch by ID)
+var quoteFetched = this.client.getQuote(quote.getId(), grantRequest);
 
-    // 7. Logging:
-    log.info("QUOTE: {}", quoteFetched);
-    ```
+// Output
+log.info("QUOTE: {}", quoteFetched);
+```
 
 </TabItem>
 </Tabs>

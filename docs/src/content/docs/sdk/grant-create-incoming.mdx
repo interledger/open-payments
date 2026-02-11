@@ -4,12 +4,10 @@ tableOfContents:
   maxHeadingLevel: 2
 ---
 
-import { CodeBlock, LinkOut, Tooltip } from '@interledger/docs-design-system'
+import { LinkOut } from '@interledger/docs-design-system'
 import { Tabs, TabItem, LinkButton } from '@astrojs/starlight/components'
-import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
-import TsImport from '/src/partials/ts-import-initialize.mdx'
 
 Before a client can call most of the Open Payments APIs, it must receive a grant from the appropriate authorization server.
 
@@ -22,7 +20,7 @@ The snippets below enable a client to request a grant for an incoming payment. T
 ## Request an incoming payment grant
 
 <Tabs syncKey="langs">
-<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+<TabItem label='TypeScript/NodeJS' icon='node'>
 <LinkButton href="https://github.com/interledger/open-payments-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
 <details>
@@ -30,15 +28,51 @@ The snippets below enable a client to request a grant for an incoming payment. T
   <Ts />
 </details>
 
-<TsImport />
+```ts wrap
+// Import dependencies
+import { createAuthenticatedClient } from '@interledger/open-payments'
 
-<ChunkedSnippet source="grant/grant-incoming-payment.ts" l="node" chunk="3" />
+// Initialize client
+const client = await createAuthenticatedClient({
+  walletAddressUrl: WALLET_ADDRESS,
+  privateKey: PRIVATE_KEY_PATH,
+  keyId: KEY_ID
+})
 
-<ChunkedSnippet source="grant/grant-incoming-payment.ts" l="node" chunk="4" />
+// Get wallet address information
+const walletAddress = await client.walletAddress.get({
+  url: WALLET_ADDRESS
+})
 
-<ChunkedSnippet source="grant/grant-incoming-payment.ts" l="node" chunk="5" />
+// Request incoming payment grant
+const grant = await client.grant.request(
+  {
+    url: walletAddress.authServer
+  },
+  {
+    access_token: {
+      access: [
+        {
+          type: 'incoming-payment',
+          actions: ['list', 'read', 'read-all', 'complete', 'create']
+        }
+      ]
+    }
+  }
+)
 
-<ChunkedSnippet source="grant/grant-incoming-payment.ts" l="node" chunk="6" />
+// Check grant state
+if (isPendingGrant(grant)) {
+  throw new Error('Expected non-interactive grant')
+}
+
+// Output
+console.log('INCOMING_PAYMENT_ACCESS_TOKEN =', grant.access_token.value)
+console.log(
+  'INCOMING_PAYMENT_ACCESS_TOKEN_MANAGE_URL = ',
+  grant.access_token.manage
+)
+```
 
 For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/grant/grant-incoming-payment.ts'>View full TS source</LinkOut>
 
@@ -48,41 +82,87 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 <TabItem label="Rust" icon='seti:rust'>
 <LinkButton href="https://github.com/interledger/open-payments-rust/tree/main/src/snippets#readme" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-<ChunkedSnippet source="grant/grant-incoming-payment.rs" l="rust" chunk="1" />
+```rust wrap
+// Import dependencies
+use open_payments::client::api::UnauthenticatedResources;
+use open_payments::client::AuthenticatedResources;
+use open_payments::snippets::utils::{create_authenticated_client, get_env_var, load_env};
+use open_payments::types::auth::{
+    AccessItem, AccessTokenRequest, GrantRequest, GrantResponse, IncomingPaymentAction,
+};
 
-<ChunkedSnippet source="grant/grant-incoming-payment.rs" l="rust" chunk="2" />
+// Initialize client
+// Authenticated client can be also used for unauthenticated resources
+let client = create_authenticated_client()?;
 
-<ChunkedSnippet source="grant/grant-incoming-payment.rs" l="rust" chunk="3" />
+// Get wallet address information
+let wallet_address_url = get_env_var("WALLET_ADDRESS_URL")?;
+let wallet_address = client.wallet_address().get(&wallet_address_url).await?;
 
-<ChunkedSnippet source="grant/grant-incoming-payment.rs" l="rust" chunk="4" />
+//Request incoming payment grant
+let grant_request = GrantRequest::new(
+    AccessTokenRequest {
+        access: vec![AccessItem::IncomingPayment {
+            actions: vec![
+                IncomingPaymentAction::Create,
+                IncomingPaymentAction::Read,
+                IncomingPaymentAction::ReadAll,
+                IncomingPaymentAction::List,
+                IncomingPaymentAction::Complete,
+            ],
+            identifier: None,
+        }],
+    },
+    None,
+);
 
-<ChunkedSnippet source="grant/grant-incoming-payment.rs" l="rust" chunk="5" />
+println!(
+    "Grant request JSON: {}",
+    serde_json::to_string_pretty(&grant_request)?
+);
 
-<p>
-  <LinkOut href="https://github.com/interledger/open-payments/blob/main/snippets/rust/grant/grant-incoming-payment.rs">
-    View full Rust source
-  </LinkOut>
-</p>
+let response = client
+    .grant()
+    .request(&wallet_address.auth_server, &grant_request)
+    .await?;
+
+// Output
+match response {
+  GrantResponse::WithToken { access_token, .. } => {
+      println!("Received access token: {:#?}", access_token.value);
+      println!(
+          "Received access token manage URL: {:#?}",
+          access_token.manage
+      );
+  }
+  GrantResponse::WithInteraction { .. } => {
+      unreachable!("Interaction not required for incoming payments");
+  }
+}
+
+```
+
+<LinkOut href="https://github.com/interledger/open-payments/blob/main/snippets/rust/grant/grant-incoming-payment.rs">
+  View full source
+</LinkOut>
 
 </TabItem>
 <TabItem label='PHP' icon='seti:php'>
 <LinkButton href="https://github.com/interledger/open-payments-php-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-```php
+```php wrap
 // Import dependencies
 use OpenPayments\AuthClient;
 use OpenPayments\Config\Config;
 
-// Initialize Open Payments client
+// Initialize client
 $config = new Config(
     $WALLET_ADDRESS,
     $PRIVATE_KEY,
     $KEY_ID
 );
 $opClient = new AuthClient($config);
-```
 
-```php
 // Get wallet address information
 $wallet = $opClient->walletAddress()->get([
     'url' => $config->getWalletAddressUrl()
@@ -114,18 +194,19 @@ if (!$grant instanceof \OpenPayments\Models\Grant) {
 echo 'INCOMING_PAYMENT_GRANT: ' . $grant->access_token->value . PHP_EOL;
 echo "INCOMING_PAYMENT_ACCESS_TOKEN_MANAGE_URL = " . $grant->access_token->manage . PHP_EOL;
 echo 'GRANT OBJECT: ' . PHP_EOL . print_r($grant, true);
+
 ```
 
-{/* prettier-ignore */}
-<p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Grant/GrantIncomingPayment.php'>View full source</LinkOut></p>
+<LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Grant/GrantIncomingPayment.php'>View full source</LinkOut>
 </TabItem>
 
 <TabItem label="Go" icon='seti:go'>
 <LinkButton href="https://github.com/interledger/open-payments-go/blob/main/README.md" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-```go
+```go wrap
 package main
 
+// Import dependencies
 import (
 	"context"
 	"encoding/json"
@@ -137,7 +218,7 @@ import (
 )
 
 func main() {
-	// Initialize Open Payments client
+	// Initialize client
 	client, err := op.NewAuthenticatedClient(WALLET_ADDRESS_URL, PRIVATE_KEY_BASE_64, KEY_ID)
 	if err != nil {
 		log.Fatalf("Error creating authenticated client: %v\n", err)
@@ -196,37 +277,39 @@ func main() {
 		grant.AccessToken.Manage,
 	)
 }
+
 ```
 
 </TabItem>
 <TabItem label='Java' icon='seti:java'>
 <LinkButton href="https://github.com/interledger/open-payments-java?tab=readme-ov-file#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-    ```java wrap
-    // 1. Import:
-    import org.interledger.openpayments.httpclient.OpenPaymentsHttpClient;
-    import org.interledger.openpayments.IOpenPaymentsClient;
-    import org.interledger.openpayments.model.grant.AccessAction;
+```java wrap
+// Import dependencies
+import org.interledger.openpayments.httpclient.OpenPaymentsHttpClient;
+import org.interledger.openpayments.IOpenPaymentsClient;
+import org.interledger.openpayments.model.grant.AccessAction;
 
-    // 2. Client instance using HTTP:
-    var client = OpenPaymentsHttpClient.defaultClient(
-    "WalletAddress",
-    "PrivateKeyPEM",
-    "KeyId"
-    );
+// Initialize client
+var client = OpenPaymentsHttpClient.defaultClient(
+"WalletAddress",
+"PrivateKeyPEM",
+"KeyId"
+);
 
-    // 3. Retrieve the wallet
-    var receiverWallet = client.getWalletAddress("https://cloudninebank.example.com/customer");
+// Get wallet address information
+var receiverWallet = client.getWalletAddress("https://cloudninebank.example.com/customer");
 
-    // 4.1. Grant for incoming payment (default):
-    var grantRequest = this.client.createGrantIncomingPayment(receiverWallet);
+// Request incoming payment grant (default):
+var grantRequest = this.client.createGrantIncomingPayment(receiverWallet);
 
-    // 4.2. Grant for incoming payment (specifying actions):
-    var grantRequest = this.client.createGrantIncomingPayment(receiverWallet, AccessAction.read, AccessAction.complete, AccessAction.create);
+// Request incoming payment grant (specifying actions):
+var grantRequest = this.client.createGrantIncomingPayment(receiverWallet, AccessAction.read, AccessAction.complete, AccessAction.create);
 
-    // 5. Logging:
-    log.info("INCOMING_PAYMENT_GRANT: {}", grantRequest);
-    ```
+// Output
+log.info("INCOMING_PAYMENT_GRANT: {}", grantRequest);
+
+```
 
 </TabItem>
 </Tabs>
