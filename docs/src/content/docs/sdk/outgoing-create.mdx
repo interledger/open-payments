@@ -4,14 +4,12 @@ tableOfContents:
   maxHeadingLevel: 2
 ---
 
-import { CodeBlock, LinkOut, Tooltip } from '@interledger/docs-design-system'
+import { LinkOut } from '@interledger/docs-design-system'
 import { Tabs, TabItem, LinkButton } from '@astrojs/starlight/components'
-import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
-import TsImport from '/src/partials/ts-import-initialize.mdx'
 
-After a quote is accepted and the authorized client obtains the requisite grant from the authorization server of the sender's <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip>, the client can create an outgoing payment resource against the sender's wallet address.
+After a quote is accepted and the authorized client obtains the requisite grant from the authorization server of the sender's ASE, the client can create an outgoing payment resource against the sender's wallet address.
 
 These code snippets create an outgoing payment to a given wallet address. The amount of the outgoing payment is based on the amounts in the associated quote.
 
@@ -22,7 +20,7 @@ These code snippets create an outgoing payment to a given wallet address. The am
 ## Create an outgoing payment resource
 
 <Tabs>
-<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+<TabItem label='TypeScript/NodeJS' icon='node'>
 <LinkButton href="https://github.com/interledger/open-payments-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
 <details>
@@ -30,25 +28,37 @@ These code snippets create an outgoing payment to a given wallet address. The am
   <Ts />
 </details>
 
-<TsImport />
+```ts wrap
+// Import dependencies
+import { createAuthenticatedClient } from '@interledger/open-payments'
 
-<ChunkedSnippet
-  source="outgoing-payment/outgoing-payment-create.ts"
-  l="node"
-  chunk="3"
-/>
+// Initialize client
+const client = await createAuthenticatedClient({
+  walletAddressUrl: WALLET_ADDRESS,
+  privateKey: PRIVATE_KEY_PATH,
+  keyId: KEY_ID
+})
 
-<ChunkedSnippet
-  source="outgoing-payment/outgoing-payment-create.ts"
-  l="node"
-  chunk="4"
-/>
+// Get wallet address information
+const walletAddress = await client.walletAddress.get({
+  url: WALLET_ADDRESS
+})
 
-<ChunkedSnippet
-  source="outgoing-payment/outgoing-payment-create.ts"
-  l="node"
-  chunk="5"
-/>
+// Create outgoing payment
+const outgoingPayment = await client.outgoingPayment.create(
+  {
+    url: walletAddress.resourceServer,
+    accessToken: OUTGOING_PAYMENT_ACCESS_TOKEN
+  },
+  {
+    walletAddress: WALLET_ADDRESS,
+    quoteId: QUOTE_URL
+  }
+)
+
+// Output
+console.log('OUTGOING_PAYMENT_URL = ', outgoingPayment.id)
+```
 
 For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/outgoing-payment/outgoing-payment-create.ts'>View full TS source</LinkOut>
 
@@ -58,63 +68,67 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 <TabItem label="Rust" icon='seti:rust'>
 <LinkButton href="https://github.com/interledger/open-payments-rust/tree/main/src/snippets#readme" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-<ChunkedSnippet
-  source="outgoing-payment/outgoing-payment-create.rs"
-  l="rust"
-  chunk="1"
-/>
+```rust wrap
+// Import dependencies
+use open_payments::client::api::AuthenticatedResources;
+use open_payments::client::utils::get_resource_server_url;
+use open_payments::snippets::utils::{create_authenticated_client, get_env_var, load_env};
+use open_payments::types::OutgoingPaymentRequest;
 
-<ChunkedSnippet
-  source="outgoing-payment/outgoing-payment-create.rs"
-  l="rust"
-  chunk="2"
-/>
+// Initialize client
+let client = create_authenticated_client()?;
 
-<ChunkedSnippet
-  source="outgoing-payment/outgoing-payment-create.rs"
-  l="rust"
-  chunk="3"
-/>
+// Prepare outgoing payment request
+let access_token = get_env_var("OUTGOING_PAYMENT_ACCESS_TOKEN")?;
+let quote_url = get_env_var("QUOTE_URL")?;
+let wallet_address_url = get_env_var("WALLET_ADDRESS_URL")?;
+let resource_server_url = get_resource_server_url(&wallet_address_url)?;
 
-<ChunkedSnippet
-  source="outgoing-payment/outgoing-payment-create.rs"
-  l="rust"
-  chunk="4"
-/>
+let request = OutgoingPaymentRequest::FromQuote {
+    wallet_address: wallet_address_url,
+    quote_id: quote_url,
+    metadata: None,
+};
 
-<ChunkedSnippet
-  source="outgoing-payment/outgoing-payment-create.rs"
-  l="rust"
-  chunk="5"
-/>
+// Create outgoing payment
+println!(
+    "Outgoing payment create request JSON: {}",
+    serde_json::to_string_pretty(&request)?
+);
 
-<p>
-  <LinkOut href="https://github.com/interledger/open-payments/blob/main/snippets/rust/outgoing-payment/outgoing-payment-create.rs">
-    View full Rust source
-  </LinkOut>
-</p>
+let payment = client
+    .outgoing_payments()
+    .create(&resource_server_url, &request, Some(&access_token))
+    .await?;
+
+// Output
+println!("Created outgoing payment: {payment:#?}");
+
+```
+
+<LinkOut href="https://github.com/interledger/open-payments/blob/main/snippets/rust/outgoing-payment/outgoing-payment-create.rs">
+  View full source
+</LinkOut>
 
 </TabItem>
 <TabItem label='PHP' icon='seti:php'>
 <LinkButton href="https://github.com/interledger/open-payments-php-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-```php
+#### With quote
+
+```php wrap
 // Import dependencies
 use OpenPayments\AuthClient;
 use OpenPayments\Config\Config;
 
-// Initialize Open Payments client
+// Initialize client
 $config = new Config(
     $WALLET_ADDRESS,
     $PRIVATE_KEY,
     $KEY_ID
 );
 $opClient = new AuthClient($config);
-```
 
-#### With quote
-
-```php
 // Create outgoing payment without amount
 $newOutgoingPayment = $opClient->outgoingPayment()->create(
     [
@@ -135,11 +149,32 @@ $newOutgoingPayment = $opClient->outgoingPayment()->create(
         ],
     ]
 );
+
+// Output
+echo 'OUTGOING_PAYMENT_URL: '.$newOutgoingPayment->id . PHP_EOL;
+echo 'OUTGOING_PAYMENT OBJECT: ' . PHP_EOL . print_r($newOutgoingPayment, true) . PHP_EOL;
+
 ```
+
+<LinkOut href="https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/OutgoingPayment/OutgoingPaymentCreate.php">
+  View full source with quote
+</LinkOut>
 
 #### With incoming payment
 
-```php
+```php wrap
+// Import dependencies
+use OpenPayments\AuthClient;
+use OpenPayments\Config\Config;
+
+// Initialize client
+$config = new Config(
+    $WALLET_ADDRESS,
+    $PRIVATE_KEY,
+    $KEY_ID
+);
+$opClient = new AuthClient($config);
+
 // Create outgoing payment with amount
 $newOutgoingPayment = $opClient->outgoingPayment()->create(
     [
@@ -165,33 +200,25 @@ $newOutgoingPayment = $opClient->outgoingPayment()->create(
         ],
     ]
 );
-```
 
-```php
 // Output
 echo 'OUTGOING_PAYMENT_URL: '.$newOutgoingPayment->id . PHP_EOL;
 echo 'OUTGOING_PAYMENT OBJECT: ' . PHP_EOL . print_r($newOutgoingPayment, true) . PHP_EOL;
 ```
 
-<p>
-  <LinkOut href="https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/OutgoingPayment/OutgoingPaymentCreate.php">
-    View full source without amount
-  </LinkOut>
-</p>
-<p>
-  <LinkOut href="https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/OutgoingPayment/OutgoingPaymentCreateAmount.php">
-    View full source with amount
-  </LinkOut>
-</p>
+<LinkOut href="https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/OutgoingPayment/OutgoingPaymentCreateAmount.php">
+  View full source with incoming payment
+</LinkOut>
 
 </TabItem>
 
 <TabItem label="Go" icon='seti:go'>
 <LinkButton href="https://github.com/interledger/open-payments-go/blob/main/README.md" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-```go
+```go wrap
 package main
 
+// Import dependencies
 import (
 	"context"
 	"encoding/json"
@@ -204,7 +231,7 @@ import (
 )
 
 func main() {
-  // Initialize Open Payments client
+  // Initialize client
   client, err := op.NewAuthenticatedClient(WALLET_ADDRESS_URL, PRIVATE_KEY_BASE_64, KEY_ID)
   if err != nil {
     log.Fatalf("Error creating authenticated client: %v\n", err)
@@ -242,51 +269,51 @@ func main() {
 <TabItem label='Java' icon='seti:java'>
 <LinkButton href="https://github.com/interledger/open-payments-java?tab=readme-ov-file#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-    ```java wrap
-    // 1. Import:
-    import org.interledger.openpayments.httpclient.OpenPaymentsHttpClient;
-    import org.interledger.openpayments.IOpenPaymentsClient;
+```java wrap
+// Import dependencies
+import org.interledger.openpayments.httpclient.OpenPaymentsHttpClient;
+import org.interledger.openpayments.IOpenPaymentsClient;
 
-    // 2. Client instance using HTTP:
-    var client = OpenPaymentsHttpClient.defaultClient(
-    "WalletAddress",
-    "PrivateKeyPEM",
-    "KeyId"
-    );
+// Initialize client
+var client = OpenPaymentsHttpClient.defaultClient(
+"WalletAddress",
+"PrivateKeyPEM",
+"KeyId"
+);
 
-    // 3. Retrieve the wallets:
-    var receiverWallet = client.getWalletAddress("https://cloudninebank.example.com/merchant");
-    var senderWallet = client.getWalletAddress("https://cloudninebank.example.com/customer");
+// Get wallet address information
+var receiverWallet = client.getWalletAddress("https://cloudninebank.example.com/merchant");
+var senderWallet = client.getWalletAddress("https://cloudninebank.example.com/customer");
 
-    // 4. Create incoming payment:
-    var grantRequest = this.client.createGrantIncomingPayment(receiverWallet);
-    var incomingPayment = this.client.createIncomingPayment(receiverWallet, grantRequest, BigDecimal.valueOf(11.25));
+// Create incoming payment
+var grantRequest = this.client.createGrantIncomingPayment(receiverWallet);
+var incomingPayment = this.client.createIncomingPayment(receiverWallet, grantRequest, BigDecimal.valueOf(11.25));
 
-    // 5. Create quote:
-    var quoteRequest = this.client.createGrantQuote(senderWallet);
-    var quote = client.createQuote(quoteRequest.getAccess().getToken(), senderWallet, incomingPayment, Optional.empty(), Optional.empty());
+// Create quote
+var quoteRequest = this.client.createGrantQuote(senderWallet);
+var quote = client.createQuote(quoteRequest.getAccess().getToken(), senderWallet, incomingPayment, Optional.empty(), Optional.empty());
 
-    // 6. Create outing payment from quote:
-    var urlToOpen = "http://localhost:%d?paymentId=1234".formatted(port);
+// Create outing payment from quote
+var urlToOpen = "http://localhost:%d?paymentId=1234".formatted(port);
 
-    var opContinueInteract = this.client.createGrantContinuation(
-    senderWallet,
-    quote.getDebitAmount(),
-    URI.create(urlToOpen),
-    "test"
-    );
+var opContinueInteract = this.client.createGrantContinuation(
+senderWallet,
+quote.getDebitAmount(),
+URI.create(urlToOpen),
+"test"
+);
 
-    // 7. USER APPROVES REQUEST.
+// USER APPROVES REQUEST
 
-    // 8. Grant: Finalize/Continue:
-    var finalized = this.client.createGrantFinalize(opContinueInteract, "Reference from USER interaction.");
+// Grant: Finalize/Continue
+var finalized = this.client.createGrantFinalize(opContinueInteract, "Reference from USER interaction.");
 
-    // 9. Outgoing payment (The token will be extracted from [finalized]):
-    var finalizedOutgoingPayment = this.client.createFinalizePayment(finalized, senderWallet, quote);
+// Outgoing payment (The token will be extracted from [finalized])
+var finalizedOutgoingPayment = this.client.createFinalizePayment(finalized, senderWallet, quote);
 
-    // 10. Logging:
-    log.info("OUTGOING_PAYMENT: {}", finalizedOutgoingPayment);
-    ```
+// Output
+log.info("OUTGOING_PAYMENT: {}", finalizedOutgoingPayment);
+```
 
 </TabItem>
 </Tabs>

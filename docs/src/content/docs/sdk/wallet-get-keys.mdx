@@ -2,12 +2,9 @@
 title: Get keys bound to a wallet address
 ---
 
-import { CodeBlock, LinkOut } from '@interledger/docs-design-system'
+import { LinkOut } from '@interledger/docs-design-system'
 import { Tabs, TabItem, LinkButton } from '@astrojs/starlight/components'
-import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Begin from '/src/partials/before-you-begin.mdx'
-import Ts from '/src/partials/ts-init-config.mdx'
-import TsImport from '/src/partials/ts-import-initialize.mdx'
   
 While most Open Payments code snippets are intended for clients, getting the keys bound to a wallet address is primarily a function of account servicing entities.
 
@@ -22,22 +19,29 @@ These code snippets get the keys associated with the specified wallet address.
 ## Retrieve the public keys for a wallet address
 
 <Tabs>
-<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+<TabItem label='TypeScript/NodeJS' icon='node'>
 <LinkButton 
 href="https://github.com/interledger/open-payments-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
-<TsImport />
 
-<ChunkedSnippet
-  source="wallet-address/wallet-address-get-keys.ts"
-  l="node"
-  chunk="3"
-/>
+```ts wrap
+// Import dependencies
+import { createAuthenticatedClient } from '@interledger/open-payments'
 
-<ChunkedSnippet
-  source="wallet-address/wallet-address-get-keys.ts"
-  l="node"
-  chunk="4"
-/>
+// Initialize client
+const client = await createAuthenticatedClient({
+  walletAddressUrl: WALLET_ADDRESS,
+  privateKey: PRIVATE_KEY_PATH,
+  keyId: KEY_ID
+})
+
+// Get wallet address keys
+const walletAddressKeys = await client.walletAddress.getKeys({
+  url: WALLET_ADDRESS
+})
+
+// Output
+console.log('WALLET ADDRESS KEYS:', JSON.stringify(walletAddressKeys, null, 2))
+```
 
 For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/wallet-address/wallet-address-get-keys.ts'>View full TS source</LinkOut>
 
@@ -47,52 +51,38 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 <TabItem label="Rust" icon='seti:rust'>
 <LinkButton href="https://github.com/interledger/open-payments-rust/tree/main/src/snippets#readme" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-<ChunkedSnippet
-  source="wallet-address/wallet-address-get-keys.rs"
-  l="rust"
-  chunk="1"
-/>
+```rust wrap
+// Import dependencies
+use open_payments::client::api::UnauthenticatedResources;
+use open_payments::snippets::utils::{create_unauthenticated_client, get_env_var, load_env};
 
-<ChunkedSnippet
-  source="wallet-address/wallet-address-get-keys.rs"
-  l="rust"
-  chunk="2"
-/>
+// Initialize client
+let client = create_unauthenticated_client();
 
-<ChunkedSnippet
-  source="wallet-address/wallet-address-get-keys.rs"
-  l="rust"
-  chunk="3"
-/>
+// Get wallet address keys
+let wallet_address_url = get_env_var("WALLET_ADDRESS_URL")?;
+let wallet_address = client.wallet_address().get(&wallet_address_url).await?;
 
-<ChunkedSnippet
-  source="wallet-address/wallet-address-get-keys.rs"
-  l="rust"
-  chunk="4"
-/>
+// Output
+println!("Retrieved wallet address: {wallet_address:#?}");
+println!("Retrieved keys: {keys:#?}");
 
-<ChunkedSnippet
-  source="wallet-address/wallet-address-get-keys.rs"
-  l="rust"
-  chunk="5"
-/>
+```
 
-<p>
-  <LinkOut href="https://github.com/interledger/open-payments/blob/main/snippets/rust/wallet-address/wallet-address-get-keys.rs">
-    View full Rust source
-  </LinkOut>
-</p>
+<LinkOut href="https://github.com/interledger/open-payments/blob/main/snippets/rust/wallet-address/wallet-address-get-keys.rs">
+  View full source
+</LinkOut>
 
 </TabItem>
 <TabItem label='PHP' icon='seti:php'>
 <LinkButton href="https://github.com/interledger/open-payments-php-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-```php
+```php wrap
 // Import dependencies
 use OpenPayments\AuthClient;
 use OpenPayments\Config\Config;
 
-// Initialize Open Payments unauthenticated client
+// Initialize client
 $config = new Config($WALLET_ADDRESS);
 $opClient = new AuthClient($config);
 
@@ -101,19 +91,19 @@ $walletKeys = $opClient->walletAddress()->getKeys([
     'url' => $config->getWalletAddressUrl()
 ]);
 
-// Output wallet address keys
+// Output
 echo 'WALLET ADDRESS KEYS: ' . PHP_EOL . print_r($walletKeys, true);
 ```
 
-{/* prettier-ignore */}
-<p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/WalletAddress/PublicGetWalletAddressKeys.php'>View full source</LinkOut></p>
+<LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/WalletAddress/PublicGetWalletAddressKeys.php'>View full source</LinkOut>
 </TabItem>
 <TabItem label="Go" icon='seti:go'>
 <LinkButton href="https://github.com/interledger/open-payments-go/blob/main/README.md" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-```go
+```go wrap
 package main
 
+// Import dependencies
 import (
 	"context"
 	"encoding/json"
@@ -125,7 +115,7 @@ import (
 )
 
 func main() {
-  // Initialize Open Payments client
+  // Initialize client
   client := op.NewClient()
 
   // Get wallet address keys
@@ -150,24 +140,24 @@ func main() {
 <TabItem label='Java' icon='seti:java'>
 <LinkButton href="https://github.com/interledger/open-payments-java?tab=readme-ov-file#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-    ```java wrap
-    // 1. Import:
-    import org.interledger.openpayments.httpclient.OpenPaymentsHttpClient;
-    import org.interledger.openpayments.IOpenPaymentsClient;
+```java wrap
+// Import dependencies
+import org.interledger.openpayments.httpclient.OpenPaymentsHttpClient;
+import org.interledger.openpayments.IOpenPaymentsClient;
 
-    // 2. Client instance using HTTP:
-    var client = OpenPaymentsHttpClient.defaultClient(
-    "WalletAddress",
-    "PrivateKeyPEM",
-    "KeyId"
-    );
+// Initialize client
+var client = OpenPaymentsHttpClient.defaultClient(
+"WalletAddress",
+"PrivateKeyPEM",
+"KeyId"
+);
 
-    // 3. Retrieve the wallet address public keys:
-    var keys = client.getKeys("https://cloudninebank.example.com/customer");
+// Get wallet address keys
+var keys = client.getKeys("https://cloudninebank.example.com/customer");
 
-    // 4. Log keys:
-    log.info("WALLET_ADDRESS_KEYS: {}", keys);
-    ```
+// Output
+log.info("WALLET_ADDRESS_KEYS: {}", keys);
+```
 
 </TabItem>
 </Tabs>

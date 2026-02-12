@@ -2,12 +2,10 @@
 title: List incoming payments
 ---
 
-import { CodeBlock, LinkOut } from '@interledger/docs-design-system'
+import { LinkOut } from '@interledger/docs-design-system'
 import { Tabs, TabItem, LinkButton } from '@astrojs/starlight/components'
-import ChunkedSnippet from '/src/components/ChunkedSnippet.astro'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
-import TsImport from '/src/partials/ts-import-initialize.mdx'
 
 After one or more incoming payments are created on a wallet address, an authorized client can look up active and pending incoming payments on that wallet address.
 
@@ -20,7 +18,7 @@ These code snippets retrieve the first ten incoming payments on the given wallet
 ## List all incoming payments on a wallet address
 
 <Tabs>
-<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+<TabItem label='TypeScript/NodeJS' icon='node'>
 <LinkButton href="https://github.com/interledger/open-payments-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
 <details>
@@ -28,25 +26,40 @@ These code snippets retrieve the first ten incoming payments on the given wallet
   <Ts />
 </details>
 
-<TsImport />
+```ts wrap
+// Import dependencies
+import { createAuthenticatedClient } from '@interledger/open-payments'
 
-<ChunkedSnippet
-  source="incoming-payment/incoming-payment-list.ts"
-  l="node"
-  chunk="3"
-/>
+// Initialize client
+const client = await createAuthenticatedClient({
+  walletAddressUrl: WALLET_ADDRESS,
+  privateKey: PRIVATE_KEY_PATH,
+  keyId: KEY_ID
+})
 
-<ChunkedSnippet
-  source="incoming-payment/incoming-payment-list.ts"
-  l="node"
-  chunk="4"
-/>
+// Get wallet address information
+const walletAddress = await client.walletAddress.get({
+  url: WALLET_ADDRESS
+})
 
-<ChunkedSnippet
-  source="incoming-payment/incoming-payment-list.ts"
-  l="node"
-  chunk="5"
-/>
+// List incoming payments
+const incomingPayments = await client.incomingPayment.list(
+  {
+    url: walletAddress.resourceServer,
+    walletAddress: WALLET_ADDRESS,
+    accessToken: INCOMING_PAYMENT_ACCESS_TOKEN
+  },
+  {
+    first: 10,
+    last: undefined,
+    cursor: undefined,
+    'wallet-address': WALLET_ADDRESS
+  }
+)
+
+// Output
+console.log('INCOMING PAYMENTS:', JSON.stringify(incomingPayments, null, 2))
+```
 
 For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/incoming-payment/incoming-payment-list.ts'>View full TS source</LinkOut>
 
@@ -56,46 +69,69 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 <TabItem label="Rust" icon='seti:rust'>
 <LinkButton href="https://github.com/interledger/open-payments-rust/tree/main/src/snippets#readme" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-<ChunkedSnippet
-  source="incoming-payment/incoming-payment-list.rs"
-  l="rust"
-  chunk="1"
-/>
+```rust wrap
+// Import dependencies
+use open_payments::client::api::AuthenticatedResources;
+use open_payments::client::utils::get_resource_server_url;
+use open_payments::snippets::utils::{create_authenticated_client, get_env_var, load_env};
 
-<ChunkedSnippet
-  source="incoming-payment/incoming-payment-list.rs"
-  l="rust"
-  chunk="2"
-/>
+// Initialize client
+let client = create_authenticated_client()?;
 
-<ChunkedSnippet
-  source="incoming-payment/incoming-payment-list.rs"
-  l="rust"
-  chunk="3"
-/>
+// List incoming payments
+let access_token = get_env_var("INCOMING_PAYMENT_ACCESS_TOKEN")?;
 
-<ChunkedSnippet
-  source="incoming-payment/incoming-payment-list.rs"
-  l="rust"
-  chunk="4"
-/>
+let wallet_address_url = get_env_var("WALLET_ADDRESS_URL")?;
+let resource_server_url = get_resource_server_url(&wallet_address_url)?;
+let response = client
+    .incoming_payments()
+    .list(
+        &resource_server_url,
+        &wallet_address_url,
+        None,
+        Some(10),
+        None,
+        Some(&access_token),
+    )
+    .await?;
 
-<p>
-  <LinkOut href="https://github.com/interledger/open-payments/blob/main/snippets/rust/incoming-payment/incoming-payment-list.rs">
-    View full Rust source
-  </LinkOut>
-</p>
+// Output
+println!("Incoming payments: {:#?}", response.result);
+println!("Pagination info: {:#?}", response.pagination);
+
+if response.pagination.has_next_page {
+    if let Some(end_cursor) = response.pagination.end_cursor {
+        let next_page = client
+            .incoming_payments()
+            .list(
+                &resource_server_url,
+                &wallet_address_url,
+                Some(&end_cursor),
+                Some(10),
+                None,
+                Some(&access_token),
+            )
+            .await?;
+        println!("Next page of incoming payments: {:#?}", next_page.result);
+    }
+}
+
+```
+
+<LinkOut href="https://github.com/interledger/open-payments/blob/main/snippets/rust/incoming-payment/incoming-payment-list.rs">
+  View full source
+</LinkOut>
 
 </TabItem>
 <TabItem label='PHP' icon='seti:php'>
 <LinkButton href="https://github.com/interledger/open-payments-php-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-```php
+```php wrap
 // Import dependencies
 use OpenPayments\AuthClient;
 use OpenPayments\Config\Config;
 
-// Initialize Open Payments client
+// Initialize client
 $config = new Config(
     $WALLET_ADDRESS,
     $PRIVATE_KEY,
@@ -103,7 +139,7 @@ $config = new Config(
 );
 $opClient = new AuthClient($config);
 
-// Get wallet address
+// Get wallet address information
 $wallet = $opClient->walletAddress()->get([
     'url' => $config->getWalletAddressUrl()
 ]);
@@ -125,15 +161,16 @@ $incomingPaymentsList = $opClient->incomingPayment()->list(
 echo 'INCOMING PAYMENTS ' . PHP_EOL . print_r($incomingPaymentsList, true);
 ```
 
-<p><LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/IncomingPayment/IncomingPaymentList.php'>View full source</LinkOut></p>
+<LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/IncomingPayment/IncomingPaymentList.php'>View full source</LinkOut>
 </TabItem>
 
 <TabItem label="Go" icon='seti:go'>
 <LinkButton href="https://github.com/interledger/open-payments-go/blob/main/README.md" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-```go
+```go wrap
 package main
 
+// Import dependencies
 import (
 	"context"
 	"encoding/json"
@@ -144,7 +181,7 @@ import (
 )
 
 func main() {
-	// Initialize Open Payments client
+	// Initialize client
 	client, err := op.NewAuthenticatedClient(WALLET_ADDRESS_URL, PRIVATE_KEY_BASE_64, KEY_ID)
 	if err != nil {
 		log.Fatalf("Error creating authenticated client: %v\n", err)
@@ -176,33 +213,33 @@ func main() {
 <TabItem label='Java' icon='seti:java'>
 <LinkButton href="https://github.com/interledger/open-payments-java?tab=readme-ov-file#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
-    ```java wrap
-    // 1. Import:
-    import org.interledger.openpayments.httpclient.OpenPaymentsHttpClient;
-    import org.interledger.openpayments.IOpenPaymentsClient;
+```java wrap
+// Import dependencies
+import org.interledger.openpayments.httpclient.OpenPaymentsHttpClient;
+import org.interledger.openpayments.IOpenPaymentsClient;
 
-    // 2. Client instance using HTTP:
-    var client = OpenPaymentsHttpClient.defaultClient(
-    "WalletAddress",
-    "PrivateKeyPEM",
-    "KeyId"
-    );
+// Initialize client
+var client = OpenPaymentsHttpClient.defaultClient(
+"WalletAddress",
+"PrivateKeyPEM",
+"KeyId"
+);
 
-    // 3. Retrieve the wallets:
-    var receiverWallet = client.getWalletAddress("https://cloudninebank.example.com/merchant");
-    var senderWallet = client.getWalletAddress("https://cloudninebank.example.com/customer");
+// Get wallet address information
+var receiverWallet = client.getWalletAddress("https://cloudninebank.example.com/merchant");
+var senderWallet = client.getWalletAddress("https://cloudninebank.example.com/customer");
 
-    // 4. Create incoming payment:
-    var grantRequest = this.client.createGrantIncomingPayment(receiverWallet);
-    var incomingPayment = this.client.createIncomingPayment(receiverWallet, grantRequest, BigDecimal.valueOf(11.25));
+// Create incoming payment
+var grantRequest = this.client.createGrantIncomingPayment(receiverWallet);
+var incomingPayment = this.client.createIncomingPayment(receiverWallet, grantRequest, BigDecimal.valueOf(11.25));
 
-    // 5. Retrieve the created incoming payments (by walletAddress):
-    var incomingPaymentsFetched = this.client.getIncomingPayments(senderWallet, senderWallet.getId(), grantRequest);
+// Retrieve the created incoming payments (by walletAddress)
+var incomingPaymentsFetched = this.client.getIncomingPayments(senderWallet, senderWallet.getId(), grantRequest);
 
-    // 6. Logging:
-    log.info("INCOMING_PAYMENT_RESULT: {}", incomingPaymentsFetched.getResult().size());
-    incomingPaymentsFetched.getResult().forEach(p -> log.info("INCOMING_PAYMENT: {}", p));
-    ```
+// Output
+log.info("INCOMING_PAYMENT_RESULT: {}", incomingPaymentsFetched.getResult().size());
+incomingPaymentsFetched.getResult().forEach(p -> log.info("INCOMING_PAYMENT: {}", p));
+```
 
 </TabItem>
 </Tabs>
