@@ -129,7 +129,9 @@ if err != nil {
 
 <details>
 <summary>Example responses</summary>
-The following example shows a response from the sender's wallet provider. 
+
+The following example shows a response from the sender's wallet provider.
+
 ```json wrap
 {
   "id": "https://cloudninebank.example.com/sender",
@@ -139,6 +141,7 @@ The following example shows a response from the sender's wallet provider.
   "resourceServer": "https://cloudninebank.example.com/op"
 }
 ```
+
 The following example shows a response from the recipient's wallet provider.
 
 ```json wrap
@@ -352,7 +355,9 @@ if err != nil {
 
 <details>
 <summary>Example response</summary>
+
 The following shows an example response from the sender's wallet provider.
+
 ```json wrap
 {
   "interact": {
@@ -368,6 +373,7 @@ The following shows an example response from the sender's wallet provider.
   }
 }
 ```
+
 </details>
 
 #### About the interval
@@ -473,7 +479,9 @@ $senderOutgoingPaymentGrant = $client->grant()->continue(
 
 <details>
 <summary>Example response</summary>
+
 The following shows an example response from the sender's wallet provider.
+
 ```json wrap
 {
   "access_token": {
@@ -499,10 +507,11 @@ The following shows an example response from the sender's wallet provider.
     "access_token": {
       "value": "..." // access token for continuing the request
     },
-  "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
+    "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
   }
 }
 ```
+
 </details>
 
 ### 6. Request an incoming payment grant
@@ -596,7 +605,9 @@ $recipientIncomingPaymentGrant = $client->grant()->request(
 
 <details>
 <summary>Example response</summary>
+
 The following shows an example response from the recipient's wallet provider.
+
 ```json wrap
 {
   "access_token": {
@@ -695,7 +706,9 @@ $recipientIncomingPayment = $client->incomingPayment()->create(
 
 <details>
 <summary>Example response</summary>
+
 The following shows an example response from the recipient's wallet provider.
+
 ```json wrap
 {
   "id": "https://happylifebank.example.com/incoming-payments/{...}",
@@ -716,6 +729,7 @@ The following shows an example response from the recipient's wallet provider.
   ]
 }
 ```
+
 </details>
 
 ### 8. Request a quote grant
@@ -809,24 +823,26 @@ $senderQuoteGrant = $client->grant()->request(
 
 <details>
 <summary>Example response</summary>
+
 The following shows an example response from the sender's wallet provider.
+
 ```json wrap
 {
   "access_token": {
-  "value": "...", // access token value for quote grant
-  "manage": "https://auth.cloudninebank.example.com/token/{...}", // management uri for access token
-  "access": [
-    {
-      "type": "quote",
-      "actions": ["create"]
-    }
-  ]
+    "value": "...", // access token value for quote grant
+    "manage": "https://auth.cloudninebank.example.com/token/{...}", // management uri for access token
+    "access": [
+      {
+        "type": "quote",
+        "actions": ["create"]
+      }
+    ]
   },
   "continue": {
-  "access_token": {
-    "value": "..." // access token for continuing the request
-  },
-  "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
+    "access_token": {
+      "value": "..." // access token for continuing the request
+    },
+    "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
   }
 }
 ```
@@ -944,7 +960,9 @@ Quote responses include an `expiresAt` timestamp. Create the outgoing payment be
 
 <details>
 <summary>Example response</summary>
+
 The following shows an example response from the sender's wallet provider.
+
 ```json wrap
 {
   "id": "https://cloudninebank.example.com/quotes/{...}", // url identifying the quote
@@ -965,6 +983,7 @@ The following shows an example response from the sender's wallet provider.
   "expiresAt": "2025-10-03T23:48:51.50Z"
 }
 ```
+
 </details>
 
 ### 10. Request the creation of an outgoing payment resource
@@ -1046,7 +1065,9 @@ $senderOutgoingPayment = $client->outgoingPayment()->create(
 
 <details>
 <summary>Example response</summary>
+
 The following shows an example response from the sender's wallet provider.
+
 ```json wrap
 {
   "id": "https://cloudninebank.example.com/outgoing-payments/{...}", // url of the outgoing payment
@@ -1070,6 +1091,7 @@ The following shows an example response from the sender's wallet provider.
   "createdAt": "2025-10-03T23:29:03.41Z"
 }
 ```
+
 </details>
 
 The first payment is now set up. At the next interval (one month from now), repeat the following steps to request the creation of:

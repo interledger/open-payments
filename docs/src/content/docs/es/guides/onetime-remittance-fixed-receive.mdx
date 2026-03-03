@@ -128,6 +128,7 @@ $recipientWalletAddress = $client->walletAddress()->get([
 
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
 
 ```json wrap
@@ -249,7 +250,9 @@ $recipientIncomingPaymentGrant = $client->grant()->request(
 
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del destinatario.
+
 ```json wrap
 {
   "access_token": {
@@ -270,6 +273,7 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del destin
   }
 }
 ```
+
 </details>
 
 ### 3. Solicitar la creación de un recurso de pago entrante
@@ -351,7 +355,9 @@ $recipientIncomingPayment = $client->incomingPayment()->create(
 
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del destinatario.
+
 ```json wrap
 {
   "id": "https://happylifebank.example.com/incoming-payments/{...}",
@@ -372,6 +378,7 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del destin
   ]
 }
 ```
+
 </details>
 
 ### 4. Solicitar una concesión de autorización para una cotización
@@ -473,7 +480,9 @@ if err != nil {
 
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
+
 ```json wrap
 {
   "access_token": {
@@ -490,11 +499,10 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del remite
     "access_token": {
       "value": "..." // access token for continuing the request
     },
-  "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
+    "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
   }
 }
-
-````
+```
 
 </details>
 
@@ -613,7 +621,9 @@ Las cotizaciones incluyen una marca de tiempo `expiresAt`. Cree el pago saliente
 
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
+
 ```json wrap
 {
   "id": "https://cloudninebank.example.com/quotes/{...}", // url identifying the quote
@@ -634,6 +644,7 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del remite
   "expiresAt": "2025-03-12T23:24:51.50Z"
 }
 ```
+
 </details>
 
 ### 6. Solicitar una concesión de autorización interactiva para un pago saliente
@@ -815,7 +826,9 @@ $pendingSenderOutgoingPaymentGrant = $client->grant()->request(
 
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
+
 ```json wrap
 {
   "interact": {
@@ -831,6 +844,7 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del remite
   }
 }
 ```
+
 </details>
 
 ### 7. Comenzar la interacción con el consumidor
@@ -923,7 +937,9 @@ $senderOutgoingPaymentGrant = $client->grant()->continue(
 
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
+
 ```json wrap
 {
   "access_token": {
@@ -944,10 +960,11 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del remite
     "access_token": {
       "value": "..." // access token for continuing the request
     },
-  "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
+    "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
   }
 }
 ```
+
 </details>
 
 ### 10. Solicitar la creación de un recurso de pago saliente
@@ -1035,7 +1052,9 @@ Si la solicitud falla debido a una cotización caducada, [solicite una nueva cot
 
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
+
 ```json wrap
 {
   "id": "https://cloudninebank.example.com/outgoing-payments/{...}", // url identifying the outgoing payment
@@ -1059,6 +1078,7 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del remite
   "createdAt": "2025-03-12T23:20:54.52Z"
 }
 ```
+
 </details>
 
 :::note[Expiración del token de acceso]
