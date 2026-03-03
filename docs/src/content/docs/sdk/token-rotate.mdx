@@ -179,14 +179,14 @@ var client = OpenPaymentsHttpClient.defaultClient(
 );
 
 // Get wallet address information
-var receiverWallet = client.getWalletAddress("https://cloudninebank.example.com/merchant");
+var receiverWallet = client.walletAddress().get("https://cloudninebank.example.com/merchant");
 
 // Create grant request
-var grantRequest = this.client.createGrantIncomingPayment(receiverWallet);
+var grantRequest = client.auth().grant().incomingPayment(receiverWallet);
 
 // Rotate grant request
 // Auth server will be retrieved from [receiverWallet].
-var rotatedGrant = this.client.rotateToken(receiverWallet, grant.getAccess().getToken(), grantRequest);
+var rotatedGrant = client.auth().rotateToken(receiverWallet, grant.getAccess().getToken(), grantRequest);
 
 // Output
 log.info("GRANT: {}", rotatedGrant);

@@ -298,13 +298,13 @@ var client = OpenPaymentsHttpClient.defaultClient(
 );
 
 // Get wallet address information
-var receiverWallet = client.getWalletAddress("https://cloudninebank.example.com/customer");
+var receiverWallet = client.walletAddress().get("https://cloudninebank.example.com/customer");
 
 // Request incoming payment grant (default):
-var grantRequest = this.client.createGrantIncomingPayment(receiverWallet);
+var grantRequest = client.auth().grant().incomingPayment(receiverWallet);
 
 // Request incoming payment grant (specifying actions):
-var grantRequest = this.client.createGrantIncomingPayment(receiverWallet, AccessAction.read, AccessAction.complete, AccessAction.create);
+var grantRequestWithActions = client.auth().grant().incomingPayment(receiverWallet, AccessAction.read, AccessAction.complete, AccessAction.create);
 
 // Output
 log.info("INCOMING_PAYMENT_GRANT: {}", grantRequest);

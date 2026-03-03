@@ -157,14 +157,14 @@ var client = OpenPaymentsHttpClient.defaultClient(
 );
 
 // Retrieve the wallets
-var receiverWallet = client.getWalletAddress("https://cloudninebank.example.com/merchant");
+var receiverWallet = client.walletAddress().get("https://cloudninebank.example.com/merchant");
 
 // Create grant request
-var grantRequest = this.client.createGrantIncomingPayment(receiverWallet);
+var grantRequest = client.auth().grant().incomingPayment(receiverWallet);
 
 // Revoke grant request
 // Auth server will be retrieved from [receiverWallet]
-this.client.revokeToken(receiverWallet, grant.getAccess().getToken(), grantRequest);
+client.auth().revokeToken(receiverWallet, grant.getAccess().getToken(), grantRequest);
 
 // Output
 log.info("REVOKED GRANT: {}", grantRequest);

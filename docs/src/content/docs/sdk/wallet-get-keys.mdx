@@ -153,7 +153,7 @@ var client = OpenPaymentsHttpClient.defaultClient(
 );
 
 // Get wallet address keys
-var keys = client.getKeys("https://cloudninebank.example.com/customer");
+var keys = client.walletAddress().keys("https://cloudninebank.example.com/customer");
 
 // Output
 log.info("WALLET_ADDRESS_KEYS: {}", keys);
