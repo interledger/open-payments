@@ -176,7 +176,7 @@ var senderWallet = client.walletAddress().get("https://cloudninebank.example.com
 
 // Create incoming payment
 var grantRequest = client.auth().grant().incomingPayment(receiverWallet);
-var incomingPayment = client.payment().incomingPayment(receiverWallet, grantRequest, BigDecimal.valueOf(11.25));
+var incomingPayment = client.payment().createIncoming(receiverWallet, grantRequest, BigDecimal.valueOf(11.25));
 
 // Create quote
 var quoteRequest = client.auth().grant().quote(senderWallet);
@@ -198,10 +198,10 @@ URI.create(urlToOpen),
 var finalized = client.auth().grant().finalize(opContinueInteract, "Reference from USER interaction.");
 
 // Outgoing payment (The token will be extracted from [finalized])
-var finalizedOutgoingPayment = client.payment().finalizePayment(finalized, senderWallet, quote);
+var finalizedOutgoingPayment = client.payment().createOutgoing(finalized, senderWallet, quote);
 
 // Retrieve the created outgoing payment (fetch by ID)
-var outgoingPaymentFetched = client.payment().getOutgoingPayment(finalizedOutgoingPayment.getId(), grantRequest);
+var outgoingPaymentFetched = client.payment().getOutgoing(finalizedOutgoingPayment.getId(), grantRequest);
 
 // Output
 log.info("OUTGOING_PAYMENT: {}", outgoingPaymentFetched);

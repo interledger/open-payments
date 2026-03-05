@@ -266,10 +266,10 @@ var receiverWallet = client.walletAddress().get("https://cloudninebank.example.c
 var grantRequest = client.auth().grant().incomingPayment(receiverWallet);
 
 // Create the incoming payment
-var incomingPayment = client.payment().incomingPayment(receiverWallet, grantRequest, BigDecimal.valueOf(11.25));
+var incomingPayment = client.payment().createIncoming(receiverWallet, grantRequest, BigDecimal.valueOf(11.25));
 
 // Get the newly created incoming payment (fetch by ID)
-var incomingPaymentFetched = client.payment().getIncomingPayment(incomingPayment.getId(), grantRequest);
+var incomingPaymentFetched = client.payment().getIncoming(incomingPayment.getId(), grantRequest);
 
 // Output
 log.info("INCOMING_PAYMENT: {}", incomingPaymentFetched);

@@ -247,7 +247,7 @@ var receiverWallet = client.walletAddress().get("https://cloudninebank.example.c
 
 // Create incoming payment
 var grantRequest = client.auth().grant().incomingPayment(receiverWallet);
-var incomingPayment = client.payment().incomingPayment(receiverWallet, grantRequest, BigDecimal.valueOf(11.25));
+var incomingPayment = client.payment().createIncoming(receiverWallet, grantRequest, BigDecimal.valueOf(11.25));
 
 // Output
 log.info("INCOMING_PAYMENT: {}", incomingPayment);
