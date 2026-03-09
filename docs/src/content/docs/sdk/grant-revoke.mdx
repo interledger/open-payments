@@ -158,13 +158,13 @@ var client = OpenPaymentsHttpClient.defaultClient(
 );
 
 // Retrieve the wallets
-var receiverWallet = client.getWalletAddress("https://cloudninebank.example.com/merchant");
+var receiverWallet = client.walletAddress().get("https://cloudninebank.example.com/merchant");
 
 // Create incoming payment
-var grantRequest = this.client.createGrantIncomingPayment(receiverWallet);
+var grantRequest = client.auth().grant().incomingPayment(receiverWallet);
 
 // Revoke grant
-this.client.createGrantCancel(grantRequest);
+client.auth().grant().cancel(grantRequest);
 
 // Output
 log.info("CANCELLED: {}", grantRequest);

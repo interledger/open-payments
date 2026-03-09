@@ -243,11 +243,11 @@ IOpenPaymentsClient client = OpenPaymentsHttpClient.defaultClient(
 );
 
 // Get wallet address information
-    var receiverWallet = client.getWalletAddress("https://cloudninebank.example.com/merchant");
+var receiverWallet = client.walletAddress().get("https://cloudninebank.example.com/merchant");
 
 // Create incoming payment
-    var grantRequest = this.client.createGrantIncomingPayment(receiverWallet);
-    var incomingPayment = this.client.createIncomingPayment(receiverWallet, grantRequest, BigDecimal.valueOf(11.25));
+var grantRequest = client.auth().grant().incomingPayment(receiverWallet);
+var incomingPayment = client.payment().createIncoming(receiverWallet, grantRequest, BigDecimal.valueOf(11.25));
 
 // Output
 log.info("INCOMING_PAYMENT: {}", incomingPayment);
