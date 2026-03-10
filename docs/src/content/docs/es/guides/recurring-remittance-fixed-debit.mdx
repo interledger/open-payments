@@ -125,7 +125,9 @@ if err != nil {
 
 <details>
 <summary>Ejemplo de respuesta</summary>
-El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente. 
+
+El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
+
 ```json wrap
 {
   "id": "https://cloudninebank.example.com/sender",
@@ -135,6 +137,7 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del remite
   "resourceServer": "https://cloudninebank.example.com/op"
 }
 ```
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del destinatario.
 
 ```json wrap
@@ -242,7 +245,9 @@ if err != nil {
 
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del destinatario.
+
 ```json wrap
 {
   "access_token": {
@@ -263,6 +268,7 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del destin
   }
 }
 ```
+
 </details>
 
 ### 3. Solicitar la creación de un recurso de pago entrante
@@ -340,7 +346,9 @@ $recipientIncomingPayment = $client->incomingPayment()->create(
 
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del destinatario.
+
 ```json wrap
 {
   "id": "https://happylifebank.example.com/incoming-payments/{...}",
@@ -361,6 +369,7 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del destin
   ]
 }
 ```
+
 </details>
 
 ### 4. Solicitar una concesión de autorización interactiva para un pago saliente
@@ -562,7 +571,9 @@ if err != nil {
 
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
+
 ```json wrap
 {
   "interact": {
@@ -578,6 +589,7 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del remite
   }
 }
 ```
+
 </details>
 
 #### Acerca del intervalo
@@ -683,7 +695,9 @@ $senderOutgoingPaymentGrant = $client->grant()->continue(
 
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
+
 ```json wrap
 {
   "access_token": {
@@ -709,10 +723,11 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del remite
     "access_token": {
       "value": "..." // access token for continuing the request
     },
-  "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
+    "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
   }
 }
 ```
+
 </details>
 
 ### 8. Solicitar la creación de un recurso de pago saliente
@@ -815,7 +830,9 @@ $senderOutgoingPayment = $client->outgoingPayment()->create(
 
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
+
 ```json wrap
 {
   "id": "https://cloudninebank.example.com/outgoing-payments/{...}", // url of the outgoing payment
@@ -827,7 +844,7 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del remite
     "assetScale": 2
   },
   "receiveAmount": {
-       "value": "400000", // Recipient to receive $4,000 MXN (actual may vary by rate)
+    "value": "400000", // Recipient to receive $4,000 MXN (actual may vary by rate)
     "assetCode": "MXN",
     "assetScale": 2
   },
@@ -839,6 +856,7 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del remite
   "createdAt": "2025-10-03T23:27:45.41Z"
 }
 ```
+
 </details>
 
 El primer pago ya está configurado. En el siguiente intervalo (dentro de un mes), repita los siguientes pasos para solicitar la creación de los siguientes:

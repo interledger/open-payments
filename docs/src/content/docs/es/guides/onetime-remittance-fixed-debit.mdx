@@ -125,7 +125,9 @@ if err != nil {
 </Tabs>
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
+
 ```json wrap
 {
   "id": "https://cloudninebank.example.com/sender",
@@ -135,6 +137,7 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del remite
   "resourceServer": "https://cloudninebank.example.com/op"
 }
 ```
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del destinatario.
 
 ```json wrap
@@ -336,6 +339,7 @@ if err != nil {
 </Tabs>
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del destinatario.
 
 ```json wrap
@@ -455,6 +459,7 @@ if err != nil {
 </Tabs>
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 ```json wrap
 {
   "access_token": {
@@ -475,6 +480,7 @@ if err != nil {
   }
 }
 ```
+
 </details>
 
 ### 5. Solicitar la creación de un recurso de cotización
@@ -590,6 +596,7 @@ Las cotizaciones incluyen una marca de tiempo `expiresAt`. Cree el pago saliente
 
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
 
 ```json wrap
@@ -796,8 +803,10 @@ if err != nil {
 
 </TabItem>
 </Tabs>
+
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 ```json wrap
 {
   "interact": {
@@ -813,6 +822,7 @@ if err != nil {
   }
 }
 ```
+
 </details>
 
 ### 7. Comenzar la interacción con el usuario
@@ -904,6 +914,7 @@ if err != nil {
 </Tabs>
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 ```json wrap
 {
   "access_token": {
@@ -928,6 +939,7 @@ if err != nil {
   }
 }
 ```
+
 </details>
 
 ### 10. Solicitar la creación de un recurso de pago saliente
@@ -1016,6 +1028,7 @@ Si la solicitud falla debido a una cotización caducada, [solicite una nueva cot
 
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta cuando se crea un recurso de pago saliente en la cuenta del remitente.
 
 ```json wrap

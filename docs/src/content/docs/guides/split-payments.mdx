@@ -126,7 +126,9 @@ $platformWalletAddress = $client->walletAddress()->get([
 
 <details>
 <summary>Example response</summary>
+
 The following shows example responses from the customer's, merchant's, and platform's wallet providers.
+
 ```json wrap
 [
   {
@@ -298,6 +300,7 @@ if err != nil {
 
 <details>
 <summary>Example response</summary>
+
 The following shows an example response from the merchant's wallet provider. A similar response will be returned from your wallet provider.
 
 ```json wrap
@@ -471,6 +474,7 @@ $platformIncomingPayment = $client->incomingPayment()->create(
 
 <details>
 <summary>Example response</summary>
+
 The following shows an example response from the merchant's wallet provider. A similar response will be returned from your wallet provider, but your incoming amount `value` will be `100`.
 
 ```json wrap
@@ -593,7 +597,7 @@ This call obtains an access token that allows your platform to request quote res
 </Tabs>
 
 <details>
-  <summary>Example response</summary>
+<summary>Example response</summary>
 
 ```json wrap
 {
@@ -756,7 +760,8 @@ Each response returns a `receiveAmount`, a `debitAmount`, and other required inf
 
 <details>
 <summary>Example response</summary>
-  The following shows an example response from the merchant's wallet provider. A similar response will be returned from your wallet provider.
+
+The following shows an example response from the merchant's wallet provider. A similar response will be returned from your wallet provider.
 
 ```json wrap
 {
@@ -970,8 +975,7 @@ $pendingCustomerOutgoingPaymentGrant = $client->grant()->request(
 </Tabs>
 
 <details>
-  <summary>Example response</summary>
-
+<summary>Example response</summary>
 ```json wrap
 {
   "interact": {
@@ -1071,7 +1075,7 @@ $customerOutgoingPaymentGrant = $client->grant()->continue(
 </Tabs>
 
 <details>
-  <summary>Example response</summary>
+<summary>Example response</summary>
 
 ```json wrap
 {
@@ -1233,6 +1237,7 @@ $customerOutgoingPaymentToPlatform = $client->outgoingPayment()->create(
 
 <details>
 <summary>Example response</summary>
+
 The following shows an example response when an outgoing payment resource is created on the customer's account for the merchant. A similar response will be returned when an outgoing payment resource is created for you, as the wallet provider.
 
 ```json wrap
