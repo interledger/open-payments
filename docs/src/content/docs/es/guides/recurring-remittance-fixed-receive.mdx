@@ -125,6 +125,15 @@ if err != nil {
 ```
 
 </TabItem>
+
+<TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var senderWalletAddress = client.walletAddress().get("https://cloudninebank.example.com/sender");
+var recipientWalletAddress = client.walletAddress().get("https://happylifebank.example.com/recipient");
+```
+
+</TabItem>
 </Tabs>
 
 <details>
@@ -349,6 +358,17 @@ if err != nil {
 ```
 
 </TabItem>
+
+<TabItem label='Java' icon='seti:java'>
+
+```java wrap
+// Create an outgoing payment grant with a fixed receive amount and interval using the Java SDK types.
+// See the Java SDK docs for constructing a LimitsOutgoing object with receiveAmount and interval.
+var pendingSenderOutgoingPaymentGrant = client.auth().grant().outgoingPayment(senderWalletAddress);
+```
+
+</TabItem>
+
 </Tabs>
 
 <details>
@@ -473,6 +493,21 @@ if err != nil {
 ```
 
   </TabItem>
+
+  <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var senderOutgoingPaymentGrant = client.grant().continueRequest(
+  GrantContinueOptions.builder()
+    .url(pendingSenderOutgoingPaymentGrant.getContinue().getUri())
+    .accessToken(pendingSenderOutgoingPaymentGrant.getContinue().getAccessToken().getValue())
+    .interactRef(interactRef)
+    .build()
+);
+```
+
+  </TabItem>
+
 </Tabs>
 
 <details>
@@ -599,6 +634,15 @@ $recipientIncomingPaymentGrant = $client->grant()->request(
   }
   ```
   </TabItem>
+
+  <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var recipientIncomingPaymentGrant = client.auth().grant().incomingPayment(recipientWalletAddress);
+```
+
+  </TabItem>
+
 </Tabs>
 
 <details>
@@ -699,6 +743,18 @@ $recipientIncomingPayment = $client->incomingPayment()->create(
   }
   ```
   </TabItem>
+
+  <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var recipientIncomingPayment = client.payment().createIncoming(
+  recipientWalletAddress,
+  recipientIncomingPaymentGrant
+);
+```
+
+  </TabItem>
+
 </Tabs>
 
 <details>
@@ -815,6 +871,15 @@ $senderQuoteGrant = $client->grant()->request(
   }
   ```
   </TabItem>
+
+  <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var senderQuoteGrant = client.auth().grant().quote(senderWalletAddress);
+```
+
+  </TabItem>
+
 </Tabs>
 
 <details>
@@ -942,6 +1007,21 @@ $senderQuote = $client->quote()->create(
   }
   ```
   </TabItem>
+
+  <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var senderQuote = client.quote().create(
+  senderQuoteGrant.getAccess().getToken(),
+  senderWalletAddress,
+  recipientIncomingPayment,
+  Optional.empty(),
+  Optional.empty()
+);
+```
+
+  </TabItem>
+
 </Tabs>
 
 La respuesta devuelve un `receiveAmount`, un `debitAmount` y demás información requerida.
@@ -1057,6 +1137,19 @@ $senderOutgoingPayment = $client->outgoingPayment()->create(
   }
   ```
   </TabItem>
+
+  <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var senderOutgoingPayment = client.payment().createOutgoingFromQuote(
+  senderWalletAddress,
+  senderQuote,
+  senderOutgoingPaymentGrant
+);
+```
+
+  </TabItem>
+
 </Tabs>
 
 <details>

@@ -80,6 +80,14 @@ $userWalletAddress = $client->walletAddress()->get([
  }
 ```
 </TabItem>
+
+<TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var userWalletAddress = client.walletAddress().get("https://cloudninebank.example.com/user");
+```
+
+</TabItem>
 </Tabs>
 
 <details>
@@ -260,6 +268,33 @@ if err != nil {
 ```
 
  </TabItem>
+
+ <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var interval = "R3/2025-05-20T13:00:00Z/P1M";
+
+var limits = LimitsOutgoing.build(
+  interval,
+  Amount.build(BigDecimal.valueOf(100.00), "CAD", 2)
+);
+
+var accessRequest = AccessTokenRequest.build(
+  userWalletAddress.getId(),
+  limits
+);
+
+var urlToOpen = "https://paymentplatform.example/finish/{...}";
+
+var grantRequest = client.auth().grant().request(
+  userWalletAddress,
+  accessRequest,
+  URI.create(urlToOpen),
+  "NONCE"
+);
+```
+
+ </TabItem>
 </Tabs>
 
 <details>
@@ -380,6 +415,17 @@ $userOutgoingPaymentGrant = $client->grant()->continue(
     log.Fatalf("Error continuing grant: %v\n", err)
   }
   ```
+  </TabItem>
+
+  <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var userOutgoingPaymentGrant = client.auth().grant().finalize(
+  grantRequest,
+  interactRef
+);
+```
+
   </TabItem>
 </Tabs>
 

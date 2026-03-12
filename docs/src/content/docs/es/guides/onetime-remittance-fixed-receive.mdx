@@ -124,6 +124,14 @@ $recipientWalletAddress = $client->walletAddress()->get([
 ```
 
   </TabItem>
+  <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var senderWalletAddress = client.walletAddress().get("https://cloudninebank.example.com/sender");
+var recipientWalletAddress = client.walletAddress().get("https://happylifebank.example.com/recipient");
+```
+
+  </TabItem>
 </Tabs>
 
 <details>
@@ -245,6 +253,11 @@ $recipientIncomingPaymentGrant = $client->grant()->request(
 ````
 
   </TabItem>
+<TabItem label='Java' icon='seti:java'>
+  ```java wrap
+  var recipientIncomingPaymentGrant = client.auth().grant().incomingPayment(recipientWalletAddress);
+  ```
+</TabItem>
 </Tabs>
 
 <details>
@@ -344,6 +357,17 @@ $recipientIncomingPayment = $client->incomingPayment()->create(
   if err != nil {
     log.Fatalf("Error creating incoming payment: %v\n", err)
   }
+```
+
+  </TabItem>
+  <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var recipientIncomingPayment = client.payment().createIncoming(
+  recipientWalletAddress,
+  recipientIncomingPaymentGrant,
+  BigDecimal.valueOf(5000.00)
+);
 ```
 
   </TabItem>
@@ -469,6 +493,11 @@ if err != nil {
 ```
 
   </TabItem>
+<TabItem label='Java' icon='seti:java'>
+  ```java wrap
+  var senderQuoteGrant = client.auth().grant().quote(senderWalletAddress);
+  ```
+</TabItem>
 </Tabs>
 
 <details>
@@ -598,6 +627,19 @@ $senderQuote = $client->quote()->create(
 ```
 
   </TabItem>
+<TabItem label='Java' icon='seti:java'>
+  ```java wrap
+  var senderQuote = client.quote().create(
+    senderQuoteGrant.getAccess().getToken(),
+    senderWalletAddress,
+    recipientIncomingPayment,
+    Optional.empty(),
+    Optional.of(
+      Amount.build(BigDecimal.valueOf(5000.00), "MXN", 2)
+    )
+  );
+  ```
+</TabItem>
 </Tabs>
 
 La respuesta devuelve un `receiveAmount`, un `debitAmount` y demás información requerida.
@@ -811,6 +853,19 @@ $pendingSenderOutgoingPaymentGrant = $client->grant()->request(
 ```
 
   </TabItem>
+  <TabItem label='Java' icon='seti:java'>
+  ```java wrap
+  var urlToOpen = "https://myapp.example.com/finish/{...}";
+
+var opContinueInteract = client.auth().grant().continuation(
+senderWalletAddress,
+senderQuote.getDebitAmount(),
+URI.create(urlToOpen),
+"NONCE"
+);
+
+````
+</TabItem>
 </Tabs>
 
 <details>
@@ -818,19 +873,20 @@ $pendingSenderOutgoingPaymentGrant = $client->grant()->request(
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
 ```json wrap
 {
-  "interact": {
-    "redirect": "https://auth.cloudninebank.example.com/{...}", // uri to redirect the customer to, to begin interaction
-    "finish": "..." // unique key to secure the callback
+"interact": {
+  "redirect": "https://auth.cloudninebank.example.com/{...}", // uri to redirect the customer to, to begin interaction
+  "finish": "..." // unique key to secure the callback
+},
+"continue": {
+  "access_token": {
+    "value": "..." // access token for continuing the outgoing payment grant request
   },
-  "continue": {
-    "access_token": {
-      "value": "..." // access token for continuing the outgoing payment grant request
-    },
-    "uri": "https://auth.cloudninebank.example.com/continue/{...}", // uri for continuing the outgoing payment grant request
-    "wait": 30
-  }
+  "uri": "https://auth.cloudninebank.example.com/continue/{...}", // uri for continuing the outgoing payment grant request
+  "wait": 30
 }
-```
+}
+````
+
 </details>
 
 ### 7. Comenzar la interacción con el consumidor
@@ -918,6 +974,14 @@ $senderOutgoingPaymentGrant = $client->grant()->continue(
   }
 ```
 
+  </TabItem>
+  <TabItem label='Java' icon='seti:java'>
+  ```java wrap
+  var senderOutgoingPaymentGrant = client.auth().grant().finalize(
+    opContinueInteract,
+    interactRef
+  );
+  ```
   </TabItem>
 </Tabs>
 
@@ -1028,6 +1092,15 @@ if err != nil {
 }
 ```
 
+  </TabItem>
+  <TabItem label='Java' icon='seti:java'>
+  ```java wrap
+  var senderOutgoingPayment = client.payment().createOutgoing(
+    senderOutgoingPaymentGrant,
+    senderWalletAddress,
+    senderQuote
+  );
+  ```
   </TabItem>
 </Tabs>
 
