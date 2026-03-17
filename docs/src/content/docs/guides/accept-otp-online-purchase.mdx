@@ -128,6 +128,7 @@ var retailerWalletAddress = client.walletAddress().get("https://happylifebank.ex
 
 <details>
 <summary>Example response</summary>
+
 The following is an example response from the customer's wallet provider. A similar response will be returned from the retailer's wallet provider.
 
 ```json wrap
@@ -253,6 +254,7 @@ var retailerIncomingPaymentGrant = client.auth().grant().incomingPayment(
 
 <details>
 <summary>Example response</summary>
+
 The following is an example response from the retailer's wallet provider.
 
 ```json wrap
@@ -389,6 +391,7 @@ var retailerIncomingPayment = client.payment().createIncoming(
 
 <details>
 <summary>Example response</summary>
+
 The following is an example response from the retailer's wallet provider.
 
 ```json wrap
@@ -528,6 +531,7 @@ var customerQuoteGrant = client.auth().grant().quote(
 
 <details>
 <summary>Example response</summary>
+
 The following is an example response from the customer's wallet provider.
 
 ```json wrap
@@ -664,6 +668,7 @@ The response returns a `receiveAmount`, a `debitAmount`, and other required info
 
 <details>
 <summary>Example response</summary>
+
 The following is an example response from the customer's wallet provider.
 
 ```json wrap
@@ -874,6 +879,7 @@ var opContinueInteract = client.auth().grant().continuation(
 
 <details>
 <summary>Example response</summary>
+
 The following is an example response from the customer's wallet provider.
 
 ```json wrap
@@ -1002,6 +1008,7 @@ var customerOutgoingPaymentGrant = client.auth().grant().finalize(
 
 <details>
 <summary>Example response</summary>
+
 The following is an example response from the customer's wallet provider.
 
 ```json wrap
@@ -1132,6 +1139,7 @@ If the request fails because of an expired quote, [request a new quote](#5-reque
 
 <details>
 <summary>Example response</summary>
+
 The following is an example response from the customer's wallet provider.
 
 ```json wrap

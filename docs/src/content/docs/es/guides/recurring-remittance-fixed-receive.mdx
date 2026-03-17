@@ -138,7 +138,9 @@ var recipientWalletAddress = client.walletAddress().get("https://happylifebank.e
 
 <details>
 <summary>Ejemplo de respuesta</summary>
-El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente. 
+
+El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
+
 ```json wrap
 {
   "id": "https://cloudninebank.example.com/sender",
@@ -148,6 +150,7 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del remite
   "resourceServer": "https://cloudninebank.example.com/op"
 }
 ```
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del destinatario.
 
 ```json wrap
@@ -373,6 +376,7 @@ var pendingSenderOutgoingPaymentGrant = client.auth().grant().outgoingPayment(se
 
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
 
 ```json wrap
@@ -512,6 +516,7 @@ var senderOutgoingPaymentGrant = client.grant().continueRequest(
 
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
 
 ```json wrap
@@ -647,6 +652,7 @@ var recipientIncomingPaymentGrant = client.auth().grant().incomingPayment(recipi
 
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del destinatario.
 
 ```json wrap
@@ -759,6 +765,7 @@ var recipientIncomingPayment = client.payment().createIncoming(
 
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del destinatario.
 
 ```json wrap
@@ -884,6 +891,7 @@ var senderQuoteGrant = client.auth().grant().quote(senderWalletAddress);
 
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
 
 ```json wrap
@@ -1036,6 +1044,7 @@ Las respuestas de cotización incluyen una marca de tiempo `expiresAt`. Cree el 
 
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
 
 ```json wrap
@@ -1154,6 +1163,7 @@ var senderOutgoingPayment = client.payment().createOutgoingFromQuote(
 
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
 
 ```json wrap

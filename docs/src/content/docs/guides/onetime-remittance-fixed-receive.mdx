@@ -134,6 +134,7 @@ if err != nil {
 
 <details>
 <summary>Example responses</summary>
+
 The following example shows a response from the sender's wallet provider.
 
 ```json wrap
@@ -220,35 +221,36 @@ $recipientIncomingPaymentGrant = $client->grant()->request(
     ],
   ]
 );
-```
+````
 
   </TabItem>
 
   <TabItem label='Go' icon='seti:go'>
 
-  ```go wrap
-  incomingAccess := as.AccessIncoming{
-    Type:    as.IncomingPayment,
-    Actions: []as.AccessIncomingActions{as.AccessIncomingActionsCreate},
-  }
-  accessItem := as.AccessItem{}
-  if err := accessItem.FromAccessIncoming(incomingAccess); err != nil {
-    log.Fatalf("Error creating AccessItem: %v\n", err)
-  }
-  accessToken := struct {
-    Access as.Access `json:"access"`
-  }{
-    Access: []as.AccessItem{accessItem},
-  }
+```go wrap
+incomingAccess := as.AccessIncoming{
+  Type:    as.IncomingPayment,
+  Actions: []as.AccessIncomingActions{as.AccessIncomingActionsCreate},
+}
+accessItem := as.AccessItem{}
+if err := accessItem.FromAccessIncoming(incomingAccess); err != nil {
+  log.Fatalf("Error creating AccessItem: %v\n", err)
+}
+accessToken := struct {
+  Access as.Access `json:"access"`
+}{
+  Access: []as.AccessItem{accessItem},
+}
 
-  recipientIncomingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
-    URL:         *recipientWalletAddress.AuthServer,
-    RequestBody: as.GrantRequestWithAccessToken{AccessToken: accessToken},
-  })
-  if err != nil {
-    log.Fatalf("Error requesting incoming payment grant: %v\n", err)
-  }
-  ```
+recipientIncomingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
+  URL:         *recipientWalletAddress.AuthServer,
+  RequestBody: as.GrantRequestWithAccessToken{AccessToken: accessToken},
+})
+if err != nil {
+  log.Fatalf("Error requesting incoming payment grant: %v\n", err)
+}
+```
+
   </TabItem>
 <TabItem label='Java' icon='seti:java'>
   ```java wrap
@@ -259,7 +261,9 @@ $recipientIncomingPaymentGrant = $client->grant()->request(
 
 <details>
 <summary>Example response</summary>
+
 The following shows an example response from the recipient's wallet provider.
+
 ```json wrap
 {
   "access_token": {
@@ -279,7 +283,7 @@ The following shows an example response from the recipient's wallet provider.
     "uri": "https://auth.happylifebank.example.com/continue/{...}" // continuation request uri
   }
 }
-````
+```
 
 </details>
 
@@ -337,24 +341,25 @@ $recipientIncomingPayment = $client->incomingPayment()->create(
     'walletAddress' => $recipientWalletAddress->id,
   ]
 );
-```
+````
 
   </TabItem>
 
   <TabItem label='Go' icon='seti:go'>
 
-  ```go wrap
-  recipientIncomingPayment, err := client.IncomingPayment.Create(context.TODO(), op.IncomingPaymentCreateParams{
-    BaseURL:     *recipientWalletAddress.ResourceServer,
-    AccessToken: recipientIncomingPaymentGrant.AccessToken.Value,
-    Payload: rs.CreateIncomingPaymentJSONBody{
-      WalletAddressSchema: *recipientWalletAddress.Id,
-    },
-  })
-  if err != nil {
-    log.Fatalf("Error creating incoming payment: %v\n", err)
-  }
-  ```
+```go wrap
+recipientIncomingPayment, err := client.IncomingPayment.Create(context.TODO(), op.IncomingPaymentCreateParams{
+  BaseURL:     *recipientWalletAddress.ResourceServer,
+  AccessToken: recipientIncomingPaymentGrant.AccessToken.Value,
+  Payload: rs.CreateIncomingPaymentJSONBody{
+    WalletAddressSchema: *recipientWalletAddress.Id,
+  },
+})
+if err != nil {
+  log.Fatalf("Error creating incoming payment: %v\n", err)
+}
+```
+
   </TabItem>
 <TabItem label='Java' icon='seti:java'>
   ```java wrap
@@ -369,7 +374,9 @@ $recipientIncomingPayment = $client->incomingPayment()->create(
 
 <details>
 <summary>Example response</summary>
+
 The following shows an example response from the recipient's wallet provider.
+
 ```json wrap
 {
   "id": "https://happylifebank.example.com/incoming-payments/{...}",
@@ -389,7 +396,7 @@ The following shows an example response from the recipient's wallet provider.
     }
   ]
 }
-````
+```
 
 </details>
 
@@ -458,7 +465,7 @@ $senderQuoteGrant = $client->grant()->request(
     ]
   ]
 );
-```
+````
 
 </TabItem>
 
@@ -487,6 +494,7 @@ if err != nil {
   log.Fatalf("Error requesting quote grant: %v\n", err)
 }
 ```
+
   </TabItem>
 <TabItem label='Java' icon='seti:java'>
   ```java wrap
@@ -497,7 +505,9 @@ if err != nil {
 
 <details>
 <summary>Example response</summary>
+
 The following shows an example response from the sender's wallet provider.
+
 ```json wrap
 {
   "access_token": {
@@ -514,10 +524,11 @@ The following shows an example response from the sender's wallet provider.
     "access_token": {
       "value": "..." // access token for continuing the request
     },
-  "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
+    "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
   }
 }
 ```
+
 </details>
 
 ### 5. Request the creation of a quote resource
@@ -593,7 +604,7 @@ $senderQuote = $client->quote()->create(
     ]
   ]
 );
-```
+````
 
 </TabItem>
 
@@ -648,7 +659,9 @@ Quotes include an `expiresAt` timestamp. Create the outgoing payment before the 
 
 <details>
 <summary>Example response</summary>
+
 The following shows an example response from the sender’s wallet provider.
+
 ```json wrap
 {
   "id": "https://cloudninebank.example.com/quotes/{...}", // url identifying the quote
@@ -669,6 +682,7 @@ The following shows an example response from the sender’s wallet provider.
   "expiresAt": "2025-03-12T23:24:51.50Z"
 }
 ```
+
 </details>
 
 ### 6. Request an interactive outgoing payment grant
@@ -862,7 +876,9 @@ URI.create(urlToOpen),
 
 <details>
 <summary>Example response</summary>
+
 The following shows an example response from the sender’s wallet provider.
+
 ```json wrap
 {
 "interact": {
@@ -979,7 +995,9 @@ if err != nil {
 
 <details>
 <summary>Example response</summary>
+
 The following shows an example response from the sender's wallet provider.
+
 ```json wrap
 {
   "access_token": {
@@ -1000,10 +1018,11 @@ The following shows an example response from the sender's wallet provider.
     "access_token": {
       "value": "..." // access token for continuing the request
     },
-  "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
+    "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
   }
 }
 ```
+
 </details>
 
 ### 10. Request the creation of an outgoing payment resource
@@ -1100,7 +1119,9 @@ If the request fails because of an expired quote, [request a new quote](#5-reque
 
 <details>
 <summary>Example response</summary>
+
 The following shows an example response from the sender's wallet provider.
+
 ```json wrap
 {
   "id": "https://cloudninebank.example.com/outgoing-payments/{...}", // url identifying the outgoing payment
@@ -1124,6 +1145,7 @@ The following shows an example response from the sender's wallet provider.
   "createdAt": "2025-03-12T23:20:54.52Z"
 }
 ```
+
 </details>
 
 :::note[Access token expiry]

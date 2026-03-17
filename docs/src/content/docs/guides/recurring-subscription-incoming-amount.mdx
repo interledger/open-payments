@@ -136,7 +136,9 @@ var serviceProviderWalletAddress = client.walletAddress().get("https://happylife
 
 <details>
 <summary>Example responses</summary>
+
 The following example shows a response from the customer's wallet provider.
+
 ```json wrap
 {
   "id": "https://cloudninebank.example.com/customer",
@@ -146,7 +148,9 @@ The following example shows a response from the customer's wallet provider.
   "resourceServer": "https://cloudninebank.example.com/op"
 }
 ```
+
 The following example shows a response from the service provider's wallet provider.
+
 ```json wrap
 {
   "id": "https://happylifebank.example.com/service-provider",
@@ -156,6 +160,7 @@ The following example shows a response from the service provider's wallet provid
   "resourceServer": "https://happylifebank.example.com/op"
 }
 ```
+
 </details>
 
 ### 2. Request an incoming payment grant
@@ -258,6 +263,7 @@ var serviceProviderIncomingPaymentGrant = client.auth().grant().incomingPayment(
 
 <details>
 <summary>Example response</summary>
+
 The following shows an example response from the service provider's wallet provider.
 
 ```json wrap
@@ -389,6 +395,7 @@ var serviceProviderIncomingPayment = client.payment().createIncoming(
 
 <details>
 <summary>Example response</summary>
+
 The following shows an example response from the service provider's wallet provider.
 
 ```json wrap
@@ -522,6 +529,7 @@ var customerQuoteGrant = client.auth().grant().quote(
 
 <details>
 <summary>Example response</summary>
+
 The following shows an example response from the customer's wallet provider.
 
 ```json wrap
@@ -651,6 +659,7 @@ Quote responses include an `expiresAt` timestamp. Create the outgoing payment be
 
 <details>
 <summary>Example response</summary>
+
 The following shows an example response from the customer's wallet provider.
 
 ```json wrap
@@ -886,7 +895,8 @@ var opContinueInteract = client.auth().grant().continuation(
 </Tabs>
 
 <details>
-  <summary>Example response</summary>
+<summary>Example response</summary>
+
 The following shows an example response from the customer's wallet provider.
 
 ```json wrap
@@ -1016,7 +1026,8 @@ var customerOutgoingPaymentGrant = client.auth().grant().finalize(
 </Tabs>
 
 <details>
-  <summary>Example response</summary>
+<summary>Example response</summary>
+
 The following shows an example response from the customer's wallet provider.
 
 ```json wrap
@@ -1143,6 +1154,7 @@ var customerOutgoingPayment = client.payment().createOutgoing(
 
 <details>
 <summary>Example response</summary>
+
 The following shows an example response from the customer's wallet provider.
 
 ```json wrap

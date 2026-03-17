@@ -132,7 +132,9 @@ if err != nil {
 
 <details>
 <summary>Example responses</summary>
-The following example shows a response from the sender's wallet provider. 
+
+The following example shows a response from the sender's wallet provider.
+
 ```json wrap
 {
   "id": "https://cloudninebank.example.com/sender",
@@ -142,6 +144,7 @@ The following example shows a response from the sender's wallet provider.
   "resourceServer": "https://cloudninebank.example.com/op"
 }
 ```
+
 The following example shows a response from the recipient's wallet provider.
 
 ```json wrap
@@ -252,6 +255,7 @@ if err != nil {
 
 <details>
 <summary>Example response</summary>
+
 The following shows an example response from the recipient's wallet provider.
 
 ```json wrap
@@ -361,6 +365,7 @@ if err != nil {
 
 <details>
 <summary>Example response</summary>
+
 The following shows an example response from the recipient's wallet provider.
 
 ```json wrap
@@ -483,7 +488,7 @@ if err != nil {
 </Tabs>
 
 <details>
-  <summary>Example response</summary>
+<summary>Example response</summary>
 
 ```json wrap
 {
@@ -633,7 +638,8 @@ Quotes include an `expiresAt` timestamp. Create the outgoing payment before the 
 
 <details>
 <summary>Example response</summary>
-  The following shows an example response from the sender's wallet provider.
+
+The following shows an example response from the sender's wallet provider.
 
 ```json wrap
 {
@@ -790,7 +796,7 @@ $pendingSenderOutgoingPaymentGrant = $client->grant()->request(
     ]
   ]
 );
-```
+````
 
   </TabItem>
 
@@ -837,7 +843,7 @@ pendingSenderOutgoingPaymentGrant, err := client.Grant.Request(context.TODO(), o
 if err != nil {
 	log.Fatalf("Error requesting outgoing payment grant: %v\n", err)
 }
-````
+```
 
 </TabItem>
 <TabItem label='Java' icon='seti:java'>
@@ -973,7 +979,7 @@ if err != nil {
 </Tabs>
 
 <details>
-  <summary>Example response</summary>
+<summary>Example response</summary>
 
 ```json wrap
 {
@@ -1095,6 +1101,7 @@ If the request fails because of an expired quote, [request a new quote](#5-reque
 
 <details>
 <summary>Example response</summary>
+
 The following shows an example response when an outgoing payment resource is created on the sender's account.
 
 ```json wrap

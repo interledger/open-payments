@@ -9,14 +9,14 @@ import {
 } from '@interledger/docs-design-system'
 
 :::tip[Summary]
-Client keys are unique identifiers that allow clients to sign Open Payments requests. They enable the verification of a client’s identity through a publicly accessible key registry.
+Client keys are unique identifiers that allow clients to sign Open Payments requests. They allow a client's identity to be verified through a public key registry.
 :::
 
-All client requests in Open Payments are signed using a unique key that identifies the client to the authorization and resource servers. All requests, except for new grant requests, also carry an access token that's bound to the key.
+All client requests in Open Payments are signed using a unique key that identifies the client to authorization and resource servers. All requests, except for new grant requests, will carry an access token that's bound to the key.
 
 ## Key registry
 
-A key registry is a list of keys, generated and stored by the client, for when the client requires access to protected Open Payment resources. Since grant requests are completed over multiple signed HTTP requests, it's important for the client to provide a way to consistently identify itself across these requests to the authorization server. The key registry allows the authorization server to verify that the client is who it says it is.
+A key registry is a list of keys that are generated and stored by the client for when the client requires access to protected Open Payment resources. Grant requests are completed over multiple signed HTTP requests. As such, it's important that the client provides a way to consistently identify itself to an authorization server. The key registry allows the authorization server to verify that the client is who it says it is.
 
 Each client is represented by a [wallet address](/concepts/wallet-addresses). A client's key registry is publicly accessible through its wallet address via a `jwks.json` endpoint. An authorization server can retrieve the client's key registry by accessing `WALLET_ADDRESS/jwks.json`.
 
@@ -26,7 +26,7 @@ https://wallet.example.com/alice/jwks.json
 
 ### Registry structure
 
-The key registry must expose public keys in the form of JSON Web Key Sets (JWKS). The keys must be generated using the `Ed25519` algorithm and the resultant JWKS document must contain the following fields and values.
+The key registry must expose public keys in the form of JSON Web Key Sets (JWKS). The keys must be generated using the `Ed25519` algorithm and the resulting JWKS document must contain the following fields and values.
 
 ```
 {
@@ -36,7 +36,7 @@ The key registry must expose public keys in the form of JSON Web Key Sets (JWKS)
 }
 ```
 
-Additionally, it must contain the `x` and `kid` (key ID) fields for the specific client to identify itself in a signature.
+Additionally, the document must contain the `x` and `kid` (key ID) fields for the specific client to identify itself in a signature.
 
 ```json title="Example: https://wallet.example.com/alice/jwks.json"
 {
@@ -54,14 +54,16 @@ Additionally, it must contain the `x` and `kid` (key ID) fields for the specific
 
 ### Key generation
 
-Before a client can request a grant for the first time, it must:
+To initialize an authenticated Open Payments client SDK, you must have a public-private key pair and a key ID.
 
-1. Generate an asymmetric key pair. Keys must be generated using the <LinkOut href='https://datatracker.ietf.org/doc/html/rfc8032'>ed25519 algorithm</LinkOut>.
-   :::note
-   A `keyId` must be generated to identify the pair. This is often the responsibility of the account servicing entity (ASE).
-   :::
-2. Add the public key to its key registry.
-3. Store the private key. The private key signs the payload described in the [key proofing method](#key-proofing-method) section below.
+1. The client SDK generates a key pair using the <LinkOut href='https://datatracker.ietf.org/doc/html/rfc8032'>ED25519 algorithm</LinkOut>. The client's key registry exposes the public key in the form of a JWKS.
+2. The public key is provided to the client's account servicing entity (ASE). The ASE is responsible for providing a way for clients to upload keys. The ASE adds the key to its resource server.
+3. A `keyId` is created to identify the key pair. The ASE is usually responsible for `keyId` creation.
+4. The client stores the private key for future request signing. The key signs the payload described in the [key proofing method](#key-proofing-method) section below.
+
+:::note
+The Interledger test network provides a working example of [obtaining a key pair and key ID](/sdk/before-you-begin/#obtain-a-public-private-key-pair-and-key-id).
+:::
 
 ## Client requests
 
@@ -71,7 +73,7 @@ Since client requests are completed over multiple signed HTTP requests, it's imp
   - A `Signature-Input` header that includes the `keyId` associated with the client's key pair. This header is a comma-separated list of headers that map to values in the data that was signed.
   - A `signature` header generated based on the `Signature-Input`, using the `EdDSA` signing algorithm
 - Body
-  - A `client` property containing the client’s wallet address
+  - A `client` property containing the client's wallet address
 
 Securing client requests follows a profile of what's defined in the <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol#name-securing-requests-from-the-'>GNAP specification</LinkOut>.
 
@@ -81,9 +83,9 @@ Open Payments **does not** support bearer tokens.
 
 ### Grant requests
 
-Upon receiving a signed grant request, the authorization server obtains the client’s domain from the `client` property. The authorization server binds the domain to the grant to use the domain to acquire the key set for subsequent grant requests.
+Upon receiving a signed grant request, the authorization server obtains the client's domain from the `client` property. The authorization server binds the domain to the grant so it can use the domain to acquire the key set for subsequent grant requests.
 
-The authorization server then acquires the client's key registry by making a `GET` request to the client’s JWKS endpoint at `WALLET_ADDRESS/jwks.json`. When the authorization server locates the public key containing the `keyId` included in the request's `Signature-Input` header, the authorization server uses the key to decrypt and validate the request's signature. This binds the client to the grant and allows the authorization server to continue with the grant request.
+The authorization server then makes a `GET` request to the client's JWKS endpoint at `WALLET_ADDRESS/jwks.json`. In return, the server acquires the client's key registry. The server locates the public key containing the `keyId` in the request's `Signature-Input` header. Then, the server uses the key to decrypt and validate the request's signature. This binds the client to the grant and allows the authorization server to continue with the grant request.
 
 ## Key proofing method
 
@@ -112,7 +114,13 @@ See the [HTTP message signatures](/identity/http-signatures) page for more infor
 
 ## Sequence diagram
 
-This diagram shows the sequence of calls needed between a client and the servers on the sender's side to obtain an interactive grant for creating an `outgoing-payment` resource.
+An interactive grant is necessary for creating an `outgoing-payment` resource. This diagram shows the sequence of calls needed between an Open Payments client SDK and the servers on the sender's side to obtain the grant.
+
+Before initializing the client SDK, you must have a public-private key pair and a key ID.
+
+:::note
+The Interledger test network provides a working example of [obtaining a key pair and key ID](/sdk/before-you-begin/#obtain-a-public-private-key-pair-and-key-id).
+:::
 
 <MermaidWrapper diagramName="client-keys">
 
@@ -120,11 +128,10 @@ This diagram shows the sequence of calls needed between a client and the servers
 <Mermaid
   graph={`sequenceDiagram
     autonumber
-    participant C as Client
+    participant C as Open Payments Client SDK
     participant AS as Authorization server
     participant RS as Resource server
-    C->>C: Generates public/private key pair,<br/>adds the public key to its key registry
-    C->RS: Public key uploaded to the resource server
+    C->>C: Initialize client SDK with the wallet<br/>address URL, keyId, and private key
     C->>AS: POST grant request (interactive outgoing-payment), <br/>signed with private key
     AS->>AS: Pulls keyId from grant request's signature-input <br/>header, gets client's domain from request's body
     AS->>RS: GET {client_domain/jwks.json} public keys<br/> from client's JWKS endpoint

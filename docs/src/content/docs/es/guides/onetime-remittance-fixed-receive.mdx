@@ -136,6 +136,7 @@ var recipientWalletAddress = client.walletAddress().get("https://happylifebank.e
 
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
 
 ```json wrap
@@ -222,7 +223,7 @@ $recipientIncomingPaymentGrant = $client->grant()->request(
     ],
   ]
 );
-  ```
+````
 
 </TabItem>
 
@@ -250,7 +251,7 @@ $recipientIncomingPaymentGrant = $client->grant()->request(
   if err != nil {
     log.Fatalf("Error requesting incoming payment grant: %v\n", err)
   }
-````
+```
 
   </TabItem>
 <TabItem label='Java' icon='seti:java'>
@@ -262,7 +263,9 @@ $recipientIncomingPaymentGrant = $client->grant()->request(
 
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del destinatario.
+
 ```json wrap
 {
   "access_token": {
@@ -283,6 +286,7 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del destin
   }
 }
 ```
+
 </details>
 
 ### 3. Solicitar la creación de un recurso de pago entrante
@@ -375,7 +379,9 @@ var recipientIncomingPayment = client.payment().createIncoming(
 
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del destinatario.
+
 ```json wrap
 {
   "id": "https://happylifebank.example.com/incoming-payments/{...}",
@@ -396,6 +402,7 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del destin
   ]
 }
 ```
+
 </details>
 
 ### 4. Solicitar una concesión de autorización para una cotización
@@ -502,7 +509,9 @@ if err != nil {
 
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
+
 ```json wrap
 {
   "access_token": {
@@ -519,11 +528,10 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del remite
     "access_token": {
       "value": "..." // access token for continuing the request
     },
-  "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
+    "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
   }
 }
-
-````
+```
 
 </details>
 
@@ -554,7 +562,7 @@ El `receiveAmount` especifica que el destinatario recibirá exactamente MXN 5000
       }
     }
   )
-````
+```
 
   </TabItem>
   <TabItem label='Rust' icon='seti:rust'>
@@ -655,7 +663,9 @@ Las cotizaciones incluyen una marca de tiempo `expiresAt`. Cree el pago saliente
 
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
+
 ```json wrap
 {
   "id": "https://cloudninebank.example.com/quotes/{...}", // url identifying the quote
@@ -676,6 +686,7 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del remite
   "expiresAt": "2025-03-12T23:24:51.50Z"
 }
 ```
+
 </details>
 
 ### 6. Solicitar una concesión de autorización interactiva para un pago saliente
@@ -870,7 +881,9 @@ URI.create(urlToOpen),
 
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
+
 ```json wrap
 {
 "interact": {
@@ -884,8 +897,7 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del remite
   "uri": "https://auth.cloudninebank.example.com/continue/{...}", // uri for continuing the outgoing payment grant request
   "wait": 30
 }
-}
-````
+```
 
 </details>
 
@@ -987,7 +999,9 @@ $senderOutgoingPaymentGrant = $client->grant()->continue(
 
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
+
 ```json wrap
 {
   "access_token": {
@@ -1008,10 +1022,11 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del remite
     "access_token": {
       "value": "..." // access token for continuing the request
     },
-  "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
+    "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
   }
 }
 ```
+
 </details>
 
 ### 10. Solicitar la creación de un recurso de pago saliente
@@ -1108,7 +1123,9 @@ Si la solicitud falla debido a una cotización caducada, [solicite una nueva cot
 
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
+
 ```json wrap
 {
   "id": "https://cloudninebank.example.com/outgoing-payments/{...}", // url identifying the outgoing payment
@@ -1132,8 +1149,10 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del remite
   "createdAt": "2025-03-12T23:20:54.52Z"
 }
 ```
+
 </details>
 
 :::note[Expiración del token de acceso]
 Si el token de acceso de una concesión de autorización ha expirado, llame a la <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/auth-server/operations/post-token/) y, luego, utilice el nuevo token en la solicitud correspondiente.
 :::
+````

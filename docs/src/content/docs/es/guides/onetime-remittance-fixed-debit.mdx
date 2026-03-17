@@ -131,7 +131,9 @@ if err != nil {
 </Tabs>
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
+
 ```json wrap
 {
   "id": "https://cloudninebank.example.com/sender",
@@ -141,6 +143,7 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del remite
   "resourceServer": "https://cloudninebank.example.com/op"
 }
 ```
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del destinatario.
 
 ```json wrap
@@ -356,6 +359,7 @@ if err != nil {
 </Tabs>
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del destinatario.
 
 ```json wrap
@@ -480,6 +484,7 @@ if err != nil {
 </Tabs>
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 ```json wrap
 {
   "access_token": {
@@ -500,6 +505,7 @@ if err != nil {
   }
 }
 ```
+
 </details>
 
 ### 5. Solicitar la creación de un recurso de cotización
@@ -628,6 +634,7 @@ Las cotizaciones incluyen una marca de tiempo `expiresAt`. Cree el pago saliente
 
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta del proveedor de billetera del remitente.
 
 ```json wrap
@@ -783,7 +790,7 @@ $pendingSenderOutgoingPaymentGrant = $client->grant()->request(
     ]
   ]
 );
-```
+````
 
 </TabItem>
 
@@ -830,7 +837,7 @@ pendingSenderOutgoingPaymentGrant, err := client.Grant.Request(context.TODO(), o
 if err != nil {
 	log.Fatalf("Error requesting outgoing payment grant: %v\n", err)
 }
-````
+```
 
 </TabItem>
 <TabItem label='Java' icon='seti:java'>
@@ -848,8 +855,10 @@ URI.create(urlToOpen),
 ````
 </TabItem>
 </Tabs>
+
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 ```json wrap
 {
 "interact": {
@@ -863,8 +872,7 @@ URI.create(urlToOpen),
   "uri": "https://auth.cloudninebank.example.com/continue/{...}", // uri for continuing the outgoing payment grant request
   "wait": 30
 }
-}
-````
+```
 
 </details>
 
@@ -965,6 +973,7 @@ if err != nil {
 </Tabs>
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 ```json wrap
 {
   "access_token": {
@@ -989,6 +998,7 @@ if err != nil {
   }
 }
 ```
+
 </details>
 
 ### 10. Solicitar la creación de un recurso de pago saliente
@@ -1086,6 +1096,7 @@ Si la solicitud falla debido a una cotización caducada, [solicite una nueva cot
 
 <details>
 <summary>Ejemplo de respuesta</summary>
+
 El siguiente ejemplo muestra una respuesta cuando se crea un recurso de pago saliente en la cuenta del remitente.
 
 ```json wrap
@@ -1117,3 +1128,4 @@ El siguiente ejemplo muestra una respuesta cuando se crea un recurso de pago sal
 :::note[Expiración del token de acceso]
 Si el token de acceso de una concesión de autorización ha expirado, llame a la <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/auth-server/operations/post-token/) y, luego, utilice el nuevo token en la solicitud correspondiente.
 :::
+````

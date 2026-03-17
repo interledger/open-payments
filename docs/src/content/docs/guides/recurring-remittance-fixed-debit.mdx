@@ -134,7 +134,9 @@ var recipientWalletAddress = client.walletAddress().get("https://happylifebank.e
 
 <details>
 <summary>Example responses</summary>
-The following example shows a response from the sender's wallet provider. 
+
+The following example shows a response from the sender's wallet provider.
+
 ```json wrap
 {
   "id": "https://cloudninebank.example.com/sender",
@@ -144,6 +146,7 @@ The following example shows a response from the sender's wallet provider.
   "resourceServer": "https://cloudninebank.example.com/op"
 }
 ```
+
 The following example shows a response from the recipient's wallet provider.
 
 ```json wrap
@@ -260,7 +263,9 @@ var recipientIncomingPaymentGrant = client.auth().grant().incomingPayment(recipi
 
 <details>
 <summary>Example response</summary>
+
 The following shows an example response from the recipient's wallet provider.
+
 ```json wrap
 {
   "access_token": {
@@ -281,6 +286,7 @@ The following shows an example response from the recipient's wallet provider.
   }
 }
 ```
+
 </details>
 
 ### 3. Request the creation of an incoming payment resource
@@ -370,7 +376,9 @@ var recipientIncomingPayment = client.payment().createIncoming(
 
 <details>
 <summary>Example response</summary>
+
 The following shows an example response from the recipient's wallet provider.
+
 ```json wrap
 {
   "id": "https://happylifebank.example.com/incoming-payments/{...}",
@@ -391,6 +399,7 @@ The following shows an example response from the recipient's wallet provider.
   ]
 }
 ```
+
 </details>
 
 ### 4. Request an interactive outgoing payment grant
@@ -603,7 +612,9 @@ var pendingSenderOutgoingPaymentGrant = client.auth().grant().outgoingPayment(se
 
 <details>
 <summary>Example response</summary>
+
 The following shows an example response from the sender's wallet provider.
+
 ```json wrap
 {
   "interact": {
@@ -619,6 +630,7 @@ The following shows an example response from the sender's wallet provider.
   }
 }
 ```
+
 </details>
 
 #### About the interval
@@ -739,7 +751,9 @@ var senderOutgoingPaymentGrant = client.grant().continueRequest(
 
 <details>
 <summary>Example response</summary>
+
 The following shows an example response from the sender's wallet provider.
+
 ```json wrap
 {
   "access_token": {
@@ -765,10 +779,11 @@ The following shows an example response from the sender's wallet provider.
     "access_token": {
       "value": "..." // access token for continuing the request
     },
-  "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
+    "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
   }
 }
 ```
+
 </details>
 
 ### 8. Request the creation of an outgoing payment resource
@@ -884,7 +899,9 @@ var senderOutgoingPayment = client.payment().createOutgoingFromIncoming(
 
 <details>
 <summary>Example response</summary>
+
 The following shows an example response from the sender's wallet provider.
+
 ```json wrap
 {
   "id": "https://cloudninebank.example.com/outgoing-payments/{...}", // url of the outgoing payment
@@ -896,7 +913,7 @@ The following shows an example response from the sender's wallet provider.
     "assetScale": 2
   },
   "receiveAmount": {
-       "value": "400000", // Recipient to receive $4,000 MXN (actual may vary by rate)
+    "value": "400000", // Recipient to receive $4,000 MXN (actual may vary by rate)
     "assetCode": "MXN",
     "assetScale": 2
   },
@@ -908,6 +925,7 @@ The following shows an example response from the sender's wallet provider.
   "createdAt": "2025-10-03T23:27:45.41Z"
 }
 ```
+
 </details>
 
 The first payment is now set up. At the next interval (one month from now), repeat the following steps to request the creation of:
