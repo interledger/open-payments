@@ -561,18 +561,17 @@ var waInfo = await client.GetWalletAddressAsync(walletAddress);
 // Request quote grant
 var grant = await client.RequestGrantAsync(
     new RequestArgs() { Url = waInfo.AuthServer },
-    new GrantCreateBody()
+    new GrantCreateBodyWithInteract
     {
-        AccessToken = new AccessToken()
+        AccessToken = new AccessToken
         {
             Access =
             [
-                new AccessItem()
+                new OutgoingAccess
                 {
-                    Type = AccessType.OutgoingPayment,
                     Actions = [Actions.List, Actions.ListAll, Actions.Read, Actions.ReadAll, Actions.Create],
-                    Identifier = waInfo.Id.ToString(),
-                    Limits = new AccessLimits()
+                    Identifier = waInfo.Id,
+                    Limits = new OutgoingAccessLimits
                     {
                         DebitAmount = new Amount(quote.DebitAmount.Value, quote.DebitAmount.AssetCode,
                             quote.DebitAmount.AssetScale),
@@ -604,6 +603,9 @@ Console.WriteLine($"Please interact at the following URL: {grant.Interact.Redire
 Console.WriteLine($"CONTINUE_ACCESS_TOKEN = {grant.Continue.AccessToken.Value}");
 Console.WriteLine($"CONTINUE_URI = {grant.Continue.Uri}");
 ```
+<LinkOut href="https://github.com/interledger/open-payments-dotnet/blob/main/OpenPayments.Snippets/Services/Authenticated/OutgoingPaymentService.cs#L20-L50">
+  View full source
+</LinkOut>
 
 ## Generate with an interval
 
@@ -636,18 +638,17 @@ var waInfo = await client.GetWalletAddressAsync(walletAddress);
 // Request quote grant
 var grant = await client.RequestGrantAsync(
     new RequestArgs() { Url = waInfo.AuthServer },
-    new GrantCreateBody()
+    new GrantCreateBodyWithInteract
     {
-        AccessToken = new AccessToken()
+        AccessToken = new AccessToken
         {
             Access =
             [
-                new AccessItem()
+                new OutgoingAccess
                 {
-                    Type = AccessType.OutgoingPayment,
                     Actions = [Actions.List, Actions.ListAll, Actions.Read, Actions.ReadAll, Actions.Create],
-                    Identifier = waInfo.Id.ToString(),
-                    Limits = new AccessLimits()
+                    Identifier = waInfo.Id,
+                    Limits = new OutgoingAccessLimits
                     {
                         DebitAmount = new Amount(quote.DebitAmount.Value, quote.DebitAmount.AssetCode,
                             quote.DebitAmount.AssetScale),
@@ -656,10 +657,10 @@ var grant = await client.RequestGrantAsync(
                 },
             ],
         },
-        Interact = new InteractRequest()
+        Interact = new InteractRequest
         {
             Start = [Start.Redirect],
-            Finish = new Finish()
+            Finish = new Finish
             {
                 Method = FinishMethod.Redirect,
                 Uri = new Uri("http://localhost:3344"),
@@ -680,7 +681,9 @@ Console.WriteLine($"Please interact at the following URL: {grant.Interact.Redire
 Console.WriteLine($"CONTINUE_ACCESS_TOKEN = {grant.Continue.AccessToken.Value}");
 Console.WriteLine($"CONTINUE_URI = {grant.Continue.Uri}");
 ```
-
+<LinkOut href="https://github.com/interledger/open-payments-dotnet/blob/main/OpenPayments.Snippets/Services/Authenticated/OutgoingPaymentService.cs#L20-L50">
+  View full source
+</LinkOut>
 </TabItem>
 </Tabs>
 

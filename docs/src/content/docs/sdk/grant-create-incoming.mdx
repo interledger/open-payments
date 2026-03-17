@@ -344,13 +344,12 @@ var grant = await client.RequestGrantAsync(
     new RequestArgs() { Url = waInfo.AuthServer },
     new GrantCreateBody()
     {
-        AccessToken = new AccessToken()
+        AccessToken = new AccessToken
         {
             Access =
             [
-                new AccessItem()
+                new IncomingAccess
                 {
-                    Type = AccessType.IncomingPayment,
                     Actions =
                     [
                         Actions.List,
@@ -374,6 +373,9 @@ if (grant.Interact != null)
 // Output
 Console.WriteLine(JsonConvert.SerializeObject(grant, Formatting.Indented));
 ```
+<LinkOut href="https://github.com/interledger/open-payments-dotnet/blob/main/OpenPayments.Snippets/Services/Authenticated/IncomingPaymentService.cs#L17-L38">
+  View full source
+</LinkOut>
 </TabItem>
 </Tabs>
 

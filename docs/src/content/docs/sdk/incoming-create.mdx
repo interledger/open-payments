@@ -282,15 +282,15 @@ var waInfo = await client.GetWalletAddressAsync(walletAddress);
 
 // Create Incoming Payment
 var incomingPayment = await client.CreateIncomingPaymentAsync(
-    new AuthRequestArgs()
+    new AuthRequestArgs
     {
         Url = waInfo.ResourceServer,
         AccessToken = INCOMING_PAYMENT_ACCESS_TOKEN,
     },
-    new IncomingPaymentBody()
+    new IncomingPaymentBody
     {
         WalletAddress = waInfo.Id,
-        IncomingAmount = new Amount()
+        IncomingAmount = new Amount
         {
             Value = "1000",
             AssetCode = waInfo.AssetCode,
@@ -303,6 +303,9 @@ var incomingPayment = await client.CreateIncomingPaymentAsync(
 // Output
 Console.WriteLine($"INCOMING_PAYMENT_URL = {incomingPayment.Id.ToString()}");
 ```
+<LinkOut href="https://github.com/interledger/open-payments-dotnet/blob/main/OpenPayments.Snippets/Services/Authenticated/IncomingPaymentService.cs#L40-L56">
+  View full source
+</LinkOut>
 </TabItem>
 </Tabs>
 

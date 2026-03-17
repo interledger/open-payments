@@ -195,10 +195,13 @@ var client = new ServiceCollection()
     .GetRequiredService<IAuthenticatedClient>();
 
 // Revoke grant
-await client.RevokeTokenAsync(
+await client.CancelGrantAsync(
     new AuthRequestArgs() { Url = new Uri(CONTINUE_URI), AccessToken = CONTINUE_ACCESS_TOKEN }
 );
 ```
+<LinkOut href="https://github.com/interledger/open-payments-dotnet/blob/main/OpenPayments.Snippets/Services/Authenticated/OutgoingPaymentService.cs#L251-L257">
+  View full source
+</LinkOut>
 </TabItem>
 </Tabs>
 
