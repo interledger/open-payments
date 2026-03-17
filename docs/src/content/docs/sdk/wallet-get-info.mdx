@@ -158,6 +158,29 @@ log.info("WALLET_ADDRESS: {}", walletAddress);
 ```
 
 </TabItem>
+<TabItem label='.NET' icon='seti:dotnet'>
+<LinkButton href="https://github.com/interledger/open-payments-dotnet/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+```csharp wrap
+// Import dependencies
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+using OpenPayments.Sdk.Clients;
+using OpenPayments.Sdk.Extensions;
+
+// Initialize client
+var provider = new ServiceCollection()
+    .UseOpenPayments(opts => { opts.UseUnauthenticatedClient = true; })
+    .BuildServiceProvider();
+
+// Get wallet address information
+var client = provider.GetRequiredService<IUnauthenticatedClient>();
+var waDetails = await client.GetWalletAddressAsync(walletAddress);
+
+// Output
+Console.WriteLine(JsonConvert.SerializeObject(waDetails, Formatting.Indented));
+```
+</TabItem>
 </Tabs>
 
 ## References

@@ -255,6 +255,50 @@ log.info("FINALIZED: {}", finalized);
 ```
 
 </TabItem>
+<TabItem label='.NET' icon='seti:dotnet'>
+<LinkButton href="https://github.com/interledger/open-payments-dotnet/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+```csharp wrap
+// Import dependencies
+using Microsoft.Extensions.DependencyInjection;
+using OpenPayments.Sdk.Clients;
+using OpenPayments.Sdk.Extensions;
+using OpenPayments.Sdk.HttpSignatureUtils;
+
+// Initialize client
+var client = new ServiceCollection()
+    .UseOpenPayments(opts =>
+    {
+        opts.UseAuthenticatedClient = true;
+        opts.KeyId = CLIENT_ID;
+        opts.PrivateKey = KeyUtils.LoadPem(CLIENT_SECRET);
+        opts.ClientUrl = new Uri(CLIENT_WALLET_ADDRESS);
+    })
+    .BuildServiceProvider()
+    .GetRequiredService<IAuthenticatedClient>();
+
+// Continue grant
+var grant = await client.ContinueGrantAsync(
+    new AuthRequestArgs()
+    {
+        Url = new Uri(CONTINUE_URI),
+        AccessToken = CONTINUE_ACCESS_TOKEN,
+    },
+    new GrantContinueBody()
+    {
+        InteractRef = interactRef,
+    }
+);
+
+// Check grant state
+if (grant.AccessToken == null)
+    throw new Exception("Expected finalized grant. Received non-finalized grant.");
+
+// Output
+Console.WriteLine($"OUTGOING_PAYMENT_ACCESS_TOKEN = {grant.AccessToken.Value}");
+Console.WriteLine($"OUTGOING_PAYMENT_ACCESS_TOKEN_MANAGE_URL = {grant.AccessToken.Manage}");
+```
+</TabItem>
 </Tabs>
 
 ## References

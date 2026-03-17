@@ -5,7 +5,7 @@ title: Get keys bound to a wallet address
 import { LinkOut } from '@interledger/docs-design-system'
 import { Tabs, TabItem, LinkButton } from '@astrojs/starlight/components'
 import Begin from '/src/partials/before-you-begin.mdx'
-  
+
 While most Open Payments code snippets are intended for clients, getting the keys bound to a wallet address is primarily a function of account servicing entities.
 
 When an authorization server receives a signed grant request, the server can make a call to acquire the public keys bound to the wallet address. Then, when a client makes a request to a resource server, the resource server calls the auth server to ensure the signature of the request corresponds to the public JWK of the wallet address. This enables the server to ensure the client is who it says it is.
@@ -20,7 +20,7 @@ These code snippets get the keys associated with the specified wallet address.
 
 <Tabs syncKey="langs">
 <TabItem label='TypeScript/NodeJS' icon='node'>
-<LinkButton 
+<LinkButton
 href="https://github.com/interledger/open-payments-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
 ```ts wrap
@@ -159,6 +159,29 @@ var keys = client.walletAddress().keys("https://cloudninebank.example.com/custom
 log.info("WALLET_ADDRESS_KEYS: {}", keys);
 ```
 
+</TabItem>
+<TabItem label='.NET' icon='seti:dotnet'>
+<LinkButton href="https://github.com/interledger/open-payments-dotnet/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+```csharp wrap
+// Import dependencies
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+using OpenPayments.Sdk.Clients;
+using OpenPayments.Sdk.Extensions;
+
+// Initialize client
+var provider = new ServiceCollection()
+    .UseOpenPayments(opts => { opts.UseUnauthenticatedClient = true; })
+    .BuildServiceProvider();
+
+// Get wallet address keys
+var client = provider.GetRequiredService<IUnauthenticatedClient>();
+var waKeys = await client.GetWalletAddressKeysAsync(walletAddress);
+
+// Output
+Console.WriteLine(JsonConvert.SerializeObject(waKeys, Formatting.Indented));
+```
 </TabItem>
 </Tabs>
 

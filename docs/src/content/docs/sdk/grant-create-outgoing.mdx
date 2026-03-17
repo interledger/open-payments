@@ -527,6 +527,161 @@ log.info("OUTGOING_PAYMENT_GRANT: {}", opContinueInteract);
 ```
 
 </TabItem>
+<TabItem label='.NET' icon='seti:dotnet'>
+<LinkButton href="https://github.com/interledger/open-payments-dotnet/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+## Generate without an interval
+
+```csharp wrap
+// Import dependencies
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+using OpenPayments.Sdk.Clients;
+using OpenPayments.Sdk.Extensions;
+using OpenPayments.Sdk.Generated.Auth;
+using OpenPayments.Sdk.Generated.Resource;
+using OpenPayments.Sdk.HttpSignatureUtils;
+using Amount = OpenPayments.Sdk.Generated.Auth.Amount;
+
+// Initialize client
+var client = new ServiceCollection()
+    .UseOpenPayments(opts =>
+    {
+        opts.UseAuthenticatedClient = true;
+        opts.KeyId = CLIENT_ID;
+        opts.PrivateKey = KeyUtils.LoadPem(CLIENT_SECRET);
+        opts.ClientUrl = new Uri(CLIENT_WALLET_ADDRESS);
+    })
+    .BuildServiceProvider()
+    .GetRequiredService<IAuthenticatedClient>();
+
+// Get wallet address information
+var waInfo = await client.GetWalletAddressAsync(walletAddress);
+
+// Request quote grant
+var grant = await client.RequestGrantAsync(
+    new RequestArgs() { Url = waInfo.AuthServer },
+    new GrantCreateBody()
+    {
+        AccessToken = new AccessToken()
+        {
+            Access =
+            [
+                new AccessItem()
+                {
+                    Type = AccessType.OutgoingPayment,
+                    Actions = [Actions.List, Actions.ListAll, Actions.Read, Actions.ReadAll, Actions.Create],
+                    Identifier = waInfo.Id.ToString(),
+                    Limits = new AccessLimits()
+                    {
+                        DebitAmount = new Amount(quote.DebitAmount.Value, quote.DebitAmount.AssetCode,
+                            quote.DebitAmount.AssetScale),
+                    },
+                },
+            ],
+        },
+        Interact = new InteractRequest()
+        {
+            Start = [Start.Redirect],
+            Finish = new Finish()
+            {
+                Method = FinishMethod.Redirect,
+                Uri = new Uri("http://localhost:3344"),
+                Nonce = NONCE
+            }
+        },
+    }
+);
+
+// Check grant state
+if (grant.Interact == null)
+{
+    throw new Exception("Expected interactive grant");
+}
+
+// Output
+Console.WriteLine($"Please interact at the following URL: {grant.Interact.Redirect}");
+Console.WriteLine($"CONTINUE_ACCESS_TOKEN = {grant.Continue.AccessToken.Value}");
+Console.WriteLine($"CONTINUE_URI = {grant.Continue.Uri}");
+```
+
+## Generate with an interval
+
+```csharp wrap
+// Import dependencies
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+using OpenPayments.Sdk.Clients;
+using OpenPayments.Sdk.Extensions;
+using OpenPayments.Sdk.Generated.Auth;
+using OpenPayments.Sdk.Generated.Resource;
+using OpenPayments.Sdk.HttpSignatureUtils;
+using Amount = OpenPayments.Sdk.Generated.Auth.Amount;
+
+// Initialize client
+var client = new ServiceCollection()
+    .UseOpenPayments(opts =>
+    {
+        opts.UseAuthenticatedClient = true;
+        opts.KeyId = CLIENT_ID;
+        opts.PrivateKey = KeyUtils.LoadPem(CLIENT_SECRET);
+        opts.ClientUrl = new Uri(CLIENT_WALLET_ADDRESS);
+    })
+    .BuildServiceProvider()
+    .GetRequiredService<IAuthenticatedClient>();
+
+// Get wallet address information
+var waInfo = await client.GetWalletAddressAsync(walletAddress);
+
+// Request quote grant
+var grant = await client.RequestGrantAsync(
+    new RequestArgs() { Url = waInfo.AuthServer },
+    new GrantCreateBody()
+    {
+        AccessToken = new AccessToken()
+        {
+            Access =
+            [
+                new AccessItem()
+                {
+                    Type = AccessType.OutgoingPayment,
+                    Actions = [Actions.List, Actions.ListAll, Actions.Read, Actions.ReadAll, Actions.Create],
+                    Identifier = waInfo.Id.ToString(),
+                    Limits = new AccessLimits()
+                    {
+                        DebitAmount = new Amount(quote.DebitAmount.Value, quote.DebitAmount.AssetCode,
+                            quote.DebitAmount.AssetScale),
+                        Interval = "R/2016-08-24T08:00:00Z/P1D"
+                    },
+                },
+            ],
+        },
+        Interact = new InteractRequest()
+        {
+            Start = [Start.Redirect],
+            Finish = new Finish()
+            {
+                Method = FinishMethod.Redirect,
+                Uri = new Uri("http://localhost:3344"),
+                Nonce = NONCE
+            }
+        },
+    }
+);
+
+// Check grant state
+if (grant.Interact == null)
+{
+    throw new Exception("Expected interactive grant");
+}
+
+// Output
+Console.WriteLine($"Please interact at the following URL: {grant.Interact.Redirect}");
+Console.WriteLine($"CONTINUE_ACCESS_TOKEN = {grant.Continue.AccessToken.Value}");
+Console.WriteLine($"CONTINUE_URI = {grant.Continue.Uri}");
+```
+
+</TabItem>
 </Tabs>
 
 ## References
