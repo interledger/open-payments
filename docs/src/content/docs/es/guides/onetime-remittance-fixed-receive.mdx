@@ -223,7 +223,7 @@ $recipientIncomingPaymentGrant = $client->grant()->request(
     ],
   ]
 );
-  ```
+````
 
 </TabItem>
 
@@ -251,7 +251,7 @@ $recipientIncomingPaymentGrant = $client->grant()->request(
   if err != nil {
     log.Fatalf("Error requesting incoming payment grant: %v\n", err)
   }
-````
+```
 
   </TabItem>
 <TabItem label='Java' icon='seti:java'>
@@ -562,7 +562,7 @@ El `receiveAmount` especifica que el destinatario recibirá exactamente MXN 5000
       }
     }
   )
-````
+```
 
   </TabItem>
   <TabItem label='Rust' icon='seti:rust'>
@@ -1155,3 +1155,4 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del remite
 :::note[Expiración del token de acceso]
 Si el token de acceso de una concesión de autorización ha expirado, llame a la <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/auth-server/operations/post-token/) y, luego, utilice el nuevo token en la solicitud correspondiente.
 :::
+````

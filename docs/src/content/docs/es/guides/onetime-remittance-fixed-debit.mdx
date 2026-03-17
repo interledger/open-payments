@@ -790,7 +790,7 @@ $pendingSenderOutgoingPaymentGrant = $client->grant()->request(
     ]
   ]
 );
-```
+````
 
 </TabItem>
 
@@ -837,7 +837,7 @@ pendingSenderOutgoingPaymentGrant, err := client.Grant.Request(context.TODO(), o
 if err != nil {
 	log.Fatalf("Error requesting outgoing payment grant: %v\n", err)
 }
-````
+```
 
 </TabItem>
 <TabItem label='Java' icon='seti:java'>
@@ -1128,3 +1128,4 @@ El siguiente ejemplo muestra una respuesta cuando se crea un recurso de pago sal
 :::note[Expiración del token de acceso]
 Si el token de acceso de una concesión de autorización ha expirado, llame a la <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/auth-server/operations/post-token/) y, luego, utilice el nuevo token en la solicitud correspondiente.
 :::
+````
