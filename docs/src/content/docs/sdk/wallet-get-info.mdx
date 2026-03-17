@@ -150,7 +150,7 @@ var client = OpenPaymentsHttpClient.defaultClient(
 );
 
 // Get wallet address
-var walletAddress = client.getWalletAddress("https://cloudninebank.example.com/customer");
+var walletAddress = client.walletAddress().get("https://cloudninebank.example.com/customer");
 
 // Output
 log.info("WALLET_ADDRESS: {}", walletAddress);

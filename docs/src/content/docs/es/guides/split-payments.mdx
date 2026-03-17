@@ -1,4 +1,4 @@
-﻿---
+---
 title: Dividir un pago entrante
 ---
 
@@ -119,6 +119,15 @@ Llame a la <Badge text="GET" variant="note" /> [Get Wallet Address](/es/apis/wal
       log.Fatalf("Error fetching platform wallet address: %v\n", err)
     }
     ```
+  </TabItem>
+  <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var customerWalletAddress = client.walletAddress().get("https://cloudninebank.example.com/customer");
+var merchantWalletAddress = client.walletAddress().get("https://happylifebank.example.com/merchant");
+var platformWalletAddress = client.walletAddress().get("https://coolwallet.example.com/platform");
+```
+
   </TabItem>
 </Tabs>
 
@@ -293,6 +302,22 @@ platformIncomingPaymentGrant, err := client.Grant.Request(context.TODO(), op.Gra
 if err != nil {
   log.Fatalf("Error requesting platform incoming payment grant: %v\n", err)
 }
+```
+
+  </TabItem>
+
+  <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+// Merchant
+var merchantIncomingPaymentGrant = client.auth().grant().incomingPayment(
+  merchantWalletAddress
+);
+
+// Platform
+var platformIncomingPaymentGrant = client.auth().grant().incomingPayment(
+  platformWalletAddress
+);
 ```
 
   </TabItem>
@@ -477,6 +502,26 @@ $platformIncomingPayment = $client->incomingPayment()->create(
   }
   ```
   </TabItem>
+
+  <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+// Merchant receives 99.00 USD (value 9900, scale 2)
+var merchantIncomingPayment = client.payment().createIncoming(
+  merchantWalletAddress,
+  merchantIncomingPaymentGrant,
+  BigDecimal.valueOf(99.00)
+);
+
+// Platform receives 1.00 USD (value 100, scale 2)
+var platformIncomingPayment = client.payment().createIncoming(
+  platformWalletAddress,
+  platformIncomingPaymentGrant,
+  BigDecimal.valueOf(1.00)
+);
+```
+
+  </TabItem>
 </Tabs>
 
 <details>
@@ -597,6 +642,16 @@ $customerQuoteGrant = $client->grant()->request(
     log.Fatalf("Error requesting quote grant: %v\n", err)
   }
   ```
+  </TabItem>
+
+  <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var customerQuoteGrant = client.auth().grant().quote(
+  customerWalletAddress
+);
+```
+
   </TabItem>
 </Tabs>
 
@@ -758,6 +813,30 @@ if err != nil {
 ```
 
 </TabItem>
+
+ <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+// Merchant quote
+var merchantQuote = client.quote().create(
+  customerQuoteGrant.getAccess().getToken(),
+  customerWalletAddress,
+  merchantIncomingPayment,
+  Optional.empty(),
+  Optional.empty()
+);
+
+// Platform quote
+var platformQuote = client.quote().create(
+  customerQuoteGrant.getAccess().getToken(),
+  customerWalletAddress,
+  platformIncomingPayment,
+  Optional.empty(),
+  Optional.empty()
+);
+```
+
+ </TabItem>
 </Tabs>
 
 Cada respuesta devuelve un `receiveAmount`, un `debitAmount` y demás información requerida.
@@ -977,6 +1056,31 @@ if err != nil {
 ```
 
   </TabItem>
+
+  <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var merchantDebit = new BigDecimal(merchantQuote.getDebitAmount().getValue());
+var platformDebit = new BigDecimal(platformQuote.getDebitAmount().getValue());
+var combinedQuoteAmount = merchantDebit.add(platformDebit);
+
+var debitAmount = Amount.build(
+  combinedQuoteAmount,
+  merchantQuote.getDebitAmount().getAssetCode(),
+  merchantQuote.getDebitAmount().getAssetScale()
+);
+
+var urlToOpen = "https://paymentplatform.example/finish/{...}";
+
+var opContinueInteract = client.auth().grant().continuation(
+  customerWalletAddress,
+  debitAmount,
+  URI.create(urlToOpen),
+  "NONCE"
+);
+```
+
+  </TabItem>
 </Tabs>
 
 <details>
@@ -1078,6 +1182,17 @@ customerOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.Gr
 if err != nil {
   log.Fatalf("Error continuing grant: %v\n", err)
 }
+```
+
+  </TabItem>
+
+  <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var customerOutgoingPaymentGrant = client.auth().grant().finalize(
+  opContinueInteract,
+  interactRef
+);
 ```
 
   </TabItem>
@@ -1242,6 +1357,26 @@ El propósito de estas llamadas consiste en solicitar la creación de un recurso
       log.Fatalf("Error creating outgoing payment to platform: %v\n", err)
     }
     ```
+
+  </TabItem>
+
+  <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+// Merchant
+var customerOutgoingPaymentToMerchant = client.payment().createOutgoing(
+  customerOutgoingPaymentGrant,
+  customerWalletAddress,
+  merchantQuote
+);
+
+// Platform
+var customerOutgoingPaymentToPlatform = client.payment().createOutgoing(
+  customerOutgoingPaymentGrant,
+  customerWalletAddress,
+  platformQuote
+);
+```
 
   </TabItem>
 </Tabs>

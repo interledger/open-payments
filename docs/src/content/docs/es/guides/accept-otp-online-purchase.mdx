@@ -116,6 +116,15 @@ if err != nil {
 ```
 
 </TabItem>
+
+  <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var customerWalletAddress = client.walletAddress().get("https://cloudninebank.example.com/customer");
+var retailerWalletAddress = client.walletAddress().get("https://happylifebank.example.com/retailer");
+```
+
+  </TabItem>
 </Tabs>
 
 <details>
@@ -229,6 +238,16 @@ if err != nil {
 ```
 
 </TabItem>
+
+  <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var retailerIncomingPaymentGrant = client.auth().grant().incomingPayment(
+  retailerWalletAddress
+);
+```
+
+  </TabItem>
 </Tabs>
 
 <details>
@@ -352,6 +371,18 @@ if err != nil {
 ```
 
 </TabItem>
+
+  <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var retailerIncomingPayment = client.payment().createIncoming(
+  retailerWalletAddress,
+  retailerIncomingPaymentGrant,
+  BigDecimal.valueOf(1400.00)
+);
+```
+
+  </TabItem>
 </Tabs>
 
 <details>
@@ -480,6 +511,16 @@ if err != nil {
 ```
 
 </TabItem>
+
+  <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var customerQuoteGrant = client.auth().grant().quote(
+  customerWalletAddress
+);
+```
+
+  </TabItem>
 </Tabs>
 
 <details>
@@ -596,6 +637,20 @@ if err != nil {
 ```
 
 </TabItem>
+
+  <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var customerQuote = client.quote().create(
+  customerQuoteGrant.getAccess().getToken(),
+  customerWalletAddress,
+  retailerIncomingPayment,
+  Optional.empty(),
+  Optional.empty()
+);
+```
+
+  </TabItem>
 </Tabs>
 
 La respuesta devuelve un `receiveAmount`, un `debitAmount` y demás información requerida.
@@ -794,7 +849,22 @@ if err != nil {
 }
 ```
 
-</TabItem>
+  </TabItem>
+
+  <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var urlToOpen = "https://paymentplatform.example/finish/{...}";
+
+var opContinueInteract = client.auth().grant().continuation(
+  customerWalletAddress,
+  customerQuote.getDebitAmount(),
+  URI.create(urlToOpen),
+  "NONCE"
+);
+```
+
+  </TabItem>
 
 </Tabs>
 
@@ -910,7 +980,18 @@ if err != nil {
 }
 ```
 
-</TabItem>
+  </TabItem>
+
+  <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var customerOutgoingPaymentGrant = client.auth().grant().finalize(
+  opContinueInteract,
+  interactRef
+);
+```
+
+  </TabItem>
 </Tabs>
 
 <details>
@@ -1025,7 +1106,19 @@ if err != nil {
 }
 ```
 
-</TabItem>
+  </TabItem>
+
+  <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var customerOutgoingPayment = client.payment().createOutgoing(
+  customerOutgoingPaymentGrant,
+  customerWalletAddress,
+  customerQuote
+);
+```
+
+  </TabItem>
 </Tabs>
 
 Si la solicitud falla debido a una cotización caducada, [solicite una nueva cotización](#5-solicitar-la-creación-de-un-recurso-de-cotización) e intente de nuevo.

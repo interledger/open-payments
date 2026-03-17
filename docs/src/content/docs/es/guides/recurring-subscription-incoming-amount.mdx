@@ -123,6 +123,15 @@ if err != nil {
 ```
 
 </TabItem>
+
+<TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var customerWalletAddress = client.walletAddress().get("https://cloudninebank.example.com/customer");
+var serviceProviderWalletAddress = client.walletAddress().get("https://happylifebank.example.com/service-provider");
+```
+
+</TabItem>
 </Tabs>
 
 <details>
@@ -239,6 +248,16 @@ serviceProviderIncomingPaymentGrant, err := client.Grant.Request(context.TODO(),
 if err != nil {
 	log.Fatalf("Error requesting incoming payment grant: %v\n", err)
 }
+```
+
+</TabItem>
+
+<TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var serviceProviderIncomingPaymentGrant = client.auth().grant().incomingPayment(
+  serviceProviderWalletAddress
+);
 ```
 
 </TabItem>
@@ -360,6 +379,18 @@ serviceProviderIncomingPayment, err := client.IncomingPayment.Create(context.TOD
 if err != nil {
 	log.Fatalf("Error creating incoming payment: %v\n", err)
 }
+```
+
+</TabItem>
+
+<TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var serviceProviderIncomingPayment = client.payment().createIncoming(
+  serviceProviderWalletAddress,
+  serviceProviderIncomingPaymentGrant,
+  BigDecimal.valueOf(15.00)
+);
 ```
 
 </TabItem>
@@ -487,6 +518,16 @@ if err != nil {
 ```
 
 </TabItem>
+
+<TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var customerQuoteGrant = client.auth().grant().quote(
+  customerWalletAddress
+);
+```
+
+</TabItem>
 </Tabs>
 
 <details>
@@ -593,6 +634,20 @@ customerQuote, err := client.Quote.Create(context.TODO(), op.QuoteCreateParams{
 if err != nil {
 	log.Fatalf("Error creating quote: %v\n", err)
 }
+```
+
+</TabItem>
+
+<TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var customerQuote = client.quote().create(
+  customerQuoteGrant.getAccess().getToken(),
+  customerWalletAddress,
+  serviceProviderIncomingPayment,
+  Optional.empty(),
+  Optional.empty()
+);
 ```
 
 </TabItem>
@@ -827,6 +882,21 @@ if err != nil {
 ```
 
 </TabItem>
+
+<TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var urlToOpen = "https://myapp.example.com/finish/{...}";
+
+var opContinueInteract = client.auth().grant().continuation(
+  customerWalletAddress,
+  customerQuote.getDebitAmount(),
+  URI.create(urlToOpen),
+  "NONCE"
+);
+```
+
+</TabItem>
 </Tabs>
 
 <details>
@@ -947,6 +1017,16 @@ $customerOutgoingPaymentGrant = $client->grant()->continue(
   }
   ```
   </TabItem>
+<TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var customerOutgoingPaymentGrant = client.auth().grant().finalize(
+  opContinueInteract,
+  interactRef
+);
+```
+
+</TabItem>
 </Tabs>
 
 <details>
@@ -1062,6 +1142,17 @@ customerOutgoingPayment, err := client.OutgoingPayment.Create(context.TODO(), op
 if err != nil {
 	log.Fatalf("Error creating outgoing payment: %v\n", err)
 }
+```
+
+</TabItem>
+<TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var customerOutgoingPayment = client.payment().createOutgoing(
+  customerOutgoingPaymentGrant,
+  customerWalletAddress,
+  customerQuote
+);
 ```
 
 </TabItem>

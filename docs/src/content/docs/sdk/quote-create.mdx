@@ -216,19 +216,19 @@ IOpenPaymentsClient client = OpenPaymentsHttpClient.defaultClient(
 );
 
 // Get wallet address information
-var receiverWallet = client.getWalletAddress("https://cloudninebank.example.com/merchant");
-var senderWallet = client.getWalletAddress("https://cloudninebank.example.com/customer");
+var receiverWallet = client.walletAddress().get("https://cloudninebank.example.com/merchant");
+var senderWallet = client.walletAddress().get("https://cloudninebank.example.com/customer");
 
 // Create incoming payment
-var grantRequest = this.client.createGrantIncomingPayment(receiverWallet);
-var incomingPayment = this.client.createIncomingPayment(receiverWallet, grantRequest, BigDecimal.valueOf(11.25));
+var grantRequest = client.auth().grant().incomingPayment(receiverWallet);
+var incomingPayment = client.payment().createIncoming(receiverWallet, grantRequest, BigDecimal.valueOf(11.25));
 
 // Create quote
-var quoteRequest = this.client.createGrantQuote(senderWallet);
-var quote = client.createQuote(quoteRequest.getAccess().getToken(), senderWallet, incomingPayment, Optional.empty(), Optional.empty());
+var quoteRequest = client.auth().grant().quote(senderWallet);
+var quote = client.quote().create(quoteRequest.getAccess().getToken(), senderWallet, incomingPayment, Optional.empty(), Optional.empty());
 
 // Output
-log.info("QUOTE: {}", incomingPayment);
+log.info("QUOTE: {}", quote);
 ```
 
 </TabItem>
@@ -456,7 +456,6 @@ func main() {
 // Import dependencies
 import org.interledger.openpayments.httpclient.OpenPaymentsHttpClient;
 import org.interledger.openpayments.IOpenPaymentsClient;
-import org.interledger.openpayments.IOpenPaymentsClient;
 import org.interledger.openpayments.model.common.Amount;
 
 // Initialize client
@@ -467,16 +466,16 @@ IOpenPaymentsClient client = OpenPaymentsHttpClient.defaultClient(
 );
 
 // Get wallet address information
-var receiverWallet = client.getWalletAddress("https://cloudninebank.example.com/merchant");
-var senderWallet = client.getWalletAddress("https://cloudninebank.example.com/customer");
+var receiverWallet = client.walletAddress().get("https://cloudninebank.example.com/merchant");
+var senderWallet = client.walletAddress().get("https://cloudninebank.example.com/customer");
 
 // Create incoming payment
-var grantRequest = this.client.createGrantIncomingPayment(receiverWallet);
-var incomingPayment = this.client.createIncomingPayment(receiverWallet, grantRequest, BigDecimal.valueOf(11.50));
+var grantRequest = client.auth().grant().incomingPayment(receiverWallet);
+var incomingPayment = client.payment().createIncoming(receiverWallet, grantRequest, BigDecimal.valueOf(11.50));
 
 // Create quote with debit amount
-var quoteRequest = this.client.createGrantQuote(senderWallet);
-var quote = client.createQuote(
+var quoteRequest = client.auth().grant().quote(senderWallet);
+var quote = client.quote().create(
 quoteRequest.getAccess().getToken(),
 senderWallet,
 incomingPayment,
@@ -723,21 +722,21 @@ IOpenPaymentsClient client = OpenPaymentsHttpClient.defaultClient(
 );
 
 // Get wallet address information
-var receiverWallet = client.getWalletAddress("https://cloudninebank.example.com/merchant");
-var senderWallet = client.getWalletAddress("https://cloudninebank.example.com/customer");
+var receiverWallet = client.walletAddress().get("https://cloudninebank.example.com/merchant");
+var senderWallet = client.walletAddress().get("https://cloudninebank.example.com/customer");
 
 // Create incoming payment
-var grantRequest = this.client.createGrantIncomingPayment(receiverWallet);
-var incomingPayment = this.client.createIncomingPayment(receiverWallet, grantRequest, BigDecimal.valueOf(11.50));
+var grantRequest = client.auth().grant().incomingPayment(receiverWallet);
+var incomingPayment = client.payment().createIncoming(receiverWallet, grantRequest, BigDecimal.valueOf(11.50));
 
 // Create quote with receive amount
-var quoteRequest = this.client.createGrantQuote(senderWallet);
-var quote = client.createQuote(
+var quoteRequest = client.auth().grant().quote(senderWallet);
+var quote = client.quote().create(
 quoteRequest.getAccess().getToken(),
 senderWallet,
 incomingPayment,
 Optional.empty(),
-Optional.of(Amount.build(BigDecimal.valueOf(12.34), "USD")),// Receive Amount - Not the same as incoming payment amount.
+Optional.of(Amount.build(BigDecimal.valueOf(12.34), "USD"))// Receive Amount - Not the same as incoming payment amount.
 );
 
 // Output

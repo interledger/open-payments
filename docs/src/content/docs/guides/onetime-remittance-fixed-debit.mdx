@@ -122,6 +122,12 @@ if err != nil {
 ```
 
  </TabItem>
+<TabItem label='Java' icon='seti:java'>
+  ```java wrap
+  var senderWalletAddress = client.walletAddress().get("https://cloudninebank.example.com/sender");
+  var recipientWalletAddress = client.walletAddress().get("https://happylifebank.example.com/recipient");
+  ```
+</TabItem>
 </Tabs>
 
 <details>
@@ -240,6 +246,11 @@ if err != nil {
 ```
 
 </TabItem>
+<TabItem label='Java' icon='seti:java'>
+  ```java wrap
+  var recipientIncomingPaymentGrant = client.auth().grant().incomingPayment(recipientWalletAddress);
+  ```
+</TabItem>
 </Tabs>
 
 <details>
@@ -341,6 +352,15 @@ if err != nil {
 ```
 
  </TabItem>
+<TabItem label='Java' icon='seti:java'>
+  ```java wrap
+  var recipientIncomingPayment = client.payment().createIncoming(
+    recipientWalletAddress,
+    recipientIncomingPaymentGrant,
+    BigDecimal.valueOf(1700.00)
+  );
+  ```
+</TabItem>
 </Tabs>
 
 <details>
@@ -460,6 +480,11 @@ if err != nil {
 ```
 
  </TabItem>
+<TabItem label='Java' icon='seti:java'>
+  ```java wrap
+  var senderQuoteGrant = client.auth().grant().quote(senderWalletAddress);
+  ```
+</TabItem>
 </Tabs>
 
 <details>
@@ -587,6 +612,19 @@ if err != nil {
 ```
 
  </TabItem>
+<TabItem label='Java' icon='seti:java'>
+  ```java wrap
+  var senderQuote = client.quote().create(
+    senderQuoteGrant.getAccess().getToken(),
+    senderWalletAddress,
+    recipientIncomingPayment,
+    Optional.of(
+      Amount.build(BigDecimal.valueOf(100.00), "USD", 2)
+    ),
+    Optional.empty()
+  );
+  ```
+</TabItem>
 </Tabs>
 
 The response returns a `receiveAmount`, a `debitAmount`, and other required information.
@@ -808,6 +846,20 @@ if err != nil {
 ````
 
 </TabItem>
+<TabItem label='Java' icon='seti:java'>
+  ```java wrap
+  var debitAmount = Amount.build(BigDecimal.valueOf(100.00), "USD", 2);
+  var urlToOpen = "https://myapp.example.com/finish/{...}";
+
+var opContinueInteract = client.auth().grant().continuation(
+senderWalletAddress,
+debitAmount,
+URI.create(urlToOpen),
+"NONCE"
+);
+
+````
+</TabItem>
 
 </Tabs>
 
@@ -816,19 +868,19 @@ if err != nil {
 
 ```json wrap
 {
-  "interact": {
-    "redirect": "https://auth.cloudninebank.example.com/{...}", // uri to redirect the sender to, to begin interaction
-    "finish": "..." // unique key to secure the callback
+"interact": {
+  "redirect": "https://auth.cloudninebank.example.com/{...}", // uri to redirect the sender to, to begin interaction
+  "finish": "..." // unique key to secure the callback
+},
+"continue": {
+  "access_token": {
+    "value": "..." // access token for continuing the outgoing payment grant request
   },
-  "continue": {
-    "access_token": {
-      "value": "..." // access token for continuing the outgoing payment grant request
-    },
-    "uri": "https://auth.cloudninebank.example.com/continue/{...}", // uri for continuing the outgoing payment grant request
-    "wait": 30
-  }
+  "uri": "https://auth.cloudninebank.example.com/continue/{...}", // uri for continuing the outgoing payment grant request
+  "wait": 30
 }
-```
+}
+````
 
 </details>
 
@@ -916,6 +968,14 @@ if err != nil {
 ```
 
  </TabItem>
+<TabItem label='Java' icon='seti:java'>
+  ```java wrap
+  var senderOutgoingPaymentGrant = client.auth().grant().finalize(
+    opContinueInteract,
+    interactRef
+  );
+  ```
+</TabItem>
 </Tabs>
 
 <details>
@@ -1026,6 +1086,15 @@ if err != nil {
 ```
 
  </TabItem>
+<TabItem label='Java' icon='seti:java'>
+  ```java wrap
+  var senderOutgoingPayment = client.payment().createOutgoing(
+    senderOutgoingPaymentGrant,
+    senderWalletAddress,
+    senderQuote
+  );
+  ```
+</TabItem>
 </Tabs>
 
 If the request fails because of an expired quote, [request a new quote](#5-request-the-creation-of-a-quote-resource) and try again.

@@ -171,21 +171,21 @@ var client = OpenPaymentsHttpClient.defaultClient(
 );
 
 // Get wallet address information
-var receiverWallet = client.getWalletAddress("https://cloudninebank.example.com/merchant");
-var senderWallet = client.getWalletAddress("https://cloudninebank.example.com/customer");
+var receiverWallet = client.walletAddress().get("https://cloudninebank.example.com/merchant");
+var senderWallet = client.walletAddress().get("https://cloudninebank.example.com/customer");
 
 // Create incoming payment
-var grantRequest = this.client.createGrantIncomingPayment(receiverWallet);
-var incomingPayment = this.client.createIncomingPayment(receiverWallet, grantRequest, BigDecimal.valueOf(11.25));
+var grantRequest = client.auth().grant().incomingPayment(receiverWallet);
+var incomingPayment = client.payment().createIncoming(receiverWallet, grantRequest, BigDecimal.valueOf(11.25));
 
 // Create quote
-var quoteRequest = this.client.createGrantQuote(senderWallet);
-var quote = client.createQuote(quoteRequest.getAccess().getToken(), senderWallet, incomingPayment, Optional.empty(), Optional.empty());
+var quoteRequest = client.auth().grant().quote(senderWallet);
+var quote = client.quote().create(quoteRequest.getAccess().getToken(), senderWallet, incomingPayment, Optional.empty(), Optional.empty());
 
-// Create outing payment from quote
-var urlToOpen = "http://localhost:%d?paymentId=1234".formatted(port);
+// Create outgoing payment from quote
+var urlToOpen = "https://example.com/redirect?paymentId=1234";
 
-var opContinueInteract = this.client.createGrantContinuation(
+var opContinueInteract = client.auth().grant().continuation(
 senderWallet,
 quote.getDebitAmount(),
 URI.create(urlToOpen),
@@ -195,13 +195,13 @@ URI.create(urlToOpen),
 // USER APPROVES REQUEST
 
 // Grant: Finalize/Continue
-var finalized = this.client.createGrantFinalize(opContinueInteract, "Reference from USER interaction.");
+var finalized = client.auth().grant().finalize(opContinueInteract, "Reference from USER interaction.");
 
 // Outgoing payment (The token will be extracted from [finalized])
-var finalizedOutgoingPayment = this.client.createFinalizePayment(finalized, senderWallet, quote);
+var finalizedOutgoingPayment = client.payment().createOutgoing(finalized, senderWallet, quote);
 
 // Retrieve the created outgoing payment (fetch by ID)
-var outgoingPaymentFetched = this.client.getOutgoingPayment(finalizedOutgoingPayment.getId(), grantRequest);
+var outgoingPaymentFetched = client.payment().getOutgoing(finalizedOutgoingPayment.getId(), grantRequest);
 
 // Output
 log.info("OUTGOING_PAYMENT: {}", outgoingPaymentFetched);
