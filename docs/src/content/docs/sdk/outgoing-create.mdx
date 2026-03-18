@@ -316,6 +316,50 @@ log.info("OUTGOING_PAYMENT: {}", outgoingPayment);
 ```
 
 </TabItem>
+<TabItem label='.NET' icon='seti:c-sharp'>
+<LinkButton href="https://github.com/interledger/open-payments-dotnet/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+```csharp wrap
+// Import dependencies
+using Microsoft.Extensions.DependencyInjection;
+using OpenPayments.Sdk.Clients;
+using OpenPayments.Sdk.Extensions;
+using OpenPayments.Sdk.Generated.Resource;
+using OpenPayments.Sdk.HttpSignatureUtils;
+
+// Initialize client
+var client = new ServiceCollection()
+    .UseOpenPayments(opts =>
+    {
+        opts.UseAuthenticatedClient = true;
+        opts.KeyId = CLIENT_ID;
+        opts.PrivateKey = KeyUtils.LoadPem(CLIENT_SECRET);
+        opts.ClientUrl = new Uri(CLIENT_WALLET_ADDRESS);
+    })
+    .BuildServiceProvider()
+    .GetRequiredService<IAuthenticatedClient>();
+
+// Get wallet address information
+var walletAddress = await client.GetWalletAddressAsync(WALLET_ADDRESS);
+
+// Create outgoing payment
+var outgoingPayment = await client.CreateOutgoingPaymentAsync(
+    new AuthRequestArgs
+    {
+        Url = walletAddress.ResourceServer,
+        AccessToken = OUTGOING_PAYMENT_ACCESS_TOKEN,
+    },
+    new OutgoingPaymentBody { WalletAddress = walletAddress.Id, QuoteId = new Uri(QUOTE_URL) }
+);
+
+// Output
+Console.WriteLine($"OUTGOING_PAYMENT_URL: {outgoingPayment.Id}");
+```
+
+<LinkOut href="https://github.com/interledger/open-payments-dotnet/blob/main/OpenPayments.Snippets/Services/Authenticated/OutgoingPaymentService.cs#L67-L100">
+  View full source
+</LinkOut>
+</TabItem>
 </Tabs>
 
 ## References

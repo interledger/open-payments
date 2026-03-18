@@ -232,6 +232,55 @@ log.info("QUOTE: {}", quote);
 ```
 
 </TabItem>
+<TabItem label='.NET' icon='seti:c-sharp'>
+<LinkButton href="https://github.com/interledger/open-payments-dotnet/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+```csharp wrap
+// Import dependencies
+using Microsoft.Extensions.DependencyInjection;
+using OpenPayments.Sdk.Clients;
+using OpenPayments.Sdk.Extensions;
+using OpenPayments.Sdk.Generated.Resource;
+using OpenPayments.Sdk.HttpSignatureUtils;
+
+// Initialize client
+var client = new ServiceCollection()
+    .UseOpenPayments(opts =>
+    {
+        opts.UseAuthenticatedClient = true;
+        opts.KeyId = CLIENT_ID;
+        opts.PrivateKey = KeyUtils.LoadPem(CLIENT_SECRET);
+        opts.ClientUrl = new Uri(CLIENT_WALLET_ADDRESS);
+    })
+    .BuildServiceProvider()
+    .GetRequiredService<IAuthenticatedClient>();
+
+// Get wallet address information
+var waInfo = await client.GetWalletAddressAsync(WALLET_ADDRESS);
+
+// Create quote
+var quote = await client.CreateQuoteAsync(
+    new AuthRequestArgs
+    {
+        Url = waInfo.ResourceServer,
+        AccessToken = QUOTE_ACCESS_TOKEN,
+    },
+    new QuoteBody
+    {
+        WalletAddress = waInfo.Id,
+        Receiver = new Uri(INCOMING_PAYMENT_URL),
+        Method = PaymentMethod.Ilp
+    }
+);
+
+// Output
+Console.WriteLine($"QUOTE_URL = {quote.Id}");
+```
+
+<LinkOut href="https://github.com/interledger/open-payments-dotnet/blob/main/OpenPayments.Snippets/Services/Authenticated/QuoteService.cs#L37-L59">
+  View full source
+</LinkOut>
+</TabItem>
 </Tabs>
 
 ## Create a quote with a debit amount
@@ -488,6 +537,61 @@ log.info("QUOTE: {}", incomingPayment);
 ```
 
 </TabItem>
+<TabItem label='.NET' icon='seti:c-sharp'>
+<LinkButton href="https://github.com/interledger/open-payments-dotnet/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+```csharp wrap
+// Import dependencies
+using Microsoft.Extensions.DependencyInjection;
+using OpenPayments.Sdk.Clients;
+using OpenPayments.Sdk.Extensions;
+using OpenPayments.Sdk.Generated.Resource;
+using OpenPayments.Sdk.HttpSignatureUtils;
+
+// Initialize client
+var client = new ServiceCollection()
+    .UseOpenPayments(opts =>
+    {
+        opts.UseAuthenticatedClient = true;
+        opts.KeyId = CLIENT_ID;
+        opts.PrivateKey = KeyUtils.LoadPem(CLIENT_SECRET);
+        opts.ClientUrl = new Uri(CLIENT_WALLET_ADDRESS);
+    })
+    .BuildServiceProvider()
+    .GetRequiredService<IAuthenticatedClient>();
+
+// Get wallet address information
+var waInfo = await client.GetWalletAddressAsync(WALLET_ADDRESS);
+
+// Create quote with debit amount
+var quote = await client.CreateQuoteAsync(
+    new AuthRequestArgs
+    {
+        Url = waInfo.ResourceServer,
+        AccessToken = QUOTE_ACCESS_TOKEN,
+    },
+    new QuoteBody
+    {
+        WalletAddress = waInfo.Id,
+        Receiver = new Uri(INCOMING_PAYMENT_URL),
+        Method = PaymentMethod.Ilp,
+        DebitAmount = new Amount
+        {
+            Value = "500",
+            AssetCode = waInfo.AssetCode,
+            AssetScale = waInfo.AssetScale,
+        }
+    }
+);
+
+// Output
+Console.WriteLine($"QUOTE_URL = {quote.Id}");
+```
+
+<LinkOut href="https://github.com/interledger/open-payments-dotnet/blob/main/OpenPayments.Snippets/Services/Authenticated/QuoteService.cs#L37-L59">
+  View full source
+</LinkOut>
+</TabItem>
 </Tabs>
 
 ## Create a quote with a receive amount
@@ -743,6 +847,61 @@ Optional.of(Amount.build(BigDecimal.valueOf(12.34), "USD"))// Receive Amount - N
 log.info("QUOTE: {}", incomingPayment);
 ```
 
+</TabItem>
+<TabItem label='.NET' icon='seti:c-sharp'>
+<LinkButton href="https://github.com/interledger/open-payments-dotnet/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+```csharp wrap
+// Import dependencies
+using Microsoft.Extensions.DependencyInjection;
+using OpenPayments.Sdk.Clients;
+using OpenPayments.Sdk.Extensions;
+using OpenPayments.Sdk.Generated.Resource;
+using OpenPayments.Sdk.HttpSignatureUtils;
+
+// Initialize client
+var client = new ServiceCollection()
+    .UseOpenPayments(opts =>
+    {
+        opts.UseAuthenticatedClient = true;
+        opts.KeyId = CLIENT_ID;
+        opts.PrivateKey = KeyUtils.LoadPem(CLIENT_SECRET);
+        opts.ClientUrl = new Uri(CLIENT_WALLET_ADDRESS);
+    })
+    .BuildServiceProvider()
+    .GetRequiredService<IAuthenticatedClient>();
+
+// Get wallet address information
+var waInfo = await client.GetWalletAddressAsync(WALLET_ADDRESS);
+
+// Create quote with receive amount
+var quote = await client.CreateQuoteAsync(
+    new AuthRequestArgs
+    {
+        Url = waInfo.ResourceServer,
+        AccessToken = QUOTE_ACCESS_TOKEN,
+    },
+    new QuoteBody
+    {
+        WalletAddress = waInfo.Id,
+        Receiver = new Uri(INCOMING_PAYMENT_URL),
+        Method = PaymentMethod.Ilp,
+        ReceiveAmount = new Amount
+        {
+            Value = "500",
+            AssetCode = waInfo.AssetCode,
+            AssetScale = waInfo.AssetScale,
+        }
+    }
+);
+
+// Output
+Console.WriteLine($"QUOTE_URL = {quote.Id}");
+```
+
+<LinkOut href="https://github.com/interledger/open-payments-dotnet/blob/main/OpenPayments.Snippets/Services/Authenticated/QuoteService.cs#L37-L59">
+  View full source
+</LinkOut>
 </TabItem>
 </Tabs>
 

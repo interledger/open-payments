@@ -187,6 +187,46 @@ log.info("INCOMING_PAYMENT: {}", incomingPaymentComplete);
 ```
 
 </TabItem>
+<TabItem label='.NET' icon='seti:c-sharp'>
+<LinkButton href="https://github.com/interledger/open-payments-dotnet/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+```csharp wrap
+// Import dependencies
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+using OpenPayments.Sdk.Clients;
+using OpenPayments.Sdk.Extensions;
+using OpenPayments.Sdk.HttpSignatureUtils;
+
+// Initialize client
+var client = new ServiceCollection()
+    .UseOpenPayments(opts =>
+    {
+        opts.UseAuthenticatedClient = true;
+        opts.KeyId = CLIENT_ID;
+        opts.PrivateKey = KeyUtils.LoadPem(CLIENT_SECRET);
+        opts.ClientUrl = new Uri(CLIENT_WALLET_ADDRESS);
+    })
+    .BuildServiceProvider()
+    .GetRequiredService<IAuthenticatedClient>();
+
+// Create Incoming Payment
+var incomingPayment = await client.CompleteIncomingPaymentsAsync(
+    new AuthRequestArgs
+    {
+        Url = new Uri(INCOMING_PAYMENT_URL),
+        AccessToken = INCOMING_PAYMENT_ACCESS_TOKEN,
+    }
+);
+
+// Output
+Console.WriteLine($"INCOMING PAYMENT: {JsonConvert.SerializeObject(incomingPayment, Formatting.Indented)}");
+```
+
+<LinkOut href="https://github.com/interledger/open-payments-dotnet/blob/main/OpenPayments.Snippets/Services/Authenticated/IncomingPaymentService.cs#L94-L99">
+  View full source
+</LinkOut>
+</TabItem>
 </Tabs>
 
 ## References

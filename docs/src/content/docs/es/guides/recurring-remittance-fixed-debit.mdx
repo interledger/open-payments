@@ -74,20 +74,24 @@ Llame a la <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wa
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-  ```ts wrap
-  const senderWalletAddress = await client.walletAddress.get({
-    url: 'https://cloudninebank.example.com/sender'
-  })
-  const recipientWalletAddress = await client.walletAddress.get({
-    url: 'https://happylifebank.example.com/recipient'
-  })
+
+```ts wrap
+const senderWalletAddress = await client.walletAddress.get({
+  url: 'https://cloudninebank.example.com/sender'
+})
+const recipientWalletAddress = await client.walletAddress.get({
+  url: 'https://happylifebank.example.com/recipient'
+})
 ```
+
 </TabItem>
 <TabItem label='Rust' icon='seti:rust'>
+
 ```rust wrap
 let sender_wallet_address = client.wallet_address().get("https://cloudninebank.example.com/sender").await?;
 let recipient_wallet_address = client.wallet_address().get("https://happylifebank.example.com/recipient").await?;
 ```
+
 </TabItem>
 <TabItem label='PHP' icon='seti:php'>
 
@@ -169,36 +173,40 @@ Esta llamada obtiene un token de acceso que permite a su aplicación solicitar l
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-  ```ts wrap
-  const recipientIncomingPaymentGrant = await client.grant.request(
-    {
-      url: recipientWalletAddress.authServer
-    },
-    {
-      access_token: {
-        access: [
-          {
-            type: 'incoming-payment',
-            actions: ['create'],
-          },
-        ],
-      },
-    },
-  );
-  ```
+
+```ts wrap
+const recipientIncomingPaymentGrant = await client.grant.request(
+  {
+    url: recipientWalletAddress.authServer
+  },
+  {
+    access_token: {
+      access: [
+        {
+          type: 'incoming-payment',
+          actions: ['create']
+        }
+      ]
+    }
+  }
+)
+```
+
   </TabItem>
   <TabItem label='Rust' icon='seti:rust'>
-  ```rust wrap
-  use open_payments::types::{AccessTokenRequest, AccessItem, IncomingPaymentAction, GrantRequest};
-  let incoming_access = AccessTokenRequest {
-    access: vec![AccessItem::IncomingPayment { actions: vec![IncomingPaymentAction::Create], identifier: None }],
-  };
-  let incoming_grant_request = GrantRequest::new(incoming_access, None);
-  let recipient_incoming_payment_grant = client
-    .grant()
-    .request(&recipient_wallet_address.auth_server, &incoming_grant_request)
-    .await?;
-  ```
+
+```rust wrap
+use open_payments::types::{AccessTokenRequest, AccessItem, IncomingPaymentAction, GrantRequest};
+let incoming_access = AccessTokenRequest {
+  access: vec![AccessItem::IncomingPayment { actions: vec![IncomingPaymentAction::Create], identifier: None }],
+};
+let incoming_grant_request = GrantRequest::new(incoming_access, None);
+let recipient_incoming_payment_grant = client
+  .grant()
+  .request(&recipient_wallet_address.auth_server, &incoming_grant_request)
+  .await?;
+```
+
   </TabItem>
 
   <TabItem label='PHP' icon='seti:php'>
@@ -297,36 +305,40 @@ Esta llamada solicita la creación de un recurso de pago entrante en la cuenta d
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-  ```ts wrap
-  const recipientIncomingPayment = await client.incomingPayment.create(
-    {
-      url: recipientWalletAddress.resourceServer,
-      accessToken: recipientIncomingPaymentGrant.access_token.value
-    },
-    {
-      walletAddress: recipientWalletAddress.id,
-    },
-  )
-  ```
+
+```ts wrap
+const recipientIncomingPayment = await client.incomingPayment.create(
+  {
+    url: recipientWalletAddress.resourceServer,
+    accessToken: recipientIncomingPaymentGrant.access_token.value
+  },
+  {
+    walletAddress: recipientWalletAddress.id
+  }
+)
+```
+
   </TabItem>
   <TabItem label='Rust' icon='seti:rust'>
-  ```rust wrap
-  use open_payments::types::IncomingPaymentRequest;
-  let incoming_request = IncomingPaymentRequest {
-    wallet_address: recipient_wallet_address.id.clone(),
-    incoming_amount: None,
-    expires_at: None,
-    metadata: None,
-  };
-  let recipient_incoming_payment = client
-    .incoming_payments()
-    .create(
-      &recipient_wallet_address.resource_server,
-      &incoming_request,
-      Some(&recipient_incoming_payment_grant.access_token.value),
-    )
-    .await?;
-  ```
+
+```rust wrap
+use open_payments::types::IncomingPaymentRequest;
+let incoming_request = IncomingPaymentRequest {
+  wallet_address: recipient_wallet_address.id.clone(),
+  incoming_amount: None,
+  expires_at: None,
+  metadata: None,
+};
+let recipient_incoming_payment = client
+  .incoming_payments()
+  .create(
+    &recipient_wallet_address.resource_server,
+    &incoming_request,
+    Some(&recipient_incoming_payment_grant.access_token.value),
+  )
+  .await?;
+```
+
   </TabItem>
 
   <TabItem label='PHP' icon='seti:php'>
@@ -346,19 +358,20 @@ $recipientIncomingPayment = $client->incomingPayment()->create(
   </TabItem>
 
   <TabItem label='Go' icon='seti:go'>
-  
-  ```go wrap
-  recipientIncomingPayment, err := client.IncomingPayment.Create(context.TODO(), op.IncomingPaymentCreateParams{
-    BaseURL:     *recipientWalletAddress.ResourceServer,
-    AccessToken: recipientIncomingPaymentGrant.AccessToken.Value,
-    Payload: rs.CreateIncomingPaymentJSONBody{
-      WalletAddressSchema: *recipientWalletAddress.Id,
-    },
-  })
-  if err != nil {
-    log.Fatalf("Error creating incoming payment: %v\n", err)
-  }
-  ```
+
+```go wrap
+recipientIncomingPayment, err := client.IncomingPayment.Create(context.TODO(), op.IncomingPaymentCreateParams{
+  BaseURL:     *recipientWalletAddress.ResourceServer,
+  AccessToken: recipientIncomingPaymentGrant.AccessToken.Value,
+  Payload: rs.CreateIncomingPaymentJSONBody{
+    WalletAddressSchema: *recipientWalletAddress.Id,
+  },
+})
+if err != nil {
+  log.Fatalf("Error creating incoming payment: %v\n", err)
+}
+```
+
   </TabItem>
 
   <TabItem label='Java' icon='seti:java'>
@@ -453,8 +466,10 @@ Los pagos salientes requieren una concesión de autorización interactiva, que e
     }
   )
   ```
+
 </TabItem>
 <TabItem label='Rust' icon='seti:rust'>
+
 ```rust wrap
 use open_payments::types::{
   AccessTokenRequest,
@@ -502,7 +517,8 @@ let pending_sender_outgoing_payment_grant = client
 .request(&sender_wallet_address.auth_server, &outgoing_grant_request)
 .await?;
 
-````
+```
+
 </TabItem>
 
 <TabItem label='PHP' icon='seti:php'>
@@ -540,7 +556,7 @@ $pendingSenderOutgoingPaymentGrant = $client->grant()->request(
     ]
   ]
 );
-````
+```
 
 </TabItem>
 
@@ -672,35 +688,39 @@ Incluya la `interact_ref` devuelta en los parámetros de consulta del URI de red
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-  ```ts wrap
-  const senderOutgoingPaymentGrant = await client.grant.continue(
-    {
-      url: pendingSenderOutgoingPaymentGrant.continue.uri,
-      accessToken: pendingSenderOutgoingPaymentGrant.continue.access_token.value
-    },
-    {
-      interact_ref: interactRef
-    }
-  )
-  ```
+
+```ts wrap
+const senderOutgoingPaymentGrant = await client.grant.continue(
+  {
+    url: pendingSenderOutgoingPaymentGrant.continue.uri,
+    accessToken: pendingSenderOutgoingPaymentGrant.continue.access_token.value
+  },
+  {
+    interact_ref: interactRef
+  }
+)
+```
+
   </TabItem>
   <TabItem label='Rust' icon='seti:rust'>
-  ```rust wrap
-  use open_payments::types::GrantResponse;
-  let (continue_uri, continue_token) = match &pending_sender_outgoing_payment_grant {
-    GrantResponse::WithInteraction { continue_, .. } | GrantResponse::WithToken { continue_, .. } => {
-      (&continue_.uri, &continue_.access_token.value)
-    }
-  };
-  let sender_outgoing_payment_grant = client
-    .grant()
-    .continue_grant(
-      continue_uri,
-      &interact_ref,
-      Some(continue_token),
-    )
-    .await?;
-  ```
+
+```rust wrap
+use open_payments::types::GrantResponse;
+let (continue_uri, continue_token) = match &pending_sender_outgoing_payment_grant {
+  GrantResponse::WithInteraction { continue_, .. } | GrantResponse::WithToken { continue_, .. } => {
+    (&continue_.uri, &continue_.access_token.value)
+  }
+};
+let sender_outgoing_payment_grant = client
+  .grant()
+  .continue_grant(
+    continue_uri,
+    &interact_ref,
+    Some(continue_token),
+  )
+  .await?;
+```
+
   </TabItem>
 
   <TabItem label='PHP' icon='seti:php'>
@@ -720,17 +740,18 @@ $senderOutgoingPaymentGrant = $client->grant()->continue(
   </TabItem>
 
   <TabItem label='Go' icon='seti:go'>
-  
-  ```go wrap
-  senderOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
-    URL:         pendingSenderOutgoingPaymentGrant.Continue.Uri,
-    AccessToken: pendingSenderOutgoingPaymentGrant.Continue.AccessToken.Value,
-    InteractRef: INTERACT_REF,
-  })
-  if err != nil {
-    log.Fatalf("Error continuing grant: %v\n", err)
-  }
-  ```
+
+```go wrap
+senderOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
+  URL:         pendingSenderOutgoingPaymentGrant.Continue.Uri,
+  AccessToken: pendingSenderOutgoingPaymentGrant.Continue.AccessToken.Value,
+  InteractRef: INTERACT_REF,
+})
+if err != nil {
+  log.Fatalf("Error continuing grant: %v\n", err)
+}
+```
+
   </TabItem>
 
   <TabItem label='Java' icon='seti:java'>
@@ -792,46 +813,50 @@ Utilice el token de acceso devuelto en la continuación de la concesión de auto
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-  ```ts wrap
-  const senderOutgoingPayment = await client.outgoingPayment.create(
-    {
-      url: senderWalletAddress.resourceServer,
-      accessToken: senderOutgoingPaymentGrant.access_token.value
-    },
-    {
-      walletAddress: senderWalletAddress.id,
-      incomingPayment: recipientIncomingPayment.id,
-      debitAmount: {
-        assetCode: 'USD',
-        assetScale: 2,
-        value: '20000'
-      },
+
+```ts wrap
+const senderOutgoingPayment = await client.outgoingPayment.create(
+  {
+    url: senderWalletAddress.resourceServer,
+    accessToken: senderOutgoingPaymentGrant.access_token.value
+  },
+  {
+    walletAddress: senderWalletAddress.id,
+    incomingPayment: recipientIncomingPayment.id,
+    debitAmount: {
+      assetCode: 'USD',
+      assetScale: 2,
+      value: '20000'
     }
-  )
-  ```
+  }
+)
+```
+
   </TabItem>
   <TabItem label='Rust' icon='seti:rust'>
-  ```rust wrap
-  use open_payments::types::{OutgoingPaymentRequest, Amount};
-  let outgoing_request = OutgoingPaymentRequest::FromIncomingPayment {
-    wallet_address: sender_wallet_address.id.clone(),
-    incoming_payment_id: recipient_incoming_payment.id.clone(),
-    debit_amount: Amount {
-      value: "20000".into(),
-      asset_code: "USD".into(),
-      asset_scale: 2,
-    },
-    metadata: None,
-  };
-  let sender_outgoing_payment = client
-    .outgoing_payments()
-    .create(
-      &sender_wallet_address.resource_server,
-      &outgoing_request,
-      Some(&sender_outgoing_payment_grant.access_token.value),
-    )
-    .await?;
-  ```
+
+```rust wrap
+use open_payments::types::{OutgoingPaymentRequest, Amount};
+let outgoing_request = OutgoingPaymentRequest::FromIncomingPayment {
+  wallet_address: sender_wallet_address.id.clone(),
+  incoming_payment_id: recipient_incoming_payment.id.clone(),
+  debit_amount: Amount {
+    value: "20000".into(),
+    asset_code: "USD".into(),
+    asset_scale: 2,
+  },
+  metadata: None,
+};
+let sender_outgoing_payment = client
+  .outgoing_payments()
+  .create(
+    &sender_wallet_address.resource_server,
+    &outgoing_request,
+    Some(&sender_outgoing_payment_grant.access_token.value),
+  )
+  .await?;
+```
+
   </TabItem>
 
   <TabItem label='PHP' icon='seti:php'>
@@ -855,32 +880,33 @@ $senderOutgoingPayment = $client->outgoingPayment()->create(
 ```
 
   </TabItem>
-  
+
   <TabItem label='Go' icon='seti:go'>
-  
-  ```go wrap
-  var outgoingPayload rs.CreateOutgoingPaymentRequest
-  if err := outgoingPayload.FromCreateOutgoingPaymentWithoutQuote(rs.CreateOutgoingPaymentWithoutQuote{
-    WalletAddressSchema: *senderWalletAddress.Id,
-    IncomingPayment:     *recipientIncomingPayment.Id,
-    DebitAmount: &rs.Amount{
-      Value:      "20000",
-      AssetCode:  "USD",
-      AssetScale: 2,
-    },
-  }); err != nil {
-    log.Fatalf("Error creating payload: %v\n", err)
-  }
-  
-  senderOutgoingPayment, err := client.OutgoingPayment.Create(context.TODO(), op.OutgoingPaymentCreateParams{
-    BaseURL:     *senderWalletAddress.ResourceServer,
-    AccessToken: senderOutgoingPaymentGrant.AccessToken.Value,
-    Payload:     outgoingPayload,
-  })
-  if err != nil {
-    log.Fatalf("Error creating outgoing payment: %v\n", err)
-  }
-  ```
+
+```go wrap
+var outgoingPayload rs.CreateOutgoingPaymentRequest
+if err := outgoingPayload.FromCreateOutgoingPaymentWithoutQuote(rs.CreateOutgoingPaymentWithoutQuote{
+  WalletAddressSchema: *senderWalletAddress.Id,
+  IncomingPayment:     *recipientIncomingPayment.Id,
+  DebitAmount: &rs.Amount{
+    Value:      "20000",
+    AssetCode:  "USD",
+    AssetScale: 2,
+  },
+}); err != nil {
+  log.Fatalf("Error creating payload: %v\n", err)
+}
+
+senderOutgoingPayment, err := client.OutgoingPayment.Create(context.TODO(), op.OutgoingPaymentCreateParams{
+  BaseURL:     *senderWalletAddress.ResourceServer,
+  AccessToken: senderOutgoingPaymentGrant.AccessToken.Value,
+  Payload:     outgoingPayload,
+})
+if err != nil {
+  log.Fatalf("Error creating outgoing payment: %v\n", err)
+}
+```
+
   </TabItem>
 
   <TabItem label='Java' icon='seti:java'>
