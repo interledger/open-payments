@@ -70,7 +70,7 @@ $userWalletAddress = $client->walletAddress()->get([
  </TabItem>
 
  <TabItem label='Go' icon='seti:go'>
- 
+
  ```go wrap
  userWalletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
    URL: "https://cloudninebank.example.com/user",
@@ -88,6 +88,13 @@ var userWalletAddress = client.walletAddress().get("https://cloudninebank.exampl
 ```
 
 </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+```csharp wrap
+var userWalletAddress = await client.GetWalletAddressAsync("https://cloudninebank.example.com/user");
+```
+</TabItem>
+
 </Tabs>
 
 <details>
@@ -295,6 +302,49 @@ var grantRequest = client.auth().grant().request(
 ```
 
  </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+```csharp wrap
+var grant = await client.RequestGrantAsync(
+    new RequestArgs
+    {
+        Url = userWalletAddress.AuthServer,
+    },
+    new GrantCreateBodyWithInteract
+    {
+        AccessToken = new AccessToken
+        {
+            Access =
+            [
+                new OutgoingAccess
+                {
+                    Identifier = userWalletAddress.Id,
+                    Actions = [Actions.Create, Actions.Read],
+                    Limits = new OutgoingAccessLimits
+                    {
+                        DebitAmount = new AuthAmount("10000", "CAD", 2),
+                        Interval = "R3/2025-05-20T13:00:00Z/P1M"
+                    }
+                }
+            ]
+        },
+        Client = userWalletAddress.Id,
+        Interact = new InteractRequest
+        {
+            Start = [Start.Redirect],
+            Finish = new Finish
+            {
+                Method = FinishMethod.Redirect,
+                Uri = new Uri(
+                    "https://localhost"), // where to redirect your user after they've completed the interaction
+                Nonce = NONCE
+            }
+        }
+    }
+);
+```
+</TabItem>
+
 </Tabs>
 
 <details>
@@ -402,9 +452,9 @@ $userOutgoingPaymentGrant = $client->grant()->continue(
 ```
 
   </TabItem>
-  
+
   <TabItem label='Go' icon='seti:go'>
-  
+
   ```go wrap
   userOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
     URL:         pendingUserOutgoingPaymentGrant.Continue.Uri,
@@ -427,6 +477,23 @@ var userOutgoingPaymentGrant = client.auth().grant().finalize(
 ```
 
   </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+```csharp wrap
+var userOutgoingPaymentGrant = await client.ContinueGrantAsync(
+    new AuthRequestArgs
+    {
+        Url = grant.Continue.Uri,
+        AccessToken = grant.Continue.AccessToken.Value
+    },
+    new GrantContinueBody()
+    {
+        InteractRef = interactRef
+    }
+);
+```
+</TabItem>
+
 </Tabs>
 
 A successful response provides your app with an access token. Now your app can issue outgoing payment requests to future recipients against the grant. Each request must reference the access token.

@@ -128,6 +128,14 @@ if err != nil {
   var recipientWalletAddress = client.walletAddress().get("https://happylifebank.example.com/recipient");
   ```
 </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+```csharp wrap
+var senderWalletAddress = await client.GetWalletAddressAsync("https://cloudninebank.example.com/sender");
+var recipientWalletAddress = await client.GetWalletAddressAsync("https://happylifebank.example.com/recipient");
+```
+</TabItem>
+
 </Tabs>
 
 <details>
@@ -251,6 +259,31 @@ if err != nil {
   var recipientIncomingPaymentGrant = client.auth().grant().incomingPayment(recipientWalletAddress);
   ```
 </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+```csharp wrap
+var recipientIncomingPaymentGrant = await client.RequestGrantAsync(
+    new RequestArgs
+    {
+        Url = recipientWalletAddress.AuthServer,
+    },
+    new GrantCreateBody
+    {
+        AccessToken = new AccessToken
+        {
+            Access =
+            [
+                new IncomingAccess
+                {
+                    Actions = [Actions.Create]
+                }
+            ]
+        }
+    }
+);
+```
+</TabItem>
+
 </Tabs>
 
 <details>
@@ -361,6 +394,23 @@ if err != nil {
   );
   ```
 </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+```csharp wrap
+var recipientIncomingPayment = await client.CreateIncomingPaymentAsync(
+    new AuthRequestArgs
+    {
+        Url = recipientWalletAddress.ResourceServer,
+        AccessToken = recipientIncomingPaymentGrant.AccessToken.Value
+    },
+    new IncomingPaymentBody
+    {
+        WalletAddress = recipientWalletAddress.Id,
+    }
+);
+```
+</TabItem>
+
 </Tabs>
 
 <details>
@@ -418,7 +468,7 @@ This call obtains an access token that allows your app to request that a quote r
     ```
   </TabItem>
  <TabItem label='Rust' icon='seti:rust'>
- 
+
  ```rust wrap
  use open_payments::types::{AccessTokenRequest, AccessItem, QuoteAction, GrantRequest};
  let quote_access = AccessTokenRequest {
@@ -485,6 +535,31 @@ if err != nil {
   var senderQuoteGrant = client.auth().grant().quote(senderWalletAddress);
   ```
 </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+```csharp wrap
+var senderQuoteGrant = await client.RequestGrantAsync(
+    new RequestArgs
+    {
+        Url = senderWalletAddress.AuthServer,
+    },
+    new GrantCreateBody
+    {
+        AccessToken = new AccessToken
+        {
+            Access =
+            [
+                new QuoteAccess
+                {
+                    Actions = [Actions.Create]
+                }
+            ]
+        }
+    }
+);
+```
+</TabItem>
+
 </Tabs>
 
 <details>
@@ -534,7 +609,7 @@ The `debitAmount` specifies that the sender will pay exactly $100 USD, and the r
       walletAddress: senderWalletAddress.id,
       receiver: recipientIncomingPayment.id,
       debitAmount: {
-        value: '10000', 
+        value: '10000',
         assetCode: 'USD',
         assetScale: 2
       }
@@ -543,7 +618,7 @@ The `debitAmount` specifies that the sender will pay exactly $100 USD, and the r
 ```
  </TabItem>
  <TabItem label='Rust' icon='seti:rust'>
- 
+
  ```rust wrap
  use open_payments::types::{QuoteRequest, QuoteMethod, Amount};
  let quote_request = QuoteRequest {
@@ -625,6 +700,26 @@ if err != nil {
   );
   ```
 </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+```csharp wrap
+var senderQuote = await client.CreateQuoteAsync(
+    new AuthRequestArgs
+    {
+        Url = senderWalletAddress.ResourceServer,
+        AccessToken = senderQuoteGrant.AccessToken.Value
+    },
+    new QuoteBodyWithDebitAmount
+    {
+        Method = PaymentMethod.Ilp,
+        WalletAddress = senderWalletAddress.Id,
+        Receiver = recipientIncomingPayment.Id,
+        DebitAmount = new Amount("10000", "USD", 2)
+    }
+);
+```
+</TabItem>
+
 </Tabs>
 
 The response returns a `receiveAmount`, a `debitAmount`, and other required information.
@@ -677,7 +772,7 @@ Outgoing payments require an interactive grant. This type of grant will obtain t
 <Tabs syncKey="lang">
 
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-  
+
   ```ts wrap
   const pendingSenderOutgoingPaymentGrant = await client.grant.request(
     {
@@ -694,7 +789,7 @@ Outgoing payments require an interactive grant. This type of grant will obtain t
               debitAmount: {
                 assetCode: 'USD',
                 assetScale: 2,
-                value: '10000', 
+                value: '10000',
               }
             }
           }
@@ -758,7 +853,7 @@ let pending_sender_outgoing_payment_grant = client
 .request(&sender_wallet_address.auth_server, &outgoing_grant_request)
 .await?;
 
-````
+```
 
 </TabItem>
 
@@ -796,7 +891,7 @@ $pendingSenderOutgoingPaymentGrant = $client->grant()->request(
     ]
   ]
 );
-````
+```
 
   </TabItem>
 
@@ -858,7 +953,46 @@ URI.create(urlToOpen),
 "NONCE"
 );
 
-````
+```
+</TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+```csharp wrap
+var pendingSenderOutgoingPaymentGrant = await client.RequestGrantAsync(
+    new RequestArgs
+    {
+        Url = senderWalletAddress.AuthServer,
+    },
+    new GrantCreateBodyWithInteract
+    {
+        AccessToken = new AccessToken
+        {
+            Access =
+            [
+                new OutgoingAccess
+                {
+                    Identifier = senderWalletAddress.Id,
+                    Actions = [Actions.Create],
+                    Limits = new OutgoingAccessLimits
+                    {
+                        DebitAmount = new AuthAmount("10000", "USD", 2)
+                    }
+                }
+            ]
+        },
+        Interact = new InteractRequest
+        {
+            Start = [Start.Redirect],
+            Finish = new Finish
+            {
+                Method = FinishMethod.Redirect,
+                Uri = new Uri("https://localhost"),  // where to redirect your user after they've completed the interaction
+                Nonce = NONCE
+            }
+        }
+    }
+);
+```
 </TabItem>
 
 </Tabs>
@@ -880,7 +1014,7 @@ URI.create(urlToOpen),
   "wait": 30
 }
 }
-````
+```
 
 </details>
 
@@ -976,6 +1110,23 @@ if err != nil {
   );
   ```
 </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+```csharp wrap
+var senderOutgoingPaymentGrant = await client.ContinueGrantAsync(
+    new AuthRequestArgs
+    {
+        Url = pendingSenderOutgoingPaymentGrant.Continue.Uri,
+        AccessToken = pendingSenderOutgoingPaymentGrant.Continue.AccessToken.Value
+    },
+    new GrantContinueBody
+    {
+        InteractRef = interactRef
+    }
+);
+```
+</TabItem>
+
 </Tabs>
 
 <details>
@@ -1095,6 +1246,24 @@ if err != nil {
   );
   ```
 </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+```csharp wrap
+var senderOutgoingPayment = await client.CreateOutgoingPaymentAsync(
+    new AuthRequestArgs
+    {
+        Url = senderWalletAddress.ResourceServer,
+        AccessToken = senderOutgoingPaymentGrant.AccessToken.Value
+    },
+    new OutgoingPaymentBodyFromQuote
+    {
+        WalletAddress = senderWalletAddress.Id,
+        QuoteId = senderQuote.Id,
+    }
+);
+```
+</TabItem>
+
 </Tabs>
 
 If the request fails because of an expired quote, [request a new quote](#5-request-the-creation-of-a-quote-resource) and try again.

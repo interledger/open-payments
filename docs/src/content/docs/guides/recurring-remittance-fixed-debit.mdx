@@ -130,6 +130,15 @@ var recipientWalletAddress = client.walletAddress().get("https://happylifebank.e
 ```
 
 </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+```csharp wrap
+var senderWalletAddress = await client.GetWalletAddressAsync("https://cloudninebank.example.com/sender");
+var recipientWalletAddress =
+    await client.GetWalletAddressAsync("https://happylifebank.example.com/recipient");
+```
+</TabItem>
+
 </Tabs>
 
 <details>
@@ -259,6 +268,30 @@ var recipientIncomingPaymentGrant = client.auth().grant().incomingPayment(recipi
 
   </TabItem>
 
+<TabItem label='.NET' icon='seti:c-sharp'>
+```csharp wrap
+var recipientIncomingPaymentGrant = await client.RequestGrantAsync(
+    new RequestArgs
+    {
+        Url = recipientWalletAddress.AuthServer,
+    },
+    new GrantCreateBody
+    {
+        AccessToken = new AccessToken
+        {
+            Access =
+            [
+                new IncomingAccess
+                {
+                    Actions = [Actions.Create]
+                }
+            ]
+        }
+    }
+);
+```
+</TabItem>
+
 </Tabs>
 
 <details>
@@ -346,7 +379,7 @@ $recipientIncomingPayment = $client->incomingPayment()->create(
   </TabItem>
 
   <TabItem label='Go' icon='seti:go'>
-  
+
   ```go wrap
   recipientIncomingPayment, err := client.IncomingPayment.Create(context.TODO(), op.IncomingPaymentCreateParams{
     BaseURL:     *recipientWalletAddress.ResourceServer,
@@ -371,6 +404,22 @@ var recipientIncomingPayment = client.payment().createIncoming(
 ```
 
   </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+```csharp wrap
+var recipientIncomingPayment = await client.CreateIncomingPaymentAsync(
+    new AuthRequestArgs
+    {
+        Url = recipientWalletAddress.ResourceServer,
+        AccessToken = recipientIncomingPaymentGrant.AccessToken.Value
+    },
+    new IncomingPaymentBody
+    {
+        WalletAddress = recipientWalletAddress.Id
+    }
+);
+```
+</TabItem>
 
 </Tabs>
 
@@ -502,7 +551,7 @@ let pending_sender_outgoing_payment_grant = client
 .request(&sender_wallet_address.auth_server, &outgoing_grant_request)
 .await?;
 
-````
+```
 </TabItem>
 
 <TabItem label='PHP' icon='seti:php'>
@@ -540,7 +589,7 @@ $pendingSenderOutgoingPaymentGrant = $client->grant()->request(
     ]
   ]
 );
-````
+```
 
 </TabItem>
 
@@ -606,6 +655,47 @@ if err != nil {
 var pendingSenderOutgoingPaymentGrant = client.auth().grant().outgoingPayment(senderWalletAddress);
 ```
 
+</TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+```csharp wrap
+var pendingSenderOutgoingPaymentGrant = await client.RequestGrantAsync(
+    new RequestArgs
+    {
+        Url = senderWalletAddress.AuthServer,
+    },
+    new GrantCreateBodyWithInteract
+    {
+        AccessToken = new AccessToken
+        {
+            Access =
+            [
+                new OutgoingAccess
+                {
+                    Identifier = senderWalletAddress.Id,
+                    Actions = [Actions.Create],
+                    Limits = new OutgoingAccessLimits
+                    {
+                        DebitAmount = new AuthAmount("20000", "USD", 2),
+                        Interval = "R3/2025-10-03T23:25:00Z/P1M"
+                    }
+                }
+            ]
+        },
+        Interact = new InteractRequest
+        {
+            Start = [Start.Redirect],
+            Finish = new Finish
+            {
+                Method = FinishMethod.Redirect,
+                Uri = new Uri(
+                    "https://localhost"), // where to redirect your user after they've completed the interaction
+                Nonce = NONCE
+            }
+        }
+    }
+);
+```
 </TabItem>
 
 </Tabs>
@@ -720,7 +810,7 @@ $senderOutgoingPaymentGrant = $client->grant()->continue(
   </TabItem>
 
   <TabItem label='Go' icon='seti:go'>
-  
+
   ```go wrap
   senderOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
     URL:         pendingSenderOutgoingPaymentGrant.Continue.Uri,
@@ -747,6 +837,23 @@ var senderOutgoingPaymentGrant = client.grant().continueRequest(
 ```
 
   </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+```csharp wrap
+var senderOutgoingPaymentGrant = await client.ContinueGrantAsync(
+    new AuthRequestArgs
+    {
+        Url = pendingSenderOutgoingPaymentGrant.Continue.Uri,
+        AccessToken = pendingSenderOutgoingPaymentGrant.Continue.AccessToken.Value
+    },
+    new GrantContinueBody
+    {
+        InteractRef = interactRef
+    }
+);
+```
+</TabItem>
+
 </Tabs>
 
 <details>
@@ -855,9 +962,9 @@ $senderOutgoingPayment = $client->outgoingPayment()->create(
 ```
 
   </TabItem>
-  
+
   <TabItem label='Go' icon='seti:go'>
-  
+
   ```go wrap
   var outgoingPayload rs.CreateOutgoingPaymentRequest
   if err := outgoingPayload.FromCreateOutgoingPaymentWithoutQuote(rs.CreateOutgoingPaymentWithoutQuote{
@@ -871,7 +978,7 @@ $senderOutgoingPayment = $client->outgoingPayment()->create(
   }); err != nil {
     log.Fatalf("Error creating payload: %v\n", err)
   }
-  
+
   senderOutgoingPayment, err := client.OutgoingPayment.Create(context.TODO(), op.OutgoingPaymentCreateParams{
     BaseURL:     *senderWalletAddress.ResourceServer,
     AccessToken: senderOutgoingPaymentGrant.AccessToken.Value,
@@ -894,6 +1001,24 @@ var senderOutgoingPayment = client.payment().createOutgoingFromIncoming(
 ```
 
   </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+```csharp wrap
+var senderOutgoingPayment = await client.CreateOutgoingPaymentAsync(
+    new AuthRequestArgs
+    {
+        Url = senderWalletAddress.ResourceServer,
+        AccessToken = senderOutgoingPaymentGrant.AccessToken.Value
+    },
+    new OutgoingPaymentBodyFromIncomingPayment
+    {
+        WalletAddress = senderWalletAddress.Id,
+        IncomingPayment = recipientIncomingPayment.Id,
+        DebitAmount = new Amount("20000", "USD", 2)
+    }
+);
+```
+</TabItem>
 
 </Tabs>
 

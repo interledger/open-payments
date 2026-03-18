@@ -100,7 +100,7 @@ $platformWalletAddress = $client->walletAddress()->get([
 </TabItem>
 
   <TabItem label='Go' icon='seti:go'>
-  
+
   ```go wrap
   customerWalletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
     URL: "https://cloudninebank.example.com/customer",
@@ -132,6 +132,17 @@ var platformWalletAddress = client.walletAddress().get("https://coolwallet.examp
 ```
 
   </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+```csharp wrap
+var customerWalletAddress = await client.GetWalletAddressAsync("https://cloudninebank.example.com/customer");
+var merchantWalletAddress =
+    await client.GetWalletAddressAsync("https://happylifebank.example.com/merchant");
+var platformWalletAddress =
+    await client.GetWalletAddressAsync("https://happylifebank.example.com/platform");
+```
+</TabItem>
+
 </Tabs>
 
 <details>
@@ -322,6 +333,52 @@ var platformIncomingPaymentGrant = client.auth().grant().incomingPayment(
 ```
 
   </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+```csharp wrap
+// Merchant
+var merchantIncomingPaymentGrant = await client.RequestGrantAsync(
+    new RequestArgs
+    {
+        Url = merchantWalletAddress.AuthServer,
+    },
+    new GrantCreateBody
+    {
+        AccessToken = new AccessToken
+        {
+            Access =
+            [
+                new IncomingAccess
+                {
+                    Actions = [Actions.Create]
+                }
+            ]
+        }
+    }
+);
+// Platform
+var platformIncomingPaymentGrant = await client.RequestGrantAsync(
+    new RequestArgs
+    {
+        Url = platformWalletAddress.AuthServer,
+    },
+    new GrantCreateBody
+    {
+        AccessToken = new AccessToken
+        {
+            Access =
+            [
+                new IncomingAccess
+                {
+                    Actions = [Actions.Create]
+                }
+            ]
+        }
+    }
+);
+```
+</TabItem>
+
 </Tabs>
 
 <details>
@@ -460,7 +517,7 @@ $platformIncomingPayment = $client->incomingPayment()->create(
   </TabItem>
 
   <TabItem label='Go' icon='seti:go'>
-  
+
   ```go wrap
   // Merchant
   merchantIncomingPayment, err := client.IncomingPayment.Create(context.TODO(), op.IncomingPaymentCreateParams{
@@ -516,6 +573,38 @@ var platformIncomingPayment = client.payment().createIncoming(
 ```
 
   </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+```csharp wrap
+// Merchant
+var merchantIncomingPayment = await client.CreateIncomingPaymentAsync(
+    new AuthRequestArgs
+    {
+        Url = merchantWalletAddress.ResourceServer,
+        AccessToken = merchantIncomingPaymentGrant.AccessToken.Value
+    },
+    new IncomingPaymentBody
+    {
+        WalletAddress = merchantWalletAddress.Id,
+        IncomingAmount = new Amount("9900", "USD", 2)
+    }
+);
+// Platform
+var platformIncomingPayment = await client.CreateIncomingPaymentAsync(
+    new AuthRequestArgs
+    {
+        Url = platformWalletAddress.ResourceServer,
+        AccessToken = platformIncomingPaymentGrant.AccessToken.Value
+    },
+    new IncomingPaymentBody
+    {
+        WalletAddress = platformWalletAddress.Id,
+        IncomingAmount = new Amount("100", "USD", 2)
+    }
+);
+```
+</TabItem>
+
 </Tabs>
 
 <details>
@@ -615,7 +704,7 @@ This call obtains an access token that allows your platform to request quote res
   </TabItem>
 
   <TabItem label='Go' icon='seti:go'>
-  
+
   ```go wrap
   quoteAccess := as.AccessQuote{
     Type:    as.Quote,
@@ -650,6 +739,31 @@ var customerQuoteGrant = client.auth().grant().quote(
 ```
 
   </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+```csharp wrap
+var customerQuoteGrant = await client.RequestGrantAsync(
+    new RequestArgs
+    {
+        Url = customerWalletAddress.AuthServer,
+    },
+    new GrantCreateBody
+    {
+        AccessToken = new AccessToken
+        {
+            Access =
+            [
+                new QuoteAccess
+                {
+                    Actions = [Actions.Create]
+                }
+            ]
+        }
+    }
+);
+```
+</TabItem>
+
 </Tabs>
 
 <details>
@@ -777,7 +891,7 @@ $platformQuote = $client->quote()->create(
  </TabItem>
 
  <TabItem label='Go' icon='seti:go'>
-  
+
   ```go wrap
   // Merchant
   merchantQuote, err := client.Quote.Create(context.TODO(), op.QuoteCreateParams{
@@ -831,6 +945,40 @@ var platformQuote = client.quote().create(
 ```
 
  </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+```csharp wrap
+// Merchant
+var merchantQuote = await client.CreateQuoteAsync(
+    new AuthRequestArgs
+    {
+        Url = customerWalletAddress.ResourceServer,
+        AccessToken = customerQuoteGrant.AccessToken.Value
+    },
+    new QuoteBody
+    {
+        Method = PaymentMethod.Ilp,
+        WalletAddress = customerWalletAddress.Id,
+        Receiver = merchantIncomingPayment.Id,
+    }
+);
+// Platform
+var platformQuote = await client.CreateQuoteAsync(
+    new AuthRequestArgs
+    {
+        Url = customerWalletAddress.ResourceServer,
+        AccessToken = customerQuoteGrant.AccessToken.Value
+    },
+    new QuoteBody
+    {
+        Method = PaymentMethod.Ilp,
+        WalletAddress = customerWalletAddress.Id,
+        Receiver = platformIncomingPayment.Id,
+    }
+);
+```
+</TabItem>
+
 </Tabs>
 
 Each response returns a `receiveAmount`, a `debitAmount`, and other required information.
@@ -880,7 +1028,7 @@ This call obtains an access token that allows your platform to request outgoing 
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
   ```ts wrap
   combinedQuoteAmount = '10000' // 9900 + 100
-  
+
   const pendingCustomerOutgoingPaymentGrant = await client.grant.request(
     {
       url: customerWalletAddress.authServer
@@ -917,7 +1065,7 @@ This call obtains an access token that allows your platform to request outgoing 
  <TabItem label='Rust' icon='seti:rust'>
  ```rust wrap
  use open_payments::types::{AccessTokenRequest, AccessItem, OutgoingPaymentAction, InteractRequest, InteractStart, InteractFinish, InteractFinishMethod, AccessLimits, Amount, GrantRequest};
- 
+
  let merchant_amount = match merchant_quote.debit_amount.as_ref() {
    Some(a) => &a.value,
    None => {
@@ -1004,7 +1152,7 @@ $pendingCustomerOutgoingPaymentGrant = $client->grant()->request(
 </TabItem>
 
   <TabItem label='Go' icon='seti:go'>
-  
+
   ```go wrap
   combinedQuoteAmount := "10000" // merchantQuote.DebitAmount.Value + platformQuote.DebitAmount.Value
   limits := as.LimitsOutgoing{}
@@ -1076,6 +1224,49 @@ var opContinueInteract = client.auth().grant().continuation(
 ```
 
  </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+```csharp wrap
+var combinedQuoteAmount = "10000"; // 9900 + 100
+
+var pendingCustomerOutgoingPaymentGrant = await client.RequestGrantAsync(
+    new RequestArgs
+    {
+        Url = customerWalletAddress.AuthServer,
+    },
+    new GrantCreateBodyWithInteract
+    {
+        AccessToken = new AccessToken
+        {
+            Access =
+            [
+                new OutgoingAccess
+                {
+                    Identifier = customerWalletAddress.Id,
+                    Actions = [Actions.Create],
+                    Limits = new OutgoingAccessLimits
+                    {
+                        DebitAmount = new AuthAmount(combinedQuoteAmount, "USD", 2),
+                    }
+                }
+            ]
+        },
+        Interact = new InteractRequest
+        {
+            Start = [Start.Redirect],
+            Finish = new Finish
+            {
+                Method = FinishMethod.Redirect,
+                Uri = new Uri(
+                    "https://localhost"), // where to redirect your user after they've completed the interaction
+                Nonce = NONCE
+            }
+        }
+    }
+);
+```
+</TabItem>
+
 </Tabs>
 
 <details>
@@ -1164,7 +1355,7 @@ $customerOutgoingPaymentGrant = $client->grant()->continue(
 </TabItem>
 
  <TabItem label='Go' icon='seti:go'>
-  
+
   ```go wrap
   customerOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
     URL:         pendingCustomerOutgoingPaymentGrant.Continue.Uri,
@@ -1186,6 +1377,23 @@ var customerOutgoingPaymentGrant = client.auth().grant().finalize(
 ```
 
  </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+```csharp wrap
+var customerOutgoingPaymentGrant = await client.ContinueGrantAsync(
+    new AuthRequestArgs
+    {
+        Url = pendingCustomerOutgoingPaymentGrant.Continue.Uri,
+        AccessToken = pendingCustomerOutgoingPaymentGrant.Continue.AccessToken.Value
+    },
+    new GrantContinueBody
+    {
+        InteractRef = interactRef
+    }
+);
+```
+</TabItem>
+
 </Tabs>
 
 <details>
@@ -1311,7 +1519,7 @@ $customerOutgoingPaymentToPlatform = $client->outgoingPayment()->create(
   </TabItem>
 
   <TabItem label='Go' icon='seti:go'>
-  
+
   ```go wrap
   // Merchant
   var merchantOutgoingPayload rs.CreateOutgoingPaymentRequest
@@ -1367,6 +1575,38 @@ var customerOutgoingPaymentToPlatform = client.payment().createOutgoing(
 ```
 
  </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+```csharp wrap
+// Merchant
+var customerOutgoingPaymentToMerchant = await client.CreateOutgoingPaymentAsync(
+    new AuthRequestArgs
+    {
+        Url = customerWalletAddress.ResourceServer,
+        AccessToken = customerOutgoingPaymentGrant.AccessToken.Value
+    },
+    new OutgoingPaymentBodyFromQuote
+    {
+        WalletAddress = customerWalletAddress.Id,
+        QuoteId = merchantQuote.Id,
+    }
+);
+// Platform
+var customerOutgoingPaymentToPlatform = await client.CreateOutgoingPaymentAsync(
+    new AuthRequestArgs
+    {
+        Url = customerWalletAddress.ResourceServer,
+        AccessToken = customerOutgoingPaymentGrant.AccessToken.Value
+    },
+    new OutgoingPaymentBodyFromQuote
+    {
+        WalletAddress = customerWalletAddress.Id,
+        QuoteId = platformQuote.Id,
+    }
+);
+```
+</TabItem>
+
 </Tabs>
 
 <details>
