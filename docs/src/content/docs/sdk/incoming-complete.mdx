@@ -212,7 +212,7 @@ var client = new ServiceCollection()
 
 // Create Incoming Payment
 var incomingPayment = await client.CompleteIncomingPaymentsAsync(
-    new AuthRequestArgs()
+    new AuthRequestArgs
     {
         Url = new Uri(INCOMING_PAYMENT_URL),
         AccessToken = INCOMING_PAYMENT_ACCESS_TOKEN,

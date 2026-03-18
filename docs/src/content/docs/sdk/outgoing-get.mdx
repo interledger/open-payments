@@ -233,7 +233,7 @@ var client = new ServiceCollection()
 
 // Get outgoing payment
 var outgoingPayment = await client.GetOutgoingPaymentAsync(
-    new AuthRequestArgs()
+    new AuthRequestArgs
     {
         Url = new Uri(OUTGOING_PAYMENT_URL),
         AccessToken = OUTGOING_PAYMENT_ACCESS_TOKEN,

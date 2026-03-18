@@ -340,16 +340,16 @@ var client = new ServiceCollection()
     .GetRequiredService<IAuthenticatedClient>();
 
 // Get wallet address information
-var waInfo = await client.GetWalletAddressAsync(walletAddress);
+var walletAddress = await client.GetWalletAddressAsync(WALLET_ADDRESS);
 
 // Create outgoing payment
 var outgoingPayment = await client.CreateOutgoingPaymentAsync(
     new AuthRequestArgs
     {
-        Url = waInfo.ResourceServer,
+        Url = walletAddress.ResourceServer,
         AccessToken = OUTGOING_PAYMENT_ACCESS_TOKEN,
     },
-    new OutgoingPaymentBody { WalletAddress = waInfo.Id, QuoteId = new Uri(QUOTE_URL) }
+    new OutgoingPaymentBody { WalletAddress = walletAddress.Id, QuoteId = new Uri(QUOTE_URL) }
 );
 
 // Output

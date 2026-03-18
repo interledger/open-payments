@@ -278,23 +278,23 @@ var client = new ServiceCollection()
     .GetRequiredService<IAuthenticatedClient>();
 
 // Get wallet address information
-var waInfo = await client.GetWalletAddressAsync(walletAddress);
+var walletAddress = await client.GetWalletAddressAsync(WALLET_ADDRESS);
 
 // Create Incoming Payment
 var incomingPayment = await client.CreateIncomingPaymentAsync(
     new AuthRequestArgs
     {
-        Url = waInfo.ResourceServer,
+        Url = walletAddress.ResourceServer,
         AccessToken = INCOMING_PAYMENT_ACCESS_TOKEN,
     },
     new IncomingPaymentBody
     {
-        WalletAddress = waInfo.Id,
+        WalletAddress = walletAddress.Id,
         IncomingAmount = new Amount
         {
             Value = "1000",
-            AssetCode = waInfo.AssetCode,
-            AssetScale = waInfo.AssetScale
+            AssetCode = walletAddress.AssetCode,
+            AssetScale = walletAddress.AssetScale
         },
         ExpiresAt = DateTime.UtcNow.AddMinutes(10),
     }

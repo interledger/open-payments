@@ -279,12 +279,12 @@ var client = new ServiceCollection()
 
 // Continue grant
 var grant = await client.ContinueGrantAsync(
-    new AuthRequestArgs()
+    new AuthRequestArgs
     {
         Url = new Uri(CONTINUE_URI),
         AccessToken = CONTINUE_ACCESS_TOKEN,
     },
-    new GrantContinueBody()
+    new GrantContinueBody
     {
         InteractRef = interactRef,
     }

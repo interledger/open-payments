@@ -324,11 +324,11 @@ var client = new ServiceCollection()
     .GetRequiredService<IAuthenticatedClient>();
 
 // Get wallet address information
-var waInfo = await client.GetWalletAddressAsync(walletAddress);
+var walletAddress = await client.GetWalletAddressAsync(WALLET_ADDRESS);
 
 // Request quote grant
 var grant = await client.RequestGrantAsync(
-    new RequestArgs { Url = waInfo.AuthServer },
+    new RequestArgs { Url = walletAddress.AuthServer },
     new GrantCreateBody
     {
         AccessToken = new AccessToken
@@ -350,10 +350,7 @@ var grant = await client.RequestGrantAsync(
 );
 
 // Check grant state
-if (grant.Interact != null)
-{
-    throw new Exception("Expected non-interactive grant");
-}
+if (grant.Interact != null) throw new Exception("Expected non-interactive grant");
 
 // Output
 Console.WriteLine(JsonConvert.SerializeObject(grant, Formatting.Indented));

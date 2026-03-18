@@ -169,16 +169,16 @@ using OpenPayments.Sdk.Clients;
 using OpenPayments.Sdk.Extensions;
 
 // Initialize client
-var provider = new ServiceCollection()
+var client = new ServiceCollection()
     .UseOpenPayments(opts => { opts.UseUnauthenticatedClient = true; })
-    .BuildServiceProvider();
+    .BuildServiceProvider()
+    .GetRequiredService<IUnauthenticatedClient>();
 
 // Get wallet address information
-var client = provider.GetRequiredService<IUnauthenticatedClient>();
-var waDetails = await client.GetWalletAddressAsync(walletAddress);
+var walletAddress = await client.GetWalletAddressAsync(WALLET_ADDRESS);
 
 // Output
-Console.WriteLine(JsonConvert.SerializeObject(waDetails, Formatting.Indented));
+Console.WriteLine($" WALLET_ADDRESS: {JsonConvert.SerializeObject(walletAddress, Formatting.Indented)}");
 ```
 <LinkOut href="https://github.com/interledger/open-payments-dotnet/blob/main/OpenPayments.Snippets/Services/Unauthenticated/WalletAddressService.cs#L11">
   View full source

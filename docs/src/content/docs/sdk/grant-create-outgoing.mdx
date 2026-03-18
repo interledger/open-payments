@@ -556,11 +556,11 @@ var client = new ServiceCollection()
     .GetRequiredService<IAuthenticatedClient>();
 
 // Get wallet address information
-var waInfo = await client.GetWalletAddressAsync(walletAddress);
+var walletAddress = await client.GetWalletAddressAsync(WALLET_ADDRESS);
 
 // Request quote grant
 var grant = await client.RequestGrantAsync(
-    new RequestArgs() { Url = waInfo.AuthServer },
+    new RequestArgs() { Url = walletAddress.AuthServer },
     new GrantCreateBodyWithInteract
     {
         AccessToken = new AccessToken
@@ -570,7 +570,7 @@ var grant = await client.RequestGrantAsync(
                 new OutgoingAccess
                 {
                     Actions = [Actions.List, Actions.ListAll, Actions.Read, Actions.ReadAll, Actions.Create],
-                    Identifier = waInfo.Id,
+                    Identifier = walletAddress.Id,
                     Limits = new OutgoingAccessLimits
                     {
                         DebitAmount = new Amount(quote.DebitAmount.Value, quote.DebitAmount.AssetCode,
@@ -633,11 +633,11 @@ var client = new ServiceCollection()
     .GetRequiredService<IAuthenticatedClient>();
 
 // Get wallet address information
-var waInfo = await client.GetWalletAddressAsync(walletAddress);
+var walletAddress = await client.GetWalletAddressAsync(WALLET_ADDRESS);
 
 // Request quote grant
 var grant = await client.RequestGrantAsync(
-    new RequestArgs() { Url = waInfo.AuthServer },
+    new RequestArgs { Url = walletAddress.AuthServer },
     new GrantCreateBodyWithInteract
     {
         AccessToken = new AccessToken
@@ -647,7 +647,7 @@ var grant = await client.RequestGrantAsync(
                 new OutgoingAccess
                 {
                     Actions = [Actions.List, Actions.ListAll, Actions.Read, Actions.ReadAll, Actions.Create],
-                    Identifier = waInfo.Id,
+                    Identifier = walletAddress.Id,
                     Limits = new OutgoingAccessLimits
                     {
                         DebitAmount = new Amount(quote.DebitAmount.Value, quote.DebitAmount.AssetCode,
