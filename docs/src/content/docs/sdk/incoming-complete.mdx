@@ -3,19 +3,23 @@ title: Complete an incoming payment
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
-import { Tabs, TabItem, LinkButton } from '@astrojs/starlight/components'
+import { Tabs, TabItem, LinkButton, Badge } from '@astrojs/starlight/components'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
 
-An authorized client can complete an unexpired incoming payment to indicate it will not send any additional payments to the wallet address.
+The [Complete an Incoming Payment API](/apis/resource-server/operations/complete-incoming-payment) lets you complete an unexpired incoming payment.
 
-These code snippets pass the wallet address and incoming payment URL to the resource server and mark the payment as completed.
+When a client completes an unexpired payment, it tells the recipient's account servicing entity that no further payments will be sent toward the incoming payment resource.
+
+The code snippets below let an authorized client pass a wallet address and incoming payment URL to the recipient's resource server and mark the payment as completed.
 
 ## Before you begin
 
 <Begin />
 
 ## Mark an incoming payment as complete
+
+<Badge text="Authenticated client required" variant="note" />
 
 <Tabs syncKey="langs">
 <TabItem label='TypeScript/NodeJS' icon='node'>

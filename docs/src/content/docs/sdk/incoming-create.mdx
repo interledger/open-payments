@@ -3,19 +3,21 @@ title: Create an incoming payment
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
-import { Tabs, TabItem, LinkButton } from '@astrojs/starlight/components'
+import { Tabs, TabItem, LinkButton, Badge } from '@astrojs/starlight/components'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
 
-Once an authorized client obtains the requisite grant from the recipient's authentication server, the client must create an incoming payment resource before any payments can be sent to the recipient's wallet address.
+The [Create Incoming Payment API](/apis/resource-server/operations/create-incoming-payment) lets you request the creation of an incoming payment resource. An incoming payment resource must be created before any payments can be sent to a wallet address.
 
-These code snippets create an incoming payment of \$10 USD at a given wallet address, allowing subsequent payments to be sent to that wallet address up to $10 USD.
+The code snippets below let an authorized client, with the requisite grant, request an incoming payment resource for \$10 USD at a given wallet address. After the resource is created, one or more payments up to \$10 can be sent to the wallet address.
 
 ## Before you begin
 
 <Begin />
 
 ## Create an incoming payment resource
+
+<Badge text="Authenticated client required" variant="note" />
 
 <Tabs syncKey="langs">
 <TabItem label='TypeScript/NodeJS' icon='node'>

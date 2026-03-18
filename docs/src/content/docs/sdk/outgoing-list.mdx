@@ -3,19 +3,23 @@ title: List outgoing payments
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
-import { Tabs, TabItem, LinkButton } from '@astrojs/starlight/components'
+import { Tabs, TabItem, LinkButton, Badge } from '@astrojs/starlight/components'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
 
-After one or more outgoing payments have been created on a wallet address, an authorized client can look up active and pending outgoing payments on that wallet address.
+The [List Outgoing Payments API](/apis/resource-server/operations/list-outgoing-payments) lets you list all outgoing payments on a wallet address.
 
-These code snippets retrieve the first ten outgoing payments on the given wallet address.
+After one or more outgoing payment resources are created, a client and look up active and pending payments on the wallet address.
+
+The code snippets below let an authorized client retrieve the first 10 outgoing payments on a given wallet address.
 
 ## Before you begin
 
 <Begin />
 
 ## List all outgoing payments on a wallet address
+
+<Badge text="Authenticated client required" variant="note" />
 
 <Tabs syncKey="langs">
 <TabItem label='TypeScript/NodeJS' icon='node'>

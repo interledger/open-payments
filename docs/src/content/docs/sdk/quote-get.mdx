@@ -3,21 +3,21 @@ title: Get a quote
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
-import { Tabs, TabItem, LinkButton } from '@astrojs/starlight/components'
+import { Tabs, TabItem, LinkButton, Badge } from '@astrojs/starlight/components'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
 
-A quote is a commitment from an account servicing entity to deliver a particular amount to a recipient when sending a particular amount from a sender. The quote is only valid for a limited time.
+The [Get a Quote API](/apis/resource-server/operations/get-quote) lets you get the latest details for a quote resource. For example, its state (whether it's valid or expired), the total amount that the recipient should receive, and the total amount to be debited from the sender.
 
-An authorized client can get a quote to check the quote's state (for example, is the quote valid or expired), as well as other payment details, such as the total amount that should be received by the recipient and the total amount that should be sent by the sender.
-
-These code snippets return the state and details of a specific quote, if found.
+The code snippets below let an authorized client receive the state and other details of a specific quote.
 
 ## Before you begin
 
 <Begin />
 
-## Get the state of a quote
+## Get a quote
+
+<Badge text="Authenticated client required" variant="note" />
 
 <Tabs syncKey="langs">
 <TabItem label='TypeScript/NodeJS' icon='node'>

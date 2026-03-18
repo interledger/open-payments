@@ -3,20 +3,22 @@ title: Get keys bound to a wallet address
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
-import { Tabs, TabItem, LinkButton } from '@astrojs/starlight/components'
+import { Tabs, TabItem, LinkButton, Badge } from '@astrojs/starlight/components'
 import Begin from '/src/partials/before-you-begin.mdx'
   
-While most Open Payments code snippets are intended for clients, getting the keys bound to a wallet address is primarily a function of account servicing entities.
+The [Get Keys Bound to Wallet Address API](/apis/wallet-address-server/operations/get-wallet-address-keys) lets you get the public keys associated with a wallet address.
 
-When an authorization server receives a signed grant request, the server can make a call to acquire the public keys bound to the wallet address. Then, when a client makes a request to a resource server, the resource server calls the auth server to ensure the signature of the request corresponds to the public JWK of the wallet address. This enables the server to ensure the client is who it says it is.
+While this API can be used by clients, getting the keys bound to a wallet address is primarily a function of account servicing entities.
 
-These code snippets get the keys associated with the specified wallet address.
+When an authorization server receives a signed grant request, the server makes a call to get the public keys bound to the wallet address. Then, when a client makes a request to a resource server, the resource server calls the auth server to ensure the signature of the request corresponds to the wallet address's public JWK. This allows the server to ensure the client is who it says it is.
 
 ## Before you begin
 
 <Begin />
 
 ## Retrieve the public keys for a wallet address
+
+<Badge text="Unauthenticated client allowed" variant="success" />
 
 <Tabs syncKey="langs">
 <TabItem label='TypeScript/NodeJS' icon='node'>

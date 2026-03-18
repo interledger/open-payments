@@ -5,19 +5,23 @@ tableOfContents:
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
-import { Tabs, TabItem, LinkButton } from '@astrojs/starlight/components'
+import { Tabs, TabItem, LinkButton, Badge } from '@astrojs/starlight/components'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
 
-Before a client can call most of the Open Payments APIs, it must receive a grant from the appropriate authorization server.
+The [Grant Request API](/apis/auth-server/operations/post-request) lets you request a grant for quote, outgoing payment, and incoming payment resources.
 
-The snippets below enable a client to request a grant for a quote. The request to the authorization server must indicate the `quote` access type the and actions the client wants to take at the resource server.
+Before your client can call most of the Open Payments APIs, it must receive a grant from the appropriate authorization server.
+
+The code snippets below let a client request a grant for a quote. The request to the authorization server must indicate the `quote` access type and the actions the client wants to take at the resource server.
 
 ## Before you begin
 
 <Begin />
 
 ## Request a quote grant
+
+<Badge text="Authenticated client required" variant="note" />
 
 <Tabs syncKey="langs">
 <TabItem label='TypeScript/NodeJS' icon='node'>

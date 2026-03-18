@@ -5,19 +5,26 @@ tableOfContents:
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
-import { Tabs, TabItem, LinkButton } from '@astrojs/starlight/components'
+import { Tabs, TabItem, LinkButton, Badge } from '@astrojs/starlight/components'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
 
-After a quote is accepted and the authorized client obtains the requisite grant from the authorization server of the sender's ASE, the client can create an outgoing payment resource against the sender's wallet address.
+The [Create an Outgoing Payment API](/apis/resource-server/operations/create-outgoing-payment) lets you request the creation of an outgoing payment resource.
 
-These code snippets create an outgoing payment to a given wallet address. The amount of the outgoing payment is based on the amounts in the associated quote.
+A client can create an outgoing payment resource against the sender's wallet address after:
+
+- A quote is accepted AND
+- The client obtains the requisite grant from the sender's account servicing entity
+
+The code snippets below let an authorized client request an outgoing payment resource be created against the sender's wallet address. The amount of the outgoing payment is based on the amounts in the associated quote.
 
 ## Before you begin
 
 <Begin />
 
 ## Create an outgoing payment resource
+
+<Badge text="Authenticated client required" variant="note" />
 
 <Tabs syncKey="langs">
 <TabItem label='TypeScript/NodeJS' icon='node'>
