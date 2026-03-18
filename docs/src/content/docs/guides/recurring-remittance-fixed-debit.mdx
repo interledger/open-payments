@@ -131,12 +131,13 @@ var recipientWalletAddress = client.walletAddress().get("https://happylifebank.e
 
 </TabItem>
 
-<TabItem label='.NET' icon='seti:c-sharp'>
+<TabItem label=".NET" icon="seti:c-sharp">
+
 ```csharp wrap
 var senderWalletAddress = await client.GetWalletAddressAsync("https://cloudninebank.example.com/sender");
-var recipientWalletAddress =
-    await client.GetWalletAddressAsync("https://happylifebank.example.com/recipient");
+var recipientWalletAddress = await client.GetWalletAddressAsync("https://happylifebank.example.com/recipient");
 ```
+
 </TabItem>
 
 </Tabs>
@@ -380,18 +381,19 @@ $recipientIncomingPayment = $client->incomingPayment()->create(
 
   <TabItem label='Go' icon='seti:go'>
 
-  ```go wrap
-  recipientIncomingPayment, err := client.IncomingPayment.Create(context.TODO(), op.IncomingPaymentCreateParams{
-    BaseURL:     *recipientWalletAddress.ResourceServer,
-    AccessToken: recipientIncomingPaymentGrant.AccessToken.Value,
-    Payload: rs.CreateIncomingPaymentJSONBody{
-      WalletAddressSchema: *recipientWalletAddress.Id,
-    },
-  })
-  if err != nil {
-    log.Fatalf("Error creating incoming payment: %v\n", err)
-  }
-  ```
+```go wrap
+recipientIncomingPayment, err := client.IncomingPayment.Create(context.TODO(), op.IncomingPaymentCreateParams{
+  BaseURL:     *recipientWalletAddress.ResourceServer,
+  AccessToken: recipientIncomingPaymentGrant.AccessToken.Value,
+  Payload: rs.CreateIncomingPaymentJSONBody{
+    WalletAddressSchema: *recipientWalletAddress.Id,
+  },
+})
+if err != nil {
+  log.Fatalf("Error creating incoming payment: %v\n", err)
+}
+```
+
   </TabItem>
 
   <TabItem label='Java' icon='seti:java'>
@@ -504,6 +506,7 @@ Outgoing payments require an interactive grant, which the sender approves once. 
   ```
 </TabItem>
 <TabItem label='Rust' icon='seti:rust'>
+
 ```rust wrap
 use open_payments::types::{
   AccessTokenRequest,
@@ -552,6 +555,7 @@ let pending_sender_outgoing_payment_grant = client
 .await?;
 
 ```
+
 </TabItem>
 
 <TabItem label='PHP' icon='seti:php'>
@@ -811,16 +815,16 @@ $senderOutgoingPaymentGrant = $client->grant()->continue(
 
   <TabItem label='Go' icon='seti:go'>
 
-  ```go wrap
-  senderOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
-    URL:         pendingSenderOutgoingPaymentGrant.Continue.Uri,
-    AccessToken: pendingSenderOutgoingPaymentGrant.Continue.AccessToken.Value,
-    InteractRef: INTERACT_REF,
-  })
-  if err != nil {
-    log.Fatalf("Error continuing grant: %v\n", err)
-  }
-  ```
+```go wrap
+senderOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
+  URL:         pendingSenderOutgoingPaymentGrant.Continue.Uri,
+  AccessToken: pendingSenderOutgoingPaymentGrant.Continue.AccessToken.Value,
+  InteractRef: INTERACT_REF,
+})
+if err != nil {
+  log.Fatalf("Error continuing grant: %v\n", err)
+}
+```
 
   </TabItem>
 
@@ -965,29 +969,30 @@ $senderOutgoingPayment = $client->outgoingPayment()->create(
 
   <TabItem label='Go' icon='seti:go'>
 
-  ```go wrap
-  var outgoingPayload rs.CreateOutgoingPaymentRequest
-  if err := outgoingPayload.FromCreateOutgoingPaymentWithoutQuote(rs.CreateOutgoingPaymentWithoutQuote{
-    WalletAddressSchema: *senderWalletAddress.Id,
-    IncomingPayment:     *recipientIncomingPayment.Id,
-    DebitAmount: &rs.Amount{
-      Value:      "20000",
-      AssetCode:  "USD",
-      AssetScale: 2,
-    },
-  }); err != nil {
-    log.Fatalf("Error creating payload: %v\n", err)
-  }
+```go wrap
+var outgoingPayload rs.CreateOutgoingPaymentRequest
+if err := outgoingPayload.FromCreateOutgoingPaymentWithoutQuote(rs.CreateOutgoingPaymentWithoutQuote{
+  WalletAddressSchema: *senderWalletAddress.Id,
+  IncomingPayment:     *recipientIncomingPayment.Id,
+  DebitAmount: &rs.Amount{
+    Value:      "20000",
+    AssetCode:  "USD",
+    AssetScale: 2,
+  },
+}); err != nil {
+  log.Fatalf("Error creating payload: %v\n", err)
+}
 
-  senderOutgoingPayment, err := client.OutgoingPayment.Create(context.TODO(), op.OutgoingPaymentCreateParams{
-    BaseURL:     *senderWalletAddress.ResourceServer,
-    AccessToken: senderOutgoingPaymentGrant.AccessToken.Value,
-    Payload:     outgoingPayload,
-  })
-  if err != nil {
-    log.Fatalf("Error creating outgoing payment: %v\n", err)
-  }
-  ```
+senderOutgoingPayment, err := client.OutgoingPayment.Create(context.TODO(), op.OutgoingPaymentCreateParams{
+  BaseURL:     *senderWalletAddress.ResourceServer,
+  AccessToken: senderOutgoingPaymentGrant.AccessToken.Value,
+  Payload:     outgoingPayload,
+})
+if err != nil {
+  log.Fatalf("Error creating outgoing payment: %v\n", err)
+}
+```
+
   </TabItem>
 
   <TabItem label='Java' icon='seti:java'>

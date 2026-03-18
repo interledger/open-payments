@@ -71,14 +71,15 @@ $userWalletAddress = $client->walletAddress()->get([
 
  <TabItem label='Go' icon='seti:go'>
 
- ```go wrap
- userWalletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
-   URL: "https://cloudninebank.example.com/user",
- })
- if err != nil {
-   log.Fatalf("Error fetching user wallet address: %v\n", err)
- }
+```go wrap
+userWalletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
+  URL: "https://cloudninebank.example.com/user",
+})
+if err != nil {
+  log.Fatalf("Error fetching user wallet address: %v\n", err)
+}
 ```
+
 </TabItem>
 
 <TabItem label='Java' icon='seti:java'>
@@ -89,10 +90,12 @@ var userWalletAddress = client.walletAddress().get("https://cloudninebank.exampl
 
 </TabItem>
 
-<TabItem label='.NET' icon='seti:c-sharp'>
+<TabItem label=".NET" icon="seti:c-sharp">
+
 ```csharp wrap
 var userWalletAddress = await client.GetWalletAddressAsync("https://cloudninebank.example.com/user");
 ```
+
 </TabItem>
 
 </Tabs>
@@ -455,16 +458,17 @@ $userOutgoingPaymentGrant = $client->grant()->continue(
 
   <TabItem label='Go' icon='seti:go'>
 
-  ```go wrap
-  userOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
-    URL:         pendingUserOutgoingPaymentGrant.Continue.Uri,
-    AccessToken: pendingUserOutgoingPaymentGrant.Continue.AccessToken.Value,
-    InteractRef: INTERACT_REF,
-  })
-  if err != nil {
-    log.Fatalf("Error continuing grant: %v\n", err)
-  }
-  ```
+```go wrap
+userOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
+  URL:         pendingUserOutgoingPaymentGrant.Continue.Uri,
+  AccessToken: pendingUserOutgoingPaymentGrant.Continue.AccessToken.Value,
+  InteractRef: INTERACT_REF,
+})
+if err != nil {
+  log.Fatalf("Error continuing grant: %v\n", err)
+}
+```
+
   </TabItem>
 
   <TabItem label='Java' icon='seti:java'>

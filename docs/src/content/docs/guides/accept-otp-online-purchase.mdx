@@ -66,22 +66,22 @@ Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wall
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
 
-  ```ts wrap
-  const customerWalletAddress = await client.walletAddress.get({
-    url: 'https://cloudninebank.example.com/customer'
-  })
-  const retailerWalletAddress = await client.walletAddress.get({
-    url: 'https://happylifebank.example.com/retailer'
-  })
-  ```
+```ts wrap
+const customerWalletAddress = await client.walletAddress.get({
+  url: 'https://cloudninebank.example.com/customer'
+})
+const retailerWalletAddress = await client.walletAddress.get({
+  url: 'https://happylifebank.example.com/retailer'
+})
+```
 
   </TabItem>
   <TabItem label='Rust' icon='seti:rust'>
 
-  ```rust wrap
-  let sender_wallet_address = client.wallet_address().get("https://cloudninebank.example.com/customer").await?;
-  let retailer_wallet_address = client.wallet_address().get("https://happylifebank.example.com/retailer").await?;
-  ```
+```rust wrap
+let sender_wallet_address = client.wallet_address().get("https://cloudninebank.example.com/customer").await?;
+let retailer_wallet_address = client.wallet_address().get("https://happylifebank.example.com/retailer").await?;
+```
 
   </TabItem>
   <TabItem label='PHP' icon='seti:php'>
@@ -93,6 +93,7 @@ $retailerWalletAddress = $client->walletAddress()->get([
   'url' => 'https://happylifebank.example.com/retailer'
 ]);
 ```
+
   </TabItem>
 
   <TabItem label='Go' icon='seti:go'>
@@ -126,10 +127,12 @@ var retailerWalletAddress = client.walletAddress().get("https://happylifebank.ex
   </TabItem>
 
   <TabItem label='.NET' icon='seti:c-sharp'>
+
 ```csharp wrap
 var customerWalletAddress = await client.GetWalletAddressAsync("https://cloudninebank.example.com/customer");
 var retailerWalletAddress = await client.GetWalletAddressAsync("https://happylifebank.example.com/retailer");
 ```
+
   </TabItem>
 
 </Tabs>
@@ -259,6 +262,7 @@ var retailerIncomingPaymentGrant = client.auth().grant().incomingPayment(
   </TabItem>
 
   <TabItem label='.NET' icon='seti:c-sharp'>
+
 ```csharp wrap
 var retailerIncomingPaymentGrant = await client.RequestGrantAsync(
     new RequestArgs
@@ -280,6 +284,7 @@ var retailerIncomingPaymentGrant = await client.RequestGrantAsync(
     }
 );
 ```
+
   </TabItem>
 </Tabs>
 
@@ -420,6 +425,7 @@ var retailerIncomingPayment = client.payment().createIncoming(
   </TabItem>
 
   <TabItem label='.NET' icon='seti:c-sharp'>
+
 ```csharp wrap
 var retailerIncomingPayment = await client.CreateIncomingPaymentAsync(
     new AuthRequestArgs
@@ -434,6 +440,7 @@ var retailerIncomingPayment = await client.CreateIncomingPaymentAsync(
     }
 );
 ```
+
   </TabItem>
 </Tabs>
 
@@ -576,6 +583,7 @@ var customerQuoteGrant = client.auth().grant().quote(
   </TabItem>
 
   <TabItem label='.NET' icon='seti:c-sharp'>
+
 ```csharp wrap
 var customerQuoteGrant = await client.RequestGrantAsync(
     new RequestArgs
@@ -597,6 +605,7 @@ var customerQuoteGrant = await client.RequestGrantAsync(
     }
 );
 ```
+
   </TabItem>
 
 </Tabs>
@@ -732,6 +741,7 @@ var customerQuote = client.quote().create(
   </TabItem>
 
   <TabItem label='.NET' icon='seti:c-sharp'>
+
 ```csharp wrap
 var customerQuote = await client.CreateQuoteAsync(
     new AuthRequestArgs
@@ -747,6 +757,7 @@ var customerQuote = await client.CreateQuoteAsync(
     }
 );
 ```
+
   </TabItem>
 
 </Tabs>
@@ -966,6 +977,7 @@ var opContinueInteract = client.auth().grant().continuation(
   </TabItem>
 
   <TabItem label='.NET' icon='seti:c-sharp'>
+
 ```csharp wrap
 var pendingCustomerOutgoingPaymentGrant = await client.RequestGrantAsync(
     new RequestArgs
@@ -1002,6 +1014,7 @@ var pendingCustomerOutgoingPaymentGrant = await client.RequestGrantAsync(
     }
 );
 ```
+
   </TabItem>
 
 </Tabs>
@@ -1134,6 +1147,7 @@ var customerOutgoingPaymentGrant = client.auth().grant().finalize(
   </TabItem>
 
   <TabItem label='.NET' icon='seti:c-sharp'>
+
 ```csharp wrap
 var customerOutgoingPaymentGrant = await client.ContinueGrantAsync(
     new AuthRequestArgs
@@ -1147,6 +1161,7 @@ var customerOutgoingPaymentGrant = await client.ContinueGrantAsync(
     }
 );
 ```
+
   </TabItem>
 
 </Tabs>
@@ -1280,6 +1295,7 @@ var customerOutgoingPayment = client.payment().createOutgoing(
   </TabItem>
 
   <TabItem label='.NET' icon='seti:c-sharp'>
+
 ```csharp wrap
 var customerOutgoingPayment = await client.CreateOutgoingPaymentAsync(
     new AuthRequestArgs
@@ -1294,6 +1310,7 @@ var customerOutgoingPayment = await client.CreateOutgoingPaymentAsync(
     }
 );
 ```
+
   </TabItem>
 
 </Tabs>

@@ -121,19 +121,23 @@ if err != nil {
 }
 ```
 
- </TabItem>
+</TabItem>
+
 <TabItem label='Java' icon='seti:java'>
   ```java wrap
   var senderWalletAddress = client.walletAddress().get("https://cloudninebank.example.com/sender");
   var recipientWalletAddress = client.walletAddress().get("https://happylifebank.example.com/recipient");
   ```
+
 </TabItem>
 
 <TabItem label='.NET' icon='seti:c-sharp'>
+
 ```csharp wrap
 var senderWalletAddress = await client.GetWalletAddressAsync("https://cloudninebank.example.com/sender");
 var recipientWalletAddress = await client.GetWalletAddressAsync("https://happylifebank.example.com/recipient");
 ```
+
 </TabItem>
 
 </Tabs>
@@ -467,20 +471,21 @@ This call obtains an access token that allows your app to request that a quote r
     )
     ```
   </TabItem>
- <TabItem label='Rust' icon='seti:rust'>
+  <TabItem label='Rust' icon='seti:rust'>
 
- ```rust wrap
- use open_payments::types::{AccessTokenRequest, AccessItem, QuoteAction, GrantRequest};
- let quote_access = AccessTokenRequest {
-   access: vec![AccessItem::Quote { actions: vec![QuoteAction::Create] }],
- };
- let quote_grant_request = GrantRequest::new(quote_access, None);
- let sender_quote_grant = client
-   .grant()
-   .request(&sender_wallet_address.auth_server, &quote_grant_request)
-   .await?;
- ```
- </TabItem>
+```rust wrap
+use open_payments::types::{AccessTokenRequest, AccessItem, QuoteAction, GrantRequest};
+let quote_access = AccessTokenRequest {
+  access: vec![AccessItem::Quote { actions: vec![QuoteAction::Create] }],
+};
+let quote_grant_request = GrantRequest::new(quote_access, None);
+let sender_quote_grant = client
+  .grant()
+  .request(&sender_wallet_address.auth_server, &quote_grant_request)
+  .await?;
+```
+
+  </TabItem>
   <TabItem label='PHP' icon='seti:php'>
 
 ```php wrap
@@ -616,33 +621,34 @@ The `debitAmount` specifies that the sender will pay exactly $100 USD, and the r
     }
   )
 ```
- </TabItem>
- <TabItem label='Rust' icon='seti:rust'>
+  </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
 
- ```rust wrap
- use open_payments::types::{QuoteRequest, QuoteMethod, Amount};
- let quote_request = QuoteRequest {
-   method: QuoteMethod::Ilp,
-   wallet_address: Some(sender_wallet_address.id.clone()),
-   receiver: Some(recipient_incoming_payment.id.clone()),
-   debit_amount: Some(Amount {
-     value: "10000".into(),
-     asset_code: "USD".into(),
-     asset_scale: 2,
-   }),
-   receive_amount: None,
- };
- let sender_quote = client
-   .quotes()
-   .create(
-     &sender_wallet_address.resource_server,
-     &quote_request,
-     Some(&sender_quote_grant.access_token.value),
-   )
-   .await?;
- ```
- </TabItem>
- <TabItem label='PHP' icon='seti:php'>
+```rust wrap
+use open_payments::types::{QuoteRequest, QuoteMethod, Amount};
+let quote_request = QuoteRequest {
+  method: QuoteMethod::Ilp,
+  wallet_address: Some(sender_wallet_address.id.clone()),
+  receiver: Some(recipient_incoming_payment.id.clone()),
+  debit_amount: Some(Amount {
+    value: "10000".into(),
+    asset_code: "USD".into(),
+    asset_scale: 2,
+  }),
+  receive_amount: None,
+};
+let sender_quote = client
+  .quotes()
+  .create(
+    &sender_wallet_address.resource_server,
+    &quote_request,
+    Some(&sender_quote_grant.access_token.value),
+  )
+  .await?;
+```
+
+  </TabItem>
+  <TabItem label='PHP' icon='seti:php'>
 
 ```php wrap
 $senderQuote = $client->quote()->create(
@@ -664,7 +670,7 @@ $senderQuote = $client->quote()->create(
 ```
 
   </TabItem>
- <TabItem label='Go' icon='seti:go'>
+  <TabItem label='Go' icon='seti:go'>
 
 ```go wrap
 senderQuote, err := client.Quote.Create(context.TODO(), op.QuoteCreateParams{
@@ -686,22 +692,25 @@ if err != nil {
 }
 ```
 
- </TabItem>
-<TabItem label='Java' icon='seti:java'>
-  ```java wrap
-  var senderQuote = client.quote().create(
-    senderQuoteGrant.getAccess().getToken(),
-    senderWalletAddress,
-    recipientIncomingPayment,
-    Optional.of(
-      Amount.build(BigDecimal.valueOf(100.00), "USD", 2)
-    ),
-    Optional.empty()
-  );
-  ```
+  </TabItem>
+  <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var senderQuote = client.quote().create(
+  senderQuoteGrant.getAccess().getToken(),
+  senderWalletAddress,
+  recipientIncomingPayment,
+  Optional.of(
+    Amount.build(BigDecimal.valueOf(100.00), "USD", 2)
+  ),
+  Optional.empty()
+);
+```
+
 </TabItem>
 
 <TabItem label='.NET' icon='seti:c-sharp'>
+
 ```csharp wrap
 var senderQuote = await client.CreateQuoteAsync(
     new AuthRequestArgs
@@ -718,6 +727,7 @@ var senderQuote = await client.CreateQuoteAsync(
     }
 );
 ```
+
 </TabItem>
 
 </Tabs>
@@ -773,54 +783,56 @@ Outgoing payments require an interactive grant. This type of grant will obtain t
 
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
 
-  ```ts wrap
-  const pendingSenderOutgoingPaymentGrant = await client.grant.request(
-    {
-      url: senderWalletAddress.authServer
-    },
-    {
-      access_token: {
-        access: [
-          {
-            identifier: senderWalletAddress.id,
-            type: 'outgoing-payment',
-            actions: ['create'],
-            limits: {
-              debitAmount: {
-                assetCode: 'USD',
-                assetScale: 2,
-                value: '10000',
-              }
+```ts wrap
+const pendingSenderOutgoingPaymentGrant = await client.grant.request(
+  {
+    url: senderWalletAddress.authServer
+  },
+  {
+    access_token: {
+      access: [
+        {
+          identifier: senderWalletAddress.id,
+          type: 'outgoing-payment',
+          actions: ['create'],
+          limits: {
+            debitAmount: {
+              assetCode: 'USD',
+              assetScale: 2,
+              value: '10000'
             }
           }
-        ]
-      },
-      interact: {
-        start: ['redirect'],
-        finish: {
-          method: 'redirect',
-          uri: 'https://myapp.example.com/finish/{...}', // where to redirect your user after they've completed the interaction
-          nonce: NONCE
         }
+      ]
+    },
+    interact: {
+      start: ['redirect'],
+      finish: {
+        method: 'redirect',
+        uri: 'https://myapp.example.com/finish/{...}', // where to redirect your user after they've completed the interaction
+        nonce: NONCE
       }
     }
-  )
-  ```
+  }
+)
+```
+
  </TabItem>
  <TabItem label='Rust' icon='seti:rust'>
- ```rust wrap
- use open_payments::types::{
-   AccessTokenRequest,
-   AccessItem,
-   OutgoingPaymentAction,
-   AccessLimits,
-   Amount,
-   InteractRequest,
-   InteractStart,
-   InteractFinish,
-   InteractFinishMethod,
-   GrantRequest,
- };
+
+```rust wrap
+use open_payments::types::{
+  AccessTokenRequest,
+  AccessItem,
+  OutgoingPaymentAction,
+  AccessLimits,
+  Amount,
+  InteractRequest,
+  InteractStart,
+  InteractFinish,
+  InteractFinishMethod,
+  GrantRequest,
+};
 
 let outgoing_access = AccessTokenRequest {
 access: vec![AccessItem::OutgoingPayment {
@@ -942,7 +954,8 @@ if err != nil {
 
 </TabItem>
 <TabItem label='Java' icon='seti:java'>
-  ```java wrap
+
+```java wrap
   var debitAmount = Amount.build(BigDecimal.valueOf(100.00), "USD", 2);
   var urlToOpen = "https://myapp.example.com/finish/{...}";
 
@@ -954,9 +967,11 @@ URI.create(urlToOpen),
 );
 
 ```
+
 </TabItem>
 
 <TabItem label='.NET' icon='seti:c-sharp'>
+
 ```csharp wrap
 var pendingSenderOutgoingPaymentGrant = await client.RequestGrantAsync(
     new RequestArgs
@@ -993,6 +1008,7 @@ var pendingSenderOutgoingPaymentGrant = await client.RequestGrantAsync(
     }
 );
 ```
+
 </TabItem>
 
 </Tabs>
@@ -1002,17 +1018,17 @@ var pendingSenderOutgoingPaymentGrant = await client.RequestGrantAsync(
 
 ```json wrap
 {
-"interact": {
-  "redirect": "https://auth.cloudninebank.example.com/{...}", // uri to redirect the sender to, to begin interaction
-  "finish": "..." // unique key to secure the callback
-},
-"continue": {
-  "access_token": {
-    "value": "..." // access token for continuing the outgoing payment grant request
+  "interact": {
+    "redirect": "https://auth.cloudninebank.example.com/{...}", // uri to redirect the sender to, to begin interaction
+    "finish": "..." // unique key to secure the callback
   },
-  "uri": "https://auth.cloudninebank.example.com/continue/{...}", // uri for continuing the outgoing payment grant request
-  "wait": 30
-}
+  "continue": {
+    "access_token": {
+      "value": "..." // access token for continuing the outgoing payment grant request
+    },
+    "uri": "https://auth.cloudninebank.example.com/continue/{...}", // uri for continuing the outgoing payment grant request
+    "wait": 30
+  }
 }
 ```
 
@@ -1165,38 +1181,42 @@ Use the access token returned in Step 9 to call the <Badge text="POST" variant="
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-  ```ts wrap
-  const senderOutgoingPayment = await client.outgoingPayment.create(
-    {
-      url: senderWalletAddress.resourceServer,
-      accessToken: senderOutgoingPaymentGrant.access_token.value
-    },
-    {
-      walletAddress: senderWalletAddress.id,
-      quoteId: senderQuote.id
-    }
-  )
+
+```ts wrap
+const senderOutgoingPayment = await client.outgoingPayment.create(
+  {
+    url: senderWalletAddress.resourceServer,
+    accessToken: senderOutgoingPaymentGrant.access_token.value
+  },
+  {
+    walletAddress: senderWalletAddress.id,
+    quoteId: senderQuote.id
+  }
+)
 ```
+
 </TabItem>
  <TabItem label='Rust' icon='seti:rust'>
- ```rust wrap
- use open_payments::types::OutgoingPaymentRequest;
- let outgoing_request = OutgoingPaymentRequest {
-   wallet_address: sender_wallet_address.id.clone(),
-   receiver: Some(recipient_incoming_payment.id.clone()),
-   debit_amount: None,
-   receive_amount: None,
-   quote_id: Some(sender_quote.id.clone()),
- };
- let sender_outgoing_payment = client
-   .outgoing_payments()
-   .create(
-     &sender_wallet_address.resource_server,
-     &outgoing_request,
-     Some(&sender_outgoing_payment_grant.access_token.value),
-   )
-   .await?;
- ```
+
+```rust wrap
+use open_payments::types::OutgoingPaymentRequest;
+let outgoing_request = OutgoingPaymentRequest {
+  wallet_address: sender_wallet_address.id.clone(),
+  receiver: Some(recipient_incoming_payment.id.clone()),
+  debit_amount: None,
+  receive_amount: None,
+  quote_id: Some(sender_quote.id.clone()),
+};
+let sender_outgoing_payment = client
+  .outgoing_payments()
+  .create(
+    &sender_wallet_address.resource_server,
+    &outgoing_request,
+    Some(&sender_outgoing_payment_grant.access_token.value),
+  )
+  .await?;
+```
+
  </TabItem>
  <TabItem label='PHP' icon='seti:php'>
 
@@ -1238,16 +1258,19 @@ if err != nil {
 
  </TabItem>
 <TabItem label='Java' icon='seti:java'>
-  ```java wrap
-  var senderOutgoingPayment = client.payment().createOutgoing(
-    senderOutgoingPaymentGrant,
-    senderWalletAddress,
-    senderQuote
-  );
-  ```
+
+```java wrap
+var senderOutgoingPayment = client.payment().createOutgoing(
+  senderOutgoingPaymentGrant,
+  senderWalletAddress,
+  senderQuote
+);
+```
+
 </TabItem>
 
 <TabItem label='.NET' icon='seti:c-sharp'>
+
 ```csharp wrap
 var senderOutgoingPayment = await client.CreateOutgoingPaymentAsync(
     new AuthRequestArgs
@@ -1262,6 +1285,7 @@ var senderOutgoingPayment = await client.CreateOutgoingPaymentAsync(
     }
 );
 ```
+
 </TabItem>
 
 </Tabs>
