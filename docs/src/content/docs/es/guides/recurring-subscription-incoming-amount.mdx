@@ -76,20 +76,24 @@ Llame a la <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wa
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-  ```ts
-  const customerWalletAddress = await client.walletAddress.get({
-    url: 'https://cloudninebank.example.com/customer'
-  })
-  const serviceProviderWalletAddress = await client.walletAddress.get({
-    url: 'https://happylifebank.example.com/service-provider'
-  })
+
+```ts
+const customerWalletAddress = await client.walletAddress.get({
+  url: 'https://cloudninebank.example.com/customer'
+})
+const serviceProviderWalletAddress = await client.walletAddress.get({
+  url: 'https://happylifebank.example.com/service-provider'
+})
 ```
+
 </TabItem>
 <TabItem label='Rust' icon='seti:rust'>
+
 ```rust wrap
 let customer_wallet_address = client.wallet_address().get("https://cloudninebank.example.com/customer").await?;
 let service_provider_wallet_address = client.wallet_address().get("https://happylifebank.example.com/service-provider").await?;
 ```
+
 </TabItem>
 <TabItem label='PHP' icon='seti:php'>
 
@@ -171,25 +175,28 @@ Esta llamada obtiene un token de acceso que le permite solicitar la creación de
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-  ```ts wrap
-  const serviceProviderIncomingPaymentGrant = await client.grant.request(
-    {
-      url: serviceProviderWalletAddress.authServer
-    },
-    {
-      access_token: {
-        access: [
-          {
-            type: "incoming-payment",
-            actions: ["create"],
-          },
-        ],
-      },
-    },
-  );
+
+```ts wrap
+const serviceProviderIncomingPaymentGrant = await client.grant.request(
+  {
+    url: serviceProviderWalletAddress.authServer
+  },
+  {
+    access_token: {
+      access: [
+        {
+          type: 'incoming-payment',
+          actions: ['create']
+        }
+      ]
+    }
+  }
+)
 ```
+
 </TabItem>
 <TabItem label='Rust' icon='seti:rust'>
+
 ```rust wrap
 use open_payments::types::{AccessTokenRequest, AccessItem, IncomingPaymentAction, GrantRequest};
 let incoming_access = AccessTokenRequest {
@@ -201,6 +208,7 @@ let service_provider_incoming_payment_grant = client
   .request(&service_provider_wallet_address.auth_server, &incoming_grant_request)
   .await?;
 ```
+
 </TabItem>
 <TabItem label='PHP' icon='seti:php'>
 
@@ -299,24 +307,27 @@ Esta llamada solicita la creación de un recurso de pago entrante en la cuenta d
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-  ```ts wrap
-  const serviceProviderIncomingPayment = await client.incomingPayment.create(
-    {
-      url: serviceProviderWalletAddress.resourceServer,
-      accessToken: serviceProviderIncomingPaymentGrant.access_token.value
-    },
-    {
-      walletAddress: serviceProviderWalletAddress.id,
-      incomingAmount: {
-        value: '1500',  // The amount the service provider expects to receive in the first payment
-        assetCode: 'USD',
-        assetScale: 2
-      },
-    },
-  )
+
+```ts wrap
+const serviceProviderIncomingPayment = await client.incomingPayment.create(
+  {
+    url: serviceProviderWalletAddress.resourceServer,
+    accessToken: serviceProviderIncomingPaymentGrant.access_token.value
+  },
+  {
+    walletAddress: serviceProviderWalletAddress.id,
+    incomingAmount: {
+      value: '1500', // The amount the service provider expects to receive in the first payment
+      assetCode: 'USD',
+      assetScale: 2
+    }
+  }
+)
 ```
+
 </TabItem>
   <TabItem label='Rust' icon='seti:rust'>
+
 ```rust wrap
 use open_payments::types::{IncomingPaymentRequest, Amount};
 let incoming_request = IncomingPaymentRequest {
@@ -338,6 +349,7 @@ let service_provider_incoming_payment = client
   )
   .await?;
 ```
+
   </TabItem>
 
   <TabItem label='PHP' icon='seti:php'>
@@ -437,25 +449,28 @@ Esta llamada obtiene un token de acceso que le permite solicitar la creación de
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-  ```ts wrap
-  const customerQuoteGrant = await client.grant.request(
-    {
-      url: customerWalletAddress.authServer
-    },
-    {
-      access_token: {
-        access: [
-          {
-            type: 'quote',
-            actions: ['create']
-          }
-        ]
-      }
+
+```ts wrap
+const customerQuoteGrant = await client.grant.request(
+  {
+    url: customerWalletAddress.authServer
+  },
+  {
+    access_token: {
+      access: [
+        {
+          type: 'quote',
+          actions: ['create']
+        }
+      ]
     }
-  )
-  ```
+  }
+)
+```
+
 </TabItem>
 <TabItem label='Rust' icon='seti:rust'>
+
 ```rust wrap
 use open_payments::types::{AccessTokenRequest, AccessItem, QuoteAction, GrantRequest};
 let quote_access = AccessTokenRequest {
@@ -467,6 +482,7 @@ let customer_quote_grant = client
   .request(&customer_wallet_address.auth_server, &quote_grant_request)
   .await?;
 ```
+
 </TabItem>
 
 <TabItem label='PHP' icon='seti:php'>
@@ -568,21 +584,24 @@ La solicitud debe contener el `receiver`, que es la `id` del pago entrante del p
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-  ```ts wrap
-  const customerQuote = await client.quote.create(
-    {
-      url: customerWalletAddress.resourceServer,
-      accessToken: customerQuoteGrant.access_token.value
-    },
-    {
-      method: 'ilp',
-      walletAddress: customerWalletAddress.id,
-      receiver: serviceProviderIncomingPayment.id,
-    }
-  )
+
+```ts wrap
+const customerQuote = await client.quote.create(
+  {
+    url: customerWalletAddress.resourceServer,
+    accessToken: customerQuoteGrant.access_token.value
+  },
+  {
+    method: 'ilp',
+    walletAddress: customerWalletAddress.id,
+    receiver: serviceProviderIncomingPayment.id
+  }
+)
 ```
+
 </TabItem>
 <TabItem label='Rust' icon='seti:rust'>
+
 ```rust wrap
 use open_payments::types::{CreateQuoteRequest, PaymentMethodType, Receiver};
 let quote_request = CreateQuoteRequest::NoAmountQuote {
@@ -599,6 +618,7 @@ let customer_quote = client
   )
   .await?;
 ```
+
 </TabItem>
 
 <TabItem label='PHP' icon='seti:php'>
@@ -704,42 +724,45 @@ Para los pagos recurrentes, incluya la propiedad `interval` para especificar la 
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-  ```ts wrap
-  const pendingCustomerOutgoingPaymentGrant = await client.grant.request(
-    {
-      url: customerWalletAddress.authServer
-    },
-    {
-      access_token: {
-        access: [
-          {
-            identifier: customerWalletAddress.id,
-            type: 'outgoing-payment',
-            actions: ['create', 'read'],
-            limits: {
-              debitAmount: {
-                assetCode: 'USD',
-                assetScale: 2,
-                value: '1500',
-              },
-              interval: 'R12/2025-10-14T00:03:00Z/P1M'
-            }
+
+```ts wrap
+const pendingCustomerOutgoingPaymentGrant = await client.grant.request(
+  {
+    url: customerWalletAddress.authServer
+  },
+  {
+    access_token: {
+      access: [
+        {
+          identifier: customerWalletAddress.id,
+          type: 'outgoing-payment',
+          actions: ['create', 'read'],
+          limits: {
+            debitAmount: {
+              assetCode: 'USD',
+              assetScale: 2,
+              value: '1500'
+            },
+            interval: 'R12/2025-10-14T00:03:00Z/P1M'
           }
-        ]
-      },
-      interact: {
-        start: ['redirect'],
-        finish: {
-          method: 'redirect',
-          uri: 'https://myapp.example.com/finish/{...}', // where to redirect the customer after they've completed interaction
-          nonce: NONCE
         }
+      ]
+    },
+    interact: {
+      start: ['redirect'],
+      finish: {
+        method: 'redirect',
+        uri: 'https://myapp.example.com/finish/{...}', // where to redirect the customer after they've completed interaction
+        nonce: NONCE
       }
     }
-  )
-  ```
+  }
+)
+```
+
 </TabItem>
 <TabItem label='Rust' icon='seti:rust'>
+
 ```rust wrap
 use open_payments::types::{
   AccessTokenRequest,
@@ -787,7 +810,8 @@ let pending_customer_outgoing_payment_grant = client
 .request(&customer_wallet_address.auth_server, &outgoing_grant_request)
 .await?;
 
-````
+```
+
 </TabItem>
 
 <TabItem label='PHP' icon='seti:php'>
@@ -825,7 +849,7 @@ $pendingCustomerOutgoingPaymentGrant = $client->grant()->request(
     ]
   ]
 );
-````
+```
 
 </TabItem>
 
@@ -957,6 +981,7 @@ Incluya la `interact_ref` devuelta en los parámetros de consulta del URI de red
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+
     ```ts wrap
     const customerOutgoingPaymentGrant = await client.grant.continue(
       {
@@ -968,24 +993,27 @@ Incluya la `interact_ref` devuelta en los parámetros de consulta del URI de red
       }
     )
     ```
+
   </TabItem>
   <TabItem label='Rust' icon='seti:rust'>
-  ```rust wrap
-  use open_payments::types::GrantResponse;
-  let (continue_uri, continue_token) = match &pending_customer_outgoing_payment_grant {
-    GrantResponse::WithInteraction { continue_, .. } | GrantResponse::WithToken { continue_, .. } => {
-      (&continue_.uri, &continue_.access_token.value)
-    }
-  };
-  let customer_outgoing_payment_grant = client
-    .grant()
-    .continue_grant(
-      continue_uri,
-      &interact_ref,
-      Some(continue_token),
-    )
-    .await?;
-  ```
+
+```rust wrap
+use open_payments::types::GrantResponse;
+let (continue_uri, continue_token) = match &pending_customer_outgoing_payment_grant {
+  GrantResponse::WithInteraction { continue_, .. } | GrantResponse::WithToken { continue_, .. } => {
+    (&continue_.uri, &continue_.access_token.value)
+  }
+};
+let customer_outgoing_payment_grant = client
+  .grant()
+  .continue_grant(
+    continue_uri,
+    &interact_ref,
+    Some(continue_token),
+  )
+  .await?;
+```
+
   </TabItem>
 
   <TabItem label='PHP' icon='seti:php'>
@@ -1005,17 +1033,18 @@ $customerOutgoingPaymentGrant = $client->grant()->continue(
   </TabItem>
 
   <TabItem label='Go' icon='seti:go'>
-  
-  ```go wrap
-  customerOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
-    URL:         pendingCustomerOutgoingPaymentGrant.Continue.Uri,
-    AccessToken: pendingCustomerOutgoingPaymentGrant.Continue.AccessToken.Value,
-    InteractRef: INTERACT_REF,
-  })
-  if err != nil {
-    log.Fatalf("Error continuing grant: %v\n", err)
-  }
-  ```
+
+```go wrap
+customerOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
+  URL:         pendingCustomerOutgoingPaymentGrant.Continue.Uri,
+  AccessToken: pendingCustomerOutgoingPaymentGrant.Continue.AccessToken.Value,
+  InteractRef: INTERACT_REF,
+})
+if err != nil {
+  log.Fatalf("Error continuing grant: %v\n", err)
+}
+```
+
   </TabItem>
 <TabItem label='Java' icon='seti:java'>
 
@@ -1074,20 +1103,23 @@ Incluya el `quoteId` de la cotización creada en el paso 5.
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-  ```ts wrap
-  const customerOutgoingPayment = await client.outgoingPayment.create(
-    {
-      url: customerWalletAddress.resourceServer,
-      accessToken: customerOutgoingPaymentGrant.access_token.value
-    },
-    {
-      walletAddress: customerWalletAddress.id,
-      quoteId: customerQuote.id
-    }
-  )
+
+```ts wrap
+const customerOutgoingPayment = await client.outgoingPayment.create(
+  {
+    url: customerWalletAddress.resourceServer,
+    accessToken: customerOutgoingPaymentGrant.access_token.value
+  },
+  {
+    walletAddress: customerWalletAddress.id,
+    quoteId: customerQuote.id
+  }
+)
 ```
+
 </TabItem>
 <TabItem label='Rust' icon='seti:rust'>
+
 ```rust wrap
 use open_payments::types::OutgoingPaymentRequest;
 let outgoing_request = OutgoingPaymentRequest::FromQuote {
@@ -1104,6 +1136,7 @@ let customer_outgoing_payment = client
   )
   .await?;
 ```
+
 </TabItem>
 
 <TabItem label='PHP' icon='seti:php'>

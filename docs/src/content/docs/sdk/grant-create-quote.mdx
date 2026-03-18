@@ -303,6 +303,67 @@ log.info("QUOTE_GRANT: {}", grantRequest);
 ```
 
 </TabItem>
+<TabItem label='.NET' icon='seti:c-sharp'>
+<LinkButton href="https://github.com/interledger/open-payments-dotnet/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+```csharp wrap
+// Import dependencies
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+using OpenPayments.Sdk.Clients;
+using OpenPayments.Sdk.Extensions;
+using OpenPayments.Sdk.Generated.Auth;
+using OpenPayments.Sdk.HttpSignatureUtils;
+
+// Initialize client
+var client = new ServiceCollection()
+    .UseOpenPayments(opts =>
+    {
+        opts.UseAuthenticatedClient = true;
+        opts.KeyId = CLIENT_ID;
+        opts.PrivateKey = KeyUtils.LoadPem(CLIENT_SECRET);
+        opts.ClientUrl = new Uri(CLIENT_WALLET_ADDRESS);
+    })
+    .BuildServiceProvider()
+    .GetRequiredService<IAuthenticatedClient>();
+
+// Get wallet address information
+var walletAddress = await client.GetWalletAddressAsync(WALLET_ADDRESS);
+
+// Request quote grant
+var grant = await client.RequestGrantAsync(
+    new RequestArgs { Url = walletAddress.AuthServer },
+    new GrantCreateBody
+    {
+        AccessToken = new AccessToken
+        {
+            Access =
+            [
+                new QuoteAccess
+                {
+                    Actions =
+                    [
+                        Actions.Create,
+                        Actions.Read,
+                        Actions.ReadAll,
+                    ],
+                },
+            ],
+        },
+    }
+);
+
+// Check grant state
+if (grant.Interact != null) throw new Exception("Expected non-interactive grant");
+
+// Output
+Console.WriteLine(JsonConvert.SerializeObject(grant, Formatting.Indented));
+```
+
+<LinkOut href="https://github.com/interledger/open-payments-dotnet/blob/main/OpenPayments.Snippets/Services/Authenticated/QuoteService.cs#L20-L36">
+  View full source
+</LinkOut>
+</TabItem>
 </Tabs>
 
 ## References

@@ -22,7 +22,7 @@ When an authorization server receives a signed grant request, the server makes a
 
 <Tabs syncKey="langs">
 <TabItem label='TypeScript/NodeJS' icon='node'>
-<LinkButton 
+<LinkButton
 href="https://github.com/interledger/open-payments-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
 
 ```ts wrap
@@ -161,6 +161,33 @@ var keys = client.walletAddress().keys("https://cloudninebank.example.com/custom
 log.info("WALLET_ADDRESS_KEYS: {}", keys);
 ```
 
+</TabItem>
+<TabItem label='.NET' icon='seti:c-sharp'>
+<LinkButton href="https://github.com/interledger/open-payments-dotnet/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+
+```csharp wrap
+// Import dependencies
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+using OpenPayments.Sdk.Clients;
+using OpenPayments.Sdk.Extensions;
+
+// Initialize client
+var client = new ServiceCollection()
+    .UseOpenPayments(opts => { opts.UseUnauthenticatedClient = true; })
+    .BuildServiceProvider()
+    .GetRequiredService<IUnauthenticatedClient>();
+
+// Get wallet address keys
+var walletAddressKeys = await client.GetWalletAddressKeysAsync(WALLET_ADDRESS);
+
+// Output
+Console.WriteLine($"WALLET ADDRESS KEYS: {JsonConvert.SerializeObject(walletAddressKeys, Formatting.Indented)}");
+```
+
+<LinkOut href="https://github.com/interledger/open-payments-dotnet/blob/main/OpenPayments.Snippets/Services/Unauthenticated/WalletAddressService.cs#L27">
+  View full source
+</LinkOut>
 </TabItem>
 </Tabs>
 
