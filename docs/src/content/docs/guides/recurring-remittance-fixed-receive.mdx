@@ -1267,36 +1267,40 @@ Use the access token returned in the outgoing payment grant continuation respons
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-  ```ts wrap
-  const senderOutgoingPayment = await client.outgoingPayment.create(
-    {
-      url: senderWalletAddress.resourceServer,
-      accessToken: senderOutgoingPaymentGrant.access_token.value
-    },
-    {
-      walletAddress: senderWalletAddress.id,
-      quoteId: senderQuote.id,
-    }
-  )
-  ```
+
+```ts wrap
+const senderOutgoingPayment = await client.outgoingPayment.create(
+  {
+    url: senderWalletAddress.resourceServer,
+    accessToken: senderOutgoingPaymentGrant.access_token.value
+  },
+  {
+    walletAddress: senderWalletAddress.id,
+    quoteId: senderQuote.id
+  }
+)
+```
+
   </TabItem>
   <TabItem label='Rust' icon='seti:rust'>
-  ```rust wrap
-  use open_payments::types::OutgoingPaymentRequest;
-  let outgoing_request = OutgoingPaymentRequest::FromQuote {
-    wallet_address: sender_wallet_address.id.clone(),
-    quote_id: sender_quote.id.clone(),
-    metadata: None,
-  };
-  let sender_outgoing_payment = client
-    .outgoing_payments()
-    .create(
-      &sender_wallet_address.resource_server,
-      &outgoing_request,
-      Some(&sender_outgoing_payment_grant.access_token.value),
-    )
-    .await?;
-  ```
+
+```rust wrap
+use open_payments::types::OutgoingPaymentRequest;
+let outgoing_request = OutgoingPaymentRequest::FromQuote {
+  wallet_address: sender_wallet_address.id.clone(),
+  quote_id: sender_quote.id.clone(),
+  metadata: None,
+};
+let sender_outgoing_payment = client
+  .outgoing_payments()
+  .create(
+    &sender_wallet_address.resource_server,
+    &outgoing_request,
+    Some(&sender_outgoing_payment_grant.access_token.value),
+  )
+  .await?;
+```
+
   </TabItem>
   <TabItem label='PHP' icon='seti:php'>
 

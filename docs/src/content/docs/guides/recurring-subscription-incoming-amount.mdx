@@ -76,20 +76,24 @@ Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wall
 
 <Tabs syncKey="lang">
 <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-  ```ts
-  const customerWalletAddress = await client.walletAddress.get({
-    url: 'https://cloudninebank.example.com/customer'
-  })
-  const serviceProviderWalletAddress = await client.walletAddress.get({
-    url: 'https://happylifebank.example.com/service-provider'
-  })
+
+```ts
+const customerWalletAddress = await client.walletAddress.get({
+  url: 'https://cloudninebank.example.com/customer'
+})
+const serviceProviderWalletAddress = await client.walletAddress.get({
+  url: 'https://happylifebank.example.com/service-provider'
+})
 ```
+
 </TabItem>
 <TabItem label='Rust' icon='seti:rust'>
+
 ```rust wrap
 let customer_wallet_address = client.wallet_address().get("https://cloudninebank.example.com/customer").await?;
 let service_provider_wallet_address = client.wallet_address().get("https://happylifebank.example.com/service-provider").await?;
 ```
+
 </TabItem>
 <TabItem label='PHP' icon='seti:php'>
 
