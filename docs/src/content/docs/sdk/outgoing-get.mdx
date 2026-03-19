@@ -3,19 +3,23 @@ title: Get an outgoing payment
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
-import { Tabs, TabItem, LinkButton } from '@astrojs/starlight/components'
+import { Tabs, TabItem, LinkButton, Badge } from '@astrojs/starlight/components'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
 
-An authorized client can look up the state of an outgoing payment on a wallet address. This is useful when a client must determine if an outgoing payment is still active and pending payment.
+The [Get an Outgoing Payment API](/apis/resource-server/operations/get-outgoing-payment) lets you get the latest state of an outgoing payment resource.
 
-These code snippets return the state and details of a specific outgoing payment, if found.
+Using the ID of the payment resource, a client can determine whether the payment is active, pending payment, or complete, and get the receive, debit, and sent amount values.
+
+The code snippets below let an authorized client retrieve the state and details of a specific outgoing payment resource.
 
 ## Before you begin
 
 <Begin />
 
 ## Get the state of an outgoing payment
+
+<Badge text="Authenticated client required" variant="note" />
 
 <Tabs syncKey="langs">
 <TabItem label='TypeScript/NodeJS' icon='node'>

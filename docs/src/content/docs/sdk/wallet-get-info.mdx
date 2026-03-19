@@ -3,18 +3,22 @@ title: Get wallet address information
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
-import { Tabs, TabItem, LinkButton } from '@astrojs/starlight/components'
+import { Tabs, TabItem, LinkButton, Badge } from '@astrojs/starlight/components'
 import Begin from '/src/partials/before-you-begin.mdx'
 
-For a client to request a grant from an authorization server, the client must first verify the validity of the wallet address and get the URL of the wallet's authorization server.
+The [Get Wallet Address API](/apis/wallet-address-server/operations/get-wallet-address) lets you get the public information for a wallet address.
 
-These code snippets enable an authenticated client to verify a wallet address, get the basic information required to construct a new transaction, and discover the auth server's URL. Note that unauthenticated clients can also call the Wallet Address API to get wallet address information.
+A client must verify the validity of a wallet address and get the URL of the wallet's authorization server before requesting a grant from the server.
+
+The code snippets below let a client verify a wallet address, get the basic information required to construct a new transaction, and discover the auth server's URL.
 
 ## Before you begin
 
 <Begin />
 
 ## Retrieve public information for a wallet address
+
+<Badge text="Unauthenticated client allowed" variant="success" />
 
 <Tabs syncKey="langs">
 <TabItem label='TypeScript/NodeJS' icon='node'>

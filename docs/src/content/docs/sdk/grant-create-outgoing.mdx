@@ -5,13 +5,21 @@ tableOfContents:
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
-import { Tabs, TabItem, LinkButton } from '@astrojs/starlight/components'
+import { Tabs, TabItem, LinkButton, Badge } from '@astrojs/starlight/components'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
 
-Before a client can call most of the Open Payments APIs, it must receive a grant from the appropriate authorization server.
+The [Grant Request API](/apis/auth-server/operations/post-request) lets you request a grant for outgoing payment, incoming payment, and quote resources.
 
-The snippets below enable a client to request a grant for an outgoing payment. The request to the authorization server must indicate the `outgoing-payment` access type and the actions the client wants to take at the resource server.
+Before your client can call most of the Open Payments APIs, it must receive a grant from the appropriate authorization server.
+
+The code snippets below let an authenticated client request a grant for an outgoing payment. The request to the authorization server must indicate the `outgoing-payment` and the actions the client wants to take at the resource server.
+
+## Interactive grants
+
+Outgoing payments require explicit consent, typically by the client's user, before a grant can be issued. Consent is obtained through an interactive grant.
+
+Any authorization server that issues interactive grants must integrate with an [identity provider (IdP)](/identity/idp). When a client requests the outgoing payment grant, the authorization server provides the client with the IdP URI to redirect to.
 
 ## Before you begin
 
@@ -19,9 +27,7 @@ The snippets below enable a client to request a grant for an outgoing payment. T
 
 ## Request an outgoing payment grant
 
-In Open Payments, outgoing payments require explicit consent, usually by the client's user, before a grant can be issued. Consent is obtained through an interactive grant.
-
-Open Payments also requires any authorization server that issues interactive grants to integrate with an [identity provider (IdP)](/identity/idp). When the client requests the outgoing payment grant, the authorization server provides the client with the IdP URI the client should redirect to.
+<Badge text="Authenticated client required" variant="note" />
 
 <Tabs syncKey="langs">
 <TabItem label='TypeScript/NodeJS' icon='node'>

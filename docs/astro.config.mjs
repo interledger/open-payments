@@ -235,7 +235,7 @@ export default defineConfig({
                   link: '/sdk/grant-continue'
                 },
                 {
-                  label: 'Revoke a grant request',
+                  label: 'Cancel a grant request',
                   link: '/sdk/grant-revoke'
                 }
               ]
@@ -323,7 +323,7 @@ export default defineConfig({
               link: '/guides/accept-otp-online-purchase/'
             },
             {
-              label: 'Send a remittance payment with fixed debit amount',
+              label: 'Send a remittance payment with a fixed debit amount',
               translations: {
                 es: 'Enviar un pago de remesa con un monto de débito fijo'
               },

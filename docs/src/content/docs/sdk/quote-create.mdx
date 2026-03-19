@@ -3,19 +3,26 @@ title: Create a quote
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
-import { Tabs, TabItem, LinkButton } from '@astrojs/starlight/components'
+import { Tabs, TabItem, LinkButton, Badge } from '@astrojs/starlight/components'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
 
-A quote is a commitment from an account servicing entity to deliver a particular amount to a recipient when sending a particular amount from a sender. Once an authorized client obtains the requisite grant from the authorization server of the sender's ASE, the client can create a quote resource against the sender's wallet address. The quote indicates how much it will cost the sender to proceed with the transaction.
+The [Create Quote API](/apis/resource-server/operations/create-quote) lets you request the creation of a quote resource against the sender's wallet address.
+
+A quote is a commitment from an account servicing entity to pay a particular amount from the sender's account or pay a particular amount into the recipient's account, depending on the quote type. A quote is only valid for a limited time.
+
+The code snippets below let an authorized client request a quote from an [incomingAmount](#create-a-quote-from-an-incoming-amount), with a [debit amount](#create-a-quote-with-a-debit-amount), or with a [receive amount](#create-a-quote-with-a-receive-amount). You can read more about these quote types on the [Resources](/concepts/resources/#quote) page.
 
 ## Before you begin
 
 <Begin />
 
-## Create a quote with an incomingAmount _(from incoming payment)_
+## Create a quote from an incoming amount
 
-This code snippet allows a client to create a quote with an `incomingAmount` when one is specified in the `INCOMING_PAYMENT_URL`.
+<Badge text="Authenticated client required" variant="note" />
+<br />
+Create this type of quote when the incoming payment resource already has a
+defined `incomingAmount`.
 
 <Tabs syncKey="langs">
 <TabItem label='TypeScript/NodeJS' icon='node'>
@@ -285,7 +292,10 @@ Console.WriteLine($"QUOTE_URL = {quote.Id}");
 
 ## Create a quote with a debit amount
 
-This code snippet allows a client to create a quote with a `debitAmount`, which specifies the amount that will be deducted from the sender's wallet.
+<Badge text="Authenticated client required" variant="note" />
+<br />
+Create this type of quote to specify a debit amount. The debit amount is the
+amount to deduct from the sender's wallet.
 
 <Tabs syncKey="langs">
 <TabItem label='TypeScript/NodeJS' icon='node'>
@@ -596,7 +606,10 @@ Console.WriteLine($"QUOTE_URL = {quote.Id}");
 
 ## Create a quote with a receive amount
 
-This code snippet allows a client to create a quote with a `receiveAmount`, which specifies the amount that the recipient's wallet will receive.
+<Badge text="Authenticated client required" variant="note" />
+<br />
+Create this type of quote to specify a receive amount. The receive amount is the
+amount that will be paid into the recipient's wallet.
 
 <Tabs syncKey="langs">
 <TabItem label='TypeScript/NodeJS' icon='node'>
@@ -908,3 +921,4 @@ Console.WriteLine($"QUOTE_URL = {quote.Id}");
 ## References
 
 - [API specification](/apis/resource-server/operations/create-quote)
+- [Quote resource](/concepts/resources/#quote)

@@ -1,21 +1,23 @@
 ---
-title: Revoke a grant request
+title: Cancel a grant request
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
-import { Tabs, TabItem, LinkButton } from '@astrojs/starlight/components'
+import { Tabs, TabItem, LinkButton, Badge } from '@astrojs/starlight/components'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
 
-If an authorized client no longer needs access to protected resources, the client can revoke the corresponding grant request.
+If your client no longer needs access to protected resources, the [Cancel Grant API](/apis/auth-server/operations/delete-continue) lets you cancel (revoke) the corresponding grant request.
 
-These code snippets enable a client to revoke (cancel) a grant that it was previously issued. When a grant request is revoked, the request is placed into a finalized state and no further updates to the grant are allowed.
+The code snippets below let a client cancel a previously issued grant. When cancelled, the request is placed into a finalized state and no further updates to the grant request are allowed.
 
 ## Before you begin
 
 <Begin />
 
 ## Revoke a grant request
+
+<Badge text="Authenticated client required" variant="note" />
 
 <Tabs syncKey="langs">
 <TabItem label='TypeScript/NodeJS' icon='node'>

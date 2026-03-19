@@ -5,19 +5,23 @@ tableOfContents:
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
-import { Tabs, TabItem, LinkButton } from '@astrojs/starlight/components'
+import { Tabs, TabItem, LinkButton, Badge } from '@astrojs/starlight/components'
 import Begin from '/src/partials/before-you-begin.mdx'
 import Ts from '/src/partials/ts-init-config.mdx'
 
-An authorized client can look up the state of an incoming payment on a wallet address. This is useful when a client must determine if an incoming payment is still active and pending payment.
+The [Get an Incoming Payment API](/apis/resource-server/operations/get-incoming-payment) lets you get the latest state of an incoming payment resource.
 
-These code snippets return the state and details of a specific incoming payment, if found.
+Using the ID of the payment resource, a client can determine whether the payment is active, pending payment, or complete, and get the value of the amount received.
+
+The code snippets below let an authorized client retrieve the state and details of a specific incoming payment resource.
 
 ## Before you begin
 
 <Begin />
 
 ## Get the state of an incoming payment
+
+<Badge text="Authenticated client required" variant="note" />
 
 <Tabs syncKey="langs">
 <TabItem label='TypeScript/NodeJS' icon='node'>
