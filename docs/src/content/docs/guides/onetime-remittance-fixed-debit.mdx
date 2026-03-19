@@ -4,8 +4,8 @@ title: Send a remittance with fixed debit amount
 
 import { LinkOut } from '@interledger/docs-design-system'
 import { Tabs, TabItem, Badge } from '@astrojs/starlight/components'
-import StartInteraction from '/src/partials/grant-start-interaction.mdx'
-import FinishInteraction from '/src/partials/grant-finish-interaction.mdx'
+import Start from '/src/content/docs/partials/_grant-start-interaction.mdx'
+import Finish from '/src/content/docs/partials/_grant-finish-interaction.mdx'
 
 :::tip[Summary]
 Learn how to send a one-time remittance payment by debiting the sender's account by a specific amount.
@@ -1063,11 +1063,11 @@ var pendingSenderOutgoingPaymentGrant = await client.RequestGrantAsync(
 
 ### 7. Start interaction with the user
 
-<StartInteraction />
+<Start />
 
 ### 8. Finish interaction with the user
 
-<FinishInteraction />
+<Finish />
 
 ### 9. Request a grant continuation
 
