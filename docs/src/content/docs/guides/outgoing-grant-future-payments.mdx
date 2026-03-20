@@ -4,9 +4,9 @@ title: Get an outgoing payment grant for future payments
 
 import { LinkOut } from '@interledger/docs-design-system'
 import { Tabs, TabItem, Badge } from '@astrojs/starlight/components'
-import InteractionReq from '/src/partials/interaction-required.mdx'
-import StartInteraction from '/src/partials/grant-start-interaction.mdx'
-import FinishInteraction from '/src/partials/grant-finish-interaction.mdx'
+import InteractionReq from '/src/content/docs/partials/_interaction-required.mdx'
+import Start from '/src/content/docs/partials/_grant-start-interaction.mdx'
+import Finish from '/src/content/docs/partials/_grant-finish-interaction.mdx'
 
 :::tip[Summary]
 Learn how to get an outgoing payment grant for future payments without specifying any recipients.
@@ -125,10 +125,7 @@ Use the authorization server information received in the previous step to call t
 
 This call obtains a token that allows your app to request outgoing payment resources be created on your user's wallet account.
 
-:::note
-
 <InteractionReq />
-:::
 
 Remember, your user wants to send payments of up to $100 CAD a month for three months. The amount resets each month and any unspent portions don't roll over.
 
@@ -400,11 +397,11 @@ Altogether, your user can send up to $100 CAD from:
 
 ### 3. Start interaction with your user
 
-<StartInteraction />
+<Start />
 
 ### 4. Finish interaction with your user
 
-<FinishInteraction />
+<Finish />
 
 ### 5. Request a grant continuation
 

@@ -4,9 +4,9 @@ title: Dividir un pago entrante
 
 import { LinkOut } from '@interledger/docs-design-system'
 import { Tabs, TabItem, Badge } from '@astrojs/starlight/components'
-import InteractionReq from '/src/partials/es/interaction-required.mdx'
-import StartInteraction from '/src/partials/es/grant-start-interaction.mdx'
-import FinishInteraction from '/src/partials/es/grant-finish-interaction.mdx'
+import InteractionReq from '/src/content/docs/partials/es/_interaction-required.mdx'
+import Start from '/src/content/docs/partials/es/_grant-start-interaction.mdx'
+import Finish from '/src/content/docs/partials/es/_grant-finish-interaction.mdx'
 
 :::tip[Resumen]
 Conozca cómo tomar un único pago y dividir el valor entre varios destinatarios.
@@ -903,10 +903,7 @@ Utilice la información del consumidor `authServer` recibida en el paso 1 para l
 
 El propósito de esta llamada consiste en obtener un token de acceso que permita a su plataforma solicitar la creación de recursos de pago saliente en la cuenta de la billetera del consumidor.
 
-:::note
-
 <InteractionReq />
-:::
 
 <Tabs syncKey="lang">
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
@@ -1136,11 +1133,11 @@ var opContinueInteract = client.auth().grant().continuation(
 
 ### 7. Comenzar la interacción con el consumidor
 
-<StartInteraction />
+<Start />
 
 ### 8. Finalizar la interacción con el consumidor
 
-<FinishInteraction />
+<Finish />
 
 ### 9. Solicitar una continuación de la concesión de autorización
 
