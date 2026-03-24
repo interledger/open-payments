@@ -37,7 +37,7 @@ For more information about the EdDSA and its variants, refer to <LinkOut href='h
 
 ## Signature creation
 
-The example below illustrates creating the signature, starting with the original HTTP message.
+Signature creation starts with the original HTTP message.
 
 ```http title="Example: message before signature"
 POST HTTP/1.1
@@ -52,11 +52,11 @@ Authorization: GNAP 123454321
 }
 ```
 
-![Create the http signature](/img/4-sig-creation.png)
+### Signature base and signature params
 
-### Signature base
+First, the covered components are identified. The covered components are the fields that identify which parts of the message to use when creating the signature.
 
-The signature creation process begins with identifying the fields of the original message to use when creating the signature. These fields are referred to as the covered components of the message. The covered components make up the signature base, together with the signing algorithm, and an identifier for the signer's public key.
+The signature base is comprised of the covered components, the signing algorithm, and an identifier for the signer's public key.
 
 The final sub-field of the signature base is an HTTP-structured field called `signature-params`, which contains an ordered list of components that make up the signature base.
 
@@ -73,7 +73,7 @@ The final sub-field of the signature base is an HTTP-structured field called `si
 
 For more information about required components, see <LinkOut href="https://datatracker.ietf.org/doc/html/rfc9635#name-http-message-signatures">Section 7.3.1 HTTP Message Signatures</LinkOut> in the GNAP specification.
 
-### Generate signature
+### Signature generation
 
 To generate the HTTP signature:
 
@@ -81,7 +81,7 @@ To generate the HTTP signature:
 2. The digest is signed with the signer's private key, producing the signature as a byte string.
 3. The byte string is Base64-encoded, resulting in the final signature value.
 
-### Signed HTTP message
+### HTTP message signing
 
 The original message gets signed by adding uniquely labelled signature headers to the original message: `Signature-Input` and `Signature`.
 
