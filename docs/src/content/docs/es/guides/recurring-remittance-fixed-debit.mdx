@@ -134,6 +134,16 @@ var recipientWalletAddress = client.walletAddress().get("https://happylifebank.e
 ```
 
 </TabItem>
+
+<TabItem label=".NET" icon="seti:c-sharp">
+
+```csharp wrap
+var senderWalletAddress = await client.GetWalletAddressAsync("https://cloudninebank.example.com/sender");
+var recipientWalletAddress = await client.GetWalletAddressAsync("https://happylifebank.example.com/recipient");
+```
+
+</TabItem>
+
 </Tabs>
 
 <details>
@@ -267,6 +277,32 @@ var recipientIncomingPaymentGrant = client.auth().grant().incomingPayment(recipi
 
   </TabItem>
 
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var recipientIncomingPaymentGrant = await client.RequestGrantAsync(
+    new RequestArgs
+    {
+        Url = recipientWalletAddress.AuthServer,
+    },
+    new GrantCreateBody
+    {
+        AccessToken = new AccessToken
+        {
+            Access =
+            [
+                new IncomingAccess
+                {
+                    Actions = [Actions.Create]
+                }
+            ]
+        }
+    }
+);
+```
+
+</TabItem>
+
 </Tabs>
 
 <details>
@@ -384,6 +420,24 @@ var recipientIncomingPayment = client.payment().createIncoming(
 ```
 
   </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var recipientIncomingPayment = await client.CreateIncomingPaymentAsync(
+    new AuthRequestArgs
+    {
+        Url = recipientWalletAddress.ResourceServer,
+        AccessToken = recipientIncomingPaymentGrant.AccessToken.Value
+    },
+    new IncomingPaymentBody
+    {
+        WalletAddress = recipientWalletAddress.Id
+    }
+);
+```
+
+</TabItem>
 
 </Tabs>
 
@@ -624,6 +678,49 @@ var pendingSenderOutgoingPaymentGrant = client.auth().grant().outgoingPayment(se
 
 </TabItem>
 
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var pendingSenderOutgoingPaymentGrant = await client.RequestGrantAsync(
+    new RequestArgs
+    {
+        Url = senderWalletAddress.AuthServer,
+    },
+    new GrantCreateBodyWithInteract
+    {
+        AccessToken = new AccessToken
+        {
+            Access =
+            [
+                new OutgoingAccess
+                {
+                    Identifier = senderWalletAddress.Id,
+                    Actions = [Actions.Create],
+                    Limits = new OutgoingAccessLimits
+                    {
+                        DebitAmount = new AuthAmount("20000", "USD", 2),
+                        Interval = "R3/2025-10-03T23:25:00Z/P1M"
+                    }
+                }
+            ]
+        },
+        Interact = new InteractRequest
+        {
+            Start = [Start.Redirect],
+            Finish = new Finish
+            {
+                Method = FinishMethod.Redirect,
+                Uri = new Uri(
+                    "https://localhost"), // where to redirect your user after they've completed the interaction
+                Nonce = NONCE
+            }
+        }
+    }
+);
+```
+
+</TabItem>
+
 </Tabs>
 
 <details>
@@ -767,6 +864,24 @@ var senderOutgoingPaymentGrant = client.grant().continueRequest(
 ```
 
   </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var senderOutgoingPaymentGrant = await client.ContinueGrantAsync(
+    new AuthRequestArgs
+    {
+        Url = pendingSenderOutgoingPaymentGrant.Continue.Uri,
+        AccessToken = pendingSenderOutgoingPaymentGrant.Continue.AccessToken.Value
+    },
+    new GrantContinueBody
+    {
+        InteractRef = interactRef
+    }
+);
+```
+
+</TabItem>
 
 </Tabs>
 
@@ -920,6 +1035,26 @@ var senderOutgoingPayment = client.payment().createOutgoingFromIncoming(
 ```
 
   </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var senderOutgoingPayment = await client.CreateOutgoingPaymentAsync(
+    new AuthRequestArgs
+    {
+        Url = senderWalletAddress.ResourceServer,
+        AccessToken = senderOutgoingPaymentGrant.AccessToken.Value
+    },
+    new OutgoingPaymentBodyFromIncomingPayment
+    {
+        WalletAddress = senderWalletAddress.Id,
+        IncomingPayment = recipientIncomingPayment.Id,
+        DebitAmount = new Amount("20000", "USD", 2)
+    }
+);
+```
+
+</TabItem>
 
 </Tabs>
 

@@ -93,6 +93,15 @@ var userWalletAddress = client.walletAddress().get("https://cloudninebank.exampl
 ```
 
 </TabItem>
+
+<TabItem label=".NET" icon="seti:c-sharp">
+
+```csharp wrap
+var userWalletAddress = await client.GetWalletAddressAsync("https://cloudninebank.example.com/user");
+```
+
+</TabItem>
+
 </Tabs>
 
 <details>
@@ -309,6 +318,51 @@ var grantRequest = client.auth().grant().request(
 ```
 
   </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var grant = await client.RequestGrantAsync(
+    new RequestArgs
+    {
+        Url = userWalletAddress.AuthServer,
+    },
+    new GrantCreateBodyWithInteract
+    {
+        AccessToken = new AccessToken
+        {
+            Access =
+            [
+                new OutgoingAccess
+                {
+                    Identifier = userWalletAddress.Id,
+                    Actions = [Actions.Create, Actions.Read],
+                    Limits = new OutgoingAccessLimits
+                    {
+                        DebitAmount = new AuthAmount("10000", "CAD", 2),
+                        Interval = "R3/2025-05-20T13:00:00Z/P1M"
+                    }
+                }
+            ]
+        },
+        Client = userWalletAddress.Id,
+        Interact = new InteractRequest
+        {
+            Start = [Start.Redirect],
+            Finish = new Finish
+            {
+                Method = FinishMethod.Redirect,
+                Uri = new Uri(
+                    "https://localhost"), // where to redirect your user after they've completed the interaction
+                Nonce = NONCE
+            }
+        }
+    }
+);
+```
+
+</TabItem>
+
 </Tabs>
 
 <details>
@@ -444,6 +498,25 @@ var userOutgoingPaymentGrant = client.auth().grant().finalize(
 ```
 
   </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var userOutgoingPaymentGrant = await client.ContinueGrantAsync(
+    new AuthRequestArgs
+    {
+        Url = grant.Continue.Uri,
+        AccessToken = grant.Continue.AccessToken.Value
+    },
+    new GrantContinueBody()
+    {
+        InteractRef = interactRef
+    }
+);
+```
+
+</TabItem>
+
 </Tabs>
 
 Una respuesta exitosa proporciona a su aplicación un token de acceso. Ahora su aplicación puede emitir solicitudes de pago saliente hacia destinatarios futuros en función de la concesión. Cada solicitud debe hacer referencia al token de acceso.
