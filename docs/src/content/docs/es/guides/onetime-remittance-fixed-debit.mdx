@@ -134,6 +134,15 @@ var recipientWalletAddress = client.walletAddress().get("https://happylifebank.e
 ```
 
 </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var senderWalletAddress = await client.GetWalletAddressAsync("https://cloudninebank.example.com/sender");
+var recipientWalletAddress = await client.GetWalletAddressAsync("https://happylifebank.example.com/recipient");
+```
+
+</TabItem>
 </Tabs>
 <details>
 <summary>Ejemplo de respuesta</summary>
@@ -262,6 +271,32 @@ var recipientIncomingPaymentGrant = client.auth().grant().incomingPayment(recipi
 ```
 
 </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var recipientIncomingPaymentGrant = await client.RequestGrantAsync(
+    new RequestArgs
+    {
+        Url = recipientWalletAddress.AuthServer,
+    },
+    new GrantCreateBody
+    {
+        AccessToken = new AccessToken
+        {
+            Access =
+            [
+                new IncomingAccess
+                {
+                    Actions = [Actions.Create]
+                }
+            ]
+        }
+    }
+);
+```
+
+</TabItem>
 </Tabs>
 <details>
 <summary>Ejemplo de respuesta</summary>
@@ -370,6 +405,24 @@ var recipientIncomingPayment = client.payment().createIncoming(
   recipientWalletAddress,
   recipientIncomingPaymentGrant,
   BigDecimal.valueOf(1700.00)
+);
+```
+
+</TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var recipientIncomingPayment = await client.CreateIncomingPaymentAsync(
+    new AuthRequestArgs
+    {
+        Url = recipientWalletAddress.ResourceServer,
+        AccessToken = recipientIncomingPaymentGrant.AccessToken.Value
+    },
+    new IncomingPaymentBody
+    {
+        WalletAddress = recipientWalletAddress.Id,
+    }
 );
 ```
 
@@ -501,6 +554,32 @@ if err != nil {
 
 ```java wrap
 var senderQuoteGrant = client.auth().grant().quote(senderWalletAddress);
+```
+
+</TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var senderQuoteGrant = await client.RequestGrantAsync(
+    new RequestArgs
+    {
+        Url = senderWalletAddress.AuthServer,
+    },
+    new GrantCreateBody
+    {
+        AccessToken = new AccessToken
+        {
+            Access =
+            [
+                new QuoteAccess
+                {
+                    Actions = [Actions.Create]
+                }
+            ]
+        }
+    }
+);
 ```
 
 </TabItem>
@@ -646,6 +725,27 @@ var senderQuote = client.quote().create(
     Amount.build(BigDecimal.valueOf(100.00), "USD", 2)
   ),
   Optional.empty()
+);
+```
+
+</TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var senderQuote = await client.CreateQuoteAsync(
+    new AuthRequestArgs
+    {
+        Url = senderWalletAddress.ResourceServer,
+        AccessToken = senderQuoteGrant.AccessToken.Value
+    },
+    new QuoteBodyWithDebitAmount
+    {
+        Method = PaymentMethod.Ilp,
+        WalletAddress = senderWalletAddress.Id,
+        Receiver = recipientIncomingPayment.Id,
+        DebitAmount = new Amount("10000", "USD", 2)
+    }
 );
 ```
 
@@ -887,6 +987,47 @@ URI.create(urlToOpen),
 ```
 
 </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var pendingSenderOutgoingPaymentGrant = await client.RequestGrantAsync(
+    new RequestArgs
+    {
+        Url = senderWalletAddress.AuthServer,
+    },
+    new GrantCreateBodyWithInteract
+    {
+        AccessToken = new AccessToken
+        {
+            Access =
+            [
+                new OutgoingAccess
+                {
+                    Identifier = senderWalletAddress.Id,
+                    Actions = [Actions.Create],
+                    Limits = new OutgoingAccessLimits
+                    {
+                        DebitAmount = new AuthAmount("10000", "USD", 2)
+                    }
+                }
+            ]
+        },
+        Interact = new InteractRequest
+        {
+            Start = [Start.Redirect],
+            Finish = new Finish
+            {
+                Method = FinishMethod.Redirect,
+                Uri = new Uri("https://localhost"),  // where to redirect your user after they've completed the interaction
+                Nonce = NONCE
+            }
+        }
+    }
+);
+```
+
+</TabItem>
 </Tabs>
 
 <details>
@@ -1006,6 +1147,24 @@ if err != nil {
 var senderOutgoingPaymentGrant = client.auth().grant().finalize(
   opContinueInteract,
   interactRef
+);
+```
+
+</TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var senderOutgoingPaymentGrant = await client.ContinueGrantAsync(
+    new AuthRequestArgs
+    {
+        Url = pendingSenderOutgoingPaymentGrant.Continue.Uri,
+        AccessToken = pendingSenderOutgoingPaymentGrant.Continue.AccessToken.Value
+    },
+    new GrantContinueBody
+    {
+        InteractRef = interactRef
+    }
 );
 ```
 
@@ -1132,6 +1291,25 @@ var senderOutgoingPayment = client.payment().createOutgoing(
   senderOutgoingPaymentGrant,
   senderWalletAddress,
   senderQuote
+);
+```
+
+</TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var senderOutgoingPayment = await client.CreateOutgoingPaymentAsync(
+    new AuthRequestArgs
+    {
+        Url = senderWalletAddress.ResourceServer,
+        AccessToken = senderOutgoingPaymentGrant.AccessToken.Value
+    },
+    new OutgoingPaymentBodyFromQuote
+    {
+        WalletAddress = senderWalletAddress.Id,
+        QuoteId = senderQuote.Id,
+    }
 );
 ```
 

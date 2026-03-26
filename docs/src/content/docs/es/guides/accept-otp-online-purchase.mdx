@@ -127,6 +127,15 @@ var retailerWalletAddress = client.walletAddress().get("https://happylifebank.ex
 ```
 
   </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var customerWalletAddress = await client.GetWalletAddressAsync("https://cloudninebank.example.com/customer");
+var retailerWalletAddress = await client.GetWalletAddressAsync("https://happylifebank.example.com/retailer");
+```
+
+  </TabItem>
 </Tabs>
 
 <details>
@@ -248,6 +257,32 @@ if err != nil {
 ```java wrap
 var retailerIncomingPaymentGrant = client.auth().grant().incomingPayment(
   retailerWalletAddress
+);
+```
+
+  </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var retailerIncomingPaymentGrant = await client.RequestGrantAsync(
+    new RequestArgs
+    {
+        Url = retailerWalletAddress.AuthServer,
+    },
+    new GrantCreateBody
+    {
+        AccessToken = new AccessToken
+        {
+            Access =
+            [
+                new IncomingAccess
+                {
+                    Actions = [Actions.Create]
+                }
+            ]
+        }
+    }
 );
 ```
 
@@ -385,6 +420,25 @@ var retailerIncomingPayment = client.payment().createIncoming(
   retailerWalletAddress,
   retailerIncomingPaymentGrant,
   BigDecimal.valueOf(1400.00)
+);
+```
+
+  </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var retailerIncomingPayment = await client.CreateIncomingPaymentAsync(
+    new AuthRequestArgs
+    {
+        Url = retailerWalletAddress.ResourceServer,
+        AccessToken = retailerIncomingPaymentGrant.AccessToken.Value
+    },
+    new IncomingPaymentBody
+    {
+        WalletAddress = retailerWalletAddress.Id,
+        IncomingAmount = new Amount("140000", "MXN", 2)
+    }
 );
 ```
 
@@ -529,6 +583,32 @@ var customerQuoteGrant = client.auth().grant().quote(
 ```
 
   </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var customerQuoteGrant = await client.RequestGrantAsync(
+    new RequestArgs
+    {
+        Url = customerWalletAddress.AuthServer,
+    },
+    new GrantCreateBody
+    {
+        AccessToken = new AccessToken
+        {
+            Access =
+            [
+                new QuoteAccess
+                {
+                    Actions = [Actions.Create]
+                }
+            ]
+        }
+    }
+);
+```
+
+  </TabItem>
 </Tabs>
 
 <details>
@@ -657,6 +737,26 @@ var customerQuote = client.quote().create(
   retailerIncomingPayment,
   Optional.empty(),
   Optional.empty()
+);
+```
+
+  </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var customerQuote = await client.CreateQuoteAsync(
+    new AuthRequestArgs
+    {
+        Url = customerWalletAddress.ResourceServer,
+        AccessToken = customerQuoteGrant.AccessToken.Value
+    },
+    new QuoteBody
+    {
+        WalletAddress = customerWalletAddress.Id,
+        Receiver = retailerWalletAddress.Id,
+        Method = PaymentMethod.Ilp
+    }
 );
 ```
 
@@ -878,6 +978,47 @@ var opContinueInteract = client.auth().grant().continuation(
 
   </TabItem>
 
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var pendingCustomerOutgoingPaymentGrant = await client.RequestGrantAsync(
+    new RequestArgs
+    {
+        Url = customerWalletAddress.AuthServer,
+    },
+    new GrantCreateBodyWithInteract
+    {
+        AccessToken = new AccessToken
+        {
+            Access =
+            [
+                new OutgoingAccess
+                {
+                    Identifier = customerWalletAddress.Id,
+                    Actions = [Actions.Create],
+                    Limits = new OutgoingAccessLimits
+                    {
+                        DebitAmount = new AuthAmount("140000", "MXN", 2)
+                    }
+                }
+            ]
+        },
+        Interact = new InteractRequest
+        {
+            Start = [Start.Redirect],
+            Finish = new Finish
+            {
+                Method = FinishMethod.Redirect,
+                Uri = new Uri("https://localhost"),
+                Nonce = NONCE
+            }
+        }
+    }
+);
+```
+
+  </TabItem>
+
 </Tabs>
 
 <details>
@@ -1002,6 +1143,24 @@ if err != nil {
 var customerOutgoingPaymentGrant = client.auth().grant().finalize(
   opContinueInteract,
   interactRef
+);
+```
+
+  </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var customerOutgoingPaymentGrant = await client.ContinueGrantAsync(
+    new AuthRequestArgs
+    {
+        Url = pendingCustomerOutgoingPaymentGrant.Continue.Uri,
+        AccessToken = pendingCustomerOutgoingPaymentGrant.Continue.AccessToken.Value
+    },
+    new GrantContinueBody
+    {
+        InteractRef = interactRef
+    }
 );
 ```
 
@@ -1131,6 +1290,25 @@ var customerOutgoingPayment = client.payment().createOutgoing(
   customerOutgoingPaymentGrant,
   customerWalletAddress,
   customerQuote
+);
+```
+
+  </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var customerOutgoingPayment = await client.CreateOutgoingPaymentAsync(
+    new AuthRequestArgs
+    {
+        Url = customerWalletAddress.ResourceServer,
+        AccessToken = customerOutgoingPaymentGrant.AccessToken.Value
+    },
+    new OutgoingPaymentBodyFromQuote
+    {
+        WalletAddress = customerWalletAddress.Id,
+        QuoteId = customerQuote.Id,
+    }
 );
 ```
 

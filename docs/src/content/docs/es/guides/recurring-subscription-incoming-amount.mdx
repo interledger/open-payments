@@ -136,6 +136,16 @@ var serviceProviderWalletAddress = client.walletAddress().get("https://happylife
 ```
 
 </TabItem>
+
+<TabItem label=".NET" icon="seti:c-sharp">
+
+```csharp wrap
+var customerWalletAddress = await client.GetWalletAddressAsync("https://cloudninebank.example.com/customer");
+var serviceProviderWalletAddress = await client.GetWalletAddressAsync("https://happylifebank.example.com/service-provider");
+```
+
+</TabItem>
+
 </Tabs>
 
 <details>
@@ -269,6 +279,33 @@ var serviceProviderIncomingPaymentGrant = client.auth().grant().incomingPayment(
 ```
 
 </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var serviceProviderIncomingPaymentGrant = await client.RequestGrantAsync(
+    new RequestArgs
+    {
+        Url = serviceProviderWalletAddress.AuthServer,
+    },
+    new GrantCreateBody
+    {
+        AccessToken = new AccessToken
+        {
+            Access =
+            [
+                new IncomingAccess
+                {
+                    Actions = [Actions.Create]
+                }
+            ]
+        }
+    }
+);
+```
+
+</TabItem>
+
 </Tabs>
 
 <details>
@@ -406,6 +443,26 @@ var serviceProviderIncomingPayment = client.payment().createIncoming(
 ```
 
 </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var serviceProviderIncomingPayment = await client.CreateIncomingPaymentAsync(
+    new AuthRequestArgs
+    {
+        Url = serviceProviderWalletAddress.ResourceServer,
+        AccessToken = serviceProviderIncomingPaymentGrant.AccessToken.Value
+    },
+    new IncomingPaymentBody
+    {
+        WalletAddress = serviceProviderWalletAddress.Id,
+        IncomingAmount = new Amount("1500", "USD", 2)
+    }
+);
+```
+
+</TabItem>
+
 </Tabs>
 
 <details>
@@ -544,6 +601,33 @@ var customerQuoteGrant = client.auth().grant().quote(
 ```
 
 </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var customerQuoteGrant = await client.RequestGrantAsync(
+    new RequestArgs
+    {
+        Url = customerWalletAddress.AuthServer,
+    },
+    new GrantCreateBody
+    {
+        AccessToken = new AccessToken
+        {
+            Access =
+            [
+                new QuoteAccess
+                {
+                    Actions = [Actions.Create]
+                }
+            ]
+        }
+    }
+);
+```
+
+</TabItem>
+
 </Tabs>
 
 <details>
@@ -671,6 +755,27 @@ var customerQuote = client.quote().create(
 ```
 
 </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var customerQuote = await client.CreateQuoteAsync(
+    new AuthRequestArgs
+    {
+        Url = customerWalletAddress.ResourceServer,
+        AccessToken = customerQuoteGrant.AccessToken.Value
+    },
+    new QuoteBody
+    {
+        Method = PaymentMethod.Ilp,
+        WalletAddress = customerWalletAddress.Id,
+        Receiver = serviceProviderIncomingPayment.Id,
+    }
+);
+```
+
+</TabItem>
+
 </Tabs>
 
 La respuesta devuelve un `debitAmount`, un `receiveAmount` y demás información requerida.
@@ -921,6 +1026,50 @@ var opContinueInteract = client.auth().grant().continuation(
 ```
 
 </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var pendingCustomerOutgoingPaymentGrant = await client.RequestGrantAsync(
+    new RequestArgs
+    {
+        Url = customerWalletAddress.AuthServer,
+    },
+    new GrantCreateBodyWithInteract
+    {
+        AccessToken = new AccessToken
+        {
+            Access =
+            [
+                new OutgoingAccess
+                {
+                    Identifier = customerWalletAddress.Id,
+                    Actions = [Actions.Create, Actions.Read],
+                    Limits = new OutgoingAccessLimits
+                    {
+                        DebitAmount = new AuthAmount("1500", "USD", 2),
+                        Interval = "R12/2025-10-14T00:03:00Z/P1M"
+                    }
+                }
+            ]
+        },
+        Interact = new InteractRequest
+        {
+            Start = [Start.Redirect],
+            Finish = new Finish
+            {
+                Method = FinishMethod.Redirect,
+                Uri = new Uri(
+                    "https://localhost"), // where to redirect your user after they've completed the interaction
+                Nonce = NONCE
+            }
+        }
+    }
+);
+```
+
+</TabItem>
+
 </Tabs>
 
 <details>
@@ -1056,6 +1205,25 @@ var customerOutgoingPaymentGrant = client.auth().grant().finalize(
 ```
 
 </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var customerOutgoingPaymentGrant = await client.ContinueGrantAsync(
+    new AuthRequestArgs
+    {
+        Url = pendingCustomerOutgoingPaymentGrant.Continue.Uri,
+        AccessToken = pendingCustomerOutgoingPaymentGrant.Continue.AccessToken.Value
+    },
+    new GrantContinueBody
+    {
+        InteractRef = interactRef
+    }
+);
+```
+
+</TabItem>
+
 </Tabs>
 
 <details>
@@ -1189,6 +1357,26 @@ var customerOutgoingPayment = client.payment().createOutgoing(
 ```
 
 </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var customerOutgoingPayment = await client.CreateOutgoingPaymentAsync(
+    new AuthRequestArgs
+    {
+        Url = customerWalletAddress.ResourceServer,
+        AccessToken = customerOutgoingPaymentGrant.AccessToken.Value
+    },
+    new OutgoingPaymentBodyFromQuote
+    {
+        WalletAddress = customerWalletAddress.Id,
+        QuoteId = customerQuote.Id,
+    }
+);
+```
+
+</TabItem>
+
 </Tabs>
 
 <details>
