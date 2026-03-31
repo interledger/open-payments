@@ -66,26 +66,22 @@ export default defineConfig({
         starlightOpenAPI([
           {
             base: 'apis/resource-server',
-            schema:
-              './public/specs/resource-server.yaml',
+            schema: './public/specs/resource-server.yaml',
             sidebar: { label: 'Open Payments' }
           },
           {
             base: 'es/apis/resource-server',
-            schema:
-              './public/specs/resource-server.yaml',
+            schema: './public/specs/resource-server.yaml',
             sidebar: { label: 'Open Payments' }
           },
           {
             base: 'apis/wallet-address-server',
-            schema:
-              './public/specs/wallet-address-server.yaml',
+            schema: './public/specs/wallet-address-server.yaml',
             sidebar: { label: 'Wallet Addresses' }
           },
           {
             base: 'es/apis/wallet-address-server',
-            schema:
-              './public/specs/wallet-address-server.yaml',
+            schema: './public/specs/wallet-address-server.yaml',
             sidebar: { label: 'Wallet Addresses' }
           },
           {
