@@ -8,7 +8,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "build:redoc": "redocly build-docs ../open-payments-specifications/openapi/resource-server.yaml --output public/apis/redoc/resource-server/index.html && redocly build-docs ../open-payments-specifications/openapi/auth-server.yaml --output public/apis/redoc/auth-server/index.html && redocly build-docs ../open-payments-specifications/openapi/wallet-address-server.yaml --output public/apis/redoc/wallet-address-server/index.html",
+    "build:redoc": "redocly build-docs public/specs/resource-server.yaml --output public/apis/redoc/resource-server/index.html && redocly build-docs public/specs/auth-server.yaml --output public/apis/redoc/auth-server/index.html && redocly build-docs public/specs/wallet-address-server.yaml --output public/apis/redoc/wallet-address-server/index.html",
     "format": "prettier --write '**/*.{js,mjs,ts,tsx,json,md,mdx,astro}' && eslint --max-warnings=0 --fix .",
     "lint": "prettier --check '**/*.{js,mjs,ts,tsx,json,md,mdx,astro}' && eslint --max-warnings=0 . "
   },
