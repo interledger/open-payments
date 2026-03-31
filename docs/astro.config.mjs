@@ -67,35 +67,35 @@ export default defineConfig({
           {
             base: 'apis/resource-server',
             schema:
-              '../open-payments-specifications/openapi/resource-server.yaml',
+              './public/specs/resource-server.yaml',
             sidebar: { label: 'Open Payments' }
           },
           {
             base: 'es/apis/resource-server',
             schema:
-              '../open-payments-specifications/openapi/resource-server.yaml',
+              './public/specs/resource-server.yaml',
             sidebar: { label: 'Open Payments' }
           },
           {
             base: 'apis/wallet-address-server',
             schema:
-              '../open-payments-specifications/openapi/wallet-address-server.yaml',
+              './public/specs/wallet-address-server.yaml',
             sidebar: { label: 'Wallet Addresses' }
           },
           {
             base: 'es/apis/wallet-address-server',
             schema:
-              '../open-payments-specifications/openapi/wallet-address-server.yaml',
+              './public/specs/wallet-address-server.yaml',
             sidebar: { label: 'Wallet Addresses' }
           },
           {
             base: 'apis/auth-server',
-            schema: '../open-payments-specifications/openapi/auth-server.yaml',
+            schema: './public/specs/auth-server.yaml',
             sidebar: { label: 'Open Payments Authorization Server' }
           },
           {
             base: 'es/apis/auth-server',
-            schema: '../open-payments-specifications/openapi/auth-server.yaml',
+            schema: './public/specs/auth-server.yaml',
             sidebar: { label: 'Open Payments Authorization Server' }
           }
         ]),
