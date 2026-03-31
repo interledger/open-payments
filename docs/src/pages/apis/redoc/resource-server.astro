@@ -5,7 +5,10 @@ import { fileURLToPath } from 'node:url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const html = fs.readFileSync(
-  path.resolve(__dirname, '../../../../public/apis/redoc/resource-server/index.html'),
+  path.resolve(
+    __dirname,
+    '../../../../public/apis/redoc/resource-server/index.html'
+  ),
   'utf-8'
 )
 ---

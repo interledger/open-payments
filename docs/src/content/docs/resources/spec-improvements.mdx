@@ -21,9 +21,9 @@ The changes are grouped by spec file. All three API reference tools on this bran
 **Fix:** Added `title` fields to both objects:
 
 | Before                                                 | After                 |
-|--------------------------------------------------------|-----------------------|
-| *(no title)* — object with `interact` + `continue`     | `Pending Interaction` |
-| *(no title)* — object with `access_token` + `continue` | `Approved`            |
+| ------------------------------------------------------ | --------------------- |
+| _(no title)_ — object with `interact` + `continue`     | `Pending Interaction` |
+| _(no title)_ — object with `access_token` + `continue` | `Approved`            |
 
 This pattern is already used correctly elsewhere in the same spec (the request body uses `title: with Access Token` and `title: with Subject`).
 
@@ -36,7 +36,7 @@ This pattern is already used correctly elsewhere in the same spec (the request b
 **Fix:** Added descriptions:
 
 | Path             | Description added                                            |
-|------------------|--------------------------------------------------------------|
+| ---------------- | ------------------------------------------------------------ |
 | `/continue/{id}` | `The unique reference ID of the grant request continuation.` |
 | `/token/{id}`    | `The unique reference of the access token to be managed.`    |
 
@@ -83,7 +83,7 @@ This pattern is already used correctly elsewhere in the same spec (the request b
 **Fix:** Added descriptions:
 
 | Property | Description added                                                                                              |
-|----------|----------------------------------------------------------------------------------------------------------------|
+| -------- | -------------------------------------------------------------------------------------------------------------- |
 | `kid`    | `A unique identifier for the key.`                                                                             |
 | `use`    | `The intended use of the key. The only allowed value is `sig` (signature).`                                    |
 | `kty`    | `The key type. Identifies the cryptographic algorithm family. The only allowed value is OKP (Octet Key Pair).` |
