@@ -12,7 +12,7 @@ info:
     - `GET /` — retrieve public details for a wallet address
     - `GET /jwks.json` — retrieve the JSON Web Key Set (JWKS) for a wallet address
 
-    For an overview of wallet addresses and how they work in Open Payments, see [openpayments.dev](https://openpayments.dev/concepts/wallet-addresses).
+    For an overview of wallet addresses and how they work in Open Payments, see [the Wallet addresses concepts page](https://openpayments.dev/concepts/wallet-addresses).
   contact:
     email: tech@interledger.org
 servers:

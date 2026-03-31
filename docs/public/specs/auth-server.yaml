@@ -16,7 +16,7 @@ info:
     - `POST /token/{id}` — rotate an access token
     - `DELETE /token/{id}` — revoke an access token
 
-    For an overview of how Open Payments authorization works, see [openpayments.dev](https://openpayments.dev/concepts/auth).
+    For an overview of how Open Payments authorization works, see [the Authorization concepts page](https://openpayments.dev/concepts/auth).
   contact:
     email: tech@interledger.org
 servers:

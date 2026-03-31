@@ -13,7 +13,7 @@ info:
     - `/outgoing-payments` — create and manage outgoing payment instructions
     - `/quotes` — request a quote for a specific send or receive amount
 
-    For a full overview of these resources, see [openpayments.dev](https://openpayments.dev/concepts/resources).
+    For a full overview of these resources, see [the Resources concepts page](https://openpayments.dev/concepts/resources).
   summary: An API for open access to financial accounts to send and receive payments.
   contact:
     email: tech@interledger.org
