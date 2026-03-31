@@ -104,7 +104,9 @@ export default defineConfig({
           errorOnFallbackPages: false,
           exclude: [
             '/apis/{auth-server,resource-server,wallet-address-server}/**/*',
-            '/es/apis/{auth-server,resource-server,wallet-address-server}/**/*'
+            '/es/apis/{auth-server,resource-server,wallet-address-server}/**/*',
+            '/apis/scalar/**',
+            '/apis/redoc/**'
           ]
         }),
         starlightFullViewMode()
@@ -395,6 +397,52 @@ export default defineConfig({
             {
               label: 'Further learning',
               link: '/resources/further-learning/'
+            }
+          ]
+        },
+        {
+          label: 'Demo: Spec improvements',
+          link: '/resources/spec-improvements'
+        },
+        {
+          label: 'Demo: Redoc',
+          collapsed: false,
+          items: [
+            {
+              label: 'Resource Server',
+              link: '/apis/redoc/resource-server',
+              attrs: { target: '_blank', rel: 'noopener noreferrer' }
+            },
+            {
+              label: 'Auth Server',
+              link: '/apis/redoc/auth-server',
+              attrs: { target: '_blank', rel: 'noopener noreferrer' }
+            },
+            {
+              label: 'Wallet Address Server',
+              link: '/apis/redoc/wallet-address-server',
+              attrs: { target: '_blank', rel: 'noopener noreferrer' }
+            }
+          ]
+        },
+        {
+          label: 'Demo: Scalar',
+          collapsed: false,
+          items: [
+            {
+              label: 'Resource Server',
+              link: '/apis/scalar/resource-server',
+              attrs: { target: '_blank', rel: 'noopener noreferrer' }
+            },
+            {
+              label: 'Auth Server',
+              link: '/apis/scalar/auth-server',
+              attrs: { target: '_blank', rel: 'noopener noreferrer' }
+            },
+            {
+              label: 'Wallet Address Server',
+              link: '/apis/scalar/wallet-address-server',
+              attrs: { target: '_blank', rel: 'noopener noreferrer' }
             }
           ]
         },

@@ -1,0 +1,204 @@
+openapi: 3.1.0
+info:
+  title: Wallet Address API
+  version: '1.3.0'
+  license:
+    name: Apache 2.0
+    identifier: Apache-2.0
+  description: |-
+    The wallet address server exposes publicly accessible information about an Open Payments wallet address, including basic account details and the cryptographic keys used to verify requests from this wallet address.
+
+    **Endpoints:**
+    - `GET /` — retrieve public details for a wallet address
+    - `GET /jwks.json` — retrieve the JSON Web Key Set (JWKS) for a wallet address
+
+    For an overview of wallet addresses and how they work in Open Payments, see [openpayments.dev](https://openpayments.dev/concepts/wallet-addresses).
+  contact:
+    email: tech@interledger.org
+servers:
+  - url: 'https://ilp.interledger-test.dev/alice'
+    description: "Server for Alice's wallet address"
+  - url: 'https://ilp.interledger-test.dev/bob'
+    description: "Server for Bob's wallet address"
+tags:
+  - name: wallet-address
+    description: wallet address operations
+paths:
+  /:
+    get:
+      summary: Get a Wallet Address
+      tags:
+        - wallet-address
+      responses:
+        '200':
+          description: Wallet Address Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/wallet-address'
+              examples:
+                Get wallet address for https://ilp.interledger-test.dev/alice:
+                  value:
+                    id: 'https://ilp.interledger-test.dev/alice'
+                    publicName: Alice
+                    assetCode: USD
+                    assetScale: 2
+                    authServer: 'https://ilp.interledger-test.dev/auth'
+                    resourceServer: 'https://ilp.interledger-test.dev/op'
+        '302':
+          description: If the `Accept` header is `text/html` in the request, the server may choose to redirect to an HTML page for the given wallet address.
+          headers:
+            Location:
+              description: 'The URL of the wallet address webpage.'
+              schema:
+                type: string
+        '404':
+          description: Wallet Address Not Found
+      operationId: get-wallet-address
+      description: |-
+        Retrieve the public information of the Wallet Address.
+
+        This endpoint should be open to anonymous requests as it allows clients to verify a Wallet Address URL and get the basic information required to construct new transactions and discover the grant request URL.
+
+        The content should be slow changing and cacheable for long periods. Servers SHOULD use cache control headers.
+      security: []
+      x-internal: false
+  /jwks.json:
+    get:
+      summary: Get the keys bound to a Wallet Address
+      tags:
+        - wallet-address
+      responses:
+        '200':
+          description: JWKS Document Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/json-web-key-set'
+              examples: {}
+        '404':
+          description: JWKS Document Not Found
+      operationId: get-wallet-address-keys
+      description: Retrieve the public keys of the Wallet Address.
+      security: []
+
+components:
+  schemas:
+    wallet-address:
+      title: Wallet Address
+      type: object
+      description: A **wallet address** resource is the root of the API and contains the public details of the financial account represented by the Wallet Address that is also the service endpoint URL.
+      additionalProperties: true
+      examples:
+        - id: 'https://ilp.interledger-test.dev/alice'
+          publicName: Alice
+          assetCode: USD
+          assetScale: 2
+          authServer: 'https://ilp.interledger-test.dev/auth'
+          resourceServer: 'https://ilp.interledger-test.dev/op'
+      properties:
+        id:
+          type: string
+          format: uri
+          description: The URL identifying the wallet address.
+          readOnly: true
+        publicName:
+          type: string
+          description: A public name for the account. This should be set by the account holder with their provider to provide a hint to counterparties as to the identity of the account holder.
+          readOnly: true
+        assetCode:
+          title: Asset code
+          type: string
+          description: The assetCode is a code that indicates the underlying asset. An ISO4217 currency code should be used whenever possible. The ISO4217 representation of the US Dollar is USD.
+        assetScale:
+          title: Asset scale
+          type: integer
+          minimum: 0
+          maximum: 255
+          description: The number of decimal places that defines the scale of the smallest divisible unit for the given asset code. It determines how an integer amount is scaled to derive the actual monetary value. For example, USD has an asset scale of 2 with the smallest unit being 0.01. An integer amount of `1000` with an `assetCode` of `USD` and `assetScale` of `2` translates to $10.00.
+        authServer:
+          type: string
+          format: uri
+          description: The URL of the authorization server endpoint for getting grants and access tokens for this wallet address.
+          readOnly: true
+        resourceServer:
+          type: string
+          format: uri
+          description: The URL of the resource server endpoint for performing Open Payments with this wallet address.
+          readOnly: true
+      required:
+        - id
+        - assetCode
+        - assetScale
+        - authServer
+        - resourceServer
+    json-web-key-set:
+      title: JSON Web Key Set document
+      type: object
+      description: 'A JSON Web Key Set document according to [rfc7517](https://datatracker.ietf.org/doc/html/rfc7517) listing the keys associated with this wallet address. These keys are used to sign requests made by this wallet address.'
+      additionalProperties: false
+      properties:
+        keys:
+          type: array
+          items:
+            $ref: '#/components/schemas/json-web-key'
+          readOnly: true
+      required:
+        - keys
+      examples:
+        - keys:
+            - kid: key-1
+              alg: EdDSA
+              use: sig
+              kty: OKP
+              crv: Ed25519
+              x: 11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo
+    json-web-key:
+      type: object
+      properties:
+        kid:
+          type: string
+          description: A unique identifier for the key.
+        alg:
+          type: string
+          description: 'The cryptographic algorithm family used with the key. The only allowed value is `EdDSA`. '
+          enum:
+            - EdDSA
+        use:
+          type: string
+          description: The intended use of the key. The only allowed value is `sig` (signature).
+          enum:
+            - sig
+        kty:
+          type: string
+          description: The key type. Identifies the cryptographic algorithm family. The only allowed value is `OKP` (Octet Key Pair).
+          enum:
+            - OKP
+        crv:
+          type: string
+          description: The cryptographic curve used with the key. The only allowed value is `Ed25519`.
+          enum:
+            - Ed25519
+        x:
+          type: string
+          pattern: '^[a-zA-Z0-9-_]+$'
+          description: The base64 url-encoded public key.
+      required:
+        - kid
+        - alg
+        - kty
+        - crv
+        - x
+      title: Ed25519 Public Key
+      description: A JWK representation of an Ed25519 Public Key
+      examples:
+        - kid: key-1
+          use: sig
+          kty: OKP
+          crv: Ed25519
+          x: 11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo
+        - kid: '2022-09-02'
+          use: sig
+          kty: OKP
+          crv: Ed25519
+          x: oy0L_vTygNE4IogRyn_F5GmHXdqYVjIXkWs2jky7zsI
