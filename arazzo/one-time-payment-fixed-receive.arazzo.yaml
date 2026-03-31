@@ -1,0 +1,280 @@
+arazzo: "1.0.1"
+info:
+  title: "Open Payments — One-Time Payment (Fixed Receive)"
+  summary: >
+    End-to-end workflow for sending a one-time payment where the recipient
+    specifies the amount to receive.
+  description: |
+    This workflow documents the complete API call sequence for an Open Payments
+    client to send a one-time payment with a fixed receive amount — the most
+    common e-commerce checkout flow.
+
+    **Actors:**
+    - **Client** — a web or mobile application acting on behalf of the sender.
+    - **Recipient's ASE** — the Account Servicing Entity that hosts the
+      recipient's wallet address, authorization server, and resource server.
+    - **Sender's ASE** — the Account Servicing Entity that hosts the sender's
+      wallet address, authorization server, and resource server.
+
+    **Flow summary:**
+    1. Resolve the recipient's wallet address to discover server URLs.
+    2. Obtain a grant and create an incoming payment on the recipient's ASE.
+    3. Obtain a grant and create a quote on the sender's ASE.
+    4. Obtain an interactive grant (with user consent) for the outgoing payment.
+    5. Continue the grant after user interaction to receive an access token.
+    6. Create the outgoing payment on the sender's ASE to initiate the transfer.
+  version: "1.0.0"
+
+sourceDescriptions:
+  - name: walletAddressServer
+    url: ../open-payments-specifications/openapi/wallet-address-server.yaml
+    type: openapi
+  - name: resourceServer
+    url: ../open-payments-specifications/openapi/resource-server.yaml
+    type: openapi
+  - name: authServer
+    url: ../open-payments-specifications/openapi/auth-server.yaml
+    type: openapi
+
+workflows:
+  - workflowId: oneTimePaymentFixedReceive
+    summary: "One-time payment with a fixed receive amount"
+    description: |
+      Complete Open Payments flow for a one-time payment where the incoming
+      payment has an `incomingAmount` set. This is the standard e-commerce
+      checkout pattern where the merchant knows exactly how much should be
+      received.
+    inputs:
+      type: object
+      required:
+        - recipientWalletAddressUrl
+        - senderWalletAddressUrl
+        - amount
+        - assetCode
+        - assetScale
+        - clientWalletAddress
+      properties:
+        recipientWalletAddressUrl:
+          type: string
+          description: "The recipient's wallet address URL (e.g. https://wallet.example.com/alice)"
+        senderWalletAddressUrl:
+          type: string
+          description: "The sender's wallet address URL (e.g. https://wallet.example.com/bob)"
+        amount:
+          type: string
+          description: "Amount to receive in minor units (e.g. '2500' for $25.00 with scale 2)"
+        assetCode:
+          type: string
+          description: "Currency code (e.g. USD)"
+        assetScale:
+          type: integer
+          description: "Asset scale (e.g. 2 for USD cents)"
+        clientWalletAddress:
+          type: string
+          description: "The client's wallet address for GNAP identification"
+        finishUri:
+          type: string
+          description: "URI to redirect the user to after interaction (optional, defaults to client callback)"
+        finishNonce:
+          type: string
+          description: "Unique nonce for the interaction finish (optional)"
+
+    steps:
+      # ─── Step 1: Resolve recipient's wallet address ───
+      - stepId: getRecipientWalletAddress
+        description: >
+          Retrieve the recipient's wallet address details to discover the
+          authorization server URL and resource server URL.
+        operationId: walletAddressServer.get-wallet-address
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          recipientAuthServer: $response.body.authServer
+          recipientResourceServer: $response.body.resourceServer
+          recipientAssetCode: $response.body.assetCode
+          recipientAssetScale: $response.body.assetScale
+
+      # ─── Step 2: Request grant for incoming payment on recipient's ASE ───
+      - stepId: requestIncomingPaymentGrant
+        description: >
+          Request a non-interactive grant from the recipient's authorization
+          server to create an incoming payment resource.
+        operationId: authServer.post-request
+        requestBody:
+          contentType: application/json
+          payload:
+            access_token:
+              access:
+                - type: incoming-payment
+                  actions:
+                    - create
+                    - read
+                  identifier: $inputs.recipientWalletAddressUrl
+            client: $inputs.clientWalletAddress
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          incomingPaymentAccessToken: $response.body.access_token.value
+          incomingPaymentContinueUri: $response.body.continue.uri
+
+      # ─── Step 3: Create incoming payment on recipient's resource server ───
+      - stepId: createIncomingPayment
+        description: >
+          Create an incoming payment resource on the recipient's account with
+          the fixed receive amount. The response includes unique payment
+          details (e.g. ILP address) for addressing payments to the recipient.
+        operationId: resourceServer.create-incoming-payment
+        requestBody:
+          contentType: application/json
+          payload:
+            walletAddress: $inputs.recipientWalletAddressUrl
+            incomingAmount:
+              value: $inputs.amount
+              assetCode: $inputs.assetCode
+              assetScale: $inputs.assetScale
+        successCriteria:
+          - condition: $statusCode == 201
+        outputs:
+          incomingPaymentUrl: $response.body.id
+
+      # ─── Step 4: Resolve sender's wallet address ───
+      - stepId: getSenderWalletAddress
+        description: >
+          Retrieve the sender's wallet address details to discover the
+          sender's authorization and resource server URLs.
+        operationId: walletAddressServer.get-wallet-address
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          senderAuthServer: $response.body.authServer
+          senderResourceServer: $response.body.resourceServer
+
+      # ─── Step 5: Request grant for quote on sender's ASE ───
+      - stepId: requestQuoteGrant
+        description: >
+          Request a non-interactive grant from the sender's authorization
+          server to create a quote resource.
+        operationId: authServer.post-request
+        requestBody:
+          contentType: application/json
+          payload:
+            access_token:
+              access:
+                - type: quote
+                  actions:
+                    - create
+                    - read
+            client: $inputs.clientWalletAddress
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          quoteAccessToken: $response.body.access_token.value
+
+      # ─── Step 6: Create quote on sender's resource server ───
+      - stepId: createQuote
+        description: >
+          Create a quote on the sender's account. The receiver is the URL of
+          the incoming payment. Since the incoming payment has an
+          `incomingAmount`, the quote automatically calculates the debit
+          amount including any fees.
+        operationId: resourceServer.create-quote
+        requestBody:
+          contentType: application/json
+          payload:
+            walletAddress: $inputs.senderWalletAddressUrl
+            receiver: $steps.createIncomingPayment.outputs.incomingPaymentUrl
+            method: ilp
+        successCriteria:
+          - condition: $statusCode == 201
+        outputs:
+          quoteId: $response.body.id
+          debitAmount: $response.body.debitAmount
+          receiveAmount: $response.body.receiveAmount
+          expiresAt: $response.body.expiresAt
+
+      # ─── Step 7: Request interactive grant for outgoing payment ───
+      - stepId: requestOutgoingPaymentGrant
+        description: >
+          Request an interactive grant from the sender's authorization server
+          for the outgoing payment. This returns a redirect URI where the
+          sender must provide explicit consent before the payment can proceed.
+        operationId: authServer.post-request
+        requestBody:
+          contentType: application/json
+          payload:
+            access_token:
+              access:
+                - type: outgoing-payment
+                  actions:
+                    - create
+                    - read
+                  identifier: $inputs.senderWalletAddressUrl
+                  limits:
+                    debitAmount: $steps.createQuote.outputs.debitAmount
+                    receiveAmount: $steps.createQuote.outputs.receiveAmount
+                    receiver: $steps.createIncomingPayment.outputs.incomingPaymentUrl
+            client: $inputs.clientWalletAddress
+            interact:
+              start:
+                - redirect
+              finish:
+                method: redirect
+                uri: $inputs.finishUri
+                nonce: $inputs.finishNonce
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          interactRedirectUri: $response.body.interact.redirect
+          interactFinishNonce: $response.body.interact.finish
+          continueAccessToken: $response.body.continue.access_token.value
+          continueUri: $response.body.continue.uri
+          continueWait: $response.body.continue.wait
+
+      # ─── Step 8: Continue grant after user interaction ───
+      - stepId: continueOutgoingPaymentGrant
+        description: >
+          After the sender has completed the interaction (consented to the
+          payment via the identity provider), the client continues the grant
+          request to obtain the access token for the outgoing payment.
+          The client MUST verify the interaction hash before making this call.
+        operationId: authServer.post-continue
+        parameters:
+          - name: id
+            in: path
+            value: $steps.requestOutgoingPaymentGrant.outputs.continueUri
+        requestBody:
+          contentType: application/json
+          payload:
+            interact_ref: "{interact_ref_from_redirect}"
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          outgoingPaymentAccessToken: $response.body.access_token.value
+          outgoingPaymentManageUrl: $response.body.access_token.manage
+
+      # ─── Step 9: Create outgoing payment on sender's resource server ───
+      - stepId: createOutgoingPayment
+        description: >
+          Create the outgoing payment resource on the sender's account using
+          the quote ID. This instructs the sender's ASE to execute the payment.
+          The payment setup is now complete — the actual money movement happens
+          on the underlying payment rails between the two ASEs.
+        operationId: resourceServer.create-outgoing-payment
+        requestBody:
+          contentType: application/json
+          payload:
+            walletAddress: $inputs.senderWalletAddressUrl
+            quoteId: $steps.createQuote.outputs.quoteId
+        successCriteria:
+          - condition: $statusCode == 201
+        outputs:
+          outgoingPaymentId: $response.body.id
+          outgoingPaymentFailed: $response.body.failed
+          sentAmount: $response.body.sentAmount
+
+    outputs:
+      incomingPaymentUrl: $steps.createIncomingPayment.outputs.incomingPaymentUrl
+      quoteId: $steps.createQuote.outputs.quoteId
+      outgoingPaymentId: $steps.createOutgoingPayment.outputs.outgoingPaymentId
+      debitAmount: $steps.createQuote.outputs.debitAmount
+      receiveAmount: $steps.createQuote.outputs.receiveAmount
