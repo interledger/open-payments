@@ -1,0 +1,111 @@
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+
+```ts wrap
+const customerQuote = await client.quote.create(
+  {
+    url: customerWalletAddress.resourceServer,
+    accessToken: customerQuoteGrant.access_token.value
+  },
+  {
+    method: 'ilp',
+    walletAddress: customerWalletAddress.id,
+    receiver: serviceProviderIncomingPayment.id
+  }
+)
+```
+
+</TabItem>
+<TabItem label='Rust' icon='seti:rust'>
+
+```rust wrap
+use open_payments::types::{CreateQuoteRequest, PaymentMethodType, Receiver};
+let quote_request = CreateQuoteRequest::NoAmountQuote {
+  wallet_address: customer_wallet_address.id.clone(),
+  receiver: Receiver(service_provider_incoming_payment.id.clone()),
+  method: PaymentMethodType::Ilp,
+};
+let customer_quote = client
+  .quotes()
+  .create(
+    &customer_wallet_address.resource_server,
+    &quote_request,
+    Some(&customer_quote_grant.access_token.value),
+  )
+  .await?;
+```
+
+</TabItem>
+<TabItem label='PHP' icon='seti:php'>
+
+```php wrap
+$customerQuote = $client->quote()->create(
+  [
+    'url' => $customerWalletAddress->resourceServer,
+    'accessToken' => $customerQuoteGrant->access_token->value
+  ],
+  [
+    'method' => 'ilp',
+    'walletAddress' => $customerWalletAddress->id,
+    'receiver' => $serviceProviderIncomingPayment->id,
+  ]
+);
+```
+
+</TabItem>
+<TabItem label='Go' icon='seti:go'>
+
+```go wrap
+customerQuote, err := client.Quote.Create(context.TODO(), op.QuoteCreateParams{
+	BaseURL:     *customerWalletAddress.ResourceServer,
+	AccessToken: customerQuoteGrant.AccessToken.Value,
+	Payload: rs.CreateQuoteJSONBody0{
+		WalletAddressSchema: *customerWalletAddress.Id,
+		Receiver:            *serviceProviderIncomingPayment.Id,
+		Method:              "ilp",
+	},
+})
+if err != nil {
+	log.Fatalf("Error creating quote: %v\n", err)
+}
+```
+
+</TabItem>
+
+<TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var customerQuote = client.quote().create(
+  customerQuoteGrant.getAccess().getToken(),
+  customerWalletAddress,
+  serviceProviderIncomingPayment,
+  Optional.empty(),
+  Optional.empty()
+);
+```
+
+</TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var customerQuote = await client.CreateQuoteAsync(
+    new AuthRequestArgs
+    {
+        Url = customerWalletAddress.ResourceServer,
+        AccessToken = customerQuoteGrant.AccessToken.Value
+    },
+    new QuoteBody
+    {
+        Method = PaymentMethod.Ilp,
+        WalletAddress = customerWalletAddress.Id,
+        Receiver = serviceProviderIncomingPayment.Id,
+    }
+);
+```
+
+</TabItem>
+
+</Tabs>

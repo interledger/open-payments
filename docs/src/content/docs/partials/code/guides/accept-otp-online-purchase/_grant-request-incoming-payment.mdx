@@ -1,0 +1,129 @@
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+
+<Tabs syncKey="lang">
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+
+```ts wrap
+const retailerIncomingPaymentGrant = await client.grant.request(
+  {
+    url: retailerWalletAddress.authServer
+  },
+  {
+    access_token: {
+      access: [
+        {
+          type: 'incoming-payment',
+          actions: ['create']
+        }
+      ]
+    }
+  }
+)
+```
+
+  </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
+
+```rust wrap
+use open_payments::types::{AccessTokenRequest, AccessItem, IncomingPaymentAction, GrantRequest};
+
+let incoming_access = AccessTokenRequest {
+access: vec![AccessItem::IncomingPayment { actions: vec![IncomingPaymentAction::Create], identifier: None }],
+};
+let incoming_grant_request = GrantRequest::new(incoming_access, None);
+
+let retailer_incoming_payment_grant = client
+.grant()
+.request(&retailer_wallet_address.auth_server, &incoming_grant_request)
+.await?;
+
+```
+
+</TabItem>
+
+<TabItem label='PHP' icon='seti:php'>
+
+```php
+$retailerIncomingPaymentGrant = $client->grant()->request(
+  [
+    'url' => $retailerWalletAddress->authServer
+  ],
+  [
+    'access_token' => [
+      'access' => [
+        [
+          'type' => 'incoming-payment',
+          'actions' => ['create']
+        ]
+      ]
+    ]
+  ]
+);
+```
+
+</TabItem>
+
+<TabItem label='Go' icon='seti:go'>
+
+```go wrap
+incomingAccess := as.AccessIncoming{
+	Type:    as.IncomingPayment,
+	Actions: []as.AccessIncomingActions{as.AccessIncomingActionsCreate},
+}
+accessItem := as.AccessItem{}
+if err := accessItem.FromAccessIncoming(incomingAccess); err != nil {
+	log.Fatalf("Error creating AccessItem: %v\n", err)
+}
+accessToken := struct {
+	Access as.Access `json:"access"`
+}{
+	Access: []as.AccessItem{accessItem},
+}
+
+retailerIncomingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
+	URL:         *retailerWalletAddress.AuthServer,
+	RequestBody: as.GrantRequestWithAccessToken{AccessToken: accessToken},
+})
+if err != nil {
+	log.Fatalf("Error requesting incoming payment grant: %v\n", err)
+}
+```
+
+</TabItem>
+
+  <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var retailerIncomingPaymentGrant = client.auth().grant().incomingPayment(
+  retailerWalletAddress
+);
+```
+
+  </TabItem>
+
+  <TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var retailerIncomingPaymentGrant = await client.RequestGrantAsync(
+    new RequestArgs
+    {
+        Url = retailerWalletAddress.AuthServer,
+    },
+    new GrantCreateBody
+    {
+        AccessToken = new AccessToken
+        {
+            Access =
+            [
+                new IncomingAccess
+                {
+                    Actions = [Actions.Create]
+                }
+            ]
+        }
+    }
+);
+```
+
+  </TabItem>
+</Tabs>

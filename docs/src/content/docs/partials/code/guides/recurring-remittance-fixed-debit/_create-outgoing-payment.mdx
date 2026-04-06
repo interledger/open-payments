@@ -1,0 +1,133 @@
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+
+<Tabs syncKey="lang">
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+
+```ts wrap
+const senderOutgoingPayment = await client.outgoingPayment.create(
+  {
+    url: senderWalletAddress.resourceServer,
+    accessToken: senderOutgoingPaymentGrant.access_token.value
+  },
+  {
+    walletAddress: senderWalletAddress.id,
+    incomingPayment: recipientIncomingPayment.id,
+    debitAmount: {
+      assetCode: 'USD',
+      assetScale: 2,
+      value: '20000'
+    }
+  }
+)
+```
+
+  </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
+
+```rust wrap
+use open_payments::types::{OutgoingPaymentRequest, Amount};
+let outgoing_request = OutgoingPaymentRequest::FromIncomingPayment {
+  wallet_address: sender_wallet_address.id.clone(),
+  incoming_payment_id: recipient_incoming_payment.id.clone(),
+  debit_amount: Amount {
+    value: "20000".into(),
+    asset_code: "USD".into(),
+    asset_scale: 2,
+  },
+  metadata: None,
+};
+let sender_outgoing_payment = client
+  .outgoing_payments()
+  .create(
+    &sender_wallet_address.resource_server,
+    &outgoing_request,
+    Some(&sender_outgoing_payment_grant.access_token.value),
+  )
+  .await?;
+```
+
+  </TabItem>
+
+  <TabItem label='PHP' icon='seti:php'>
+
+```php wrap
+$senderOutgoingPayment = $client->outgoingPayment()->create(
+  [
+    'url' => $senderWalletAddress->resourceServer,
+    'accessToken' => $senderOutgoingPaymentGrant->access_token->value
+  ],
+  [
+    'walletAddress' => $senderWalletAddress->id,
+    'incomingPayment' => $recipientIncomingPayment->id,
+    'debitAmount' => [
+      'assetCode' => 'USD',
+      'assetScale' => 2,
+      'value' => '20000'
+    ],
+  ]
+ );
+```
+
+  </TabItem>
+
+  <TabItem label='Go' icon='seti:go'>
+
+```go wrap
+var outgoingPayload rs.CreateOutgoingPaymentRequest
+if err := outgoingPayload.FromCreateOutgoingPaymentWithoutQuote(rs.CreateOutgoingPaymentWithoutQuote{
+  WalletAddressSchema: *senderWalletAddress.Id,
+  IncomingPayment:     *recipientIncomingPayment.Id,
+  DebitAmount: &rs.Amount{
+    Value:      "20000",
+    AssetCode:  "USD",
+    AssetScale: 2,
+  },
+}); err != nil {
+  log.Fatalf("Error creating payload: %v\n", err)
+}
+
+senderOutgoingPayment, err := client.OutgoingPayment.Create(context.TODO(), op.OutgoingPaymentCreateParams{
+  BaseURL:     *senderWalletAddress.ResourceServer,
+  AccessToken: senderOutgoingPaymentGrant.AccessToken.Value,
+  Payload:     outgoingPayload,
+})
+if err != nil {
+  log.Fatalf("Error creating outgoing payment: %v\n", err)
+}
+```
+
+  </TabItem>
+
+  <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var senderOutgoingPayment = client.payment().createOutgoingFromIncoming(
+  senderWalletAddress,
+  recipientIncomingPayment,
+  senderOutgoingPaymentGrant
+);
+```
+
+  </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var senderOutgoingPayment = await client.CreateOutgoingPaymentAsync(
+    new AuthRequestArgs
+    {
+        Url = senderWalletAddress.ResourceServer,
+        AccessToken = senderOutgoingPaymentGrant.AccessToken.Value
+    },
+    new OutgoingPaymentBodyFromIncomingPayment
+    {
+        WalletAddress = senderWalletAddress.Id,
+        IncomingPayment = recipientIncomingPayment.Id,
+        DebitAmount = new Amount("20000", "USD", 2)
+    }
+);
+```
+
+</TabItem>
+
+</Tabs>

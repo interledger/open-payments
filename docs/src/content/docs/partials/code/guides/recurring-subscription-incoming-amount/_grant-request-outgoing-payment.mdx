@@ -1,0 +1,246 @@
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+
+```ts wrap
+const pendingCustomerOutgoingPaymentGrant = await client.grant.request(
+  {
+    url: customerWalletAddress.authServer
+  },
+  {
+    access_token: {
+      access: [
+        {
+          identifier: customerWalletAddress.id,
+          type: 'outgoing-payment',
+          actions: ['create', 'read'],
+          limits: {
+            debitAmount: {
+              assetCode: 'USD',
+              assetScale: 2,
+              value: '1500'
+            },
+            interval: 'R12/2025-10-14T00:03:00Z/P1M'
+          }
+        }
+      ]
+    },
+    interact: {
+      start: ['redirect'],
+      finish: {
+        method: 'redirect',
+        uri: 'https://myapp.example.com/finish/{...}', // where to redirect the customer after they've completed interaction
+        nonce: NONCE
+      }
+    }
+  }
+)
+```
+
+</TabItem>
+<TabItem label='Rust' icon='seti:rust'>
+
+```rust wrap
+use open_payments::types::{
+  AccessTokenRequest,
+  AccessItem,
+  OutgoingPaymentAction,
+  LimitsOutgoing,
+  Amount,
+  Interval,
+  InteractRequest,
+  InteractFinish,
+  GrantRequest,
+};
+use uuid::Uuid;
+
+let outgoing_access = AccessTokenRequest {
+access: vec![AccessItem::OutgoingPayment {
+identifier: customer_wallet_address.id.clone(),
+actions: vec![OutgoingPaymentAction::Create, OutgoingPaymentAction::Read],
+limits: Some(LimitsOutgoing {
+receiver: None,
+debit_amount: Some(Amount {
+value: "1500".into(),
+asset_code: "USD".into(),
+asset_scale: 2,
+}),
+receive_amount: None,
+interval: Some(Interval("R12/2025-10-14T00:03:00Z/P1M".to_string())),
+}),
+}],
+};
+
+let interact = InteractRequest {
+start: vec!["redirect".to_string()],
+finish: Some(InteractFinish {
+method: "redirect".to_string(),
+uri: "https://myapp.example.com/finish/{...}".to_string(),
+nonce: Uuid::new_v4().to_string(),
+}),
+};
+
+let outgoing_grant_request = GrantRequest::new(outgoing_access, Some(interact));
+
+let pending_customer_outgoing_payment_grant = client
+.grant()
+.request(&customer_wallet_address.auth_server, &outgoing_grant_request)
+.await?;
+
+```
+
+</TabItem>
+
+<TabItem label='PHP' icon='seti:php'>
+
+```php wrap
+$pendingCustomerOutgoingPaymentGrant = $client->grant()->request(
+  [
+    'url' => $customerWalletAddress->authServer
+  ],
+  [
+    'access_token' => [
+      'access' => [
+        [
+          'identifier' => $customerWalletAddress->id,
+          'type' => 'outgoing-payment',
+          'actions' => ['create', 'read'],
+          'limits' => [
+            'debitAmount' => [
+              'assetCode' => 'USD',
+              'assetScale' => 2,
+              'value' => '1500',
+            ],
+            'interval' => 'R12/2025-10-14T00:03:00Z/P1M'
+          ]
+        ]
+      ]
+    ],
+    'interact' => [
+      'start' => ['redirect'],
+      'finish' => [
+        'method' => 'redirect',
+        'uri' => 'https://myapp.example.com/finish/{...}', // where to redirect the customer after they've completed interaction
+        'nonce' => NONCE
+      ]
+    ]
+  ]
+);
+```
+
+</TabItem>
+
+<TabItem label='Go' icon='seti:go'>
+
+```go wrap
+interval := "R12/2025-10-14T00:03:00Z/P1M"
+limits := as.LimitsOutgoing{}
+if err := limits.FromLimitsOutgoing1(as.LimitsOutgoing1{
+	Interval: &interval,
+	DebitAmount: as.Amount{
+		Value:      "1500",
+		AssetCode:  "USD",
+		AssetScale: 2,
+	},
+}); err != nil {
+	log.Fatalf("Error creating limits: %v\n", err)
+}
+
+outgoingAccess := as.AccessOutgoing{
+	Type:       as.OutgoingPayment,
+	Actions:    []as.AccessOutgoingActions{as.AccessOutgoingActionsCreate, as.AccessOutgoingActionsRead},
+	Identifier: *customerWalletAddress.Id,
+	Limits:     &limits,
+}
+outgoingAccessItem := as.AccessItem{}
+if err := outgoingAccessItem.FromAccessOutgoing(outgoingAccess); err != nil {
+	log.Fatalf("Error creating AccessItem: %v\n", err)
+}
+outgoingAccessToken := struct {
+	Access as.Access `json:"access"`
+}{
+	Access: []as.AccessItem{outgoingAccessItem},
+}
+interact := &as.InteractRequest{
+	Start: []as.InteractRequestStart{as.InteractRequestStartRedirect},
+	Finish: &as.InteractRequestFinish{
+		Method: as.Redirect,
+		Uri:    "https://myapp.example.com/finish/{...}", // where to redirect the customer after they've completed interaction
+		Nonce:  NONCE,
+	},
+}
+
+pendingCustomerOutgoingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
+	URL: *customerWalletAddress.AuthServer,
+	RequestBody: as.GrantRequestWithAccessToken{
+		AccessToken: outgoingAccessToken,
+		Interact:    interact,
+	},
+})
+if err != nil {
+	log.Fatalf("Error requesting outgoing payment grant: %v\n", err)
+}
+```
+
+</TabItem>
+
+<TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var urlToOpen = "https://myapp.example.com/finish/{...}";
+
+var opContinueInteract = client.auth().grant().continuation(
+  customerWalletAddress,
+  customerQuote.getDebitAmount(),
+  URI.create(urlToOpen),
+  "NONCE"
+);
+```
+
+</TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var pendingCustomerOutgoingPaymentGrant = await client.RequestGrantAsync(
+    new RequestArgs
+    {
+        Url = customerWalletAddress.AuthServer,
+    },
+    new GrantCreateBodyWithInteract
+    {
+        AccessToken = new AccessToken
+        {
+            Access =
+            [
+                new OutgoingAccess
+                {
+                    Identifier = customerWalletAddress.Id,
+                    Actions = [Actions.Create, Actions.Read],
+                    Limits = new OutgoingAccessLimits
+                    {
+                        DebitAmount = new AuthAmount("1500", "USD", 2),
+                        Interval = "R12/2025-10-14T00:03:00Z/P1M"
+                    }
+                }
+            ]
+        },
+        Interact = new InteractRequest
+        {
+            Start = [Start.Redirect],
+            Finish = new Finish
+            {
+                Method = FinishMethod.Redirect,
+                Uri = new Uri(
+                    "https://localhost"), // where to redirect your user after they've completed the interaction
+                Nonce = NONCE
+            }
+        }
+    }
+);
+```
+
+</TabItem>
+
+</Tabs>

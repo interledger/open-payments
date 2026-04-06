@@ -1,0 +1,216 @@
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+
+<Tabs syncKey="lang">
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+
+```ts wrap
+const pendingCustomerOutgoingPaymentGrant = await client.grant.request(
+  {
+    url: customerWalletAddress.authServer
+  },
+  {
+    access_token: {
+      access: [
+        {
+          identifier: customerWalletAddress.id,
+          type: 'outgoing-payment',
+          actions: ['create'],
+          limits: {
+            debitAmount: {
+              assetCode: 'MXN',
+              assetScale: 2,
+              value: '140000'
+            }
+          }
+        }
+      ]
+    },
+    interact: {
+      start: ['redirect'],
+      finish: {
+        method: 'redirect',
+        uri: 'https://paymentplatform.example/finish/{...}', // where to redirect the customer after they've completed the interaction
+        nonce: NONCE
+      }
+    }
+  }
+)
+```
+
+  </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
+
+```rust wrap
+use open_payments::types::{AccessTokenRequest, AccessItem, OutgoingPaymentAction, InteractRequest, InteractStart, InteractFinish, InteractFinishMethod, AccessLimits, Amount, GrantRequest};
+
+let access_limits = AccessLimits {
+  debit_amount: Some(Amount { value: "140000".into(), asset_code: "MXN".into(), asset_scale: 2 }),
+  ..Default::default()
+};
+let access_request = AccessTokenRequest {
+  access: vec![AccessItem::OutgoingPayment {
+    identifier: Some(customer_wallet_address.id.clone()),
+    actions: vec![OutgoingPaymentAction::Create],
+    limits: Some(access_limits),
+  }],
+};
+let interact_request = InteractRequest {
+  start: Some(vec![InteractStart::Redirect]),
+  finish: Some(InteractFinish {
+    method: InteractFinishMethod::Redirect,
+    uri: Some("https://paymentplatform.example/finish/{...}".into()),
+    nonce: Some("NONCE".into()),
+  }),
+};
+
+let grant_request = GrantRequest::new(access_request, Some(interact_request));
+let pending_customer_outgoing_payment_grant = client
+  .grant()
+  .request(&customer_wallet_address.auth_server, &grant_request)
+  .await?;
+```
+
+  </TabItem>
+  <TabItem label='PHP' icon='seti:php'>
+
+```php
+$pendingCustomerOutgoingPaymentGrant = $client->grant()->request(
+  [
+    'url' => $customerWalletAddress->authServer
+  ],
+  [
+    'access_token' => [
+      'access' => [
+        [
+          'identifier' => $customerWalletAddress->id,
+          'type' => 'outgoing-payment',
+          'actions' => ['create'],
+          'limits' => [
+            'debitAmount' => [
+              'assetCode' => 'MXN',
+              'assetScale' => 2,
+              'value' => '140000'
+            ]
+          ]
+        ]
+      ]
+    ],
+    'interact' => [
+      'start' => ['redirect'],
+      'finish' => [
+        'method' => 'redirect',
+        'uri' => 'https://paymentplatform.example/finish/{...}', // where to redirect the customer after they've completed the interaction
+        'nonce' => 'NONCE'
+      ]
+    ]
+  ]
+);
+```
+
+  </TabItem>
+
+  <TabItem label='Go' icon='seti:go'>
+
+```go wrap
+outgoingAccess := as.AccessOutgoing{
+  Type:       as.OutgoingPayment,
+  Actions:    []as.AccessOutgoingActions{as.AccessOutgoingActionsCreate},
+  Identifier: *customerWalletAddress.Id,
+  Limits: &as.LimitsOutgoing{
+    DebitAmount: &as.Amount{
+      Value:      "140000",
+      AssetCode:  "MXN",
+      AssetScale: 2,
+    },
+  },
+}
+outgoingAccessItem := as.AccessItem{}
+if err := outgoingAccessItem.FromAccessOutgoing(outgoingAccess); err != nil {
+  log.Fatalf("Error creating AccessItem: %v\n", err)
+}
+outgoingAccessToken := struct {
+  Access as.Access `json:"access"`
+}{
+  Access: []as.AccessItem{outgoingAccessItem},
+}
+interact := &as.InteractRequest{
+  Start: []as.InteractRequestStart{as.InteractRequestStartRedirect},
+  Finish: &as.InteractRequestFinish{
+    Method: as.Redirect,
+    Uri:    "https://paymentplatform.example/finish/{...}",
+    Nonce:  NONCE,
+  },
+}
+
+pendingCustomerOutgoingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
+  URL: *customerWalletAddress.AuthServer,
+  RequestBody: as.GrantRequestWithAccessToken{
+    AccessToken: outgoingAccessToken,
+    Interact: interact,
+  },
+})
+
+if err != nil {
+  log.Fatalf("Error requesting outgoing payment grant: %v\n", err)
+}
+```
+
+</TabItem>
+
+  <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var urlToOpen = "https://paymentplatform.example/finish/{...}";
+
+var opContinueInteract = client.auth().grant().continuation(
+  customerWalletAddress,
+  customerQuote.getDebitAmount(),
+  URI.create(urlToOpen),
+  "NONCE"
+);
+```
+
+  </TabItem>
+
+  <TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var pendingCustomerOutgoingPaymentGrant = await client.RequestGrantAsync(
+    new RequestArgs
+    {
+        Url = customerWalletAddress.AuthServer,
+    },
+    new GrantCreateBodyWithInteract
+    {
+        AccessToken = new AccessToken
+        {
+            Access =
+            [
+                new OutgoingAccess
+                {
+                    Identifier = customerWalletAddress.Id,
+                    Actions = [Actions.Create],
+                    Limits = new OutgoingAccessLimits
+                    {
+                        DebitAmount = new AuthAmount("140000", "MXN", 2)
+                    }
+                }
+            ]
+        },
+        Interact = new InteractRequest
+        {
+            Start = [Start.Redirect],
+            Finish = new Finish
+            {
+                Method = FinishMethod.Redirect,
+                Uri = new Uri("https://localhost"),
+                Nonce = NONCE
+            }
+        }
+    }
+);
+```
+
+  </TabItem>
+
+</Tabs>

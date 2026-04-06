@@ -1,0 +1,253 @@
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+
+```ts wrap
+combinedQuoteAmount = '10000' // 9900 + 100
+
+const pendingCustomerOutgoingPaymentGrant = await client.grant.request(
+  {
+    url: customerWalletAddress.authServer
+  },
+  {
+    access_token: {
+      access: [
+        {
+          identifier: customerWalletAddress.id,
+          type: 'outgoing-payment',
+          actions: ['create'],
+          limits: {
+            debitAmount: {
+              assetCode: 'USD',
+              assetScale: 2,
+              value: combinedQuoteAmount
+            }
+          }
+        }
+      ]
+    },
+    interact: {
+      start: ['redirect'],
+      finish: {
+        method: 'redirect',
+        uri: 'https://paymentplatform.example/finish/{...}', // where to redirect the customer after they've completed interaction
+        nonce: NONCE
+      }
+    }
+  }
+)
+```
+
+ </TabItem>
+ <TabItem label='Rust' icon='seti:rust'>
+
+```rust wrap
+use open_payments::types::{AccessTokenRequest, AccessItem, OutgoingPaymentAction, InteractRequest, InteractStart, InteractFinish, InteractFinishMethod, AccessLimits, Amount, GrantRequest};
+
+let merchant_amount = match merchant_quote.debit_amount.as_ref() {
+  Some(a) => &a.value,
+  None => {
+    eprintln!("Missing debit_amount on merchant quote");
+    return Ok(());
+  }
+};
+let platform_amount = match platform_quote.debit_amount.as_ref() {
+  Some(a) => &a.value,
+  None => {
+    eprintln!("Missing debit_amount on platform quote");
+    return Ok(());
+  }
+};
+let merchant_value = match merchant_amount.parse::<i64>() {
+  Ok(v) => v,
+  Err(_) => {
+    eprintln!("Invalid merchant debit_amount value");
+    return Ok(());
+  }
+};
+let platform_value = match platform_amount.parse::<i64>() {
+  Ok(v) => v,
+  Err(_) => {
+    eprintln!("Invalid platform debit_amount value");
+    return Ok(());
+  }
+};
+let combined_quote_amount = merchant_value + platform_value;
+let outgoing_access = AccessTokenRequest {
+  access: vec![AccessItem::OutgoingPayment {
+    identifier: Some(customer_wallet_address.id.clone()),
+    actions: vec![OutgoingPaymentAction::Create],
+    limits: Some(AccessLimits { debit_amount: Some(Amount { value: combined_quote_amount.to_string(), asset_code: "USD".into(), asset_scale: 2 }), ..Default::default() }),
+  }],
+};
+let interact = InteractRequest { start: Some(vec![InteractStart::Redirect]), finish: Some(InteractFinish { method: InteractFinishMethod::Redirect, uri: Some("https://paymentplatform.example/finish/{...}".into()), nonce: Some("NONCE".into()) }) };
+let outgoing_grant_request = GrantRequest::new(outgoing_access, Some(interact));
+let pending_customer_outgoing_payment_grant = client
+  .grant()
+  .request(&customer_wallet_address.auth_server, &outgoing_grant_request)
+  .await?;
+```
+
+ </TabItem>
+
+<TabItem label='PHP' icon='seti:php'>
+
+```php wrap
+$combinedQuoteAmount = bcadd($merchantQuote->debitAmount->value, $platformQuote->debitAmount->value);
+
+$pendingCustomerOutgoingPaymentGrant = $client->grant()->request(
+  [
+    'url' => $customerWalletAddress->authServer
+  ],
+  [
+    'access_token' => [
+      'access' => [
+        [
+          'identifier' => $customerWalletAddress->id,
+          'type' => 'outgoing-payment',
+          'actions' => ['create'],
+          'limits' => [
+            'debitAmount' => [
+              'assetCode' => 'USD',
+              'assetScale' => 2,
+              'value' => $combinedQuoteAmount
+            ]
+          ]
+        ]
+      ]
+    ],
+    'interact' => [
+      'start' => ['redirect'],
+      'finish' => [
+        'method' => 'redirect',
+        'uri' => 'https://paymentplatform.example/finish/{...}', // where to redirect the customer after they've completed interaction
+        'nonce' => 'NONCE'
+      ]
+    ]
+  ]
+);
+```
+
+</TabItem>
+
+  <TabItem label='Go' icon='seti:go'>
+
+```go wrap
+combinedQuoteAmount := "10000" // merchantQuote.DebitAmount.Value + platformQuote.DebitAmount.Value
+limits := as.LimitsOutgoing{}
+if err := limits.FromLimitsOutgoing1(as.LimitsOutgoing1{
+  DebitAmount: as.Amount{
+    Value:      combinedQuoteAmount,
+    AssetCode:  "USD",
+    AssetScale: 2,
+  },
+}); err != nil {
+  log.Fatalf("Error creating limits: %v\n", err)
+}
+outgoingAccess := as.AccessOutgoing{
+  Type:       as.OutgoingPayment,
+  Actions:    []as.AccessOutgoingActions{as.AccessOutgoingActionsCreate},
+  Identifier: *customerWalletAddress.Id,
+  Limits:     &limits,
+}
+outgoingAccessItem := as.AccessItem{}
+if err := outgoingAccessItem.FromAccessOutgoing(outgoingAccess); err != nil {
+  log.Fatalf("Error creating AccessItem: %v\n", err)
+}
+outgoingAccessToken := struct {
+  Access as.Access `json:"access"`
+}{
+  Access: []as.AccessItem{outgoingAccessItem},
+}
+interact := &as.InteractRequest{
+  Start: []as.InteractRequestStart{as.InteractRequestStartRedirect},
+  Finish: &as.InteractRequestFinish{
+    Method: as.Redirect,
+    Uri:    "https://paymentplatform.example/finish/{...}", // where to redirect the customer after they've completed interaction
+    Nonce:  NONCE,
+  },
+}
+pendingCustomerOutgoingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
+  URL: *customerWalletAddress.AuthServer,
+  RequestBody: as.GrantRequestWithAccessToken{
+    AccessToken: outgoingAccessToken,
+    Interact:    interact,
+  },
+})
+if err != nil {
+  log.Fatalf("Error requesting outgoing payment grant: %v\n", err)
+}
+```
+
+ </TabItem>
+ <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var merchantDebit = new BigDecimal(merchantQuote.getDebitAmount().getValue());
+var platformDebit = new BigDecimal(platformQuote.getDebitAmount().getValue());
+var combinedQuoteAmount = merchantDebit.add(platformDebit);
+
+var debitAmount = Amount.build(
+  combinedQuoteAmount,
+  merchantQuote.getDebitAmount().getAssetCode(),
+  merchantQuote.getDebitAmount().getAssetScale()
+);
+
+var urlToOpen = "https://paymentplatform.example/finish/{...}";
+
+var opContinueInteract = client.auth().grant().continuation(
+  customerWalletAddress,
+  debitAmount,
+  URI.create(urlToOpen),
+  "NONCE"
+);
+```
+
+ </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var combinedQuoteAmount = "10000"; // 9900 + 100
+
+var pendingCustomerOutgoingPaymentGrant = await client.RequestGrantAsync(
+    new RequestArgs
+    {
+        Url = customerWalletAddress.AuthServer,
+    },
+    new GrantCreateBodyWithInteract
+    {
+        AccessToken = new AccessToken
+        {
+            Access =
+            [
+                new OutgoingAccess
+                {
+                    Identifier = customerWalletAddress.Id,
+                    Actions = [Actions.Create],
+                    Limits = new OutgoingAccessLimits
+                    {
+                        DebitAmount = new AuthAmount(combinedQuoteAmount, "USD", 2),
+                    }
+                }
+            ]
+        },
+        Interact = new InteractRequest
+        {
+            Start = [Start.Redirect],
+            Finish = new Finish
+            {
+                Method = FinishMethod.Redirect,
+                Uri = new Uri(
+                    "https://localhost"), // where to redirect your user after they've completed the interaction
+                Nonce = NONCE
+            }
+        }
+    }
+);
+```
+
+</TabItem>
+
+</Tabs>

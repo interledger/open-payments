@@ -6,6 +6,14 @@ import { LinkOut } from '@interledger/docs-design-system'
 import { Tabs, TabItem, Badge } from '@astrojs/starlight/components'
 import Start from '/src/content/docs/partials/es/_grant-start-interaction.mdx'
 import Finish from '/src/content/docs/partials/es/_grant-finish-interaction.mdx'
+import GetWalletAddress from '/src/content/docs/partials/code/guides/accept-otp-online-purchase/_get-wallet-address.mdx'
+import GrantRequestIncomingPayment from '/src/content/docs/partials/code/guides/accept-otp-online-purchase/_grant-request-incoming-payment.mdx'
+import CreateIncomingPayment from '/src/content/docs/partials/code/guides/accept-otp-online-purchase/_create-incoming-payment.mdx'
+import GrantRequestQuote from '/src/content/docs/partials/code/guides/accept-otp-online-purchase/_grant-request-quote.mdx'
+import CreateQuote from '/src/content/docs/partials/code/guides/accept-otp-online-purchase/_create-quote.mdx'
+import GrantRequestOutgoingPayment from '/src/content/docs/partials/code/guides/accept-otp-online-purchase/_grant-request-outgoing-payment.mdx'
+import CreateOutgoingPayment from '/src/content/docs/partials/code/guides/accept-otp-online-purchase/_create-outgoing-payment.mdx'
+import GrantContinuationRequest from '/src/content/docs/partials/code/guides/accept-otp-online-purchase/_grant-continuation-request.mdx'
 
 :::tip[Resumen]
 Aprenda a aceptar un pago único por una cantidad previamente pactada.
@@ -63,71 +71,7 @@ Asumamos que el cliente ingresó su dirección de billetera en el formulario de 
 
 Llame a la <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wallet-address-server/operations/get-wallet-address) para cada dirección.
 
-<Tabs syncKey="lang">
-  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-
-```ts wrap
-const customerWalletAddress = await client.walletAddress.get({
-  url: 'https://cloudninebank.example.com/customer'
-})
-const retailerWalletAddress = await client.walletAddress.get({
-  url: 'https://happylifebank.example.com/retailer'
-})
-```
-
-  </TabItem>
-  <TabItem label='Rust' icon='seti:rust'>
-
-```rust wrap
-let sender_wallet_address = client.wallet_address().get("https://cloudninebank.example.com/customer").await?;
-let retailer_wallet_address = client.wallet_address().get("https://happylifebank.example.com/retailer").await?;
-```
-
-  </TabItem>
-
-  <TabItem label='PHP' icon='seti:php'>
-
-```php wrap
-$customerWalletAddress = $client->walletAddress()->get([
-  'url' => 'https://cloudninebank.example.com/customer'
-]);
-$retailerWalletAddress = $client->walletAddress()->get([
-  'url' => 'https://happylifebank.example.com/retailer'
-]);
-```
-
-  </TabItem>
-
-  <TabItem label='Go' icon='seti:go'>
-
-```go wrap
-customerWalletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
-  URL: "https://cloudninebank.example.com/customer",
-})
-if err != nil {
-  log.Fatalf("Error fetching customer wallet address: %v\n", err)
-}
-
-retailerWalletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
-  URL: "https://happylifebank.example.com/retailer",
-})
-if err != nil {
-  log.Fatalf("Error fetching retailer wallet address: %v\n", err)
-}
-
-```
-
-</TabItem>
-
-  <TabItem label='Java' icon='seti:java'>
-
-```java wrap
-var customerWalletAddress = client.walletAddress().get("https://cloudninebank.example.com/customer");
-var retailerWalletAddress = client.walletAddress().get("https://happylifebank.example.com/retailer");
-```
-
-  </TabItem>
-</Tabs>
+<GetWalletAddress />
 
 <details>
 <summary>Ejemplo de respuesta</summary>
@@ -152,107 +96,7 @@ Utilice los datos del minorista `authServer`, recibidos en el paso anterior, par
 
 Esta llamada obtiene un token de acceso que permite a la aplicación cliente solicitar la creación de un recurso de pago entrante en la cuenta de billetera del minorista.
 
-<Tabs syncKey="lang">
-  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-
-```ts wrap
-const retailerIncomingPaymentGrant = await client.grant.request(
-  {
-    url: retailerWalletAddress.authServer
-  },
-  {
-    access_token: {
-      access: [
-        {
-          type: 'incoming-payment',
-          actions: ['create']
-        }
-      ]
-    }
-  }
-)
-```
-
-  </TabItem>
-  <TabItem label='Rust' icon='seti:rust'>
-
-```rust wrap
-use open_payments::types::{AccessTokenRequest, AccessItem, IncomingPaymentAction, GrantRequest};
-
-let incoming_access = AccessTokenRequest {
-access: vec![AccessItem::IncomingPayment { actions: vec![IncomingPaymentAction::Create], identifier: None }],
-};
-let incoming_grant_request = GrantRequest::new(incoming_access, None);
-
-let retailer_incoming_payment_grant = client
-.grant()
-.request(&retailer_wallet_address.auth_server, &incoming_grant_request)
-.await?;
-
-```
-
-</TabItem>
-
-<TabItem label='PHP' icon='seti:php'>
-
-```php wrap
-$retailerIncomingPaymentGrant = $client->grant()->request(
-  [
-    'url' => $retailerWalletAddress->authServer
-  ],
-  [
-    'access_token' => [
-      'access' => [
-        [
-          'type' => 'incoming-payment',
-          'actions' => ['create']
-        ]
-      ]
-    ]
-  ]
-);
-```
-
-</TabItem>
-
-<TabItem label='Go' icon='seti:go'>
-
-```go wrap
-incomingAccess := as.AccessIncoming{
-	Type:    as.IncomingPayment,
-	Actions: []as.AccessIncomingActions{as.AccessIncomingActionsCreate},
-}
-accessItem := as.AccessItem{}
-if err := accessItem.FromAccessIncoming(incomingAccess); err != nil {
-	log.Fatalf("Error creating AccessItem: %v\n", err)
-}
-accessToken := struct {
-	Access as.Access `json:"access"`
-}{
-	Access: []as.AccessItem{accessItem},
-}
-
-retailerIncomingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
-	URL:         *retailerWalletAddress.AuthServer,
-	RequestBody: as.GrantRequestWithAccessToken{AccessToken: accessToken},
-})
-if err != nil {
-	log.Fatalf("Error requesting incoming payment grant: %v\n", err)
-}
-```
-
-</TabItem>
-
-  <TabItem label='Java' icon='seti:java'>
-
-```java wrap
-var retailerIncomingPaymentGrant = client.auth().grant().incomingPayment(
-  retailerWalletAddress
-);
-```
-
-  </TabItem>
-</Tabs>
+<GrantRequestIncomingPayment />
 
 <details>
 <summary>Ejemplo de respuesta</summary>
@@ -290,106 +134,7 @@ Esta llamada solicita la creación de un recurso de pago entrante en la cuenta d
 
 Recuerde que el monto total de la compra del cliente es de MXN 1400.
 
-<Tabs syncKey="lang">
-  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-
-```ts wrap
-const retailerIncomingPayment = await.client.incomingPayment.create(
-  {
-    url: retailerWalletAddress.resourceServer,
-    accessToken: retailerIncomingPaymentGrant.access_token.value
-  },
-  {
-    walletAddress: retailerWalletAddress.id,
-    incomingAmount: {
-      value: '140000',
-      assetCode: 'MXN',
-      assetScale: 2
-    }
-  }
-)
-```
-
-  </TabItem>
-  <TabItem label='Rust' icon='seti:rust'>
-
-```rust wrap
-use open_payments::types::{IncomingPaymentRequest, Amount};
-
-let incoming_request = IncomingPaymentRequest {
-wallet_address: retailer_wallet_address.id.clone(),
-incoming_amount: Some(Amount { value: "140000".into(), asset_code: "MXN".into(), asset_scale: 2 }),
-expires_at: None,
-metadata: None,
-};
-
-let retailer_incoming_payment = client
-.incoming_payments()
-.create(
-&retailer_wallet_address.resource_server,
-&incoming_request,
-Some(&retailer_incoming_payment_grant.access_token.value),
-)
-.await?;
-
-```
-
-</TabItem>
-
-<TabItem label='PHP' icon='seti:php'>
-
-```php wrap
-$retailerIncomingPayment = $client->incomingPayment()->create(
-  [
-    'url' => $retailerWalletAddress->resourceServer,
-    'accessToken' => $retailerIncomingPaymentGrant->access_token->value
-  ],
-  [
-    'walletAddress' => $retailerWalletAddress->id,
-    'incomingAmount' => [
-      'value' => '140000',
-      'assetCode' => 'MXN',
-      'assetScale' => 2
-    ]
-  ]
-);
-```
-
-</TabItem>
-
-<TabItem label='Go' icon='seti:go'>
-```go wrap
-incomingPayment, err := client.IncomingPayment.Create(context.TODO(), op.IncomingPaymentCreateParams{
-	BaseURL:     *retailerWalletAddress.ResourceServer,
-	AccessToken: retailerIncomingPaymentGrant.AccessToken.Value,
-	Payload: rs.CreateIncomingPaymentJSONBody{
-		WalletAddressSchema: *retailerWalletAddress.Id,
-		IncomingAmount: &rs.Amount{
-			Value:      "140000",
-			AssetCode:  "MXN",
-			AssetScale: 2,
-		},
-	},
-})
-if err != nil {
-	log.Fatalf("Error creating incoming payment: %v\n", err)
-}
-```
-
-</TabItem>
-
-  <TabItem label='Java' icon='seti:java'>
-
-```java wrap
-var retailerIncomingPayment = client.payment().createIncoming(
-  retailerWalletAddress,
-  retailerIncomingPaymentGrant,
-  BigDecimal.valueOf(1400.00)
-);
-```
-
-  </TabItem>
-</Tabs>
+<CreateIncomingPayment />
 
 <details>
 <summary>Ejemplo de respuesta</summary>
@@ -430,106 +175,7 @@ Utilice los datos del consumidor `authServer`, devueltos en el paso 1, para llam
 
 Esta llamada obtiene un token de acceso que permite a la aplicación cliente solicitar la creación de un recurso de cotización en la cuenta de billetera del cliente.
 
-<Tabs syncKey="lang">
-  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-
-```ts wrap
-const customerQuoteGrant = await client.grant.request(
-  {
-    url: customerWalletAddress.authServer
-  },
-  {
-    access_token: {
-      access: [
-        {
-          type: 'quote',
-          actions: ['create']
-        }
-      ]
-    }
-  }
-)
-```
-
-  </TabItem>
-  <TabItem label='Rust' icon='seti:rust'>
-
-```rust wrap
-use open_payments::types::{AccessTokenRequest, AccessItem, QuoteAction, GrantRequest};
-
-let quote_access = AccessTokenRequest {
-access: vec![AccessItem::Quote { actions: vec![QuoteAction::Create] }],
-};
-let quote_grant_request = GrantRequest::new(quote_access, None);
-let customer_quote_grant = client
-.grant()
-.request(&customer_wallet_address.auth_server, &quote_grant_request)
-.await?;
-
-```
-
-</TabItem>
-
-<TabItem label='PHP' icon='seti:php'>
-
-```php wrap
-$customerQuoteGrant = $client->grant()->request(
-  [
-    'url' => $customerWalletAddress->authServer
-  ],
-  [
-    'access_token' => [
-      'access' => [
-        [
-          'type' => 'quote',
-          'actions' => ['create']
-        ]
-      ]
-    ]
-  ]
-);
-```
-
-</TabItem>
-
-<TabItem label='Go' icon='seti:go'>
-
-```go wrap
-quoteAccess := as.AccessQuote{
-	Type:    as.Quote,
-	Actions: []as.AccessQuoteActions{as.Create},
-}
-quoteAccessItem := as.AccessItem{}
-if err := quoteAccessItem.FromAccessQuote(quoteAccess); err != nil {
-	log.Fatalf("Error creating AccessItem: %v\n", err)
-}
-quoteAccessToken := struct {
-	Access as.Access `json:"access"`
-}{
-	Access: []as.AccessItem{quoteAccessItem},
-}
-
-customerQuoteGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
-	URL:         *customerWalletAddress.AuthServer,
-	RequestBody: as.GrantRequestWithAccessToken{AccessToken: quoteAccessToken},
-})
-if err != nil {
-	log.Fatalf("Error requesting quote grant: %v\n", err)
-}
-```
-
-</TabItem>
-
-  <TabItem label='Java' icon='seti:java'>
-
-```java wrap
-var customerQuoteGrant = client.auth().grant().quote(
-  customerWalletAddress
-);
-```
-
-  </TabItem>
-</Tabs>
+<GrantRequestQuote />
 
 <details>
 <summary>Ejemplo de respuesta</summary>
@@ -567,106 +213,7 @@ Esta llamada solicita la creación de un recurso de cotización en la cuenta de 
 
 La solicitud debe contener el destinatario, que es la `id` del pago entrante. La `id` se indicó en la respuesta de la Create an Incoming Payment API en el paso 3.
 
-<Tabs syncKey="lang">
-  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-
-```ts wrap
-const customerQuote = await client.quote.create(
-  {
-    url: customerWalletAddress.resourceServer,
-    accessToken: customerQuoteGrant.access_token.value
-  },
-  {
-    method: 'ilp',
-    walletAddress: customerWalletAddress.id,
-    receiver: retailerIncomingPayment.id
-  }
-)
-```
-
-  </TabItem>
-  <TabItem label='Rust' icon='seti:rust'>
-
-```rust wrap
-use open_payments::types::{QuoteRequest, QuoteMethod};
-
-let quote_request = QuoteRequest {
-method: QuoteMethod::Ilp,
-wallet_address: Some(customer_wallet_address.id.clone()),
-receiver: Some(retailer_incoming_payment.id.clone()),
-debit_amount: None,
-receive_amount: None,
-};
-
-let customer_quote = client
-.quotes()
-.create(
-&customer_wallet_address.resource_server,
-&quote_request,
-Some(&customer_quote_grant.access_token.value),
-)
-.await?;
-
-```
-
-</TabItem>
-
-<TabItem label='PHP' icon='seti:php'>
-
-```php wrap
-$customerQuote = $client->quote()->create(
-  [
-    'url' => $customerWalletAddress->resourceServer,
-    'accessToken' => $customerQuoteGrant->access_token->value
-  ],
-  [
-    'method' => 'ilp',
-    'walletAddress' => $customerWalletAddress->id,
-    'receiver' => $retailerIncomingPayment->id
-  ]
-);
-```
-
-</TabItem>
-
-<TabItem label='Go' icon='seti:go'>
-
-```go wrap
-customerQuote, err := client.Quote.Create(context.TODO(), op.QuoteCreateParams{
-	BaseURL:     *customerWalletAddress.ResourceServer,
-	AccessToken: customerQuoteGrant.AccessToken.Value,
-	Payload: rs.CreateQuoteJSONBody0{
-		WalletAddressSchema: *customerWalletAddress.Id,
-		Receiver:            *incomingPayment.Id,
-		Method:              "ilp",
-	},
-})
-if err != nil {
-	log.Fatalf("Error creating quote: %v\n", err)
-}
-```
-
-</TabItem>
-
-  <TabItem label='Java' icon='seti:java'>
-
-```java wrap
-var customerQuote = client.quote().create(
-  customerQuoteGrant.getAccess().getToken(),
-  customerWalletAddress,
-  retailerIncomingPayment,
-  Optional.empty(),
-  Optional.empty()
-);
-```
-
-  </TabItem>
-</Tabs>
-
-La respuesta devuelve un `receiveAmount`, un `debitAmount` y demás información requerida.
-
-- `debitAmount`: el monto (expresado en MXN) que se cobrará al cliente.
-- `receiveAmount`: el valor del `incomingAmount` del recurso de pago entrante.
+<CreateQuote />
 
 <details>
 <summary>Ejemplo de respuesta</summary>
@@ -695,6 +242,11 @@ El siguiente es un ejemplo de respuesta proveniente del proveedor de billetera d
 
 </details>
 
+La respuesta devuelve un `receiveAmount`, un `debitAmount` y demás información requerida.
+
+- `debitAmount`: el monto (expresado en MXN) que se cobrará al cliente.
+- `receiveAmount`: el valor del `incomingAmount` del recurso de pago entrante.
+
 ### 6. Solicitar una concesión de autorización interactiva para un pago saliente
 
 Utilice la información del consumidor `authServer` para llamar a la <Badge text="POST" variant="success" /> [Grant Request](/apis/auth-server/operations/post-request).
@@ -705,180 +257,7 @@ Esta llamada obtiene un token de acceso que permite a la aplicación cliente sol
 Los pagos salientes requieren una concesión de autorización interactiva. Este tipo de concesión de autorización obtendrá el consentimiento del cliente antes de que se realice un pago saliente desde su cuenta de billetera. Puede encontrar más información en las páginas del [flujo de Open Payments](/es/concepts/op-flow/#pago-saliente) y [proveedores de identidad](/es/identity/idp).
 :::
 
-<Tabs syncKey="lang">
-  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-
-```ts wrap
-const pendingCustomerOutgoingPaymentGrant = await client.grant.request(
-  {
-    url: customerWalletAddress.authServer
-  },
-  {
-    access_token: {
-      access: [
-        {
-          identifier: customerWalletAddress.id,
-          type: 'outgoing-payment',
-          actions: ['create'],
-          limits: {
-            debitAmount: {
-              assetCode: 'MXN',
-              assetScale: 2,
-              value: '140000'
-            }
-          }
-        }
-      ]
-    },
-    interact: {
-      start: ['redirect'],
-      finish: {
-        method: 'redirect',
-        uri: 'https://paymentplatform.example/finish/{...}', // where to redirect the customer after they've completed the interaction
-        nonce: NONCE
-      }
-    }
-  }
-)
-```
-
-  </TabItem>
-  <TabItem label='Rust' icon='seti:rust'>
-
-```rust wrap
-use open_payments::types::{AccessTokenRequest, AccessItem, OutgoingPaymentAction, InteractRequest, InteractStart, InteractFinish, InteractFinishMethod, AccessLimits, Amount, GrantRequest};
-
-let access_limits = AccessLimits {
-  debit_amount: Some(Amount { value: "140000".into(), asset_code: "MXN".into(), asset_scale: 2 }),
-  ..Default::default()
-};
-let access_request = AccessTokenRequest {
-  access: vec![AccessItem::OutgoingPayment {
-    identifier: Some(customer_wallet_address.id.clone()),
-    actions: vec![OutgoingPaymentAction::Create],
-    limits: Some(access_limits),
-  }],
-};
-let interact_request = InteractRequest {
-  start: Some(vec![InteractStart::Redirect]),
-  finish: Some(InteractFinish {
-    method: InteractFinishMethod::Redirect,
-    uri: Some("https://paymentplatform.example/finish/{...}".into()),
-    nonce: Some("NONCE".into()),
-  }),
-};
-
-let grant_request = GrantRequest::new(access_request, Some(interact_request));
-let pending_customer_outgoing_payment_grant = client
-  .grant()
-  .request(&customer_wallet_address.auth_server, &grant_request)
-  .await?;
-```
-
-  </TabItem>
-
-  <TabItem label='PHP' icon='seti:php'>
-
-```php wrap
-$pendingCustomerOutgoingPaymentGrant = $client->grant()->request(
-  [
-    'url' => $customerWalletAddress->authServer
-  ],
-  [
-    'access_token' => [
-      'access' => [
-        [
-          'identifier' => $customerWalletAddress->id,
-          'type' => 'outgoing-payment',
-          'actions' => ['create'],
-          'limits' => [
-            'debitAmount' => [
-              'assetCode' => 'MXN',
-              'assetScale' => 2,
-              'value' => '140000'
-            ]
-          ]
-        ]
-      ]
-    ],
-    'interact' => [
-      'start' => ['redirect'],
-      'finish' => [
-        'method' => 'redirect',
-        'uri' => 'https://paymentplatform.example/finish/{...}', // where to redirect the customer after they've completed the interaction
-        'nonce' => 'NONCE'
-      ]
-    ]
-  ]
-);
-```
-
-  </TabItem>
-
-  <TabItem label='Go' icon='seti:go'>
-
-```go wrap
-outgoingAccess := as.AccessOutgoing{
-  Type:       as.OutgoingPayment,
-  Actions:    []as.AccessOutgoingActions{as.AccessOutgoingActionsCreate},
-  Identifier: *customerWalletAddress.Id,
-  Limits: &as.LimitsOutgoing{
-    DebitAmount: &as.Amount{
-      Value:      "140000",
-      AssetCode:  "MXN",
-      AssetScale: 2,
-    },
-  },
-}
-outgoingAccessItem := as.AccessItem{}
-if err := outgoingAccessItem.FromAccessOutgoing(outgoingAccess); err != nil {
-  log.Fatalf("Error creating AccessItem: %v\n", err)
-}
-outgoingAccessToken := struct {
-  Access as.Access `json:"access"`
-}{
-  Access: []as.AccessItem{outgoingAccessItem},
-}
-interact := &as.InteractRequest{
-  Start: []as.InteractRequestStart{as.InteractRequestStartRedirect},
-  Finish: &as.InteractRequestFinish{
-    Method: as.Redirect,
-    Uri:    "https://paymentplatform.example/finish/{...}",
-    Nonce:  NONCE,
-  },
-}
-
-pendingCustomerOutgoingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
-  URL: *customerWalletAddress.AuthServer,
-  RequestBody: as.GrantRequestWithAccessToken{
-    AccessToken: outgoingAccessToken,
-    Interact: interact,
-  },
-})
-
-if err != nil {
-  log.Fatalf("Error requesting outgoing payment grant: %v\n", err)
-}
-```
-
-  </TabItem>
-
-  <TabItem label='Java' icon='seti:java'>
-
-```java wrap
-var urlToOpen = "https://paymentplatform.example/finish/{...}";
-
-var opContinueInteract = client.auth().grant().continuation(
-  customerWalletAddress,
-  customerQuote.getDebitAmount(),
-  URI.create(urlToOpen),
-  "NONCE"
-);
-```
-
-  </TabItem>
-
-</Tabs>
+<GrantRequestOutgoingPayment />
 
 <details>
 <summary>Ejemplo de respuesta</summary>
@@ -925,88 +304,7 @@ Emita la solicitud al `continue.uri` proporcionado en la respuesta de concesión
 
 Incluya la `interact_ref` devuelta en los parámetros de consulta del URI de redirección.
 
-<Tabs syncKey="lang">
-  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-
-```ts wrap
-const customerOutgoingPaymentGrant = await client.grant.continue(
-  {
-    url: pendingCustomerOutgoingPaymentGrant.continue.uri,
-    accessToken: pendingCustomerOutgoingPaymentGrant.continue.access_token.value
-  },
-  {
-    interact_ref: interactRef
-  }
-)
-```
-
-  </TabItem>
-  <TabItem label='Rust' icon='seti:rust'>
-
-```rust wrap
-let continue_field = match &pending_customer_outgoing_payment_grant.continue_field {
-  Some(c) => c,
-  None => {
-    eprintln!("Missing continue field on pending grant");
-    return Ok(());
-  }
-};
-
-let customer_outgoing_payment_grant = client
-.grant()
-.continue_grant(
-&continue_field.uri,
-&interact_ref,
-Some(&continue_field.access_token.value),
-)
-.await?;
-
-```
-
-</TabItem>
-
-<TabItem label='PHP' icon='seti:php'>
-
-```php wrap
-$customerOutgoingPaymentGrant = $client->grant()->continue(
-  [
-    'url' => $pendingCustomerOutgoingPaymentGrant->continue->uri,
-    'accessToken' => $pendingCustomerOutgoingPaymentGrant->continue->access_token->value
-  ],
-  [
-    'interact_ref' => $interactRef
-  ]
-);
-```
-
-</TabItem>
-
-<TabItem label='Go' icon='seti:go'>
-
-```go wrap
-customerOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
-	URL:         pendingCustomerOutgoingPaymentGrant.Continue.Uri,
-	AccessToken: pendingCustomerOutgoingPaymentGrant.Continue.AccessToken.Value,
-  InteractRef: INTERACT_REF,
-})
-if err != nil {
-	log.Fatalf("Error continuing grant: %v\n", err)
-}
-```
-
-  </TabItem>
-
-  <TabItem label='Java' icon='seti:java'>
-
-```java wrap
-var customerOutgoingPaymentGrant = client.auth().grant().finalize(
-  opContinueInteract,
-  interactRef
-);
-```
-
-  </TabItem>
-</Tabs>
+<GrantContinuationRequest />
 
 <details>
 <summary>Ejemplo de respuesta</summary>
@@ -1044,100 +342,7 @@ El siguiente es un ejemplo de respuesta proveniente del proveedor de billetera d
 
 Utilice el token de acceso devuelto en el paso 9 para llamar a la <Badge text="POST" variant="success" /> [Create Outgoing Payment API](/apis/resource-server/operations/create-outgoing-payment/). Esta llamada solicita la creación de un recurso de pago saliente en la cuenta de billetera del consumidor. Incluya el `quoteId` en la solicitud. La `quoteId` es la `id` devuelta en la respuesta de Create Quote API (paso 5).
 
-<Tabs syncKey="lang">
-  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
-
-```ts wrap
-const customerOutgoingPayment = await client.outgoingPayment.create(
-  {
-    url: customerWalletAddress.resourceServer,
-    accessToken: customerOutgoingPaymentGrant.access_token.value
-  },
-  {
-    walletAddress: customerWalletAddress.id,
-    quoteId: customerQuote.id
-  }
-)
-```
-
-  </TabItem>
-  <TabItem label='Rust' icon='seti:rust'>
-
-```rust wrap
-use open_payments::types::OutgoingPaymentRequest;
-let outgoing_request = OutgoingPaymentRequest {
-  wallet_address: customer_wallet_address.id.clone(),
-  receiver: Some(retailer_incoming_payment.id.clone()),
-  debit_amount: None,
-  receive_amount: None,
-  quote_id: Some(customer_quote.id.clone()),
-};
-let customer_outgoing_payment_to_retailer = client
-  .outgoing_payments()
-  .create(
-    &customer_wallet_address.resource_server,
-    &outgoing_request,
-    Some(&customer_outgoing_payment_grant.access_token.value),
-  )
-  .await?;
-```
-
-  </TabItem>
-
-  <TabItem label='PHP' icon='seti:php'>
-
-```php wrap
-$customerOutgoingPayment = $client->outgoingPayment()->create(
-  [
-    'url' => $customerWalletAddress->resourceServer,
-    'accessToken' => $customerOutgoingPaymentGrant->access_token->value
-  ],
-  [
-    'walletAddress' => $customerWalletAddress->id,
-    'quoteId' => $customerQuote->id
-  ]
-);
-```
-
-  </TabItem>
-
-  <TabItem label='Go' icon='seti:go'>
-
-```go
-var outgoingPayload rs.CreateOutgoingPaymentRequest
-if err := outgoingPayload.FromCreateOutgoingPaymentWithQuote(rs.CreateOutgoingPaymentWithQuote{
-  WalletAddressSchema: *customerWalletAddress.Id,
-  QuoteId:             *customerQuote.Id,
-}); err != nil {
-  log.Fatalf("Error creating payload: %v\n", err)
-}
-
-customerOutgoingPayment, err := client.OutgoingPayment.Create(context.TODO(), op.OutgoingPaymentCreateParams{
-  BaseURL: customerWalletAddress.ResourceServer,
-  AccessToken: customerOutgoingPaymentGrant.AccessToken.Value,
-  Payload: outgoingPayload
-})
-if err != nil {
-  log.Fatalf("Error creating outgoing payment: %v\n", err)
-}
-```
-
-  </TabItem>
-
-  <TabItem label='Java' icon='seti:java'>
-
-```java wrap
-var customerOutgoingPayment = client.payment().createOutgoing(
-  customerOutgoingPaymentGrant,
-  customerWalletAddress,
-  customerQuote
-);
-```
-
-  </TabItem>
-</Tabs>
-
-Si la solicitud falla debido a una cotización caducada, [solicite una nueva cotización](#5-solicitar-la-creación-de-un-recurso-de-cotización) e intente de nuevo.
+<CreateOutgoingPayment />
 
 <details>
 <summary>Ejemplo de respuesta</summary>
@@ -1170,6 +375,7 @@ El siguiente es un ejemplo de respuesta proveniente del proveedor de billetera d
 
 </details>
 
+Si la solicitud falla debido a una cotización caducada, [solicite una nueva cotización](#5-solicitar-la-creación-de-un-recurso-de-cotización) e intente de nuevo.
 :::note[Expiración del token de acceso]
 Si el token de acceso de una concesión de autorización ha expirado, llame a la <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/auth-server/operations/post-token/) y, luego, utilice el nuevo token en la solicitud correspondiente.
 :::

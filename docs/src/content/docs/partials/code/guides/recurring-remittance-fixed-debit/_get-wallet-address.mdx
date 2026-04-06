@@ -1,0 +1,75 @@
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+
+```ts wrap
+const senderWalletAddress = await client.walletAddress.get({
+  url: 'https://cloudninebank.example.com/sender'
+})
+const recipientWalletAddress = await client.walletAddress.get({
+  url: 'https://happylifebank.example.com/recipient'
+})
+```
+
+</TabItem>
+<TabItem label='Rust' icon='seti:rust'>
+
+```rust wrap
+let sender_wallet_address = client.wallet_address().get("https://cloudninebank.example.com/sender").await?;
+let recipient_wallet_address = client.wallet_address().get("https://happylifebank.example.com/recipient").await?;
+```
+
+</TabItem>
+<TabItem label='PHP' icon='seti:php'>
+
+```php wrap
+$senderWalletAddress = $client->walletAddress()->get([
+  'url' => 'https://cloudninebank.example.com/sender'
+]);
+$recipientWalletAddress = $client->walletAddress()->get([
+  'url' => 'https://happylifebank.example.com/recipient'
+]);
+```
+
+</TabItem>
+
+<TabItem label='Go' icon='seti:go'>
+
+```go wrap
+senderWalletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
+	URL: "https://cloudninebank.example.com/sender",
+})
+if err != nil {
+  log.Fatalf("Error fetching sender wallet address: %v\n", err)
+}
+
+recipientWalletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
+  URL: "https://happylifebank.example.com/recipient",
+})
+if err != nil {
+  log.Fatalf("Error fetching recipient wallet address: %v\n", err)
+}
+```
+
+</TabItem>
+
+<TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var senderWalletAddress = client.walletAddress().get("https://cloudninebank.example.com/sender");
+var recipientWalletAddress = client.walletAddress().get("https://happylifebank.example.com/recipient");
+```
+
+</TabItem>
+
+<TabItem label=".NET" icon="seti:c-sharp">
+
+```csharp wrap
+var senderWalletAddress = await client.GetWalletAddressAsync("https://cloudninebank.example.com/sender");
+var recipientWalletAddress = await client.GetWalletAddressAsync("https://happylifebank.example.com/recipient");
+```
+
+</TabItem>
+
+</Tabs>

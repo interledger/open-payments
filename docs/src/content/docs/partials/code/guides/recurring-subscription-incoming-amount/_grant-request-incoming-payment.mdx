@@ -1,0 +1,124 @@
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+
+```ts wrap
+const serviceProviderIncomingPaymentGrant = await client.grant.request(
+  {
+    url: serviceProviderWalletAddress.authServer
+  },
+  {
+    access_token: {
+      access: [
+        {
+          type: 'incoming-payment',
+          actions: ['create']
+        }
+      ]
+    }
+  }
+)
+```
+
+</TabItem>
+<TabItem label='Rust' icon='seti:rust'>
+
+```rust wrap
+use open_payments::types::{AccessTokenRequest, AccessItem, IncomingPaymentAction, GrantRequest};
+let incoming_access = AccessTokenRequest {
+  access: vec![AccessItem::IncomingPayment { actions: vec![IncomingPaymentAction::Create], identifier: None }],
+};
+let incoming_grant_request = GrantRequest::new(incoming_access, None);
+let service_provider_incoming_payment_grant = client
+  .grant()
+  .request(&service_provider_wallet_address.auth_server, &incoming_grant_request)
+  .await?;
+```
+
+</TabItem>
+<TabItem label='PHP' icon='seti:php'>
+
+```php wrap
+$serviceProviderIncomingPaymentGrant = $client->grant()->request(
+  [
+    'url' => $serviceProviderWalletAddress->authServer
+  ],
+  [
+    'access_token' => [
+      'access' => [
+        [
+          'type' => 'incoming-payment',
+          'actions' => ['create']
+        ]
+      ]
+    ]
+  ]
+);
+```
+
+</TabItem>
+<TabItem label='Go' icon='seti:go'>
+
+```go wrap
+incomingAccess := as.AccessIncoming{
+	Type:    as.IncomingPayment,
+	Actions: []as.AccessIncomingActions{as.AccessIncomingActionsCreate},
+}
+accessItem := as.AccessItem{}
+if err := accessItem.FromAccessIncoming(incomingAccess); err != nil {
+	log.Fatalf("Error creating AccessItem: %v\n", err)
+}
+accessToken := struct {
+	Access as.Access `json:"access"`
+}{
+	Access: []as.AccessItem{accessItem},
+}
+
+serviceProviderIncomingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
+	URL:         *serviceProviderWalletAddress.AuthServer,
+	RequestBody: as.GrantRequestWithAccessToken{AccessToken: accessToken},
+})
+if err != nil {
+	log.Fatalf("Error requesting incoming payment grant: %v\n", err)
+}
+```
+
+</TabItem>
+<TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var serviceProviderIncomingPaymentGrant = client.auth().grant().incomingPayment(
+  serviceProviderWalletAddress
+);
+```
+
+</TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var serviceProviderIncomingPaymentGrant = await client.RequestGrantAsync(
+    new RequestArgs
+    {
+        Url = serviceProviderWalletAddress.AuthServer,
+    },
+    new GrantCreateBody
+    {
+        AccessToken = new AccessToken
+        {
+            Access =
+            [
+                new IncomingAccess
+                {
+                    Actions = [Actions.Create]
+                }
+            ]
+        }
+    }
+);
+```
+
+</TabItem>
+
+</Tabs>

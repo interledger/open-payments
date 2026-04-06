@@ -1,0 +1,103 @@
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+
+<Tabs syncKey="lang">
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+
+```ts wrap
+const recipientIncomingPayment = await client.incomingPayment.create(
+  {
+    url: recipientWalletAddress.resourceServer,
+    accessToken: recipientIncomingPaymentGrant.access_token.value
+  },
+  {
+    walletAddress: recipientWalletAddress.id
+  }
+)
+```
+
+  </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
+
+```rust wrap
+use open_payments::types::IncomingPaymentRequest;
+let incoming_request = IncomingPaymentRequest {
+  wallet_address: recipient_wallet_address.id.clone(),
+  incoming_amount: None,
+  expires_at: None,
+  metadata: None,
+};
+let recipient_incoming_payment = client
+  .incoming_payments()
+  .create(
+    &recipient_wallet_address.resource_server,
+    &incoming_request,
+    Some(&recipient_incoming_payment_grant.access_token.value),
+  )
+  .await?;
+```
+
+  </TabItem>
+
+  <TabItem label='PHP' icon='seti:php'>
+
+```php wrap
+$recipientIncomingPayment = $client->incomingPayment()->create(
+  [
+    'url' => $recipientWalletAddress->resourceServer,
+    'accessToken' => $recipientIncomingPaymentGrant->access_token->value
+  ],
+  [
+    'walletAddress' => $recipientWalletAddress->id,
+  ]
+);
+```
+
+  </TabItem>
+
+  <TabItem label='Go' icon='seti:go'>
+
+```go wrap
+recipientIncomingPayment, err := client.IncomingPayment.Create(context.TODO(), op.IncomingPaymentCreateParams{
+  BaseURL:     *recipientWalletAddress.ResourceServer,
+  AccessToken: recipientIncomingPaymentGrant.AccessToken.Value,
+  Payload: rs.CreateIncomingPaymentJSONBody{
+    WalletAddressSchema: *recipientWalletAddress.Id,
+  },
+})
+if err != nil {
+  log.Fatalf("Error creating incoming payment: %v\n", err)
+}
+```
+
+  </TabItem>
+
+  <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var recipientIncomingPayment = client.payment().createIncoming(
+  recipientWalletAddress,
+  recipientIncomingPaymentGrant
+);
+```
+
+  </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var recipientIncomingPayment = await client.CreateIncomingPaymentAsync(
+    new AuthRequestArgs
+    {
+        Url = recipientWalletAddress.ResourceServer,
+        AccessToken = recipientIncomingPaymentGrant.AccessToken.Value
+    },
+    new IncomingPaymentBody
+    {
+        WalletAddress = recipientWalletAddress.Id
+    }
+);
+```
+
+</TabItem>
+
+</Tabs>

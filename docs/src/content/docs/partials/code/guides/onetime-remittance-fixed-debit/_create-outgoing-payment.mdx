@@ -1,0 +1,112 @@
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+
+```ts wrap
+const senderOutgoingPayment = await client.outgoingPayment.create(
+  {
+    url: senderWalletAddress.resourceServer,
+    accessToken: senderOutgoingPaymentGrant.access_token.value
+  },
+  {
+    walletAddress: senderWalletAddress.id,
+    quoteId: senderQuote.id
+  }
+)
+```
+
+</TabItem>
+ <TabItem label='Rust' icon='seti:rust'>
+
+```rust wrap
+use open_payments::types::OutgoingPaymentRequest;
+let outgoing_request = OutgoingPaymentRequest {
+  wallet_address: sender_wallet_address.id.clone(),
+  receiver: Some(recipient_incoming_payment.id.clone()),
+  debit_amount: None,
+  receive_amount: None,
+  quote_id: Some(sender_quote.id.clone()),
+};
+let sender_outgoing_payment = client
+  .outgoing_payments()
+  .create(
+    &sender_wallet_address.resource_server,
+    &outgoing_request,
+    Some(&sender_outgoing_payment_grant.access_token.value),
+  )
+  .await?;
+```
+
+ </TabItem>
+ <TabItem label='PHP' icon='seti:php'>
+
+```php wrap
+$senderOutgoingPayment = $client->outgoingPayment()->create(
+  [
+    'url' => $senderWalletAddress->resourceServer,
+    'accessToken' => $senderOutgoingPaymentGrant->access_token->value
+  ],
+  [
+    'walletAddress' => $senderWalletAddress->id,
+    'quoteId' => $senderQuote->id
+  ]
+);
+```
+
+  </TabItem>
+ <TabItem label='Go' icon='seti:go'>
+
+```go wrap
+var outgoingPayload rs.CreateOutgoingPaymentRequest
+if err := outgoingPayload.FromCreateOutgoingPaymentWithQuote(rs.CreateOutgoingPaymentWithQuote{
+ 	WalletAddressSchema: *senderWalletAddress.Id,
+ 	QuoteId:             *senderQuote.Id,
+}); err != nil {
+ 	log.Fatalf("Error creating payload: %v\n", err)
+}
+
+senderOutgoingPayment, err := client.OutgoingPayment.Create(context.TODO(), op.OutgoingPaymentCreateParams{
+  BaseURL: senderWalletAddress.ResourceServer,
+  AccessToken: senderOutgoingPaymentGrant.AccessToken.Value,
+  Payload: outgoingPayload,
+})
+if err != nil {
+  log.Fatalf("Error creating outgoing payment: %v\n", err)
+}
+
+```
+
+ </TabItem>
+<TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var senderOutgoingPayment = client.payment().createOutgoing(
+  senderOutgoingPaymentGrant,
+  senderWalletAddress,
+  senderQuote
+);
+```
+
+</TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var senderOutgoingPayment = await client.CreateOutgoingPaymentAsync(
+    new AuthRequestArgs
+    {
+        Url = senderWalletAddress.ResourceServer,
+        AccessToken = senderOutgoingPaymentGrant.AccessToken.Value
+    },
+    new OutgoingPaymentBodyFromQuote
+    {
+        WalletAddress = senderWalletAddress.Id,
+        QuoteId = senderQuote.Id,
+    }
+);
+```
+
+</TabItem>
+
+</Tabs>
