@@ -1,0 +1,131 @@
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+
+<Tabs syncKey="lang">
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+
+```ts wrap
+const senderQuoteGrant = await client.grant.request(
+  {
+    url: senderWalletAddress.authServer
+  },
+  {
+    access_token: {
+      access: [
+        {
+          type: 'quote',
+          actions: ['create']
+        }
+      ]
+    }
+  }
+)
+```
+
+  </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
+
+```rust wrap
+use open_payments::types::{
+  AccessTokenRequest,
+  AccessItem,
+  QuoteAction,
+  GrantRequest,
+};
+
+let quote_access = AccessTokenRequest {
+access: vec![AccessItem::Quote { actions: vec![QuoteAction::Create] }],
+};
+let quote_grant_request = GrantRequest::new(quote_access, None);
+let sender_quote_grant = client
+.grant()
+.request(&sender_wallet_address.auth_server, &quote_grant_request)
+.await?;
+
+```
+
+</TabItem>
+
+<TabItem label='PHP' icon='seti:php'>
+
+```php wrap
+$senderQuoteGrant = $client->grant()->request(
+  [
+    'url' => $senderWalletAddress->authServer
+  ],
+  [
+    'access_token' => [
+      'access' => [
+        [
+          'type' => 'quote',
+          'actions' => ['create']
+        ]
+      ]
+    ]
+  ]
+);
+```
+
+</TabItem>
+
+<TabItem label='Go' icon='seti:go'>
+
+```go wrap
+quoteAccess := as.AccessQuote{
+  Type:    as.Quote,
+  Actions: []as.AccessQuoteActions{as.Create},
+}
+quoteAccessItem := as.AccessItem{}
+if err := quoteAccessItem.FromAccessQuote(quoteAccess); err != nil {
+  log.Fatalf("Error creating AccessItem: %v\n", err)
+}
+quoteAccessToken := struct {
+  Access as.Access `json:"access"`
+}{
+  Access: []as.AccessItem{quoteAccessItem},
+}
+
+senderQuoteGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
+  URL: senderWalletAddress.AuthServer,
+  RequestBody: as.GrantRequestWithAccessToken{AccessToken: quoteAccessToken},
+})
+if err != nil {
+  log.Fatalf("Error requesting quote grant: %v\n", err)
+}
+```
+
+  </TabItem>
+<TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var senderQuoteGrant = client.auth().grant().quote(senderWalletAddress);
+```
+
+</TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var senderQuoteGrant = await client.RequestGrantAsync(
+    new RequestArgs
+    {
+        Url = senderWalletAddress.AuthServer,
+    },
+    new GrantCreateBody
+    {
+        AccessToken = new AccessToken
+        {
+            Access =
+            [
+                new QuoteAccess
+                {
+                    Actions = [Actions.Create]
+                }
+            ]
+        }
+    }
+);
+```
+
+</TabItem>
+
+</Tabs>

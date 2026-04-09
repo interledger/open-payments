@@ -1,0 +1,121 @@
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+
+<Tabs syncKey="lang">
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+
+```ts wrap
+const retailerIncomingPayment = await.client.incomingPayment.create(
+  {
+    url: retailerWalletAddress.resourceServer,
+    accessToken: retailerIncomingPaymentGrant.access_token.value
+  },
+  {
+    walletAddress: retailerWalletAddress.id,
+    incomingAmount: {
+      value: '140000',
+      assetCode: 'MXN',
+      assetScale: 2
+    }
+  }
+)
+```
+
+  </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
+
+```rust wrap
+use open_payments::types::{IncomingPaymentRequest, Amount};
+
+let incoming_request = IncomingPaymentRequest {
+wallet_address: retailer_wallet_address.id.clone(),
+incoming_amount: Some(Amount { value: "140000".into(), asset_code: "MXN".into(), asset_scale: 2 }),
+expires_at: None,
+metadata: None,
+};
+
+let retailer_incoming_payment = client
+.incoming_payments()
+.create(
+&retailer_wallet_address.resource_server,
+&incoming_request,
+Some(&retailer_incoming_payment_grant.access_token.value),
+)
+.await?;
+
+```
+
+</TabItem>
+
+<TabItem label='PHP' icon='seti:php'>
+
+```php
+$retailerIncomingPayment = $client->incomingPayment()->create(
+  [
+    'url' => $retailerWalletAddress->resourceServer,
+    'accessToken' => $retailerIncomingPaymentGrant->access_token->value
+  ],
+  [
+    'walletAddress' => $retailerWalletAddress->id,
+    'incomingAmount' => [
+      'value' => '140000',
+      'assetCode' => 'MXN',
+      'assetScale' => 2
+    ]
+  ]
+);
+```
+
+</TabItem>
+
+<TabItem label='Go' icon='seti:go'>
+```go wrap
+incomingPayment, err := client.IncomingPayment.Create(context.TODO(), op.IncomingPaymentCreateParams{
+	BaseURL:     *retailerWalletAddress.ResourceServer,
+	AccessToken: retailerIncomingPaymentGrant.AccessToken.Value,
+	Payload: rs.CreateIncomingPaymentJSONBody{
+		WalletAddressSchema: *retailerWalletAddress.Id,
+		IncomingAmount: &rs.Amount{
+			Value:      "140000",
+			AssetCode:  "MXN",
+			AssetScale: 2,
+		},
+	},
+})
+if err != nil {
+	log.Fatalf("Error creating incoming payment: %v\n", err)
+}
+```
+
+</TabItem>
+
+  <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var retailerIncomingPayment = client.payment().createIncoming(
+  retailerWalletAddress,
+  retailerIncomingPaymentGrant,
+  BigDecimal.valueOf(1400.00)
+);
+```
+
+  </TabItem>
+
+  <TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var retailerIncomingPayment = await client.CreateIncomingPaymentAsync(
+    new AuthRequestArgs
+    {
+        Url = retailerWalletAddress.ResourceServer,
+        AccessToken = retailerIncomingPaymentGrant.AccessToken.Value
+    },
+    new IncomingPaymentBody
+    {
+        WalletAddress = retailerWalletAddress.Id,
+        IncomingAmount = new Amount("140000", "MXN", 2)
+    }
+);
+```
+
+  </TabItem>
+</Tabs>

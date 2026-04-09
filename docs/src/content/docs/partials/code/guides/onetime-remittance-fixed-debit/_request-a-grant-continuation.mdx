@@ -1,0 +1,98 @@
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+
+<Tabs syncKey="lang">
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+
+    ```ts wrap
+    const senderOutgoingPaymentGrant = await client.grant.continue(
+      {
+        url: pendingSenderOutgoingPaymentGrant.continue.uri,
+        accessToken: pendingSenderOutgoingPaymentGrant.continue.access_token.value
+      },
+      {
+        interact_ref: interactRef
+      }
+    )
+    ```
+
+ </TabItem>
+ <TabItem label='Rust' icon='seti:rust'>
+
+```rust wrap
+let continue_field = match &pending_sender_outgoing_payment_grant.continue_field {
+  Some(c) => c,
+  None => {
+    eprintln!("Missing continue field on pending grant");
+    return Ok(());
+  }
+};
+let sender_outgoing_payment_grant = client
+  .grant()
+  .continue_grant(
+    &continue_field.uri,
+    &interact_ref,
+    Some(&continue_field.access_token.value),
+  )
+  .await?;
+```
+
+ </TabItem>
+  <TabItem label='PHP' icon='seti:php'>
+
+```php wrap
+$senderOutgoingPaymentGrant = $client->grant()->continue(
+  [
+    'url' => $pendingSenderOutgoingPaymentGrant->continue->uri,
+    'accessToken' => $pendingSenderOutgoingPaymentGrant->continue->access_token->value
+  ],
+  [
+    'interact_ref' => $interactRef
+  ]
+);
+```
+
+  </TabItem>
+ <TabItem label='Go' icon='seti:go'>
+
+```go wrap
+senderOutgoingPaymentGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
+  URL:         pendingSenderOutgoingPaymentGrant.Continue.Uri,
+  AccessToken: pendingSenderOutgoingPaymentGrant.Continue.AccessToken.Value,
+  InteractRef: INTERACT_REF,
+})
+if err != nil {
+ 	log.Fatalf("Error continuing grant: %v\n", err)
+}
+```
+
+ </TabItem>
+<TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var senderOutgoingPaymentGrant = client.auth().grant().finalize(
+  opContinueInteract,
+  interactRef
+);
+```
+
+</TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var senderOutgoingPaymentGrant = await client.ContinueGrantAsync(
+    new AuthRequestArgs
+    {
+        Url = pendingSenderOutgoingPaymentGrant.Continue.Uri,
+        AccessToken = pendingSenderOutgoingPaymentGrant.Continue.AccessToken.Value
+    },
+    new GrantContinueBody
+    {
+        InteractRef = interactRef
+    }
+);
+```
+
+</TabItem>
+
+</Tabs>

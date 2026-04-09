@@ -1,0 +1,200 @@
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+
+```ts wrap
+// Merchant
+const merchantIncomingPaymentGrant = await client.grant.request(
+  {
+    url: merchantWalletAddress.authServer
+  },
+  {
+    access_token: {
+      access: [
+        {
+          type: 'incoming-payment',
+          actions: ['create']
+        }
+      ]
+    }
+  }
+)
+// Platform
+const platformIncomingPaymentGrant = await client.grant.request(
+  {
+    url: platformWalletAddress.authServer
+  },
+  {
+    access_token: {
+      access: [
+        {
+          type: 'incoming-payment',
+          actions: ['create']
+        }
+      ]
+    }
+  }
+)
+```
+
+ </TabItem>
+ <TabItem label='Rust' icon='seti:rust'>
+
+```rust wrap
+use open_payments::types::{AccessTokenRequest, AccessItem, IncomingPaymentAction, GrantRequest};
+let incoming_access = AccessTokenRequest {
+  access: vec![AccessItem::IncomingPayment { actions: vec![IncomingPaymentAction::Create], identifier: None }],
+};
+let merchant_grant_request = GrantRequest::new(incoming_access.clone(), None);
+let platform_grant_request = GrantRequest::new(incoming_access, None);
+let merchant_incoming_payment_grant = client
+  .grant()
+  .request(&merchant_wallet_address.auth_server, &merchant_grant_request)
+  .await?;
+let platform_incoming_payment_grant = client
+  .grant()
+  .request(&platform_wallet_address.auth_server, &platform_grant_request)
+  .await?;
+```
+
+ </TabItem>
+  <TabItem label='PHP' icon='seti:php'>
+
+```php wrap
+// Merchant
+$merchantIncomingPaymentGrant = $client->grant()->request(
+  [
+    'url' => $merchantWalletAddress->authServer
+  ],
+  [
+    'access_token' => [
+      'access' => [
+        [
+          'type' => 'incoming-payment',
+          'actions' => ['create']
+        ]
+      ]
+    ]
+  ]
+);
+// Platform
+$platformIncomingPaymentGrant = $client->grant()->request(
+  [
+    'url' => $platformWalletAddress->authServer
+  ],
+  [
+    'access_token' => [
+      'access' => [
+        [
+          'type' => 'incoming-payment',
+          'actions' => ['create']
+        ]
+      ]
+    ]
+  ]
+);
+```
+
+ </TabItem>
+
+  <TabItem label='Go' icon='seti:go'>
+
+```go wrap
+incomingAccess := as.AccessIncoming{
+  Type:    as.IncomingPayment,
+  Actions: []as.AccessIncomingActions{as.AccessIncomingActionsCreate},
+}
+accessItem := as.AccessItem{}
+if err := accessItem.FromAccessIncoming(incomingAccess); err != nil {
+  log.Fatalf("Error creating AccessItem: %v\n", err)
+}
+accessToken := struct {
+  Access as.Access `json:"access"`
+}{
+  Access: []as.AccessItem{accessItem},
+}
+// Merchant
+merchantIncomingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
+  URL:         *merchantWalletAddress.AuthServer,
+  RequestBody: as.GrantRequestWithAccessToken{AccessToken: accessToken},
+})
+if err != nil {
+  log.Fatalf("Error requesting merchant incoming payment grant: %v\n", err)
+}
+// Platform
+platformIncomingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
+  URL:         *platformWalletAddress.AuthServer,
+  RequestBody: as.GrantRequestWithAccessToken{AccessToken: accessToken},
+})
+if err != nil {
+  log.Fatalf("Error requesting platform incoming payment grant: %v\n", err)
+}
+```
+
+   </TabItem>
+
+  <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+// Merchant
+var merchantIncomingPaymentGrant = client.auth().grant().incomingPayment(
+  merchantWalletAddress
+);
+
+// Platform
+var platformIncomingPaymentGrant = client.auth().grant().incomingPayment(
+  platformWalletAddress
+);
+```
+
+  </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+// Merchant
+var merchantIncomingPaymentGrant = await client.RequestGrantAsync(
+    new RequestArgs
+    {
+        Url = merchantWalletAddress.AuthServer,
+    },
+    new GrantCreateBody
+    {
+        AccessToken = new AccessToken
+        {
+            Access =
+            [
+                new IncomingAccess
+                {
+                    Actions = [Actions.Create]
+                }
+            ]
+        }
+    }
+);
+// Platform
+var platformIncomingPaymentGrant = await client.RequestGrantAsync(
+    new RequestArgs
+    {
+        Url = platformWalletAddress.AuthServer,
+    },
+    new GrantCreateBody
+    {
+        AccessToken = new AccessToken
+        {
+            Access =
+            [
+                new IncomingAccess
+                {
+                    Actions = [Actions.Create]
+                }
+            ]
+        }
+    }
+);
+```
+
+</TabItem>
+
+</Tabs>

@@ -1,0 +1,183 @@
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+
+```ts wrap
+// Merchant
+const customerOutgoingPaymentToMerchant = await client.outgoingPayment.create(
+  {
+    url: customerWalletAddress.resourceServer,
+    accessToken: customerOutgoingPaymentGrant.access_token.value
+  },
+  {
+    walletAddress: customerWalletAddress.id,
+    quoteId: merchantQuote.id
+  }
+)
+// Platform
+const customerOutgoingPaymentToPlatform = await client.outgoingPayment.create(
+  {
+    url: customerWalletAddress.resourceServer,
+    accessToken: customerOutgoingPaymentGrant.access_token.value
+  },
+  {
+    walletAddress: customerWalletAddress.id,
+    quoteId: platformQuote.id
+  }
+)
+```
+
+ </TabItem>
+ <TabItem label='Rust' icon='seti:rust'>
+
+```rust wrap
+use open_payments::types::OutgoingPaymentRequest;
+let merchant_outgoing_request = OutgoingPaymentRequest {
+  wallet_address: customer_wallet_address.id.clone(),
+  receiver: Some(merchant_incoming_payment.id.clone()),
+  debit_amount: None,
+  receive_amount: None,
+  quote_id: Some(merchant_quote.id.clone()),
+};
+let platform_outgoing_request = OutgoingPaymentRequest {
+  wallet_address: customer_wallet_address.id.clone(),
+  receiver: Some(platform_incoming_payment.id.clone()),
+  debit_amount: None,
+  receive_amount: None,
+  quote_id: Some(platform_quote.id.clone()),
+};
+let customer_outgoing_payment_to_merchant = client
+  .outgoing_payments()
+  .create(&customer_wallet_address.resource_server, &merchant_outgoing_request, Some(&customer_outgoing_payment_grant.access_token.value))
+  .await?;
+let customer_outgoing_payment_to_platform = client
+  .outgoing_payments()
+  .create(&customer_wallet_address.resource_server, &platform_outgoing_request, Some(&customer_outgoing_payment_grant.access_token.value))
+  .await?;
+```
+
+ </TabItem>
+
+  <TabItem label='PHP' icon='seti:php'>
+
+```php wrap
+// Merchant
+$customerOutgoingPaymentToMerchant = $client->outgoingPayment()->create(
+  [
+    'url' => $customerWalletAddress->resourceServer,
+    'accessToken' => $customerOutgoingPaymentGrant->access_token->value
+  ],
+  [
+    'walletAddress' => $customerWalletAddress->id,
+    'quoteId' => $merchantQuote->id
+  ]
+);
+// Platform
+$customerOutgoingPaymentToPlatform = $client->outgoingPayment()->create(
+  [
+    'url' => $customerWalletAddress->resourceServer,
+    'accessToken' => $customerOutgoingPaymentGrant->access_token->value
+  ],
+  [
+    'walletAddress' => $customerWalletAddress->id,
+    'quoteId' => $platformQuote->id
+  ]
+);
+```
+
+  </TabItem>
+
+  <TabItem label='Go' icon='seti:go'>
+
+```go wrap
+// Merchant
+var merchantOutgoingPayload rs.CreateOutgoingPaymentRequest
+if err := merchantOutgoingPayload.FromCreateOutgoingPaymentWithQuote(rs.CreateOutgoingPaymentWithQuote{
+  WalletAddressSchema: *customerWalletAddress.Id,
+  QuoteId:             *merchantQuote.Id,
+}); err != nil {
+  log.Fatalf("Error creating merchant payload: %v\n", err)
+}
+customerOutgoingPaymentToMerchant, err := client.OutgoingPayment.Create(context.TODO(), op.OutgoingPaymentCreateParams{
+  BaseURL:     *customerWalletAddress.ResourceServer,
+  AccessToken: customerOutgoingPaymentGrant.AccessToken.Value,
+  Payload:     merchantOutgoingPayload,
+})
+if err != nil {
+  log.Fatalf("Error creating outgoing payment to merchant: %v\n", err)
+}
+// Platform
+var platformOutgoingPayload rs.CreateOutgoingPaymentRequest
+if err := platformOutgoingPayload.FromCreateOutgoingPaymentWithQuote(rs.CreateOutgoingPaymentWithQuote{
+  WalletAddressSchema: *customerWalletAddress.Id,
+  QuoteId:             *platformQuote.Id,
+}); err != nil {
+  log.Fatalf("Error creating platform payload: %v\n", err)
+}
+customerOutgoingPaymentToPlatform, err := client.OutgoingPayment.Create(context.TODO(), op.OutgoingPaymentCreateParams{
+  BaseURL:     *customerWalletAddress.ResourceServer,
+  AccessToken: customerOutgoingPaymentGrant.AccessToken.Value,
+  Payload:     platformOutgoingPayload,
+})
+if err != nil {
+  log.Fatalf("Error creating outgoing payment to platform: %v\n", err)
+}
+```
+
+ </TabItem>
+
+ <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+// Merchant
+var customerOutgoingPaymentToMerchant = client.payment().createOutgoing(
+  customerOutgoingPaymentGrant,
+  customerWalletAddress,
+  merchantQuote
+);
+
+// Platform
+var customerOutgoingPaymentToPlatform = client.payment().createOutgoing(
+  customerOutgoingPaymentGrant,
+  customerWalletAddress,
+  platformQuote
+);
+```
+
+ </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+// Merchant
+var customerOutgoingPaymentToMerchant = await client.CreateOutgoingPaymentAsync(
+    new AuthRequestArgs
+    {
+        Url = customerWalletAddress.ResourceServer,
+        AccessToken = customerOutgoingPaymentGrant.AccessToken.Value
+    },
+    new OutgoingPaymentBodyFromQuote
+    {
+        WalletAddress = customerWalletAddress.Id,
+        QuoteId = merchantQuote.Id,
+    }
+);
+// Platform
+var customerOutgoingPaymentToPlatform = await client.CreateOutgoingPaymentAsync(
+    new AuthRequestArgs
+    {
+        Url = customerWalletAddress.ResourceServer,
+        AccessToken = customerOutgoingPaymentGrant.AccessToken.Value
+    },
+    new OutgoingPaymentBodyFromQuote
+    {
+        WalletAddress = customerWalletAddress.Id,
+        QuoteId = platformQuote.Id,
+    }
+);
+```
+
+</TabItem>
+
+</Tabs>

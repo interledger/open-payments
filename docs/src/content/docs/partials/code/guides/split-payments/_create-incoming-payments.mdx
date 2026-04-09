@@ -1,0 +1,198 @@
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+
+<Tabs syncKey="lang">
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+
+```ts wrap
+// Merchant
+const merchantIncomingPayment = await client.incomingPayment.create(
+  {
+    url: merchantWalletAddress.resourceServer,
+    accessToken: merchantIncomingPaymentGrant.access_token.value
+  },
+  {
+    walletAddress: merchantWalletAddress.id,
+    incomingAmount: {
+      value: '9900',
+      assetCode: 'USD',
+      assetScale: 2
+    }
+  }
+)
+// Platform
+const platformIncomingPayment = await client.incomingPayment.create(
+  {
+    url: platformWalletAddress.resourceServer,
+    accessToken: platformIncomingPaymentGrant.access_token.value
+  },
+  {
+    walletAddress: platformWalletAddress.id,
+    incomingAmount: {
+      value: '100',
+      assetCode: 'USD',
+      assetScale: 2
+    }
+  }
+)
+```
+
+</TabItem>
+
+<TabItem label='Rust' icon='seti:rust'>
+
+```rust wrap
+use open_payments::types::{IncomingPaymentRequest, Amount};
+let merchant_request = IncomingPaymentRequest {
+  wallet_address: merchant_wallet_address.id.clone(),
+  incoming_amount: Some(Amount { value: "9900".into(), asset_code: "USD".into(), asset_scale: 2 }),
+  expires_at: None,
+  metadata: None,
+};
+let platform_request = IncomingPaymentRequest {
+  wallet_address: platform_wallet_address.id.clone(),
+  incoming_amount: Some(Amount { value: "100".into(), asset_code: "USD".into(), asset_scale: 2 }),
+  expires_at: None,
+  metadata: None,
+};
+let merchant_incoming_payment = client
+  .incoming_payments()
+  .create(&merchant_wallet_address.resource_server, &merchant_request, Some(&merchant_incoming_payment_grant.access_token.value))
+  .await?;
+let platform_incoming_payment = client
+  .incoming_payments()
+  .create(&platform_wallet_address.resource_server, &platform_request, Some(&platform_incoming_payment_grant.access_token.value))
+  .await?;
+```
+
+ </TabItem>
+
+  <TabItem label='PHP' icon='seti:php'>
+
+```php wrap
+// Merchant
+$merchantIncomingPayment = $client->incomingPayment()->create(
+  [
+   'url' => $merchantWalletAddress->resourceServer,
+    'accessToken' => $merchantIncomingPaymentGrant->access_token->value
+  ],
+  [
+    'walletAddress' => $merchantWalletAddress->id,
+   'incomingAmount' => [
+     'value' => '9900',
+      'assetCode' => 'USD',
+     'assetScale' => 2
+   ]
+ ]
+);
+// Platform
+$platformIncomingPayment = $client->incomingPayment()->create(
+  [
+    'url' => $platformWalletAddress->resourceServer,
+    'accessToken' => $platformIncomingPaymentGrant->access_token->value
+  ],
+  [
+    'walletAddress' => $platformWalletAddress->id,
+    'incomingAmount' => [
+      'value' => '100',
+      'assetCode' => 'USD',
+      'assetScale' => 2
+    ]
+  ]
+);
+```
+
+  </TabItem>
+
+  <TabItem label='Go' icon='seti:go'>
+
+```go wrap
+// Merchant
+merchantIncomingPayment, err := client.IncomingPayment.Create(context.TODO(), op.IncomingPaymentCreateParams{
+  BaseURL:     *merchantWalletAddress.ResourceServer,
+  AccessToken: merchantIncomingPaymentGrant.AccessToken.Value,
+  Payload: rs.CreateIncomingPaymentJSONBody{
+    WalletAddressSchema: *merchantWalletAddress.Id,
+    IncomingAmount: &rs.Amount{
+      Value:      "9900",
+      AssetCode:  "USD",
+      AssetScale: 2,
+    },
+  },
+})
+if err != nil {
+  log.Fatalf("Error creating merchant incoming payment: %v\n", err)
+}
+// Platform
+platformIncomingPayment, err := client.IncomingPayment.Create(context.TODO(), op.IncomingPaymentCreateParams{
+  BaseURL:     *platformWalletAddress.ResourceServer,
+  AccessToken: platformIncomingPaymentGrant.AccessToken.Value,
+  Payload: rs.CreateIncomingPaymentJSONBody{
+    WalletAddressSchema: *platformWalletAddress.Id,
+    IncomingAmount: &rs.Amount{
+      Value:      "100",
+      AssetCode:  "USD",
+      AssetScale: 2,
+    },
+  },
+})
+if err != nil {
+  log.Fatalf("Error creating platform incoming payment: %v\n", err)
+}
+```
+
+ </TabItem>
+
+  <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+// Merchant receives 99.00 USD (value 9900, scale 2)
+var merchantIncomingPayment = client.payment().createIncoming(
+  merchantWalletAddress,
+  merchantIncomingPaymentGrant,
+  BigDecimal.valueOf(99.00)
+);
+
+// Platform receives 1.00 USD (value 100, scale 2)
+var platformIncomingPayment = client.payment().createIncoming(
+  platformWalletAddress,
+  platformIncomingPaymentGrant,
+  BigDecimal.valueOf(1.00)
+);
+```
+
+  </TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+// Merchant
+var merchantIncomingPayment = await client.CreateIncomingPaymentAsync(
+    new AuthRequestArgs
+    {
+        Url = merchantWalletAddress.ResourceServer,
+        AccessToken = merchantIncomingPaymentGrant.AccessToken.Value
+    },
+    new IncomingPaymentBody
+    {
+        WalletAddress = merchantWalletAddress.Id,
+        IncomingAmount = new Amount("9900", "USD", 2)
+    }
+);
+// Platform
+var platformIncomingPayment = await client.CreateIncomingPaymentAsync(
+    new AuthRequestArgs
+    {
+        Url = platformWalletAddress.ResourceServer,
+        AccessToken = platformIncomingPaymentGrant.AccessToken.Value
+    },
+    new IncomingPaymentBody
+    {
+        WalletAddress = platformWalletAddress.Id,
+        IncomingAmount = new Amount("100", "USD", 2)
+    }
+);
+```
+
+</TabItem>
+
+</Tabs>

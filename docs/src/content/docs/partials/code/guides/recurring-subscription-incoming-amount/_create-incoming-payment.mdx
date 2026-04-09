@@ -1,0 +1,123 @@
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+
+<Tabs syncKey="lang">
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+
+```ts wrap
+const serviceProviderIncomingPayment = await client.incomingPayment.create(
+  {
+    url: serviceProviderWalletAddress.resourceServer,
+    accessToken: serviceProviderIncomingPaymentGrant.access_token.value
+  },
+  {
+    walletAddress: serviceProviderWalletAddress.id,
+    incomingAmount: {
+      value: '1500', // The amount the service provider expects to receive in the first payment
+      assetCode: 'USD',
+      assetScale: 2
+    }
+  }
+)
+```
+
+</TabItem>
+<TabItem label='Rust' icon='seti:rust'>
+
+```rust wrap
+use open_payments::types::{IncomingPaymentRequest, Amount};
+let incoming_request = IncomingPaymentRequest {
+  wallet_address: service_provider_wallet_address.id.clone(),
+  incoming_amount: Some(Amount {
+    value: "1500".into(),
+    asset_code: "USD".into(),
+    asset_scale: 2,
+  }),
+  expires_at: None,
+  metadata: None,
+};
+let service_provider_incoming_payment = client
+  .incoming_payments()
+  .create(
+    &service_provider_wallet_address.resource_server,
+    &incoming_request,
+    Some(&service_provider_incoming_payment_grant.access_token.value),
+  )
+  .await?;
+```
+
+</TabItem>
+  <TabItem label='PHP' icon='seti:php'>
+
+```php wrap
+$serviceProviderIncomingPayment = $client->incomingPayment()->create(
+  [
+    'url' => $serviceProviderWalletAddress->resourceServer,
+    'accessToken' => $serviceProviderIncomingPaymentGrant->access_token->value
+  ],
+  [
+    'walletAddress' => $serviceProviderWalletAddress->id,
+    'incomingAmount' => [
+      'value' => '1500',  // The amount the service provider expects to receive in the first payment
+      'assetCode' => 'USD',
+      'assetScale' => 2
+    ],
+  ]
+);
+```
+
+</TabItem>
+
+<TabItem label='Go' icon='seti:go'>
+
+```go wrap
+serviceProviderIncomingPayment, err := client.IncomingPayment.Create(context.TODO(), op.IncomingPaymentCreateParams{
+	BaseURL:     *serviceProviderWalletAddress.ResourceServer,
+	AccessToken: serviceProviderIncomingPaymentGrant.AccessToken.Value,
+	Payload: rs.CreateIncomingPaymentJSONBody{
+		WalletAddressSchema: *serviceProviderWalletAddress.Id,
+		IncomingAmount: &rs.Amount{
+			Value:      "1500",
+			AssetCode:  "USD",
+			AssetScale: 2,
+		},
+	},
+})
+if err != nil {
+	log.Fatalf("Error creating incoming payment: %v\n", err)
+}
+```
+
+</TabItem>
+
+<TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var serviceProviderIncomingPayment = client.payment().createIncoming(
+  serviceProviderWalletAddress,
+  serviceProviderIncomingPaymentGrant,
+  BigDecimal.valueOf(15.00)
+);
+```
+
+</TabItem>
+
+<TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var serviceProviderIncomingPayment = await client.CreateIncomingPaymentAsync(
+    new AuthRequestArgs
+    {
+        Url = serviceProviderWalletAddress.ResourceServer,
+        AccessToken = serviceProviderIncomingPaymentGrant.AccessToken.Value
+    },
+    new IncomingPaymentBody
+    {
+        WalletAddress = serviceProviderWalletAddress.Id,
+        IncomingAmount = new Amount("1500", "USD", 2)
+    }
+);
+```
+
+</TabItem>
+
+</Tabs>
