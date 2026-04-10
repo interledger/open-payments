@@ -4,6 +4,8 @@
   <img src="https://raw.githubusercontent.com/interledger/open-payments/main/docs/public/img/logo.svg" width="700" alt="Open Payments">
 </p>
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/61b256a1-93e0-4735-a492-1a71d5524e63/deploy-status)](https://app.netlify.com/projects/openpayments/deploys)
+
 ## What is Open Payments?
 
 Open Payments is an open API standard that can be implemented by account servicing entities (e.g. banks, digital wallet providers, and mobile money providers) to facilitate interoperability in the setup and completion of payments for different use cases including:
