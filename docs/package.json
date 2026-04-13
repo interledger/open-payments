@@ -8,12 +8,15 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "build:redoc": "redocly build-docs public/specs/resource-server.yaml --output public/apis/redoc/resource-server/index.html && redocly build-docs public/specs/auth-server.yaml --output public/apis/redoc/auth-server/index.html && redocly build-docs public/specs/wallet-address-server.yaml --output public/apis/redoc/wallet-address-server/index.html",
     "format": "prettier --write '**/*.{js,mjs,ts,tsx,json,md,mdx,astro}' && eslint --max-warnings=0 --fix .",
     "lint": "prettier --check '**/*.{js,mjs,ts,tsx,json,md,mdx,astro}' && eslint --max-warnings=0 . "
   },
   "dependencies": {
     "@astrojs/starlight": "^0.37.4",
     "@interledger/docs-design-system": "^0.11.0",
+    "@scalar/astro": "^0.2.4",
+    "@scalar/core": "^0.4.4",
     "astro": "5.17.1",
     "katex": "^0.16.28",
     "mermaid": "^11.12.2",
@@ -28,6 +31,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.2",
     "@prettier/plugin-php": "^0.24.0",
+    "@redocly/cli": "^2.24.1",
     "@typescript-eslint/parser": "^8.54.0",
     "astro-eslint-parser": "^1.2.2",
     "eslint": "^9.39.2",

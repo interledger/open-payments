@@ -1,0 +1,148 @@
+---
+title: Proposed spec improvements
+description: A summary of proposed changes to the Open Payments OpenAPI specs for developer and writer review.
+---
+
+This page documents proposed improvements to the OpenAPI spec files in the
+[`interledger/open-payments-specifications`](https://github.com/interledger/open-payments-specifications) repository.
+
+These changes have been applied locally on the `demo/api-docs-exploration` branch for review purposes. **No changes have been pushed to the specifications repository.** Each item below should be reviewed with a developer before opening a PR over there to confirm no breaking changes are introduced.
+
+The changes are grouped by spec file. All three API reference tools on this branch (the existing Starlight plugin, Scalar, and Redoc) read from the same spec files and will reflect these changes automatically.
+
+---
+
+## `auth-server.yaml`
+
+### Anonymous `oneOf` objects in grant request 200 response
+
+**Problem:** The 200 response for the grant request endpoint (`POST /`) uses a `oneOf` with two inline objects that have no `title` field. All three doc tools render these as generic labels like `"object"` or `"One of: object | object"`, which gives the reader no useful information about what each case represents.
+
+**Fix:** Added `title` fields to both objects:
+
+| Before                                                 | After                 |
+| ------------------------------------------------------ | --------------------- |
+| _(no title)_ — object with `interact` + `continue`     | `Pending Interaction` |
+| _(no title)_ — object with `access_token` + `continue` | `Approved`            |
+
+This pattern is already used correctly elsewhere in the same spec (the request body uses `title: with Access Token` and `title: with Subject`).
+
+---
+
+### Missing descriptions on `id` path parameters
+
+**Problem:** Both `/continue/{id}` and `/token/{id}` define an `id` path parameter with no `description` field. Doc tools display it as a required string with no context.
+
+**Fix:** Added descriptions:
+
+| Path             | Description added                                            |
+| ---------------- | ------------------------------------------------------------ |
+| `/continue/{id}` | `The unique reference ID of the grant request continuation.` |
+| `/token/{id}`    | `The unique reference of the access token to be managed.`    |
+
+---
+
+### Anonymous `anyOf` objects in `limits-outgoing` schema
+
+**Problem:** The `limits-outgoing` schema uses an `anyOf` with three untitled inline objects representing different payment limit configurations.
+
+**Fix:** Added titles — `No amount limit`, `Debit amount limit`, and `Receive amount limit`.
+
+---
+
+### Missing `title` fields on error schemas
+
+**Problem:** All six error component schemas (`error-invalid-client`, `error-invalid-request`, `error-request-denied`, `error-too-fast`, `error-invalid-continuation`, `error-invalid-rotation`) had no `title` field. Since these are reused across multiple error response `oneOf`s throughout the spec, doc tools rendered every error response as `object | object`.
+
+**Fix:** Added a `title` to each schema (`Invalid client`, `Invalid request`, `Request denied`, `Too fast`, `Invalid continuation`, `Invalid rotation`). This fixes all error response displays in one place.
+
+---
+
+### Anonymous `oneOf` objects on `client` schema (v1.3.0)
+
+**Problem:** A v1.3.0 upstream update added directed identity support, expanding the `client` field from a plain string to a `oneOf` with three options. None of the three had `title` fields.
+
+**Fix:** Added titles — `Wallet address string (deprecated)`, `Wallet address object`, and `Directed identity (JWK)`.
+
+---
+
+### Updated `info.description`
+
+**Problem:** The original description was a single sentence describing the spec as "an opinionated GNAP Server API" with no further context.
+
+**Fix:** Replaced with an explanation of the auth server's role, a full endpoint list, and a link to the authorization concepts page.
+
+---
+
+## `wallet-address-server.yaml`
+
+### Missing descriptions on `json-web-key` properties
+
+**Problem:** The `json-web-key` schema has four properties with no `description` field — `kid`, `use`, `kty`, and `crv`. The `alg` and `x` properties already have descriptions. The missing ones are particularly confusing for readers unfamiliar with JWK terminology.
+
+**Fix:** Added descriptions:
+
+| Property | Description added                                                                                              |
+| -------- | -------------------------------------------------------------------------------------------------------------- |
+| `kid`    | `A unique identifier for the key.`                                                                             |
+| `use`    | `The intended use of the key. The only allowed value is `sig` (signature).`                                    |
+| `kty`    | `The key type. Identifies the cryptographic algorithm family. The only allowed value is OKP (Octet Key Pair).` |
+| `crv`    | `The cryptographic curve used with the key. The only allowed value is Ed25519.`                                |
+
+---
+
+### 4. Removed `/did.json` endpoint and `did-document` schema
+
+**Problem:** The `/did.json` endpoint was defined in the spec with a 500 response described as "DID Document not yet implemented." It was intentionally excluded from the published docs sidebar, but its presence in the spec was misleading and caused it to appear in Scalar and Redoc.
+
+**Fix:** Removed the `/did.json` endpoint and the `did-document` schema entirely. Confirmed with Max — this feature is not planned and should not be in the spec.
+
+---
+
+### Updated `info.description`
+
+**Problem:** The original description was a single sentence: "The Wallet Address API is a simple REST API to get basic details about a wallet address."
+
+**Fix:** Replaced with a description that covers both purposes of the server (account details and cryptographic keys), lists the two endpoints, and links to the wallet addresses concepts page.
+
+## `resource-server.yaml`
+
+### Orphaned `wallet-address` tag
+
+**Problem:** The top-level `tags` array in `resource-server.yaml` declares a `wallet-address` tag, but no operations in this spec use it. The wallet address operations (`GET /wallet-address`, `GET /wallet-address/keys`) live in `wallet-address-server.yaml`, where they belong.
+
+The orphaned tag causes all three doc tools to render an empty "Wallet Addresses" section in the resource server reference, which is confusing.
+
+**Fix:** Removed the `wallet-address` entry from the `tags` array. Confirmed safe to remove by Max.
+
+---
+
+### Anonymous `oneOf` objects in create outgoing payment request body
+
+**Problem:** The request body for `POST /outgoing-payments` uses a `oneOf` with two inline objects and no `title` fields, causing doc tools to render them as generic `object | object` labels.
+
+**Fix:** Added titles — `From quote` and `From incoming payment` — which accurately describe the two ways to create an outgoing payment.
+
+---
+
+### Anonymous `oneOf` objects in create quote request body
+
+**Problem:** Same issue as above. The request body for `POST /quotes` uses a `oneOf` with three untitled inline objects.
+
+**Fix:** Added titles — `Receiver with incoming amount`, `With fixed-receive amount`, and `With fixed-send amount`.
+
+---
+
+### Missing `title` on `ilp-payment-method` schema
+
+**Problem:** The `ilp-payment-method` component schema had no `title`, causing it to render as a generic `object` in doc tools.
+
+**Fix:** Added `title: ILP payment method`.
+
+---
+
+### Updated `info.description`
+
+**Problem:** The resource server description was a long multi-paragraph block originally written when all resources lived in a single spec. It still referenced wallet address as one of four resource types, which is no longer accurate.
+
+**Fix:** Replaced with a concise description scoped to the three actual resource types (incoming payments, outgoing payments, quotes), a brief endpoint list, and a link the resources concepts page.
