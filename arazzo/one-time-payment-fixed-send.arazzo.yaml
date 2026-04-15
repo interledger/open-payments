@@ -1,0 +1,264 @@
+arazzo: "1.0.1"
+info:
+  title: "Open Payments — One-Time Payment (Fixed Send)"
+  summary: >
+    End-to-end workflow for sending a one-time payment where the sender
+    specifies the exact debit amount (remittance pattern).
+  description: |
+    This workflow documents the complete API call sequence for an Open Payments
+    client to send a one-time payment with a fixed send amount — the standard
+    remittance pattern where the sender knows exactly how much they want to
+    debit from their account.
+
+    The key difference from the fixed-receive workflow is:
+    - The incoming payment is created **without** an `incomingAmount`.
+    - The quote is created with a `debitAmount` to fix the debit side.
+    - The ASE calculates the receive amount based on the exchange rate.
+
+    **Actors:**
+    - **Client** — application acting on behalf of the sender.
+    - **Recipient's ASE** — hosts the recipient's wallet and auth/resource servers.
+    - **Sender's ASE** — hosts the sender's wallet and auth/resource servers.
+  version: "1.0.0"
+
+sourceDescriptions:
+  - name: walletAddressServer
+    url: ../open-payments-specifications/openapi/wallet-address-server.yaml
+    type: openapi
+  - name: resourceServer
+    url: ../open-payments-specifications/openapi/resource-server.yaml
+    type: openapi
+  - name: authServer
+    url: ../open-payments-specifications/openapi/auth-server.yaml
+    type: openapi
+
+workflows:
+  - workflowId: oneTimePaymentFixedSend
+    summary: "One-time payment with a fixed send (debit) amount"
+    description: |
+      Complete Open Payments flow where the sender specifies how much to
+      debit from their account. The incoming payment has no `incomingAmount`,
+      and the quote uses `debitAmount` to fix the sender's side.
+    inputs:
+      type: object
+      required:
+        - recipientWalletAddressUrl
+        - senderWalletAddressUrl
+        - debitAmount
+        - debitAssetCode
+        - debitAssetScale
+        - clientWalletAddress
+      properties:
+        recipientWalletAddressUrl:
+          type: string
+          description: "The recipient's wallet address URL"
+        senderWalletAddressUrl:
+          type: string
+          description: "The sender's wallet address URL"
+        debitAmount:
+          type: string
+          description: "Amount to debit in minor units (e.g. '2500' for $25.00 with scale 2)"
+        debitAssetCode:
+          type: string
+          description: "Currency code of the sender's asset (e.g. USD)"
+        debitAssetScale:
+          type: integer
+          description: "Asset scale (e.g. 2 for USD cents)"
+        clientWalletAddress:
+          type: string
+          description: "The client's wallet address for GNAP identification"
+        finishUri:
+          type: string
+          description: "URI to redirect the user to after interaction"
+        finishNonce:
+          type: string
+          description: "Unique nonce for the interaction finish"
+
+    steps:
+      # ─── Step 1: Resolve recipient's wallet address ───
+      - stepId: getRecipientWalletAddress
+        description: >
+          Retrieve the recipient's wallet address details to discover server
+          URLs and supported asset information.
+        operationId: walletAddressServer.get-wallet-address
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          recipientAuthServer: $response.body.authServer
+          recipientResourceServer: $response.body.resourceServer
+
+      # ─── Step 2: Request grant for incoming payment ───
+      - stepId: requestIncomingPaymentGrant
+        description: >
+          Request a non-interactive grant from the recipient's authorization
+          server to create and read incoming payments.
+        operationId: authServer.post-request
+        requestBody:
+          contentType: application/json
+          payload:
+            access_token:
+              access:
+                - type: incoming-payment
+                  actions:
+                    - create
+                    - read
+                  identifier: $inputs.recipientWalletAddressUrl
+            client: $inputs.clientWalletAddress
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          incomingPaymentAccessToken: $response.body.access_token.value
+
+      # ─── Step 3: Create incoming payment WITHOUT incomingAmount ───
+      - stepId: createIncomingPayment
+        description: >
+          Create an incoming payment on the recipient's account WITHOUT
+          specifying an `incomingAmount`. This creates an open-ended
+          incoming payment where the received amount will be determined
+          by the quote and exchange rate.
+        operationId: resourceServer.create-incoming-payment
+        requestBody:
+          contentType: application/json
+          payload:
+            walletAddress: $inputs.recipientWalletAddressUrl
+        successCriteria:
+          - condition: $statusCode == 201
+        outputs:
+          incomingPaymentUrl: $response.body.id
+
+      # ─── Step 4: Resolve sender's wallet address ───
+      - stepId: getSenderWalletAddress
+        description: >
+          Retrieve the sender's wallet address details to discover the
+          sender's authorization and resource server URLs.
+        operationId: walletAddressServer.get-wallet-address
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          senderAuthServer: $response.body.authServer
+          senderResourceServer: $response.body.resourceServer
+
+      # ─── Step 5: Request grant for quote ───
+      - stepId: requestQuoteGrant
+        description: >
+          Request a non-interactive grant from the sender's authorization
+          server to create and read quotes.
+        operationId: authServer.post-request
+        requestBody:
+          contentType: application/json
+          payload:
+            access_token:
+              access:
+                - type: quote
+                  actions:
+                    - create
+                    - read
+            client: $inputs.clientWalletAddress
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          quoteAccessToken: $response.body.access_token.value
+
+      # ─── Step 6: Create quote with fixed debitAmount ───
+      - stepId: createQuote
+        description: >
+          Create a quote on the sender's account with a fixed `debitAmount`.
+          The sender's ASE calculates the corresponding receive amount based
+          on the exchange rate, fees, and the quote method.
+        operationId: resourceServer.create-quote
+        requestBody:
+          contentType: application/json
+          payload:
+            walletAddress: $inputs.senderWalletAddressUrl
+            receiver: $steps.createIncomingPayment.outputs.incomingPaymentUrl
+            method: ilp
+            debitAmount:
+              value: $inputs.debitAmount
+              assetCode: $inputs.debitAssetCode
+              assetScale: $inputs.debitAssetScale
+        successCriteria:
+          - condition: $statusCode == 201
+        outputs:
+          quoteId: $response.body.id
+          debitAmount: $response.body.debitAmount
+          receiveAmount: $response.body.receiveAmount
+
+      # ─── Step 7: Request interactive grant for outgoing payment ───
+      - stepId: requestOutgoingPaymentGrant
+        description: >
+          Request an interactive grant from the sender's authorization server
+          for the outgoing payment. The user must explicitly consent to the
+          payment through the redirect flow.
+        operationId: authServer.post-request
+        requestBody:
+          contentType: application/json
+          payload:
+            access_token:
+              access:
+                - type: outgoing-payment
+                  actions:
+                    - create
+                    - read
+                  identifier: $inputs.senderWalletAddressUrl
+                  limits:
+                    debitAmount: $steps.createQuote.outputs.debitAmount
+                    receiveAmount: $steps.createQuote.outputs.receiveAmount
+                    receiver: $steps.createIncomingPayment.outputs.incomingPaymentUrl
+            client: $inputs.clientWalletAddress
+            interact:
+              start:
+                - redirect
+              finish:
+                method: redirect
+                uri: $inputs.finishUri
+                nonce: $inputs.finishNonce
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          interactRedirectUri: $response.body.interact.redirect
+          continueAccessToken: $response.body.continue.access_token.value
+          continueUri: $response.body.continue.uri
+
+      # ─── Step 8: Continue grant after user interaction ───
+      - stepId: continueOutgoingPaymentGrant
+        description: >
+          After the sender completes the interaction (consents to the payment),
+          the client continues the grant to obtain the access token.
+        operationId: authServer.post-continue
+        parameters:
+          - name: id
+            in: path
+            value: $steps.requestOutgoingPaymentGrant.outputs.continueUri
+        requestBody:
+          contentType: application/json
+          payload:
+            interact_ref: "{interact_ref_from_redirect}"
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          outgoingPaymentAccessToken: $response.body.access_token.value
+
+      # ─── Step 9: Create outgoing payment ───
+      - stepId: createOutgoingPayment
+        description: >
+          Create the outgoing payment using the quote. This triggers the
+          actual payment execution between the two ASEs.
+        operationId: resourceServer.create-outgoing-payment
+        requestBody:
+          contentType: application/json
+          payload:
+            walletAddress: $inputs.senderWalletAddressUrl
+            quoteId: $steps.createQuote.outputs.quoteId
+        successCriteria:
+          - condition: $statusCode == 201
+        outputs:
+          outgoingPaymentId: $response.body.id
+          outgoingPaymentFailed: $response.body.failed
+          sentAmount: $response.body.sentAmount
+
+    outputs:
+      incomingPaymentUrl: $steps.createIncomingPayment.outputs.incomingPaymentUrl
+      quoteId: $steps.createQuote.outputs.quoteId
+      outgoingPaymentId: $steps.createOutgoingPayment.outputs.outgoingPaymentId
+      debitAmount: $steps.createQuote.outputs.debitAmount
+      receiveAmount: $steps.createQuote.outputs.receiveAmount
