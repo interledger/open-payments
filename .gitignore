@@ -1,6 +1,9 @@
 # Macs
 .DS_Store
 
+# Claude Code
+.claude
+
 # Logs
 logs
 *.log
