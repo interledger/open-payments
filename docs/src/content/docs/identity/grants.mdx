@@ -34,7 +34,7 @@ An authorization server is uniquely identified by its grant endpoint URI, which 
 
 A key registry is a list of keys associated with clients requiring access to protected Open Payments resources. Key registries are publicly exposed via a `jwks.json` endpoint and allows an authorization server to verify that a client is who it says it is.
 
-A client must generate and add its key to its key registry before requesting a grant for the first time. For more information on key generation and registration, as well as how key registries work with authorization servers, refer to the [Client keys](/identity/client-keys) page.
+A client must generate and add its key to its key registry before requesting a grant for the first time. A client using directed identity provides its public key directly in the grant request and does not require a key registry. For more information on key generation and registration, as well as how key registries work with authorization servers, refer to the [Client keys](/identity/client-keys) page.
 
 ## Grant requests
 

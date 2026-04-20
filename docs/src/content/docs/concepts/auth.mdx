@@ -31,13 +31,13 @@ A client typically begins the Open Payments flow by requesting an incoming payme
 
 The client can request a single grant to create multiple incoming payments for different Open Payments-enabled accounts as long as each account belongs to the same <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip>.
 
-Incoming payment grants are non-interactive by default, meaning interaction by an individual (typically the client’s user) is not required for the authorization server to issue an access token.
+Incoming payment grants are non-interactive by default, meaning interaction by an individual (typically the client’s user) is not required for the authorization server to issue an access token. Clients can use [directed identity](/identity/client-keys#client-requests) for incoming payment grant requests.
 
 ### quote
 
 After the client receives an incoming payment grant and an incoming payment resource is created on the recipient's account, the client requests a quote grant from the authorization server on the _sender_ side. The client can request a single grant to create multiple quotes for different Open Payments-enabled accounts as long as each account belongs to the same <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip>.
 
-Quote grants are non-interactive by default, meaning interaction by an individual (typically the client’s user) is not required for the authorization server to issue an access token.
+Quote grants are non-interactive by default, meaning interaction by an individual (typically the client’s user) is not required for the authorization server to issue an access token. Clients can also use [directed identity](/identity/client-keys#client-requests) for quote grant requests.
 
 ### outgoing-payment
 

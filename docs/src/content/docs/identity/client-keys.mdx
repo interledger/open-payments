@@ -9,7 +9,7 @@ import {
 } from '@interledger/docs-design-system'
 
 :::tip[Summary]
-Client keys are unique identifiers that allow clients to sign Open Payments requests. They allow a client's identity to be verified through a public key registry.
+Client keys are unique identifiers that allow clients to sign Open Payments requests and verify the client's identity.
 :::
 
 All client requests in Open Payments are signed using a unique key that identifies the client to authorization and resource servers. All requests, except for new grant requests, will carry an access token that's bound to the key.
@@ -18,11 +18,15 @@ All client requests in Open Payments are signed using a unique key that identifi
 
 A key registry is a list of keys that are generated and stored by the client for when the client requires access to protected Open Payment resources. Grant requests are completed over multiple signed HTTP requests. As such, it's important that the client provides a way to consistently identify itself to an authorization server. The key registry allows the authorization server to verify that the client is who it says it is.
 
-Each client is represented by a [wallet address](/concepts/wallet-addresses). A client's key registry is publicly accessible through its wallet address via a `jwks.json` endpoint. An authorization server can retrieve the client's key registry by accessing `WALLET_ADDRESS/jwks.json`.
+Clients that identify themselves with a [wallet address](/concepts/wallet-addresses/) make their key registry publicly accessible via a `jwks.json` endpoint. An authorization server can retrieve the client's key registry by accessing `WALLET_ADDRESS/jwks.json`.
 
 ```http title="Example"
 https://wallet.example.com/alice/jwks.json
 ```
+
+:::note
+Clients using directed identity for non-interactive grant requests provide their public key directly in the request body and do not require a key registry. See [Client requests](#client-requests) for more information.
+:::
 
 ### Registry structure
 
@@ -73,7 +77,7 @@ Since client requests are completed over multiple signed HTTP requests, it's imp
   - A `Signature-Input` header that includes the `keyId` associated with the client's key pair. This header is a comma-separated list of headers that map to values in the data that was signed.
   - A `signature` header generated based on the `Signature-Input`, using the `EdDSA` signing algorithm
 - Body
-  - A `client` property containing the client's wallet address
+  - A `client` property containing either the client's wallet address (`walletAddress`) or the client's public key provided directly in the request (`jwk`). The `jwk` option, known as directed identity, can only be used for non-interactive grant requests such as incoming payment and quote grants.
 
 Securing client requests follows a profile of what's defined in the <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol#name-securing-requests-from-the-'>GNAP specification</LinkOut>.
 
@@ -83,9 +87,9 @@ Open Payments **does not** support bearer tokens.
 
 ### Grant requests
 
-Upon receiving a signed grant request, the authorization server obtains the client's domain from the `client` property. The authorization server binds the domain to the grant so it can use the domain to acquire the key set for subsequent grant requests.
+When the `client` property contains a `walletAddress`, the authorization server obtains the client's domain from the property and binds it to the grant so it can use the domain to acquire the key set for subsequent grant requests. The server then makes a `GET` request to the client's JWKS endpoint at `WALLET_ADDRESS/jwks.json` to retrieve the client's key registry. The server locates the public key matching the `keyId` in the `Signature-Input` header and uses it to validate the request's signature. This binds the client to the grant and allows the authorization server to continue with the grant request.
 
-The authorization server then makes a `GET` request to the client's JWKS endpoint at `WALLET_ADDRESS/jwks.json`. In return, the server acquires the client's key registry. The server locates the public key containing the `keyId` in the request's `Signature-Input` header. Then, the server uses the key to decrypt and validate the request's signature. This binds the client to the grant and allows the authorization server to continue with the grant request.
+When the `client` property contains a `jwk` (directed identity), the authorization server uses the public key provided directly in the request body. No request to a JWKS endpoint is required, and the client's wallet address is never exposed to the authorization server.
 
 ## Key proofing method
 
@@ -93,7 +97,7 @@ The authorization server then makes a `GET` request to the client's JWKS endpoin
 
 Open Payments uses the <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol#name-http-message-signatures'>HTTP message signatures</LinkOut> (`httpsig`) key proofing method.
 
-Declare the `httpsig` proofing method as part of the key material when directly using a key to request a grant. The key material below is for illustrative purposes. In Open Payments, it's expected that the wallet address be used in the grant request.
+Declare the `httpsig` proofing method as part of the key material when directly using a key to request a grant. The key material below is for illustrative purposes. In Open Payments, the grant request identifies the client using either a wallet address or, for non-interactive grants, a public key provided directly via directed identity.
 
 ```json title="Example"
 "key": {
@@ -114,7 +118,7 @@ See the [HTTP message signatures](/identity/http-signatures) page for more infor
 
 ## Sequence diagram
 
-An interactive grant is necessary for creating an `outgoing-payment` resource. This diagram shows the sequence of calls needed between an Open Payments client SDK and the servers on the sender's side to obtain the grant.
+An interactive grant is necessary for creating an `outgoing-payment` resource. This diagram shows the sequence of calls needed between an Open Payments client SDK and the servers on the sender's side to obtain the grant when the client identifies itself using a wallet address. Clients using directed identity provide their public key directly in the grant request instead. See [Client requests](#client-requests).
 
 Before initializing the client SDK, you must have a public-private key pair and a key ID.
 
