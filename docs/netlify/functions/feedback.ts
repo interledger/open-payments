@@ -88,7 +88,7 @@ export const handler = async (event: NetlifyEvent) => {
     })
   }
 
-  const emoji = type === 'yes' ? '👍' : '👎'
+  const emoji = type === 'yes' ? '🙂' : '🙁'
   const sentiment = type === 'yes' ? 'Positive' : 'Negative'
   const issueTitle = `[Feedback] ${emoji} ${page}`
   const issueBody = `**Page:** ${page}
