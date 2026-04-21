@@ -4,7 +4,7 @@
   "repository": "https://github.com/interledger/open-payments",
   "engines": {
     "pnpm": "^8.15.6",
-    "node": "20"
+    "node": "22"
   },
   "packageManager": "pnpm@8.15.6",
   "scripts": {

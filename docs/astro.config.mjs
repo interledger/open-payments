@@ -107,7 +107,10 @@ export default defineConfig({
             '/es/apis/{auth-server,resource-server,wallet-address-server}/**/*'
           ]
         }),
-        starlightFullViewMode()
+        starlightFullViewMode({
+          leftSidebarEnabled: true,
+          rightSidebarEnabled: true
+        })
       ],
       sidebar: [
         {
