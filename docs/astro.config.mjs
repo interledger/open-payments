@@ -1,3 +1,5 @@
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'astro/config'
 import starlight from '@astrojs/starlight'
 import starlightOpenAPI from 'starlight-openapi'
@@ -5,6 +7,32 @@ import starlightLinksValidator from 'starlight-links-validator'
 import starlightFullViewMode from 'starlight-fullview-mode'
 import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
+import { loadEnv } from 'vite'
+
+const docsRoot = path.dirname(fileURLToPath(import.meta.url))
+const envFromFile = loadEnv(
+  process.env.NODE_ENV === 'production' ? 'production' : 'development',
+  docsRoot,
+  ''
+)
+
+const isNetlifyDev =
+  process.env.NETLIFY_DEV === 'true' || process.env.NETLIFY_DEV === '1'
+
+const netlifyDevFunctionsProxyTarget = (() => {
+  const raw =
+    process.env.URL ||
+    process.env.DEPLOY_URL ||
+    envFromFile.NETLIFY_FUNCTIONS_PROXY_TARGET
+  if (!raw) {
+    return null
+  }
+  try {
+    return new URL(raw).origin
+  } catch {
+    return null
+  }
+})()
 
 // https://astro.build/config
 export default defineConfig({
@@ -31,7 +59,8 @@ export default defineConfig({
       ],
       components: {
         Header: './src/components/Header.astro',
-        PageSidebar: './src/components/PageSidebar.astro'
+        PageSidebar: './src/components/PageSidebar.astro',
+        Footer: './src/components/Footer.astro'
       },
       customCss: [
         './node_modules/@interledger/docs-design-system/src/styles/teal-theme.css',
@@ -556,6 +585,15 @@ export default defineConfig({
     '/sdk/grant-create': '/sdk/grant-create-incoming'
   },
   server: {
-    port: 1104
+    port: 1104,
+    ...(isNetlifyDev &&
+      netlifyDevFunctionsProxyTarget && {
+        proxy: {
+          '/.netlify/functions': {
+            target: netlifyDevFunctionsProxyTarget,
+            changeOrigin: true
+          }
+        }
+      })
   }
 })
