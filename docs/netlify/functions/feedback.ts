@@ -58,7 +58,8 @@ export const handler = async (event: NetlifyEvent) => {
     })
   }
 
-  const githubToken = process.env.GITHUB_TOKEN || readLocalEnvVar('GITHUB_TOKEN')
+  const githubToken =
+    process.env.GITHUB_TOKEN || readLocalEnvVar('GITHUB_TOKEN')
 
   if (!githubToken) {
     return createResponse(500, {
