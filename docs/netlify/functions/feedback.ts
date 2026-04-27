@@ -1,4 +1,4 @@
-import { createSign } from 'node:crypto'
+import { createPrivateKey, sign } from 'node:crypto'
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
 
@@ -47,17 +47,20 @@ const parseEnvFileContent = (content: string) => {
   return map
 }
 
-/** Netlify runs functions with an arbitrary cwd; walk up to find docs/.env or repo .env */
-const listEnvFileCandidates = (): string[] => {
-  const seen = new Set<string>()
+/**
+ * Netlify functions often have an unexpected cwd. Walk ancestors and try both
+ * each directory and its `docs/` subfolder (monorepo layout).
+ */
+const walkSearchBases = (): string[] => {
   const out: string[] = []
+  const seen = new Set<string>()
   let dir = process.cwd()
   for (let i = 0; i < 12; i++) {
-    for (const rel of ['.env', path.join('docs', '.env')]) {
-      const resolved = path.resolve(dir, rel)
-      if (!seen.has(resolved)) {
-        seen.add(resolved)
-        out.push(resolved)
+    for (const base of [dir, path.join(dir, 'docs')]) {
+      const normalized = path.normalize(base)
+      if (!seen.has(normalized)) {
+        seen.add(normalized)
+        out.push(normalized)
       }
     }
     const parent = path.dirname(dir)
@@ -68,6 +71,9 @@ const listEnvFileCandidates = (): string[] => {
   }
   return out
 }
+
+const listEnvFileCandidates = (): string[] =>
+  walkSearchBases().map((base) => path.resolve(base, '.env'))
 
 type LocalEnvCache = { map: Map<string, string>; baseDir: string } | null
 let localEnvCache: LocalEnvCache | undefined
@@ -118,27 +124,16 @@ const loadPrivateKeyPem = (): string | undefined => {
     }
   }
 
-  const roots = new Set<string>()
+  const bases = new Set(walkSearchBases())
   const local = getLocalEnvFromDisk()
   if (local?.baseDir) {
-    roots.add(local.baseDir)
-  }
-  roots.add(process.cwd())
-  roots.add(path.join(process.cwd(), 'docs'))
-  let walkDir = process.cwd()
-  for (let i = 0; i < 12; i++) {
-    roots.add(path.join(walkDir, 'docs'))
-    const parent = path.dirname(walkDir)
-    if (parent === walkDir) {
-      break
-    }
-    walkDir = parent
+    bases.add(path.normalize(local.baseDir))
   }
 
-  for (const root of roots) {
+  for (const base of bases) {
     try {
       return normalizePrivateKey(
-        readFileSync(path.join(root, keyPath), 'utf8')
+        readFileSync(path.join(base, keyPath), 'utf8')
       )
     } catch {
       continue
@@ -158,21 +153,18 @@ const createAppJwt = (appId: string, privateKeyPem: string) => {
   const exp = iat + 9 * 60
   const payload = { iat, exp, iss: appId }
   const unsigned = `${base64urlJson(header)}.${base64urlJson(payload)}`
-  const signer = createSign('RSA-SHA256')
-  signer.update(unsigned)
-  signer.end()
-  const signature = signer
-    .sign(privateKeyPem)
-    .toString('base64')
-    .replace(/=/g, '')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
+  const key = createPrivateKey(privateKeyPem)
+  const signature = sign(
+    'RSA-SHA256',
+    Buffer.from(unsigned, 'utf8'),
+    key
+  ).toString('base64url')
   return `${unsigned}.${signature}`
 }
 
-const githubHeaders = (auth: string, accept = 'application/vnd.github+json') => ({
-  Authorization: auth,
-  Accept: accept,
+const githubHeaders = (authorization: string) => ({
+  Authorization: authorization,
+  Accept: 'application/vnd.github+json',
   'Content-Type': 'application/json',
   'User-Agent': 'OpenPayments-Docs-Feedback-Widget',
   'X-GitHub-Api-Version': '2022-11-28'
@@ -191,12 +183,8 @@ const getInstallationAccessToken = async (
     }
   )
 
-  if (!response.ok) {
-    return { ok: false as const, status: response.status }
-  }
-
   const data = (await response.json()) as { token?: string }
-  if (!data.token) {
+  if (!response.ok || !data.token) {
     return { ok: false as const, status: response.status }
   }
 
