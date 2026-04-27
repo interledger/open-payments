@@ -17,5 +17,11 @@ pnpm-debug.log*
 .env
 .env.production
 
+# GitHub App key (local dev only; never commit)
+.github-app-private-key.pem
+*.pem
+
 # macOS-specific files
 .DS_Store
+
+.netlify
