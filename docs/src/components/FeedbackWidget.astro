@@ -10,7 +10,9 @@ const translations = {
     improve: 'Help us improve',
     improvePlaceholder: 'What can we improve?',
     submit: 'Submit',
-    submitting: 'Submitting...'
+    submitting: 'Submitting...',
+    submitError:
+      'Could not submit feedback. Check your connection and try again.'
   },
   es: {
     question: '¿Fue útil esta página?',
@@ -20,7 +22,9 @@ const translations = {
     improve: 'Ayúdanos a mejorar',
     improvePlaceholder: '¿Qué podemos mejorar?',
     submit: 'Enviar',
-    submitting: 'Enviando...'
+    submitting: 'Enviando...',
+    submitError:
+      'No se pudo enviar el comentario. Comprueba tu conexión e inténtalo de nuevo.'
   }
 }
 
@@ -36,6 +40,7 @@ const functionUrl =
   id="feedback-widget"
   data-function-url={functionUrl}
   data-issue-repo="interledger/open-payments-docs-feedback"
+  data-submit-error={t.submitError}
 >
   <div class="feedback-question">
     <h3>{t.question}</h3>
@@ -98,6 +103,7 @@ const functionUrl =
   <div class="feedback-success hidden" id="feedback-success" aria-live="polite">
     <p>{t.thanks}</p>
   </div>
+  <div class="feedback-error hidden" id="feedback-error" role="alert"></div>
 </div>
 
 <style>
@@ -220,6 +226,15 @@ const functionUrl =
     text-align: center;
   }
 
+  .feedback-error {
+    margin-top: var(--sl-spacing-m, 1rem);
+    padding: var(--sl-spacing-s, 0.75rem);
+    border-radius: 0.375rem;
+    background: #fef2f2;
+    color: #b91c1c;
+    font-size: 0.875rem;
+  }
+
   .hidden {
     display: none;
   }
@@ -262,10 +277,31 @@ const functionUrl =
     const functionUrl = widget.dataset.functionUrl?.trim() || ''
     const issueRepo =
       widget.dataset.issueRepo || 'interledger/open-payments-docs-feedback'
+    const submitErrorDefault =
+      widget.dataset.submitError ||
+      'Could not submit feedback. Check your connection and try again.'
+    const feedbackError =
+      widget.querySelector<HTMLElement>('#feedback-error')
 
     let selectedFeedback: FeedbackChoice | null = null
 
+    const hideError = () => {
+      feedbackError?.classList.add('hidden')
+      if (feedbackError) {
+        feedbackError.textContent = ''
+      }
+    }
+
+    const showError = (message: string) => {
+      if (!feedbackError) {
+        return
+      }
+      feedbackError.textContent = message
+      feedbackError.classList.remove('hidden')
+    }
+
     const showSuccess = () => {
+      hideError()
       feedbackForm?.classList.add('hidden')
       feedbackSuccess?.classList.remove('hidden')
     }
@@ -323,6 +359,7 @@ ${message || '_No additional feedback provided_'}`
         }
 
         selectedFeedback = choice
+        hideError()
         feedbackQuestion?.classList.add('hidden')
         feedbackForm?.classList.remove('hidden')
         feedbackText?.focus()
@@ -349,8 +386,9 @@ ${message || '_No additional feedback provided_'}`
             return
           }
 
+          hideError()
           const controller = new AbortController()
-          const timeoutId = window.setTimeout(() => controller.abort(), 4000)
+          const timeoutId = window.setTimeout(() => controller.abort(), 25_000)
 
           const response = await fetch(functionUrl, {
             method: 'POST',
@@ -371,16 +409,25 @@ ${message || '_No additional feedback provided_'}`
           let result: { success?: boolean; error?: string } = {}
 
           if (rawResponse) {
-            result = JSON.parse(rawResponse) as {
-              success?: boolean
-              error?: string
+            try {
+              result = JSON.parse(rawResponse) as {
+                success?: boolean
+                error?: string
+              }
+            } catch {
+              result = {}
             }
           }
 
           if (!response.ok || !result.success) {
-            throw new Error(
-              result.error || `Request failed with status ${response.status}`
-            )
+            showError(result.error || submitErrorDefault)
+            track('feedback', {
+              type: selectedFeedback,
+              hasMessage: feedback.length > 0,
+              delivery: 'function-error',
+              status: response.status
+            })
+            return
           }
 
           showSuccess()
@@ -390,7 +437,12 @@ ${message || '_No additional feedback provided_'}`
             delivery: 'function'
           })
         } catch {
-          openIssueFallback(selectedFeedback, page, feedback)
+          showError(submitErrorDefault)
+          track('feedback', {
+            type: selectedFeedback!,
+            hasMessage: feedback.length > 0,
+            delivery: 'function-error'
+          })
         } finally {
           submitButton.disabled = false
           submitButton.textContent = originalLabel
