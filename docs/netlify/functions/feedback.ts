@@ -102,7 +102,21 @@ const readLocalEnvVar = (name: string) => getLocalEnvFromDisk()?.map.get(name)
 
 const getEnv = (name: string) => process.env[name] || readLocalEnvVar(name)
 
-const normalizePrivateKey = (raw: string) => raw.trim().replace(/\\n/g, '\n')
+/** Netlify / dashboards often add BOM, quotes, or CRLF around PEM secrets */
+const normalizePrivateKey = (raw: string) => {
+  let s = raw.trim().replace(/^\uFEFF/, '')
+  if (
+    (s.startsWith('"') && s.endsWith('"')) ||
+    (s.startsWith("'") && s.endsWith("'"))
+  ) {
+    s = s.slice(1, -1)
+  }
+  return s
+    .replace(/\\n/g, '\n')
+    .replace(/\r\n/g, '\n')
+    .replace(/\r/g, '\n')
+    .trimEnd()
+}
 
 const loadPrivateKeyPem = (): string | undefined => {
   const inline = getEnv('GITHUB_APP_PRIVATE_KEY')
@@ -202,8 +216,10 @@ export const handler = async (event: NetlifyEvent) => {
     })
   }
 
-  const appId = getEnv('GITHUB_APP_ID')
-  const installationId = getEnv('GITHUB_APP_INSTALLATION_ID')
+  const appId = stripEnvValueQuotes(getEnv('GITHUB_APP_ID')?.trim() ?? '')
+  const installationId = stripEnvValueQuotes(
+    getEnv('GITHUB_APP_INSTALLATION_ID')?.trim() ?? ''
+  )
   const privateKey = loadPrivateKeyPem()
 
   if (!appId || !installationId || !privateKey) {
@@ -239,7 +255,8 @@ export const handler = async (event: NetlifyEvent) => {
   } catch {
     return createResponse(500, {
       success: false,
-      error: 'Could not sign GitHub App JWT'
+      error:
+        'Could not sign GitHub App JWT (check GITHUB_APP_PRIVATE_KEY: use PEM with \\n newlines, no wrapping quotes, same key as the app)'
     })
   }
 
