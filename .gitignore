@@ -124,6 +124,3 @@ styles/write-good/TooWordy.yml
 styles/write-good/Weasel.yml
 .vale.ini
 vale
-
-# Local Netlify folder
-.netlify
