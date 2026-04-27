@@ -280,8 +280,7 @@ const functionUrl =
     const submitErrorDefault =
       widget.dataset.submitError ||
       'Could not submit feedback. Check your connection and try again.'
-    const feedbackError =
-      widget.querySelector<HTMLElement>('#feedback-error')
+    const feedbackError = widget.querySelector<HTMLElement>('#feedback-error')
 
     let selectedFeedback: FeedbackChoice | null = null
 

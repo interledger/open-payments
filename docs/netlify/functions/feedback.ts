@@ -102,8 +102,7 @@ const readLocalEnvVar = (name: string) => getLocalEnvFromDisk()?.map.get(name)
 
 const getEnv = (name: string) => process.env[name] || readLocalEnvVar(name)
 
-const normalizePrivateKey = (raw: string) =>
-  raw.trim().replace(/\\n/g, '\n')
+const normalizePrivateKey = (raw: string) => raw.trim().replace(/\\n/g, '\n')
 
 const loadPrivateKeyPem = (): string | undefined => {
   const inline = getEnv('GITHUB_APP_PRIVATE_KEY')
@@ -132,9 +131,7 @@ const loadPrivateKeyPem = (): string | undefined => {
 
   for (const base of bases) {
     try {
-      return normalizePrivateKey(
-        readFileSync(path.join(base, keyPath), 'utf8')
-      )
+      return normalizePrivateKey(readFileSync(path.join(base, keyPath), 'utf8'))
     } catch {
       continue
     }
@@ -266,22 +263,19 @@ ${message || '_No additional feedback provided_'}
 ---
 _Submitted via feedback widget on ${new Date().toISOString()}_`
 
-  const response = await fetch(
-    `${GITHUB_API}/repos/${GITHUB_REPO}/issues`,
-    {
-      method: 'POST',
-      headers: githubHeaders(`Bearer ${tokenResult.token}`),
-      body: JSON.stringify({
-        title: issueTitle,
-        body: issueBody,
-        labels: [
-          'feedback',
-          'docs',
-          type === 'yes' ? 'feedback-positive' : 'feedback-negative'
-        ]
-      })
-    }
-  )
+  const response = await fetch(`${GITHUB_API}/repos/${GITHUB_REPO}/issues`, {
+    method: 'POST',
+    headers: githubHeaders(`Bearer ${tokenResult.token}`),
+    body: JSON.stringify({
+      title: issueTitle,
+      body: issueBody,
+      labels: [
+        'feedback',
+        'docs',
+        type === 'yes' ? 'feedback-positive' : 'feedback-negative'
+      ]
+    })
+  })
 
   if (!response.ok) {
     return createResponse(response.status, {
