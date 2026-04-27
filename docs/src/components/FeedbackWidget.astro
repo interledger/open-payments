@@ -86,7 +86,6 @@ const functionUrl =
   </div>
 
   <div class="feedback-form hidden" id="feedback-form">
-    <p class="feedback-thanks">{t.thanks}</p>
     <label for="feedback-text">{t.improve}</label>
     <textarea id="feedback-text" rows="4" placeholder={t.improvePlaceholder}
     ></textarea>
@@ -211,12 +210,6 @@ const functionUrl =
   .feedback-submit:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-  }
-
-  .feedback-thanks {
-    color: #16a34a;
-    font-weight: 500;
-    margin-bottom: var(--sl-spacing-xs, 0.5rem);
   }
 
   .feedback-success {
