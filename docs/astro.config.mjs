@@ -581,6 +581,7 @@ export default defineConfig({
     })
   ],
   redirects: {
+    '/docs': '/overview/getting-started',
     '/introduction/wallet-addresses': '/concepts/wallet-addresses',
     '/sdk/grant-create': '/sdk/grant-create-incoming'
   },
