@@ -1,0 +1,129 @@
+---
+/**
+ * Embeds an isolated Scalar API reference page inside a Starlight layout.
+ *
+ * Scalar is embedded via <iframe> rather than inline because @scalar/astro's
+ * ScalarComponent injects a full HTML document inline, causing Scalar's global
+ * CSS to bleed into the surrounding Starlight page. The iframe provides proper
+ * CSS isolation so Scalar cannot affect the parent layout.
+ *
+ * The frame source pages live at /apis/scalar/frames/[spec] and are defined in
+ * src/pages/apis/scalar/frames/[spec].astro.
+ */
+interface Props {
+  /** URL of the frame page to embed (e.g. /apis/scalar/frames/auth-server) */
+  src: string
+  /** Accessible title for the iframe */
+  title: string
+  /** When true, adds the .scalar-wide class for the full-width splash layout */
+  wide?: boolean
+}
+
+const { src, title, wide = false } = Astro.props
+---
+
+<div class:list={['scalar-embed', 'not-content', { 'scalar-wide': wide }]}>
+  <iframe class="scalar-frame" src={src} title={title}></iframe>
+</div>
+
+<script>
+  const iframe = document.querySelector<HTMLIFrameElement>('.scalar-frame')
+
+  /**
+   * Sync Starlight's current theme to Scalar. Parent and frame share localStorage
+   * (same origin), so writing colorMode there and reloading the frame is enough —
+   * Scalar reads it on init. Guard with an equality check to avoid reload loops.
+   */
+  function syncTheme() {
+    if (!iframe) return
+    const colorMode = document.documentElement.dataset.theme === 'light' ? 'light' : 'dark'
+    if (localStorage.getItem('colorMode') === colorMode) return
+    localStorage.setItem('colorMode', colorMode)
+    iframe.style.transition = 'opacity 0.2s'
+    iframe.style.opacity = '0'
+    iframe.addEventListener('load', () => { iframe.style.opacity = '1' }, { once: true })
+    iframe.src = iframe.src // trigger reload in new theme
+  }
+
+  iframe?.addEventListener('load', syncTheme)
+  new MutationObserver(syncTheme).observe(document.documentElement, { attributeFilter: ['data-theme'] })
+</script>
+
+<style is:global>
+  /* Prevent the ILF design system's div+div spacing rule from affecting the iframe */
+  body:has(.scalar-embed) .scalar-embed {
+    --space-m: 0;
+    --space-s: 0;
+  }
+
+  /* Remove ILF decorative underlines from headings inside Scalar pages */
+  body:has(.scalar-embed) .sl-container h1:first-of-type::after,
+  body:has(.scalar-embed) .sl-container h3::after {
+    content: none;
+  }
+
+  /* On full-width (splash) pages, hide the first ContentPanel which only contains the page title */
+  body:has(.scalar-wide) main > .content-panel:first-of-type {
+    display: none;
+  }
+
+  /* Hide edit/last-updated meta on scalar pages — not meaningful for API reference */
+  body:has(.scalar-embed) footer.sl-flex .meta {
+    display: none;
+  }
+
+  /*
+   * Flex chain: make the page fill exactly the viewport with no outer scroll.
+   * main becomes a flex column; .sl-markdown-content gets flex:1 and pushes
+   * the feedback widget + footer to the bottom naturally.
+   */
+  html:has(.scalar-embed) {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  html:has(.scalar-embed) body {
+    height: 100%;
+  }
+
+  html:has(.scalar-embed) main {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - var(--sl-nav-height));
+    overflow: hidden;
+  }
+
+  html:has(.scalar-embed) main > .content-panel:last-of-type {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding-bottom: 0;
+  }
+
+  html:has(.scalar-embed) main > .content-panel:last-of-type > .sl-container {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  html:has(.scalar-embed) main > .content-panel:last-of-type .sl-markdown-content {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  body:has(.scalar-embed) .scalar-embed {
+    height: 100%;
+  }
+
+  .scalar-frame {
+    width: 100%;
+    border: none;
+    display: block;
+    height: 100%;
+  }
+</style>

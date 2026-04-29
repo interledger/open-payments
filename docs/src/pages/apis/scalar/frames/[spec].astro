@@ -1,0 +1,64 @@
+---
+/**
+ * Frame pages that serve isolated Scalar API reference UIs at /apis/scalar/frames/[spec].
+ *
+ * These pages are intentionally minimal — no Starlight layout, no shared header/footer.
+ * They exist solely to provide CSS isolation for the Scalar embed. @scalar/astro's
+ * ScalarComponent injects a full HTML document inline, causing Scalar's global CSS to
+ * bleed into the parent Starlight page. By serving each spec at its own URL and
+ * embedding it via <iframe> in ScalarIframe.astro, Scalar's styles are fully contained.
+ *
+ * Theme sync and iframe sizing are handled entirely by ScalarIframe.astro on the parent
+ * side — parent and frame share localStorage (same origin), so no postMessage needed.
+ */
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
+
+// getStaticPaths runs at module level (separate from component render scope),
+// so it must be self-contained and cannot reference render-scope variables.
+export function getStaticPaths() {
+  return [
+    { params: { spec: 'auth-server' } },
+    { params: { spec: 'resource-server' } },
+    { params: { spec: 'wallet-address-server' } },
+  ]
+}
+
+const SPECS = {
+  'auth-server': 'auth-server.yaml',
+  'resource-server': 'resource-server.yaml',
+  'wallet-address-server': 'wallet-address-server.yaml',
+} as const
+
+type Spec = keyof typeof SPECS
+
+const { spec } = Astro.params as { spec: Spec }
+const specPath = resolve('..', 'open-payments-specifications', 'openapi', SPECS[spec])
+const specContent = readFileSync(specPath, 'utf-8')
+
+const config = JSON.stringify({
+  content: specContent,
+  hideClientButton: true,
+  hideTestRequestButton: true,
+  hideSearch: true,
+  isEditable: false,
+  mcp: { disabled: true },
+  hideDarkModeToggle: true,
+})
+
+// Pinned CDN version — keep in sync with the @scalar/astro package version
+const CDN = 'https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.49.3'
+---
+
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
+    <div id="app"></div>
+    <script src={CDN}></script>
+    <script type="text/javascript" set:html={`Scalar.createApiReference('#app', ${config})`}></script>
+  </body>
+</html>

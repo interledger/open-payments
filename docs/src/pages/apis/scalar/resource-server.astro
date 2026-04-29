@@ -1,0 +1,8 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
+import ScalarIframe from '../../../components/ScalarIframe.astro'
+---
+
+<StarlightPage frontmatter={{ title: 'Resource Server API', tableOfContents: false }}>
+  <ScalarIframe src="/apis/scalar/frames/resource-server" title="Resource Server API Reference" />
+</StarlightPage>

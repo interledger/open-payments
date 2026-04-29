@@ -1,0 +1,20 @@
+---
+import { ScalarComponent } from '@scalar/astro'
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
+
+const specPath = resolve('..', 'open-payments-specifications', 'openapi', 'auth-server.yaml')
+const spec = readFileSync(specPath, 'utf-8')
+---
+
+<StarlightPage frontmatter={{ title: 'Test - Auth Server API' }}>
+  <ScalarComponent
+    configuration={{
+      content: spec,
+      hideClientButton: true,
+      hideTestRequestButton: true,
+      hideSearch: true,
+    }}
+  />
+</StarlightPage>
