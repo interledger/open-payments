@@ -36,17 +36,26 @@ const { src, title, wide = false } = Astro.props
    */
   function syncTheme() {
     if (!iframe) return
-    const colorMode = document.documentElement.dataset.theme === 'light' ? 'light' : 'dark'
+    const colorMode =
+      document.documentElement.dataset.theme === 'light' ? 'light' : 'dark'
     if (localStorage.getItem('colorMode') === colorMode) return
     localStorage.setItem('colorMode', colorMode)
     iframe.style.transition = 'opacity 0.2s'
     iframe.style.opacity = '0'
-    iframe.addEventListener('load', () => { iframe.style.opacity = '1' }, { once: true })
-    iframe.src = iframe.src // trigger reload in new theme
+    iframe.addEventListener(
+      'load',
+      () => {
+        iframe.style.opacity = '1'
+      },
+      { once: true }
+    )
+    iframe.setAttribute('src', iframe.src) // trigger reload in new theme
   }
 
   iframe?.addEventListener('load', syncTheme)
-  new MutationObserver(syncTheme).observe(document.documentElement, { attributeFilter: ['data-theme'] })
+  new MutationObserver(syncTheme).observe(document.documentElement, {
+    attributeFilter: ['data-theme']
+  })
 </script>
 
 <style is:global>
@@ -110,7 +119,10 @@ const { src, title, wide = false } = Astro.props
     flex-direction: column;
   }
 
-  html:has(.scalar-embed) main > .content-panel:last-of-type .sl-markdown-content {
+  html:has(.scalar-embed)
+    main
+    > .content-panel:last-of-type
+    .sl-markdown-content {
     flex: 1;
     min-height: 0;
     overflow: hidden;

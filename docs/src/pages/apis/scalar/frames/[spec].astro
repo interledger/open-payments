@@ -20,20 +20,25 @@ export function getStaticPaths() {
   return [
     { params: { spec: 'auth-server' } },
     { params: { spec: 'resource-server' } },
-    { params: { spec: 'wallet-address-server' } },
+    { params: { spec: 'wallet-address-server' } }
   ]
 }
 
 const SPECS = {
   'auth-server': 'auth-server.yaml',
   'resource-server': 'resource-server.yaml',
-  'wallet-address-server': 'wallet-address-server.yaml',
+  'wallet-address-server': 'wallet-address-server.yaml'
 } as const
 
 type Spec = keyof typeof SPECS
 
 const { spec } = Astro.params as { spec: Spec }
-const specPath = resolve('..', 'open-payments-specifications', 'openapi', SPECS[spec])
+const specPath = resolve(
+  '..',
+  'open-payments-specifications',
+  'openapi',
+  SPECS[spec]
+)
 const specContent = readFileSync(specPath, 'utf-8')
 
 const config = JSON.stringify({
@@ -43,7 +48,7 @@ const config = JSON.stringify({
   hideSearch: true,
   isEditable: false,
   mcp: { disabled: true },
-  hideDarkModeToggle: true,
+  hideDarkModeToggle: true
 })
 
 // Pinned CDN version — keep in sync with the @scalar/astro package version
@@ -58,7 +63,10 @@ const CDN = 'https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.49.3'
   </head>
   <body>
     <div id="app"></div>
-    <script src={CDN}></script>
-    <script type="text/javascript" set:html={`Scalar.createApiReference('#app', ${config})`}></script>
+    <script is:inline src={CDN}></script>
+    <script
+      type="text/javascript"
+      set:html={`Scalar.createApiReference('#app', ${config})`}
+    />
   </body>
 </html>

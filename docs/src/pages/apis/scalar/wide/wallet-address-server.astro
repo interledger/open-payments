@@ -3,6 +3,16 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
 import ScalarIframe from '../../../../components/ScalarIframe.astro'
 ---
 
-<StarlightPage frontmatter={{ title: 'Wallet Address Server API', template: 'splash', tableOfContents: false }}>
-  <ScalarIframe src="/apis/scalar/frames/wallet-address-server" title="Wallet Address Server API Reference" wide />
+<StarlightPage
+  frontmatter={{
+    title: 'Wallet Address Server API',
+    template: 'splash',
+    tableOfContents: false
+  }}
+>
+  <ScalarIframe
+    src="/apis/scalar/frames/wallet-address-server"
+    title="Wallet Address Server API Reference"
+    wide
+  />
 </StarlightPage>
