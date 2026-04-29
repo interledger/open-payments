@@ -41,9 +41,6 @@ importers:
       '@scalar/astro':
         specifier: ^0.2.11
         version: 0.2.11(astro@6.1.9)
-      '@scalar/client-side-rendering':
-        specifier: 0.1.4
-        version: 0.1.4
       astro:
         specifier: ^6.1.7
         version: 6.1.9(typescript@5.9.3)
