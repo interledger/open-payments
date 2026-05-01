@@ -1,0 +1,13 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
+import ScalarIframe from '../../../components/ScalarIframe.astro'
+---
+
+<StarlightPage
+  frontmatter={{ title: 'Auth Server API', tableOfContents: false }}
+>
+  <ScalarIframe
+    src="/apis/scalar/frames/auth-server"
+    title="Auth Server API Reference"
+  />
+</StarlightPage>

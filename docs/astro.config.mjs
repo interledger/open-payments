@@ -133,7 +133,10 @@ export default defineConfig({
           errorOnFallbackPages: false,
           exclude: [
             '/apis/{auth-server,resource-server,wallet-address-server}/**/*',
-            '/es/apis/{auth-server,resource-server,wallet-address-server}/**/*'
+            '/es/apis/{auth-server,resource-server,wallet-address-server}/**/*',
+            '/apis/scalar/**',
+            '/apis/scalar/wide/**',
+            '/apis/scalar/minimal/**'
           ]
         }),
         starlightFullViewMode({
@@ -567,6 +570,60 @@ export default defineConfig({
                   ]
                 }
               ]
+            }
+          ]
+        },
+        {
+          label: 'Scalar: with left nav',
+          collapsed: false,
+          items: [
+            {
+              label: 'Auth server',
+              link: '/apis/scalar/auth-server'
+            },
+            {
+              label: 'Resource server',
+              link: '/apis/scalar/resource-server'
+            },
+            {
+              label: 'Wallet address server',
+              link: '/apis/scalar/wallet-address-server'
+            }
+          ]
+        },
+        {
+          label: 'Scalar: full width',
+          collapsed: false,
+          items: [
+            {
+              label: 'Auth server',
+              link: '/apis/scalar/wide/auth-server'
+            },
+            {
+              label: 'Resource server',
+              link: '/apis/scalar/wide/resource-server'
+            },
+            {
+              label: 'Wallet address server',
+              link: '/apis/scalar/wide/wallet-address-server'
+            }
+          ]
+        },
+        {
+          label: 'Scalar: minimal',
+          collapsed: false,
+          items: [
+            {
+              label: 'Auth server',
+              link: '/apis/scalar/minimal/auth-server'
+            },
+            {
+              label: 'Resource server',
+              link: '/apis/scalar/minimal/resource-server'
+            },
+            {
+              label: 'Wallet address server',
+              link: '/apis/scalar/minimal/wallet-address-server'
             }
           ]
         }
