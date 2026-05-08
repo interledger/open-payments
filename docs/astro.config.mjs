@@ -136,7 +136,8 @@ export default defineConfig({
             '/es/apis/{auth-server,resource-server,wallet-address-server}/**/*',
             '/apis/scalar/**',
             '/apis/scalar/wide/**',
-            '/apis/scalar/minimal/**'
+            '/apis/scalar/minimal/**',
+            '/apis/scalar/header/**'
           ]
         }),
         starlightFullViewMode({
@@ -624,6 +625,24 @@ export default defineConfig({
             {
               label: 'Wallet address server',
               link: '/apis/scalar/minimal/wallet-address-server'
+            }
+          ]
+        },
+        {
+          label: 'Scalar: header',
+          collapsed: false,
+          items: [
+            {
+              label: 'Auth server',
+              link: '/apis/scalar/header/auth-server'
+            },
+            {
+              label: 'Resource server',
+              link: '/apis/scalar/header/resource-server'
+            },
+            {
+              label: 'Wallet address server',
+              link: '/apis/scalar/header/wallet-address-server'
             }
           ]
         }

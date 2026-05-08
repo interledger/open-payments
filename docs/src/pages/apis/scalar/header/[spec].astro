@@ -1,0 +1,155 @@
+---
+/**
+ * Standalone Scalar API reference pages with a custom Open Payments header.
+ *
+ * Unlike the iframe-based Scalar pages, these pages render Scalar inline —
+ * there is no surrounding Starlight layout, so Scalar's global CSS cannot bleed
+ * into Starlight styles. The result is a full-page Scalar experience with the
+ * site header above it, natural deep-linking via URL hash, and no double scroll.
+ */
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
+import OpenPaymentsLogo from '../../../../components/OpenPaymentsLogo.astro'
+
+export function getStaticPaths() {
+  return [
+    { params: { spec: 'auth-server' } },
+    { params: { spec: 'resource-server' } },
+    { params: { spec: 'wallet-address-server' } }
+  ]
+}
+
+const SPECS = {
+  'auth-server': 'auth-server.yaml',
+  'resource-server': 'resource-server.yaml',
+  'wallet-address-server': 'wallet-address-server.yaml'
+} as const
+
+const TITLES = {
+  'auth-server': 'Authorization Server API',
+  'resource-server': 'Resource Server API',
+  'wallet-address-server': 'Wallet Address Server API'
+} as const
+
+type Spec = keyof typeof SPECS
+
+const { spec } = Astro.params as { spec: Spec }
+const specPath = resolve(
+  '..',
+  'open-payments-specifications',
+  'openapi',
+  SPECS[spec]
+)
+const specContent = readFileSync(specPath, 'utf-8')
+
+const config = JSON.stringify({
+  content: specContent,
+  hideClientButton: true,
+  hideTestRequestButton: true,
+  isEditable: false,
+  mcp: { disabled: true }
+})
+
+const CDN = 'https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.49.3'
+---
+
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{TITLES[spec]} — Open Payments</title>
+  </head>
+  <body>
+    <header class="op-header">
+      <a href="/" class="op-header__logo">
+        <OpenPaymentsLogo />
+      </a>
+      <a href="/overview/getting-started" class="op-header__back">← Documentation</a>
+    </header>
+    <div id="app"></div>
+    <script is:inline src={CDN}></script>
+    <script type="text/javascript" set:html={`Scalar.createApiReference('#app', ${config})`} />
+  </body>
+</html>
+
+<style is:global>
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  :root {
+    --op-header-height: 3.5rem;
+    --op-header-bg: #fff;
+    --op-header-border: #e5e7eb;
+    --op-header-text: #111827;
+    --op-header-muted: #6b7280;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --op-header-bg: #0f172a;
+      --op-header-border: #1e293b;
+      --op-header-text: #f1f5f9;
+      --op-header-muted: #94a3b8;
+    }
+    /* The logo SVG text path has a hardcoded fill="#222" — override for dark mode */
+    .logo-text {
+      fill: var(--op-header-text) !important;
+      stroke: var(--op-header-text) !important;
+    }
+  }
+
+  html,
+  body {
+    height: 100%;
+    margin: 0;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+
+  .op-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--op-header-height);
+    padding: 0 1.5rem;
+    background: var(--op-header-bg);
+    border-bottom: 1px solid var(--op-header-border);
+  }
+
+  .op-header__logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--op-header-text);
+  }
+
+  .op-header__logo svg {
+    width: 9.5em;
+    height: auto;
+    max-height: 2rem;
+  }
+
+  .op-header__back {
+    font-size: 0.875rem;
+    text-decoration: none;
+    color: var(--op-header-muted);
+  }
+
+  .op-header__back:hover {
+    color: var(--op-header-text);
+  }
+
+  #app {
+    flex: 1;
+    min-height: 0;
+  }
+</style>
