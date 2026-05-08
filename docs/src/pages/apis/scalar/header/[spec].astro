@@ -65,16 +65,23 @@ const CDN = 'https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.49.3'
       <a href="/" class="op-header__logo">
         <OpenPaymentsLogo />
       </a>
-      <a href="/overview/getting-started" class="op-header__back">← Documentation</a>
+      <a href="/overview/getting-started" class="op-header__back"
+        >← Documentation</a
+      >
     </header>
     <div id="app"></div>
     <script is:inline src={CDN}></script>
-    <script type="text/javascript" set:html={`Scalar.createApiReference('#app', ${config})`} />
+    <script
+      type="text/javascript"
+      set:html={`Scalar.createApiReference('#app', ${config})`}
+    />
   </body>
 </html>
 
 <style is:global>
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     box-sizing: border-box;
   }
 
@@ -109,7 +116,10 @@ const CDN = 'https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.49.3'
   body {
     display: flex;
     flex-direction: column;
-    font-family: system-ui, -apple-system, sans-serif;
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif;
   }
 
   .op-header {
