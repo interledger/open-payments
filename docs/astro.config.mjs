@@ -400,6 +400,13 @@ export default defineConfig({
                 es: 'Obtener una concesión de pago saliente para pagos futuros'
               },
               link: '/guides/outgoing-grant-future-payments/'
+            },
+            {
+              label: 'Automate gig economy payouts',
+              translations: {
+                es: 'Automatizar pagos de la economía colaborativa'
+              },
+              link: '/guides/gig-economy-payouts/'
             }
           ]
         },

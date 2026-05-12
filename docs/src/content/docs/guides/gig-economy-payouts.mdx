@@ -1,0 +1,270 @@
+---
+title: Integrating Open Payments for Gig Economy Payouts
+---
+
+import { LinkOut } from '@interledger/docs-design-system'
+import { Tabs, TabItem, Badge } from '@astrojs/starlight/components'
+
+:::tip[Summary]
+Learn how to use the Open Payments Node.js SDK to automate cross-border payouts for gig economy workers or freelancers, routing from a corporate account to a local digital wallet.
+:::
+
+A common use case for Open Payments is automating payouts for digital workers across the globe. In the gig economy, platforms need a reliable, programmable way to disburse funds to freelancers in their local currencies, often to mobile money accounts or digital wallets. 
+
+In this guide, you will learn how to implement an automated payout flow using the official `@interledger/open-payments` Node.js SDK.
+
+### Scenario
+
+Imagine a freelance platform based in the US that needs to pay a developer based in Kenya. The platform wants to send exactly \$500 USD, and the developer should receive the equivalent amount in Kenyan Shillings (KES) directly to their digital wallet.
+
+**Example transaction details:**
+
+- **Platform pays**: $500.00 USD (fixed debit amount)
+- **Currency conversion**: Handled dynamically by the Interledger network
+- **Recipient receives**: KES equivalent after conversion
+
+The Open Payments API handles the authorization and payment instructions, while the underlying Interledger network handles the actual value transfer and currency conversion.
+
+## Prerequisites
+
+Before starting, ensure you have:
+1. Installed the Open Payments SDK (`npm install @interledger/open-payments`).
+2. Generated your client keys and registered them with your platform's wallet address.
+3. Created an authenticated client instance.
+
+## Steps
+
+### 1. Initialize the Authenticated Client
+
+First, create an authenticated client using your platform's private key and key ID. This client will be used to make all subsequent requests.
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+
+```ts wrap
+import { createAuthenticatedClient } from '@interledger/open-payments';
+
+const client = await createAuthenticatedClient({
+  walletAddressUrl: 'https://platformbank.example.com/corporate-account',
+  privateKey: Buffer.from('YOUR_PRIVATE_KEY', 'base64'),
+  keyId: 'YOUR_KEY_ID',
+});
+```
+
+</TabItem>
+</Tabs>
+
+### 2. Fetch Wallet Address Information
+
+Retrieve the Open Payments configuration for both the platform's (sender) and the freelancer's (recipient) wallet addresses. This provides the necessary URLs for authorization and resource servers.
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+
+```ts wrap
+const platformWallet = await client.walletAddress.get({
+  url: 'https://platformbank.example.com/corporate-account',
+});
+
+const freelancerWallet = await client.walletAddress.get({
+  url: 'https://digitalwallet.example.ke/freelancer',
+});
+```
+
+</TabItem>
+</Tabs>
+
+### 3. Request an Incoming Payment Grant
+
+To send money to the freelancer, your platform must first obtain permission (a grant) from the freelancer's Authorization Server to create an incoming payment resource.
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+
+```ts wrap
+const incomingPaymentGrant = await client.grant.request(
+  { url: freelancerWallet.authServer },
+  {
+    access_token: {
+      access: [
+        {
+          type: 'incoming-payment',
+          actions: ['create', 'read'],
+        },
+      ],
+    },
+  }
+);
+```
+
+</TabItem>
+</Tabs>
+
+### 4. Create the Incoming Payment Resource
+
+Using the grant obtained in the previous step, request the freelancer's Resource Server to create an incoming payment. Since we want the platform to pay exactly \$500 USD (a fixed debit), we leave the `incomingAmount` blank here.
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+
+```ts wrap
+const incomingPayment = await client.incomingPayment.create(
+  {
+    url: freelancerWallet.resourceServer,
+    accessToken: incomingPaymentGrant.access_token.value,
+  },
+  {
+    walletAddress: freelancerWallet.id,
+  }
+);
+```
+
+</TabItem>
+</Tabs>
+
+### 5. Request a Quote Grant
+
+Next, your platform needs permission from its own Authorization Server to generate a quote for the payout.
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+
+```ts wrap
+const quoteGrant = await client.grant.request(
+  { url: platformWallet.authServer },
+  {
+    access_token: {
+      access: [
+        {
+          type: 'quote',
+          actions: ['create', 'read'],
+        },
+      ],
+    },
+  }
+);
+```
+
+</TabItem>
+</Tabs>
+
+### 6. Generate the Quote
+
+Create a quote on the platform's Resource Server. Here, we specify the `debitAmount` as $500 USD (which is `50000` on an asset scale of 2). The network will calculate the exact `receiveAmount` in KES based on the current exchange rate.
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+
+```ts wrap
+const quote = await client.quote.create(
+  {
+    url: platformWallet.resourceServer,
+    accessToken: quoteGrant.access_token.value,
+  },
+  {
+    walletAddress: platformWallet.id,
+    receiver: incomingPayment.id,
+    debitAmount: {
+      value: '50000', // $500.00 USD
+      assetCode: 'USD',
+      assetScale: 2,
+    },
+  }
+);
+
+console.log(`The freelancer will receive: ${quote.receiveAmount.value} ${quote.receiveAmount.assetCode}`);
+```
+
+</TabItem>
+</Tabs>
+
+### 7. Request an Outgoing Payment Grant (Interactive)
+
+To finalize the payout, you need an outgoing payment grant. Because this involves deducting funds from the platform's account, it requires interactive consent.
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+
+```ts wrap
+const outgoingPaymentGrant = await client.grant.request(
+  { url: platformWallet.authServer },
+  {
+    access_token: {
+      access: [
+        {
+          type: 'outgoing-payment',
+          actions: ['create', 'read', 'list'],
+          identifier: platformWallet.id,
+          limits: {
+            debitAmount: quote.debitAmount,
+          },
+        },
+      ],
+    },
+    interact: {
+      start: ['redirect'],
+      finish: {
+        method: 'redirect',
+        uri: 'https://platform.example.com/payout/callback',
+        nonce: 'RANDOM_NONCE_VALUE',
+      },
+    },
+  }
+);
+```
+
+</TabItem>
+</Tabs>
+
+### 8. Complete Interaction and Continue Grant
+
+The platform administrator is redirected to the `interact.redirect` URI to approve the transaction. Once approved, the authorization server redirects back to your finish URI. 
+
+Your application then continues the grant request to receive the final access token.
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+
+```ts wrap
+const finalizedGrant = await client.grant.continue(
+  {
+    url: outgoingPaymentGrant.continue.uri,
+    accessToken: outgoingPaymentGrant.continue.access_token.value,
+  },
+  {
+    interact_ref: 'REF_FROM_CALLBACK_URL',
+  }
+);
+```
+
+</TabItem>
+</Tabs>
+
+### 9. Execute the Outgoing Payment
+
+Finally, execute the payout using the finalized access token and the quote ID.
+
+<Tabs syncKey="lang">
+<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+
+```ts wrap
+const outgoingPayment = await client.outgoingPayment.create(
+  {
+    url: platformWallet.resourceServer,
+    accessToken: finalizedGrant.access_token.value,
+  },
+  {
+    walletAddress: platformWallet.id,
+    quoteId: quote.id,
+  }
+);
+
+console.log('Payout successful!', outgoingPayment.id);
+```
+
+</TabItem>
+</Tabs>
+
+### Next Steps
+
+By automating this process, gig economy platforms can programmatically disburse funds globally without manual intervention. For enterprise deployments, consider implementing [Webhook notifications](/concepts/resources/#webhooks) to track the final settlement status of your outgoing payments.
