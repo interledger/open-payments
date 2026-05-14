@@ -10,6 +10,10 @@ HTTP message signatures secure communications in Open Payments by verifying mess
 
 HTTP message signatures are cryptographic digital signatures used by the Open Payments APIs to secure HTTP messages exchanged between sender, receiver, or third-party initiating payment systems.
 
+:::note[For ASEs]
+This page describes how clients sign their outgoing requests. If you're implementing Open Payments at your institution, refer to [Security](/implement/security/) for the server-side signature validation procedure your authorization and resource servers must perform on every incoming request.
+:::
+
 The Open Payments APIs implement the <LinkOut href='https://datatracker.ietf.org/doc/html/rfc9635#name-http-message-signatures'> HTTP Signatures </LinkOut> section of the GNAP (Grant Negotiation and Authorization Protocol) specification.
 
 ## Purpose

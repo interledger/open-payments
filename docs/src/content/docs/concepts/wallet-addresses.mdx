@@ -9,6 +9,10 @@ A wallet address is a secure, sharable identifier for an Open Payments-enabled a
 
 At the heart of all interactions in Open Payments is an Open Payments-enabled account. Every Open Payments-enabled account is identified by one or more URLs. These URLs aren't only account identifiers, but also service endpoints for gaining access to the Open Payments APIs. These URLs are called **wallet addresses**. Not all URLs are wallet addresses, but all wallet addresses are URLs.
 
+:::note[For ASEs]
+This page covers wallet addresses from the perspective of a client developer. If you're implementing Open Payments at your institution, refer to [Wallet address architecture](/implement/wallet-address-architecture/) for the server-side details and the policies that you need to decide on.
+:::
+
 ## What makes a wallet address?
 
 A URL is only a wallet address if it meets the following criteria:
@@ -48,13 +52,11 @@ Each wallet address supports a single asset code and scale, but Open Payments en
 
 When setting up a payment, the client must obtain the wallet address for both the sender and the recipient. Since the sender is typically the client's user, the client can obtain the sender's wallet address during an onboarding process, for example. The sender must be authenticated by their account servicing entity (ASE) to grant the client the permission it needs to access their Open Payments-enabled account.
 
-A wallet address server is an API endpoint that retrieves public information about a wallet address, including its associated public keys. For more technical details, visit the [wallet address server API docs](/apis/wallet-address-server/operations/get-wallet-address/).
+A wallet address server is an API endpoint that provides public information about a wallet address, including its associated public keys. For more technical details, visit the [wallet address server API docs](/apis/wallet-address-server/operations/get-wallet-address/). For details on what an ASE must implement, refer to [Wallet address architecture](/implement/wallet-address-architecture/).
 
 ## Privacy and security
 
-A wallet address acts as a proxy identifier (alias) for an underlying financial account. If permitted by an ASE, a single account can have multiple wallet addresses. Allowing account holders to generate unique wallet addresses for every client they interact with can help prevent a single address from becoming a tracking vector.
-
-Ultimately, it's up to the ASE to define the supported configuration of relationships between wallet addresses and user accounts. This loose coupling allows wallet addresses to be disabled or even linked to a new account (although there are considerations that must be made before allowing this) without affecting the underlying account.
+A wallet address acts as a proxy identifier (alias) for an underlying financial account. ASEs define the relationship between wallet addresses and accounts, and may allow a single account to have multiple wallet addresses. The supported configurations and the policy decisions involved (address reuse, disabling, relinking) are covered in [Wallet address architecture](/implement/wallet-address-architecture/).
 
 For any client, a wallet address is as good as an account. Any two distinct wallet addresses should be treated as distinct accounts by clients even if the client is aware that they're proxies for the same underlying account. Permission for a client to access an account via one wallet address isn't automatically granted when accessing the same account via another wallet address.
 

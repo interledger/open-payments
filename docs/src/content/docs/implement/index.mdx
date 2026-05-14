@@ -1,0 +1,45 @@
+---
+title: Overview for ASEs
+---
+
+import { LinkOut } from '@interledger/docs-design-system'
+
+:::tip[Summary]
+This section is for account servicing entities (ASEs) that want to make their accounts Open Payments-enabled. It describes the servers you must operate and the protocol-level requirements your implementation must meet.
+:::
+
+The Open Payments standard is meant to be implemented by account servicing entities (ASEs). ASEs provide and maintain payment accounts for senders and recipients, and are regulated entities within the countries they operate. Examples of ASEs include banks, digital wallet providers, and mobile money providers.
+
+When an ASE implements Open Payments, their customers' financial accounts become Open Payments-enabled. Clients (applications) can then call the Open Payments APIs to view an Open Payments-enabled account's transaction history and certain account details, as well as issue instructions for receiving payments into and sending payments from the account.
+
+## What an ASE provides
+
+As an ASE, you serve the Open Payments APIs. This means you:
+
+- Manage the underlying financial accounts of senders and recipients.
+- Issue and serve [wallet addresses](/concepts/wallet-addresses/) as the public identifiers and service endpoints for those accounts.
+- Run an authorization server that issues access tokens to clients.
+- Integrate an identity provider to collect explicit consent from resource owners during interactive grants.
+- Settle payments with other ASEs over a shared payment rail after Open Payments instructions have been issued.
+
+Open Payments doesn't execute payments or touch funds. The APIs allow clients to issue payment instructions to ASEs. The sending ASE is responsible for executing and settling the payment with the receiving ASE outside of Open Payments. The ability to execute payments between Open Payments-enabled ASEs is predicated on the availability of a common payment rail between the ASEs.
+
+## The three servers you must operate
+
+An Open Payments implementation comprises three sub-systems that work together:
+
+- **Wallet address server**: Serves public information about each Open Payments-enabled account at its wallet address URL, including the asset code and scale, the account's authorization and resource server URLs, and the public keys bound to the account. Refer to [Wallet address architecture](/implement/wallet-address-architecture/).
+- **Resource server**: Hosts the APIs for incoming payments, quotes, and outgoing payments. Generates payment details for incoming payments, calculates quotes, and accepts outgoing payment instructions. Refer to [Resource server](/implement/resource-server/).
+- **Authorization server**: Processes grant requests, validates client signatures, manages interactive flows with your identity provider, and issues access tokens that the resource server validates. Refer to [Authorization server](/implement/auth-server/).
+
+In addition, your authorization server must integrate with an [identity provider](/implement/identity-provider/) to collect consent during interactive grants, and your servers must validate signatures and verify hashes as described in [Security](/implement/security/).
+
+## Relationship to clients
+
+A client is an application, such as a mobile or web app, that consumes one or more Open Payments resources, typically requiring access privileges from one or several authorization servers. Clients call your APIs, and you serve them.
+
+The [Concepts](/concepts/wallet-addresses/) and [Identity and access management](/identity/grants/) sections describe what client developers need to know to call the Open Payments APIs. This **Implement Open Payments** section describes what you, as an ASE, need to build so those clients can connect.
+
+:::note[Reference implementation]
+This section describes the standard and protocol-level requirements that any Open Payments implementation must meet. The <LinkOut href='https://rafiki.dev'>Rafiki</LinkOut> project is an open source reference implementation of the Open Payments servers and ships with documentation that covers the specifics of running and deploying that software.
+:::

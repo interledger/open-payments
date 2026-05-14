@@ -1,0 +1,85 @@
+---
+title: Wallet address architecture
+---
+
+import { LinkOut } from '@interledger/docs-design-system'
+
+:::tip[Summary]
+A wallet address is the public identifier and service endpoint for an Open Payments-enabled account. As an ASE, you decide how wallet addresses map to underlying accounts and you operate the wallet address server that serves their public details.
+:::
+
+Every Open Payments-enabled account is identified by one or more URLs. These URLs aren't only account identifiers, but also service endpoints for gaining access to the Open Payments APIs. These URLs are called **wallet addresses**. As an ASE, you issue wallet addresses and operate the server that responds to requests against them.
+
+For the client-facing perspective on wallet addresses, refer to the [Wallet addresses](/concepts/wallet-addresses/) page in the Concepts section.
+
+## URL constraints
+
+Your wallet address server must enforce the following constraints on every URL you issue as a wallet address:
+
+- The server handling the HTTP requests to the URL must support the Open Payments protocol.
+- The URL must use the `https` protocol and have no `user-info`, `port`, `query string`, or `fragment` parts.
+
+Any URL that doesn't meet these constraints is not a valid wallet address.
+
+## The wallet address server response
+
+When a client makes a `GET` request to a wallet address with an `Accept` header value of `application/json`, your wallet address server must return public details about the underlying account.
+
+```http
+HTTP/1.1 200 Success
+Content-Type: application/json
+
+{
+  "id": "https://wallet.example.com/alice",
+  "publicName": "Alice",
+  "assetCode": "USD",
+  "assetScale": 2,
+  "authServer": "https://auth.wallet.example.com",
+  "resourceServer": "https://wallet.example.com/op"
+}
+```
+
+Each field in the response represents a contract you must fulfill:
+
+- `id`: The canonical wallet address URL. Must match the requested URL.
+- `publicName`: A human-readable name that may be displayed by clients during onboarding or consent flows. You decide what value to expose, subject to your privacy policy.
+- `assetCode`: The ISO 4217 code of the single asset/currency this wallet address holds. Refer to [Amounts](/concepts/amounts/) for how asset codes and scales work.
+- `assetScale`: The scale (decimal precision) used to represent values in the wallet address's asset.
+- `authServer`: The URL of the authorization server clients must contact to request grants for this wallet address. Your authorization server must accept grant requests for any wallet address it hosts.
+- `resourceServer`: The URL of the resource server hosting the incoming payment, quote, and outgoing payment APIs for this wallet address.
+
+Your wallet address server also exposes the public keys bound to the wallet address via `WALLET_ADDRESS/jwks.json`. For more technical details, refer to the <LinkOut href='/apis/wallet-address-server/operations/get-wallet-address/'>wallet address server API docs</LinkOut>.
+
+## Multi-currency considerations
+
+A single wallet address supports one asset code and scale. Open Payments enables multi-currency transactions. When a sender denominates a payment in a different currency, your account holder's wallet address always receives in its declared `assetCode`. You handle currency conversion as part of accepting the incoming payment.
+
+If your institution supports accounts in multiple currencies, you may issue separate wallet addresses for each currency the account holder wants to expose, or you may issue a single wallet address that maps to a single-currency view of an underlying multi-currency account. Either approach is a policy decision your institution must make.
+
+## Account-to-wallet-address mapping
+
+A wallet address acts as a proxy identifier (alias) for an underlying financial account. You decide the supported configuration of relationships between wallet addresses and the accounts you maintain. Common models include:
+
+- **One-to-one**: Each underlying account has exactly one wallet address.
+- **One-to-many**: A single account can have multiple wallet addresses. Allowing account holders to generate unique wallet addresses for every client they interact with can help prevent a single address from becoming a tracking vector.
+- **Many-to-one**: Multiple wallet addresses can resolve to a single account. This approach is useful when the user-facing identifier should differ from the internal account identifier.
+
+This loose coupling allows wallet addresses to be disabled or even linked to a new account (although there are considerations that must be made before allowing this) without affecting the underlying account.
+
+For any client, a wallet address is as good as an account. Any two distinct wallet addresses should be treated as distinct accounts by clients even if the client is aware that they're proxies for the same underlying account. Permission for a client to access an account via one wallet address isn't automatically granted when accessing the same account via another wallet address. Your authorization server must enforce this isolation.
+
+### Policy decisions you must make
+
+When designing your wallet address architecture, consider the following:
+
+- **Address reuse**: Whether to allow account holders to share a single wallet address across multiple clients, or to encourage one-address-per-client to limit cross-client tracking.
+- **Disabling addresses**: How to handle a wallet address that an account holder no longer wants to use. The address must continue to exist as a URL (clients may still hold references to it) but should no longer accept new payments.
+- **Relinking addresses**: Whether and how to allow a wallet address to be moved from one underlying account to another. Because a wallet address is treated by clients as equivalent to an account, relinking has security and trust implications that warrant explicit account holder consent.
+
+## Why URLs as payment instruments
+
+Using URLs as payment instruments solves two of the biggest issues with existing payments UX: discoverability and interaction.
+
+URLs (universal resource locators) have been used on the web for decades to allow clients to directly locate a resource and begin interacting with it via HTTP. A wallet address is both a proxy identifier and a resource locator for the underlying account, used to access the account via the Open Payments APIs and begin interactions with the account's ASE.
+
+Using URLs as proxies is also preferable to overloading other identifiers, such as email addresses and Mobile Station International Subscriber Directory Numbers (MSISDNs), as these proxies have no standard for interaction. As a result, identifiers like an MSISDN or email require a registry that maps the identifier to an account provider and a mechanism for governing this mapping securely. Wallet addresses inherit the existing DNS and HTTPS infrastructure for both functions.

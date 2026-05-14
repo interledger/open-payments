@@ -1,0 +1,99 @@
+---
+title: Resource server
+---
+
+import { LinkOut } from '@interledger/docs-design-system'
+
+:::tip[Summary]
+The resource server hosts the APIs for incoming payments, quotes, and outgoing payments. As an ASE, your resource server is responsible for generating payment details, calculating quotes, accepting outgoing payment instructions, and handing off to settlement.
+:::
+
+The Open Payments APIs are served by a resource server. Operations on the APIs require the client to have a valid access token issued by a trusted authorization server.
+
+For the client-facing perspective on these resources, refer to the [Resources](/concepts/resources/) page.
+
+## Resource types
+
+Your resource server hosts three sets of APIs, those for incoming payments, quotes, and outgoing payments. Each set has its own resource type: `incoming-payment`, `quote`, and `outgoing-payment`.
+
+### incoming-payment
+
+When your resource server receives a request to <LinkOut href='/apis/resource-server/operations/create-incoming-payment'>create an incoming payment</LinkOut>, you must:
+
+- Generate the unique payment details the client (and ultimately the sending ASE) will use to address payments to the recipient. When using ILP as the payment method, this means generating an ILP address and a shared secret. Refer to [Payment methods](#payment-methods) below.
+- Persist the resource and bind any subsequently received payments to it.
+- Return the resource representation, including the payment method object.
+
+#### Handling `incomingAmount`
+
+An incoming payment request can include or exclude an `incomingAmount`.
+
+When an `incomingAmount` is included, your resource server must enforce that the total of payments received against the resource must not exceed `incomingAmount`. The incoming payment can complete automatically when the cumulative received amount reaches `incomingAmount`.
+
+When an `incomingAmount` is excluded, your resource server can't know in advance how much to expect. You must continue accepting payments against the resource until the client explicitly completes the incoming payment via the <LinkOut href='/apis/resource-server/operations/complete-incoming-payment'>Complete an Incoming Payment API</LinkOut>, or until the payment session expires.
+
+#### Expiration
+
+Your resource server defines the validity window for incoming payments. After expiration, the resource must reject further payments. The exact window is a policy decision.
+
+### quote
+
+When your resource server receives a request to <LinkOut href='/apis/resource-server/operations/create-quote'>create a quote</LinkOut>, you must:
+
+- Calculate any fees that will apply to the payment.
+- Determine the exchange rate, if the sender's account currency differs from the recipient's. The rate may come from your treasury, or a market data provider.
+- Set a validity window for the quote.
+- Return the resulting `debitAmount`, `receiveAmount`, and the `quoteId` to the client.
+
+The quote represents your commitment as the sender's ASE to deliver a particular amount to the recipient's ASE within the quote's validity window. After the window closes, the quote must no longer be acted upon.
+
+### outgoing-payment
+
+When your resource server receives a request to <LinkOut href='/apis/resource-server/operations/create-outgoing-payment'>create an outgoing payment</LinkOut>, you must:
+
+- Validate the request against the quote (if one is referenced) or against the supplied `incomingPayment` and `debitAmount` if no quote is used.
+- Confirm that the access token presented by the client is bound to a valid interactive grant for outgoing payments. Refer to [Authorization server](/implement/auth-server/).
+- Persist the outgoing payment instruction and initiate settlement with the recipient's ASE over your shared payment rail.
+
+Once the outgoing payment resource is created, your institution is responsible for executing and settling the payment. Open Payments provides the instruction, but you handle the actual money movement.
+
+## Payment methods
+
+The payment method is the means by which the sender's ASE will fulfill its payment obligations to the recipient's ASE. Cash, credit/debit cards, bank transfers, gift cards and mobile money can all be considered different payment methods.
+
+When an `outgoing-payment` is completed against an open and active `incoming-payment`, the sender's ASE becomes obligated to make payment using the payment method initially specified in the `incoming-payment` response.
+
+Though Open Payments is designed to be an abstraction layer that can issue payment instructions between transacting parties atop any payment method, <LinkOut href='https://interledger.org'>Interledger (ILP)</LinkOut> is the only payment method that currently integrates with Open Payments readily.
+
+When using ILP as a payment method, your resource server must include the following in each incoming payment's `methods` array:
+
+- A `type` of `ilp` to indicate the payment method.
+- The <LinkOut href='https://interledger.org/developers/rfcs/ilp-addresses/'>ILP address</LinkOut> of the recipient's ASE: the ILP address is required so that packets representing payments routed over the Interledger network will be forwarded to the node owned and operated by the intended receiver (the recipient's ASE).
+- A shared secret: a cryptographically secured secret to be exchanged between the sender's ASE and the recipient's ASE to ensure that packets sent over the Interledger network through a <LinkOut href='https://interledger.org/developers/rfcs/stream-protocol/'>STREAM</LinkOut> connection can only be read by the two parties.
+
+```http title="incoming-payment methods object"
+"methods": [
+    {
+      "type": "ilp",
+      "ilpAddress": "g.ilp.iwuyge987y.98y08y",
+      "sharedSecret": "1c7eaXa4rd2fFOBl1iydvCT1tV5TbM3RW1WLCafu_JA"
+    }
+  ]
+```
+
+You generate a unique `ilpAddress` and `sharedSecret` for each incoming payment. The sender's ASE uses these values when sending packets over Interledger so that incoming packets can be matched to and credited against the correct incoming payment resource.
+
+## Settlement
+
+Open Payments operates at the instruction layer. After your resource server creates an outgoing payment against an incoming payment hosted by the recipient's ASE, the sender's ASE must settle with the recipient's ASE over a shared payment rail. The settlement layer (real-time gross settlement, correspondent banking, internal book transfer between two of your own customers) is outside the scope of Open Payments.
+
+:::note
+Open Payments does not execute payments or touch funds in any way. Your resource server emits the instruction, but your institution is responsible for the actual money movement.
+:::
+
+The hand-off between Open Payments and settlement is:
+
+1. The client creates an incoming payment via your (or another ASE's) resource server. Payment details are generated.
+2. The client creates a quote and an outgoing payment against your resource server.
+3. Your institution executes and settles the payment with the recipient's ASE using the payment method returned on the incoming payment.
+4. The recipient's ASE credits the underlying account associated with the wallet address on the incoming payment.

@@ -5,26 +5,12 @@ parent: Concepts
 
 import { LinkOut } from '@interledger/docs-design-system'
 
-The payment method is the means by which the sender's ASE will fulfill its payment obligations to the recipient's ASE. Cash, credit/debit cards, bank transfers, gift cards and mobile money can all be considered different payment methods.
+:::note[For ASEs]
+This page is a brief overview from the client developer's perspective. If you're implementing Open Payments at your institution, refer to [Resource server](/implement/resource-server/) for what your resource server must include in the incoming payment response and how settlement is initiated.
+:::
 
-When an `outgoing-payment` is completed against an open and active `incoming-payment`, the sender's ASE becomes obligated to make payment using the payment method initially specified in the `incoming-payment` response.
+The payment method is the means by which the sender's ASE will fulfill its payment obligations to the recipient's ASE. Cash, credit/debit cards, bank transfers, gift cards and mobile money can all be considered different payment methods. Payment methods determine how settlement occurs between ASEs after Open Payments instructions have been issued.
 
-Though Open Payments is designed to be an abstraction layer that can issue payment instructions between transacting parties atop any payment method, <LinkOut href='https://interledger.org'>Interledger (ILP) </LinkOut> is the only payment method that currently integrates with Open Payments readily.
+Though Open Payments is designed to be an abstraction layer that can issue payment instructions between transacting parties atop any payment method, <LinkOut href='https://interledger.org'>Interledger (ILP)</LinkOut> is the only payment method that currently integrates with Open Payments readily.
 
-When using ILP as a payment method in Open Payments, the following information is required from the recipient's ASE, in the incoming payment's `method` object.
-
-- A `type` of `ilp` to indicate the payment method.
-- The <LinkOut href='https://interledger.org/developers/rfcs/ilp-addresses/'>ILP address</LinkOut> of the recipient’s ASE: The ILP address is required so that packets representing payments routed over the Interledger network will be forwarded to the node owned and operated by the intended receiver (i.e. recipient's ASE).
-- A shared secret: A cryptographically secured secret to be exchanged between the sender's ASE and the recipient's ASE to ensure that packets sent over the Interledger network through a <LinkOut href='https://interledger.org/developers/rfcs/stream-protocol/'>STREAM</LinkOut> connection can only be read by the two parties.
-
-```http title="incoming-payment methods object"
-"methods": [
-    {
-      "type": "ilp",
-      "ilpAddress": "g.ilp.iwuyge987y.98y08y",
-      "sharedSecret": "1c7eaXa4rd2fFOBl1iydvCT1tV5TbM3RW1WLCafu_JA"
-    }
-  ]
-```
-
-After the `incoming-payment` response is received, the sender's ASE creates a `quote` request containing `"method": "ilp"`.
+When a client creates an `incoming-payment` resource, the recipient's ASE returns a `methods` array describing how to address payments to that resource. The client doesn't generate these values and doesn't act on them directly; the sender's ASE uses them when settling the payment.

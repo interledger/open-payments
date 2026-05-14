@@ -10,6 +10,10 @@ A grant in Open Payments allows a client to obtain authorization from a resource
 
 In Open Payments, a grant indicates a transfer, or delegation, of authorization from a Resource Owner (RO) to a piece of software. An RO can be a physical person, such as the software’s end user, or a process, such as predefined organizational rules. By delegating authorization, the RO allows the software to access and perform operations on protected resources on the RO’s behalf.
 
+:::note[For ASEs]
+This page describes how clients request grants. If you're implementing Open Payments at your institution, refer to [Authorization server](/implement/auth-server/) for the server-side GNAP processing, including how to validate signatures, manage interactive sessions, and issue continuation URIs.
+:::
+
 Open Payments leverages the <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol'>Grant Negotiation and Authorization Protocol (GNAP)</LinkOut> as the mechanism by which the piece of software, known as a client instance (or client for short), is delegated authorization to use the Open Payments APIs to interface with supported accounts.
 
 ## GNAP vs OAuth 2.0

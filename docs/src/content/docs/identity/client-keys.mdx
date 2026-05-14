@@ -14,6 +14,10 @@ Client keys are unique identifiers that allow clients to sign Open Payments requ
 
 All client requests in Open Payments are signed using a unique key that identifies the client to authorization and resource servers. All requests, except for new grant requests, will carry an access token that's bound to the key.
 
+:::note[For ASEs]
+This page describes how clients generate, register, and use their keys. If you're implementing Open Payments at your institution, refer to [Security](/implement/security/) for how your authorization server resolves and verifies these keys during grant requests.
+:::
+
 ## Key registry
 
 A key registry is a list of keys that are generated and stored by the client for when the client requires access to protected Open Payment resources. Grant requests are completed over multiple signed HTTP requests. As such, it's important that the client provides a way to consistently identify itself to an authorization server. The key registry allows the authorization server to verify that the client is who it says it is.

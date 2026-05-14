@@ -225,6 +225,36 @@ export default defineConfig({
           ]
         },
         {
+          label: 'Implement Open Payments',
+          collapsed: true,
+          items: [
+            {
+              label: 'Overview for ASEs',
+              link: '/implement/'
+            },
+            {
+              label: 'Wallet address architecture',
+              link: '/implement/wallet-address-architecture/'
+            },
+            {
+              label: 'Resource server',
+              link: '/implement/resource-server/'
+            },
+            {
+              label: 'Authorization server',
+              link: '/implement/auth-server/'
+            },
+            {
+              label: 'Identity provider integration',
+              link: '/implement/identity-provider/'
+            },
+            {
+              label: 'Security',
+              link: '/implement/security/'
+            }
+          ]
+        },
+        {
           label: 'SDKs',
           collapsed: true,
           items: [

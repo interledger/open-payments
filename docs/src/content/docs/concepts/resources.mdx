@@ -9,6 +9,10 @@ import { LinkOut, Tooltip } from '@interledger/docs-design-system'
 
 The Open Payments APIs are served by a resource server. Operations on the APIs require the client to have a valid access token issued by a trusted authorization server.
 
+:::note[For ASEs]
+This page covers Open Payments resources from the perspective of a client developer. If you're implementing Open Payments at your institution, see [Resource server](/implement/resource-server/) for the server-side responsibilities, including how to generate payment details.
+:::
+
 ## Resource types
 
 An Open Payments resource server hosts three sets of APIs, those for incoming payments, quotes, and outgoing payments. A client must receive authorization, via grants, to use any of the APIs.
@@ -69,7 +73,7 @@ The `outgoing-payment` resource contains the recipient's wallet address so the s
 A quote isn't required for all outgoing payments. If the sender doesn't specify the amount the recipient will receive, the `outgoing-payment` can instead contain `incomingPayment` and `debitAmount` values. <LinkOut href='https://webmonetization.org'>Web Monetization</LinkOut> is a good example of this use case.
 :::
 
-After the `outgoing-payment` resource is created, the incoming payment can complete (either automatically or manually) to end the payment flow. Now it's up to the sender's ASE to settle with the recipient's ASE over a shared payment rail.
+After the `outgoing-payment` resource is created, the incoming payment can complete (either automatically or manually) to end the payment flow. The sender's ASE then settles with the recipient's ASE over a shared payment rail. For details on the server-side handling of each resource type refer to [Resource server](/implement/resource-server/).
 
 ## Grants
 

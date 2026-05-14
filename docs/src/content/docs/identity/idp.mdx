@@ -9,16 +9,24 @@ import Interactive from '/src/content/docs/partials/_diagram-interactive-grant.m
 An identity provider (IdP) is a system or service that manages user authentication and consent during the interactive grant process.
 :::
 
-Open Payments requires any authorization server that issues interactive grants to integrate with an IdP.
+Open Payments requires any authorization server that issues interactive grants to integrate with an IdP. An interactive grant is a grant that requires explicit user interaction/consent from the resource owner before an access token can be issued. In Open Payments, an interactive grant must be issued before an outgoing payment resource can be created.
 
-An interactive grant is a grant that requires explicit user interaction/consent from the resource owner before an access token can be issued. In Open Payments, an interactive grant must be issued before an outgoing payment resource can be created.
+:::note[For ASEs]
+This page describes the interactive grant flow from the client developer's perspective. If you're implementing Open Payments at your institution, refer to [Identity provider integration](/implement/identity-provider/) for the full IdP integration guide, including what your auth server must pass to the IdP, what the IdP must display to the resource owner, and how the redirect and hash mechanics work.
+:::
 
-After the interactive grant request begins and the authorization server sets the session, the server provides the client with the IdP URI in which to redirect the user.
+## What happens from the client's perspective
+
+When you (the client) request an interactive grant for an outgoing payment, the authorization server returns an interaction URI in addition to the usual continuation URI. From there:
+
+1. Redirect the user to the interaction URI returned by the authorization server.
+2. The authorization server starts the interaction and redirects the user to the ASE's IdP.
+3. The user authenticates with their ASE and reviews the transaction details.
+4. The user accepts or rejects the request at the IdP.
+5. After the interaction completes, the authorization server redirects the user back to the `interact.finish` URI you supplied in your initial grant request, including a `hash` parameter and an `interact_ref`.
+6. Verify the hash to confirm the redirect emanated from the authorization server. See [Hash verification](/identity/hash-verification/).
+7. Send a [Grant Continuation request](/apis/auth-server/operations/post-continue) to the continuation URI to obtain the access token.
 
 The following diagram illustrates the flow of an interactive grant.
 
 <Interactive />
-
-:::tip[Reference implementation]
-Rafiki provides a reference <LinkOut href='https://rafiki.dev/integration/deployment/services/auth-service/'>authorization service</LinkOut> implementation that includes support for integration with an IdP.
-:::

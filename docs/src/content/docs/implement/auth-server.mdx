@@ -1,0 +1,99 @@
+---
+title: Authorization server
+---
+
+import { LinkOut } from '@interledger/docs-design-system'
+
+:::tip[Summary]
+The authorization server processes grant requests from clients, validates client signatures, manages interactive consent flows with your identity provider, and issues access tokens that your resource server validates on every API call.
+:::
+
+Open Payments leverages the <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol'>Grant Negotiation and Authorization Protocol (GNAP)</LinkOut> as the mechanism by which clients are delegated authorization to use the Open Payments APIs. As an ASE, you operate the authorization server that processes those grant requests.
+
+For the client-facing perspective on grants and tokens, see [Authorization](/concepts/auth/) and [Grant negotiation and authorization](/identity/grants/).
+
+## What the authorization server does
+
+Your authorization server:
+
+- Accepts grant requests at a single grant endpoint URI.
+- Validates the HTTP message signature on every request using the client's public key (resolved from the client's wallet address `jwks.json` endpoint, or supplied directly via directed identity).
+- Decides whether the requested grant is interactive or non-interactive.
+- For interactive grants, manages the session and coordinates with your [identity provider](/implement/identity-provider/) to collect consent.
+- Issues access tokens scoped to the granted access rights.
+- Validates access tokens on demand when your resource server presents them.
+- Manages the token lifecycle, including rotation and revocation.
+
+An authorization server is uniquely identified by its grant endpoint URI, which is an absolute URI that a client calls to initiate a grant request. This URI is the value you publish in the `authServer` field of every wallet address response served by your wallet address server.
+
+## Processing grant requests
+
+A grant is an authorization issued by the resource owner (RO) that allows a client to access specific resources. The grant specifies the type of actions the client is allowed to perform. An access token is issued after a grant request is approved and serves as the credential the client uses on subsequent API calls.
+
+Your authorization server processes three grant types differently:
+
+### incoming-payment grants (non-interactive)
+
+Incoming payment grants are non-interactive by default. When your authorization server receives an incoming payment grant request:
+
+1. Validate the client's signature.
+2. Resolve the client's identity (via wallet address `jwks.json` or directed identity).
+3. Issue an access token bound to the client and scoped to the requested actions.
+4. Return the access token in the response.
+
+No identity provider interaction is required.
+
+### quote grants (non-interactive)
+
+Quote grants are also non-interactive and follow the same processing as incoming payment grants. A client may obtain a single grant that covers quote creation across multiple wallet addresses, as long as those wallet addresses are served by your institution.
+
+### outgoing-payment grants (interactive)
+
+Outgoing payment grants are interactive: the resource owner must explicitly consent before an access token is issued. When your authorization server receives an outgoing payment grant request:
+
+1. Validate the client's signature and resolve the client's identity.
+2. Create a grant record in a `pending` state and issue a continuation URI plus an interaction URI.
+3. Return both URIs to the client. The client redirects the resource owner to the interaction URI.
+4. When the resource owner navigates to the interaction URI, start an interactive session and redirect the resource owner to your identity provider, passing along the grant details (requested permissions, amounts, client identification).
+5. After the IdP collects the resource owner's choice, accept the choice, complete the session, and redirect the resource owner back to the client's `interact.finish` URI with an interaction reference and a hash parameter.
+6. When the client subsequently calls the continuation URI, validate the call, mark the grant as approved (or denied), and issue the access token if approved.
+
+This flow is described in more detail under [Identity provider integration](/implement/identity-provider/).
+
+## Access token validation
+
+When your resource server receives a request bearing an access token, it must determine whether the token is sufficient for the request. The means by which a resource server makes this determination are outside the scope of Open Payments, but in practice your resource server will validate tokens by calling your authorization server.
+
+A typical validation flow:
+
+1. The resource server receives a signed request with a presented access token.
+2. The resource server calls the authorization server's token introspection endpoint with the presented token.
+3. The authorization server confirms the token is active, returns the access rights bound to the token, and confirms the client identity.
+4. The resource server checks that the requested operation falls within the granted access rights, then proceeds (or rejects) accordingly.
+
+If the token is sufficient, the client gets the right to access the operations and resource tied to the token.
+
+## Session management during interactive grants
+
+For interactive grants, your authorization server is the orchestrator. The lifecycle of a single interactive grant looks like this:
+
+1. **Grant request received**: Validate signature, persist a `pending` grant record, return continuation URI and interaction URI.
+2. **Interaction starts**: The resource owner navigates to the interaction URI. Start an interaction session, attach it to the grant, and redirect to your IdP with the grant context.
+3. **IdP collects consent**: Your IdP displays the transaction details (amount, recipient, client identity, etc.) and captures the resource owner's choice.
+4. **Choice returned**: The IdP communicates the choice back to your authorization server, which records it on the grant and acknowledges receipt.
+5. **Session completes**: Your authorization server completes the session, redirects the resource owner to the client's `interact.finish` URI with an interaction reference and a hash, and ends the session.
+6. **Continuation request**: The client calls the continuation URI with a fresh signed request. Validate the signature, look up the grant record, and either issue the access token (if the resource owner consented) or refuse it.
+
+## Token lifecycle
+
+Once issued, access tokens follow a lifecycle that you must support:
+
+- **Issuance**: On grant approval, return an access token with an expiration time and the granted access rights.
+- **Rotation**: Clients may call the <LinkOut href='/apis/auth-server/operations/post-token'>token rotation endpoint</LinkOut> to obtain a new token before the current one expires. Issue a new token bound to the same grant and invalidate the previous one.
+- **Revocation**: Clients (or the resource owner via internal channels) may revoke a token via the <LinkOut href='/apis/auth-server/operations/delete-token'>token revocation endpoint</LinkOut>. Mark the token invalid and reject any further use.
+
+:::note[Reference implementation]
+
+<LinkOut href="https://rafiki.dev">Rafiki</LinkOut> provides an open source
+authorization service that implements the GNAP server-side mechanics described
+here. :::
