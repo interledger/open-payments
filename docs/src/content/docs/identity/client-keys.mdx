@@ -69,6 +69,10 @@ To initialize an authenticated Open Payments client SDK, you must have a public-
 The Interledger test network provides a working example of [obtaining a key pair and key ID](/sdk/before-you-begin/#obtain-a-public-private-key-pair-and-key-id).
 :::
 
+:::note[If you're an ASE]
+ASE-side key verification is covered on the [Security](/implement/security/) page of the ASE implementation guide.
+:::
+
 ## Client requests
 
 Since client requests are completed over multiple signed HTTP requests, it's important for a client to provide a way to consistently identify itself across these requests. As such, clients must include the following when making requests:

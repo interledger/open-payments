@@ -3,6 +3,7 @@ title: Getting started
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
+import { LinkCard, CardGrid } from '@astrojs/starlight/components'
 
 :::tip[Summary]
 Open Payments is an API standard for banks, mobile money providers, and other account servicing entities. It allows developers to build payment capabilities into their apps without the need for custom integrations or third-party payment processors.
@@ -15,6 +16,23 @@ Handling payments is a crucial part of many online applications. Whether it's an
 Open Payments is an open RESTful API and an API standard that enables clients to interface with Open Payments-enabled accounts. In this context, a client is an application, such as a mobile or web app, that consumes one or more Open Payments resources, typically requiring access privileges from one or several authorization servers. The [Open Payments SDKs](/sdk/before-you-begin) simplify this process by providing pre-built functions for these interactions.
 
 The Open Payments standard is meant to be implemented by account servicing entities (ASEs). ASEs provide and maintain payment accounts for senders and recipients, and are regulated entities within the countries they operate. Examples of ASEs include banks, digital wallet providers, and mobile money providers.
+
+## Choose your path
+
+Open Payments has two audiences. Pick the path that matches your role for a tailored reading order through the docs.
+
+<CardGrid>
+  <LinkCard
+    title="I'm building an app"
+    description="You want to send or receive payments from your application by calling the Open Payments APIs. Start here for a developer-focused reading path."
+    href="/overview/for-developers/"
+  />
+  <LinkCard
+    title="I'm implementing Open Payments at my institution"
+    description="You're a bank, digital wallet, or mobile money operator looking to make your accounts Open Payments-enabled. Start here for an ASE-focused reading path."
+    href="/overview/for-ases/"
+  />
+</CardGrid>
 
 ## Benefits of Open Payments
 

@@ -36,6 +36,10 @@ Using our hash base string example above, the following is the `sha-256` encoded
 x-gguKWTj8rQf7d7i3w3UhzvuJ5bpOlKyAlVpLxBffY
 ```
 
+:::note[If you're an ASE]
+Hash generation by the auth server is covered on the [Security](/implement/security/) page of the ASE implementation guide.
+:::
+
 ## Verifying hash
 
 When the client receives a redirect from the authorization server, the authorization server will include the hash parameter in the response. The client must calculate this exact value by concatenating the fields referenced above and then applying the `sha-256` hashing algorithm. If the hash value matches the parameter sent by the authorization server, then the client can be certain the redirect emanated from the authorization server.

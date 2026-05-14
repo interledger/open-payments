@@ -35,6 +35,14 @@ Excluding an `incomingAmount` means the recipient's ASE won't know how much to e
 Supporting streaming Web Monetization payments is one use case for excluding an `incomingAmount`. The time a user spends on a web monetized site is unknown to the recipient's ASE. Payments will stream until the session ends. The Web Monetization agent can then request to mark the incoming payment as complete. This tells the ASE that no further payments will be sent and to credit the recipient's account.
 :::
 
+:::note[If you're an ASE]
+When your resource server receives a Create Incoming Payment request, it must generate unique payment details (such as a wallet address) and return them in the response. Your server determines expiration behavior and how to handle incoming payments with and without an `incomingAmount`.
+:::
+
+:::note[If you're a developer]
+As a developer, you create incoming payment resources by calling the API. You'll use the returned payment details in subsequent steps. You don't generate wallet addresses yourself.
+:::
+
 ### quote
 
 After an `incoming-payment` resource is created on the recipient's account, a `quote` resource is typically created on the sender's account, by way of the <LinkOut href="/apis/resource-server/operations/create-quote">Create a Quote API</LinkOut>.
@@ -55,6 +63,10 @@ Use when the incoming payment resource excludes an `incomingAmount` and the send
 
 Use when the incoming payment resource excludes an `incomingAmount` and the sender wants to specify exactly how much the recipient should receive. A `receiveAmount` is required for this type of quote. With this quote type, the incoming payment automatically completes when the outgoing payment is complete.
 
+:::note[If you're an ASE]
+Your resource server must calculate fees, determine exchange rates if applicable, and set a validity window for the quote. The quote represents your commitment to deliver a specific amount to the recipient's ASE.
+:::
+
 ### outgoing-payment
 
 Finally, an `outgoing-payment` resource is created on the sender's account, by way of the <LinkOut href='/apis/resource-server/operations/create-outgoing-payment'>Create Outgoing Payment API</LinkOut>. An outgoing-payment resource can represent a payment that will be, is currently being, or was sent from the sender’s account. The purpose of this resource is to serve as an instruction to the sender's ASE to make a payment.
@@ -71,6 +83,14 @@ A quote isn't required for all outgoing payments. If the sender doesn't specify 
 
 After the `outgoing-payment` resource is created, the incoming payment can complete (either automatically or manually) to end the payment flow. Now it's up to the sender's ASE to settle with the recipient's ASE over a shared payment rail.
 
+:::note[If you're an ASE]
+After the outgoing payment resource is created, your institution is responsible for executing and settling the payment with the recipient's ASE over a shared payment rail. Open Payments provides the instruction, but you handle execution.
+:::
+
+:::note[If you're a client developer]
+As a client developer, creating the outgoing payment resource is the final step in the Open Payments flow. Settlement happens between the ASEs outside Open Payments.
+:::
+
 ## Grants
 
-For information about the grant types for each resourse, refer to the [Grant types](/concepts/auth/#grant-types) section in the Authorization concepts page.
+For information about the grant types for each resource, refer to the [Grant types](/concepts/auth/#grant-types) section in the Authorization concepts page.

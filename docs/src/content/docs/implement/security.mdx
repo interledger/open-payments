@@ -1,0 +1,112 @@
+---
+title: Security
+---
+
+import { LinkOut } from '@interledger/docs-design-system'
+
+:::tip[Summary]
+As an ASE, you must validate the authenticity and integrity of every request your servers receive, verify the keys clients present, and generate the interaction hashes that allow clients to confirm redirects came from your authorization server.
+:::
+
+Open Payments uses three cryptographic mechanisms to secure communication between clients and ASEs:
+
+- **HTTP message signatures** protect the authenticity and integrity of every request.
+- **Client keys** identify the client across the multi-step grant flow.
+- **Interaction hashes** let clients confirm that a redirect at the end of an interactive grant truly emanated from your authorization server.
+
+Your authorization and resource servers participate in all three mechanisms from the verification side. The client-side counterparts (signing requests, generating keys, and verifying received hashes) are documented in [HTTP message signatures](/identity/http-signatures/), [Client keys](/identity/client-keys/), and [Hash verification](/identity/hash-verification/).
+
+## Validating HTTP message signatures
+
+All client requests in Open Payments are signed using a unique key that identifies the client to authorization and resource servers. Your servers must validate the signature on every incoming request.
+
+Open Payments uses the <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol#name-http-message-signatures'>HTTP message signatures</LinkOut> (`httpsig`) key proofing method, with the **Ed25519** variant of the EdDSA (Edwards-curve Digital Signature Algorithm) for signature generation.
+
+To validate an incoming signed request:
+
+1. Parse the `Signature-Input` header to determine the covered components, the signing algorithm, and the `keyid`.
+2. Resolve the public key associated with the `keyid` (refer to [Verifying client keys](#verifying-client-keys) below).
+3. Reconstruct the signature base from the covered components in the order declared in `Signature-Input`. The reconstructed base must include the same `@signature-params` line, including `alg`, `keyid`, and `created` values.
+4. Hash the reconstructed signature base using SHA-512.
+5. Verify the signature in the `Signature` header against the digest using the public key.
+
+If verification fails, reject the request. Reject any request that omits a required signature, uses a `keyid` you cannot resolve, or whose covered components do not match the request as received.
+
+For the full list of required components, refer to <LinkOut href='https://datatracker.ietf.org/doc/html/rfc9635#name-http-message-signatures'>Section 7.3.1 HTTP Message Signatures</LinkOut> in the GNAP specification. For the client-side signing procedure, refer to [HTTP message signatures](/identity/http-signatures/).
+
+## Verifying client keys
+
+A client identifies itself to your authorization server using either a wallet address or, for non-interactive grants, a public key provided directly via directed identity.
+
+### When the client uses a wallet address
+
+When the `client` property of the grant request body contains a `walletAddress`:
+
+1. Pull the `keyId` from the request's `Signature-Input` header.
+2. Get the client's domain from the `walletAddress` value in the request body.
+3. Make a `GET` request to the client's JWKS endpoint at `WALLET_ADDRESS/jwks.json`.
+4. Locate the public key whose `kid` matches the `keyId` from the signature header.
+5. Validate the signature on the original request using that public key.
+6. Bind the client's domain to the grant. Subsequent grant continuation requests must be signed by a key bound to the same domain. Re-fetch the JWKS endpoint and locate the bound key on every continuation request.
+
+The keys you retrieve must be generated using the `Ed25519` algorithm and the JWKS document must contain the following fields and values:
+
+```
+{
+  alg: 'EdDSA',
+  kty: 'OKP',
+  crv: 'Ed25519'
+}
+```
+
+### When the client uses directed identity
+
+When the `client` property contains a `jwk` instead of a `walletAddress`, the client is using directed identity. The public key is provided directly in the request body. No request to a JWKS endpoint is required, and the client's wallet address is never exposed to your authorization server. Validate the signature using the supplied `jwk`.
+
+Directed identity is only valid for non-interactive grant requests (incoming payment and quote grants). Reject directed identity for outgoing payment grant requests.
+
+:::note
+Open Payments **does not** support bearer tokens. Every request must be signed with the client's key, even when an access token is presented.
+:::
+
+For the client-side perspective on key generation and registration, refer to [Client keys](/identity/client-keys/).
+
+## Generating interaction hashes
+
+After the resource owner completes their interaction at your IdP, your authorization server redirects them back to the client's `interact.finish` URI (if one was supplied). To allow the client to confirm that the redirect emanated from your authorization server, you must include a `hash` parameter in the redirect.
+
+The hash base is generated by concatenating the following values in sequence using a single newline (`\n`) character to separate them:
+
+1. `nonce` value sent by the client in the initial request.
+2. `nonce` value returned from your authorization server after the initial grant request.
+3. `interact_ref` returned from your authorization server in the interaction finish method.
+4. The grant endpoint `uri` the client used to make its initial request.
+
+The following example shows the four components that make up the hash base. There is no padding or whitespace before or after each line and no trailing newline character.
+
+```http title="Example hash base"
+VJLO6A4CATR0KRO
+MBDOFXG4Y5CVJCX821LH
+4IFWWIKYB2PQ6U56NL1
+https://server.example.com/tx
+```
+
+The ASCII encoding of this string is hashed with the `sha-256` algorithm, which is the only hashing algorithm currently supported by Open Payments. The byte array from the hash function is then encoded using Base64 with no padding. The resultant string is the hash value.
+
+```http title="SHA2 256-bit hash example"
+x-gguKWTj8rQf7d7i3w3UhzvuJ5bpOlKyAlVpLxBffY
+```
+
+Include this hash value as a parameter on the redirect to the client's `interact.finish` URI. The client will recompute the hash and compare it against the value you sent.
+
+For the client-side verification procedure, refer to [Hash verification](/identity/hash-verification/) and the <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol-20#name-calculating-the-interaction'>Calculating the interaction hash</LinkOut> section of the GNAP specification.
+
+## How the three mechanisms work together
+
+The three verification mechanisms cover complementary aspects of the security posture you must maintain:
+
+- **HTTP message signatures** authenticate every individual request and protect specific message fields against tampering. Without a valid signature, no request whether that be a grant, continuation, resource creation, or token operation should be accepted.
+- **Client keys** provide the long-lived identity that ties a multi-step grant flow together. The same key that signed the original grant request must sign every continuation request and every API call against the resource server. Your authorization server binds the client's domain to the grant on first contact and uses that binding to resolve keys on subsequent steps.
+- **Interaction hashes** close the loop on interactive grants. After your IdP collects consent, the redirect back to the client must carry a hash the client can verify, so a malicious party cannot forge a "consent granted" redirect to your client's callback.
+
+Together, these mechanisms allow your servers to address two key aspects of message security: **authenticity** of any system that requests access to specific resources, and **integrity** of specific message fields to guard against message tampering.

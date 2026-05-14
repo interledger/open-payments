@@ -44,15 +44,27 @@ Content-Type: application/json
 
 Each wallet address supports a single asset code and scale, but Open Payments enables multi-currency transactions. For example, while Alice's wallet details above returns `USD` as the `assetCode`, a sender can initiate payments to Alice in `EUR` or other currencies. The receiving wallet address provider handles currency conversion, so Alice will always receive `USD` at that specific wallet address. For details about how amounts work in Open Payments, refer to the [Amounts](/concepts/amounts) page.
 
+:::note[If you're an ASE]
+Your wallet address server must enforce these URL constraints and serve the JSON response described above for every valid wallet address. Each field in the response (`id`, `publicName`, `assetCode`, `assetScale`, `authServer`, `resourceServer`) must be included in the response, and you handle currency conversion when payments arrive in a different asset. Refer to the [ASE implementation guide](/implement/) for the broader server-side context.
+:::
+
 ## Wallet address server
 
 When setting up a payment, the client must obtain the wallet address for both the sender and the recipient. Since the sender is typically the client's user, the client can obtain the sender's wallet address during an onboarding process, for example. The sender must be authenticated by their account servicing entity (ASE) to grant the client the permission it needs to access their Open Payments-enabled account.
 
 A wallet address server is an API endpoint that retrieves public information about a wallet address, including its associated public keys. For more technical details, visit the [wallet address server API docs](/apis/wallet-address-server/operations/get-wallet-address/).
 
+:::note[If you're a developer]
+You'll obtain wallet addresses from your users during onboarding and use `GET` requests to retrieve account details. You don't need to implement the wallet address server yourself. The user's ASE operates it.
+:::
+
 ## Privacy and security
 
 A wallet address acts as a proxy identifier (alias) for an underlying financial account. If permitted by an ASE, a single account can have multiple wallet addresses. Allowing account holders to generate unique wallet addresses for every client they interact with can help prevent a single address from becoming a tracking vector.
+
+:::note[If you're an ASE]
+You must decide how to map wallet addresses to underlying accounts. The models described here (1:1, 1:many, many:1) represent policy choices your institution must make.
+:::
 
 Ultimately, it's up to the ASE to define the supported configuration of relationships between wallet addresses and user accounts. This loose coupling allows wallet addresses to be disabled or even linked to a new account (although there are considerations that must be made before allowing this) without affecting the underlying account.
 

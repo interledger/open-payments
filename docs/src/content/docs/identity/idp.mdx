@@ -9,6 +9,14 @@ import Interactive from '/src/content/docs/partials/_diagram-interactive-grant.m
 An identity provider (IdP) is a system or service that manages user authentication and consent during the interactive grant process.
 :::
 
+:::note[If you're an ASE]
+Your authorization server must integrate with an identity provider (IdP) to handle interactive grant consent. This page describes the full integration flow your systems must support. For detailed implementation guidance, refer to [Identity provider integration](/implement/identity-provider/).
+:::
+
+:::note[If you're a client developer]
+As a client developer, your role in the IdP flow is limited: redirect the user to the URI provided by the auth server, then handle the redirect back to your app after consent is collected.
+:::
+
 Open Payments requires any authorization server that issues interactive grants to integrate with an IdP.
 
 An interactive grant is a grant that requires explicit user interaction/consent from the resource owner before an access token can be issued. In Open Payments, an interactive grant must be issued before an outgoing payment resource can be created.

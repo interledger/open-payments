@@ -1,0 +1,51 @@
+---
+title: Implementing Open Payments
+---
+
+import { LinkOut } from '@interledger/docs-design-system'
+
+:::tip[Summary]
+You're a bank, digital wallet provider, or mobile money operator looking to make your accounts Open Payments-enabled. This page suggests a reading path through the docs and points to the resources you'll need.
+:::
+
+The Open Payments standard is meant to be implemented by account servicing entities (ASEs). When an ASE implements Open Payments, their customers' financial accounts become Open Payments-enabled, and clients (applications) can call the Open Payments APIs to view account details and issue payment instructions against those accounts.
+
+Examples of ASEs include banks, digital wallet providers, and mobile money providers.
+
+## What you'll need to build
+
+An Open Payments implementation consists of several systems that work together:
+
+- **A wallet address server**: Serves public information about each Open Payments-enabled account at its wallet address URL, including the asset code/scale, the auth and resource server URLs, and the public keys bound to the account.
+- **A resource server**: Hosts the APIs for incoming payments, quotes, and outgoing payments. Generates payment details for each incoming payment, creates quotes, and accepts outgoing payment instructions.
+- **An authorization server**: Processes grant requests using GNAP, validates client signatures, and issues access tokens. For interactive grants, manages the resource owner consent flow.
+- **An identity provider integration**: Authenticates the resource owner and collects explicit consent during interactive grants.
+
+Also, you must validate HTTP message signatures on every incoming request, verify the keys clients present, and generate the interaction hashes that allow clients to confirm redirects came from your authorization server.
+
+## Suggested reading path
+
+1. **Overview**
+   Begin with the [Getting started](/overview/getting-started/) page, which provides a background on the standard, the relationship between ASEs and clients, and a high-level look at the payment flow.
+2. **Concepts**
+   Read these pages, paying attention to the **If you're an ASE** callouts that highlight what each topic means for your implementation
+   - [Wallet addresses](/concepts/wallet-addresses/)
+   - [Resources](/concepts/resources/)
+   - [Authorization](/concepts/auth/)
+   - [Payment methods](/concepts/payments/)
+   - [Open Payments flow](/concepts/op-flow/)
+3. **Identity and access management**
+   Each page includes role-specific callouts. Pay particular attention to:
+   - [Grant negotiation and authorization](/identity/grants/)
+   - [Identity providers](/identity/idp/)
+   - [HTTP signatures](/identity/http-signatures/)
+4. [ASE implementation guide](/implement/): A focused section covering topics that are purely server-side, including resource server implementation details, identity provider integration, and security.
+5. **API specifications**: The [resource server](/apis/resource-server/operations/create-incoming-payment), [wallet address server](/apis/wallet-address-server/operations/get-wallet-address), and [auth server](/apis/auth-server/operations/post-request) specifications define the exact APIs your servers must expose to clients.
+
+## Reference implementation
+
+<LinkOut href="https://rafiki.dev">Rafiki</LinkOut> is an open source reference
+implementation of the Open Payments servers. The Rafiki documentation covers the
+specifics of running and deploying that software, while this site describes the
+standard and protocol level requirements that any Open Payments implementation
+must meet.

@@ -1,0 +1,36 @@
+---
+title: Building with Open Payments
+---
+
+import { LinkOut } from '@interledger/docs-design-system'
+
+:::tip[Summary]
+You're building an app that needs to send or receive payments. Open Payments lets you do this without custom integrations with each financial institution. This page suggests a reading path through the docs and links to the resources you'll need.
+:::
+
+Open Payments is an open RESTful API and an API standard that enables clients to interface with Open Payments-enabled accounts. As an client application developer, you call the Open Payments APIs to view account details, create incoming payments, request quotes, and issue outgoing payment instructions on behalf of your users.
+
+## What you'll need to know
+
+To integrate Open Payments into your client application, you'll need a working understanding of:
+
+- **The Open Payments resources**: `incoming-payment`, `quote`, and `outgoing-payment`. These are the building blocks of every payment flow. Refer to [Resources](/concepts/resources/).
+- **How authorization works**: Open Payments uses [Grant Negotiation and Authorization Protocol (GNAP)](/identity/grants/) for clients to obtain access tokens. Some grants are non-interactive, whereas others like outgoing payment grants require explicit user consent through an interactive flow. Refer to [Authorization](/concepts/auth/).
+- **Either the SDKs or direct API calls**: The [Open Payments SDKs](/sdk/before-you-begin/) provide pre-built functions in several languages and abstract away signing, key handling, and the GNAP request/response shapes. You can also make API calls directly. Refer to the [API specifications](/apis/wallet-address-server/operations/get-wallet-address) for details.
+
+## Suggested reading path
+
+1. **Overview**:
+   Begin with the [Getting started](/overview/getting-started/) page, which gives a background on the standard, account identification with wallet addresses, and a high-level look at the payment flow.
+2. **Concepts**:
+   - [Resources](/concepts/resources/): incoming payments, quotes, outgoing payments.
+   - [Authorization](/concepts/auth/): grants and access tokens.
+   - [Open Payments flow](/concepts/op-flow/): the full sequence of API calls that make up a payment.
+3. **SDKs or API specifications**: Pick the integration style that matches your project. Start with [Before you begin](/sdk/before-you-begin/) to set up a test wallet and obtain a key pair, then work through the SDK pages for the operations you need.
+4. **Guides**: End-to-end [guides](/guides/accept-otp-online-purchase/) of common use cases, including one-time and recurring payments, and remittances. Pick any guide or any combination of multiple guides to help your build for your use case.
+
+## What you don't need to do
+
+You don't need to operate any of the Open Payments servers, as your users' account servicing entities (ASEs) operate those. You won't generate wallet addresses or shared secrets, you won't run an authorization server, and you won't integrate an identity provider. Those responsibilities belong to the ASE. As a developer you will call the APIs they expose.
+
+If you're curious about what's happening on the server side, the [Concepts](/concepts/wallet-addresses/) and [Identity and access management](/identity/grants/) pages include role-specific callouts marked **If you're an ASE** that contrast what you do with what the ASE does.

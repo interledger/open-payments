@@ -99,6 +99,14 @@ Signature: sig1=:EiCdZMbyXj6pN59g+mh3mY/Q6DlSBrCL7CJM4OZ550+d2MZhfdDKrOJU/ugeRdw
 }
 ```
 
+:::note[If you're a client developer]
+This is what you implement: sign your outgoing requests using your private key, including the `Signature-Input` and `Signature` headers as described above.
+:::
+
+:::note[If you're an ASE]
+This is what you implement: validate incoming request signatures using the client's public key (resolved via the wallet address `jwks.json` endpoint or supplied directly via directed identity). Refer to [Security](/implement/security/) for the server-side validation procedure.
+:::
+
 :::note
 HTTP messages can hold multiple signatures, with each signature uniquely labelled. If required, different signatures can be generated using different signature algorithms.
 :::

@@ -152,6 +152,14 @@ export default defineConfig({
               link: '/overview/getting-started/'
             },
             {
+              label: 'Building with Open Payments',
+              link: '/overview/for-developers/'
+            },
+            {
+              label: 'Implementing Open Payments',
+              link: '/overview/for-ases/'
+            },
+            {
               label: 'Concepts',
               translations: { es: 'Conceptos' },
               collapsed: false,
@@ -221,6 +229,28 @@ export default defineConfig({
                   link: '/identity/hash-verification/'
                 }
               ]
+            }
+          ]
+        },
+        {
+          label: 'ASE implementation guide',
+          collapsed: true,
+          items: [
+            {
+              label: 'ASE implementation guide',
+              link: '/implement/'
+            },
+            {
+              label: 'Resource server implementation',
+              link: '/implement/resource-server/'
+            },
+            {
+              label: 'Identity provider integration',
+              link: '/implement/identity-provider/'
+            },
+            {
+              label: 'Security',
+              link: '/implement/security/'
             }
           ]
         },

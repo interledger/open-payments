@@ -21,6 +21,14 @@ A **grant** is an authorization issued by the RO that allows a client to access 
 
 An **access token** is issued after a grant request is approved by the authorization server. This token serves as a credential that the client uses to authenticate itself when making requests to access protected resources. The access token contains information about the permissions granted, including the specific actions the client can perform and the resources it can access.
 
+:::note[If you're an ASE]
+You must operate an authorization server that processes grant requests, issues access tokens, and validates tokens when your resource server receives API calls. For outgoing payment grants, your auth server must initiate an interactive flow and integrate with your identity provider.
+:::
+
+:::note[If you're a developer]
+As a client developer, you request grants from the ASE's authorization server and use the returned access tokens to call the resource server APIs. For outgoing payment grants, you must handle the interactive redirect flow.
+:::
+
 ## Grant types
 
 This section outlines the different types of grants that clients can request within Open Payments. While the flow often begins with an incoming payment grant, there are scenarios where other grant types may be requested first.

@@ -1,0 +1,57 @@
+---
+title: Resource server implementation
+---
+
+import { LinkOut } from '@interledger/docs-design-system'
+
+:::tip[Summary]
+This page covers the resource server topics that are purely server-side: generating payment details, calculating quotes, and the settlement hand-off after an outgoing payment is created. For the client-facing perspective on resources, refer to [Resources](/concepts/resources/) and [Payment methods](/concepts/payments/).
+:::
+
+## Generating incoming payment details
+
+When your resource server creates an `incoming-payment` resource, it must generate the unique payment details the client (and ultimately the sending ASE) will use to address payments to the recipient. The details depend on the payment method communicated on the resource. Currently, that means ILP.
+
+For ILP, your server must produce two values per incoming payment:
+
+- A unique <LinkOut href='https://interledger.org/developers/rfcs/ilp-addresses/'>ILP address</LinkOut> that routes to your node and that, on receipt, lets you match incoming packets back to the correct incoming payment resource.
+- A cryptographically secured shared secret used to derive the encryption keys for the <LinkOut href='https://interledger.org/developers/rfcs/stream-protocol/'>STREAM</LinkOut> connection that will carry the payment.
+
+Both values are returned in the `methods` array of the incoming payment response. The sender's ASE uses them on every packet it sends. You use them to authenticate and decrypt incoming packets and credit the right resource.
+
+```http title="incoming-payment methods object"
+"methods": [
+    {
+      "type": "ilp",
+      "ilpAddress": "g.ilp.iwuyge987y.98y08y",
+      "sharedSecret": "1c7eaXa4rd2fFOBl1iydvCT1tV5TbM3RW1WLCafu_JA"
+    }
+  ]
+```
+
+## Calculating quotes
+
+When your resource server receives a Create Quote request, it must:
+
+- **Calculate fees** that will apply to the payment. Fee logic is your business decision. The quote response just tells the client (and the sender's account holder) the total cost.
+- **Determine the exchange rate** when the sender's account asset differs from the recipient's. The rate may come from your treasury, a market data provider, or any policy you choose. Pin the rate to the quote so the price doesn't drift between quote creation and outgoing payment creation.
+- **Set a validity window**. Quotes are short-lived commitments. Choose a window long enough for the client to act but short enough to limit your exposure to market movement.
+
+The quote represents your commitment as the sender's ASE to deliver a particular `receiveAmount` to the recipient's ASE for the calculated `debitAmount`. After the validity window closes, the quote must no longer be acted upon.
+
+## The settlement hand-off
+
+Open Payments operates at the instruction layer. After your resource server creates an outgoing payment against an incoming payment hosted by the recipient's ASE, the sender's ASE must settle with the recipient's ASE over a shared payment rail. The settlement layer (real-time gross settlement, correspondent banking, internal book transfer between two of your own customers) is outside the scope of Open Payments.
+
+The hand-off looks like this:
+
+1. The client creates an incoming payment via your (or another ASE's) resource server. Payment details are generated.
+2. The client creates a quote and an outgoing payment against your resource server.
+3. Your institution executes and settles the payment with the recipient's ASE using the payment method communicated on the incoming payment.
+4. The recipient's ASE credits the underlying account associated with the wallet address on the incoming payment.
+
+:::note
+Open Payments does not execute payments or touch funds in any way. Your resource server emits the instruction, but your institution is responsible for the actual money movement.
+:::
+
+For the client-facing perspective on these resources and on payment methods, refer to [Resources](/concepts/resources/) and [Payment methods](/concepts/payments/).

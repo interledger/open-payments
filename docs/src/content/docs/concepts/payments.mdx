@@ -27,4 +27,12 @@ When using ILP as a payment method in Open Payments, the following information i
   ]
 ```
 
+:::note[If you're an ASE]
+Your resource server must include the `methods` array in incoming payment responses. For ILP, this means generating an ILP address and shared secret for each incoming payment.
+:::
+
+:::note[If you're a developer]
+As a client developer, you receive the `methods` object in the incoming payment response but don't need to generate or manage these values. They're used internally by the ASEs during settlement.
+:::
+
 After the `incoming-payment` response is received, the sender's ASE creates a `quote` request containing `"method": "ilp"`.
