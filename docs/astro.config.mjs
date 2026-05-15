@@ -323,6 +323,10 @@ export default defineConfig({
                 {
                   label: 'Get an outgoing payment',
                   link: '/sdk/outgoing-get/'
+                },
+                {
+                  label: 'Get spent amounts for current outgoing payment grant',
+                  link: '/sdk/outgoing-grant-spent-amounts/'
                 }
               ]
             },
