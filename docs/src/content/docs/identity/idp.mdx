@@ -5,6 +5,10 @@ title: Identity providers
 import { CodeBlock, LinkOut } from '@interledger/docs-design-system'
 import Interactive from '/src/content/docs/partials/_diagram-interactive-grant.mdx'
 
+:::note[For client developers]
+This page describes Open Payments from the client developer's perspective. ASEs should refer to the [ASE implementation guide](/implement/).
+:::
+
 :::tip[Summary]
 An identity provider (IdP) is a system or service that manages user authentication and consent during the interactive grant process.
 :::
@@ -18,6 +22,10 @@ After the interactive grant request begins and the authorization server sets the
 The following diagram illustrates the flow of an interactive grant.
 
 <Interactive />
+
+:::note[For ASE implementors]
+ASEs should refer to the [ASE implementation guide](/implement/).
+:::
 
 :::tip[Reference implementation]
 Rafiki provides a reference <LinkOut href='https://rafiki.dev/integration/deployment/services/auth-service/'>authorization service</LinkOut> implementation that includes support for integration with an IdP.

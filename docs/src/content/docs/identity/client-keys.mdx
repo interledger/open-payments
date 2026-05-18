@@ -8,6 +8,10 @@ import {
   MermaidWrapper
 } from '@interledger/docs-design-system'
 
+:::note[For client developers]
+This page describes Open Payments from the client developer's perspective. ASEs should refer to the [ASE implementation guide](/implement/).
+:::
+
 :::tip[Summary]
 Client keys are unique identifiers that allow clients to sign Open Payments requests and verify the client's identity.
 :::
@@ -64,6 +68,10 @@ To initialize an authenticated Open Payments client SDK, you must have a public-
 2. The public key is provided to the client's account servicing entity (ASE). The ASE is responsible for providing a way for clients to upload keys. The ASE adds the key to its resource server.
 3. A `keyId` is created to identify the key pair. The ASE is usually responsible for `keyId` creation.
 4. The client stores the private key for future request signing. The key signs the payload described in the [key proofing method](#key-proofing-method) section below.
+
+:::note[For ASE implementors]
+ASEs should refer to the [ASE implementation guide](/implement/).
+:::
 
 :::note
 The Interledger test network provides a working example of [obtaining a key pair and key ID](/sdk/before-you-begin/#obtain-a-public-private-key-pair-and-key-id).

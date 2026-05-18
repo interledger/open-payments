@@ -10,6 +10,10 @@ import {
 } from '@interledger/docs-design-system'
 import Interactive from '/src/content/docs/partials/_diagram-interactive-grant.mdx'
 
+:::note[For client developers]
+This page describes Open Payments from the client developer's perspective. ASEs should refer to the [ASE implementation guide](/implement/).
+:::
+
 :::tip[Summary]
 When a client issues payment instructions, numerous interactions between the client and servers are needed to obtain grants, verify identities, and create the resources required to complete a transaction.
 :::
@@ -161,6 +165,10 @@ This diagram brings the aforementioned concepts together, except for getting tra
 As shown below, both the sender and the recipient's ASEs must operate their own authorization and resource servers. Grant requests for incoming payment and quote resources are typically non-interactive. A grant request for an outgoing payment resource requires explicit consent from the sender (for example, the client's user), which is obtained through the sender's [identity provider](/identity/idp/).
 
 More information about grant interaction flows can be found in the [Grant negotiation and authorization](/identity/grants) page.
+
+:::note[For ASE implementors]
+ASEs should refer to the [ASE implementation guide](/implement/).
+:::
 
 <MermaidWrapper diagramName="transaction-flow">
 

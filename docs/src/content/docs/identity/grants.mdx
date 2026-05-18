@@ -4,6 +4,10 @@ title: Grant negotiation and authorization
 
 import { CodeBlock, LinkOut, Tooltip } from '@interledger/docs-design-system'
 
+:::note[For client developers]
+This page describes Open Payments from the client developer's perspective. ASEs should refer to the [ASE implementation guide](/implement/).
+:::
+
 :::tip[Summary]
 A grant in Open Payments allows a client to obtain authorization from a resource owner to access and perform operations on protected resources. Open Payments uses the Grant Negotiation and Authorization Protocol (GNAP) to facilitate this process, allowing clients to securely interact with the API.
 :::
@@ -29,6 +33,10 @@ GNAP is being developed as the successor to OAuth 2.0 and is designed to fill ma
 An authorization server grants delegated privileges to a client in the form of access tokens. Access tokens represent a set of access rights and/or attributes granted to the client. With the requisite access tokens, the client can access a resource server’s Open Payments APIs and perform allowed operations, such as creating incoming payments and listing outgoing payments, on behalf of the resource owner.
 
 An authorization server is uniquely identified by its grant endpoint URI, which is an absolute URI that a client calls to initiate a grant request.
+
+:::note[For ASE implementors]
+ASEs should refer to the [ASE implementation guide](/implement/).
+:::
 
 ### Key registries
 

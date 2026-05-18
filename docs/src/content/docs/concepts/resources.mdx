@@ -7,6 +7,10 @@ tableOfContents:
 
 import { LinkOut, Tooltip } from '@interledger/docs-design-system'
 
+:::note[For client developers]
+This page describes Open Payments from the client developer's perspective. ASEs should refer to the [ASE implementation guide](/implement/).
+:::
+
 The Open Payments APIs are served by a resource server. Operations on the APIs require the client to have a valid access token issued by a trusted authorization server.
 
 ## Resource types
@@ -14,6 +18,10 @@ The Open Payments APIs are served by a resource server. Operations on the APIs r
 An Open Payments resource server hosts three sets of APIs, those for incoming payments, quotes, and outgoing payments. A client must receive authorization, via grants, to use any of the APIs.
 
 Each set of APIs has its own resource type: `incoming-payment`, `quote`, and `outgoing-payment`.
+
+:::note[For ASE implementors]
+ASEs should refer to the [ASE implementation guide](/implement/).
+:::
 
 ### incoming-payment
 

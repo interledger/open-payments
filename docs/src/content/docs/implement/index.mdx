@@ -1,0 +1,47 @@
+---
+title: ASE implementation guide
+---
+
+import { LinkOut } from '@interledger/docs-design-system'
+
+:::tip[Summary]
+The ASE implementation guide describes what an account servicing entity (ASE) must build to make its accounts Open Payments-enabled. The rest of the Open Payments documentation describes what client developers need to know to call the APIs; this guide describes what ASEs need to build to serve them.
+:::
+
+## What is an ASE?
+
+An account servicing entity (ASE) provides and maintains payment accounts for senders and recipients, and is a regulated entity within the countries it operates. Examples of ASEs include banks, digital wallet providers, and mobile money providers.
+
+When an ASE adopts the Open Payments standard, the customers' financial accounts at that ASE become Open Payments-enabled. Clients (apps, services, and other software) can then call the Open Payments APIs against those accounts to retrieve account details and issue payment instructions, without needing a custom integration per ASE.
+
+## What ASEs must operate
+
+To make accounts Open Payments-enabled, ASEs must operate three servers and integrate with an identity provider:
+
+- **Wallet address server** — Returns public information about each Open Payments-enabled account at a stable HTTPS URL (the wallet address).
+- **Resource server** — Hosts the `incoming-payment`, `quote`, and `outgoing-payment` APIs that clients call to set up payments.
+- **Authorization server** — Processes grant requests under the <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol'>Grant Negotiation and Authorization Protocol (GNAP)</LinkOut>, issues access tokens, and coordinates user consent for interactive grants.
+- **Identity provider (IdP) integration** — Authenticates the resource owner and collects explicit consent during interactive grants (required for outgoing payments).
+
+The ASE is also responsible for the actual movement of funds. Open Payments only carries the payment **instruction**; settlement happens between ASEs over a shared payment rail.
+
+## Relationship to client developers
+
+Client developers do not know — and do not need to know — how an ASE structures its accounts, validates tokens, integrates its IdP, or settles funds. From the client developer's perspective, an ASE exposes:
+
+- A wallet address URL that returns public account details.
+- A resource server that accepts payment-related requests and returns resources.
+- An authorization server that issues access tokens after evaluating grant requests.
+
+This guide covers the server-side concerns that sit behind those interfaces. The pages assume the reader is implementing Open Payments at an ASE; the language is intentionally addressed to ASEs (third person) so a client developer who lands here can quickly tell that the page is not aimed at them.
+
+## How this guide fits with the rest of the docs
+
+| Where to look                                                                    | What it covers                                                                                                 |
+| -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| [Developer Concepts](/concepts/wallet-addresses/)                                | What a client developer needs to know to call the Open Payments APIs.                                          |
+| Identity and access management (under Concepts)                                  | Client-side identity mechanics: signing requests, handling interactive grants, verifying the interaction hash. |
+| [ASE implementation guide](/implement/) (this guide)                             | What an ASE must build and operate to serve the APIs.                                                          |
+| [SDKs](/sdk/before-you-begin/) and [Guides](/guides/accept-otp-online-purchase/) | Client developer-focused tooling and end-to-end task walkthroughs.                                             |
+
+This guide describes the standard- and protocol-level requirements. For a concrete, open-source reference implementation of an Open Payments-compatible server stack, refer to <LinkOut href='https://rafiki.dev'>Rafiki</LinkOut>.

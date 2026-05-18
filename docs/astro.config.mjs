@@ -152,41 +152,49 @@ export default defineConfig({
               link: '/overview/getting-started/'
             },
             {
-              label: 'Concepts',
-              translations: { es: 'Conceptos' },
-              collapsed: false,
-              items: [
-                {
-                  label: 'Wallet addresses',
-                  translations: { es: 'Direcciones de billetera' },
-                  link: '/concepts/wallet-addresses/'
-                },
-                {
-                  label: 'Resources',
-                  translations: { es: 'Recursos' },
-                  link: '/concepts/resources/'
-                },
-                {
-                  label: 'Authorization',
-                  translations: { es: 'Autorización' },
-                  link: '/concepts/auth/'
-                },
-                {
-                  label: 'Amounts',
-                  translations: { es: `Montos` },
-                  link: '/concepts/amounts/'
-                },
-                {
-                  label: 'Payment methods',
-                  translations: { es: 'Métodos de pago' },
-                  link: '/concepts/payments/'
-                },
-                {
-                  label: 'Open Payments flow',
-                  translations: { es: 'Flujo de Open Payments' },
-                  link: '/concepts/op-flow/'
-                }
-              ]
+              label: 'Building with Open Payments',
+              link: '/overview/for-developers/'
+            },
+            {
+              label: 'Implementing Open Payments',
+              link: '/overview/for-ases/'
+            }
+          ]
+        },
+        {
+          label: 'Developer Concepts',
+          translations: { es: 'Conceptos para desarrolladores' },
+          collapsed: true,
+          items: [
+            {
+              label: 'Wallet addresses',
+              translations: { es: 'Direcciones de billetera' },
+              link: '/concepts/wallet-addresses/'
+            },
+            {
+              label: 'Resources',
+              translations: { es: 'Recursos' },
+              link: '/concepts/resources/'
+            },
+            {
+              label: 'Authorization',
+              translations: { es: 'Autorización' },
+              link: '/concepts/auth/'
+            },
+            {
+              label: 'Amounts',
+              translations: { es: `Montos` },
+              link: '/concepts/amounts/'
+            },
+            {
+              label: 'Payment methods',
+              translations: { es: 'Métodos de pago' },
+              link: '/concepts/payments/'
+            },
+            {
+              label: 'Open Payments flow',
+              translations: { es: 'Flujo de Open Payments' },
+              link: '/concepts/op-flow/'
             },
             {
               label: 'Identity and access management',
@@ -343,8 +351,8 @@ export default defineConfig({
           ]
         },
         {
-          label: 'Guides',
-          translations: { es: 'Guías' },
+          label: 'Developer Guides',
+          translations: { es: 'Guías para desarrolladores' },
           collapsed: true,
           items: [
             {
@@ -400,6 +408,36 @@ export default defineConfig({
                 es: 'Obtener una concesión de pago saliente para pagos futuros'
               },
               link: '/guides/outgoing-grant-future-payments/'
+            }
+          ]
+        },
+        {
+          label: 'ASE implementation guide',
+          collapsed: true,
+          items: [
+            {
+              label: 'Overview',
+              link: '/implement/'
+            },
+            {
+              label: 'Wallet address architecture',
+              link: '/implement/wallet-address-architecture/'
+            },
+            {
+              label: 'Resource server',
+              link: '/implement/resource-server/'
+            },
+            {
+              label: 'Authorization server',
+              link: '/implement/auth-server/'
+            },
+            {
+              label: 'Identity provider integration',
+              link: '/implement/identity-provider/'
+            },
+            {
+              label: 'Security',
+              link: '/implement/security/'
             }
           ]
         },

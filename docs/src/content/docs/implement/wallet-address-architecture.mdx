@@ -1,0 +1,87 @@
+---
+title: Wallet address architecture
+---
+
+import { LinkOut } from '@interledger/docs-design-system'
+
+:::tip[Summary]
+A wallet address is the public HTTPS endpoint that identifies an Open Payments-enabled account and exposes the information clients need to interact with it. ASEs operate a wallet address server that returns this information and define the policy that maps wallet addresses to underlying accounts.
+:::
+
+## URL requirements
+
+ASEs must enforce the following constraints on any URL that is exposed as a wallet address:
+
+- The URL must use the `https` protocol.
+- The URL must not contain a `user-info`, `port`, `query string`, or `fragment` component.
+- The server handling HTTP requests at that URL must support the Open Payments protocol.
+
+URLs that do not meet these constraints are not valid wallet addresses. ASEs should refuse to issue or accept them.
+
+## Wallet address response
+
+A wallet address server returns public information about the underlying account in response to a `GET` request with `Accept: application/json`:
+
+```http
+HTTP/1.1 200 Success
+Content-Type: application/json
+
+{
+  "id": "https://wallet.example.com/alice",
+  "publicName": "Alice",
+  "assetCode": "USD",
+  "assetScale": 2,
+  "authServer": "https://auth.wallet.example.com",
+  "resourceServer": "https://wallet.example.com/op"
+}
+```
+
+Each field is part of the ASE's externally observable contract:
+
+- `id` — The canonical wallet address URL. ASEs must return the same identifier the client used to reach the endpoint (after applicable normalization).
+- `publicName` — A human-readable label intended for display by clients and identity providers. ASEs decide what to expose here and must consider that this field is publicly visible.
+- `assetCode` — The <LinkOut href='https://en.wikipedia.org/wiki/ISO_4217'>ISO 4217</LinkOut> currency code of the underlying account.
+- `assetScale` — The number of decimal places used for that currency. Refer to [Amounts](/concepts/amounts/) for the value/scale relationship clients rely on.
+- `authServer` — The grant endpoint URI of the authorization server that issues tokens for this wallet address. Clients send all grant requests here.
+- `resourceServer` — The base URL of the resource server that hosts the `incoming-payment`, `quote`, and `outgoing-payment` resources for this wallet address.
+
+The full request and response shape is defined by the <LinkOut href='/apis/wallet-address-server/operations/get-wallet-address/'>wallet address server API</LinkOut>. ASEs must also expose the keys bound to a wallet address; refer to <LinkOut href='/apis/wallet-address-server/operations/get-wallet-address-keys/'>Get keys bound to wallet address</LinkOut>.
+
+## Multi-currency considerations
+
+A wallet address supports a single `assetCode` and `assetScale`. ASEs that wish to support multi-currency accounts have two common patterns:
+
+- Issue one wallet address per supported currency for the same underlying account. Each wallet address advertises its own asset code and scale.
+- Issue a single wallet address in the primary currency and perform currency conversion on the ASE side when payments arrive in a different currency. In this pattern, the wallet address still advertises only one asset code, and the recipient is credited in that currency regardless of the sender's denomination.
+
+In both patterns, the asset code returned by the wallet address response is the currency in which the underlying account will be credited. Conversion fees and exchange rates are an ASE policy decision and must be surfaced to the sender via the quote.
+
+## Mapping wallet addresses to accounts
+
+The relationship between wallet addresses and underlying accounts is intentionally loose. Common mapping models include:
+
+- **1:1** — Each account has exactly one wallet address. Simplest model; reuse and tracking risks are highest.
+- **1:many** — One account has many wallet addresses. Lets account holders generate per-client or per-context addresses to avoid being tracked across services.
+- **Many:1** — Many wallet addresses route to the same underlying account; ASEs may use this for shared accounts or rotation.
+
+ASEs define which models they support and the policy around:
+
+- Whether account holders can create new wallet addresses on demand.
+- Whether wallet addresses can be disabled or relinked to a different account.
+- Whether disabled wallet addresses are tombstoned (return `410 Gone`) or recycled.
+- Whether previously granted access via one wallet address transfers to another wallet address on the same account.
+
+Open Payments treats any two distinct wallet addresses as distinct accounts even when they share an underlying account. ASEs must enforce this at the authorization layer: permission granted via one wallet address must not implicitly grant access via another.
+
+## Why URLs
+
+ASEs should treat the choice of URL-as-identifier as a design decision, not an accident of the protocol:
+
+- URLs are both an identifier and a service endpoint, so a client can discover everything it needs to transact (auth server, resource server, asset code) by dereferencing the address.
+- URLs avoid the need to overload identifiers such as email addresses or MSISDNs, which lack a standard interaction mechanism and require a separate registry to map an identifier to an account provider.
+- URLs let ASEs control the entire surface area of an Open Payments-enabled account through their own domain, including key rotation, address lifecycle, and content negotiation.
+
+## Reference implementation
+
+<LinkOut href="https://rafiki.dev">Rafiki</LinkOut> provides an open-source
+implementation of a wallet address server.

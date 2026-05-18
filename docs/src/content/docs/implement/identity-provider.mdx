@@ -1,0 +1,65 @@
+---
+title: Identity provider integration
+---
+
+import { CodeBlock, LinkOut } from '@interledger/docs-design-system'
+import Interactive from '/src/content/docs/partials/_diagram-interactive-grant.mdx'
+
+:::tip[Summary]
+ASEs must integrate their authorization server with an identity provider (IdP) to authenticate the resource owner and collect explicit consent during interactive grants.
+:::
+
+## When the IdP is involved
+
+Open Payments requires an interactive grant for outgoing payments. An interactive grant cannot be approved without explicit consent from the resource owner (typically the client's user). The ASE's authorization server is responsible for orchestrating consent collection, but it must not collect consent itself — it delegates that to an IdP so that the resource owner authenticates against the same system that controls their underlying account.
+
+The following diagram illustrates the full interactive grant flow, including the IdP.
+
+<Interactive />
+
+## What the authorization server passes to the IdP
+
+When the authorization server forwards the resource owner to the IdP, it must pass enough information for the IdP to display a meaningful consent screen and route the decision back. The exact mechanism is an ASE implementation detail (a signed redirect URL, a short-lived consent token, a backchannel call, etc.), but the information the IdP needs includes:
+
+- The **grant identifier**, so the IdP can return its decision to the right grant.
+- The **resource owner identity** (or whatever the IdP uses to start authentication), so the IdP can prompt the correct user to log in.
+- The **requested access**: resource types, actions, limits (debit amount, receive amount, expiry, interval for recurring access).
+- The **client identity**: at minimum a display name; ideally enough material for the IdP to render a trustworthy client identification cue.
+- The **return path** to the authorization server once a decision is made.
+
+## What the IdP must display
+
+The IdP is the only system in the flow that the resource owner is authenticated against, so it is also the only system that can credibly ask for consent. The IdP must show:
+
+- Who the client is (display name; optionally additional client attestation).
+- What the client is asking permission to do, in plain language (for example, "send up to $50 USD from your account").
+- Any time or velocity limits attached to the request.
+- A clear accept/deny choice.
+
+ASEs decide the exact UI, but the consent prompt must accurately reflect what the authorization server will encode in the resulting grant. If the IdP under-represents the requested access (for example, by omitting a `interval`), the grant must be denied or the access scaled down to what the user actually saw and accepted.
+
+## How consent flows back
+
+After the resource owner makes a choice, the IdP communicates it back to the authorization server. Common patterns:
+
+- A signed redirect from the IdP to a callback on the authorization server, carrying the grant identifier and the decision.
+- A backchannel API call from the IdP to the authorization server.
+
+The authorization server must verify the integrity of the incoming decision — both that it came from the ASE's IdP and that it has not been altered. On accept, the authorization server moves the grant to `approved` and unlocks token issuance. On deny, the grant must be moved to a terminal denied state so that subsequent continuation requests return the appropriate error.
+
+## Redirect and hash mechanics
+
+Once the authorization server has the IdP's decision, it redirects the resource owner back to the client's `interact.finish` URI (if one was provided in the original grant request) and includes:
+
+- An `interact_ref`.
+- A `hash` computed from the original `nonce` values and the grant URI.
+
+The client verifies the hash to confirm that the redirect actually came from the authorization server, then calls the continuation URI to retrieve the access token. The exact hash construction is described in [Security](/implement/security/).
+
+## Reference implementation
+
+<LinkOut href="https://rafiki.dev">Rafiki</LinkOut> provides a reference
+<LinkOut href="https://rafiki.dev/integration/deployment/services/auth-service/">
+  authorization service
+</LinkOut>
+implementation that includes support for integration with an IdP.

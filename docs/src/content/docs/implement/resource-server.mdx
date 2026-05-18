@@ -1,0 +1,96 @@
+---
+title: Resource server
+---
+
+import { LinkOut } from '@interledger/docs-design-system'
+
+:::tip[Summary]
+The resource server hosts the `incoming-payment`, `quote`, and `outgoing-payment` APIs that clients use to set up payments. This page describes what an ASE's resource server must do when each resource type is created and how it hands payments off to settlement.
+:::
+
+## What the resource server does
+
+An ASE's resource server hosts three sets of APIs, one per resource type. For each request, the resource server validates the access token presented by the client with the ASE's authorization server before performing the operation.
+
+### incoming-payment
+
+When the resource server receives a <LinkOut href='/apis/resource-server/operations/create-incoming-payment'>Create Incoming Payment</LinkOut> request, it must:
+
+- Generate unique payment details that the sender's ASE will use to address payments to this incoming payment. For ILP, those details are returned in the `methods` array; refer to [Payment method details](#payment-method-details) below.
+- Persist the incoming payment resource so it can be retrieved, listed, and completed via subsequent API calls.
+- Track the running `receivedAmount` as payments arrive.
+
+If the request specifies an `incomingAmount`, the resource server must enforce it as a maximum total. One or more payments can be associated with the incoming payment, but the sum across them must not exceed `incomingAmount`. The resource server should mark the incoming payment as completed once the running total reaches the cap.
+
+If `incomingAmount` is absent, the resource server cannot determine completion on its own. It must accept payments until a client issues a <LinkOut href='/apis/resource-server/operations/complete-incoming-payment'>Complete an Incoming Payment</LinkOut> request, or until the incoming payment expires. ASEs define the expiration window; it must be returned to the client so the client knows when the resource will stop accepting payments.
+
+### quote
+
+When the resource server receives a <LinkOut href='/apis/resource-server/operations/create-quote'>Create a Quote</LinkOut> request, it must:
+
+- Compute the `debitAmount`, `receiveAmount`, and fee for the requested payment, including any applicable exchange rate when the sender's and recipient's wallet addresses use different `assetCode` values.
+- Commit to deliver the quoted `receiveAmount` to the recipient's ASE if an outgoing payment is created against the quote within the quote's validity window.
+- Assign the quote a `quoteId` and persist it.
+- Set a validity window after which the quote is no longer honored. ASEs define this window; it must be short enough that rate and fee exposure is bounded and long enough that the client can collect interactive consent before it expires.
+
+A quote represents a binding commitment from the sender's ASE. If the sender's ASE cannot honor the quote at execution time, that is an ASE-side failure, not a protocol error.
+
+### outgoing-payment
+
+When the resource server receives a <LinkOut href='/apis/resource-server/operations/create-outgoing-payment'>Create Outgoing Payment</LinkOut> request, it must:
+
+- Validate that the access token presented carries a grant that authorizes this specific outgoing payment, including the limits collected during the interactive consent flow.
+- If a `quoteId` is present, look up the quote, confirm it has not expired, and use the quoted amounts.
+- If no `quoteId` is present (for example, in Web Monetization-style use cases), use the `incomingPayment` and `debitAmount` from the request to scope the outgoing payment.
+- Persist the outgoing payment resource and initiate settlement.
+
+The outgoing-payment resource is the ASE's instruction to itself to move funds. Returning a `201` does not mean money has moved; it means the resource server has accepted and durably stored the instruction.
+
+## Payment method details
+
+The `methods` array in the incoming payment response tells the sender's ASE how to deliver funds. ASEs are responsible for populating this array with valid payment method data for each rail they support.
+
+When using ILP, the resource server must include the following in the `methods` object:
+
+- `type` set to `ilp`.
+- The recipient ASE's <LinkOut href='https://interledger.org/developers/rfcs/ilp-addresses/'>ILP address</LinkOut>, so packets routed over the Interledger network reach the recipient's ASE.
+- A `sharedSecret` — a cryptographically generated secret used to secure the <LinkOut href='https://interledger.org/developers/rfcs/stream-protocol/'>STREAM</LinkOut> connection between the sender's and recipient's ASEs.
+
+```http title="incoming-payment methods object (ILP)"
+"methods": [
+    {
+      "type": "ilp",
+      "ilpAddress": "g.ilp.iwuyge987y.98y08y",
+      "sharedSecret": "1c7eaXa4rd2fFOBl1iydvCT1tV5TbM3RW1WLCafu_JA"
+    }
+  ]
+```
+
+ASEs must generate a fresh `sharedSecret` per incoming payment and must not reuse secrets across resources. ILP is currently the only payment method that integrates with Open Payments; ASEs that intend to settle over a different rail must wait for that rail's payment method to be defined and integrated.
+
+## Instruction layer vs. settlement layer
+
+Open Payments is an instruction layer. The resource server stores the agreement between the two ASEs ("ASE A will deliver X to ASE B against this incoming payment") and exposes it through the APIs.
+
+Actual movement of funds happens on the settlement layer:
+
+- Once the outgoing payment is created and the corresponding incoming payment is open, the sender's ASE is obligated to settle with the recipient's ASE.
+- Settlement runs over a shared payment rail (currently ILP).
+- Open Payments does not touch funds, hold balances, or execute transfers. The ASE is fully responsible for that.
+
+ASEs must keep the two layers in sync. As funds arrive at the recipient's ASE, the resource server must update the `receivedAmount` on the corresponding incoming payment so clients have an accurate view of payment progress.
+
+## Token validation
+
+Every request to the resource server carries an access token issued by the ASE's authorization server. Before serving the request, the resource server must validate that the token:
+
+- Is well-formed and not revoked.
+- Covers the requested action (`create`, `read`, `list`, `complete`) and resource type (`incoming-payment`, `quote`, `outgoing-payment`).
+- Is scoped to the wallet address the request targets, where applicable.
+
+ASEs decide whether the resource server validates tokens locally (for example, against a shared cache) or by calling the authorization server. The protocol does not mandate one approach. Whichever pattern an ASE chooses, the resource server must refuse requests with insufficient tokens. For more detail on token issuance and lifecycle, refer to [Authorization server](/implement/auth-server/).
+
+## Reference implementation
+
+<LinkOut href="https://rafiki.dev">Rafiki</LinkOut> provides an open-source
+implementation of an Open Payments resource server.
