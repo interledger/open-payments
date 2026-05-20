@@ -2,7 +2,6 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'astro/config'
 import starlight from '@astrojs/starlight'
-import starlightOpenAPI from 'starlight-openapi'
 import starlightLinksValidator from 'starlight-links-validator'
 import starlightFullViewMode from 'starlight-fullview-mode'
 import remarkMath from 'remark-math'
@@ -91,50 +90,9 @@ export default defineConfig({
         src: './public/favicon.svg'
       },
       plugins: [
-        // Generate the OpenAPI documentation pages.
-        starlightOpenAPI([
-          {
-            base: 'apis/resource-server',
-            schema:
-              '../open-payments-specifications/openapi/resource-server.yaml',
-            sidebar: { label: 'Open Payments' }
-          },
-          {
-            base: 'es/apis/resource-server',
-            schema:
-              '../open-payments-specifications/openapi/resource-server.yaml',
-            sidebar: { label: 'Open Payments' }
-          },
-          {
-            base: 'apis/wallet-address-server',
-            schema:
-              '../open-payments-specifications/openapi/wallet-address-server.yaml',
-            sidebar: { label: 'Wallet Addresses' }
-          },
-          {
-            base: 'es/apis/wallet-address-server',
-            schema:
-              '../open-payments-specifications/openapi/wallet-address-server.yaml',
-            sidebar: { label: 'Wallet Addresses' }
-          },
-          {
-            base: 'apis/auth-server',
-            schema: '../open-payments-specifications/openapi/auth-server.yaml',
-            sidebar: { label: 'Open Payments Authorization Server' }
-          },
-          {
-            base: 'es/apis/auth-server',
-            schema: '../open-payments-specifications/openapi/auth-server.yaml',
-            sidebar: { label: 'Open Payments Authorization Server' }
-          }
-        ]),
         starlightLinksValidator({
           errorOnLocalLinks: false,
-          errorOnFallbackPages: false,
-          exclude: [
-            '/apis/{auth-server,resource-server,wallet-address-server}/**/*',
-            '/es/apis/{auth-server,resource-server,wallet-address-server}/**/*'
-          ]
+          errorOnFallbackPages: false
         }),
         starlightFullViewMode({
           leftSidebarEnabled: true,
@@ -435,142 +393,35 @@ export default defineConfig({
           ]
         },
         {
-          label: 'API specifications',
+          label: 'API reference',
           collapsed: true,
           items: [
             {
               label: 'Wallet address server',
-              collapsed: true,
-              items: [
-                {
-                  label: 'Get wallet address',
-                  link: '/apis/wallet-address-server/operations/get-wallet-address',
-                  badge: { text: 'GET', variant: 'note' }
-                },
-                {
-                  label: 'Get keys bound to wallet address',
-                  link: '/apis/wallet-address-server/operations/get-wallet-address-keys',
-                  badge: { text: 'GET', variant: 'note' }
-                }
-              ]
+              link: '/apis/wallet-address-server/',
+              attrs: {
+                target: '_blank',
+                rel: 'noopener noreferrer',
+                'data-icon': 'external'
+              }
             },
             {
               label: 'Resource server',
-              collapsed: true,
-              items: [
-                {
-                  label: 'Incoming payment',
-                  collapsed: true,
-                  items: [
-                    {
-                      label: 'Create incoming payment',
-                      link: '/apis/resource-server/operations/create-incoming-payment',
-                      badge: { text: 'POST', variant: 'success' }
-                    },
-                    {
-                      label: 'List incoming payments',
-                      link: '/apis/resource-server/operations/list-incoming-payments',
-                      badge: { text: 'GET', variant: 'note' }
-                    },
-                    {
-                      label: 'Get an incoming payment',
-                      link: '/apis/resource-server/operations/get-incoming-payment',
-                      badge: { text: 'GET', variant: 'note' }
-                    },
-                    {
-                      label: 'Complete an incoming payment',
-                      link: '/apis/resource-server/operations/complete-incoming-payment',
-                      badge: { text: 'POST', variant: 'success' }
-                    }
-                  ]
-                },
-                {
-                  label: 'Outgoing payment',
-                  collapsed: true,
-                  items: [
-                    {
-                      label: 'Create outgoing payment',
-                      link: '/apis/resource-server/operations/create-outgoing-payment',
-                      badge: { text: 'POST', variant: 'success' }
-                    },
-                    {
-                      label: 'List outgoing payments',
-                      link: '/apis/resource-server/operations/list-outgoing-payments',
-                      badge: { text: 'GET', variant: 'note' }
-                    },
-                    {
-                      label: 'Get an outgoing payment',
-                      link: '/apis/resource-server/operations/get-outgoing-payment',
-                      badge: { text: 'GET', variant: 'note' }
-                    },
-                    {
-                      label:
-                        'Get spent amounts for current outgoing payment grant',
-                      link: '/apis/resource-server/operations/get-outgoing-payment-grant',
-                      badge: { text: 'GET', variant: 'note' }
-                    }
-                  ]
-                },
-                {
-                  label: 'Quote',
-                  collapsed: true,
-                  items: [
-                    {
-                      label: 'Create quote',
-                      link: '/apis/resource-server/operations/create-quote',
-                      badge: { text: 'POST', variant: 'success' }
-                    },
-                    {
-                      label: 'Get a quote',
-                      link: '/apis/resource-server/operations/get-quote',
-                      badge: { text: 'GET', variant: 'note' }
-                    }
-                  ]
-                }
-              ]
+              link: '/apis/resource-server/',
+              attrs: {
+                target: '_blank',
+                rel: 'noopener noreferrer',
+                'data-icon': 'external'
+              }
             },
             {
               label: 'Auth server',
-              collapsed: true,
-              items: [
-                {
-                  label: 'Grants',
-                  collapsed: true,
-                  items: [
-                    {
-                      label: 'Grant request',
-                      link: '/apis/auth-server/operations/post-request',
-                      badge: { text: 'POST', variant: 'success' }
-                    },
-                    {
-                      label: 'Grant continuation request',
-                      link: '/apis/auth-server/operations/post-continue',
-                      badge: { text: 'POST', variant: 'success' }
-                    },
-                    {
-                      label: 'Cancel grant',
-                      link: '/apis/auth-server/operations/delete-continue',
-                      badge: { text: 'DELETE', variant: 'danger' }
-                    }
-                  ]
-                },
-                {
-                  label: 'Access token',
-                  collapsed: true,
-                  items: [
-                    {
-                      label: 'Rotate access token',
-                      link: '/apis/auth-server/operations/post-token',
-                      badge: { text: 'POST', variant: 'success' }
-                    },
-                    {
-                      label: 'Revoke access token',
-                      link: '/apis/auth-server/operations/delete-token',
-                      badge: { text: 'DELETE', variant: 'danger' }
-                    }
-                  ]
-                }
-              ]
+              link: '/apis/auth-server/',
+              attrs: {
+                target: '_blank',
+                rel: 'noopener noreferrer',
+                'data-icon': 'external'
+              }
             }
           ]
         }

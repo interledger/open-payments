@@ -1,0 +1,202 @@
+---
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
+import OpenPaymentsLogo from '../../components/OpenPaymentsLogo.astro'
+
+export function getStaticPaths() {
+  return [
+    { params: { spec: 'auth-server' } },
+    { params: { spec: 'resource-server' } },
+    { params: { spec: 'wallet-address-server' } }
+  ]
+}
+
+const SPECS = {
+  'auth-server': 'auth-server.yaml',
+  'resource-server': 'resource-server.yaml',
+  'wallet-address-server': 'wallet-address-server.yaml'
+} as const
+
+const TITLES = {
+  'auth-server': 'Authorization Server API',
+  'resource-server': 'Resource Server API',
+  'wallet-address-server': 'Wallet Address Server API'
+} as const
+
+type Spec = keyof typeof SPECS
+
+const { spec } = Astro.params as { spec: Spec }
+const specPath = resolve(
+  '..',
+  'open-payments-specifications',
+  'openapi',
+  SPECS[spec]
+)
+const specContent = readFileSync(specPath, 'utf-8')
+
+const baseConfig = {
+  content: specContent,
+  hideClientButton: true,
+  hideTestRequestButton: true,
+  isEditable: false,
+  mcp: { disabled: true }
+}
+
+const CDN = 'https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.55.0'
+---
+
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{TITLES[spec]} — Open Payments</title>
+    <script is:inline>
+      ;(function () {
+        const theme = localStorage.getItem('starlight-theme')
+        if (theme === 'dark' || theme === 'light') {
+          localStorage.setItem('colorMode', theme)
+        } else {
+          const prefersDark = window.matchMedia(
+            '(prefers-color-scheme: dark)'
+          ).matches
+          localStorage.setItem('colorMode', prefersDark ? 'dark' : 'light')
+        }
+        if (localStorage.getItem('colorMode') === 'dark') {
+          document.documentElement.classList.add('dark')
+        }
+        // Scalar's toggle writes to localStorage in the same tab, which doesn't
+        // trigger the normal storage event — this keeps our header in sync with it
+        const _setItem = Storage.prototype.setItem
+        Storage.prototype.setItem = function (key, value) {
+          _setItem.call(this, key, value)
+          if (key === 'colorMode') {
+            document.documentElement.classList.toggle('dark', value === 'dark')
+          }
+        }
+      })()
+    </script>
+  </head>
+  <body>
+    <header class="op-header">
+      <!-- font-size here prevents the logo from visibly jumping size on load -->
+      <a href="/" class="op-header__logo" style="font-size: larger">
+        <OpenPaymentsLogo />
+      </a>
+      <a
+        href="/overview/getting-started/"
+        class="op-header__back"
+        id="back-link">← Documentation</a
+      >
+    </header>
+    <script is:inline>
+      ;(function () {
+        try {
+          const ref = document.referrer
+          if (ref && new URL(ref).origin === location.origin) {
+            document.getElementById('back-link').href = ref
+          }
+        } catch {
+          // ignore invalid referrer URLs
+        }
+      })()
+    </script>
+    <div id="app"></div>
+    <script is:inline src={CDN}></script>
+    <script is:inline define:vars={{ baseConfig }}>
+      Scalar.createApiReference('#app', baseConfig)
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  /* Header colors pulled from Starlight's teal theme (props.css) — update here if the theme changes */
+  :root {
+    --op-header-height: 3.5rem;
+    --op-header-pad-x: 1rem;
+    --op-header-bg: hsl(224, 19%, 97%);
+    --op-header-border: hsl(224, 20%, 94%);
+    --op-header-text: hsl(224, 14%, 16%);
+    --op-header-muted: hsl(224, 7%, 36%);
+  }
+
+  html.dark {
+    --op-header-bg: hsl(224, 14%, 16%);
+    --op-header-border: hsl(224, 10%, 10%);
+    --op-header-text: hsl(224, 20%, 94%);
+    --op-header-muted: hsl(224, 6%, 56%);
+  }
+
+  html.dark .logo-text {
+    fill: var(--op-header-text) !important;
+    stroke: var(--op-header-text) !important;
+  }
+
+  @media (min-width: 50rem) {
+    :root {
+      --op-header-height: 4rem;
+      --op-header-pad-x: 1.5rem;
+    }
+  }
+
+  html,
+  body {
+    height: 100%;
+    margin: 0;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif;
+  }
+
+  .op-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--op-header-height);
+    padding: 0 var(--op-header-pad-x);
+    background: var(--op-header-bg);
+    border-bottom: 1px solid var(--op-header-border);
+  }
+
+  .op-header__logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--op-header-text);
+  }
+
+  .op-header__logo svg {
+    width: 9.5em;
+    flex: none;
+  }
+
+  .op-header__back {
+    font-size: 0.875rem;
+    text-decoration: none;
+    color: var(--op-header-muted);
+  }
+
+  .op-header__back:hover {
+    color: var(--op-header-text);
+  }
+
+  #app {
+    flex: 1;
+    min-height: 0;
+  }
+</style>
