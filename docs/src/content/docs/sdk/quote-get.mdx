@@ -7,7 +7,7 @@ import { Tabs, TabItem, LinkButton, Badge } from '@astrojs/starlight/components'
 import Begin from '/src/content/docs/partials/_before-you-begin.mdx'
 import Ts from '/src/content/docs/partials/_ts-init-config.mdx'
 
-The [Get a Quote API](/apis/resource-server/operations/get-quote) lets you get the latest details for a quote resource. For example, its state (whether it's valid or expired), the total amount that the recipient should receive, and the total amount to be debited from the sender.
+The [Get a Quote API](/apis/resource-server/#tag/quote/GET/quotes/%7Bid%7D) lets you get the latest details for a quote resource. For example, its state (whether it's valid or expired), the total amount that the recipient should receive, and the total amount to be debited from the sender.
 
 The code snippets below let an authorized client receive the state and other details of a specific quote.
 
@@ -238,4 +238,4 @@ Console.WriteLine($"QUOTE: {JsonConvert.SerializeObject(quote, Formatting.Indent
 
 ## References
 
-- [API specification](/apis/resource-server/operations/get-quote)
+- [Resource server API reference](/apis/resource-server/#tag/quote/GET/quotes/%7Bid%7D)

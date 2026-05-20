@@ -7,7 +7,7 @@ import { Tabs, TabItem, LinkButton, Badge } from '@astrojs/starlight/components'
 import Begin from '/src/content/docs/partials/_before-you-begin.mdx'
 import Ts from '/src/content/docs/partials/_ts-init-config.mdx'
 
-The [Get an Outgoing Payment API](/apis/resource-server/operations/get-outgoing-payment) lets you get the latest state of an outgoing payment resource.
+The [Get an Outgoing Payment API](/apis/resource-server/#tag/outgoing-payment/GET/outgoing-payments/%7Bid%7D) lets you get the latest state of an outgoing payment resource.
 
 Using the ID of the payment resource, a client can determine whether the payment is active, pending payment, or complete, and get the receive, debit, and sent amount values.
 
@@ -256,4 +256,4 @@ Console.WriteLine($"OUTGOING PAYMENT: {JsonConvert.SerializeObject(outgoingPayme
 
 ## References
 
-- [API specification](/apis/resource-server/operations/get-outgoing-payment)
+- [Resource server API reference](/apis/resource-server/#tag/outgoing-payment/GET/outgoing-payments/%7Bid%7D)

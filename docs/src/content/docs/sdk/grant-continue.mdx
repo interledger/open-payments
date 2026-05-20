@@ -7,7 +7,7 @@ import { Tabs, TabItem, LinkButton, Badge } from '@astrojs/starlight/components'
 import Begin from '/src/content/docs/partials/_before-you-begin.mdx'
 import Ts from '/src/content/docs/partials/_ts-init-config.mdx'
 
-The [Grant Continuation Request API](/apis/auth-server/operations/post-continue) lets you continue an interactive grant request during or after user interaction.
+The [Grant Continuation Request API](/apis/auth-server/#tag/grant/POST/continue/%7Bid%7D) lets you continue an interactive grant request during or after user interaction.
 
 An authorization server can require a user (typically the client's end user) to approve the grant by interacting directly with the server. For example, by tapping an Approve button on a web page provided by the auth server. [Outgoing payment grant requests](/sdk/grant-create-outgoing) require interactive grants.
 
@@ -312,5 +312,5 @@ Console.WriteLine($"OUTGOING_PAYMENT_ACCESS_TOKEN_MANAGE_URL = {grant.AccessToke
 
 ## References
 
-- [API specification](/apis/auth-server/operations/post-continue)
+- [Auth server API reference](/apis/auth-server/#tag/grant/POST/continue/%7Bid%7D)
 - [Grant negotiation and authorization](/identity/grants)

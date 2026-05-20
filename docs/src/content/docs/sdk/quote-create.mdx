@@ -7,7 +7,7 @@ import { Tabs, TabItem, LinkButton, Badge } from '@astrojs/starlight/components'
 import Begin from '/src/content/docs/partials/_before-you-begin.mdx'
 import Ts from '/src/content/docs/partials/_ts-init-config.mdx'
 
-The [Create Quote API](/apis/resource-server/operations/create-quote) lets you request the creation of a quote resource against the sender's wallet address.
+The [Create Quote API](/apis/resource-server/#tag/quote/POST/quotes) lets you request the creation of a quote resource against the sender's wallet address.
 
 A quote is a commitment from an account servicing entity to pay a particular amount from the sender's account or pay a particular amount into the recipient's account, depending on the quote type. A quote is only valid for a limited time.
 
@@ -920,5 +920,5 @@ Console.WriteLine($"QUOTE_URL = {quote.Id}");
 
 ## References
 
-- [API specification](/apis/resource-server/operations/create-quote)
+- [Resource server API reference](/apis/resource-server/#tag/quote/POST/quotes)
 - [Quote resource](/concepts/resources/#quote)

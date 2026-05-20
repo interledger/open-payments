@@ -37,27 +37,27 @@ Las partes que intervienen en la transacción son las siguientes:
 ## Puntos finales
 
 - <Badge text="GET" variant="note" />
-  <LinkOut href="https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/">
+  <LinkOut href="https://openpayments.dev/apis/wallet-address-server/#tag/wallet-address/GET/">
     Get Wallet Address
   </LinkOut>
 - <Badge text="POST" variant="success" />
-  <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-request/">
+  <LinkOut href="https://openpayments.dev/apis/auth-server/#tag/grant/POST/">
     Grant Request
   </LinkOut>
 - <Badge text="POST" variant="success" />
-  <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-incoming-payment/">
+  <LinkOut href="https://openpayments.dev/apis/resource-server/#tag/incoming-payment/POST/incoming-payments">
     Create an Incoming Payment
   </LinkOut>
 - <Badge text="POST" variant="success" />
-  <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-quote/">
+  <LinkOut href="https://openpayments.dev/apis/resource-server/#tag/quote/POST/quotes">
     Create a Quote
   </LinkOut>
 - <Badge text="POST" variant="success" />
-  <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-continue/">
+  <LinkOut href="https://openpayments.dev/apis/auth-server/#tag/grant/POST/continue/%7Bid%7D">
     Grant Continuation Request
   </LinkOut>
 - <Badge text="POST" variant="success" />
-  <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment/">
+  <LinkOut href="https://openpayments.dev/apis/resource-server/#tag/outgoing-payment/POST/outgoing-payments">
     Create an Outgoing Payment
   </LinkOut>
 
@@ -69,7 +69,7 @@ Cuando el cliente inicia el pago, la aplicación cliente (el sitio web del minor
 
 Asumamos que el cliente ingresó su dirección de billetera en el formulario de pago del sitio. Asumamos también que la dirección de billetera del minorista está codificada en dicho formulario de pago.
 
-Llame a la <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wallet-address-server/operations/get-wallet-address) para cada dirección.
+Llame a la <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wallet-address-server/#tag/wallet-address/GET/) para cada dirección.
 
 <GetWalletAddress />
 
@@ -92,7 +92,7 @@ El siguiente es un ejemplo de respuesta proveniente del proveedor de billetera d
 
 ### 2. Solicitar una concesión de autorización para un pago entrante
 
-Utilice los datos del minorista `authServer`, recibidos en el paso anterior, para llamar a la <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request/).
+Utilice los datos del minorista `authServer`, recibidos en el paso anterior, para llamar a la <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/#tag/grant/POST/).
 
 Esta llamada obtiene un token de acceso que permite a la aplicación cliente solicitar la creación de un recurso de pago entrante en la cuenta de billetera del minorista.
 
@@ -128,7 +128,7 @@ El siguiente es un ejemplo de respuesta proveniente del proveedor de billetera d
 
 ### 3. Solicitar la creación de un recurso de pago entrante
 
-Use el token de acceso devuelto en la respuesta anterior para llamar a la <Badge text="POST" variant="success" /> [Create an Incoming Payment API](/apis/resource-server/operations/create-incoming-payment).
+Use el token de acceso devuelto en la respuesta anterior para llamar a la <Badge text="POST" variant="success" /> [Create an Incoming Payment API](/apis/resource-server/#tag/incoming-payment/POST/incoming-payments).
 
 Esta llamada solicita la creación de un recurso de pago entrante en la cuenta de billetera del minorista.
 
@@ -171,7 +171,7 @@ El siguiente es un ejemplo de respuesta proveniente del proveedor de billetera d
 
 ### 4. Solicitar una concesión de autorización para una cotización
 
-Utilice los datos del consumidor `authServer`, devueltos en el paso 1, para llamar a la <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request/).
+Utilice los datos del consumidor `authServer`, devueltos en el paso 1, para llamar a la <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/#tag/grant/POST/).
 
 Esta llamada obtiene un token de acceso que permite a la aplicación cliente solicitar la creación de un recurso de cotización en la cuenta de billetera del cliente.
 
@@ -207,7 +207,7 @@ El siguiente es un ejemplo de respuesta proveniente del proveedor de billetera d
 
 ### 5. Solicitar la creación de un recurso de cotización
 
-Utilice el token de acceso recibido en el paso anterior para llamar a la <Badge text="POST" variant="success" /> [Create Quote API](/apis/resource-server/operations/create-quote/).
+Utilice el token de acceso recibido en el paso anterior para llamar a la <Badge text="POST" variant="success" /> [Create Quote API](/apis/resource-server/#tag/quote/POST/quotes).
 
 Esta llamada solicita la creación de un recurso de cotización en la cuenta de la billetera del consumidor.
 
@@ -249,7 +249,7 @@ La respuesta devuelve un `receiveAmount`, un `debitAmount` y demás información
 
 ### 6. Solicitar una concesión de autorización interactiva para un pago saliente
 
-Utilice la información del consumidor `authServer` para llamar a la <Badge text="POST" variant="success" /> [Grant Request](/apis/auth-server/operations/post-request).
+Utilice la información del consumidor `authServer` para llamar a la <Badge text="POST" variant="success" /> [Grant Request](/apis/auth-server/#tag/grant/POST/).
 
 Esta llamada obtiene un token de acceso que permite a la aplicación cliente solicitar la creación de recursos de pago saliente en la cuenta de billetera del cliente. Para esta guía, la solicitud se limitará hasta el monto de `140000` (MXN 1400,00).
 
@@ -298,7 +298,7 @@ En nuestro ejemplo, suponemos que el IdP con el que interactuó el consumidor cu
 En una situación hipotética donde una interfaz de usuario no se encuentra disponible, analice la posibilidad de implementar un mecanismo de sondeo para verificar que se haya completado la interacción.
 :::
 
-Llame a la <Badge text="POST" variant="success" /> [Grant Continuation Request API](/apis/auth-server/operations/post-continue/). Esta llamada solicita un token de acceso que permite a la aplicación cliente solicitar la creación de un recurso de pago saliente en la cuenta de billetera del cliente.
+Llame a la <Badge text="POST" variant="success" /> [Grant Continuation Request API](/apis/auth-server/#tag/grant/POST/continue/%7Bid%7D). Esta llamada solicita un token de acceso que permite a la aplicación cliente solicitar la creación de un recurso de pago saliente en la cuenta de billetera del cliente.
 
 Emita la solicitud al `continue.uri` proporcionado en la respuesta de concesión de autorización de pago saliente inicial (paso 6).
 
@@ -340,7 +340,7 @@ El siguiente es un ejemplo de respuesta proveniente del proveedor de billetera d
 
 ### 10. Solicitar la creación de un recurso de pago saliente
 
-Utilice el token de acceso devuelto en el paso 9 para llamar a la <Badge text="POST" variant="success" /> [Create Outgoing Payment API](/apis/resource-server/operations/create-outgoing-payment/). Esta llamada solicita la creación de un recurso de pago saliente en la cuenta de billetera del consumidor. Incluya el `quoteId` en la solicitud. La `quoteId` es la `id` devuelta en la respuesta de Create Quote API (paso 5).
+Utilice el token de acceso devuelto en el paso 9 para llamar a la <Badge text="POST" variant="success" /> [Create Outgoing Payment API](/apis/resource-server/#tag/outgoing-payment/POST/outgoing-payments). Esta llamada solicita la creación de un recurso de pago saliente en la cuenta de billetera del consumidor. Incluya el `quoteId` en la solicitud. La `quoteId` es la `id` devuelta en la respuesta de Create Quote API (paso 5).
 
 <CreateOutgoingPayment />
 
@@ -377,5 +377,5 @@ El siguiente es un ejemplo de respuesta proveniente del proveedor de billetera d
 
 Si la solicitud falla debido a una cotización caducada, [solicite una nueva cotización](#5-solicitar-la-creación-de-un-recurso-de-cotización) e intente de nuevo.
 :::note[Expiración del token de acceso]
-Si el token de acceso de una concesión de autorización ha expirado, llame a la <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/auth-server/operations/post-token/) y, luego, utilice el nuevo token en la solicitud correspondiente.
+Si el token de acceso de una concesión de autorización ha expirado, llame a la <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/auth-server/#tag/token/POST/token/%7Bid%7D) y, luego, utilice el nuevo token en la solicitud correspondiente.
 :::
