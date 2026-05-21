@@ -92,7 +92,8 @@ export default defineConfig({
       plugins: [
         starlightLinksValidator({
           errorOnLocalLinks: false,
-          errorOnFallbackPages: false
+          errorOnFallbackPages: false,
+          exclude: ['/apis/**']
         }),
         starlightFullViewMode({
           leftSidebarEnabled: true,
