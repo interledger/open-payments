@@ -31,10 +31,10 @@ For every signed incoming request, ASEs must:
 5. Reject the request if any of the following are true:
    - Required components (method, target URI, content digest where applicable, authorization header where applicable) are missing.
    - The signature does not validate.
-   - The signature is older than the freshness window the ASE permits.
+   - The signature is older than the maximum age the ASE permits.
    - The `Content-Digest` header is present but does not match the body.
 
-ASEs decide their freshness window. Open Payments does not bound it, but very long windows create replay risk and very short windows create operational issues for clients on slow networks.
+ASEs set their own maximum signature age. Open Payments does not bound it, but very long limits increase replay risk and very short limits can cause failures for clients on slow networks.
 
 Bearer tokens are not supported. A token alone is never sufficient: every request must carry both an access token (where applicable) and a valid signature.
 

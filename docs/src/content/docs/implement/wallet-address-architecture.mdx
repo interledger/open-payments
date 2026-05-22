@@ -38,21 +38,21 @@ Content-Type: application/json
 
 Each field is part of the ASE's externally observable contract:
 
-- `id`: The canonical wallet address URL. ASEs must return the same identifier the client used to reach the endpoint (after applicable normalization).
+- `id`: The canonical wallet address URL. ASEs must return the same identifier the client used to reach the endpoint.
 - `publicName`: A human-readable label intended for display by clients and identity providers. ASEs decide what to expose here and must consider that this field is publicly visible.
 - `assetCode`: The <LinkOut href='https://en.wikipedia.org/wiki/ISO_4217'>ISO 4217</LinkOut> currency code of the underlying account.
 - `assetScale`: The number of decimal places used for that currency. Refer to [Amounts](/concepts/amounts/) for the value/scale relationship clients rely on.
 - `authServer`: The grant endpoint URI of the authorization server that issues tokens for this wallet address. Clients send all grant requests here.
 - `resourceServer`: The base URL of the resource server that hosts the `incoming-payment`, `quote`, and `outgoing-payment` resources for this wallet address.
 
-The full request and response shape is defined by the <LinkOut href='/apis/wallet-address-server/operations/get-wallet-address/'>wallet address server API</LinkOut>. ASEs must also expose the keys bound to a wallet address; refer to <LinkOut href='/apis/wallet-address-server/operations/get-wallet-address-keys/'>Get keys bound to wallet address</LinkOut>.
+The full request and response schema is defined by the <LinkOut href='/apis/wallet-address-server/operations/get-wallet-address/'>wallet address server API</LinkOut>. ASEs must also expose the keys bound to a wallet address. Refer to <LinkOut href='/apis/wallet-address-server/operations/get-wallet-address-keys/'>Get keys bound to wallet address</LinkOut>.
 
 ## Multi-currency considerations
 
 A wallet address supports a single `assetCode` and `assetScale`. ASEs that wish to support multi-currency accounts have two common patterns:
 
-- Issue one wallet address per supported currency for the same underlying account. Each wallet address advertises its own asset code and scale.
-- Issue a single wallet address in the primary currency and perform currency conversion on the ASE side when payments arrive in a different currency. In this pattern, the wallet address still advertises only one asset code, and the recipient is credited in that currency regardless of the sender's denomination.
+- Issue one wallet address per supported currency for the same underlying account. Each wallet address returns its own `assetCode` and `assetScale`.
+- Issue a single wallet address in the primary currency and perform currency conversion on the ASE side when payments arrive in a different currency. In this pattern, the wallet address still returns only one `assetCode`, and the recipient is credited in that currency regardless of the sender's denomination.
 
 In both patterns, the asset code returned by the wallet address response is the currency in which the underlying account will be credited. Conversion fees and exchange rates are an ASE policy decision and must be surfaced to the sender via the quote.
 
@@ -68,7 +68,7 @@ ASEs define which models they support and the policy around:
 
 - Whether account holders can create new wallet addresses on demand.
 - Whether wallet addresses can be disabled or relinked to a different account.
-- Whether disabled wallet addresses are tombstoned (return `410 Gone`) or recycled.
+- Whether GET requests to a disabled wallet address return `404 Not Found`, or whether the URL may be reassigned to another account.
 - Whether previously granted access via one wallet address transfers to another wallet address on the same account.
 
 Open Payments treats any two distinct wallet addresses as distinct accounts even when they share an underlying account. ASEs must enforce this at the authorization layer: permission granted via one wallet address must not implicitly grant access via another.

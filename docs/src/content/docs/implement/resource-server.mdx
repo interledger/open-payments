@@ -16,13 +16,13 @@ An ASE's resource server hosts three sets of APIs, one per resource type. For ea
 
 When the resource server receives a <LinkOut href='/apis/resource-server/operations/create-incoming-payment'>Create Incoming Payment</LinkOut> request, it must:
 
-- Generate unique payment details that the sender's ASE will use to address payments to this incoming payment. For ILP, those details are returned in the `methods` array; refer to [Payment method details](#payment-method-details) below.
+- Generate unique payment details that the sender's ASE will use to address payments to this incoming payment.
 - Persist the incoming payment resource so it can be retrieved, listed, and completed via subsequent API calls.
 - Track the running `receivedAmount` as payments arrive.
 
 If the request specifies an `incomingAmount`, the resource server must enforce it as a maximum total. One or more payments can be associated with the incoming payment, but the sum across them must not exceed `incomingAmount`. The resource server should mark the incoming payment as completed once the running total reaches the cap.
 
-If `incomingAmount` is absent, the resource server cannot determine completion on its own. It must accept payments until a client issues a <LinkOut href='/apis/resource-server/operations/complete-incoming-payment'>Complete an Incoming Payment</LinkOut> request, or until the incoming payment expires. ASEs define the expiration window; it must be returned to the client so the client knows when the resource will stop accepting payments.
+If `incomingAmount` is absent, the resource server cannot determine completion on its own. It must accept payments until a client issues a <LinkOut href='/apis/resource-server/operations/complete-incoming-payment'>Complete an Incoming Payment</LinkOut> request, or until the incoming payment expires. ASEs can define an expiration window. The `expiresAt` must be returned to the client in such cases so that the client knows when the resource will stop accepting payments.
 
 ### quote
 
@@ -50,7 +50,7 @@ The outgoing-payment resource is the ASE's instruction to itself to move funds. 
 
 The `methods` array in the incoming payment response tells the sender's ASE how to deliver funds. ASEs are responsible for populating this array with valid payment method data for each rail they support.
 
-When using ILP, the resource server must include the following in the `methods` object:
+When using Interledger (ILP) as the payment method, the resource server must include the following in the `methods` object:
 
 - `type` set to `ilp`.
 - The recipient ASE's <LinkOut href='https://interledger.org/developers/rfcs/ilp-addresses/'>ILP address</LinkOut>, so packets routed over the Interledger network reach the recipient's ASE.
@@ -66,16 +66,16 @@ When using ILP, the resource server must include the following in the `methods` 
   ]
 ```
 
-ASEs must generate a fresh `sharedSecret` per incoming payment and must not reuse secrets across resources. ILP is currently the only payment method that integrates with Open Payments; ASEs that intend to settle over a different rail must wait for that rail's payment method to be defined and integrated.
+ASEs must generate a fresh `sharedSecret` per incoming payment and must not reuse secrets across resources. ILP is currently the only payment method that integrates with Open Payments. ASEs that intend to settle over a different rail must wait for that rail's payment method to be defined and integrated.
 
-## Instruction layer vs. settlement layer
+## Application layer vs. settlement layer
 
-Open Payments is an instruction layer. The resource server stores the agreement between the two ASEs ("ASE A will deliver X to ASE B against this incoming payment") and exposes it through the APIs.
+Open Payments is a protocol that operates in the application layer. The resource server stores the agreement between the two ASEs ("ASE A will deliver X to ASE B against this incoming payment") and exposes it through the APIs.
 
 Actual movement of funds happens on the settlement layer:
 
 - Once the outgoing payment is created and the corresponding incoming payment is open, the sender's ASE is obligated to settle with the recipient's ASE.
-- Settlement runs over a shared payment rail (currently ILP).
+- Settlement runs over a shared payment rail outside of Open Payments.
 - Open Payments does not touch funds, hold balances, or execute transfers. The ASE is fully responsible for that.
 
 ASEs must keep the two layers in sync. As funds arrive at the recipient's ASE, the resource server must update the `receivedAmount` on the corresponding incoming payment so clients have an accurate view of payment progress.
@@ -88,7 +88,7 @@ Every request to the resource server carries an access token issued by the ASE's
 - Covers the requested action (`create`, `read`, `list`, `complete`) and resource type (`incoming-payment`, `quote`, `outgoing-payment`).
 - Is scoped to the wallet address the request targets, where applicable.
 
-ASEs decide whether the resource server validates tokens locally (for example, against a shared cache) or by calling the authorization server. The protocol does not mandate one approach. Whichever pattern an ASE chooses, the resource server must refuse requests with insufficient tokens. For more detail on token issuance and lifecycle, refer to [Authorization server](/implement/auth-server/).
+ASEs decide whether the resource server validates tokens locally (for example, against a shared cache) or by calling the authorization server. The protocol does not mandate one approach. Whichever pattern an ASE chooses, the resource server must refuse requests with insufficient tokens. For more details on token issuance and lifecycle, refer to [Authorization server](/implement/auth-server/).
 
 ## Reference implementation
 

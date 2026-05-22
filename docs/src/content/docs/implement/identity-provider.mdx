@@ -11,7 +11,7 @@ ASEs must integrate their authorization server with an identity provider (IdP) t
 
 ## When the IdP is involved
 
-Open Payments requires an interactive grant for outgoing payments. An interactive grant cannot be approved without explicit consent from the resource owner (typically the client's user). The ASE's authorization server is responsible for orchestrating consent collection, but it must not collect consent itself: it delegates that to an IdP so that the resource owner authenticates against the same system that controls their underlying account.
+Open Payments requires an interactive grant for outgoing payments. An interactive grant cannot be approved without explicit consent from the resource owner (typically the client's user). The ASE's authorization server is responsible for orchestrating consent collection, but it must not collect consent itself. It delegates that to an IdP so that the resource owner authenticates against the same system that controls their underlying account.
 
 The following diagram illustrates the full interactive grant flow, including the IdP.
 
@@ -19,12 +19,12 @@ The following diagram illustrates the full interactive grant flow, including the
 
 ## What the authorization server passes to the IdP
 
-When the authorization server forwards the resource owner to the IdP, it must pass enough information for the IdP to display a meaningful consent screen and route the decision back. The exact mechanism is an ASE implementation detail (a signed redirect URL, a short-lived consent token, a backchannel call, etc.), but the information the IdP needs includes:
+When the authorization server forwards the resource owner to the IdP, it must pass enough information for the IdP to display a meaningful consent screen and route the decision back. The exact mechanism is an ASE implementation detail (a signed redirect URL, a short-lived consent token, a back channel call), but the information the IdP needs includes:
 
 - The **grant identifier**, so the IdP can return its decision to the right grant.
 - The **resource owner identity** (or whatever the IdP uses to start authentication), so the IdP can prompt the correct user to log in.
 - The **requested access**: resource types, actions, limits (debit amount, receive amount, expiry, interval for recurring access).
-- The **client identity**: at minimum a display name; ideally enough material for the IdP to render a trustworthy client identification cue.
+- The **client identity**: at minimum a display name.
 - The **return path** to the authorization server once a decision is made.
 
 ## What the IdP must display
@@ -43,9 +43,9 @@ ASEs decide the exact UI, but the consent prompt must accurately reflect what th
 After the resource owner makes a choice, the IdP communicates it back to the authorization server. Common patterns:
 
 - A signed redirect from the IdP to a callback on the authorization server, carrying the grant identifier and the decision.
-- A backchannel API call from the IdP to the authorization server.
+- A back channel API call from the IdP to the authorization server.
 
-The authorization server must verify the integrity of the incoming decision: both that it came from the ASE's IdP and that it has not been altered. On accept, the authorization server moves the grant to `approved` and unlocks token issuance. On deny, the grant must be moved to a terminal denied state so that subsequent continuation requests return the appropriate error.
+The authorization server must verify the integrity of the incoming decision, both that it came from the ASE's IdP and that it has not been altered. On accept, the authorization server moves the grant to `approved` and unlocks token issuance. On deny, the grant must be moved to a terminal denied state so that subsequent continuation requests return the appropriate error.
 
 ## Redirect and hash mechanics
 

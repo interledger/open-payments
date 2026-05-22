@@ -18,7 +18,7 @@ An ASE's authorization server is the single entry point for clients seeking perm
 - Issues, rotates, and revokes access tokens.
 - Coordinates the interactive flow with the ASE's identity provider when consent is needed.
 
-The grant endpoint URI is what the wallet address response advertises as `authServer`. Clients send all grant requests there. The GNAP specification uses a single endpoint per authorization server rather than a different endpoint per grant type.
+The wallet address response returns the grant endpoint URI in the `authServer` field. Clients send all grant requests to that URI. The GNAP specification uses a single endpoint per authorization server rather than a different endpoint per grant type.
 
 ## Grants and access tokens
 
@@ -57,12 +57,12 @@ The authorization server may issue a single grant whose access token covers mult
 When the authorization server receives an outgoing-payment grant request:
 
 1. Verify the request signature and the client's identity.
-2. Persist the grant in a `pending` state, including the requested limits (amounts, expiry, etc.).
+2. Persist the grant in a `pending` state, including the requested limits (amounts, expiry).
 3. Return an `interact.redirect` URI (the redirect to the start of the interaction flow) and a `continue` URI with a continuation token. The client uses the redirect URI to send the resource owner into the consent flow.
-4. When the resource owner reaches the redirect URI, start the interaction session and forward the resource owner to the identity provider. Refer to [Identity provider integration](/implement/identity-provider/).
+4. When the resource owner reaches the redirect URI, start the interaction session and forward the resource owner to the identity provider (IdP). Refer to [Identity provider integration](/implement/identity-provider/).
 5. When the IdP returns the resource owner's decision, finalize the session. If consent was granted, advance the grant from `pending` to `approved`.
 6. Redirect the resource owner back to the client's `interact.finish` URI with an `interact_ref` and a hash computed from the original nonce values and the grant URI. Refer to [Security](/implement/security/) for the hash generation rules.
-7. When the client posts to the continuation URI with the continuation token, issue the access token if the grant is `approved`. If the grant is still `pending` or has been denied, return the appropriate GNAP error.
+7. When the client posts to the continuation URI with the continuation token, issue the access token if the grant is `approved`. If the grant is still `pending` or was denied, return the appropriate GNAP error.
 
 ## Continuation and polling
 
@@ -73,7 +73,7 @@ In headless or non-browser scenarios, the client may not have a return URI for t
 ASEs must support:
 
 - **Rotation**: The client may request a new access token bound to the same grant. The authorization server issues a new token and invalidates the previous one. Tokens bound to grants that have themselves expired must not be rotatable.
-- **Revocation**: The client (or, in some flows, the resource owner) may revoke an access token. After revocation, the resource server must reject any subsequent use of the token. If tokens are validated locally at the resource server, the authorization server must propagate revocation quickly enough that stale tokens cannot be used for meaningful operations.
+- **Revocation**: The client (or, in some flows, the resource owner) may revoke an access token. After revocation, the resource server must reject any subsequent use of the token. If tokens are validated locally at the resource server, the authorization server must propagate revocation quickly enough that stale tokens cannot be used for unauthorized operations.
 
 The relevant client-facing endpoints are <LinkOut href='/apis/auth-server/operations/post-token'>Rotate access token</LinkOut> and <LinkOut href='/apis/auth-server/operations/delete-token'>Revoke access token</LinkOut>.
 
