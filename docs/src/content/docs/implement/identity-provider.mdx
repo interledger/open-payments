@@ -11,7 +11,7 @@ ASEs must integrate their authorization server with an identity provider (IdP) t
 
 ## When the IdP is involved
 
-Open Payments requires an interactive grant for outgoing payments. An interactive grant cannot be approved without explicit consent from the resource owner (typically the client's user). The ASE's authorization server is responsible for orchestrating consent collection, but it must not collect consent itself — it delegates that to an IdP so that the resource owner authenticates against the same system that controls their underlying account.
+Open Payments requires an interactive grant for outgoing payments. An interactive grant cannot be approved without explicit consent from the resource owner (typically the client's user). The ASE's authorization server is responsible for orchestrating consent collection, but it must not collect consent itself: it delegates that to an IdP so that the resource owner authenticates against the same system that controls their underlying account.
 
 The following diagram illustrates the full interactive grant flow, including the IdP.
 
@@ -45,7 +45,7 @@ After the resource owner makes a choice, the IdP communicates it back to the aut
 - A signed redirect from the IdP to a callback on the authorization server, carrying the grant identifier and the decision.
 - A backchannel API call from the IdP to the authorization server.
 
-The authorization server must verify the integrity of the incoming decision — both that it came from the ASE's IdP and that it has not been altered. On accept, the authorization server moves the grant to `approved` and unlocks token issuance. On deny, the grant must be moved to a terminal denied state so that subsequent continuation requests return the appropriate error.
+The authorization server must verify the integrity of the incoming decision: both that it came from the ASE's IdP and that it has not been altered. On accept, the authorization server moves the grant to `approved` and unlocks token issuance. On deny, the grant must be moved to a terminal denied state so that subsequent continuation requests return the appropriate error.
 
 ## Redirect and hash mechanics
 

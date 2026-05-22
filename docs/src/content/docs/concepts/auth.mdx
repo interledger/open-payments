@@ -6,7 +6,7 @@ parent: Concepts
 import { LinkOut, Tooltip } from '@interledger/docs-design-system'
 
 :::note[For client developers]
-This page describes Open Payments from the client developer's perspective. ASEs should refer to the [ASE implementation guide](/implement/).
+This page describes Open Payments from the client developer's perspective. ASEs should refer to the [For ASEs](/implement/) section.
 :::
 
 :::tip[Summary]
@@ -19,8 +19,8 @@ Open Payments leverages the <LinkOut href='https://datatracker.ietf.org/doc/html
 
 The authorization server grants permission for a client to access the Open Payments APIs and the `incoming-payment`, `quote`, and `outgoing-payment` resources. It does this by issuing access tokens, which represent a set of access rights and/or attributes granted to the client. With the appropriate access tokens, the client can perform allowed operations, such as creating incoming and outgoing payments, on behalf of the resource owner (RO).
 
-:::note[For ASE implementors]
-ASEs should refer to the [ASE implementation guide](/implement/).
+:::note[For ASEs deploying an authorization server]
+ASEs should refer to the [authorization server page](/implement/auth-server/) under the For ASEs section.
 :::
 
 ### Relationship between grants and access tokens

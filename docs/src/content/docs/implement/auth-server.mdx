@@ -72,8 +72,8 @@ In headless or non-browser scenarios, the client may not have a return URI for t
 
 ASEs must support:
 
-- **Rotation** — The client may request a new access token bound to the same grant. The authorization server issues a new token and invalidates the previous one. Tokens bound to grants that have themselves expired must not be rotatable.
-- **Revocation** — The client (or, in some flows, the resource owner) may revoke an access token. After revocation, the resource server must reject any subsequent use of the token. If tokens are validated locally at the resource server, the authorization server must propagate revocation quickly enough that stale tokens cannot be used for meaningful operations.
+- **Rotation**: The client may request a new access token bound to the same grant. The authorization server issues a new token and invalidates the previous one. Tokens bound to grants that have themselves expired must not be rotatable.
+- **Revocation**: The client (or, in some flows, the resource owner) may revoke an access token. After revocation, the resource server must reject any subsequent use of the token. If tokens are validated locally at the resource server, the authorization server must propagate revocation quickly enough that stale tokens cannot be used for meaningful operations.
 
 The relevant client-facing endpoints are <LinkOut href='/apis/auth-server/operations/post-token'>Rotate access token</LinkOut> and <LinkOut href='/apis/auth-server/operations/delete-token'>Revoke access token</LinkOut>.
 
@@ -81,8 +81,8 @@ The relevant client-facing endpoints are <LinkOut href='/apis/auth-server/operat
 
 When the resource server receives a request from a client, it must validate the access token. ASEs choose one of two patterns:
 
-- **Introspection** — The resource server calls the authorization server for each request to check the token. Simple to reason about; cost scales with traffic.
-- **Self-contained tokens** — The authorization server signs tokens that the resource server can validate locally using shared key material. Cheaper at scale; requires careful handling of revocation propagation.
+- **Introspection**: The resource server calls the authorization server for each request to check the token. Simple to reason about; cost scales with traffic.
+- **Self-contained tokens**: The authorization server signs tokens that the resource server can validate locally using shared key material. Cheaper at scale; requires careful handling of revocation propagation.
 
 Either way, the authorization server is the source of truth for whether a token is currently valid.
 

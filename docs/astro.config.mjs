@@ -162,257 +162,269 @@ export default defineConfig({
           ]
         },
         {
-          label: 'Developer Concepts',
-          translations: { es: 'Conceptos para desarrolladores' },
-          collapsed: true,
+          label: 'For Developers',
+          translations: { es: 'Para desarrolladores' },
           items: [
             {
-              label: 'Wallet addresses',
-              translations: { es: 'Direcciones de billetera' },
-              link: '/concepts/wallet-addresses/'
-            },
-            {
-              label: 'Resources',
-              translations: { es: 'Recursos' },
-              link: '/concepts/resources/'
-            },
-            {
-              label: 'Authorization',
-              translations: { es: 'Autorización' },
-              link: '/concepts/auth/'
-            },
-            {
-              label: 'Amounts',
-              translations: { es: `Montos` },
-              link: '/concepts/amounts/'
-            },
-            {
-              label: 'Payment methods',
-              translations: { es: 'Métodos de pago' },
-              link: '/concepts/payments/'
-            },
-            {
-              label: 'Open Payments flow',
-              translations: { es: 'Flujo de Open Payments' },
-              link: '/concepts/op-flow/'
-            },
-            {
-              label: 'Identity and access management',
-              translations: { es: 'Gestión de la identidad y el acceso' },
+              label: 'Concepts',
+              translations: { es: 'Conceptos' },
               collapsed: true,
               items: [
                 {
-                  label: 'Grant negotiation and authorization',
+                  label: 'Wallet addresses',
+                  translations: { es: 'Direcciones de billetera' },
+                  link: '/concepts/wallet-addresses/'
+                },
+                {
+                  label: 'Resources',
+                  translations: { es: 'Recursos' },
+                  link: '/concepts/resources/'
+                },
+                {
+                  label: 'Authorization',
+                  translations: { es: 'Autorización' },
+                  link: '/concepts/auth/'
+                },
+                {
+                  label: 'Amounts',
+                  translations: { es: `Montos` },
+                  link: '/concepts/amounts/'
+                },
+                {
+                  label: 'Payment methods',
+                  translations: { es: 'Métodos de pago' },
+                  link: '/concepts/payments/'
+                },
+                {
+                  label: 'Open Payments flow',
+                  translations: { es: 'Flujo de Open Payments' },
+                  link: '/concepts/op-flow/'
+                },
+                {
+                  label: 'Identity and access management',
                   translations: {
-                    es: 'Negociación y autorización de las concesiones'
+                    es: 'Gestión de la identidad y el acceso'
                   },
-                  link: '/identity/grants/'
+                  collapsed: true,
+                  items: [
+                    {
+                      label: 'Grant negotiation and authorization',
+                      translations: {
+                        es: 'Negociación y autorización de las concesiones'
+                      },
+                      link: '/identity/grants/'
+                    },
+                    {
+                      label: 'Identity providers',
+                      translations: { es: 'Proveedores de identidad' },
+                      link: '/identity/idp/'
+                    },
+                    {
+                      label: 'Client keys',
+                      translations: { es: 'Claves de cliente' },
+                      link: '/identity/client-keys/'
+                    },
+                    {
+                      label: 'HTTP signatures',
+                      translations: { es: 'Firmas de mensajes HTTP' },
+                      link: '/identity/http-signatures/'
+                    },
+                    {
+                      label: 'Hash verification',
+                      translations: { es: 'Verificación de hash' },
+                      link: '/identity/hash-verification/'
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              label: 'SDKs',
+              collapsed: true,
+              items: [
+                {
+                  label: 'Before you begin',
+                  link: '/sdk/before-you-begin'
                 },
                 {
-                  label: 'Identity providers',
-                  translations: { es: 'Proveedores de identidad' },
-                  link: '/identity/idp/'
+                  label: 'Wallet addresses',
+                  collapsed: true,
+                  items: [
+                    {
+                      label: 'Get wallet address info',
+                      link: '/sdk/wallet-get-info'
+                    },
+                    {
+                      label: 'Get keys bound to a wallet address',
+                      link: '/sdk/wallet-get-keys'
+                    }
+                  ]
                 },
                 {
-                  label: 'Client keys',
-                  translations: { es: 'Claves de cliente' },
-                  link: '/identity/client-keys/'
+                  label: 'Grants',
+                  collapsed: true,
+                  items: [
+                    {
+                      label: 'Create an incoming payment grant request',
+                      link: '/sdk/grant-create-incoming'
+                    },
+                    {
+                      label: 'Create a quote grant request',
+                      link: '/sdk/grant-create-quote'
+                    },
+                    {
+                      label: 'Create an outgoing payment grant request',
+                      link: '/sdk/grant-create-outgoing'
+                    },
+                    {
+                      label: 'Continue a grant request',
+                      link: '/sdk/grant-continue'
+                    },
+                    {
+                      label: 'Cancel a grant request',
+                      link: '/sdk/grant-revoke'
+                    }
+                  ]
                 },
                 {
-                  label: 'HTTP signatures',
-                  translations: { es: 'Firmas de mensajes HTTP' },
-                  link: '/identity/http-signatures/'
+                  label: 'Incoming payments',
+                  collapsed: true,
+                  items: [
+                    {
+                      label: 'Create an incoming payment',
+                      link: '/sdk/incoming-create/'
+                    },
+                    {
+                      label: 'List incoming payments',
+                      link: '/sdk/incoming-list/'
+                    },
+                    {
+                      label: 'Get an incoming payment',
+                      link: '/sdk/incoming-get/'
+                    },
+                    {
+                      label: 'Complete an incoming payment',
+                      link: '/sdk/incoming-complete/'
+                    }
+                  ]
                 },
                 {
-                  label: 'Hash verification',
-                  translations: { es: 'Verificación de hash' },
-                  link: '/identity/hash-verification/'
+                  label: 'Quotes',
+                  collapsed: true,
+                  items: [
+                    {
+                      label: 'Create a quote',
+                      link: '/sdk/quote-create/'
+                    },
+                    {
+                      label: 'Get a quote',
+                      link: '/sdk/quote-get/'
+                    }
+                  ]
+                },
+                {
+                  label: 'Outgoing payments',
+                  collapsed: true,
+                  items: [
+                    {
+                      label: 'Create an outgoing payment',
+                      link: '/sdk/outgoing-create/'
+                    },
+                    {
+                      label: 'List outgoing payments',
+                      link: '/sdk/outgoing-list/'
+                    },
+                    {
+                      label: 'Get an outgoing payment',
+                      link: '/sdk/outgoing-get/'
+                    }
+                  ]
+                },
+                {
+                  label: 'Tokens',
+                  collapsed: true,
+                  items: [
+                    {
+                      label: 'Rotate an access token',
+                      link: '/sdk/token-rotate/'
+                    },
+                    {
+                      label: 'Revoke an access token',
+                      link: '/sdk/token-revoke/'
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              label: 'Guides',
+              translations: { es: 'Guías' },
+              collapsed: true,
+              items: [
+                {
+                  label: 'Accept a one-time payment for an online purchase',
+                  translations: {
+                    es: 'Aceptar un pago único por una compra en línea'
+                  },
+                  link: '/guides/accept-otp-online-purchase/'
+                },
+                {
+                  label: 'Send a remittance payment with a fixed debit amount',
+                  translations: {
+                    es: 'Enviar un pago de remesa con un monto de débito fijo'
+                  },
+                  link: '/guides/onetime-remittance-fixed-debit'
+                },
+                {
+                  label:
+                    'Send a remittance payment with a fixed receive amount',
+                  translations: {
+                    es: 'Enviar una remesa con un monto de recepción fijo'
+                  },
+                  link: '/guides/onetime-remittance-fixed-receive/'
+                },
+                {
+                  label:
+                    'Set up recurring payments with a fixed incoming amount',
+                  translations: {
+                    es: 'Configurar pagos recurrentes con un monto entrante fijo'
+                  },
+                  link: '/guides/recurring-subscription-incoming-amount/'
+                },
+                {
+                  label: 'Send recurring remittances with a fixed debit amount',
+                  translations: {
+                    es: 'Enviar remesas recurrentes con un monto de débito fijo'
+                  },
+                  link: '/guides/recurring-remittance-fixed-debit/'
+                },
+                {
+                  label:
+                    'Send recurring remittances with a fixed receive amount',
+                  translations: {
+                    es: 'Enviar remesas recurrentes con un monto de recepción fijo'
+                  },
+                  link: '/guides/recurring-remittance-fixed-receive/'
+                },
+                {
+                  label: 'Split an incoming payment',
+                  translations: { es: 'Dividir un pago entrante' },
+                  link: '/guides/split-payments/'
+                },
+                {
+                  label: 'Get an outgoing payment grant for future payments',
+                  translations: {
+                    es: 'Obtener una concesión de pago saliente para pagos futuros'
+                  },
+                  link: '/guides/outgoing-grant-future-payments/'
                 }
               ]
             }
           ]
         },
         {
-          label: 'SDKs',
-          collapsed: true,
-          items: [
-            {
-              label: 'Before you begin',
-              link: '/sdk/before-you-begin'
-            },
-            {
-              label: 'Wallet addresses',
-              collapsed: true,
-              items: [
-                {
-                  label: 'Get wallet address info',
-                  link: '/sdk/wallet-get-info'
-                },
-                {
-                  label: 'Get keys bound to a wallet address',
-                  link: '/sdk/wallet-get-keys'
-                }
-              ]
-            },
-            {
-              label: 'Grants',
-              collapsed: true,
-              items: [
-                {
-                  label: 'Create an incoming payment grant request',
-                  link: '/sdk/grant-create-incoming'
-                },
-                {
-                  label: 'Create a quote grant request',
-                  link: '/sdk/grant-create-quote'
-                },
-                {
-                  label: 'Create an outgoing payment grant request',
-                  link: '/sdk/grant-create-outgoing'
-                },
-                {
-                  label: 'Continue a grant request',
-                  link: '/sdk/grant-continue'
-                },
-                {
-                  label: 'Cancel a grant request',
-                  link: '/sdk/grant-revoke'
-                }
-              ]
-            },
-            {
-              label: 'Incoming payments',
-              collapsed: true,
-              items: [
-                {
-                  label: 'Create an incoming payment',
-                  link: '/sdk/incoming-create/'
-                },
-                {
-                  label: 'List incoming payments',
-                  link: '/sdk/incoming-list/'
-                },
-                {
-                  label: 'Get an incoming payment',
-                  link: '/sdk/incoming-get/'
-                },
-                {
-                  label: 'Complete an incoming payment',
-                  link: '/sdk/incoming-complete/'
-                }
-              ]
-            },
-            {
-              label: 'Quotes',
-              collapsed: true,
-              items: [
-                {
-                  label: 'Create a quote',
-                  link: '/sdk/quote-create/'
-                },
-                {
-                  label: 'Get a quote',
-                  link: '/sdk/quote-get/'
-                }
-              ]
-            },
-            {
-              label: 'Outgoing payments',
-              collapsed: true,
-              items: [
-                {
-                  label: 'Create an outgoing payment',
-                  link: '/sdk/outgoing-create/'
-                },
-                {
-                  label: 'List outgoing payments',
-                  link: '/sdk/outgoing-list/'
-                },
-                {
-                  label: 'Get an outgoing payment',
-                  link: '/sdk/outgoing-get/'
-                }
-              ]
-            },
-            {
-              label: 'Tokens',
-              collapsed: true,
-              items: [
-                {
-                  label: 'Rotate an access token',
-                  link: '/sdk/token-rotate/'
-                },
-                {
-                  label: 'Revoke an access token',
-                  link: '/sdk/token-revoke/'
-                }
-              ]
-            }
-          ]
-        },
-        {
-          label: 'Developer Guides',
-          translations: { es: 'Guías para desarrolladores' },
-          collapsed: true,
-          items: [
-            {
-              label: 'Accept a one-time payment for an online purchase',
-              translations: {
-                es: 'Aceptar un pago único por una compra en línea'
-              },
-              link: '/guides/accept-otp-online-purchase/'
-            },
-            {
-              label: 'Send a remittance payment with a fixed debit amount',
-              translations: {
-                es: 'Enviar un pago de remesa con un monto de débito fijo'
-              },
-              link: '/guides/onetime-remittance-fixed-debit'
-            },
-            {
-              label: 'Send a remittance payment with a fixed receive amount',
-              translations: {
-                es: 'Enviar una remesa con un monto de recepción fijo'
-              },
-              link: '/guides/onetime-remittance-fixed-receive/'
-            },
-            {
-              label: 'Set up recurring payments with a fixed incoming amount',
-              translations: {
-                es: 'Configurar pagos recurrentes con un monto entrante fijo'
-              },
-              link: '/guides/recurring-subscription-incoming-amount/'
-            },
-            {
-              label: 'Send recurring remittances with a fixed debit amount',
-              translations: {
-                es: 'Enviar remesas recurrentes con un monto de débito fijo'
-              },
-              link: '/guides/recurring-remittance-fixed-debit/'
-            },
-            {
-              label: 'Send recurring remittances with a fixed receive amount',
-              translations: {
-                es: 'Enviar remesas recurrentes con un monto de recepción fijo'
-              },
-              link: '/guides/recurring-remittance-fixed-receive/'
-            },
-            {
-              label: 'Split an incoming payment',
-              translations: { es: 'Dividir un pago entrante' },
-              link: '/guides/split-payments/'
-            },
-            {
-              label: 'Get an outgoing payment grant for future payments',
-              translations: {
-                es: 'Obtener una concesión de pago saliente para pagos futuros'
-              },
-              link: '/guides/outgoing-grant-future-payments/'
-            }
-          ]
-        },
-        {
-          label: 'ASE implementation guide',
+          label: 'For ASEs',
+          translations: { es: 'Para ASEs' },
           collapsed: true,
           items: [
             {

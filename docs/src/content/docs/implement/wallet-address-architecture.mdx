@@ -38,12 +38,12 @@ Content-Type: application/json
 
 Each field is part of the ASE's externally observable contract:
 
-- `id` — The canonical wallet address URL. ASEs must return the same identifier the client used to reach the endpoint (after applicable normalization).
-- `publicName` — A human-readable label intended for display by clients and identity providers. ASEs decide what to expose here and must consider that this field is publicly visible.
-- `assetCode` — The <LinkOut href='https://en.wikipedia.org/wiki/ISO_4217'>ISO 4217</LinkOut> currency code of the underlying account.
-- `assetScale` — The number of decimal places used for that currency. Refer to [Amounts](/concepts/amounts/) for the value/scale relationship clients rely on.
-- `authServer` — The grant endpoint URI of the authorization server that issues tokens for this wallet address. Clients send all grant requests here.
-- `resourceServer` — The base URL of the resource server that hosts the `incoming-payment`, `quote`, and `outgoing-payment` resources for this wallet address.
+- `id`: The canonical wallet address URL. ASEs must return the same identifier the client used to reach the endpoint (after applicable normalization).
+- `publicName`: A human-readable label intended for display by clients and identity providers. ASEs decide what to expose here and must consider that this field is publicly visible.
+- `assetCode`: The <LinkOut href='https://en.wikipedia.org/wiki/ISO_4217'>ISO 4217</LinkOut> currency code of the underlying account.
+- `assetScale`: The number of decimal places used for that currency. Refer to [Amounts](/concepts/amounts/) for the value/scale relationship clients rely on.
+- `authServer`: The grant endpoint URI of the authorization server that issues tokens for this wallet address. Clients send all grant requests here.
+- `resourceServer`: The base URL of the resource server that hosts the `incoming-payment`, `quote`, and `outgoing-payment` resources for this wallet address.
 
 The full request and response shape is defined by the <LinkOut href='/apis/wallet-address-server/operations/get-wallet-address/'>wallet address server API</LinkOut>. ASEs must also expose the keys bound to a wallet address; refer to <LinkOut href='/apis/wallet-address-server/operations/get-wallet-address-keys/'>Get keys bound to wallet address</LinkOut>.
 
@@ -60,9 +60,9 @@ In both patterns, the asset code returned by the wallet address response is the 
 
 The relationship between wallet addresses and underlying accounts is intentionally loose. Common mapping models include:
 
-- **1:1** — Each account has exactly one wallet address. Simplest model; reuse and tracking risks are highest.
-- **1:many** — One account has many wallet addresses. Lets account holders generate per-client or per-context addresses to avoid being tracked across services.
-- **Many:1** — Many wallet addresses route to the same underlying account; ASEs may use this for shared accounts or rotation.
+- **1:1**: Each account has exactly one wallet address. Simplest model; reuse and tracking risks are highest.
+- **1:many**: One account has many wallet addresses. Lets account holders generate per-client or per-context addresses to avoid being tracked across services.
+- **Many:1**: Many wallet addresses route to the same underlying account; ASEs may use this for shared accounts or rotation.
 
 ASEs define which models they support and the policy around:
 

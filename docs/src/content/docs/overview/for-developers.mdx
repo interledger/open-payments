@@ -6,7 +6,7 @@ import { LinkCard, CardGrid } from '@astrojs/starlight/components'
 import { LinkOut } from '@interledger/docs-design-system'
 
 :::tip[Summary]
-Building with Open Payments means writing a client — an app or service — that calls the Open Payments APIs to set up payments between Open Payments-enabled accounts. The accounts themselves, and the servers that expose them, are operated by account servicing entities (ASEs).
+Building with Open Payments means writing a client that calls the Open Payments APIs to set up payments between Open Payments-enabled accounts. The accounts themselves, and the servers that expose them, are operated by account servicing entities (ASEs).
 :::
 
 This page is the starting point for developers building applications, services, or other software that consume the Open Payments APIs.
@@ -41,7 +41,7 @@ If you're new to Open Payments, follow this path:
   <LinkCard
     title="Resources"
     href="/concepts/resources/"
-    description="The three resource types — incoming-payment, quote, outgoing-payment — and what they represent."
+    description="The three resource types: incoming-payment, quote, outgoing-payment, and what they represent."
   />
   <LinkCard
     title="Authorization"
@@ -67,6 +67,6 @@ If you're new to Open Payments, follow this path:
 
 ## What's intentionally not on the developer path
 
-Some Open Payments documentation describes the responsibilities of the ASE, not the client: how the wallet address server is structured, how the authorization server processes grants, how the resource server hands payments off to settlement, how the identity provider is integrated. Those pages live under [ASE implementation guide](/implement/) and are written for the engineers building the server stack.
+Some Open Payments documentation describes the responsibilities of the ASE, not the client such as how the wallet address server is structured, how the authorization server processes grants, how the resource server hands payments off to settlement, how the identity provider is integrated. Those pages live under the [For ASEs](/implement/) section and are intended for the engineers deploying the server stack.
 
 If you find yourself reading an ASE page and wondering whether you need to implement something on the client side, the answer is almost always no.

@@ -36,7 +36,7 @@ For every signed incoming request, ASEs must:
 
 ASEs decide their freshness window. Open Payments does not bound it, but very long windows create replay risk and very short windows create operational issues for clients on slow networks.
 
-Bearer tokens are not supported. A token alone is never sufficient — every request must carry both an access token (where applicable) and a valid signature.
+Bearer tokens are not supported. A token alone is never sufficient: every request must carry both an access token (where applicable) and a valid signature.
 
 ## Client key resolution
 

@@ -54,7 +54,7 @@ When using ILP, the resource server must include the following in the `methods` 
 
 - `type` set to `ilp`.
 - The recipient ASE's <LinkOut href='https://interledger.org/developers/rfcs/ilp-addresses/'>ILP address</LinkOut>, so packets routed over the Interledger network reach the recipient's ASE.
-- A `sharedSecret` — a cryptographically generated secret used to secure the <LinkOut href='https://interledger.org/developers/rfcs/stream-protocol/'>STREAM</LinkOut> connection between the sender's and recipient's ASEs.
+- A `sharedSecret`: a cryptographically generated secret used to secure the <LinkOut href='https://interledger.org/developers/rfcs/stream-protocol/'>STREAM</LinkOut> connection between the sender's and recipient's ASEs.
 
 ```http title="incoming-payment methods object (ILP)"
 "methods": [
