@@ -31,7 +31,58 @@ The code snippets below let an authorized client retrieve the spent amounts for 
 </details>
 
 ```ts wrap
-// Coming soon
+import { createAuthenticatedClient } from '@interledger/open-payments'
+
+// Initialize client
+const client = await createAuthenticatedClient({
+  walletAddressUrl: WALLET_ADDRESS,
+  privateKey: PRIVATE_KEY_PATH,
+  keyId: KEY_ID
+})
+
+// Get sender wallet address information
+const walletAddress = await client.walletAddress.get({ url: WALLET_ADDRESS })
+
+// Create an outgoing-payment grant, and get the access token after continuation
+const OUTGOING_PAYMENT_ACCESS_TOKEN = await setupOutgoingPaymentGrant({
+  client,
+  sender: walletAddress,
+  actions: ['read', 'create'],
+  limits: {
+    debitAmount: {
+      amount: '8000',
+      assetCode: walletAddress.assetCode,
+      assetScale: walletAddress.assetScale
+    }
+  }
+})
+
+// Create outgoing payment, with a debitAmount less than grant limits.
+// This will spend the money from the grant
+await client.outgoingPayment.create(
+  {
+    url: walletAddress.resourceServer,
+    accessToken: OUTGOING_PAYMENT_ACCESS_TOKEN
+  },
+  {
+    receiver: INCOMING_PAYMENT_ID,
+    debitAmount: {
+      amount: '800',
+      assetCode: walletAddress.assetCode,
+      assetScale: walletAddress.assetScale
+    }
+  }
+)
+
+// Get spent amounts
+const grantSpentAmounts = await client.outgoingPayment.getGrantSpentAmounts({
+  url: walletAddress.resourceServer,
+  accessToken: OUTGOING_PAYMENT_ACCESS_TOKEN
+})
+
+// Output
+console.log('GRANT_SPENT_DEBIT_AMOUNT: ', grantSpentAmounts.spentDebitAmount)
+// GRANT_SPENT_DEBIT_AMOUNT: { value: '800', assetCode: 'USD', assetScale: 2 }
 ```
 
 </TabItem>
