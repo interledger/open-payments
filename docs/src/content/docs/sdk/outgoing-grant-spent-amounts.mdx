@@ -43,37 +43,6 @@ const client = await createAuthenticatedClient({
 // Get sender wallet address information
 const walletAddress = await client.walletAddress.get({ url: WALLET_ADDRESS })
 
-// Create an outgoing-payment grant, and get the access token after continuation
-const OUTGOING_PAYMENT_ACCESS_TOKEN = await setupOutgoingPaymentGrant({
-  client,
-  sender: walletAddress,
-  actions: ['read', 'create'],
-  limits: {
-    debitAmount: {
-      amount: '8000',
-      assetCode: walletAddress.assetCode,
-      assetScale: walletAddress.assetScale
-    }
-  }
-})
-
-// Create outgoing payment, with a debitAmount less than grant limits.
-// This will spend the money from the grant
-await client.outgoingPayment.create(
-  {
-    url: walletAddress.resourceServer,
-    accessToken: OUTGOING_PAYMENT_ACCESS_TOKEN
-  },
-  {
-    receiver: INCOMING_PAYMENT_ID,
-    debitAmount: {
-      amount: '800',
-      assetCode: walletAddress.assetCode,
-      assetScale: walletAddress.assetScale
-    }
-  }
-)
-
 // Get spent amounts
 const grantSpentAmounts = await client.outgoingPayment.getGrantSpentAmounts({
   url: walletAddress.resourceServer,
