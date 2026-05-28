@@ -10,6 +10,7 @@ import Finish from '/src/content/docs/partials/_grant-finish-interaction.mdx'
 import GetWalletAddress from '/src/content/docs/partials/code/guides/outgoing-grant-future-payments/_get-wallet-address.mdx'
 import GrantRequestOutgoingPayment from '/src/content/docs/partials/code/guides/outgoing-grant-future-payments/_grant-request-outgoing-payment.mdx'
 import RequestAGrantContinuation from '/src/content/docs/partials/code/guides/outgoing-grant-future-payments/_request-a-grant-continuation.mdx'
+import GrantSpentAmount from '/src/content/docs/partials/code/guides/outgoing-grant-future-payments/_get-grant-spent-amount.mdx'
 
 :::tip[Summary]
 Learn how to get an outgoing payment grant for future payments without specifying any recipients.
@@ -40,6 +41,10 @@ For this guide, you'll assume the role of an app developer. The guide explains h
 - <Badge text="POST" variant="success" />
   <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-continue/">
     Grant Continuation Request
+  </LinkOut>
+- <Badge text="GET" variant="note" />
+  <LinkOut href="https://openpayments.dev/apis/resource-server/operations/get-outgoing-payment-grant/">
+    Get Spent Amounts for Current Outgoing Payment Grant
   </LinkOut>
 
 ## Steps
@@ -157,6 +162,36 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
       "value": "..." // access token for continuing the request
     },
     "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
+  }
+}
+```
+
+</details>
+
+## 6. Get the outgoing payment grant's spent amounts
+
+You can provide your user with information about how much they have left to spend by calling the <Badge text="GET" variant="note" /> [Get Spent Amounts for Current Outgoing Payment Grant API](/apis/auth-server/operations/get-outgoing-payment-grant/).
+
+The API uses the access token returned in the grant continuation response from Step 5. Since the outgoing payment grant is for an interval (three months), the API will only return the amounts for the current interval.
+
+<GrantSpentAmount />
+
+<details>
+  <summary>Example response</summary>
+
+```json wrap
+{
+  "spentReceiveAmount": {
+    // the total amount successfully received (by all receivers) for the current interval
+    "value": "4500",
+    "assetCode": "CAD",
+    "assetScale": 2
+  },
+  "spentDebitAmount": {
+    // the total amount successfully deducted from the sender's account for the current interval
+    "value": "5000",
+    "assetCode": "CAD",
+    "assetScale": 2
   }
 }
 ```
