@@ -27,17 +27,11 @@ En esta sección, se detallan los diferentes tipos de concesiones de autorizaci�
 
 ### Pago entrante
 
-Por lo general, para iniciar el flujo de Open Payments, el cliente solicita una concesión de autorización para un pago entrante al servidor de autorización que corresponde al _destinatario_. Sin embargo, existen situaciones en las que el cliente solicita una concesión de autorización para un pago saliente primero, como en el caso de Web Monetization (estándar de monetización web).
-
-El cliente puede solicitar una sola concesión de autorización para crear varios pagos entrantes destinados a distintas cuentas compatibles con Open Payments, siempre que todas las cuentas pertenezcan a la misma <Tooltip content="Entidad que administra la cuenta" client: load><span>ASE</span></Tooltip>.
-
-Por defecto, las concesiones de autorización para pagos entrantes no son interactivas; esto significa que no se requiere la interacción de una persona (por lo general, el usuario del cliente) para que el servidor de autorización emita un token de acceso.
+Por defecto, las concesiones para pagos entrantes no son interactivas; esto significa que no se requiere la interacción de una persona (por lo general, el usuario del cliente) para que el servidor de autorización emita un token de acceso. Los clientes pueden utilizar la [identidad dirigida](/es/identity/client-keys#solicitudes-de-clientes) para las solicitudes de concesión para pagos entrantes.
 
 ### Cotización
 
-Una vez que el cliente recibe una concesión de autorización para un pago entrante y se crea un recurso de pago entrante en la cuenta del destinatario, el cliente solicita la concesión de autorización para una cotización al servidor de autorización que corresponde al _remitente_. El cliente puede solicitar una sola concesión de autorización para crear varias cotizaciones destinadas a distintas cuentas compatibles con Open Payments, siempre que todas las cuentas pertenezcan a la misma <Tooltip content="Entidad que administra la cuenta" client: load><span>ASE</span></Tooltip>.
-
-Por defecto, las concesiones de autorización para cotizaciones no son interactivas; esto significa que no se requiere la interacción de una persona (por lo general, el usuario del cliente) para que el servidor de autorización emita un token de acceso.
+Por defecto, las concesiones para cotizaciones no son interactivas; esto significa que no se requiere la interacción de una persona (por lo general, el usuario del cliente) para que el servidor de autorización emita un token de acceso. Los clientes también pueden utilizar la [identidad dirigida](/es/identity/client-keys#solicitudes-de-clientes) para las solicitudes de concesión para cotizaciones.
 
 ### Pago saliente
 
