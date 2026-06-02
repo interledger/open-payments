@@ -178,7 +178,25 @@ export default defineConfig({
                 {
                   label: 'Resources',
                   translations: { es: 'Recursos' },
-                  link: '/concepts/resources/'
+                  collapsed: false,
+                  items: [
+                    {
+                      label: 'Payment resource types',
+                      link: '/concepts/resources/'
+                    },
+                    {
+                      label: 'incoming-payment',
+                      link: '/concepts/resources/#incoming-payment'
+                    },
+                    {
+                      label: 'quote',
+                      link: '/concepts/resources/#quote'
+                    },
+                    {
+                      label: 'outgoing-payment',
+                      link: '/concepts/resources/#outgoing-payment'
+                    }
+                  ]
                 },
                 {
                   label: 'Authorization',

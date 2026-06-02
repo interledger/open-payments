@@ -44,13 +44,15 @@ The authorization server needs the client's public key to verify signatures. Ope
 
 ### Wallet address-identified clients
 
-The client's grant request body includes `client.walletAddress`. The authorization server:
+The client's grant request body includes `client.walletAddress`. ASEs must provide a key registration flow for clients and host each client's JWKS at `WALLET_ADDRESS/jwks.json`. The authorization server:
 
 1. Extracts the client's domain from the wallet address.
 2. Issues a `GET` to `{walletAddress}/jwks.json` to retrieve the client's key registry.
 3. Locates the key whose `kid` matches the `keyId` in the `Signature-Input` header.
 4. Confirms the key uses the expected algorithm (`EdDSA`), key type (`OKP`), and curve (`Ed25519`).
 5. Binds the resolved key to the grant. On subsequent requests against the same grant, the authorization server fetches the bound key from the grant's stored domain rather than the request body.
+
+ASEs are responsible for keeping the hosted JWKS in sync with client key lifecycle events such as key rotation and key revocation.
 
 ### Directed-identity clients
 
