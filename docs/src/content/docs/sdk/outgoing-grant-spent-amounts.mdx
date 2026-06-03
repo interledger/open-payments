@@ -7,11 +7,11 @@ import { Tabs, TabItem, LinkButton, Badge } from '@astrojs/starlight/components'
 import Begin from '/src/content/docs/partials/_before-you-begin.mdx'
 import Ts from '/src/content/docs/partials/_ts-init-config.mdx'
 
-The [Get Spent Amounts for Current Outgoing Payment Grant API](/apis/resource-server/operations/get-outgoing-payment-grant) returns the debit and receive amounts spent against an outgoing payment grant.
+The [Get Spent Amounts for Current Outgoing Payment Grant API](/apis/resource-server/operations/get-outgoing-payment-grant) returns the debit and receive amounts spent against the current outgoing payment grant.
 
-The grant is identified by the client's GNAP access token. For grants created with a recurring interval, the amounts returned reflect the current interval only.
+When an outgoing payment [grant continuation request](/apis/resource-server/operations/post-continue) is successful, the client receives an access token from the authorization server. The current grant is identified by this access token.
 
-The code snippets below let an authorized client retrieve the spent amounts for the current outgoing payment grant.
+The code snippets below let an authorized client retrieve the spent amounts for the current outgoing payment grant. For grants created with a recurring interval, the amounts returned reflect the current interval only.
 
 ## Before you begin
 
@@ -31,7 +31,27 @@ The code snippets below let an authorized client retrieve the spent amounts for 
 </details>
 
 ```ts wrap
-// Coming soon
+import { createAuthenticatedClient } from '@interledger/open-payments'
+
+// Initialize client
+const client = await createAuthenticatedClient({
+  walletAddressUrl: WALLET_ADDRESS,
+  privateKey: PRIVATE_KEY_PATH,
+  keyId: KEY_ID
+})
+
+// Get sender wallet address information
+const walletAddress = await client.walletAddress.get({ url: WALLET_ADDRESS })
+
+// Get spent amounts
+const grantSpentAmounts = await client.outgoingPayment.getGrantSpentAmounts({
+  url: walletAddress.resourceServer,
+  accessToken: OUTGOING_PAYMENT_ACCESS_TOKEN
+})
+
+// Output
+console.log('GRANT_SPENT_DEBIT_AMOUNT: ', grantSpentAmounts.spentDebitAmount)
+// GRANT_SPENT_DEBIT_AMOUNT: { value: '800', assetCode: 'USD', assetScale: 2 }
 ```
 
 </TabItem>

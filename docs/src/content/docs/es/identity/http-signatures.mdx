@@ -37,9 +37,9 @@ Para obtener más información sobre el EdDSA y sus variantes, consulte <LinkOut
 
 ## Creación de firmas
 
-El ejemplo a continuación ilustra cómo crear la firma, comenzando con el mensaje HTTP original.
+La creación de la firma comienza con el mensaje HTTP original.
 
-```http title="Example: message before signature"
+```http title="Ejemplo: message before signature"
 POST HTTP/1.1
 Host: example.com
 Content-Type: application/json
@@ -52,13 +52,15 @@ Authorization: GNAP 123454321
 }
 ```
 
-### Base de la firma
+### Base de la firma y parámetros de la firma
 
-El proceso de creación de la firma comienza por identificar los campos del mensaje original que se usarán para crear la firma. Estos campos se denominan componentes cubiertos del mensaje. Los componentes cubiertos conforman la base de la firma, junto con el algoritmo de firma y un identificador de la clave pública del firmante.
+En primer lugar, se identifican los componentes cubiertos. Los componentes cubiertos son los campos que identifican qué partes del mensaje se usarán para crear la firma.
+
+La base de la firma está formada por los componentes cubiertos, el algoritmo de firma y un identificador de la clave pública del firmante.
 
 El subcampo final de la base de la firma es un campo estructurado HTTP llamado `signature-params`, que contiene una lista ordenada de los componentes que conforman la base de la firma.
 
-```http wrap title="Example: signature base"
+```http wrap title="Ejemplo: signature base"
 "content-type": application/json
 "content-digest": sha-512=:X48E9qOokqqrvdts8nOJRJN3OWDUoyWxBf7kbu9DBPE=:
 "content-length": 18
@@ -71,7 +73,7 @@ El subcampo final de la base de la firma es un campo estructurado HTTP llamado `
 
 Para obtener más información sobre los componentes necesarios, consulte la <LinkOut href="https://datatracker.ietf.org/doc/html/rfc9635#name-http-message-signatures">Sección 7.3.1, Firmas de mensajes HTTP</LinkOut> de la especificación GNAP.
 
-### Generar firma
+### Generación de la firma
 
 Para generar la firma HTTP:
 
@@ -79,11 +81,11 @@ Para generar la firma HTTP:
 2. El resumen se firma con la clave privada del firmante, lo cual produce la firma como una cadena de bytes.
 3. La cadena de bytes se codifica en Base64, lo cual da como resultado el valor final de la firma.
 
-### Mensaje HTTP firmado
+### Firma de mensajes HTTP
 
 El mensaje original se firma agregando encabezados de firma con etiquetas exclusivas al mensaje original: `Signature-Input` y `Signature`.
 
-```http wrap title="Example: signed message"
+```http wrap title="Ejemplo: signed message"
 POST HTTP/1.1
 Host: https://example.com
 Content-Type: application/json
