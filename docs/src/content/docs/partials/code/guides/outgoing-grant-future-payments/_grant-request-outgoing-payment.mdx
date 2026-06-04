@@ -37,6 +37,10 @@ const grant = await client.grant.request(
     },
   },
 );
+
+if (!isPendingGrant(grant)) {
+  throw new Error('Expected pending/interactive grant')
+}
 ```
 
  </TabItem>
