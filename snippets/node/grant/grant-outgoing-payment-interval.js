@@ -8,7 +8,7 @@ dotenv.config({
 })
 
 const KEY_ID = process.env.KEY_ID
-const WALLET_ADDRESS = process.env.WALLET_ADDRESS
+const CLIENT_WALLET_ADDRESS = process.env.CLIENT_WALLET_ADDRESS
 const QUOTE_URL = process.env.QUOTE_URL
 const QUOTE_ACCESS_TOKEN = process.env.QUOTE_ACCESS_TOKEN
 const PRIVATE_KEY_PATH = process.env.PRIVATE_KEY_PATH
@@ -16,11 +16,11 @@ const NONCE = randomUUID()
 
 import {
   createAuthenticatedClient,
-  isPendingGrant
+  isFinalizedGrantWithAccessToken
 } from '@interledger/open-payments'
 
 const client = await createAuthenticatedClient({
-  walletAddressUrl: WALLET_ADDRESS,
+  walletAddressUrl: CLIENT_WALLET_ADDRESS,
   privateKey: PRIVATE_KEY_PATH,
   keyId: KEY_ID
 })
@@ -67,8 +67,8 @@ const grant = await client.grant.request(
   }
 )
 
-if (!isPendingGrant(grant)) {
-  throw new Error('Expected interactive grant')
+if (!isFinalizedGrantWithAccessToken(grant)) {
+  throw new Error('Expected pending/interactive grant')
 }
 
 console.log('Please interact at the following URL:', grant.interact.redirect)

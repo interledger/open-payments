@@ -19,6 +19,10 @@ const recipientIncomingPaymentGrant = await client.grant.request(
     }
   }
 )
+
+if (!isFinalizedGrantWithAccessToken(recipientIncomingPaymentGrant)) {
+  throw new Error('Expected finalized grant')
+}
 ```
 
  </TabItem>

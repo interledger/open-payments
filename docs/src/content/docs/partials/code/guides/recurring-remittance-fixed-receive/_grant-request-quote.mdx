@@ -19,6 +19,10 @@ const senderQuoteGrant = await client.grant.request(
     }
   }
 )
+
+if (!isFinalizedGrantWithAccessToken(senderQuoteGrant)) {
+  throw new Error('Expected finalized grant')
+}
 ```
 
   </TabItem>

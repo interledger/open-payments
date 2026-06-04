@@ -13,6 +13,10 @@ const userOutgoingPaymentGrant = await client.grant.continue(
     interact_ref: interactRef
   }
 )
+
+if (!isFinalizedGrantWithAccessToken(userOutgoingPaymentGrant)) {
+  throw new Error('Expected finalized grant')
+}
 ```
 
   </TabItem>

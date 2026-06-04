@@ -13,6 +13,10 @@ import { Tabs, TabItem } from '@astrojs/starlight/components'
         interact_ref: interactRef
       }
     )
+
+    if (!isFinalizedGrantWithAccessToken(senderOutgoingPaymentGrant)) {
+      throw new Error('Expected finalized grant')
+    }
     ```
 
  </TabItem>

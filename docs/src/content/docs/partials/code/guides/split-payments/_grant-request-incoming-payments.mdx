@@ -20,6 +20,11 @@ const merchantIncomingPaymentGrant = await client.grant.request(
     }
   }
 )
+
+if (!isFinalizedGrantWithAccessToken(merchantIncomingPaymentGrant)) {
+  throw new Error('Expected finalized grant')
+}
+
 // Platform
 const platformIncomingPaymentGrant = await client.grant.request(
   {
@@ -36,6 +41,10 @@ const platformIncomingPaymentGrant = await client.grant.request(
     }
   }
 )
+
+if (!isFinalizedGrantWithAccessToken(platformIncomingPaymentGrant)) {
+  throw new Error('Expected finalized grant')
+}
 ```
 
  </TabItem>

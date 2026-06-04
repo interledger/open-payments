@@ -38,11 +38,14 @@ The code snippets below let an authorized client send a grant continuation reque
 
 ```ts wrap
 // Import dependencies
-import { createAuthenticatedClient } from '@interledger/open-payments'
+import {
+  createAuthenticatedClient,
+  isFinalizedGrantWithAccessToken
+} from '@interledger/open-payments'
 
 // Initialize client
 const client = await createAuthenticatedClient({
-  walletAddressUrl: WALLET_ADDRESS,
+  walletAddressUrl: CLIENT_WALLET_ADDRESS,
   privateKey: PRIVATE_KEY_PATH,
   keyId: KEY_ID
 })
@@ -59,8 +62,8 @@ const grant = await client.grant.continue(
 )
 
 // Check grant state
-if (!isFinalizedGrant(grant)) {
-  throw new Error('Expected finalized grant. Received non-finalized grant.')
+if (!isFinalizedGrantWithAccessToken(grant)) {
+  throw new Error('Expected finalized grant')
 }
 
 // Output

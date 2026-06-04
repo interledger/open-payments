@@ -19,6 +19,10 @@ import { Tabs, TabItem } from '@astrojs/starlight/components'
         }
       }
     )
+
+    if (!isFinalizedGrantWithAccessToken(customerQuoteGrant)) {
+      throw new Error('Expected finalized grant')
+    }
     ```
 
   </TabItem>
