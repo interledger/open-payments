@@ -7,7 +7,7 @@ dotenv.config({
 })
 
 const KEY_ID = process.env.KEY_ID
-const WALLET_ADDRESS = process.env.WALLET_ADDRESS
+const CLIENT_WALLET_ADDRESS = process.env.CLIENT_WALLET_ADDRESS
 const CONTINUE_URI = process.env.CONTINUE_URI
 const CONTINUE_ACCESS_TOKEN = process.env.CONTINUE_ACCESS_TOKEN
 const URL_WITH_INTERACT_REF = process.env.URL_WITH_INTERACT_REF
@@ -22,7 +22,7 @@ import {
 
 //@! start chunk 2 | title=Initialize Open Payments client
 const client = await createAuthenticatedClient({
-  walletAddressUrl: WALLET_ADDRESS,
+  walletAddressUrl: CLIENT_WALLET_ADDRESS,
   privateKey: PRIVATE_KEY_PATH,
   keyId: KEY_ID
 })
