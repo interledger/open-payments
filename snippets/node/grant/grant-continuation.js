@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 import { join } from 'path'
 import { fileURLToPath } from 'url'
-import { isFinalizedGrant } from '@interledger/open-payments'
+import { isFinalizedGrantWithAccessToken } from '@interledger/open-payments'
 
 dotenv.config({
   path: fileURLToPath(join(import.meta.url, '..', '..', '.env'))
@@ -42,7 +42,7 @@ const grant = await client.grant.continue(
   }
 )
 
-if (!isFinalizedGrant(grant)) {
+if (!isFinalizedGrantWithAccessToken(grant)) {
   throw new Error('Expected finalized grant. Received non-finalized grant.')
 }
 

@@ -76,7 +76,7 @@ const grant = await client.grant.request(
 
 //@! start chunk 5 | title=Check grant state
 if (!isPendingGrant(grant)) {
-  throw new Error('Expected interactive grant')
+  throw new Error('Expected pending/interactive grant')
 }
 //@! end chunk 5
 

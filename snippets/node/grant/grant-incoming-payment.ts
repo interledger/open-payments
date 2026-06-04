@@ -13,7 +13,7 @@ const PRIVATE_KEY_PATH = process.env.PRIVATE_KEY_PATH
 //@! start chunk 1 | title=Import dependencies
 import {
   createAuthenticatedClient,
-  isPendingGrant
+  isFinalizedGrantWithAccessToken
 } from '@interledger/open-payments'
 //@! end chunk 1
 
@@ -50,7 +50,7 @@ const grant = await client.grant.request(
 //@! end chunk 4
 
 //@! start chunk 5 | title=Check grant state
-if (isPendingGrant(grant)) {
+if (isFinalizedGrantWithAccessToken(grant)) {
   throw new Error('Expected non-interactive grant')
 }
 //@! end chunk 5

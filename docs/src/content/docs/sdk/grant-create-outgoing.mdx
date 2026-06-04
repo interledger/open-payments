@@ -42,7 +42,10 @@ Any authorization server that issues interactive grants must integrate with an [
 
 ```ts wrap
 // Import dependencies
-import { createAuthenticatedClient } from '@interledger/open-payments'
+import {
+  createAuthenticatedClient,
+  isPendingGrant
+} from '@interledger/open-payments'
 
 // Initialize client
 const client = await createAuthenticatedClient({
@@ -91,7 +94,7 @@ const grant = await client.grant.request(
 
 // Check grant state
 if (!isPendingGrant(grant)) {
-  throw new Error('Expected interactive grant')
+  throw new Error('Expected pending/interactive grant')
 }
 
 // Output
@@ -104,7 +107,10 @@ console.log('CONTINUE_URI =', grant.continue.uri)
 
 ```ts wrap
 // Import dependencies
-import { createAuthenticatedClient } from '@interledger/open-payments'
+import {
+  createAuthenticatedClient,
+  isPendingGrant
+} from '@interledger/open-payments'
 
 // Initialize client
 const client = await createAuthenticatedClient({
@@ -154,7 +160,7 @@ const grant = await client.grant.request(
 
 // Check grant state
 if (!isPendingGrant(grant)) {
-  throw new Error('Expected interactive grant')
+  throw new Error('Expected pending/interactive grant')
 }
 
 // Output

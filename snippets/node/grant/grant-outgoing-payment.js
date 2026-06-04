@@ -67,7 +67,7 @@ const grant = await client.grant.request(
 )
 
 if (!isPendingGrant(grant)) {
-  throw new Error('Expected interactive grant')
+  throw new Error('Expected pending/interactive grant')
 }
 
 console.log('Please interact at the following URL:', grant.interact.redirect)

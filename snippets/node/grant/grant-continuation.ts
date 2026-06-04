@@ -16,7 +16,7 @@ const PRIVATE_KEY_PATH = process.env.PRIVATE_KEY_PATH
 //@! start chunk 1 | title=Import dependencies
 import {
   createAuthenticatedClient,
-  isFinalizedGrant
+  isFinalizedGrantWithAccessToken
 } from '@interledger/open-payments'
 //@! end chunk 1
 
@@ -51,7 +51,7 @@ const grant = await client.grant.continue(
 //@! end chunk 3
 
 //@! start chunk 4 | title=Check grant state
-if (!isFinalizedGrant(grant)) {
+if (!isFinalizedGrantWithAccessToken(grant)) {
   throw new Error('Expected finalized grant. Received non-finalized grant.')
 }
 //@! end chunk4
