@@ -7,7 +7,7 @@ import { Tabs, TabItem, LinkButton, Badge } from '@astrojs/starlight/components'
 import Begin from '/src/content/docs/partials/_before-you-begin.mdx'
 import Ts from '/src/content/docs/partials/_ts-init-config.mdx'
 
-The [Rotate Access Token API](/apis/auth-server/#tag/token/POST/token/%7Bid%7D) lets you request a new access token from the authorization server. The new token replaces the existing token and has the same rights and properties. If, for example, an access token expires, a client can request the token be rotated.
+The [Rotate Access Token API](/apis/#auth-server/tag/token/POST/token/%7Bid%7D) lets you request a new access token from the authorization server. The new token replaces the existing token and has the same rights and properties. If, for example, an access token expires, a client can request the token be rotated.
 
 All access tokens in Open Payments have a 10-minute lifespan by default. This includes new access tokens issued because of a rotate request.
 
@@ -235,4 +235,4 @@ Console.WriteLine($"MANAGE_URL = {token.AccessToken.Manage}");
 
 ## References
 
-- [Auth server API reference](/apis/auth-server/#tag/token/POST/token/%7Bid%7D)
+- [Auth server API reference](/apis/#auth-server/tag/token/POST/token/%7Bid%7D)

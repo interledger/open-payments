@@ -7,7 +7,7 @@ import { Tabs, TabItem, LinkButton, Badge } from '@astrojs/starlight/components'
 import Begin from '/src/content/docs/partials/_before-you-begin.mdx'
 import Ts from '/src/content/docs/partials/_ts-init-config.mdx'
 
-The [Revoke Access Token API](/apis/auth-server/#tag/token/DELETE/token/%7Bid%7D) lets you request an access token be invalidated for all purposes. If, for example, a user indicates to a client that they no longer want the client to have access to something, the client can request the associated token be revoked.
+The [Revoke Access Token API](/apis/#auth-server/tag/token/DELETE/token/%7Bid%7D) lets you request an access token be invalidated for all purposes. If, for example, a user indicates to a client that they no longer want the client to have access to something, the client can request the associated token be revoked.
 
 The code snippets below let an authorized client call a management endpoint to revoke a specified access token.
 
@@ -209,4 +209,4 @@ await client.RevokeTokenAsync(
 
 ## References
 
-- [Auth server API reference](/apis/auth-server/#tag/token/DELETE/token/%7Bid%7D)
+- [Auth server API reference](/apis/#auth-server/tag/token/DELETE/token/%7Bid%7D)

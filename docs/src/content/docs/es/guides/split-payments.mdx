@@ -39,21 +39,21 @@ Las tres partes que intervienen en la transacción son las siguientes:
 ## Puntos finales
 
 - <Badge text="GET" variant="note" />
-  <LinkOut href="/apis/wallet-address-server/#tag/wallet-address/GET/">
+  <LinkOut href="/apis/#wallet-address-server/tag/wallet-address/GET/">
     Get Wallet Address
   </LinkOut>
 - <Badge text="POST" variant="success" />
-  <LinkOut href="/apis/auth-server/#tag/grant/POST/">Grant Request</LinkOut>
+  <LinkOut href="/apis/#auth-server/tag/grant/POST/">Grant Request</LinkOut>
 - <Badge text="POST" variant="success" />
-  <LinkOut href="/apis/resource-server/#tag/incoming-payment/POST/incoming-payments">
+  <LinkOut href="/apis/#resource-server/tag/incoming-payment/POST/incoming-payments">
     Create an Incoming Payment
   </LinkOut>
 - <Badge text="POST" variant="success" />
-  <LinkOut href="/apis/resource-server/#tag/quote/POST/quotes">
+  <LinkOut href="/apis/#resource-server/tag/quote/POST/quotes">
     Create a Quote
   </LinkOut>
 - <Badge text="POST" variant="success" />
-  <LinkOut href="/apis/resource-server/#tag/outgoing-payment/POST/outgoing-payments">
+  <LinkOut href="/apis/#resource-server/tag/outgoing-payment/POST/outgoing-payments">
     Create an Outgoing Payment
   </LinkOut>
 
@@ -65,7 +65,7 @@ Cuando un consumidor inicia un pago, su plataforma debe obtener la información 
 
 Supongamos que la dirección de la billetera ya se encuentra guardada en su plataforma, al igual que la del comerciante. Supongamos además que el consumidor proporcionó su dirección de billetera al comienzo del proceso de pago.
 
-Llame a la <Badge text="GET" variant="note" /> [Get Wallet Address](/apis/wallet-address-server/#tag/wallet-address/GET/) para cada dirección.
+Llame a la <Badge text="GET" variant="note" /> [Get Wallet Address](/apis/#wallet-address-server/tag/wallet-address/GET/) para cada dirección.
 
 <GetWalletAddress />
 
@@ -104,7 +104,7 @@ El siguiente ejemplo muestra respuestas de los proveedores de billetera del cons
 
 ### 2. Solicitar concesiones de autorización de pagos entrantes
 
-Utilice los datos del comerciante y de la plataforma `authServer`, recibidos en el paso anterior, para llamar a la <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/#tag/grant/POST/).
+Utilice los datos del comerciante y de la plataforma `authServer`, recibidos en el paso anterior, para llamar a la <Badge text="POST" variant="success" /> [Grant Request API](/apis/#auth-server/tag/grant/POST/).
 
 El propósito de estas llamadas consiste en obtener tókenes de acceso que permitan a su plataforma solicitar la creación de un recurso de pago entrante en la cuenta de la billetera del comerciante y en su cuenta de billetera.
 
@@ -144,7 +144,7 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del comerc
 
 ### 3. Solicitar la creación de recursos de pagos entrantes
 
-Use los tókenes de acceso devueltos en las respuestas anteriores para llamar a la <Badge text="POST" variant="success" /> [Create an Incoming Payment API](/apis/resource-server/#tag/incoming-payment/POST/incoming-payments).
+Use los tókenes de acceso devueltos en las respuestas anteriores para llamar a la <Badge text="POST" variant="success" /> [Create an Incoming Payment API](/apis/#resource-server/tag/incoming-payment/POST/incoming-payments).
 
 El propósito de estas llamadas consiste en solicitar la creación de un recurso de pago entrante en la cuenta de la billetera del comerciante y en su cuenta de billetera.
 
@@ -196,7 +196,7 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del comerc
 
 ### 4. Solicitar una concesión de autorización para una cotización
 
-Utilice los datos del consumidor `authServer`, recibidos en el paso 1, para llamar a la <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/#tag/grant/POST/).
+Utilice los datos del consumidor `authServer`, recibidos en el paso 1, para llamar a la <Badge text="POST" variant="success" /> [Grant Request API](/apis/#auth-server/tag/grant/POST/).
 
 El propósito de esta llamada consiste en obtener un token de acceso que permita a su plataforma solicitar la creación de recursos de cotización en la cuenta de la billetera del consumidor.
 
@@ -232,7 +232,7 @@ El siguiente ejemplo muestra una respuesta del proveedor de billetera del consum
 
 ### 5. Solicitar la creación de recursos de cotización
 
-Utilice el token de acceso recibido en el paso anterior para llamar a la <Badge text="POST" variant="success" />[Create Quote API](/apis/resource-server/#tag/quote/POST/quotes).
+Utilice el token de acceso recibido en el paso anterior para llamar a la <Badge text="POST" variant="success" />[Create Quote API](/apis/#resource-server/tag/quote/POST/quotes).
 
 El propósito de esta llamada consiste en solicitar la creación de un recurso de cotización en la cuenta de la billetera del consumidor. Dado que el consumidor necesita un recurso de cotización tanto para el comerciante como para la plataforma, llamaremos a la API dos veces usando el mismo token de acceso.
 
@@ -276,7 +276,7 @@ Cada respuesta devuelve un `receiveAmount`, un `debitAmount` y demás informaci�
 
 ### 6. Solicitar una concesión de autorización interactiva para un pago saliente
 
-Utilice la información del consumidor `authServer` recibida en el paso 1 para llamar a la <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/#tag/grant/POST/).
+Utilice la información del consumidor `authServer` recibida en el paso 1 para llamar a la <Badge text="POST" variant="success" /> [Grant Request API](/apis/#auth-server/tag/grant/POST/).
 
 El propósito de esta llamada consiste en obtener un token de acceso que permita a su plataforma solicitar la creación de recursos de pago saliente en la cuenta de la billetera del consumidor.
 
@@ -320,7 +320,7 @@ En nuestro ejemplo, suponemos que el IdP con el que interactuó el consumidor cu
 En una situación hipotética donde una interfaz de usuario no se encuentra disponible, analice la posibilidad de implementar un mecanismo de sondeo para verificar que se haya completado la interacción.
 :::
 
-Llame a la <Badge text="POST" variant="success" /> [Grant Continuation Request API](/apis/auth-server/#tag/grant/POST/continue/%7Bid%7D). El propósito de esta llamada consiste en solicitar un token de acceso que permita a su plataforma solicitar la creación de recursos de pago saliente en la cuenta de la billetera del consumidor.
+Llame a la <Badge text="POST" variant="success" /> [Grant Continuation Request API](/apis/#auth-server/tag/grant/POST/continue/%7Bid%7D). El propósito de esta llamada consiste en solicitar un token de acceso que permita a su plataforma solicitar la creación de recursos de pago saliente en la cuenta de la billetera del consumidor.
 
 Emita la solicitud al `continue uri` proporcionado en la respuesta de concesión de pago saliente inicial (paso 6). Por ejemplo:
 
@@ -366,7 +366,7 @@ Recuerde que las respuestas de la Create Quote API para el comerciante y para su
 
 Dado que las cotizaciones contienen los montos por debitar y recibir, no especificaremos otros montos al realizar una solicitud a la Create Outgoing Payment API. En su lugar, especificaremos un `quoteId`.
 
-Utilice los tókenes de acceso devueltos en el paso 5 para llamar a la <Badge text="POST" variant="success" /> [Create an Outgoing Payment API](/apis/resource-server/#tag/outgoing-payment/POST/outgoing-payments).
+Utilice los tókenes de acceso devueltos en el paso 5 para llamar a la <Badge text="POST" variant="success" /> [Create an Outgoing Payment API](/apis/#resource-server/tag/outgoing-payment/POST/outgoing-payments).
 
 El propósito de estas llamadas consiste en solicitar la creación de un recurso de pago saliente en la cuenta de la billetera del consumidor: uno para el comerciante y otro para su plataforma. Incluya el `quoteId` correspondiente en cada solicitud.
 

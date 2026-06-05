@@ -7,7 +7,7 @@ import { Tabs, TabItem, LinkButton, Badge } from '@astrojs/starlight/components'
 import Begin from '/src/content/docs/partials/_before-you-begin.mdx'
 import Ts from '/src/content/docs/partials/_ts-init-config.mdx'
 
-If your client no longer needs access to protected resources, the [Cancel Grant API](/apis/auth-server/#tag/grant/DELETE/continue/%7Bid%7D) lets you cancel (revoke) the corresponding grant request.
+If your client no longer needs access to protected resources, the [Cancel Grant API](/apis/#auth-server/tag/grant/DELETE/continue/%7Bid%7D) lets you cancel (revoke) the corresponding grant request.
 
 The code snippets below let a client cancel a previously issued grant. When cancelled, the request is placed into a finalized state and no further updates to the grant request are allowed.
 
@@ -210,5 +210,5 @@ await client.CancelGrantAsync(
 
 ## References
 
-- [Auth server API reference](/apis/auth-server/#tag/grant/DELETE/continue/%7Bid%7D)
+- [Auth server API reference](/apis/#auth-server/tag/grant/DELETE/continue/%7Bid%7D)
 - [Grant negotiation and authorization](/identity/grants)
