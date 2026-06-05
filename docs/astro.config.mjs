@@ -7,6 +7,7 @@ import starlightFullViewMode from 'starlight-fullview-mode'
 import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
 import { loadEnv } from 'vite'
+import { generateApiSidebar } from './src/lib/api-sidebar.js'
 
 const docsRoot = path.dirname(fileURLToPath(import.meta.url))
 const envFromFile = loadEnv(
@@ -396,35 +397,7 @@ export default defineConfig({
         {
           label: 'API reference',
           collapsed: true,
-          items: [
-            {
-              label: 'Wallet address server',
-              link: '/apis/wallet-address-server/',
-              attrs: {
-                target: '_blank',
-                rel: 'noopener noreferrer',
-                'data-icon': 'external'
-              }
-            },
-            {
-              label: 'Resource server',
-              link: '/apis/resource-server/',
-              attrs: {
-                target: '_blank',
-                rel: 'noopener noreferrer',
-                'data-icon': 'external'
-              }
-            },
-            {
-              label: 'Auth server',
-              link: '/apis/auth-server/',
-              attrs: {
-                target: '_blank',
-                rel: 'noopener noreferrer',
-                'data-icon': 'external'
-              }
-            }
-          ]
+          items: generateApiSidebar()
         }
       ],
       social: [
