@@ -3,6 +3,7 @@ title: Wallet address architecture
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
+import RafikiReference from '/src/content/docs/partials/_rafiki-reference.mdx'
 
 :::tip[Summary]
 A wallet address is the public HTTPS endpoint that identifies an Open Payments-enabled account and exposes the information clients need to interact with it. ASEs operate a wallet address server that returns this information and define the policy that maps wallet addresses to underlying accounts.
@@ -81,7 +82,4 @@ ASEs should treat the choice of URL-as-identifier as a design decision, not an a
 - URLs avoid the need to overload identifiers such as email addresses or MSISDNs, which lack a standard interaction mechanism and require a separate registry to map an identifier to an account provider.
 - URLs let ASEs control the entire surface area of an Open Payments-enabled account through their own domain, including key rotation, address lifecycle, and content negotiation.
 
-## Reference implementation
-
-<LinkOut href="https://rafiki.dev">Rafiki</LinkOut> provides an open-source
-implementation of a wallet address server.
+<RafikiReference />

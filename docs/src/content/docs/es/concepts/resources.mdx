@@ -1,4 +1,4 @@
-﻿---
+---
 title: Recursos
 parent: Concepts
 tableOfContents:
@@ -32,7 +32,7 @@ Cuando no se incluye un `incomingAmount`, la creación del recurso de `quote` po
 Si no se incluye un `incomingAmount`, la ASE del destinatario no sabrá qué monto recibirá. Por lo tanto, no sabrá de inmediato cuándo se ha completado un pago. El cliente puede llamar a la <LinkOut href='/apis/resource-server/operations/complete-incoming-payment'>API Completar un pago entrante</LinkOut> para indicar a la ASE que no espere más pagos. De lo contrario, la sesión de pago eventualmente caducará.
 
 :::tip[Caso de uso: pagos continuos mediante Web Monetization (estándar de monetización web)]
-La compatibilidad con los pagos continuos mediante Web Monetization es un caso de uso para excluir un `incomingAmount`. La ASE del destinatario desconoce el tiempo que un usuario pasa en un sitio con monetización web. Los pagos se efectuarán de forma continua hasta que finalice la sesión. Luego, el agente de Web Monetization puede solicitar que se marque como completado el pago entrante. Esto indica a la ASE que no se enviarán más pagos y que se acredite el monto en la cuenta del destinatario.
+La compatibilidad con los pagos continuos mediante <LinkOut href='https://webmonetization.org'>Web Monetization</LinkOut> es un caso de uso para excluir un `incomingAmount`. La ASE del destinatario desconoce el tiempo que un usuario pasa en un sitio con monetización web. Los pagos se efectuarán de forma continua hasta que finalice la sesión. Luego, el agente de Web Monetization puede solicitar que se marque como completado el pago entrante. Esto indica a la ASE que no se enviarán más pagos y que se acredite el monto en la cuenta del destinatario.
 :::
 
 ### cotización

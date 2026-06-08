@@ -3,9 +3,7 @@ title: Wallet addresses
 parent: Concepts
 ---
 
-:::note[For client developers]
-This page describes Open Payments from the client developer's perspective. ASEs should refer to the [For ASEs](/implement/) section.
-:::
+import ForAsesWalletAddressArchitecture from '/src/content/docs/partials/_for-ases-wallet-address-architecture.mdx'
 
 :::tip[Summary]
 A wallet address is a secure, sharable identifier for an Open Payments-enabled account. Each wallet address acts a service endpoint into the APIs, allowing clients to interact with the underlying account.
@@ -54,9 +52,7 @@ When setting up a payment, the client must obtain the wallet address for both th
 
 A wallet address server is an API endpoint that retrieves public information about a wallet address, including its associated public keys. For more technical details, visit the [wallet address server API docs](/apis/wallet-address-server/operations/get-wallet-address/).
 
-:::note[For ASEs deploying a wallet address server]
-ASEs should refer to the [wallet address architecture page](/implement/wallet-address-architecture/) under the For ASEs section.
-:::
+<ForAsesWalletAddressArchitecture />
 
 ## Privacy and security
 

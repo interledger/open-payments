@@ -451,8 +451,8 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
-              label: 'Overview',
-              link: '/implement/'
+              label: 'ASE overview',
+              link: '/implement/ase-overview/'
             },
             {
               label: 'Wallet address architecture',
@@ -656,7 +656,8 @@ export default defineConfig({
   redirects: {
     '/docs': '/overview/getting-started',
     '/introduction/wallet-addresses': '/concepts/wallet-addresses',
-    '/sdk/grant-create': '/sdk/grant-create-incoming'
+    '/sdk/grant-create': '/sdk/grant-create-incoming',
+    '/implement': '/implement/ase-overview/'
   },
   server: {
     port: 1104,

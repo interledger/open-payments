@@ -3,12 +3,16 @@ title: Resources
 parent: Concepts
 tableOfContents:
   maxHeadingLevel: 4
+next:
+  link: /concepts/auth/
+  label: Authorization
 ---
 
 import { LinkOut, Tooltip } from '@interledger/docs-design-system'
+import ForAsesResourceServer from '/src/content/docs/partials/_for-ases-resource-server.mdx'
 
-:::note[For client developers]
-This page describes Open Payments from the client developer's perspective. ASEs should refer to the [For ASEs](/implement/) section.
+:::tip[Summary]
+Open Payments payments are set up through three resource types hosted by a resource server: `incoming-payment`, `quote`, and `outgoing-payment`. Clients create these resources in sequence to establish payment details on the recipient's account, lock in cost on the sender's account, and issue the payment instruction.
 :::
 
 The Open Payments APIs are served by a resource server. Operations on the APIs require the client to have a valid access token issued by a trusted authorization server.
@@ -19,9 +23,7 @@ An Open Payments resource server hosts three sets of APIs, those for incoming pa
 
 Each set of APIs has its own resource type: `incoming-payment`, `quote`, and `outgoing-payment`.
 
-:::note[For ASEs deploying a resource server]
-ASEs should refer to the [resource server page](/implement/resource-server/) under the For ASEs section.
-:::
+<ForAsesResourceServer />
 
 ### incoming-payment
 
@@ -40,7 +42,7 @@ When an `incomingAmount` is excluded, the creation of the subsequent `quote` res
 Excluding an `incomingAmount` means the recipient's ASE won't know how much to expect. As such, they won't immediately know when a payment is complete. The client can call the <LinkOut href='/apis/resource-server/operations/complete-incoming-payment'>Complete an Incoming Payment API</LinkOut> to let the ASE know not to expect further payment. Otherwise, the payment session will eventually expire.
 
 :::tip[Use case: streaming Web Monetization payments]
-Supporting streaming Web Monetization payments is one use case for excluding an `incomingAmount`. The time a user spends on a web monetized site is unknown to the recipient's ASE. Payments will stream until the session ends. The Web Monetization agent can then request to mark the incoming payment as complete. This tells the ASE that no further payments will be sent and to credit the recipient's account.
+Supporting streaming <LinkOut href='https://webmonetization.org'>Web Monetization</LinkOut> payments is one use case for excluding an `incomingAmount`. The time a user spends on a web monetized site is unknown to the recipient's ASE. Payments will stream until the session ends. The Web Monetization agent can then request to mark the incoming payment as complete. This tells the ASE that no further payments will be sent and to credit the recipient's account.
 :::
 
 ### quote

@@ -3,6 +3,7 @@ title: Authorization server
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
+import RafikiReference from '/src/content/docs/partials/_rafiki-reference.mdx'
 
 :::tip[Summary]
 The authorization server processes grant requests under GNAP, issues access tokens, and coordinates user consent for interactive grants. This page describes what the ASE's authorization server must do.
@@ -86,7 +87,4 @@ When the resource server receives a request from a client, it must validate the 
 
 Either way, the authorization server is the source of truth for whether a token is currently valid.
 
-## Reference implementation
-
-<LinkOut href="https://rafiki.dev">Rafiki</LinkOut> provides an open-source
-implementation of an Open Payments authorization server.
+<RafikiReference />

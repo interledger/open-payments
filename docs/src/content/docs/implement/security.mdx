@@ -34,7 +34,7 @@ For every signed incoming request, ASEs must:
    - The signature is older than the maximum age the ASE permits.
    - The `Content-Digest` header is present but does not match the body.
 
-ASEs set their own maximum signature age. Open Payments does not bound it, but very long limits increase replay risk and very short limits can cause failures for clients on slow networks.
+ASEs set their own maximum signature age. Open Payments does not bound it. If the limit is too long, an intercepted signed request can be resent and still accepted (a replay attack). If the limit is too short, legitimate clients on slow networks may see their signatures expire before the request arrives.
 
 Bearer tokens are not supported. A token alone is never sufficient: every request must carry both an access token (where applicable) and a valid signature.
 
@@ -56,7 +56,7 @@ ASEs are responsible for keeping the hosted JWKS in sync with client key lifecyc
 
 ### Directed-identity clients
 
-For non-interactive grants (incoming-payment, quote), the client may provide its key directly in the request body as a `jwk`. The authorization server uses that key for signature verification on the initial request and binds it to the resulting grant. No JWKS endpoint lookup is required, and the client's wallet address is never exposed.
+For non-interactive grants (`incoming-payment`, `quote`), the client may provide its key directly in the request body as a `jwk`. The authorization server uses that key for signature verification on the initial request and binds it to the resulting grant. No JWKS endpoint lookup is required, and the client's wallet address is never exposed.
 
 ASEs must reject directed identity on interactive grant requests.
 

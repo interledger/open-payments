@@ -5,8 +5,8 @@ parent: Concepts
 
 import { LinkOut } from '@interledger/docs-design-system'
 
-:::note[For client developers]
-This page describes Open Payments from the client developer's perspective. ASEs should refer to the [For ASEs](/implement/) section.
+:::tip[Summary]
+A payment method tells the sender's ASE how to deliver funds to the recipient's ASE. The recipient's ASE specifies the payment method in the `incoming-payment` response. Interledger (ILP) is currently the only payment method integrated with Open Payments.
 :::
 
 The payment method is the means by which the sender's ASE will fulfill its payment obligations to the recipient's ASE. Cash, credit/debit cards, bank transfers, gift cards and mobile money can all be considered different payment methods.

@@ -15,17 +15,17 @@ This page is the starting point for developers building applications, services, 
 
 A client in Open Payments is software that:
 
-- Discovers an Open Payments-enabled account from its [wallet address](/concepts/wallet-addresses/).
+- Discovers an Open Payments-enabled account from the [wallet address](/concepts/wallet-addresses/) that identifies the account.
 - Requests [grants](/identity/grants/) from the account's authorization server.
 - Creates `incoming-payment`, `quote`, and `outgoing-payment` resources to set up a payment.
 - Signs every request with a key the authorization server can verify.
-- Handles the interactive consent flow for outgoing payments.
+- Handles the interactive consent flows.
 
 A client never moves money. The ASEs on each side of the payment are responsible for settlement.
 
 ## What to read
 
-If you're new to Open Payments, follow this path:
+If you're new to Open Payments, check out these resources:
 
 <CardGrid>
   <LinkCard
@@ -67,6 +67,6 @@ If you're new to Open Payments, follow this path:
 
 ## What's intentionally not on the developer path
 
-Some Open Payments documentation describes the responsibilities of the ASE, not the client such as how the wallet address server is structured, how the authorization server processes grants, how the resource server hands payments off to settlement, how the identity provider is integrated. Those pages live under the [For ASEs](/implement/) section and are intended for the engineers deploying the server stack.
+Some Open Payments documentation describes the responsibilities of the ASE, not the client. This includes how the wallet address server is structured, how the authorization server processes grants, how the resource server hands payments off to settlement, and how the identity provider is integrated. Those pages live under the [For ASEs](/implement/) section and are intended for the engineers deploying the server stack.
 
 If you find yourself reading an ASE page and wondering whether you need to implement something on the client side, the answer is almost always no.

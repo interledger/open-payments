@@ -3,10 +3,8 @@ title: Grant negotiation and authorization
 ---
 
 import { CodeBlock, LinkOut, Tooltip } from '@interledger/docs-design-system'
-
-:::note[For client developers]
-This page describes Open Payments from the client developer's perspective. ASEs should refer to the [For ASEs](/implement/) section.
-:::
+import ForAsesAuthServer from '/src/content/docs/partials/_for-ases-auth-server.mdx'
+import RafikiResourceServerNote from '/src/content/docs/partials/_rafiki-resource-server-note.mdx'
 
 :::tip[Summary]
 A grant in Open Payments allows a client to obtain authorization from a resource owner to access and perform operations on protected resources. Open Payments uses the Grant Negotiation and Authorization Protocol (GNAP) to facilitate this process, allowing clients to securely interact with the API.
@@ -34,9 +32,7 @@ An authorization server grants delegated privileges to a client in the form of a
 
 An authorization server is uniquely identified by its grant endpoint URI, which is an absolute URI that a client calls to initiate a grant request.
 
-:::note[For ASEs deploying an authorization server]
-ASEs should refer to the [authorization server page](/implement/auth-server/) under the For ASEs section.
-:::
+<ForAsesAuthServer />
 
 ### Key registries
 
@@ -73,6 +69,4 @@ A resource server provides the Open Payments APIs through which resources can be
 
 Operations on the APIs by a client require the client to have a valid access token issued by a <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol-16#name-trust-relationships'>trusted authorization server</LinkOut>. When the client uses its access token to call the resource server, the resource server examines the token to determine if the token is sufficient for the request. The means by which a resource server makes this determination are outside the scope of Open Payments. If the token is sufficient, the client gets the right to access the operations and resource tied to the token.
 
-:::note
-An open source implementation of an Open Payments resource server, called <LinkOut href='https://rafiki.dev'>Rafiki</LinkOut>, is currently in development.
-:::
+<RafikiResourceServerNote />
