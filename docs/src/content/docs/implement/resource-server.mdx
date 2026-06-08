@@ -32,7 +32,7 @@ When the resource server receives a <LinkOut href='/apis/resource-server/operati
 - Compute the `debitAmount`, `receiveAmount`, and fee for the requested payment, including any applicable exchange rate when the sender's and recipient's wallet addresses use different `assetCode` values.
 - Commit to deliver the quoted `receiveAmount` to the recipient's ASE if an outgoing payment is created against the quote within the quote's validity window.
 - Assign the quote a `quoteId` and persist it.
-- Set a validity window after which the quote is no longer honored. ASEs define this window; it must be short enough that rate and fee exposure is bounded and long enough that the quote remains valid through any later steps required before execution, including interactive consent and the subsequent Create Outgoing Payment request.
+- Set a validity window after which the quote is no longer honored. ASEs define this window; it must be short enough that rate and fee exposure is bounded and long enough that the quote remains valid through any later steps required before execution, including interactive consent and the subsequent `outgoing-payment`.
 
 A quote represents a binding commitment from the sender's ASE. If the sender's ASE cannot honor the quote at execution time, that is an ASE-side failure, not a protocol error.
 
