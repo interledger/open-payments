@@ -35,6 +35,10 @@ const pendingSenderOutgoingPaymentGrant = await client.grant.request(
     }
   }
 )
+
+if (!isPendingGrant(pendingSenderOutgoingPaymentGrant)) {
+  throw new Error('Expected pending/interactive grant')
+}
 ```
 
   </TabItem>
