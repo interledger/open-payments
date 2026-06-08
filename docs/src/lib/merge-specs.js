@@ -1,12 +1,12 @@
 import { readFileSync } from 'node:fs'
-import { dirname, resolve } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { resolve } from 'node:path'
 import yaml from 'js-yaml'
 
+// process.cwd() is the docs/ directory at both dev and build time.
+// import.meta.url cannot be used here — Vite rebases it to the prerender
+// chunk location, which breaks the relative traversal to the submodule.
 const SPEC_DIR = resolve(
-  dirname(fileURLToPath(import.meta.url)),
-  '..',
-  '..',
+  process.cwd(),
   '..',
   'open-payments-specifications',
   'openapi'
@@ -96,48 +96,40 @@ export function mergeSpecs() {
       }
     ],
     paths: mergePaths(auth.paths, resource.paths, wallet.paths),
-    components: {
-      schemas: Object.fromEntries(
-        Object.entries({
-          ...(auth.components?.schemas ?? {}),
-          ...(resource.components?.schemas ?? {}),
-          ...(wallet.components?.schemas ?? {})
-        }).sort(([keyA, schemaA], [keyB, schemaB]) =>
-          (schemaA.title ?? keyA).localeCompare(
-            schemaB.title ?? keyB,
-            undefined,
-            { sensitivity: 'base' }
-          )
-        )
-      ),
-      securitySchemes: {
-        ...(auth.components?.securitySchemes ?? {}),
-        ...(resource.components?.securitySchemes ?? {}),
-        ...(wallet.components?.securitySchemes ?? {})
-      },
-      ...(Object.keys({
+    components: (() => {
+      const parameters = {
         ...(auth.components?.parameters ?? {}),
         ...(resource.components?.parameters ?? {}),
         ...(wallet.components?.parameters ?? {})
-      }).length && {
-        parameters: {
-          ...(auth.components?.parameters ?? {}),
-          ...(resource.components?.parameters ?? {}),
-          ...(wallet.components?.parameters ?? {})
-        }
-      }),
-      ...(Object.keys({
+      }
+      const headers = {
         ...(auth.components?.headers ?? {}),
         ...(resource.components?.headers ?? {}),
         ...(wallet.components?.headers ?? {})
-      }).length && {
-        headers: {
-          ...(auth.components?.headers ?? {}),
-          ...(resource.components?.headers ?? {}),
-          ...(wallet.components?.headers ?? {})
-        }
-      })
-    }
+      }
+      return {
+        schemas: Object.fromEntries(
+          Object.entries({
+            ...(auth.components?.schemas ?? {}),
+            ...(resource.components?.schemas ?? {}),
+            ...(wallet.components?.schemas ?? {})
+          }).sort(([keyA, schemaA], [keyB, schemaB]) =>
+            (schemaA.title ?? keyA).localeCompare(
+              schemaB.title ?? keyB,
+              undefined,
+              { sensitivity: 'base' }
+            )
+          )
+        ),
+        securitySchemes: {
+          ...(auth.components?.securitySchemes ?? {}),
+          ...(resource.components?.securitySchemes ?? {}),
+          ...(wallet.components?.securitySchemes ?? {})
+        },
+        ...(Object.keys(parameters).length && { parameters }),
+        ...(Object.keys(headers).length && { headers })
+      }
+    })()
   }
 
   return yaml.dump(merged, { lineWidth: -1 })
