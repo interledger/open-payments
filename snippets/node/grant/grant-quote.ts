@@ -7,19 +7,19 @@ dotenv.config({
 })
 
 const KEY_ID = process.env.KEY_ID
-const WALLET_ADDRESS = process.env.WALLET_ADDRESS
+const CLIENT_WALLET_ADDRESS = process.env.CLIENT_WALLET_ADDRESS
 const PRIVATE_KEY_PATH = process.env.PRIVATE_KEY_PATH
 
 //@! start chunk 1 | title=Import dependencies
 import {
   createAuthenticatedClient,
-  isPendingGrant
+  isFinalizedGrantWithAccessToken
 } from '@interledger/open-payments'
 //@! end chunk 1
 
 //@! start chunk 2 | title=Initialize Open Payments client
 const client = await createAuthenticatedClient({
-  walletAddressUrl: WALLET_ADDRESS,
+  walletAddressUrl: CLIENT_WALLET_ADDRESS,
   privateKey: PRIVATE_KEY_PATH,
   keyId: KEY_ID
 })
@@ -50,7 +50,7 @@ const grant = await client.grant.request(
 //@! end chunk 4
 
 //@! start chunk 5 | title=Check grant state
-if (isPendingGrant(grant)) {
+if (isFinalizedGrantWithAccessToken(grant)) {
   throw new Error('Expected non-interactive grant')
 }
 //@! end chunk 5

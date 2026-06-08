@@ -1,14 +1,14 @@
 import dotenv from 'dotenv'
 import { join } from 'path'
 import { fileURLToPath } from 'url'
-import { isFinalizedGrant } from '@interledger/open-payments'
+import { isFinalizedGrantWithAccessToken } from '@interledger/open-payments'
 
 dotenv.config({
   path: fileURLToPath(join(import.meta.url, '..', '..', '.env'))
 })
 
 const KEY_ID = process.env.KEY_ID
-const WALLET_ADDRESS = process.env.WALLET_ADDRESS
+const CLIENT_WALLET_ADDRESS = process.env.CLIENT_WALLET_ADDRESS
 const CONTINUE_URI = process.env.CONTINUE_URI
 const CONTINUE_ACCESS_TOKEN = process.env.CONTINUE_ACCESS_TOKEN
 const URL_WITH_INTERACT_REF = process.env.URL_WITH_INTERACT_REF
@@ -17,7 +17,7 @@ const PRIVATE_KEY_PATH = process.env.PRIVATE_KEY_PATH
 import { createAuthenticatedClient } from '@interledger/open-payments'
 
 const client = await createAuthenticatedClient({
-  walletAddressUrl: WALLET_ADDRESS,
+  walletAddressUrl: CLIENT_WALLET_ADDRESS,
   privateKey: PRIVATE_KEY_PATH,
   keyId: KEY_ID
 })
@@ -42,7 +42,7 @@ const grant = await client.grant.continue(
   }
 )
 
-if (!isFinalizedGrant(grant)) {
+if (!isFinalizedGrantWithAccessToken(grant)) {
   throw new Error('Expected finalized grant. Received non-finalized grant.')
 }
 

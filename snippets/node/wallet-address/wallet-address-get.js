@@ -7,13 +7,13 @@ dotenv.config({
 })
 
 const KEY_ID = process.env.KEY_ID
-const WALLET_ADDRESS = process.env.WALLET_ADDRESS
+const CLIENT_WALLET_ADDRESS = process.env.CLIENT_WALLET_ADDRESS
 const PRIVATE_KEY_PATH = process.env.PRIVATE_KEY_PATH
 
 import { createAuthenticatedClient } from '@interledger/open-payments'
 
 const client = await createAuthenticatedClient({
-  walletAddressUrl: WALLET_ADDRESS,
+  walletAddressUrl: CLIENT_WALLET_ADDRESS,
   privateKey: PRIVATE_KEY_PATH,
   keyId: KEY_ID
 })
