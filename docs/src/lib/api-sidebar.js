@@ -13,17 +13,9 @@ const SPEC_DIR = resolve(
 )
 
 const SPECS = [
-  { file: 'auth-server.yaml', title: 'Auth Server', slug: 'auth-server' },
-  {
-    file: 'resource-server.yaml',
-    title: 'Resource Server',
-    slug: 'resource-server'
-  },
-  {
-    file: 'wallet-address-server.yaml',
-    title: 'Wallet Address Server',
-    slug: 'wallet-address-server'
-  }
+  { file: 'auth-server.yaml', title: 'Auth server' },
+  { file: 'resource-server.yaml', title: 'Resource server' },
+  { file: 'wallet-address-server.yaml', title: 'Wallet address server' }
 ]
 
 const HTTP_METHODS = ['get', 'post', 'put', 'patch', 'delete']
@@ -45,7 +37,7 @@ function encodePath(path) {
 }
 
 export function generateApiSidebar() {
-  return SPECS.map(({ file, title, slug }) => {
+  return SPECS.map(({ file, title }) => {
     const spec = yaml.load(readFileSync(resolve(SPEC_DIR, file), 'utf-8'))
     const byTag = {}
 
@@ -58,7 +50,7 @@ export function generateApiSidebar() {
         byTag[tag].push({
           label: op.summary ?? path,
           badge: METHOD_BADGE[method],
-          link: `/apis/#${slug}/tag/${tag}/${method.toUpperCase()}${encodePath(path)}`
+          link: `/apis/#tag/${tag}/${method.toUpperCase()}${encodePath(path)}`
         })
       }
     }

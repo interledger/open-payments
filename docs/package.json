@@ -24,8 +24,7 @@
     "sharp": "^0.34.5",
     "shiki": "^4.0.2",
     "starlight-fullview-mode": "^0.2.6",
-    "starlight-links-validator": "^0.23.0",
-    "starlight-openapi": "^0.24.0"
+    "starlight-links-validator": "^0.23.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",

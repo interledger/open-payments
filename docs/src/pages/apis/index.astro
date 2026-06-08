@@ -1,34 +1,14 @@
 ---
-import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
 import OpenPaymentsLogo from '../../components/OpenPaymentsLogo.astro'
-
-const specDir = resolve('..', 'open-payments-specifications', 'openapi')
-
-const sources = [
-  {
-    title: 'Auth Server',
-    content: readFileSync(resolve(specDir, 'auth-server.yaml'), 'utf-8')
-  },
-  {
-    title: 'Resource Server',
-    content: readFileSync(resolve(specDir, 'resource-server.yaml'), 'utf-8')
-  },
-  {
-    title: 'Wallet Address Server',
-    content: readFileSync(
-      resolve(specDir, 'wallet-address-server.yaml'),
-      'utf-8'
-    )
-  }
-]
+import { mergeSpecs } from '../../lib/merge-specs.js'
 
 const config = {
-  sources,
+  content: mergeSpecs(),
   hideClientButton: true,
   hideTestRequestButton: true,
   isEditable: false,
-  mcp: { disabled: true }
+  mcp: { disabled: true },
+  documentDownloadType: 'none'
 }
 
 const CDN = 'https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.55.0'

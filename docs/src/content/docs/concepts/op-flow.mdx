@@ -23,7 +23,7 @@ This page provides a high-level look at the API calls and interactions that occu
 
 ## Get account details
 
-A client retrieves public details about a recipient's Open Payments-enabled account by issuing a <LinkOut href='/apis/#wallet-address-server/tag/wallet-address/GET/'>GET request</LinkOut> to the recipient's wallet address. Details include the asset code and scale of the underlying account and the authorization and resource server URLs which the client needs to set up a payment to the recipient.
+A client retrieves public details about a recipient's Open Payments-enabled account by issuing a <LinkOut href='/apis/#tag/wallet-address/GET/'>GET request</LinkOut> to the recipient's wallet address. Details include the asset code and scale of the underlying account and the authorization and resource server URLs which the client needs to set up a payment to the recipient.
 
 <MermaidWrapper diagramName="get-account-details">
 
@@ -42,7 +42,7 @@ A client retrieves public details about a recipient's Open Payments-enabled acco
 
 ## Incoming payment
 
-The client first <LinkOut href='/apis/#auth-server/tag/grant/POST/'>requests/receives a grant</LinkOut> from the authorization server of the recipient's <Tooltip content="account servicing entity" client:load>ASE</Tooltip> to create an `incoming-payment` resource. The client then sends a request to the ASE's resource server to <LinkOut href='/apis/#resource-server/tag/incoming-payment/POST/incoming-payments'>create the resource</LinkOut>. When created, the resource server returns unique payment details the client will use to address one or more payments to the recipient.
+The client first <LinkOut href='/apis/#tag/grant/POST/'>requests/receives a grant</LinkOut> from the authorization server of the recipient's <Tooltip content="account servicing entity" client:load>ASE</Tooltip> to create an `incoming-payment` resource. The client then sends a request to the ASE's resource server to <LinkOut href='/apis/#tag/incoming-payment/POST/incoming-payments'>create the resource</LinkOut>. When created, the resource server returns unique payment details the client will use to address one or more payments to the recipient.
 
 <MermaidWrapper diagramName="incoming-payment">
 
@@ -64,7 +64,7 @@ The client first <LinkOut href='/apis/#auth-server/tag/grant/POST/'>requests/rec
 
 ## Quote
 
-The client <LinkOut href='/apis/#auth-server/tag/grant/POST/'>requests/receives a grant</LinkOut> from the authorization server of the sender's <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip> to create a `quote` resource. The client then sends a request to the resource server to <LinkOut href='/apis/#resource-server/tag/quote/POST/quotes'>create the resource</LinkOut>. When created, the resource server returns, among other things, a quote `id` and the amount it will cost to make the payment.
+The client <LinkOut href='/apis/#tag/grant/POST/'>requests/receives a grant</LinkOut> from the authorization server of the sender's <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip> to create a `quote` resource. The client then sends a request to the resource server to <LinkOut href='/apis/#tag/quote/POST/quotes'>create the resource</LinkOut>. When created, the resource server returns, among other things, a quote `id` and the amount it will cost to make the payment.
 
 <MermaidWrapper diagramName="quote">
 
@@ -86,11 +86,11 @@ The client <LinkOut href='/apis/#auth-server/tag/grant/POST/'>requests/receives 
 
 ## Outgoing payment
 
-Before an outgoing payment resource can be created on the sender's account, Open Payments requires the client to send an <LinkOut href='/apis/#auth-server/tag/grant/POST/'>interactive grant request</LinkOut> to the authorization server of the sender's <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip>.
+Before an outgoing payment resource can be created on the sender's account, Open Payments requires the client to send an <LinkOut href='/apis/#tag/grant/POST/'>interactive grant request</LinkOut> to the authorization server of the sender's <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip>.
 
 An interactive grant requires explicit consent be collected from the sender before an access token is issued. While the client must facilitate the interaction, the authorization server and identity provider (IdP) of the sender's ASE are responsible for the interface and collecting consent.
 
-After consent is obtained, the client requests permission to <LinkOut href='/apis/#auth-server/tag/grant/POST/continue/%7Bid%7D'>continue the grant request</LinkOut> to obtain an access token.
+After consent is obtained, the client requests permission to <LinkOut href='/apis/#tag/grant/POST/continue/%7Bid%7D'>continue the grant request</LinkOut> to obtain an access token.
 
 :::note[Continue request timing]
 For outgoing payments, explicit user consent is required before proceeding with the continuation request. After the user completes their interaction with the identity provider (IdP), they should be redirected back to your app. At this point, you can make the grant continuation request. In scenarios where a user interface isn't available, consider implementing a polling mechanism to check for the completion of the interaction.
@@ -98,7 +98,7 @@ For outgoing payments, explicit user consent is required before proceeding with 
 
 <Interactive />
 
-Once an access token is acquired, the client can request the creation of the <LinkOut href='/apis/#resource-server/tag/outgoing-payment/POST/outgoing-payments'>outgoing-payment resource</LinkOut>. The setup of the payment is complete and the Open Payments flow ends after the resource is created.
+Once an access token is acquired, the client can request the creation of the <LinkOut href='/apis/#tag/outgoing-payment/POST/outgoing-payments'>outgoing-payment resource</LinkOut>. The setup of the payment is complete and the Open Payments flow ends after the resource is created.
 
 <MermaidWrapper diagramName="outgoing-payment">
 
@@ -118,7 +118,7 @@ Once an access token is acquired, the client can request the creation of the <Li
 
 ## Get transaction history
 
-To provide a user with their transaction history, the client can retrieve a list of the user's <LinkOut href='/apis/#resource-server/tag/incoming-payment/GET/incoming-payments'>incoming (received) payments</LinkOut> and <LinkOut href='/apis/#resource-server/tag/outgoing-payment/GET/outgoing-payments'>outgoing (sent) payments</LinkOut>.
+To provide a user with their transaction history, the client can retrieve a list of the user's <LinkOut href='/apis/#tag/incoming-payment/GET/incoming-payments'>incoming (received) payments</LinkOut> and <LinkOut href='/apis/#tag/outgoing-payment/GET/outgoing-payments'>outgoing (sent) payments</LinkOut>.
 
 <MermaidWrapper diagramName="get-all-transaction-history">
 
@@ -136,7 +136,7 @@ To provide a user with their transaction history, the client can retrieve a list
 
 </MermaidWrapper>
 
-Similarly, the client can provide the user with details about a specific <LinkOut href='/apis/#resource-server/tag/incoming-payment/GET/incoming-payments/%7Bid%7D'>incoming</LinkOut> or <LinkOut href='/apis/#resource-server/tag/outgoing-payment/GET/outgoing-payments/%7Bid%7D'>outgoing</LinkOut> payment.
+Similarly, the client can provide the user with details about a specific <LinkOut href='/apis/#tag/incoming-payment/GET/incoming-payments/%7Bid%7D'>incoming</LinkOut> or <LinkOut href='/apis/#tag/outgoing-payment/GET/outgoing-payments/%7Bid%7D'>outgoing</LinkOut> payment.
 
 <MermaidWrapper diagramName="get-specific-transaction-history">
 

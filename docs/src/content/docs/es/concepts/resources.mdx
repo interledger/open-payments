@@ -17,7 +17,7 @@ Cada conjunto de API tiene su propio tipo de recurso: `incoming-payment`, `quote
 
 ### pago entrante
 
-Un recurso de `incoming-payment` suele ser el primero en crearse en un flujo de pago, a través de la <LinkOut href='/apis/#resource-server/tag/incoming-payment/POST/incoming-payments'>API Crear pago entrante</LinkOut>. El recurso se crea en la cuenta del destinatario.
+Un recurso de `incoming-payment` suele ser el primero en crearse en un flujo de pago, a través de la <LinkOut href='/apis/#tag/incoming-payment/POST/incoming-payments'>API Crear pago entrante</LinkOut>. El recurso se crea en la cuenta del destinatario.
 
 Luego, la entidad que administra la cuenta (account servicing entity, ASE) del destinatario devuelve los datos de pago único que el cliente utilizará para enviar pagos al destinatario. Todos los pagos recibidos mediante el uso de estos datos se asocian al recurso de `incoming-payment`.
 
@@ -29,7 +29,7 @@ Cuando se incluye un `incomingAmount`, el monto representa el monto máximo que 
 
 Cuando no se incluye un `incomingAmount`, la creación del recurso de `quote` posterior debe contener un monto de débito o un monto de recepción, como se explica en la siguiente sección.
 
-Si no se incluye un `incomingAmount`, la ASE del destinatario no sabrá qué monto recibirá. Por lo tanto, no sabrá de inmediato cuándo se ha completado un pago. El cliente puede llamar a la <LinkOut href='/apis/#resource-server/tag/incoming-payment/POST/incoming-payments/%7Bid%7D/complete'>API Completar un pago entrante</LinkOut> para indicar a la ASE que no espere más pagos. De lo contrario, la sesión de pago eventualmente caducará.
+Si no se incluye un `incomingAmount`, la ASE del destinatario no sabrá qué monto recibirá. Por lo tanto, no sabrá de inmediato cuándo se ha completado un pago. El cliente puede llamar a la <LinkOut href='/apis/#tag/incoming-payment/POST/incoming-payments/%7Bid%7D/complete'>API Completar un pago entrante</LinkOut> para indicar a la ASE que no espere más pagos. De lo contrario, la sesión de pago eventualmente caducará.
 
 :::tip[Caso de uso: pagos continuos mediante Web Monetization (estándar de monetización web)]
 La compatibilidad con los pagos continuos mediante Web Monetization es un caso de uso para excluir un `incomingAmount`. La ASE del destinatario desconoce el tiempo que un usuario pasa en un sitio con monetización web. Los pagos se efectuarán de forma continua hasta que finalice la sesión. Luego, el agente de Web Monetization puede solicitar que se marque como completado el pago entrante. Esto indica a la ASE que no se enviarán más pagos y que se acredite el monto en la cuenta del destinatario.
@@ -37,7 +37,7 @@ La compatibilidad con los pagos continuos mediante Web Monetization es un caso d
 
 ### cotización
 
-Luego de crearse un recurso de `incoming-payment` en la cuenta del destinatario, por lo general, un recurso de `quote` se crea en la cuenta del remitente a través de la <LinkOut href="/apis/#resource-server/tag/quote/POST/quotes">API Crear una cotización</LinkOut>.
+Luego de crearse un recurso de `incoming-payment` en la cuenta del destinatario, por lo general, un recurso de `quote` se crea en la cuenta del remitente a través de la <LinkOut href="/apis/#tag/quote/POST/quotes">API Crear una cotización</LinkOut>.
 
 La cotización indica cuánto costará efectuar el pago, lo que incluye todas las tarifas que correspondan. La cotización funciona como un compromiso de la ASE del remitente de entregar un monto en particular a la ASE del destinatario. Las cotizaciones son válidas solo durante un tiempo limitado.
 
@@ -49,7 +49,7 @@ Se utiliza cuando el recurso de pago entrante tiene un `incomingAmount` definido
 
 **Cotización de envío fija**
 
-Se utiliza cuando el recurso de pago entrante no incluye un `incomingAmount` y el remitente desea especificar exactamente cuánto se debe debitar de su cuenta. Se exige un `debitAmount` para este tipo de cotización. Con este tipo de cotización, el pago entrante no se puede completar automáticamente una vez que el pago saliente se haya completado. El cliente puede emitir una <LinkOut href='/apis/#resource-server/tag/incoming-payment/POST/incoming-payments/%7Bid%7D/complete'>solicitud de completar el pago entrante</LinkOut>. De lo contrario, la sesión de pago eventualmente caducará.
+Se utiliza cuando el recurso de pago entrante no incluye un `incomingAmount` y el remitente desea especificar exactamente cuánto se debe debitar de su cuenta. Se exige un `debitAmount` para este tipo de cotización. Con este tipo de cotización, el pago entrante no se puede completar automáticamente una vez que el pago saliente se haya completado. El cliente puede emitir una <LinkOut href='/apis/#tag/incoming-payment/POST/incoming-payments/%7Bid%7D/complete'>solicitud de completar el pago entrante</LinkOut>. De lo contrario, la sesión de pago eventualmente caducará.
 
 **Cotización de recepción fija**
 
@@ -57,7 +57,7 @@ Se utiliza cuando el recurso de pago entrante no incluye un `incomingAmount` y e
 
 ### pago saliente
 
-Por último, se crea un recurso de `outgoing-payment` en la cuenta del remitente a través de la <LinkOut href='/apis/#resource-server/tag/outgoing-payment/POST/outgoing-payments'>API Crear pago saliente</LinkOut>. Un recurso de pago saliente puede representar un pago que se enviará, que se está enviando o que se envió previamente desde la cuenta del remitente. El objetivo de este recurso es actuar como una instrucción para que la ASE del remitente realice un pago.
+Por último, se crea un recurso de `outgoing-payment` en la cuenta del remitente a través de la <LinkOut href='/apis/#tag/outgoing-payment/POST/outgoing-payments'>API Crear pago saliente</LinkOut>. Un recurso de pago saliente puede representar un pago que se enviará, que se está enviando o que se envió previamente desde la cuenta del remitente. El objetivo de este recurso es actuar como una instrucción para que la ASE del remitente realice un pago.
 
 Open Payments no ejecuta pagos reales. Solo proporciona las instrucciones para el pago saliente. Esta separación permite que las aplicaciones emitan solicitudes de pago sin estar registradas como proveedoras de servicios financieros. Las aplicaciones no tienen que manipular datos financieros confidenciales de manera directa, lo que reduce el riesgo y la complejidad.
 
