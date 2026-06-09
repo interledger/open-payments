@@ -16,6 +16,10 @@ function load(file) {
   return yaml.load(readFileSync(resolve(SPEC_DIR, file), 'utf-8'))
 }
 
+function toSentenceCase(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
+}
+
 // Merges path maps — when two specs share a path (e.g. auth POST / and wallet GET /),
 // their HTTP methods are combined rather than one overwriting the other.
 function mergePaths(...pathMaps) {
@@ -72,7 +76,16 @@ export function mergeSpecs() {
       },
       ...(wallet.tags ?? [])
     ],
-    paths: mergePaths(auth.paths, resource.paths, wallet.paths),
+    paths: (() => {
+      const paths = mergePaths(auth.paths, resource.paths, wallet.paths)
+      for (const item of Object.values(paths)) {
+        for (const method of ['get', 'post', 'put', 'patch', 'delete']) {
+          if (item[method]?.summary)
+            item[method].summary = toSentenceCase(item[method].summary)
+        }
+      }
+      return paths
+    })(),
     components: (() => {
       const parameters = {
         ...(auth.components?.parameters ?? {}),
