@@ -168,7 +168,7 @@ Include the `interact_ref` returned in the redirect URI's query parameters.
 
 </details>
 
-## 6. Get the outgoing payment grant's spent amounts
+### 6. Get the outgoing payment grant's spent amounts
 
 You can provide your user with information about how much they have left to spend by calling the <Badge text="GET" variant="note" /> [Get Spent Amounts for Current Outgoing Payment Grant API](/apis/auth-server/operations/get-outgoing-payment-grant/).
 
@@ -182,13 +182,13 @@ The API uses the access token returned in the grant continuation response from S
 ```json wrap
 {
   "spentReceiveAmount": {
-    // the total amount successfully received (by all receivers) for the current interval
+    // the total amount successfully received (by all receivers) using the current outgoing payment grant and interval
     "value": "4500",
     "assetCode": "CAD",
     "assetScale": 2
   },
   "spentDebitAmount": {
-    // the total amount successfully deducted from the sender's account for the current interval
+    // the total amount successfully deducted from the sender's account using the current outgoing payment grant and interval
     "value": "5000",
     "assetCode": "CAD",
     "assetScale": 2
