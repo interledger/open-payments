@@ -55,45 +55,22 @@ export function mergeSpecs() {
     tags: [
       {
         name: 'Authorization server overview',
-        'x-displayName': 'Overview',
+        'x-displayName': 'Authorization server',
         description: auth.info.description
       },
       ...(auth.tags ?? []),
       {
         name: 'Resource server overview',
-        'x-displayName': 'Overview',
+        'x-displayName': 'Resource server',
         description: resource.info.description
       },
       ...(resource.tags ?? []),
       {
         name: 'Wallet address server overview',
-        'x-displayName': 'Overview',
+        'x-displayName': 'Wallet address server',
         description: wallet.info.description
       },
       ...(wallet.tags ?? [])
-    ],
-    'x-tagGroups': [
-      {
-        name: 'Authorization server',
-        tags: [
-          'Authorization server overview',
-          ...(auth.tags ?? []).map((t) => t.name)
-        ]
-      },
-      {
-        name: 'Resource server',
-        tags: [
-          'Resource server overview',
-          ...(resource.tags ?? []).map((t) => t.name)
-        ]
-      },
-      {
-        name: 'Wallet address server',
-        tags: [
-          'Wallet address server overview',
-          ...(wallet.tags ?? []).map((t) => t.name)
-        ]
-      }
     ],
     paths: mergePaths(auth.paths, resource.paths, wallet.paths),
     components: (() => {

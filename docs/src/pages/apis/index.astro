@@ -8,7 +8,34 @@ const config = {
   hideTestRequestButton: true,
   isEditable: false,
   mcp: { disabled: true },
-  documentDownloadType: 'none'
+  documentDownloadType: 'none',
+  customCss: `
+    [data-sidebar-id="api-1/tag/authorization-server-overview"],
+    [data-sidebar-id="api-1/tag/resource-server-overview"],
+    [data-sidebar-id="api-1/tag/wallet-address-server-overview"] {
+      margin-top: 1.25rem;
+      pointer-events: none;
+      cursor: default;
+    }
+    [data-sidebar-id="api-1/tag/authorization-server-overview"] button,
+    [data-sidebar-id="api-1/tag/resource-server-overview"] button,
+    [data-sidebar-id="api-1/tag/wallet-address-server-overview"] button {
+      background-color: transparent !important;
+      color: inherit !important;
+    }
+    [data-sidebar-id="api-1/tag/authorization-server-overview"] .group\\/button-label,
+    [data-sidebar-id="api-1/tag/resource-server-overview"] .group\\/button-label,
+    [data-sidebar-id="api-1/tag/wallet-address-server-overview"] .group\\/button-label {
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      font-weight: 500 !important;
+      letter-spacing: 0.07em;
+      color: inherit !important;
+    }
+    [data-sidebar-id="api-1/models"] {
+      margin-top: 2rem;
+    }
+  `
 }
 
 const CDN = 'https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.55.0'
