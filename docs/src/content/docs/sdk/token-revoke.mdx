@@ -6,6 +6,12 @@ import { LinkOut } from '@interledger/docs-design-system'
 import { Tabs, TabItem, LinkButton, Badge } from '@astrojs/starlight/components'
 import Begin from '/src/content/docs/partials/_before-you-begin.mdx'
 import Ts from '/src/content/docs/partials/_ts-init-config.mdx'
+import TsButton from '/src/content/docs/partials/sdk/_ts-button.mdx'
+import RustButton from '/src/content/docs/partials/sdk/_rust-button.mdx'
+import PhpButton from '/src/content/docs/partials/sdk/_php-button.mdx'
+import GoButton from '/src/content/docs/partials/sdk/_go-button.mdx'
+import JavaButton from '/src/content/docs/partials/sdk/_java-button.mdx'
+import NetButton from '/src/content/docs/partials/sdk/_net-button.mdx'
 
 The [Revoke Access Token API](/apis/auth-server/operations/delete-token) lets you request an access token be invalidated for all purposes. If, for example, a user indicates to a client that they no longer want the client to have access to something, the client can request the associated token be revoked.
 
@@ -21,7 +27,7 @@ The code snippets below let an authorized client call a management endpoint to r
 
 <Tabs syncKey="langs">
 <TabItem label='TypeScript/NodeJS' icon='node'>
-<LinkButton href="https://github.com/interledger/open-payments-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+<TsButton />
 
 <details>
   <summary>Initial configuration</summary>
@@ -52,7 +58,7 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 
 </TabItem>
 <TabItem label="Rust" icon='seti:rust'>
-<LinkButton href="https://github.com/interledger/open-payments-rust/tree/main/src/snippets#readme" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+<RustButton />
 
 ```rust wrap
 // Import dependencies
@@ -82,7 +88,7 @@ println!("Access token revoked successfully");
 
 </TabItem>
 <TabItem label='PHP' icon='seti:php'>
-<LinkButton href="https://github.com/interledger/open-payments-php-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+<PhpButton />
 
 ```php wrap
 // Import dependencies
@@ -109,7 +115,7 @@ $tokenResponse = $opClient->token()->revoke(
 <LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Token/TokenRevoke.php'>View full source</LinkOut>
 </TabItem>
 <TabItem label="Go" icon='seti:go'>
-<LinkButton href="https://github.com/interledger/open-payments-go/blob/main/README.md" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+<GoButton />
 
 ```go wrap
 package main
@@ -144,7 +150,7 @@ func main() {
 
 </TabItem>
 <TabItem label='Java' icon='seti:java'>
-<LinkButton href="https://github.com/interledger/open-payments-java?tab=readme-ov-file#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+<JavaButton />
 
 ```java wrap
 // Import dependencies
@@ -174,7 +180,7 @@ log.info("REVOKED GRANT: {}", grantRequest);
 
 </TabItem>
 <TabItem label='.NET' icon='seti:c-sharp'>
-<LinkButton href="https://github.com/interledger/open-payments-dotnet/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+<NetButton />
 
 ```csharp wrap
 // Import dependencies
