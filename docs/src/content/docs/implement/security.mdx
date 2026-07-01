@@ -1,0 +1,99 @@
+---
+title: Security
+---
+
+import { LinkOut } from '@interledger/docs-design-system'
+
+:::tip[Summary]
+ASEs operate the verification side of every security mechanism in Open Payments: signature validation on incoming requests, client key resolution and verification, and the interaction hash generation that lets clients prove a redirect came from the authorization server.
+:::
+
+## Security posture
+
+Open Payments places three cryptographic checkpoints between a client and the resource server:
+
+1. **HTTP message signatures** on every request, so the ASE can authenticate the sender and detect tampering.
+2. **Client keys** registered to a wallet address (or provided directly via directed identity), so the ASE knows which key to verify against.
+3. **Interaction hashes** during interactive grants, so the client can verify that a redirect emanated from the ASE's authorization server.
+
+ASEs are responsible for the verification side of all three mechanisms. Failure to enforce any one of them weakens the others.
+
+## HTTP signature validation
+
+Every request a client sends to an ASE's authorization or resource server is signed using the <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol#name-http-message-signatures'>HTTP message signatures</LinkOut> profile defined by GNAP, with the Ed25519 variant of EdDSA.
+
+For every signed incoming request, ASEs must:
+
+1. Read the `Signature-Input` header to identify the `keyId` and the list of covered components.
+2. Reconstruct the signature base from those components exactly as the client did.
+3. Resolve the client's public key (refer to [Client key resolution](#client-key-resolution) below).
+4. Verify the `Signature` header against the reconstructed signature base using that public key and Ed25519.
+5. Reject the request if any of the following are true:
+   - Required components (method, target URI, content digest where applicable, authorization header where applicable) are missing.
+   - The signature does not validate.
+   - The signature is older than the maximum age the ASE permits.
+   - The `Content-Digest` header is present but does not match the body.
+
+ASEs set their own maximum signature age. Open Payments does not bind it. If the limit is too long, an intercepted signed request can be resent and still accepted (a replay attack). If the limit is too short, legitimate clients on slow networks may see their signatures expire before the request arrives.
+
+Bearer tokens are not supported. A token alone is never sufficient: every request must carry both an access token (where applicable) and a valid signature.
+
+## Client key resolution
+
+The authorization server needs the client's public key to verify signatures. Open Payments supports two modes:
+
+### Wallet address-identified clients
+
+The client's grant request body includes `client.walletAddress`. ASEs must provide a key registration flow for clients and host each client's JWKS at `WALLET_ADDRESS/jwks.json`. The authorization server:
+
+1. Extracts the client's domain from the wallet address.
+2. Issues a `GET` to `{walletAddress}/jwks.json` to retrieve the client's key registry.
+3. Locates the key whose `kid` matches the `keyId` in the `Signature-Input` header.
+4. Confirms the key uses the expected algorithm (`EdDSA`), key type (`OKP`), and curve (`Ed25519`).
+5. Binds the resolved key to the grant. On subsequent requests against the same grant, the authorization server fetches the bound key from the grant's stored domain rather than the request body.
+
+ASEs are responsible for keeping the hosted JWKS in sync with client key lifecycle events such as key rotation and key revocation.
+
+### Directed-identity clients
+
+For non-interactive grants (`incoming-payment`, `quote`), the client may provide its key directly in the request body as a `jwk`. The authorization server uses that key for signature verification on the initial request and binds it to the resulting grant. No JWKS endpoint lookup is required, and the client's wallet address is never exposed.
+
+ASEs must reject directed identity on interactive grant requests.
+
+## Interaction hash generation
+
+During interactive grants, the authorization server redirects the resource owner back to the client's `interact.finish` URI with a `hash` parameter. The client uses this hash to confirm that the redirect actually emanated from the authorization server.
+
+ASEs must generate the hash by concatenating four values in order, separated by single newlines (`\n`), with no padding, no surrounding whitespace, and no trailing newline:
+
+1. The `nonce` the client sent in the initial grant request.
+2. The `nonce` the authorization server returned in its response to the initial grant request.
+3. The `interact_ref` the authorization server is about to return on this redirect.
+4. The grant endpoint URI the client used for its initial request.
+
+The resulting string is hashed with `sha-256` (the only hashing algorithm Open Payments currently supports), and the digest is Base64-encoded with no padding. The result is sent as the `hash` parameter on the redirect.
+
+```http title="Example hash base"
+VJLO6A4CATR0KRO
+MBDOFXG4Y5CVJCX821LH
+4IFWWIKYB2PQ6U56NL1
+https://server.example.com/tx
+```
+
+```http title="Resulting hash"
+x-gguKWTj8rQf7d7i3w3UhzvuJ5bpOlKyAlVpLxBffY
+```
+
+ASEs must use the exact concatenation order and separator above. Any deviation breaks the client's verification.
+
+## Putting the three together
+
+The three mechanisms reinforce each other:
+
+- HTTP signatures authenticate every request and prevent tampering in flight.
+- Client keys give the authorization server a stable identity to attach grants to.
+- The interaction hash closes the loop on interactive grants by letting the client cryptographically confirm the round-trip through the IdP returned to the same authorization server.
+
+If an ASE skips signature validation, it cannot trust the client identity. If it skips key resolution, it cannot detect a forged signature. If it skips hash generation, clients cannot trust the redirect. ASEs must implement all three.
+
+For the client-side details (signing requests, generating keys, verifying the hash), refer to [HTTP signatures](/identity/http-signatures/), [Client keys](/identity/client-keys/), and [Hash verification](/identity/hash-verification/).

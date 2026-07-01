@@ -4,6 +4,7 @@ parent: Concepts
 ---
 
 import { LinkOut, Tooltip } from '@interledger/docs-design-system'
+import ForAsesAuthServer from '/src/content/docs/partials/_for-ases-auth-server.mdx'
 
 :::tip[Summary]
 Authorization in Open Payments refers to the process by which a client obtains permission from a resource owner to access and perform operations on protected resources.
@@ -14,6 +15,8 @@ Open Payments leverages the <LinkOut href='https://datatracker.ietf.org/doc/html
 ## Authorization server
 
 The authorization server grants permission for a client to access the Open Payments APIs and the `incoming-payment`, `quote`, and `outgoing-payment` resources. It does this by issuing access tokens, which represent a set of access rights and/or attributes granted to the client. With the appropriate access tokens, the client can perform allowed operations, such as creating incoming and outgoing payments, on behalf of the resource owner (RO).
+
+<ForAsesAuthServer />
 
 ### Relationship between grants and access tokens
 
@@ -27,17 +30,17 @@ This section outlines the different types of grants that clients can request wit
 
 ### incoming-payment
 
-A client typically begins the Open Payments flow by requesting an incoming payment grant from the authorization server on the _recipient_ side. However, there are instances where the client may request an outgoing payment grant first, such as in the case of Web Monetization.
+A client typically begins the Open Payments flow by requesting an incoming payment grant from the authorization server on the _recipient_ side. However, there are instances where the client may request an outgoing payment grant first, such as in the case of <LinkOut href='https://webmonetization.org'>Web Monetization</LinkOut>.
 
 The client can request a single grant to create multiple incoming payments for different Open Payments-enabled accounts as long as each account belongs to the same <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip>.
 
-Incoming payment grants are non-interactive by default, meaning interaction by an individual (typically the client’s user) is not required for the authorization server to issue an access token. Clients can use [directed identity](/identity/client-keys#client-requests) for incoming payment grant requests.
+Incoming payment grants are non-interactive by default, meaning interaction by an individual (typically the client’s user) is not required for the authorization server to issue an access token. If the grant request includes the `list-all` action, the authorization server should require interaction before issuing an access token, since that action lets the client list incoming payments it did not create. Clients can use [directed identity](/identity/client-keys#client-requests) for incoming payment grant requests.
 
 ### quote
 
 After the client receives an incoming payment grant and an incoming payment resource is created on the recipient's account, the client requests a quote grant from the authorization server on the _sender_ side. The client can request a single grant to create multiple quotes for different Open Payments-enabled accounts as long as each account belongs to the same <Tooltip content="Account servicing entity" client: load><span>ASE</span></Tooltip>.
 
-Quote grants are non-interactive by default, meaning interaction by an individual (typically the client’s user) is not required for the authorization server to issue an access token. Clients can also use [directed identity](/identity/client-keys#client-requests) for quote grant requests.
+Quote grants are non-interactive by default, meaning interaction by an individual (typically the client’s user) is not required for the authorization server to issue an access token. If the grant request includes the `list-all` action, the authorization server should require interaction before issuing an access token, since that action lets the client list quotes it did not create. Clients can also use [directed identity](/identity/client-keys#client-requests) for quote grant requests.
 
 ### outgoing-payment
 
