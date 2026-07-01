@@ -26,8 +26,8 @@ For every signed incoming request, ASEs must:
 
 1. Read the `Signature-Input` header to identify the `keyId` and the list of covered components.
 2. Reconstruct the signature base from those components exactly as the client did.
-3. Resolve the public key (refer to [Client key resolution](#client-key-resolution) below).
-4. Verify the `Signature` header against the reconstructed signature base using Ed25519.
+3. Resolve the client's public key (refer to [Client key resolution](#client-key-resolution) below).
+4. Verify the `Signature` header against the reconstructed signature base using that public key and Ed25519.
 5. Reject the request if any of the following are true:
    - Required components (method, target URI, content digest where applicable, authorization header where applicable) are missing.
    - The signature does not validate.

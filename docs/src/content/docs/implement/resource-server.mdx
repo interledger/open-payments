@@ -75,7 +75,7 @@ ILP is currently the only payment method defined in the Open Payments standard. 
 
 Open Payments carries payment instructions, it does not move funds. The resource server records the agreement between parties ("ASE A will deliver X to ASE B against this incoming payment") and exposes it through the APIs.
 
-The ASE is responsible for executing the payment against the underlying accounts:
+The ASE is responsible for executing the payment against the underlying accounts.
 
 - Once the outgoing payment is created and the corresponding incoming payment is open, the sender's ASE must deliver the agreed amount to the recipient.
 - When the sender and recipient use different ASEs, settlement between those ASEs runs over a shared payment rail outside of Open Payments and ILP.
@@ -86,13 +86,13 @@ ASEs must keep the resource server's view of payment progress aligned with what 
 
 ## Token validation
 
-Every request to the resource server carries an access token issued by the ASE's authorization server. Before serving the request, the resource server must validate that the token:
+Every request to the resource server carries an access token issued by the ASE's authorization server. Before serving the request, the resource server must validate the token.
 
 - Is well-formed and not revoked.
 - Covers the requested action (`create`, `read`, `list`, `complete`) and resource type (`incoming-payment`, `quote`, `outgoing-payment`).
 - Is scoped to the wallet address the request targets, where applicable.
 - Enforces grant `limits` on outgoing-payment `create` requests, including debit amount, receive amount, and interval restrictions collected during interactive consent.
 
-ASEs decide whether the resource server validates tokens locally (for example, against a shared cache) or by calling the authorization server. The protocol does not mandate one approach. Whichever pattern an ASE chooses, the resource server must refuse requests with insufficient tokens. For more details on token issuance and lifecycle, refer to [Authorization server](/implement/auth-server/).
+How and where tokens are validated is an ASE implementation choice. The checks above must still run on every request before the resource server serves it. For more details on token issuance and lifecycle, refer to [Authorization server](/implement/auth-server/).
 
 <RafikiReference />

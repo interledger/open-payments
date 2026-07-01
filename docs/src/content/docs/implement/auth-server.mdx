@@ -37,9 +37,11 @@ Every grant request must be signed by the client. The authorization server's fir
 
 After signature verification, the authorization server inspects the request to determine the grant type and whether interaction is required.
 
+Open Payments requires outgoing-payment grants to be interactive. For incoming-payment and quote grants, whether interaction is required is otherwise an ASE implementation choice. ASEs should require interaction for outgoing-payment grants and for any grant that includes the `list-all` action, since that action lets the client list resources it did not create. ASEs may also require interaction for all incoming-payment or quote grants. Reference implementations such as <LinkOut href='https://rafiki.dev/integration/requirements/open-payments/idp/#interactive-grants'>Rafiki</LinkOut> treat `list-all` as interactive by default.
+
 ### incoming-payment grants
 
-Non-interactive. The authorization server may issue an access token immediately if the request is well-formed and the client is trusted.
+`incoming-payment` grants are non-interactive by default. The authorization server may issue an access token immediately if the request is well-formed and the client is trusted, unless interaction is required for the requested actions.
 
 The client may include directed identity (a public key in the request body rather than a wallet address). The authorization server uses the embedded key for signature verification and does not require a wallet address or key registry lookup for this grant type.
 
@@ -47,13 +49,13 @@ The authorization server may issue a single grant whose access token covers mult
 
 ### quote grants
 
-Non-interactive. Same handling as incoming-payment grants. Directed identity is also permitted.
+`quote` grants are non-interactive by default and follow the same handling as incoming-payment grants, including when the client requests `list-all` or when the ASE requires interaction for all quote grants. Directed identity is also permitted.
 
 The authorization server may issue a single grant whose access token covers multiple quotes at this ASE, subject to the same single-ASE constraint.
 
 ### outgoing-payment grants
 
-**Interactive.** The authorization server must not issue an access token until the resource owner has explicitly consented to the outgoing payment.
+`outgoing-payment` grants are interactive. The authorization server must not issue an access token until the resource owner has explicitly consented to the outgoing payment.
 
 When the authorization server receives an outgoing-payment grant request:
 

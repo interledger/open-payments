@@ -36,7 +36,7 @@ The IdP is the only system in the flow that the resource owner is authenticated 
 - Any time or velocity limits attached to the request.
 - A clear accept/deny choice.
 
-ASEs decide the exact UI, but the consent prompt must accurately reflect what the authorization server will encode in the resulting grant. If the IdP under-represents the requested access (for example, by omitting a `interval`), the grant must be denied or the access scaled down to what the user actually saw and accepted.
+ASEs decide the exact UI, but the consent prompt must accurately reflect what the authorization server will encode in the resulting grant. If the IdP does not accurately reflect the access the ASE received in the grant request, the resource owner may consent to more access than they were shown, or less than the client requested. That exposes both the ASE and the resource owner to risk.
 
 ## How consent flows back
 
