@@ -6,16 +6,16 @@ import { Tabs, TabItem } from '@astrojs/starlight/components'
 ```ts
 const grant = await client.grant.request(
   {
-    url: userWalletAddress.authServer,
+    url: userWalletAddress.authServer
   },
   {
     subject: {
       sub_ids: [
         {
           id: userWalletAddress.id,
-          format: 'uri',
-        },
-      ],
+          format: 'uri'
+        }
+      ]
     },
     client: userWalletAddress.id,
     interact: {
@@ -23,11 +23,11 @@ const grant = await client.grant.request(
       finish: {
         method: 'redirect',
         uri: 'https://paymentplatform.example/finish/{...}', // where to redirect the user to after they've completed the interaction
-        nonce: NONCE,
-      },
-    },
-  },
-);
+        nonce: NONCE
+      }
+    }
+  }
+)
 ```
 
  </TabItem>
