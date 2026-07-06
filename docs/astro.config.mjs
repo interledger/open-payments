@@ -387,7 +387,7 @@ export default defineConfig({
                 {
                   label: 'Verify ownership of a wallet address',
                   translations: {
-                     es: 'Verificar la propiedad de una dirección de billetera'
+                    es: 'Verificar la propiedad de una dirección de billetera'
                   },
                   link: '/guides/verify-wallet-address-ownership/'
                 },
