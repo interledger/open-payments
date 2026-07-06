@@ -6,13 +6,17 @@ import { Tabs, TabItem } from '@astrojs/starlight/components'
 ```ts wrap
 const userOutgoingPaymentGrant = await client.grant.continue(
   {
-    accessToken: pendingUserOutgoingPaymentGrant.continue.acces_token.value,
+    accessToken: pendingUserOutgoingPaymentGrant.continue.access_token.value,
     url: pendingUserOutgoingPaymentGrant.continue.uri
   },
   {
     interact_ref: interactRef
   }
 )
+
+if (!isFinalizedGrantWithAccessToken(userOutgoingPaymentGrant)) {
+  throw new Error('Expected finalized grant')
+}
 ```
 
   </TabItem>

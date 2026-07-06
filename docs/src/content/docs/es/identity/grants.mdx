@@ -32,9 +32,7 @@ Un servidor de autorización se identifica de forma exclusiva por su URI de punt
 
 ### Registros de claves
 
-Un registro de claves es una lista de claves asociadas con clientes que requieren acceso a recursos protegidos de Open Payments. Los registros de claves se exponen públicamente mediante un punto final `jwks.json` y permiten que un servidor de autorización verifique que un cliente es quien dice ser.
-
-Un cliente debe generar y agregar su clave a su registro de claves antes de solicitar una concesión por primera vez. Para obtener más información sobre la generación y el registro de claves y sobre cómo funcionan los registros de claves con los servidores de autorización, consulte la página [Claves de clientes](/es/identity/client-keys).
+Un cliente debe generar y agregar su clave a su registro de claves antes de solicitar una concesión por primera vez. Un cliente que utiliza la identidad dirigida proporciona su clave pública directamente en la solicitud de concesión y no necesita un registro de claves. Para obtener más información sobre la generación y el registro de claves y sobre cómo funcionan los registros de claves con los servidores de autorización, consulte la página [Claves de clientes](/es/identity/client-keys).
 
 ## Solicitudes de concesión
 

@@ -8,6 +8,12 @@ import { LinkOut } from '@interledger/docs-design-system'
 import { Tabs, TabItem, LinkButton, Badge } from '@astrojs/starlight/components'
 import Begin from '/src/content/docs/partials/_before-you-begin.mdx'
 import Ts from '/src/content/docs/partials/_ts-init-config.mdx'
+import TsButton from '/src/content/docs/partials/sdk/_ts-button.mdx'
+import RustButton from '/src/content/docs/partials/sdk/_rust-button.mdx'
+import PhpButton from '/src/content/docs/partials/sdk/_php-button.mdx'
+import GoButton from '/src/content/docs/partials/sdk/_go-button.mdx'
+import JavaButton from '/src/content/docs/partials/sdk/_java-button.mdx'
+import NetButton from '/src/content/docs/partials/sdk/_net-button.mdx'
 
 The [Grant Request API](/apis/auth-server/operations/post-request) lets you request a grant for incoming payment, outgoing payment, and quote resources.
 
@@ -25,7 +31,7 @@ The code snippets below let an authenticated client request a grant for an incom
 
 <Tabs syncKey="langs">
 <TabItem label='TypeScript/NodeJS' icon='node'>
-<LinkButton href="https://github.com/interledger/open-payments-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+<TsButton />
 
 <details>
   <summary>Initial configuration</summary>
@@ -34,11 +40,14 @@ The code snippets below let an authenticated client request a grant for an incom
 
 ```ts wrap
 // Import dependencies
-import { createAuthenticatedClient } from '@interledger/open-payments'
+import {
+  createAuthenticatedClient,
+  isFinalizedGrantWithAccessToken
+} from '@interledger/open-payments'
 
 // Initialize client
 const client = await createAuthenticatedClient({
-  walletAddressUrl: WALLET_ADDRESS,
+  walletAddressUrl: CLIENT_WALLET_ADDRESS,
   privateKey: PRIVATE_KEY_PATH,
   keyId: KEY_ID
 })
@@ -66,8 +75,8 @@ const grant = await client.grant.request(
 )
 
 // Check grant state
-if (isPendingGrant(grant)) {
-  throw new Error('Expected non-interactive grant')
+if (!isFinalizedGrantWithAccessToken(grant)) {
+  throw new Error('Expected finalized grant')
 }
 
 // Output
@@ -84,7 +93,7 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 
 </TabItem>
 <TabItem label="Rust" icon='seti:rust'>
-<LinkButton href="https://github.com/interledger/open-payments-rust/tree/main/src/snippets#readme" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+<RustButton />
 
 ```rust wrap
 // Import dependencies
@@ -152,7 +161,7 @@ match response {
 
 </TabItem>
 <TabItem label='PHP' icon='seti:php'>
-<LinkButton href="https://github.com/interledger/open-payments-php-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+<PhpButton />
 
 ```php wrap
 // Import dependencies
@@ -205,7 +214,7 @@ echo 'GRANT OBJECT: ' . PHP_EOL . print_r($grant, true);
 </TabItem>
 
 <TabItem label="Go" icon='seti:go'>
-<LinkButton href="https://github.com/interledger/open-payments-go/blob/main/README.md" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+<GoButton />
 
 ```go wrap
 package main
@@ -286,7 +295,7 @@ func main() {
 
 </TabItem>
 <TabItem label='Java' icon='seti:java'>
-<LinkButton href="https://github.com/interledger/open-payments-java?tab=readme-ov-file#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+<JavaButton />
 
 ```java wrap
 // Import dependencies
@@ -317,7 +326,7 @@ log.info("INCOMING_PAYMENT_GRANT: {}", grantRequest);
 
 </TabItem>
 <TabItem label='.NET' icon='seti:c-sharp'>
-<LinkButton href="https://github.com/interledger/open-payments-dotnet/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+<NetButton />
 
 ```csharp wrap
 // Import dependencies

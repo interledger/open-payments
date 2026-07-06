@@ -16,19 +16,32 @@ Los montos en Open Payments definen valores monetarios mediante códigos de acti
 
 Los montos representan valores monetarios y son fundamentales para cada operación de Open Payments. Ya sea que esté creando un pago entrante, solicitando una cotización o rastreando el progreso de un pago, cada monto consta de tres componentes clave: un valor numérico `value`, un código de activo `assetCode` y una escala de activo `assetScale`. Comprender estos componentes es crucial para desarrollar aplicaciones de Open Payments.
 
+## Montos por debitar y recibir
+
+Antes de conocer los componentes de los montos, debe comprender la diferencia entre los montos por debitar y los montos por recibir.
+
+- Monto por debitar - El monto total que se cobrará a un remitente, en su activo o moneda, al completarse un pago saliente.
+- Monto por recibir - El monto que se acreditará en la cuenta del destinatario en su activo o moneda.
+
 ## Valores
+
+El primer componente que conforma un monto es un valor numérico (`value`).
 
 Para maximizar la precisión y evitar errores de redondeo en los cálculos financieros, Open Payments utiliza tipos de datos numéricos sin decimales para representar valores. En el contexto de los lenguajes de programación, esto significa que Open Payments emplea números enteros sin signo de 64 bits para los montos monetarios, en lugar de números de punto flotante.
 
-Un ejemplo de valor es el número 10000.
+Un ejemplo de valor es el número `10000`.
 
 ## Códigos de activo
+
+El segundo componente de un monto es un `assetCode`.
 
 Los códigos de activo identifican el tipo de moneda o activo que se utiliza en un pago y deben seguir la norma <LinkOut href='https://es.wikipedia.org/wiki/ISO_4217'>ISO 4217</LinkOut> para la representación de monedas.
 
 Un ejemplo de `assetCode` ISO 4217 es `USD`, que representa el dólar estadounidense.
 
 ## Escalas de activo
+
+El tercer componente de un monto es un `assetScale`.
 
 Una escala de activo indica la cantidad de posiciones decimales que utiliza una moneda. Es como especificar si se está contando en dólares, céntimos o unidades más pequeñas.
 
@@ -52,7 +65,7 @@ $$\frac{10000}{10^2} = \frac{10000}{100} = \$100.00$$
       <th>Moneda</th>
       <th>Código de activo</th>
       <th>Escala de activo</th>
-      <th>Monto entero</th>
+      <th>Monto entero (Value)</th>
       <th>Valor existente</th>
     </tr>
   </thead>

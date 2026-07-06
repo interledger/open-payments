@@ -1,0 +1,72 @@
+---
+title: Implementing Open Payments
+next: Developer Concepts
+---
+
+import { LinkCard, CardGrid } from '@astrojs/starlight/components'
+import { LinkOut } from '@interledger/docs-design-system'
+
+:::tip[Summary]
+Implementing Open Payments means standing up the servers that make a financial service provider's accounts Open Payments-enabled. This page is the entry point for engineers at banks, digital wallets, mobile payment systems, and other providers who are building that server stack.
+:::
+
+This page is the starting point for account servicing entity (ASE) implementors.
+
+## What ASEs build
+
+To make accounts Open Payments-enabled, ASEs operate three servers and integrate with an identity provider:
+
+- A **wallet address server** that returns public information about each Open Payments-enabled account.
+- A **resource server** that hosts the `incoming-payment`, `quote`, and `outgoing-payment` APIs.
+- An **authorization server** that processes grant requests, issues access tokens, and coordinates user consent.
+- An **identity provider** integration that authenticates the resource owner and collects explicit consent for interactive grants.
+
+ASEs are also responsible for settlement. Open Payments only carries the payment instruction; actual movement of funds happens between ASEs over a shared payment rail.
+
+## What to read
+
+ASEs should refer to the [For ASEs](/implement/ase-overview/) pages for server-side details. The pages are organized as follows:
+
+<CardGrid>
+  <LinkCard
+    title="ASE overview"
+    href="/implement/ase-overview/"
+    description="What an ASE must build, how these pages relate to the rest of the docs, and where Rafiki fits in."
+  />
+  <LinkCard
+    title="Wallet address architecture"
+    href="/implement/wallet-address-architecture/"
+    description="URL constraints, the response contract, multi-currency patterns, and address-to-account mapping policy."
+  />
+  <LinkCard
+    title="Resource server"
+    href="/implement/resource-server/"
+    description="What the resource server must do for each resource type and how it hands off to settlement."
+  />
+  <LinkCard
+    title="Authorization server"
+    href="/implement/auth-server/"
+    description="GNAP processing, interactive consent orchestration, and token lifecycle management."
+  />
+  <LinkCard
+    title="Identity provider integration"
+    href="/implement/identity-provider/"
+    description="What the IdP must display, what the auth server passes to it, and how decisions flow back."
+  />
+  <LinkCard
+    title="Security"
+    href="/implement/security/"
+    description="Signature validation, client key resolution, and interaction hash generation from the server side."
+  />
+</CardGrid>
+
+## The rest of the docs
+
+The Developer Concepts pages (under For Developers → Concepts) describe what client developers need to know to call the APIs. ASEs are welcome to read them. They describe the same protocol from the other side, but they are not the authoritative source for ASE implementation requirements.
+
+## Reference implementation
+
+<LinkOut href="https://rafiki.dev">Rafiki</LinkOut> is an open-source
+implementation of an Open Payments-compatible server stack. The [For
+ASEs](/implement/ase-overview/) pages describe the standard and protocol-level
+requirements. Rafiki's documentation describes one specific implementation.
