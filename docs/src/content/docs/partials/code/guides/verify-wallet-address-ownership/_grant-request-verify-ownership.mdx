@@ -1,9 +1,9 @@
 import { Tabs, TabItem } from '@astrojs/starlight/components'
 
 <Tabs syncKey="lang">
-<TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
 
-```ts
+```ts wrap
 const grant = await client.grant.request(
   {
     url: userWalletAddress.authServer
@@ -30,8 +30,8 @@ const grant = await client.grant.request(
 )
 ```
 
- </TabItem>
- <TabItem label='Rust' icon='seti:rust'>
+  </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
 
 ```rust wrap
 use open_payments::types::{InteractRequest, InteractStart, InteractFinish, InteractFinishMethod, GrantRequest, Subject, SubjectId};
@@ -60,8 +60,8 @@ let pending_grant = client
   .await?;
 ```
 
- </TabItem>
-  <TabItem label='PHP' icon='seti:php'>
+  </TabItem>
+    <TabItem label='PHP' icon='seti:php'>
 
 ```php wrap
 $grant = $client->grant()->request(
@@ -90,8 +90,8 @@ $grant = $client->grant()->request(
 );
 ```
 
- </TabItem>
- <TabItem label='Go' icon='seti:go'>
+  </TabItem>
+  <TabItem label='Go' icon='seti:go'>
 
 ```go wrap
 subject := as.Subject{
@@ -124,9 +124,9 @@ if err != nil {
 }
 ```
 
-  </TabItem>
+    </TabItem>
 
-  <TabItem label='Java' icon='seti:java'>
+    <TabItem label='Java' icon='seti:java'>
 
 ```java wrap
 var subject = Subject.build(userWalletAddress.getId(), "uri");
@@ -141,9 +141,9 @@ var grantRequest = client.auth().grant().request(
 );
 ```
 
-  </TabItem>
+    </TabItem>
 
-<TabItem label='.NET' icon='seti:c-sharp'>
+  <TabItem label='.NET' icon='seti:c-sharp'>
 
 ```csharp wrap
 var grant = await client.RequestGrantAsync(
@@ -180,6 +180,6 @@ var grant = await client.RequestGrantAsync(
 );
 ```
 
-</TabItem>
+  </TabItem>
 
 </Tabs>
