@@ -709,9 +709,9 @@ Console.WriteLine($"CONTINUE_URI = {grant.Continue.Uri}");
 
 ## Create a subject verification request
 
-The `subject` field lets a client ask the authorization server to verify information about a subject as part of a grant request. For example, a client can use it to confirm that a wallet address identifies a particular account holder. The request must include `subject.sub_ids` with the subject's `id` and the `format` (`uri`) the client accepts.
+The `subject` field lets a client ask the authorization server to verify information about a subject as part of a grant request. For example, a client can use it to confirm that a wallet address identifies a particular account holder. The request must include `subject.sub_ids` with the subject's `id` and the `format` the client accepts.
 
-Subject verification requests are always [interactive grants](#interactive-grants). The request must include an `interact` object, and the user consents through the [identity provider (IdP)](/identity/idp) flow. After the user completes the interaction, the grant continuation response can include a `subject` object with the verified `sub_ids`.
+Subject verification requests are always interactive grants. The request must include an `interact` object, and the user consents through the [identity provider (IdP)](/identity/idp) flow. After the user completes the interaction, the grant continuation response can include a `subject` object with the verified `sub_ids`.
 
 <Badge text="Authenticated client required" variant="note" />
 
