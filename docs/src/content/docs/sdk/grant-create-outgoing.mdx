@@ -711,7 +711,7 @@ Console.WriteLine($"CONTINUE_URI = {grant.Continue.Uri}");
 
 The `subject` field lets a client ask the authorization server to verify information about a subject as part of a grant request, without requesting payment permissions in `access_token`. The request must include `subject.sub_ids` with the subject's `id` and the `format` the client accepts.
 
-One use case is verifying that the correct user has access to a specific wallet address. For example, a payout platform can confirm during onboarding that a user controls the wallet address they provided. Refer to the [Verify ownership of a wallet address](/guides/verify-wallet-address-ownership/) guide for an example. The `subject` field can also be used for other verification scenarios.
+One use case is verifying that the correct user has access to a specific wallet address. For example, a payout platform can confirm during onboarding that a user controls the wallet address they provided. The `subject` field can also be used for other verification scenarios.
 
 Subject verification requests are always interactive grants. The request must include an `interact` object, and the user is authenticated through the [identity provider (IdP)](/identity/idp). The IdP verifies the subject information in `subject.sub_ids`, such as whether the user has access to a wallet address. When verification is successful, the grant continuation response includes a `subject` object with the verified `sub_ids`.
 
