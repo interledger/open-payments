@@ -707,6 +707,422 @@ Console.WriteLine($"CONTINUE_URI = {grant.Continue.Uri}");
 </TabItem>
 </Tabs>
 
+## Create a subject verification request
+
+The `subject` field lets a client ask the authorization server to verify information about a subject as part of a grant request. For example, a client can use it to confirm that a wallet address identifies a particular account holder. The request must include `subject.sub_ids` with the subject's `id` and the `format` (`uri`) the client accepts.
+
+Subject verification requests are always [interactive grants](#interactive-grants). The request must include an `interact` object, and the user consents through the [identity provider (IdP)](/identity/idp) flow. After the user completes the interaction, the grant continuation response can include a `subject` object with the verified `sub_ids`.
+
+<Badge text="Authenticated client required" variant="note" />
+
+<Tabs syncKey="langs">
+<TabItem label='TypeScript/NodeJS' icon='node'>
+<TsButton />
+
+<details>
+  <summary>Initial configuration</summary>
+  <Ts />
+</details>
+
+```ts wrap
+// Import dependencies
+import {
+  createAuthenticatedClient,
+  isPendingGrant
+} from '@interledger/open-payments'
+
+// Initialize client
+const client = await createAuthenticatedClient({
+  walletAddressUrl: CLIENT_WALLET_ADDRESS,
+  privateKey: PRIVATE_KEY_PATH,
+  keyId: KEY_ID
+})
+
+// Get wallet address information
+const walletAddress = await client.walletAddress.get({
+  url: WALLET_ADDRESS
+})
+
+// Request subject verification grant
+// TODO(docs): confirm `subject` support in TypeScript SDK
+const grant = await client.grant.request(
+  {
+    url: walletAddress.authServer
+  },
+  {
+    subject: {
+      sub_ids: [
+        {
+          id: walletAddress.id,
+          format: 'uri'
+        }
+      ]
+    },
+    client: CLIENT_WALLET_ADDRESS,
+    interact: {
+      start: ['redirect'],
+      finish: {
+        method: 'redirect',
+        uri: 'http://localhost:3344',
+        nonce: NONCE
+      }
+    }
+  }
+)
+
+// Check grant state
+if (!isPendingGrant(grant)) {
+  throw new Error('Expected pending/interactive grant')
+}
+
+// Output
+console.log('Please interact at the following URL:', grant.interact.redirect)
+console.log('CONTINUE_ACCESS_TOKEN =', grant.continue.access_token.value)
+console.log('CONTINUE_URI =', grant.continue.uri)
+```
+
+For TypeScript, run `tsx path/to/directory/index.ts`.
+
+{/* TODO(docs): add View full source link when subject verification snippet exists in open-payments repo */}
+
+</TabItem>
+<TabItem label="Rust" icon='seti:rust'>
+<RustButton />
+
+```rust wrap
+// Import dependencies
+use open_payments::client::api::UnauthenticatedResources;
+use open_payments::client::AuthenticatedResources;
+use open_payments::snippets::utils::{create_authenticated_client, get_env_var, load_env};
+use open_payments::types::GrantResponse;
+use serde_json::json;
+use uuid::Uuid;
+
+// Initialize client
+// Authenticated client can be also used for unauthenticated resources
+let client = create_authenticated_client()?;
+
+// Get wallet address information
+let wallet_address_url = get_env_var("WALLET_ADDRESS_URL")?;
+let client_wallet_address_url = get_env_var("CLIENT_WALLET_ADDRESS_URL")?;
+let wallet_address = client.wallet_address().get(&wallet_address_url).await?;
+
+// Request subject verification grant
+// TODO(docs): confirm `subject` support in Rust SDK
+let grant_request = json!({
+    "subject": {
+        "sub_ids": [
+            {
+                "id": wallet_address_url,
+                "format": "uri"
+            }
+        ]
+    },
+    "client": client_wallet_address_url,
+    "interact": {
+        "start": ["redirect"],
+        "finish": {
+            "method": "redirect",
+            "uri": "http://localhost:3344",
+            "nonce": Uuid::new_v4().to_string()
+        }
+    }
+});
+
+let response = client
+    .grant()
+    .request(&wallet_address.auth_server, &grant_request)
+    .await?;
+
+// Check grant state
+match response {
+    GrantResponse::WithInteraction {
+        interact,
+        continue_,
+    } => {
+        println!("Please interact at the following URL: {interact:#?}");
+        println!("CONTINUE_ACCESS_TOKEN = {:#?}", continue_.access_token.value);
+        println!("CONTINUE_URI = {:#?}", continue_.uri);
+    }
+    _ => {
+        panic!("Expected pending/interactive grant");
+    }
+}
+```
+
+{/* TODO(docs): add View full source link when subject verification snippet exists in open-payments repo */}
+
+</TabItem>
+<TabItem label='PHP' icon='seti:php'>
+<PhpButton />
+
+```php wrap
+// Import dependencies
+use OpenPayments\AuthClient;
+use OpenPayments\Config\Config;
+
+// Initialize client
+$config = new Config(
+    $WALLET_ADDRESS,
+    $PRIVATE_KEY,
+    $KEY_ID
+);
+$opClient = new AuthClient($config);
+
+// Get wallet address information
+$wallet  = $opClient->walletAddress()->get([
+    'url' => $config->getWalletAddressUrl()
+]);
+
+// Request subject verification grant
+// TODO(docs): confirm `subject` support in PHP SDK
+$grant = $opClient->grant()->request(
+    [
+        'url' => $wallet->authServer
+    ],
+    [
+        'subject' => [
+            'sub_ids' => [
+                [
+                    'id' => $wallet->id,
+                    'format' => 'uri',
+                ],
+            ],
+        ],
+        'client' => $config->getWalletAddressUrl(),
+        'interact' => [
+            'start' => ["redirect"],
+            'finish' => [
+                'method' => "redirect",
+                'uri' => 'https://localhost/?paymentId=123423',
+                'nonce' => "1234567890",
+            ],
+        ]
+    ]
+);
+
+// Check grant state
+if (!$grant instanceof \OpenPayments\Models\PendingGrant) {
+    throw new \Error('Expected interactive grant');
+}
+
+// Output
+echo 'Please interact at the following URL: ' . $grant->interact->redirect . PHP_EOL;
+echo 'CONTINUE_ACCESS_TOKEN = ' . $grant->continue->access_token->value . PHP_EOL;
+echo 'CONTINUE_URI = ' . $grant->continue->uri . PHP_EOL;
+echo 'GRANT OBJECT: ' . PHP_EOL . print_r($grant, true);
+```
+
+{/* TODO(docs): add View full source link when subject verification snippet exists in open-payments-php-snippets repo */}
+
+</TabItem>
+<TabItem label="Go" icon='seti:go'>
+<GoButton />
+
+```go wrap
+package main
+
+// Import dependencies
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
+
+	op "github.com/interledger/open-payments-go"
+)
+
+func main() {
+	// Initialize client
+	client, err := op.NewAuthenticatedClient(WALLET_ADDRESS_URL, PRIVATE_KEY_BASE_64, KEY_ID)
+	if err != nil {
+		log.Fatalf("Error creating authenticated client: %v\n", err)
+	}
+
+	// Get wallet address information
+	walletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
+		URL: WALLET_ADDRESS_URL,
+	})
+	if err != nil {
+		log.Fatalf("Error fetching wallet address: %v\n", err)
+	}
+
+	// Request subject verification grant
+	// TODO(docs): confirm `subject` support in Go SDK
+	requestBody := map[string]interface{}{
+		"subject": map[string]interface{}{
+			"sub_ids": []map[string]string{
+				{
+					"id":     *walletAddress.Id,
+					"format": "uri",
+				},
+			},
+		},
+		"client": CLIENT_WALLET_ADDRESS_URL,
+		"interact": map[string]interface{}{
+			"start": []string{"redirect"},
+			"finish": map[string]string{
+				"method": "redirect",
+				"uri":    "http://localhost:3344",
+				"nonce":  NONCE,
+			},
+		},
+	}
+
+	grant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
+		URL:         *walletAddress.AuthServer,
+		RequestBody: requestBody,
+	})
+	if err != nil {
+		log.Fatalf("Error requesting grant: %v\n", err)
+	}
+
+	// Check grant state
+	if !grant.IsInteractive() {
+		log.Fatalf("Expected interactive grant")
+	}
+
+	// Output
+	grantJSON, err := json.MarshalIndent(grant, "", "  ")
+	if err != nil {
+		log.Fatalf("Error marshaling grant: %v\n", err)
+	}
+	fmt.Println("GRANT:", string(grantJSON))
+	fmt.Println("Please interact at the following URL:", grant.Interact.Redirect)
+	fmt.Println("CONTINUE_ACCESS_TOKEN =", grant.Continue.AccessToken.Value)
+	fmt.Println("CONTINUE_URI =", grant.Continue.Uri)
+}
+```
+
+</TabItem>
+<TabItem label='Java' icon='seti:java'>
+<JavaButton />
+
+```java wrap
+// Import dependencies
+import org.interledger.openpayments.httpclient.OpenPaymentsHttpClient;
+import org.interledger.openpayments.IOpenPaymentsClient;
+
+// Initialize client
+var client = OpenPaymentsHttpClient.defaultClient(
+    "WalletAddress",
+    "PrivateKeyPEM",
+    "KeyId"
+);
+
+// Get wallet address information
+var walletAddress = client.walletAddress().get(WALLET_ADDRESS);
+
+// Request subject verification grant
+// TODO(docs): confirm `subject` support in Java SDK
+// {
+//   "subject": { "sub_ids": [ { "id": "<wallet-address>", "format": "uri" } ] },
+//   "client": "<client-wallet-address>",
+//   "interact": {
+//     "start": ["redirect"],
+//     "finish": { "method": "redirect", "uri": "http://localhost:3344", "nonce": "<nonce>" }
+//   }
+// }
+var grant = client.auth().grant().request(
+    walletAddress.getAuthServer(),
+    Map.of(
+        "subject", Map.of(
+            "sub_ids", List.of(
+                Map.of("id", walletAddress.getId(), "format", "uri")
+            )
+        ),
+        "client", CLIENT_WALLET_ADDRESS,
+        "interact", Map.of(
+            "start", List.of("redirect"),
+            "finish", Map.of(
+                "method", "redirect",
+                "uri", "http://localhost:3344",
+                "nonce", NONCE
+            )
+        )
+    )
+);
+
+// Check grant state
+// TODO(docs): confirm pending-grant check API in Java SDK
+
+// Output
+log.info("Please interact at the following URL: {}", grant.getInteract().getRedirect());
+log.info("CONTINUE_ACCESS_TOKEN = {}", grant.getContinue().getAccessToken().getValue());
+log.info("CONTINUE_URI = {}", grant.getContinue().getUri());
+```
+
+</TabItem>
+<TabItem label='.NET' icon='seti:c-sharp'>
+<NetButton />
+
+```csharp wrap
+// Import dependencies
+using Microsoft.Extensions.DependencyInjection;
+using OpenPayments.Sdk.Clients;
+using OpenPayments.Sdk.Extensions;
+using OpenPayments.Sdk.Generated.Auth;
+using OpenPayments.Sdk.HttpSignatureUtils;
+
+// Initialize client
+var client = new ServiceCollection()
+    .UseOpenPayments(opts =>
+    {
+        opts.UseAuthenticatedClient = true;
+        opts.KeyId = CLIENT_ID;
+        opts.PrivateKey = KeyUtils.LoadPem(CLIENT_SECRET);
+        opts.ClientUrl = new Uri(CLIENT_WALLET_ADDRESS);
+    })
+    .BuildServiceProvider()
+    .GetRequiredService<IAuthenticatedClient>();
+
+// Get wallet address information
+var walletAddress = await client.GetWalletAddressAsync(WALLET_ADDRESS);
+
+// Request subject verification grant
+// TODO(docs): confirm `subject` support in .NET SDK
+var grant = await client.RequestGrantAsync(
+    new RequestArgs() { Url = walletAddress.AuthServer },
+    new
+    {
+        Subject = new
+        {
+            SubIds = new[]
+            {
+                new { Id = WALLET_ADDRESS, Format = "uri" }
+            }
+        },
+        Client = CLIENT_WALLET_ADDRESS,
+        Interact = new InteractRequest()
+        {
+            Start = [Start.Redirect],
+            Finish = new Finish()
+            {
+                Method = FinishMethod.Redirect,
+                Uri = new Uri("http://localhost:3344"),
+                Nonce = NONCE
+            }
+        },
+    }
+);
+
+// Check grant state
+if (grant.Interact == null)
+{
+    throw new Exception("Expected interactive grant");
+}
+
+// Output
+Console.WriteLine($"Please interact at the following URL: {grant.Interact.Redirect}");
+Console.WriteLine($"CONTINUE_ACCESS_TOKEN = {grant.Continue.AccessToken.Value}");
+Console.WriteLine($"CONTINUE_URI = {grant.Continue.Uri}");
+```
+
+{/* TODO(docs): add View full source link when subject verification snippet exists in open-payments-dotnet repo */}
+
+</TabItem>
+</Tabs>
+
 ## References
 
 - [API specification](/apis/auth-server/operations/post-request)
