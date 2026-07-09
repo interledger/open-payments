@@ -1,0 +1,102 @@
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+
+<Tabs syncKey='lang'>
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+
+```ts wrap
+const userVerificationGrant = await client.grant.continue(
+  {
+    accessToken: pendingGrant.continue.access_token.value,
+    url: pendingGrant.continue.uri
+  },
+  {
+    interact_ref: interactRef
+  }
+)
+```
+
+  </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
+
+```rust wrap
+let continue_field = match &pending_grant.continue_field {
+  Some(c) => c,
+  None => {
+    eprintln!("Missing continue field on pending grant");
+    return Ok(());
+  }
+};
+
+let user_verification_grant = client
+  .grant()
+  .continue_grant(
+    &continue_field.uri,
+    &interact_ref,
+    Some(&continue_field.access_token.value),
+  )
+  .await?;
+```
+
+  </TabItem>
+
+  <TabItem label='PHP' icon='seti:php'>
+
+```php wrap
+$userVerificationGrant = $client->grant()->continue(
+  [
+    'accessToken' => $pendingGrant->continue->access_token->value,
+    'url' => $pendingGrant->continue->uri,
+  ],
+  [
+    'interact_ref' => $interactRef,
+  ],
+);
+```
+
+  </TabItem>
+
+  <TabItem label='Go' icon='seti:go'>
+
+```go wrap
+userVerificationGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
+  URL:         pendingGrant.Continue.Uri,
+  AccessToken: pendingGrant.Continue.AccessToken.Value,
+  InteractRef: INTERACT_REF,
+})
+if err != nil {
+  log.Fatalf("Error continuing grant: %v\n", err)
+}
+```
+
+  </TabItem>
+
+  <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var userVerificationGrant = client.auth().grant().finalize(
+  grantRequest,
+  interactRef
+);
+```
+
+  </TabItem>
+
+  <TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var userVerificationGrant = await client.ContinueGrantAsync(
+    new AuthRequestArgs
+    {
+        Url = grant.Continue.Uri,
+        AccessToken = grant.Continue.AccessToken.Value
+    },
+    new GrantContinueBody()
+    {
+        InteractRef = interactRef
+    }
+);
+```
+
+  </TabItem>
+
+</Tabs>

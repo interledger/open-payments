@@ -1,0 +1,137 @@
+---
+title: Verify ownership of a wallet address
+---
+
+import { LinkOut } from '@interledger/docs-design-system'
+import { Tabs, TabItem, Badge } from '@astrojs/starlight/components'
+import InteractionReq from '/src/content/docs/partials/_interaction-required.mdx'
+import Start from '/src/content/docs/partials/_grant-start-interaction.mdx'
+import Finish from '/src/content/docs/partials/_grant-finish-interaction.mdx'
+import GetWalletAddress from '/src/content/docs/partials/code/guides/verify-wallet-address-ownership/_get-wallet-address.mdx'
+import GrantRequestVerifyOwnership from '/src/content/docs/partials/code/guides/verify-wallet-address-ownership/_grant-request-verify-ownership.mdx'
+import RequestAGrantContinuation from '/src/content/docs/partials/code/guides/verify-wallet-address-ownership/_request-a-grant-continuation.mdx'
+
+:::tip[Summary]
+Learn how to verify that a user has access to the wallet address they provided through an interaction, without making a payment or getting a payment grant via IdP.
+:::
+
+Open Payments supports verifying that the correct user has access to a specific wallet address through an interactive authentication flow. Rather than requesting a grant to make or receive payments (which requires an `access_token` with permissions like `outgoing-payment` or `incoming-payment`), a client can request a grant targeting a specific `subject`.
+
+The authorization server interacts with the user through the identity provider (IdP) to confirm their identity. The IdP verifies that the user has access to the wallet address provided in the `subject` field.
+
+## Scenario
+
+For this guide, you'll assume the role of an app developer working for a payout platform. You want to ensure that each new user has access to the wallet address they provide when registering.
+
+The guide explains how to verify that a new user has access to the wallet address `https://cloudninebank.example.com/user` using a subject-based grant.
+
+## Endpoints
+
+- <Badge text="GET" variant="note" />
+  <LinkOut href="https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/">
+    Get Wallet Address
+  </LinkOut>
+- <Badge text="POST" variant="success" />
+  <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-request/">
+    Grant Request
+  </LinkOut>
+- <Badge text="POST" variant="success" />
+  <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-continue/">
+    Grant Continuation Request
+  </LinkOut>
+
+## Steps
+
+### 1. Get wallet address information
+
+First, call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wallet-address-server/operations/get-wallet-address) for the user's provided wallet address.
+
+<GetWalletAddress />
+
+<details>
+  <summary>Example response</summary>
+
+```json wrap
+{
+  "id": "https://cloudninebank.example.com/user",
+  "assetCode": "CAD",
+  "assetScale": 2,
+  "authServer": "https://auth.cloudninebank.example.com/",
+  "resourceServer": "https://cloudninebank.example.com/op"
+}
+```
+
+</details>
+
+### 2. Request an interactive outgoing payment grant
+
+Use the authorization server information received in the previous step to call the <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request).
+
+Provide a `subject` with the wallet address in the list of subject IDs.
+
+<InteractionReq />
+
+<details>
+  <summary>Example response</summary>
+
+```json wrap
+{
+  "interact": {
+    "redirect": "https://auth.cloudninebank.example.com/{...}", // uri to redirect the user to, to begin interaction
+    "finish": "..." // unique key to secure the callback
+  },
+  "continue": {
+    "access_token": {
+      "value": "..." // access token for continuing the outgoing payment grant request
+    },
+    "uri": "https://auth.cloudninebank.example.com/continue/{...}", // uri for continuing the outgoing payment grant request
+    "wait": 30
+  }
+}
+```
+
+</details>
+
+Here is how to specify the `subject` structure in your grant request:
+
+<GrantRequestVerifyOwnership />
+
+### 3. Start interaction with your user
+
+<Start />
+
+### 4. Finish interaction with your user
+
+<Finish />
+
+### 5. Request a grant continuation
+
+Once the user completes the interaction and is redirected back to your app, call the <Badge text="POST" variant="success" /> [Grant Continuation Request API](/apis/auth-server/operations/post-continue/) to finalize the verification.
+
+Issue the request to the `continue.uri` provided in the initial outgoing payment grant response (Step 2).
+
+Include the `interact_ref` returned in the redirect URI's query parameters.
+
+<RequestAGrantContinuation />
+
+<details>
+  <summary>Example response</summary>
+
+```json wrap
+{
+  "access_token": {
+    "value": "...", // final access token
+    "manage": "https://auth.cloudninebank.example.com/token/{...}" // management uri for the access token
+  },
+  "continue": {
+    "access_token": {
+      "value": "..."
+    },
+    "uri": "https://auth.cloudninebank.example.com/continue/{...}"
+  }
+}
+```
+
+</details>
+
+If the continuation request succeeds and returns the access token details, the identity provider (IdP) has successfully verified that the user owns the specified wallet address.

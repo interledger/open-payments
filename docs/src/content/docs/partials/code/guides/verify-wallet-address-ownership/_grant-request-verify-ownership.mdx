@@ -1,0 +1,185 @@
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+
+<Tabs syncKey="lang">
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+
+```ts wrap
+const grant = await client.grant.request(
+  {
+    url: userWalletAddress.authServer
+  },
+  {
+    subject: {
+      sub_ids: [
+        {
+          id: userWalletAddress.id,
+          format: 'uri'
+        }
+      ]
+    },
+    client: userWalletAddress.id,
+    interact: {
+      start: ['redirect'],
+      finish: {
+        method: 'redirect',
+        uri: 'https://paymentplatform.example/finish/{...}', // where to redirect the user to after they've completed the interaction
+        nonce: NONCE
+      }
+    }
+  }
+)
+```
+
+  </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
+
+```rust wrap
+use open_payments::types::{InteractRequest, InteractStart, InteractFinish, InteractFinishMethod, GrantRequest, Subject, SubjectId};
+
+let subject = Subject {
+  sub_ids: vec![SubjectId {
+    id: user_wallet_address.id.clone(),
+    format: "uri".into(),
+  }],
+};
+
+let interact = InteractRequest {
+  start: Some(vec![InteractStart::Redirect]),
+  finish: Some(InteractFinish {
+    method: InteractFinishMethod::Redirect,
+    uri: Some("https://paymentplatform.example/finish/{...}".into()),
+    nonce: Some("NONCE".into()),
+  }),
+};
+
+let grant_request = GrantRequest::new_with_subject(subject, Some(interact));
+
+let pending_grant = client
+  .grant()
+  .request(&user_wallet_address.auth_server, &grant_request)
+  .await?;
+```
+
+  </TabItem>
+    <TabItem label='PHP' icon='seti:php'>
+
+```php wrap
+$grant = $client->grant()->request(
+  [
+    'url' => $userWalletAddress->authServer,
+  ],
+  [
+    'subject' => [
+      'sub_ids' => [
+        [
+          'id' => $userWalletAddress->id,
+          'format' => 'uri',
+        ],
+      ],
+    ],
+    'client' => $userWalletAddress->id,
+    'interact' => [
+      'start' => ['redirect'],
+      'finish' => [
+        'method' => 'redirect',
+        'uri' => 'https://paymentplatform.example/finish/{...}', // where to redirect the user to after they've completed the interaction
+        'nonce' => NONCE,
+      ],
+    ],
+  ],
+);
+```
+
+  </TabItem>
+  <TabItem label='Go' icon='seti:go'>
+
+```go wrap
+subject := as.Subject{
+  SubIds: []as.SubjectId{
+    {
+      Id:     *userWalletAddress.Id,
+      Format: "uri",
+    },
+  },
+}
+
+interact := &as.InteractRequest{
+  Start: []as.InteractRequestStart{as.InteractRequestStartRedirect},
+  Finish: &as.InteractRequestFinish{
+    Method: as.Redirect,
+    Uri:    "https://paymentplatform.example/finish/{...}",
+    Nonce:  NONCE,
+  },
+}
+
+pendingGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
+  URL: *userWalletAddress.AuthServer,
+  RequestBody: as.GrantRequestWithSubject{
+    Subject:  subject,
+    Interact: interact,
+  },
+})
+if err != nil {
+  log.Fatalf("Error requesting grant: %v\n", err)
+}
+```
+
+    </TabItem>
+
+    <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+var subject = Subject.build(userWalletAddress.getId(), "uri");
+
+var urlToOpen = "https://paymentplatform.example/finish/{...}";
+
+var grantRequest = client.auth().grant().request(
+  userWalletAddress,
+  subject,
+  URI.create(urlToOpen),
+  "NONCE"
+);
+```
+
+    </TabItem>
+
+  <TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+var grant = await client.RequestGrantAsync(
+    new RequestArgs
+    {
+        Url = userWalletAddress.AuthServer,
+    },
+    new GrantCreateBodyWithInteract
+    {
+        Subject = new Subject
+        {
+            SubIds =
+            [
+                new SubjectId
+                {
+                    Id = userWalletAddress.Id,
+                    Format = "uri"
+                }
+            ]
+        },
+        Client = userWalletAddress.Id,
+        Interact = new InteractRequest
+        {
+            Start = [Start.Redirect],
+            Finish = new Finish
+            {
+                Method = FinishMethod.Redirect,
+                Uri = new Uri(
+                    "https://paymentplatform.example/finish/{...}"), // where to redirect your user after they've completed the interaction
+                Nonce = NONCE
+            }
+        }
+    }
+);
+```
+
+  </TabItem>
+
+</Tabs>
