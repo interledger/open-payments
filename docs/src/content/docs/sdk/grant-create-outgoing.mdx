@@ -746,7 +746,72 @@ coming soon
 <GoButton />
 
 ```go wrap
-coming soon
+package main
+
+// Import dependencies
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
+
+	op "github.com/interledger/open-payments-go"
+	as "github.com/interledger/open-payments-go/generated/authserver"
+)
+
+func main() {
+	// Initialize client
+	client, err := op.NewAuthenticatedClient(WALLET_ADDRESS_URL, PRIVATE_KEY_BASE_64, KEY_ID)
+	if err != nil {
+		log.Fatalf("Error creating authenticated client: %v\n", err)
+	}
+
+	// Get wallet address information
+	walletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
+		URL: WALLET_ADDRESS_URL,
+	})
+	if err != nil {
+		log.Fatalf("Error fetching wallet address: %v\n", err)
+	}
+
+	// Build subject verification request (no access_token; subject grants are always interactive)
+	subject := as.Subject{
+		SubIds: []struct {
+			Format as.SubjectSubIdsFormat `json:"format"`
+			Id     string                 `json:"id"`
+		}{
+			{Format: "uri", Id: WALLET_ADDRESS_URL},
+		},
+	}
+	interact := as.InteractRequest{
+		Start: []as.InteractRequestStart{as.InteractRequestStartRedirect},
+	}
+
+	var requestBody as.GrantRequest
+	if err := requestBody.FromGrantRequestWithSubject(as.GrantRequestWithSubject{
+		Subject:  subject,
+		Interact: interact,
+	}); err != nil {
+		log.Fatalf("Error building subject grant request: %v\n", err)
+	}
+
+	// Request subject verification grant
+	grant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
+		URL:         *walletAddress.AuthServer,
+		RequestBody: requestBody,
+	})
+	if err != nil {
+		log.Fatalf("Error requesting grant: %v\n", err)
+	}
+
+	// Output
+	grantJSON, err := json.MarshalIndent(grant, "", "  ")
+	if err != nil {
+		log.Fatalf("Error marshaling grant: %v\n", err)
+	}
+	fmt.Println("GRANT:", string(grantJSON))
+	fmt.Println("Please interact at the following URL:", grant.Interact.Redirect)
+}
 ```
 
 </TabItem>
