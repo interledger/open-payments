@@ -2,8 +2,9 @@
 title: Identity providers
 ---
 
-import { CodeBlock, LinkOut } from '@interledger/docs-design-system'
 import Interactive from '/src/content/docs/partials/_diagram-interactive-grant.mdx'
+import ForAsesIdentityProvider from '/src/content/docs/partials/_for-ases-identity-provider.mdx'
+import RafikiReferenceIdp from '/src/content/docs/partials/_rafiki-reference-idp.mdx'
 
 :::tip[Summary]
 An identity provider (IdP) is a system or service that manages user authentication and consent during the interactive grant process.
@@ -19,6 +20,6 @@ The following diagram illustrates the flow of an interactive grant.
 
 <Interactive />
 
-:::tip[Reference implementation]
-Rafiki provides a reference <LinkOut href='https://rafiki.dev/integration/deployment/services/auth-service/'>authorization service</LinkOut> implementation that includes support for integration with an IdP.
-:::
+<ForAsesIdentityProvider />
+
+<RafikiReferenceIdp />

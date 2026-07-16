@@ -8,6 +8,12 @@ import { LinkOut } from '@interledger/docs-design-system'
 import { Tabs, TabItem, LinkButton, Badge } from '@astrojs/starlight/components'
 import Begin from '/src/content/docs/partials/_before-you-begin.mdx'
 import Ts from '/src/content/docs/partials/_ts-init-config.mdx'
+import TsButton from '/src/content/docs/partials/sdk/_ts-button.mdx'
+import RustButton from '/src/content/docs/partials/sdk/_rust-button.mdx'
+import PhpButton from '/src/content/docs/partials/sdk/_php-button.mdx'
+import GoButton from '/src/content/docs/partials/sdk/_go-button.mdx'
+import JavaButton from '/src/content/docs/partials/sdk/_java-button.mdx'
+import NetButton from '/src/content/docs/partials/sdk/_net-button.mdx'
 
 The [Get an Incoming Payment API](/apis/#tag/incoming-payment/GET/incoming-payments/%7Bid%7D) lets you get the latest state of an incoming payment resource.
 
@@ -25,7 +31,7 @@ The code snippets below let an authorized client retrieve the state and details 
 
 <Tabs syncKey="langs">
 <TabItem label='TypeScript/NodeJS' icon='node'>
-<LinkButton href="https://github.com/interledger/open-payments-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+<TsButton />
 
 <details>
   <summary>Initial configuration</summary>
@@ -83,7 +89,7 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 
 </TabItem>
 <TabItem label="Rust" icon='seti:rust'>
-<LinkButton href="https://github.com/interledger/open-payments-rust/tree/main/src/snippets#readme" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+<RustButton />
 
 #### Get with authentication
 
@@ -138,7 +144,7 @@ println!("Public incoming payment: {payment:#?}");
 
 </TabItem>
 <TabItem label='PHP' icon='seti:php'>
-<LinkButton href="https://github.com/interledger/open-payments-php-snippets/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+<PhpButton />
 
 #### Get with authentication
 
@@ -201,7 +207,7 @@ echo 'INCOMING PAYMENT: ' . PHP_EOL . print_r($incomingPayment, true);
 </TabItem>
 
 <TabItem label="Go" icon='seti:go'>
-<LinkButton href="https://github.com/interledger/open-payments-go/blob/main/README.md" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+<GoButton />
 
 ```go wrap
 package main
@@ -249,7 +255,7 @@ func main() {
 
 </TabItem>
 <TabItem label='Java' icon='seti:java'>
-<LinkButton href="https://github.com/interledger/open-payments-java?tab=readme-ov-file#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+<JavaButton />
 
 ```java wrap
 // Import dependencies
@@ -281,7 +287,7 @@ log.info("INCOMING_PAYMENT: {}", incomingPaymentFetched);
 
 </TabItem>
 <TabItem label='.NET' icon='seti:c-sharp'>
-<LinkButton href="https://github.com/interledger/open-payments-dotnet/blob/main/README.md#prerequisites" target="_blank" icon="external" iconPlacement="start">Prerequisites</LinkButton>
+<NetButton />
 
 # Get with authentication
 

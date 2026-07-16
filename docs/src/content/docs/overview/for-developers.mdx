@@ -1,0 +1,72 @@
+---
+title: Building with Open Payments
+---
+
+import { LinkCard, CardGrid } from '@astrojs/starlight/components'
+import { LinkOut } from '@interledger/docs-design-system'
+
+:::tip[Summary]
+Building with Open Payments means writing a client that calls the Open Payments APIs to set up payments between Open Payments-enabled accounts. The accounts themselves, and the servers that expose them, are operated by account servicing entities (ASEs).
+:::
+
+This page is the starting point for developers building applications, services, or other software that consume the Open Payments APIs.
+
+## What you'll build
+
+A client in Open Payments is software that:
+
+- Discovers an Open Payments-enabled account from the [wallet address](/concepts/wallet-addresses/) that identifies the account.
+- Requests [grants](/identity/grants/) from the account's authorization server.
+- Creates `incoming-payment`, `quote`, and `outgoing-payment` resources to set up a payment.
+- Signs every request with a key the authorization server can verify.
+- Handles the interactive consent flows.
+
+A client never moves money. The ASEs on each side of the payment are responsible for settlement.
+
+## What to read
+
+If you're new to Open Payments, check out these resources:
+
+<CardGrid>
+  <LinkCard
+    title="Open Payments flow"
+    href="/concepts/op-flow/"
+    description="The end-to-end sequence of API calls a client makes during a payment."
+  />
+  <LinkCard
+    title="Wallet addresses"
+    href="/concepts/wallet-addresses/"
+    description="How an account is identified and how clients discover it."
+  />
+  <LinkCard
+    title="Resources"
+    href="/concepts/resources/"
+    description="The three resource types: incoming-payment, quote, outgoing-payment, and what they represent."
+  />
+  <LinkCard
+    title="Authorization"
+    href="/concepts/auth/"
+    description="How clients request grants and obtain access tokens."
+  />
+  <LinkCard
+    title="Identity and access management"
+    href="/identity/grants/"
+    description="Client-side identity mechanics: GNAP, signing requests, interactive flows, hash verification."
+  />
+  <LinkCard
+    title="SDKs"
+    href="/sdk/before-you-begin/"
+    description="Pre-built functions for the most common client operations."
+  />
+  <LinkCard
+    title="Guides"
+    href="/guides/accept-otp-online-purchase/"
+    description="End-to-end walkthroughs for common payment scenarios."
+  />
+</CardGrid>
+
+## What's intentionally not on the developer path
+
+Some Open Payments documentation describes the responsibilities of the ASE, not the client. This includes how the wallet address server is structured, how the authorization server processes grants, how the resource server hands payments off to settlement, and how the identity provider is integrated. Those pages live under the [For ASEs](/implement/) section and are intended for the engineers deploying the server stack.
+
+If you find yourself reading an ASE page and wondering whether you need to implement something on the client side, the answer is almost always no.

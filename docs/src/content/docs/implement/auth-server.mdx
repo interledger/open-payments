@@ -1,0 +1,92 @@
+---
+title: Authorization server
+---
+
+import { LinkOut } from '@interledger/docs-design-system'
+import RafikiReference from '/src/content/docs/partials/_rafiki-reference.mdx'
+
+:::tip[Summary]
+The authorization server processes grant requests under GNAP, issues access tokens, and coordinates user consent for interactive grants. This page describes what the ASE's authorization server must do.
+:::
+
+## What the authorization server does
+
+An ASE's authorization server is the single entry point for clients seeking permission to call the resource server. It:
+
+- Accepts grant requests at a single grant endpoint URI.
+- Verifies the client's identity and the signature on each request.
+- Decides whether the requested access is permitted, including whether interaction with the resource owner is required.
+- Issues, rotates, and revokes access tokens.
+- Coordinates the interactive flow with the ASE's identity provider when consent is needed.
+
+The wallet address response returns the grant endpoint URI in the `authServer` field. Clients send all grant requests to that URI. The GNAP specification uses a single endpoint per authorization server rather than a different endpoint per grant type.
+
+## Grants and access tokens
+
+The authorization server's job is to translate a **grant**, an authorization issued by the resource owner, into one or more **access tokens** that the client uses against the resource server. From the authorization server's perspective:
+
+- A grant is durable state held by the authorization server. It records what the resource owner consented to and is the basis on which tokens are issued.
+- An access token is a short-lived credential bound to a grant. The authorization server must be able to validate it when the resource server asks.
+- The authorization server validates the grant each time the client uses its access token. Revoking the grant must revoke every token bound to it.
+
+ASEs decide the token lifetime and whether tokens are opaque (validated by callback to the authorization server) or self-contained (validated locally by the resource server using shared key material).
+
+## Grant request processing
+
+Every grant request must be signed by the client. The authorization server's first job is to verify the signature. Refer to [Security](/implement/security/) for the verification rules.
+
+After signature verification, the authorization server inspects the request to determine the grant type and whether interaction is required.
+
+Open Payments requires outgoing-payment grants to be interactive. For incoming-payment and quote grants, whether interaction is required is otherwise an ASE implementation choice. ASEs should require interaction for outgoing-payment grants and for any grant that includes the `list-all` action, since that action lets the client list resources it did not create. ASEs may also require interaction for all incoming-payment or quote grants. Reference implementations such as <LinkOut href='https://rafiki.dev/integration/requirements/open-payments/idp/#interactive-grants'>Rafiki</LinkOut> treat `list-all` as interactive by default.
+
+### incoming-payment grants
+
+`incoming-payment` grants are non-interactive by default. The authorization server may issue an access token immediately if the request is well-formed and the client is trusted, unless interaction is required for the requested actions.
+
+The client may include directed identity (a public key in the request body rather than a wallet address). The authorization server uses the embedded key for signature verification and does not require a wallet address or key registry lookup for this grant type.
+
+The authorization server may issue a single grant whose access token covers multiple incoming payments at this ASE, as long as the additional incoming payments are for accounts that belong to this ASE.
+
+### quote grants
+
+`quote` grants are non-interactive by default and follow the same handling as incoming-payment grants, including when the client requests `list-all` or when the ASE requires interaction for all quote grants. Directed identity is also permitted.
+
+The authorization server may issue a single grant whose access token covers multiple quotes at this ASE, subject to the same single-ASE constraint.
+
+### outgoing-payment grants
+
+`outgoing-payment` grants are interactive. The authorization server must not issue an access token until the resource owner has explicitly consented to the outgoing payment.
+
+When the authorization server receives an outgoing-payment grant request:
+
+1. Verify the request signature and the client's identity.
+2. Persist the grant in a `pending` state, including the requested limits (amounts, expiry).
+3. Return an `interact.redirect` URI (the redirect to the start of the interaction flow) and a `continue` URI with a continuation token. The client uses the redirect URI to send the resource owner into the consent flow.
+4. When the resource owner reaches the redirect URI, start the interaction session and forward the resource owner to the identity provider (IdP). Refer to [Identity provider integration](/implement/identity-provider/).
+5. When the IdP returns the resource owner's decision, finalize the session. If consent was granted, advance the grant from `pending` to `approved`.
+6. Redirect the resource owner back to the client's `interact.finish` URI with an `interact_ref` and a hash computed from the original nonce values and the grant URI. Refer to [Security](/implement/security/) for the hash generation rules.
+7. When the client posts to the continuation URI with the continuation token, issue the access token if the grant is `approved`. If the grant is still `pending` or was denied, return the appropriate GNAP error.
+
+## Continuation and polling
+
+In headless or non-browser scenarios, the client may not have a return URI for the authorization server to redirect to. The authorization server must allow the client to poll the continuation URI to check whether interaction has completed. ASEs define a sensible minimum polling interval and return it to the client in the continuation response.
+
+## Token rotation and revocation
+
+ASEs must support:
+
+- **Rotation**: The client may request a new access token bound to the same grant. The authorization server issues a new token and invalidates the previous one. Tokens bound to grants that have themselves expired must not be rotatable.
+- **Revocation**: The client (or, in some flows, the resource owner) may revoke an access token. After revocation, the resource server must reject any subsequent use of the token. If tokens are validated locally at the resource server, the authorization server must propagate revocation quickly enough that stale tokens cannot be used for unauthorized operations.
+
+The relevant client-facing endpoints are <LinkOut href='/apis/auth-server/operations/post-token'>Rotate access token</LinkOut> and <LinkOut href='/apis/auth-server/operations/delete-token'>Revoke access token</LinkOut>.
+
+## Token validation for the resource server
+
+When the resource server receives a request from a client, it must validate the access token. ASEs choose one of two patterns:
+
+- **Introspection**: The resource server calls the authorization server for each request to check the token. Simple to reason about; cost scales with traffic.
+- **Self-contained tokens**: The authorization server signs tokens that the resource server can validate locally using shared key material. Cheaper at scale; requires careful handling of revocation propagation.
+
+Either way, the authorization server is the source of truth for whether a token is currently valid.
+
+<RafikiReference />
