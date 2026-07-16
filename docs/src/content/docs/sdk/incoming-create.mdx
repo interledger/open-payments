@@ -13,7 +13,7 @@ import GoButton from '/src/content/docs/partials/sdk/_go-button.mdx'
 import JavaButton from '/src/content/docs/partials/sdk/_java-button.mdx'
 import NetButton from '/src/content/docs/partials/sdk/_net-button.mdx'
 
-The [Create Incoming Payment API](/apis/resource-server/operations/create-incoming-payment) lets you request the creation of an incoming payment resource. An incoming payment resource must be created before any payments can be sent to a wallet address.
+The [Create Incoming Payment API](/apis/#tag/incoming-payment/POST/incoming-payments) lets you request the creation of an incoming payment resource. An incoming payment resource must be created before any payments can be sent to a wallet address.
 
 The code snippets below let an authorized client, with the requisite grant, request an incoming payment resource for \$10 USD at a given wallet address. After the resource is created, one or more payments up to \$10 can be sent to the wallet address.
 
@@ -320,4 +320,4 @@ Console.WriteLine($"INCOMING_PAYMENT_URL = {incomingPayment.Id.ToString()}");
 
 ## References
 
-- [API specification](/apis/resource-server/operations/create-incoming-payment)
+- [Resource server API reference](/apis/#tag/incoming-payment/POST/incoming-payments)

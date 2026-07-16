@@ -1,4 +1,4 @@
----
+﻿---
 title: Send a remittance with a fixed receive amount
 ---
 
@@ -48,27 +48,21 @@ The three parties involved in this scenario are:
 ## Endpoints
 
 - <Badge text="GET" variant="note" />
-  <LinkOut href="https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/">
-    Get Wallet Address
-  </LinkOut>
+  <LinkOut href="/apis/#tag/wallet-address/GET/">Get Wallet Address</LinkOut>
 - <Badge text="POST" variant="success" />
-  <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-request/">
-    Grant Request
-  </LinkOut>
+  <LinkOut href="/apis/#tag/grant/POST/">Grant Request</LinkOut>
 - <Badge text="POST" variant="success" />
-  <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-incoming-payment/">
+  <LinkOut href="/apis/#tag/incoming-payment/POST/incoming-payments">
     Create Incoming Payment
   </LinkOut>
 - <Badge text="POST" variant="success" />
-  <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-quote/">
-    Create a Quote
-  </LinkOut>
+  <LinkOut href="/apis/#tag/quote/POST/quotes">Create a Quote</LinkOut>
 - <Badge text="POST" variant="success" />
-  <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-continue/">
+  <LinkOut href="/apis/#tag/grant/POST/continue/%7Bid%7D">
     Grant Continuation Request
   </LinkOut>
 - <Badge text="POST" variant="success" />
-  <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment/">
+  <LinkOut href="/apis/#tag/outgoing-payment/POST/outgoing-payments">
     Create an Outgoing Payment
   </LinkOut>
 
@@ -80,7 +74,7 @@ When the sender initiates the remittance payment, your app needs to get wallet a
 
 Let's assume the sender has already provided their wallet address when they signed up for your app. Let's also assume the sender has entered the recipient's wallet address into your app's payment form.
 
-Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wallet-address-server/operations/get-wallet-address) for each address.
+Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/#tag/wallet-address/GET/) for each address.
 
 <GetWalletAddress />
 
@@ -115,7 +109,7 @@ The following example shows a response from the recipient's wallet provider.
 
 ### 2. Request an incoming payment grant
 
-Use the recipient's `authServer` details, received in the previous step, to call the <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request/).
+Use the recipient's `authServer` details, received in the previous step, to call the <Badge text="POST" variant="success" /> [Grant Request API](/apis/#tag/grant/POST/).
 
 This call obtains an access token that allows your app to request an incoming payment resource be created on the recipient's wallet account.
 
@@ -151,7 +145,7 @@ The following shows an example response from the recipient's wallet provider.
 
 ### 3. Request the creation of an incoming payment resource
 
-Use the access token returned in the previous response to call the <Badge text="POST" variant="success" /> [Create Incoming Payment API](/apis/resource-server/operations/create-incoming-payment).
+Use the access token returned in the previous response to call the <Badge text="POST" variant="success" /> [Create Incoming Payment API](/apis/#tag/incoming-payment/POST/incoming-payments).
 
 This call requests an incoming payment resource be created on the recipient's wallet account.
 
@@ -187,7 +181,7 @@ The following shows an example response from the recipient's wallet provider.
 
 ### 4. Request a quote grant
 
-Use the sender's `authServer` details, received in Step 1, to call the <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request/).
+Use the sender's `authServer` details, received in Step 1, to call the <Badge text="POST" variant="success" /> [Grant Request API](/apis/#tag/grant/POST/).
 
 This call obtains an access token that allows your app to request a quote resource be created on the sender's wallet account.
 
@@ -223,7 +217,7 @@ The following shows an example response from the sender's wallet provider.
 
 ### 5. Request the creation of a quote resource
 
-Use the access token received in the previous step to call the <Badge text="POST" variant="success" /> [Create Quote API](/apis/resource-server/operations/create-quote/).
+Use the access token received in the previous step to call the <Badge text="POST" variant="success" /> [Create Quote API](/apis/#tag/quote/POST/quotes).
 
 This call requests that a quote resource be created on the sender's wallet account. The request must contain the `receiver`, which is the recipient's incoming payment `id`, along with the `receiveAmount`, which is the exact amount the sender wants the recipient to receive.
 
@@ -272,7 +266,7 @@ Quotes include an `expiresAt` timestamp. Create the outgoing payment before the 
 
 ### 6. Request an interactive outgoing payment grant
 
-Use the sender's `authServer` information received in Step 1 to call the <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request).
+Use the sender's `authServer` information received in Step 1 to call the <Badge text="POST" variant="success" /> [Grant Request API](/apis/#tag/grant/POST/).
 
 This call obtains an access token that allows your app to request an outgoing payment resource be created on the sender's wallet account.
 
@@ -323,7 +317,7 @@ In our example, we're assuming the IdP your user interacted with has a user inte
 In a scenario where a user interface isn't available, consider implementing a polling mechanism to check for the completion of the interaction.
 :::
 
-Call the <Badge text="POST" variant="success" /> [Grant Continuation Request API](/apis/auth-server/operations/post-continue/). This call requests an access token that allows your app to request an outgoing payment resource be created on the sender's wallet account.
+Call the <Badge text="POST" variant="success" /> [Grant Continuation Request API](/apis/#tag/grant/POST/continue/%7Bid%7D). This call requests an access token that allows your app to request an outgoing payment resource be created on the sender's wallet account.
 
 Issue the request to the `continue.uri` provided in the initial outgoing payment grant response (Step 6).
 
@@ -365,7 +359,7 @@ The following shows an example response from the sender's wallet provider.
 
 ### 10. Request the creation of an outgoing payment resource
 
-Use the access token returned in Step 9 to call the <Badge text="POST" variant="success" /> [Create Outgoing Payment API](/apis/resource-server/operations/create-outgoing-payment/). Include the `quoteId` in the request. The `quoteId` is the `id` returned in the Create Quote API response (Step 5).
+Use the access token returned in Step 9 to call the <Badge text="POST" variant="success" /> [Create Outgoing Payment API](/apis/#tag/outgoing-payment/POST/outgoing-payments). Include the `quoteId` in the request. The `quoteId` is the `id` returned in the Create Quote API response (Step 5).
 
 <CreateOutgoingPayment />
 
@@ -402,5 +396,5 @@ The following shows an example response from the sender's wallet provider.
 
 If the request fails because of an expired quote, [request a new quote](#5-request-the-creation-of-a-quote-resource) and try again.
 :::note[Access token expiry]
-If a grant's access token has expired, call the <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/auth-server/operations/post-token/), then use the new token in the appropriate request.
+If a grant's access token has expired, call the <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/#tag/token/POST/token/%7Bid%7D), then use the new token in the appropriate request.
 :::

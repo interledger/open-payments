@@ -13,7 +13,7 @@ import GoButton from '/src/content/docs/partials/sdk/_go-button.mdx'
 import JavaButton from '/src/content/docs/partials/sdk/_java-button.mdx'
 import NetButton from '/src/content/docs/partials/sdk/_net-button.mdx'
 
-The [Rotate Access Token API](/apis/auth-server/operations/post-token) lets you request a new access token from the authorization server. The new token replaces the existing token and has the same rights and properties. If, for example, an access token expires, a client can request the token be rotated.
+The [Rotate Access Token API](/apis/#tag/token/POST/token/%7Bid%7D) lets you request a new access token from the authorization server. The new token replaces the existing token and has the same rights and properties. If, for example, an access token expires, a client can request the token be rotated.
 
 All access tokens in Open Payments have a 10-minute lifespan by default. This includes new access tokens issued because of a rotate request.
 
@@ -241,4 +241,4 @@ Console.WriteLine($"MANAGE_URL = {token.AccessToken.Manage}");
 
 ## References
 
-- [API specification](/apis/auth-server/operations/post-token)
+- [Auth server API reference](/apis/#tag/token/POST/token/%7Bid%7D)

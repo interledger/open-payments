@@ -13,7 +13,7 @@ import GoButton from '/src/content/docs/partials/sdk/_go-button.mdx'
 import JavaButton from '/src/content/docs/partials/sdk/_java-button.mdx'
 import NetButton from '/src/content/docs/partials/sdk/_net-button.mdx'
 
-If your client no longer needs access to protected resources, the [Cancel Grant API](/apis/auth-server/operations/delete-continue) lets you cancel (revoke) the corresponding grant request.
+If your client no longer needs access to protected resources, the [Cancel Grant API](/apis/#tag/grant/DELETE/continue/%7Bid%7D) lets you cancel (revoke) the corresponding grant request.
 
 The code snippets below let a client cancel a previously issued grant. When cancelled, the request is placed into a finalized state and no further updates to the grant request are allowed.
 
@@ -216,5 +216,5 @@ await client.CancelGrantAsync(
 
 ## References
 
-- [API specification](/apis/auth-server/operations/delete-continue)
+- [Auth server API reference](/apis/#tag/grant/DELETE/continue/%7Bid%7D)
 - [Grant negotiation and authorization](/identity/grants)

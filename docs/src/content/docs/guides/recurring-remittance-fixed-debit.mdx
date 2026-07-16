@@ -1,4 +1,4 @@
----
+﻿---
 title: Send recurring remittances with a fixed debit amount
 ---
 
@@ -48,23 +48,19 @@ The three parties involved in this scenario are the:
 ## Endpoints
 
 - <Badge text="GET" variant="note" />
-  <LinkOut href="https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/">
-    Get Wallet Address
-  </LinkOut>
+  <LinkOut href="/apis/#tag/wallet-address/GET/">Get Wallet Address</LinkOut>
 - <Badge text="POST" variant="success" />
-  <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-request/">
-    Grant Request
-  </LinkOut>
+  <LinkOut href="/apis/#tag/grant/POST/">Grant Request</LinkOut>
 - <Badge text="POST" variant="success" />
-  <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-incoming-payment/">
+  <LinkOut href="/apis/#tag/incoming-payment/POST/incoming-payments">
     Create Incoming Payment
   </LinkOut>
 - <Badge text="POST" variant="success" />
-  <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-continue/">
+  <LinkOut href="/apis/#tag/grant/POST/continue/%7Bid%7D">
     Grant Continuation Request
   </LinkOut>
 - <Badge text="POST" variant="success" />
-  <LinkOut href="https://openpayments.dev/apis/resource-server/operations/create-outgoing-payment/">
+  <LinkOut href="/apis/#tag/outgoing-payment/POST/outgoing-payments">
     Create an Outgoing Payment
   </LinkOut>
 
@@ -76,7 +72,7 @@ When the sender sets up a recurring payment through your app, you must get walle
 
 Let's assume the sender saved their wallet address to their profile settings in your app. Let's also assume the sender entered the recipient's wallet address into your app's payment form.
 
-Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wallet-address-server/operations/get-wallet-address) for each address.
+Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/#tag/wallet-address/GET/) for each address.
 
 <GetWalletAddress />
 
@@ -111,7 +107,7 @@ The following example shows a response from the recipient's wallet provider.
 
 ### 2. Request an incoming payment grant
 
-Use the recipient's `authServer` details, received in Step 1, to call the <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request/).
+Use the recipient's `authServer` details, received in Step 1, to call the <Badge text="POST" variant="success" /> [Grant Request API](/apis/#tag/grant/POST/).
 
 This call obtains an access token that allows your app to request an incoming payment resource be created on the recipient's wallet account.
 
@@ -147,7 +143,7 @@ The following shows an example response from the recipient's wallet provider.
 
 ### 3. Request the creation of an incoming payment resource
 
-Use the access token returned in the previous response to call the <Badge text="POST" variant="success" /> [Create Incoming Payment API](/apis/resource-server/operations/create-incoming-payment).
+Use the access token returned in the previous response to call the <Badge text="POST" variant="success" /> [Create Incoming Payment API](/apis/#tag/incoming-payment/POST/incoming-payments).
 
 This call requests an incoming payment resource be created on the recipient's wallet account.
 
@@ -183,7 +179,7 @@ The following shows an example response from the recipient's wallet provider.
 
 ### 4. Request an interactive outgoing payment grant
 
-Use the sender's `authServer` information received in Step 1 to call the <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request).
+Use the sender's `authServer` information received in Step 1 to call the <Badge text="POST" variant="success" /> [Grant Request API](/apis/#tag/grant/POST/).
 
 This call obtains an access token that allows your app to request outgoing payment resources be created on the sender's wallet account.
 
@@ -252,7 +248,7 @@ In our example, we're assuming the IdP your user (the sender) interacted with ha
 In a scenario where a user interface isn't available, consider implementing a polling mechanism to check for the completion of the interaction.
 :::
 
-Call the <Badge text="POST" variant="success" /> [Grant Continuation Request API](/apis/auth-server/operations/post-continue/). This call obtains an access token that allows your app to continue the outgoing payment grant request.
+Call the <Badge text="POST" variant="success" /> [Grant Continuation Request API](/apis/#tag/grant/POST/continue/%7Bid%7D). This call obtains an access token that allows your app to continue the outgoing payment grant request.
 
 Issue the request to the `continue.uri` provided in the initial outgoing payment grant response.
 
@@ -299,7 +295,7 @@ The following shows an example response from the sender's wallet provider.
 
 ### 8. Request the creation of an outgoing payment resource
 
-Use the access token returned in the outgoing payment grant continuation response (Step 7) to call the <Badge text="POST" variant="success" /> [Create Outgoing Payment API](/apis/resource-server/operations/create-outgoing-payment/). Create this payment by referencing the new `incomingPayment` URL and the fixed `debitAmount`.
+Use the access token returned in the outgoing payment grant continuation response (Step 7) to call the <Badge text="POST" variant="success" /> [Create Outgoing Payment API](/apis/#tag/outgoing-payment/POST/outgoing-payments). Create this payment by referencing the new `incomingPayment` URL and the fixed `debitAmount`.
 
 <CreateOutgoingPayment />
 
@@ -342,4 +338,4 @@ The first payment is now set up. At the next interval (one month from now), repe
 Use the access token associated with each resource's grant in the requests. You don't need to request new grants because the original grants should still be valid.
 
 :::note[Access token expiry]
-If a grant's access token has expired, call the <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/auth-server/operations/post-token/), then use the new token in the appropriate request.
+If a grant's access token has expired, call the <Badge text="POST" variant="success" /> [Rotate Access Token API](/apis/#tag/token/POST/token/%7Bid%7D), then use the new token in the appropriate request.

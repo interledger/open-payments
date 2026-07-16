@@ -1,4 +1,4 @@
----
+﻿---
 title: Get an outgoing payment grant for future payments
 ---
 
@@ -31,15 +31,11 @@ For this guide, you'll assume the role of an app developer. The guide explains h
 ## Endpoints
 
 - <Badge text="GET" variant="note" />
-  <LinkOut href="https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/">
-    Get Wallet Address
-  </LinkOut>
+  <LinkOut href="/apis/#tag/wallet-address/GET/">Get Wallet Address</LinkOut>
 - <Badge text="POST" variant="success" />
-  <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-request/">
-    Grant Request
-  </LinkOut>
+  <LinkOut href="/apis/#tag/grant/POST/">Grant Request</LinkOut>
 - <Badge text="POST" variant="success" />
-  <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-continue/">
+  <LinkOut href="/apis/#tag/grant/POST/continue/%7Bid%7D">
     Grant Continuation Request
   </LinkOut>
 - <Badge text="GET" variant="note" />
@@ -51,7 +47,7 @@ For this guide, you'll assume the role of an app developer. The guide explains h
 
 ### 1. Get wallet address information
 
-Let's assume your user saved their wallet address in their account profile when setting up your app. Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wallet-address-server/operations/get-wallet-address).
+Let's assume your user saved their wallet address in their account profile when setting up your app. Call the <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/#tag/wallet-address/GET/).
 
 <GetWalletAddress />
 
@@ -72,7 +68,7 @@ Let's assume your user saved their wallet address in their account profile when 
 
 ### 2. Request an interactive outgoing payment grant
 
-Use the authorization server information received in the previous step to call the <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request).
+Use the authorization server information received in the previous step to call the <Badge text="POST" variant="success" /> [Grant Request API](/apis/#tag/grant/POST/).
 
 This call obtains a token that allows your app to request outgoing payment resources be created on your user's wallet account.
 
@@ -133,7 +129,7 @@ In our example, we're assuming the IdP the user interacted with has a user inter
 In a scenario where a user interface isn't available, consider implementing a polling mechanism to check for the completion of the interaction.
 :::
 
-Call the <Badge text="POST" variant="success" /> [Grant Continuation Request API](/apis/auth-server/operations/post-continue/). This call requests an access token that allows your app to request outgoing payment resources be created on the user's wallet account.
+Call the <Badge text="POST" variant="success" /> [Grant Continuation Request API](/apis/#tag/grant/POST/continue/%7Bid%7D). This call requests an access token that allows your app to request outgoing payment resources be created on the user's wallet account.
 
 Issue the request to the `continue.uri` provided in the initial outgoing payment grant response (Step 2).
 

@@ -1,4 +1,4 @@
----
+﻿---
 title: Obtener una concesión de pago saliente para pagos futuros
 ---
 
@@ -26,15 +26,11 @@ En esta guía, usted asume el rol de desarrollador de una aplicación. La guía 
 ## Puntos finales
 
 - <Badge text="GET" variant="note" />
-  <LinkOut href="https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/">
-    Get Wallet Address
-  </LinkOut>
+  <LinkOut href="/apis/#tag/wallet-address/GET/">Get Wallet Address</LinkOut>
 - <Badge text="POST" variant="success" />
-  <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-request/">
-    Grant Request
-  </LinkOut>
+  <LinkOut href="/apis/#tag/grant/POST/">Grant Request</LinkOut>
 - <Badge text="POST" variant="success" />
-  <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-continue/">
+  <LinkOut href="/apis/#tag/grant/POST/continue/%7Bid%7D">
     Grant Continuation Request
   </LinkOut>
 
@@ -42,7 +38,7 @@ En esta guía, usted asume el rol de desarrollador de una aplicación. La guía 
 
 ### 1. Obtener los datos de la dirección de billetera
 
-Supongamos que su usuario guardó su dirección de billetera en el perfil de su cuenta al configurar la aplicación. Llame a la [Get Wallet Address API](/es/apis/wallet-address-server/operations/get-wallet-address) para obtener los datos necesarios sobre la cuenta de la billetera del usuario.
+Supongamos que su usuario guardó su dirección de billetera en el perfil de su cuenta al configurar la aplicación. Llame a la [Get Wallet Address API](/apis/#tag/wallet-address/GET/) para obtener los datos necesarios sobre la cuenta de la billetera del usuario.
 
 <GetWalletAddress />
 
@@ -63,7 +59,7 @@ Supongamos que su usuario guardó su dirección de billetera en el perfil de su 
 
 ### 2. Solicitar una concesión de autorización interactiva para un pago saliente
 
-Utilice la información del servidor de autorización recibida en el paso anterior para llamar a la [Grant Request API](/es/apis/auth-server/operations/post-request). El propósito de esta llamada consiste en obtener un token que permita que el cliente solicite la creación de recursos de pago saliente en la cuenta de la billetera de su usuario.
+Utilice la información del servidor de autorización recibida en el paso anterior para llamar a la [Grant Request API](/apis/#tag/grant/POST/). El propósito de esta llamada consiste en obtener un token que permita que el cliente solicite la creación de recursos de pago saliente en la cuenta de la billetera de su usuario.
 
 <InteractionReq />
 

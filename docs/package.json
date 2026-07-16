@@ -24,8 +24,7 @@
     "sharp": "^0.34.5",
     "shiki": "^4.1.0",
     "starlight-fullview-mode": "^0.2.6",
-    "starlight-links-validator": "^0.24.0",
-    "starlight-openapi": "0.24.0"
+    "starlight-links-validator": "^0.24.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -36,6 +35,7 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-astro": "^1.7.0",
     "globals": "^17.6.0",
+    "js-yaml": "^4.2.0",
     "prettier": "3.8.3",
     "prettier-plugin-astro": "0.14.1",
     "typescript-eslint": "^8.60.0",

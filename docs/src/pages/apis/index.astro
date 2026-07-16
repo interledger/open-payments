@@ -1,0 +1,198 @@
+---
+import OpenPaymentsLogo from '../../components/OpenPaymentsLogo.astro'
+import { mergeSpecs } from '../../lib/merge-specs.js'
+
+const config = {
+  content: mergeSpecs(),
+  hideClientButton: true,
+  hideTestRequestButton: true,
+  isEditable: false,
+  mcp: { disabled: true },
+  documentDownloadType: 'none',
+  customCss: `
+    [data-sidebar-id="api-1/tag/authorization-server-overview"],
+    [data-sidebar-id="api-1/tag/resource-server-overview"],
+    [data-sidebar-id="api-1/tag/wallet-address-server-overview"] {
+      margin-top: 1.25rem;
+      pointer-events: none;
+      cursor: default;
+    }
+    [data-sidebar-id="api-1/tag/authorization-server-overview"] button,
+    [data-sidebar-id="api-1/tag/resource-server-overview"] button,
+    [data-sidebar-id="api-1/tag/wallet-address-server-overview"] button {
+      background-color: transparent !important;
+      color: inherit !important;
+    }
+    [data-sidebar-id="api-1/tag/authorization-server-overview"] .group\\/button-label,
+    [data-sidebar-id="api-1/tag/resource-server-overview"] .group\\/button-label,
+    [data-sidebar-id="api-1/tag/wallet-address-server-overview"] .group\\/button-label {
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      font-weight: 500 !important;
+      letter-spacing: 0.07em;
+      color: inherit !important;
+    }
+    [data-sidebar-id="api-1/models"] {
+      margin-top: 2rem;
+    }
+  `
+}
+
+const CDN = 'https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.55.0'
+---
+
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>API Reference — Open Payments</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script is:inline>
+      ;(function () {
+        const theme = localStorage.getItem('starlight-theme')
+        if (theme === 'dark' || theme === 'light') {
+          localStorage.setItem('colorMode', theme)
+        } else {
+          const prefersDark = window.matchMedia(
+            '(prefers-color-scheme: dark)'
+          ).matches
+          localStorage.setItem('colorMode', prefersDark ? 'dark' : 'light')
+        }
+        if (localStorage.getItem('colorMode') === 'dark') {
+          document.documentElement.classList.add('dark')
+        }
+        const _setItem = Storage.prototype.setItem
+        Storage.prototype.setItem = function (key, value) {
+          _setItem.call(this, key, value)
+          if (key === 'colorMode') {
+            document.documentElement.classList.toggle('dark', value === 'dark')
+          }
+        }
+      })()
+    </script>
+  </head>
+  <body>
+    <header class="op-header">
+      <a href="/" class="op-header__logo" style="font-size: larger">
+        <OpenPaymentsLogo />
+      </a>
+      <a
+        href="/overview/getting-started/"
+        class="op-header__back"
+        id="back-link">← Documentation</a
+      >
+    </header>
+    <script is:inline>
+      ;(function () {
+        try {
+          const ref = document.referrer
+          if (ref && new URL(ref).origin === location.origin) {
+            document.getElementById('back-link').href = ref
+          }
+        } catch {
+          // ignore invalid referrer URLs
+        }
+      })()
+    </script>
+    <div id="app"></div>
+    <script is:inline src={CDN}></script>
+    <script is:inline define:vars={{ config }}>
+      Scalar.createApiReference('#app', config)
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  /* Header colors pulled from Starlight's teal theme (props.css) — update here if the theme changes */
+  :root {
+    --op-header-height: 3.5rem;
+    --op-header-pad-x: 1rem;
+    --op-header-bg: hsl(224, 19%, 97%);
+    --op-header-border: hsl(224, 20%, 94%);
+    --op-header-text: hsl(224, 14%, 16%);
+    --op-header-muted: hsl(224, 7%, 36%);
+  }
+
+  html.dark {
+    --op-header-bg: hsl(224, 14%, 16%);
+    --op-header-border: hsl(224, 10%, 10%);
+    --op-header-text: hsl(224, 20%, 94%);
+    --op-header-muted: hsl(224, 6%, 56%);
+  }
+
+  html.dark .logo-text {
+    fill: var(--op-header-text) !important;
+    stroke: var(--op-header-text) !important;
+  }
+
+  @media (min-width: 50rem) {
+    :root {
+      --op-header-height: 4rem;
+      --op-header-pad-x: 1.5rem;
+    }
+  }
+
+  html,
+  body {
+    height: 100%;
+    margin: 0;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif;
+  }
+
+  .op-header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--op-header-height);
+    padding: 0 var(--op-header-pad-x);
+    background: var(--op-header-bg);
+    border-bottom: 1px solid var(--op-header-border);
+  }
+
+  .op-header__logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--op-header-text);
+  }
+
+  .op-header__logo svg {
+    width: 9.5em;
+    flex: none;
+  }
+
+  .op-header__back {
+    font-size: 0.875rem;
+    text-decoration: none;
+    color: var(--op-header-muted);
+  }
+
+  .op-header__back:hover {
+    color: var(--op-header-text);
+  }
+
+  #app {
+    flex: 1;
+    min-height: 0;
+    padding-top: var(--op-header-height);
+  }
+</style>
