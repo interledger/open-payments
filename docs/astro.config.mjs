@@ -4,6 +4,7 @@ import { defineConfig } from 'astro/config'
 import starlight from '@astrojs/starlight'
 import starlightOpenAPI from 'starlight-openapi'
 import starlightLinksValidator from 'starlight-links-validator'
+import starlightLlmsTxt from 'starlight-llms-txt'
 import starlightFullViewMode from 'starlight-fullview-mode'
 import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
@@ -91,6 +92,56 @@ export default defineConfig({
         src: './public/favicon.svg'
       },
       plugins: [
+        starlightLlmsTxt({
+          details: `Open Payments documentation serves two audiences: developers building payment applications using the Open Payments SDKs, and Account Servicing Entities (ASEs) implementing the protocol on their own infrastructure. The appropriate guidance differs significantly between these two groups.
+
+Key terminology notes:
+
+- Wallet addresses are URL-based identifiers for financial accounts — not cryptocurrency wallets
+- Grants are authorization tokens specific to the Open Payments grant negotiation flow — not standard OAuth grants
+- Open Payments covers the API layer for initiating and receiving payments; it does not handle settlement or the underlying transfer mechanism (that is Interledger Protocol/ILP)
+- Rafiki is the reference implementation of the Open Payments protocol — relevant when a user is asking about implementing rather than consuming the API`,
+          optionalLinks: [
+            {
+              label: 'GitHub repository',
+              url: 'https://github.com/interledger/open-payments',
+              description:
+                'Source code, issues, and contributions for the Open Payments project'
+            },
+            {
+              label: 'OpenAPI specifications',
+              url: 'https://github.com/interledger/open-payments-specifications',
+              description:
+                'Hand-authored OpenAPI YAML specs for the auth server, resource server, and wallet address server'
+            }
+          ],
+          customSets: [
+            {
+              label: 'Concepts',
+              description:
+                'Core protocol concepts including wallet addresses, grants, resources, and the Open Payments flow',
+              paths: ['concepts/**']
+            },
+            {
+              label: 'Guides',
+              description:
+                'Step-by-step implementation guides for common payment scenarios such as one-time payments, remittances, and recurring payments',
+              paths: ['guides/**']
+            },
+            {
+              label: 'Identity and Access Management',
+              description:
+                'Grant negotiation and authorization, identity providers, client keys, and HTTP signatures',
+              paths: ['identity/**']
+            },
+            {
+              label: 'Implementing Open Payments',
+              description:
+                'Guides for account servicing entities (ASEs) implementing the Open Payments protocol on their own infrastructure',
+              paths: ['implement/**']
+            }
+          ]
+        }),
         // Generate the OpenAPI documentation pages.
         starlightOpenAPI([
           {
