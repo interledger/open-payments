@@ -1,0 +1,72 @@
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+
+<Tabs syncKey="lang">
+  <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
+
+```ts wrap
+const grant = await client.grant.request(
+  {
+    url: userWalletAddress.authServer
+  },
+  {
+    subject: {
+      sub_ids: [
+        {
+          id: userWalletAddress.id,
+          format: 'uri'
+        }
+      ]
+    },
+    client: userWalletAddress.id,
+    interact: {
+      start: ['redirect'],
+      finish: {
+        method: 'redirect',
+        uri: 'https://paymentplatform.example/finish/{...}', // where to redirect the user to after they've completed the interaction
+        nonce: NONCE
+      }
+    }
+  }
+)
+```
+
+  </TabItem>
+  <TabItem label='Rust' icon='seti:rust'>
+
+```rust wrap
+coming soon
+```
+
+  </TabItem>
+    <TabItem label='PHP' icon='seti:php'>
+
+```php wrap
+coming soon
+```
+
+  </TabItem>
+  <TabItem label='Go' icon='seti:go'>
+
+```go wrap
+coming soon
+```
+
+    </TabItem>
+
+    <TabItem label='Java' icon='seti:java'>
+
+```java wrap
+coming soon
+```
+
+    </TabItem>
+
+  <TabItem label='.NET' icon='seti:c-sharp'>
+
+```csharp wrap
+coming soon
+```
+
+  </TabItem>
+
+</Tabs>
