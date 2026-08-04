@@ -436,13 +436,6 @@ Key terminology notes:
               collapsed: true,
               items: [
                 {
-                  label: 'Verify ownership of a wallet address',
-                  translations: {
-                    es: 'Verificar la propiedad de una dirección de billetera'
-                  },
-                  link: '/guides/verify-wallet-address-ownership/'
-                },
-                {
                   label: 'Accept a one-time payment for an online purchase',
                   translations: {
                     es: 'Aceptar un pago único por una compra en línea'
@@ -498,6 +491,13 @@ Key terminology notes:
                     es: 'Obtener una concesión de pago saliente para pagos futuros'
                   },
                   link: '/guides/outgoing-grant-future-payments/'
+                },
+                {
+                  label: 'Verify ownership of a wallet address',
+                  translations: {
+                    es: 'Verificar la propiedad de una dirección de billetera'
+                  },
+                  link: '/guides/verify-wallet-address-ownership/'
                 }
               ]
             }

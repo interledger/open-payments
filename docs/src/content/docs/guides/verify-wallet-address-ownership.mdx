@@ -12,10 +12,12 @@ import GrantRequestVerifyOwnership from '/src/content/docs/partials/code/guides/
 import RequestAGrantContinuation from '/src/content/docs/partials/code/guides/verify-wallet-address-ownership/_request-a-grant-continuation.mdx'
 
 :::tip[Summary]
-Learn how to verify that a user has access to the wallet address they provided through an interaction, without making a payment or getting a payment grant via IdP.
+Learn how to use an interactive grant to verify a user has access to their wallet address.
 :::
 
-Open Payments supports verifying that the correct user has access to a specific wallet address through an interactive authentication flow. Rather than requesting a grant to make or receive payments (which requires an `access_token` with permissions like `outgoing-payment` or `incoming-payment`), a client can request a grant targeting a specific `subject`.
+In Open Payments, interactive grants are most commonly used to obtain explicit consent before issuing an outgoing payment. Interactive grants can also be used to verify a user has access to their wallet without making a payment. One use case, for example, is to allow users to authorize themselves with a platform.
+
+Verification that the correct user has access to a specific wallet address is performed through an interactive authentication flow. Rather than requesting a grant to make or receive payments (which requires an `access_token` with permissions like `outgoing-payment` or `incoming-payment`), a client can request a grant targeting a specific `subject`.
 
 The authorization server interacts with the user through the identity provider (IdP) to confirm their identity. The IdP verifies that the user has access to the wallet address provided in the `subject` field.
 
