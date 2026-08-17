@@ -1,0 +1,101 @@
+---
+title: Seguridad
+---
+
+import { LinkOut } from '@interledger/docs-design-system'
+
+:::tip[Resumen]
+Las ASE son responsables de la parte de verificación de todos los mecanismos de seguridad en Open Payments: la validación de firmas en las solicitudes entrantes, la resolución y verificación de las claves del cliente y la generación del hash de interacción que permite a los clientes comprobar que una redirección provino del servidor de autorización.
+:::
+
+## Postura de seguridad
+
+Open Payments establece tres puntos de control criptográficos entre un cliente y el servidor de recursos:
+
+1. **Firmas de mensajes HTTP** en cada solicitud, para que la ASE pueda autenticar al remitente y detectar manipulaciones.
+2. **Claves del cliente** registradas en una wallet address (o proporcionadas directamente a través de la identidad dirigida), para que la ASE sepa con qué clave verificar.
+3. **Hashes de interacción** durante las concesiones interactivas, para que el cliente pueda verificar que una redirección provino del servidor de autorización de la ASE.
+
+Las ASE son responsables de la parte de verificación de los tres mecanismos. Si no se aplica alguno de ellos, los demás se debilitan.
+
+## Validación de firmas HTTP
+
+Cada solicitud que un cliente envía al servidor de autorización o al servidor de recursos de una ASE se firma utilizando el perfil de <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol#name-http-message-signatures'>firmas de mensajes HTTP</LinkOut> definido por GNAP, con la variante Ed25519 de EdDSA.
+
+Para cada solicitud entrante firmada, las ASE deben:
+
+1. Leer el encabezado `Signature-Input` para identificar el `keyId` y la lista de componentes cubiertos.
+2. Reconstruir la base de la firma a partir de esos componentes exactamente como lo hizo el cliente.
+3. Resolver la clave pública del cliente (consulte [Resolución de claves del cliente](#client-key-resolution) a continuación).
+4. Verificar el encabezado `Signature` comparándolo con la base de la firma reconstruida mediante esa clave pública y Ed25519.
+5. Rechazar la solicitud si se cumple alguna de las siguientes condiciones:
+   - Faltan componentes obligatorios (método, URI de destino, resumen del contenido, cuando corresponda, encabezado de autorización, cuando corresponda).
+   - La firma no se valida.
+   - La firma es más antigua que la antigüedad máxima que permite la ASE.
+   - El encabezado `Content-Digest` está presente, pero no coincide con el cuerpo de la solicitud.
+
+Las ASE establecen su propia antigüedad máxima permitida para las firmas. Open Payments no la define. Si el límite es demasiado largo, una solicitud firmada interceptada puede reenviarse y seguir siendo aceptada (un ataque de repetición). Si el límite es demasiado corto, los clientes legítimos que utilizan redes lentas pueden encontrarse con que sus firmas caducan antes de que llegue la solicitud.
+
+No se admiten los tókenes de portador. Un token por sí solo nunca es suficiente: cada solicitud debe llevar tanto un token de acceso (cuando corresponda) como una firma válida.
+
+<div id="client-key-resolution" />
+
+## Resolución de claves del cliente
+
+El servidor de autorización necesita la clave pública del cliente para verificar las firmas. Open Payments admite dos modos:
+
+### Clientes identificados mediante una wallet address
+
+El cuerpo de la solicitud de concesión del cliente incluye `client.walletAddress`. Las ASE deben proporcionar un flujo de registro de claves para los clientes y alojar el JWKS de cada cliente en `WALLET_ADDRESS/jwks.json`. El servidor de autorización:
+
+1. Extrae el dominio del cliente de la wallet address.
+2. Realiza una solicitud `GET` a `{walletAddress}/jwks.json` para obtener el registro de claves del cliente.
+3. Localiza la clave cuyo `kid` coincide con el `keyId` en el encabezado `Signature-Input`.
+4. Confirma que la clave utilice el algoritmo esperado (`EdDSA`), el tipo de clave (`OKP`) y la curva (`Ed25519`).
+5. Vincula la clave resuelta con la concesión. En solicitudes posteriores asociadas a la misma concesión, el servidor de autorización obtiene la clave vinculada desde el dominio almacenado de la concesión en lugar de obtenerla del cuerpo de la solicitud.
+
+Las ASE son responsables de mantener el JWKS alojado sincronizado con los eventos del ciclo de vida de las claves del cliente, como la rotación y la revocación de claves.
+
+### Clientes con identidad dirigida
+
+Para concesiones no interactivas (`incoming-payment`, `quote`), el cliente puede proporcionar su clave directamente en el cuerpo de la solicitud como un `jwk`. El servidor de autorización utiliza esa clave para la verificación de la firma en la solicitud inicial y la vincula con la concesión resultante. No es necesario consultar un punto final JWKS, y la wallet address del cliente nunca se expone.
+
+Las ASE deben rechazar la identidad dirigida en las solicitudes de concesión interactivas.
+
+## Generación de hashes de interacción
+
+Durante las concesiones interactivas, el servidor de autorización redirige al propietario del recurso al URI `interact.finish` del cliente con un parámetro `hash`. El cliente utiliza este hash para confirmar que la redirección realmente provino del servidor de autorización.
+
+Las ASE deben generar el hash concatenando cuatro valores en orden, separados por saltos de línea simples (`\n`), sin relleno, sin espacios en blanco alrededor y sin un salto de línea final:
+
+1. El `nonce` que el cliente envió en la solicitud de concesión inicial.
+2. El `nonce` que el servidor de autorización devolvió en su respuesta a la solicitud de concesión inicial.
+3. El `interact_ref` que el servidor de autorización está a punto de devolver en esta redirección.
+4. El URI del punto final de concesión que el cliente utilizó para su solicitud inicial.
+
+La cadena resultante se procesa mediante un hash con `sha-256` (el único algoritmo de hash que Open Payments admite actualmente), y el resumen se codifica en Base64 sin relleno. El resultado se envía como el parámetro `hash` en la redirección.
+
+```http title="Ejemplo de base de hash"
+VJLO6A4CATR0KRO
+MBDOFXG4Y5CVJCX821LH
+4IFWWIKYB2PQ6U56NL1
+https://server.example.com/tx
+```
+
+```http title="Hash resultante"
+x-gguKWTj8rQf7d7i3w3UhzvuJ5bpOlKyAlVpLxBffY
+```
+
+Las ASE deben usar el orden de concatenación y el separador exactos indicados anteriormente. Cualquier desviación impide la verificación del cliente.
+
+## Combinación de los tres componentes
+
+Los tres mecanismos se refuerzan entre sí:
+
+- Las firmas HTTP autentican cada solicitud y evitan la manipulación durante el tránsito.
+- Las claves del cliente proporcionan al servidor de autorización una identidad estable a la cual asociar las concesiones.
+- El hash de interacción cierra el ciclo en las concesiones interactivas al permitir que el cliente confirme criptográficamente que el recorrido de ida y vuelta a través del IdP volvió al mismo servidor de autorización.
+
+Si una ASE omite la validación de la firma, no puede confiar en la identidad del cliente. Si omite la resolución de la clave, no puede detectar una firma falsificada. Si omite la generación del hash, los clientes no pueden confiar en la redirección. Las ASE deben implementar los tres.
+
+Para obtener los detalles del lado del cliente (solicitudes de firma, generación de claves, verificación del hash), consulte [Firmas HTTP](/es/identity/http-signatures/), [Claves del cliente](/es/identity/client-keys/) y [Verificación del hash](/es/identity/hash-verification/).

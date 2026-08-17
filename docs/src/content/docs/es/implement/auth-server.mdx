@@ -1,0 +1,92 @@
+---
+title: Servidor de autorización
+---
+
+import { LinkOut } from '@interledger/docs-design-system'
+import RafikiReference from '/src/content/docs/partials/es/_rafiki-reference.mdx'
+
+:::tip[Resumen]
+El servidor de autorización procesa las solicitudes de concesión según el GNAP, emite tókenes de acceso y coordina el consentimiento de los usuarios para las concesiones interactivas. En esta página se describe lo que debe hacer el servidor de autorización de la ASE.
+:::
+
+## Qué hace el servidor de autorización
+
+El servidor de autorización de una ASE es el único punto de entrada para los clientes que solicitan permiso para llamar al servidor de recursos. Este:
+
+- Acepta solicitudes de concesión de autorización en un único URI de punto final de concesión.
+- Verifica la identidad del cliente y la firma en cada solicitud.
+- Determina si se autoriza el acceso solicitado, incluida la necesidad de interactuar con el propietario del recurso.
+- Emite, rota y revoca los tókenes de acceso.
+- Coordina el flujo interactivo con el proveedor de identidad de la ASE cuando se requiere consentimiento.
+
+La respuesta de la wallet address devuelve el URI de punto final de concesión en el campo `authServer`. Los clientes envían todas las solicitudes de concesión a ese URI. La especificación del GNAP utiliza un único punto final por servidor de autorización en lugar de un punto final diferente para cada tipo de concesión.
+
+## Concesiones y tókenes de acceso
+
+La tarea del servidor de autorización es traducir una **concesión**, una autorización emitida por el propietario del recurso, en uno o más **tókenes de acceso** que el cliente utiliza en el servidor de recursos. Desde la perspectiva del servidor de autorización:
+
+- Una concesión es un estado duradero que mantiene el servidor de autorización. Registra aquello para lo que el propietario del recurso dio su consentimiento y constituye la base para la emisión de los tókenes.
+- Un token de acceso es una credencial de corta duración vinculada a una concesión. El servidor de autorización debe poder validarlo cuando el servidor de recursos lo solicite.
+- El servidor de autorización valida la concesión cada vez que el cliente utiliza su token de acceso. La revocación de la concesión debe revocar todos los tókenes vinculados a ella.
+
+Las ASE determinan la duración de los tókenes y si estos son opacos (validados mediante una devolución de llamada al servidor de autorización) o autocontenidos (validados localmente por el servidor de recursos mediante material de claves compartido).
+
+## Procesamiento de la solicitud de concesión
+
+Cada solicitud de concesión debe estar firmada por el cliente. La primera tarea del servidor de autorización es verificar la firma. Consulte [Seguridad](/es/implement/security/) para conocer las reglas de verificación.
+
+Después de la verificación de la firma, el servidor de autorización inspecciona la solicitud para determinar el tipo de concesión y si se requiere interacción.
+
+Open Payments requiere que las concesiones de autorización para pagos salientes sean interactivas. Para las concesiones de autorización para pagos entrantes y cotizaciones, la necesidad de interacción queda a criterio de implementación de la ASE. Las ASE deben requerir interacción para las concesiones de autorización para pagos salientes y para cualquier concesión que incluya la acción `list-all`, ya que esa acción permite al cliente enumerar los recursos que no creó. Las ASE también pueden requerir interacción para todas las concesiones de autorización para pagos entrantes o cotizaciones. Las implementaciones de referencia como <LinkOut href='https://rafiki.dev/integration/requirements/open-payments/idp/#interactive-grants'>Rafiki</LinkOut> tratan `list-all` como interactiva de forma predeterminada.
+
+### concesiones de autorización para pagos entrantes
+
+Las concesiones de autorización para `incoming-payment` no son interactivas de forma predeterminada. El servidor de autorización puede emitir un token de acceso de inmediato si la solicitud está bien formada y el cliente es de confianza, a menos que se requiera interacción para las acciones solicitadas.
+
+El cliente puede incluir una identidad dirigida (una clave pública en el cuerpo de la solicitud en lugar de una wallet address). El servidor de autorización utiliza la clave incorporada para la verificación de la firma y no requiere consultar una wallet address ni un registro de claves para este tipo de concesión.
+
+El servidor de autorización puede emitir una única concesión cuyo token de acceso abarque múltiples pagos entrantes en esta ASE, siempre que los pagos entrantes adicionales sean para cuentas que pertenezcan a esta ASE.
+
+### concesiones de autorización para cotizaciones
+
+Las concesiones de autorización para `quote` no son interactivas de forma predeterminada y siguen el mismo manejo que las concesiones de autorización para pagos entrantes, incluso cuando el cliente solicita `list-all` o cuando la ASE requiere interacción para todas las concesiones para cotizaciones. También se permite la identidad dirigida.
+
+El servidor de autorización puede emitir una única concesión cuyo token de acceso abarque múltiples cotizaciones en esta ASE, sujeto a la misma restricción de una única ASE.
+
+### concesiones de autorización para pagos salientes
+
+Las concesiones de autorización para `outgoing-payment` son interactivas. El servidor de autorización no debe emitir un token de acceso hasta que el propietario del recurso haya dado su consentimiento explícito para el pago saliente.
+
+Cuando el servidor de autorización recibe una solicitud de concesión de autorización para un pago saliente:
+
+1. Verifica la firma de la solicitud y la identidad del cliente.
+2. Mantiene la concesión en estado `pending`, incluidos los límites solicitados (montos, vencimiento).
+3. Devuelve un URI `interact.redirect` (la redirección al inicio del flujo de interacción) y un URI `continue` con un token de continuación. El cliente utiliza el URI de redirección para dirigir al propietario del recurso al flujo de consentimiento.
+4. Cuando el propietario del recurso llega al URI de redirección, inicia la sesión de interacción y redirige al propietario del recurso al proveedor de identidad (IdP). Consulte [Integración del proveedor de identidad](/es/implement/identity-provider/).
+5. Cuando el IdP devuelve la decisión del propietario del recurso, finaliza la sesión. Si se otorgó el consentimiento, la concesión pasa del estado `pending` al estado `approved`.
+6. Redirige al propietario del recurso al URI `interact.finish` del cliente junto con un `interact_ref` y un valor hash calculado a partir de los valores nonce originales y del URI de concesión. Consulte [Seguridad](/es/implement/security/) para conocer las reglas de generación de valores hash.
+7. Cuando el cliente envía una solicitud al URI de continuación con el token de continuación, emite el token de acceso si la concesión está en estado `approved`. Si la concesión sigue en estado `pending` o fue denegada, devuelve el error GNAP correspondiente.
+
+## Continuación y sondeo
+
+En escenarios headless o sin navegador, es posible que el cliente no tenga un URI de retorno al que el servidor de autorización pueda redirigir. El servidor de autorización debe permitir que el cliente sondee el URI de continuación para verificar si la interacción se ha completado. Las ASE definen un intervalo de sondeo mínimo razonable y lo devuelven al cliente en la respuesta de continuación.
+
+## Rotación y revocación de tókenes
+
+Las ASE deben ser compatibles con:
+
+- **Rotación**: El cliente puede solicitar un nuevo token de acceso vinculado a la misma concesión. El servidor de autorización emite un nuevo token e invalida el anterior. Los tókenes vinculados a concesiones que hayan expirado no deben poder rotarse.
+- **Revocación**: El cliente (o, en algunos flujos, el propietario del recurso) puede revocar un token de acceso. Después de la revocación, el servidor de recursos debe rechazar cualquier uso posterior del token. Si los tókenes se validan localmente en el servidor de recursos, el servidor de autorización debe propagar la revocación lo suficientemente rápido como para que los tókenes obsoletos no puedan usarse para operaciones no autorizadas.
+
+Los puntos finales orientados al cliente correspondientes son <LinkOut href='/apis/auth-server/operations/post-token'>Rotar token de acceso</LinkOut> y <LinkOut href='/apis/auth-server/operations/delete-token'>Revocar token de acceso</LinkOut>.
+
+## Validación de tókenes para el servidor de recursos
+
+Cuando el servidor de recursos recibe una solicitud de un cliente, debe validar el token de acceso. Las ASE eligen uno de dos patrones:
+
+- **Introspección**: El servidor de recursos llama al servidor de autorización en cada solicitud para verificar el token. Es fácil de entender; el costo aumenta en función del tráfico.
+- **Tókenes autocontenidos**: El servidor de autorización firma los tókenes que el servidor de recursos puede validar localmente mediante material de claves compartido. Más económico a escala; requiere una gestión cuidadosa de la propagación de revocaciones.
+
+De cualquier manera, el servidor de autorización es la fuente de verdad para determinar si un token es válido actualmente.
+
+<RafikiReference />

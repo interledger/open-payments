@@ -1,0 +1,98 @@
+---
+title: Servidor de recursos
+---
+
+import { LinkOut } from '@interledger/docs-design-system'
+import RafikiReference from '/src/content/docs/partials/es/_rafiki-reference.mdx'
+
+:::tip[Resumen]
+El servidor de recursos aloja las API `incoming-payment`, `quote` y `outgoing-payment` que los clientes utilizan para configurar los pagos. Esta página describe lo que debe hacer el servidor de recursos de una ASE cuando se crea cada tipo de recurso y cómo transfiere los pagos a la liquidación.
+:::
+
+## Qué hace el servidor de recursos
+
+El servidor de recursos de una ASE aloja tres conjuntos de API, uno por cada tipo de recurso. Para cada solicitud, el servidor de recursos valida el token de acceso presentado por el cliente con el servidor de autorización de la ASE antes de realizar la operación.
+
+### Pago entrante
+
+Cuando el servidor de recursos recibe una solicitud de <LinkOut href='/apis/resource-server/operations/create-incoming-payment'>Crear pago entrante</LinkOut>, debe:
+
+- Generar los datos de pago únicos que la ASE del remitente utilizará para dirigir los pagos hacia este pago entrante.
+- Conservar el recurso de pago entrante para que se pueda recuperar, enumerar y completar mediante llamadas posteriores a la API.
+- Realizar un seguimiento del `receivedAmount` acumulado a medida que llegan los pagos.
+
+Si la solicitud especifica un `incomingAmount`, el servidor de recursos debe aplicarlo como un total máximo. Uno o más pagos pueden asociarse al pago entrante, pero la suma de todos ellos no debe exceder el `incomingAmount`. El servidor de recursos debe marcar el pago entrante como completado una vez que el total acumulado alcance el límite.
+
+Si `incomingAmount` está ausente, el servidor de recursos no puede determinar la finalización por sí mismo. Debe aceptar pagos hasta que un cliente emita una solicitud de <LinkOut href='/apis/resource-server/operations/complete-incoming-payment'>Completar un pago entrante</LinkOut> o hasta que el pago entrante venza. Las ASE pueden definir un plazo de vencimiento. El `expiresAt` debe devolverse al cliente en esos casos para que el cliente sepa cuándo el recurso dejará de aceptar pagos.
+
+### Cotización
+
+Cuando el servidor de recursos recibe una solicitud de <LinkOut href='/apis/resource-server/operations/create-quote'>Crear una cotización</LinkOut>, debe:
+
+- Calcular el `debitAmount`, el `receiveAmount` y la comisión del pago solicitado, incluido cualquier tipo de cambio aplicable cuando las wallet addresses del remitente y del destinatario utilicen valores de `assetCode` diferentes.
+- Comprometerse a entregar el `receiveAmount` cotizado a la ASE del destinatario si se crea un pago saliente basado en la cotización dentro del plazo de validez de la cotización.
+- Asignar un `quoteId` a la cotización y conservarla.
+- Establecer un plazo de validez después del cual la cotización ya no se respete. Las ASE definen este plazo. Debe ser lo suficientemente breve para limitar la exposición al tipo de cambio y a las comisiones, pero lo suficientemente amplio para que el cliente pueda completar los pasos restantes de concesión y autorización y llamar a Crear pago saliente antes de que expire la cotización.
+
+Una cotización representa un compromiso vinculante de la ASE del remitente. Si la ASE del remitente no puede cumplir con la cotización en el momento de la ejecución, se trata de un fallo del lado de la ASE, no de un error del protocolo.
+
+### Pago saliente
+
+Cuando el servidor de recursos recibe una solicitud de <LinkOut href='/apis/resource-server/operations/create-outgoing-payment'>Crear pago saliente</LinkOut>, debe:
+
+- Validar que el token de acceso presentado tenga una concesión que autorice este pago saliente específico, incluidos los límites recopilados durante el flujo de consentimiento interactivo.
+- Si se proporciona un `quoteId`, buscar la cotización, confirmar que no haya vencido y usar los montos cotizados.
+- Si no se proporciona un `quoteId` (por ejemplo, en casos de uso del estilo de <LinkOut href='https://webmonetization.org'>Web Monetization</LinkOut>), utilizar el `incomingPayment` y el `debitAmount` de la solicitud para determinar el alcance del pago saliente.
+- Conservar el recurso de pago saliente e iniciar la liquidación.
+
+El recurso `outgoing-payment` es la instrucción de la ASE a sí misma para mover fondos. Devolver un `201` no significa que el dinero se haya movido; significa que el servidor de recursos ha aceptado y almacenado de forma duradera la instrucción.
+
+## Datos del método de pago
+
+La matriz `methods` en la respuesta de pago entrante le indica a la ASE del remitente cómo entregar los fondos. Las ASE son responsables de completar esta matriz con datos válidos del método de pago para cada método de pago que admitan.
+
+Cuando se utiliza Interledger (ILP) como método de pago, el servidor de recursos debe incluir lo siguiente en el objeto `methods`:
+
+- `type` establecido en `ilp`.
+- La <LinkOut href='https://interledger.org/developers/rfcs/ilp-addresses/'>dirección ILP</LinkOut> de la ASE del destinatario, para que los paquetes enrutados a través de la red Interledger lleguen a la ASE del destinatario.
+- Un `sharedSecret`: un secreto generado criptográficamente que se utiliza para proteger la conexión de <LinkOut href='https://interledger.org/developers/rfcs/stream-protocol/'>STREAM</LinkOut> entre las ASE del remitente y del destinatario.
+
+```http title="objeto de métodos de pago entrante (ILP)"
+"methods": [
+    {
+      "type": "ilp",
+      "ilpAddress": "g.ilp.iwuyge987y.98y08y",
+      "sharedSecret": "1c7eaXa4rd2fFOBl1iydvCT1tV5TbM3RW1WLCafu_JA"
+    }
+  ]
+```
+
+Las ASE deben generar un `sharedSecret` nuevo por cada pago entrante y no deben reutilizar secretos entre recursos.
+
+Actualmente, ILP es el único método de pago definido en el estándar de Open Payments. Los métodos de pago son mecanismos de mensajería, no capas de liquidación. Las ASE que necesiten un método de pago diferente deben esperar a que se defina e integre en el estándar, o proponer agregar uno. Consulte [Involúcrese](/es/resources/get-involved/).
+
+## Liquidación
+
+Open Payments transporta instrucciones de pago, no mueve fondos. El servidor de recursos registra el acuerdo entre las partes (“la ASE A entregará X a la ASE B a cambio de este pago entrante”) y lo expone a través de las API.
+
+La ASE es responsable de ejecutar el pago contra las cuentas subyacentes.
+
+- Una vez que se crea el pago saliente y se abre el pago entrante correspondiente, la ASE del remitente debe entregar el monto acordado al destinatario.
+- Cuando el remitente y el destinatario utilizan diferentes ASE, la liquidación entre esas ASE se realiza a través de una infraestructura de pagos compartida fuera de Open Payments e ILP.
+- Cuando ambas partes tienen cuentas en la misma ASE, la ASE puede completar el pago transfiriendo fondos entre esas cuentas internas. No se requiere una liquidación entre las ASE.
+- Open Payments no toca los fondos, no retiene saldos ni ejecuta transferencias.
+
+Las ASE deben mantener alineada la visión del servidor de recursos sobre el progreso del pago con lo que realmente se haya acreditado en las cuentas. A medida que los fondos llegan a la cuenta del destinatario, el servidor de recursos debe actualizar el `receivedAmount` en el pago entrante correspondiente para que los clientes tengan una visión precisa del progreso del pago.
+
+## Validación de tókenes
+
+Cada solicitud al servidor de recursos lleva un token de acceso emitido por el servidor de autorización de la ASE. Antes de procesar la solicitud, el servidor de recursos debe validar el token.
+
+- Está correctamente formado y no ha sido revocado.
+- Cubre la acción solicitada (`create`, `read`, `list`, `complete`) y el tipo de recurso (`incoming-payment`, `quote`, `outgoing-payment`).
+- Está restringido a la wallet address a la que se dirige la solicitud, según corresponda.
+- Aplica `limits` en las concesiones en las solicitudes `create` del pago saliente, incluidos el monto de débito, el monto de recepción y las restricciones de intervalo recopiladas durante el consentimiento interactivo.
+
+Cómo y dónde se validan los tókenes es una decisión de implementación de la ASE. Las verificaciones anteriores aún deben ejecutarse en cada solicitud antes de que el servidor de recursos la procese. Para obtener más información sobre la emisión y el ciclo de vida de los tókenes, consulte [Servidor de autorización](/es/implement/auth-server/).
+
+<RafikiReference />

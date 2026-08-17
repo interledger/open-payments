@@ -204,10 +204,12 @@ Key terminology notes:
             },
             {
               label: 'Building with Open Payments',
+              translations: { es: 'Desarrollo con Open Payments' },
               link: '/overview/for-developers/'
             },
             {
               label: 'Implementing Open Payments',
+              translations: { es: 'Implementación de Open Payments' },
               link: '/overview/for-ases/'
             }
           ]
@@ -223,7 +225,7 @@ Key terminology notes:
               items: [
                 {
                   label: 'Wallet addresses',
-                  translations: { es: 'Direcciones de billetera' },
+                  translations: { es: 'Wallet addresses' },
                   link: '/concepts/wallet-addresses/'
                 },
                 {
@@ -233,18 +235,22 @@ Key terminology notes:
                   items: [
                     {
                       label: 'Payment resource types',
+                      translations: { es: 'Tipos de recursos de pago' },
                       link: '/concepts/resources/'
                     },
                     {
                       label: 'incoming-payment',
+                      translations: { es: 'Pago entrante' },
                       link: '/concepts/resources/#incoming-payment'
                     },
                     {
                       label: 'quote',
+                      translations: { es: 'Cotización' },
                       link: '/concepts/resources/#quote'
                     },
                     {
                       label: 'outgoing-payment',
+                      translations: { es: 'Pago saliente' },
                       link: '/concepts/resources/#outgoing-payment'
                     }
                   ]
@@ -495,7 +501,7 @@ Key terminology notes:
                 {
                   label: 'Verify ownership of a wallet address',
                   translations: {
-                    es: 'Verificar la propiedad de una dirección de billetera'
+                    es: 'Verificar la propiedad de una wallet address'
                   },
                   link: '/guides/verify-wallet-address-ownership/'
                 }
@@ -510,26 +516,32 @@ Key terminology notes:
           items: [
             {
               label: 'ASE overview',
+              translations: { es: 'Descripción general de la ASE' },
               link: '/implement/ase-overview/'
             },
             {
               label: 'Wallet address architecture',
+              translations: { es: 'Arquitectura de wallet address' },
               link: '/implement/wallet-address-architecture/'
             },
             {
               label: 'Resource server',
+              translations: { es: 'Servidor de recursos' },
               link: '/implement/resource-server/'
             },
             {
               label: 'Authorization server',
+              translations: { es: 'Servidor de autorización' },
               link: '/implement/auth-server/'
             },
             {
               label: 'Identity provider integration',
+              translations: { es: 'Integración del proveedor de identidad' },
               link: '/implement/identity-provider/'
             },
             {
               label: 'Security',
+              translations: { es: 'Seguridad' },
               link: '/implement/security/'
             }
           ]
