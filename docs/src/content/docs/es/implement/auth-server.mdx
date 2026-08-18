@@ -78,7 +78,7 @@ Las ASE deben ser compatibles con:
 - **Rotación**: El cliente puede solicitar un nuevo token de acceso vinculado a la misma concesión. El servidor de autorización emite un nuevo token e invalida el anterior. Los tókenes vinculados a concesiones que hayan expirado no deben poder rotarse.
 - **Revocación**: El cliente (o, en algunos flujos, el propietario del recurso) puede revocar un token de acceso. Después de la revocación, el servidor de recursos debe rechazar cualquier uso posterior del token. Si los tókenes se validan localmente en el servidor de recursos, el servidor de autorización debe propagar la revocación lo suficientemente rápido como para que los tókenes obsoletos no puedan usarse para operaciones no autorizadas.
 
-Los puntos finales orientados al cliente correspondientes son <LinkOut href='/apis/auth-server/operations/post-token'>Rotar token de acceso</LinkOut> y <LinkOut href='/apis/auth-server/operations/delete-token'>Revocar token de acceso</LinkOut>.
+Los puntos finales orientados al cliente correspondientes son <LinkOut href='/apis/auth-server/operations/post-token'>Rotate access token</LinkOut> y <LinkOut href='/apis/auth-server/operations/delete-token'>Revoke access token</LinkOut>.
 
 ## Validación de tókenes para el servidor de recursos
 

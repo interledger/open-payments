@@ -26,7 +26,7 @@ Para cada solicitud entrante firmada, las ASE deben:
 
 1. Leer el encabezado `Signature-Input` para identificar el `keyId` y la lista de componentes cubiertos.
 2. Reconstruir la base de la firma a partir de esos componentes exactamente como lo hizo el cliente.
-3. Resolver la clave pública del cliente (consulte [Resolución de claves del cliente](#client-key-resolution) a continuación).
+3. Resolver la clave pública del cliente (consulte [Resolución de claves del cliente](#resolución-de-claves-del-cliente) a continuación).
 4. Verificar el encabezado `Signature` comparándolo con la base de la firma reconstruida mediante esa clave pública y Ed25519.
 5. Rechazar la solicitud si se cumple alguna de las siguientes condiciones:
    - Faltan componentes obligatorios (método, URI de destino, resumen del contenido, cuando corresponda, encabezado de autorización, cuando corresponda).
@@ -37,8 +37,6 @@ Para cada solicitud entrante firmada, las ASE deben:
 Las ASE establecen su propia antigüedad máxima permitida para las firmas. Open Payments no la define. Si el límite es demasiado largo, una solicitud firmada interceptada puede reenviarse y seguir siendo aceptada (un ataque de repetición). Si el límite es demasiado corto, los clientes legítimos que utilizan redes lentas pueden encontrarse con que sus firmas caducan antes de que llegue la solicitud.
 
 No se admiten los tókenes de portador. Un token por sí solo nunca es suficiente: cada solicitud debe llevar tanto un token de acceso (cuando corresponda) como una firma válida.
-
-<div id="client-key-resolution" />
 
 ## Resolución de claves del cliente
 

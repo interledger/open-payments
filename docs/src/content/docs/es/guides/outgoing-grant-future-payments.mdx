@@ -40,8 +40,7 @@ En esta guía, usted asume el rol de desarrollador de una aplicación. La guía 
   </LinkOut>
 - <Badge text="GET" variant="note" />
   <LinkOut href="https://openpayments.dev/apis/resource-server/operations/get-outgoing-payment-grant/">
-    Obtener los montos gastados para la concesión de autorización para el pago
-    saliente actual
+    Get Spent Amounts for Current Outgoing Payment Grant
   </LinkOut>
 
 ## Pasos
@@ -167,7 +166,7 @@ Agregue la `interact_ref` devuelta en los parámetros de consulta del URI de red
 
 ### 6. Obtener los montos gastados de la concesión de autorización para pagos salientes
 
-Puede proporcionar a su usuario información sobre cuánto le queda para gastar mediante una llamada a <Badge text="GET" variant="note" /> [API Obtener los montos gastados para la concesión de autorización para el pago saliente actual](/es/apis/auth-server/operations/get-outgoing-payment-grant/).
+Puede proporcionar a su usuario información sobre cuánto le queda para gastar mediante una llamada a <Badge text="GET" variant="note" /> [Get Spent Amounts for Current Outgoing Payment Grant API](/es/apis/auth-server/operations/get-outgoing-payment-grant/).
 
 La API utiliza el token de acceso devuelto en la respuesta de continuación de la concesión del paso 5. Dado que la concesión de autorización para pagos salientes es para un intervalo (tres meses), la API solo devolverá los montos para el intervalo actual.
 

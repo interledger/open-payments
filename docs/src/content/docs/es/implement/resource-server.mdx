@@ -15,7 +15,7 @@ El servidor de recursos de una ASE aloja tres conjuntos de API, uno por cada tip
 
 ### Pago entrante
 
-Cuando el servidor de recursos recibe una solicitud de <LinkOut href='/apis/resource-server/operations/create-incoming-payment'>Crear pago entrante</LinkOut>, debe:
+Cuando el servidor de recursos recibe una solicitud de <LinkOut href='/apis/resource-server/operations/create-incoming-payment'>Create Incoming Payment</LinkOut>, debe:
 
 - Generar los datos de pago únicos que la ASE del remitente utilizará para dirigir los pagos hacia este pago entrante.
 - Conservar el recurso de pago entrante para que se pueda recuperar, enumerar y completar mediante llamadas posteriores a la API.
@@ -23,22 +23,22 @@ Cuando el servidor de recursos recibe una solicitud de <LinkOut href='/apis/reso
 
 Si la solicitud especifica un `incomingAmount`, el servidor de recursos debe aplicarlo como un total máximo. Uno o más pagos pueden asociarse al pago entrante, pero la suma de todos ellos no debe exceder el `incomingAmount`. El servidor de recursos debe marcar el pago entrante como completado una vez que el total acumulado alcance el límite.
 
-Si `incomingAmount` está ausente, el servidor de recursos no puede determinar la finalización por sí mismo. Debe aceptar pagos hasta que un cliente emita una solicitud de <LinkOut href='/apis/resource-server/operations/complete-incoming-payment'>Completar un pago entrante</LinkOut> o hasta que el pago entrante venza. Las ASE pueden definir un plazo de vencimiento. El `expiresAt` debe devolverse al cliente en esos casos para que el cliente sepa cuándo el recurso dejará de aceptar pagos.
+Si `incomingAmount` está ausente, el servidor de recursos no puede determinar la finalización por sí mismo. Debe aceptar pagos hasta que un cliente emita una solicitud de <LinkOut href='/apis/resource-server/operations/complete-incoming-payment'>Complete an Incoming Payment</LinkOut> o hasta que el pago entrante venza. Las ASE pueden definir un plazo de vencimiento. El `expiresAt` debe devolverse al cliente en esos casos para que el cliente sepa cuándo el recurso dejará de aceptar pagos.
 
 ### Cotización
 
-Cuando el servidor de recursos recibe una solicitud de <LinkOut href='/apis/resource-server/operations/create-quote'>Crear una cotización</LinkOut>, debe:
+Cuando el servidor de recursos recibe una solicitud de <LinkOut href='/apis/resource-server/operations/create-quote'>Create a Quote</LinkOut>, debe:
 
 - Calcular el `debitAmount`, el `receiveAmount` y la comisión del pago solicitado, incluido cualquier tipo de cambio aplicable cuando las wallet addresses del remitente y del destinatario utilicen valores de `assetCode` diferentes.
 - Comprometerse a entregar el `receiveAmount` cotizado a la ASE del destinatario si se crea un pago saliente basado en la cotización dentro del plazo de validez de la cotización.
 - Asignar un `quoteId` a la cotización y conservarla.
-- Establecer un plazo de validez después del cual la cotización ya no se respete. Las ASE definen este plazo. Debe ser lo suficientemente breve para limitar la exposición al tipo de cambio y a las comisiones, pero lo suficientemente amplio para que el cliente pueda completar los pasos restantes de concesión y autorización y llamar a Crear pago saliente antes de que expire la cotización.
+- Establecer un plazo de validez después del cual la cotización ya no se respete. Las ASE definen este plazo. Debe ser lo suficientemente breve para limitar la exposición al tipo de cambio y a las comisiones, pero lo suficientemente amplio para que el cliente pueda completar los pasos restantes de concesión y autorización y llamar a Create Outgoing Payment antes de que expire la cotización.
 
 Una cotización representa un compromiso vinculante de la ASE del remitente. Si la ASE del remitente no puede cumplir con la cotización en el momento de la ejecución, se trata de un fallo del lado de la ASE, no de un error del protocolo.
 
 ### Pago saliente
 
-Cuando el servidor de recursos recibe una solicitud de <LinkOut href='/apis/resource-server/operations/create-outgoing-payment'>Crear pago saliente</LinkOut>, debe:
+Cuando el servidor de recursos recibe una solicitud de <LinkOut href='/apis/resource-server/operations/create-outgoing-payment'>Create Outgoing Payment</LinkOut>, debe:
 
 - Validar que el token de acceso presentado tenga una concesión que autorice este pago saliente específico, incluidos los límites recopilados durante el flujo de consentimiento interactivo.
 - Si se proporciona un `quoteId`, buscar la cotización, confirmar que no haya vencido y usar los montos cotizados.
