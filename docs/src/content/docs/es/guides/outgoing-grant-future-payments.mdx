@@ -10,6 +10,7 @@ import Finish from '/src/content/docs/partials/es/_grant-finish-interaction.mdx'
 import GetWalletAddress from '/src/content/docs/partials/code/guides/outgoing-grant-future-payments/_get-wallet-address.mdx'
 import GrantRequestOutgoingPayment from '/src/content/docs/partials/code/guides/outgoing-grant-future-payments/_grant-request-outgoing-payment.mdx'
 import RequestAGrantContinuation from '/src/content/docs/partials/code/guides/outgoing-grant-future-payments/_request-a-grant-continuation.mdx'
+import GrantSpentAmount from '/src/content/docs/partials/code/guides/outgoing-grant-future-payments/_get-grant-spent-amount.mdx'
 
 :::tip[Resumen]
 Aprenda cómo obtener una concesión de pago saliente para pagos futuros sin especificar destinatarios.
@@ -37,12 +38,16 @@ En esta guía, usted asume el rol de desarrollador de una aplicación. La guía 
   <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-continue/">
     Grant Continuation Request
   </LinkOut>
+- <Badge text="GET" variant="note" />
+  <LinkOut href="https://openpayments.dev/apis/resource-server/operations/get-outgoing-payment-grant/">
+    Get Spent Amounts for Current Outgoing Payment Grant
+  </LinkOut>
 
 ## Pasos
 
-### 1. Obtener los datos de la dirección de billetera
+### 1. Obtener los datos de la wallet address
 
-Supongamos que su usuario guardó su dirección de billetera en el perfil de su cuenta al configurar la aplicación. Llame a la [Get Wallet Address API](/es/apis/wallet-address-server/operations/get-wallet-address) para obtener los datos necesarios sobre la cuenta de la billetera del usuario.
+Supongamos que su usuario guardó su wallet address en el perfil de su cuenta al configurar la aplicación. Llame a la [Get Wallet Address API](/es/apis/wallet-address-server/operations/get-wallet-address) para obtener los datos necesarios sobre la cuenta de la billetera del usuario.
 
 <GetWalletAddress />
 
@@ -153,6 +158,36 @@ Agregue la `interact_ref` devuelta en los parámetros de consulta del URI de red
       "value": "..." // access token for continuing the request
     },
     "uri": "https://auth.cloudninebank.example.com/continue/{...}" // continuation request uri
+  }
+}
+```
+
+</details>
+
+### 6. Obtener los montos gastados de la concesión de autorización para pagos salientes
+
+Puede proporcionar a su usuario información sobre cuánto le queda para gastar mediante una llamada a <Badge text="GET" variant="note" /> [Get Spent Amounts for Current Outgoing Payment Grant API](/es/apis/auth-server/operations/get-outgoing-payment-grant/).
+
+La API utiliza el token de acceso devuelto en la respuesta de continuación de la concesión del paso 5. Dado que la concesión de autorización para pagos salientes es para un intervalo (tres meses), la API solo devolverá los montos para el intervalo actual.
+
+<GrantSpentAmount />
+
+<details>
+  <summary>Ejemplo de respuesta</summary>
+
+```json wrap
+{
+  "spentReceiveAmount": {
+    // the total amount successfully received (by all receivers) using the current outgoing payment grant and interval
+    "value": "4500",
+    "assetCode": "CAD",
+    "assetScale": 2
+  },
+  "spentDebitAmount": {
+    // the total amount successfully deducted from the sender's account using the current outgoing payment grant and interval
+    "value": "5000",
+    "assetCode": "CAD",
+    "assetScale": 2
   }
 }
 ```

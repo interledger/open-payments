@@ -6,6 +6,11 @@ tableOfContents:
 ---
 
 import { LinkOut, Tooltip } from '@interledger/docs-design-system'
+import ForAsesResourceServer from '/src/content/docs/partials/es/_for-ases-resource-server.mdx'
+
+:::tip[Resumen]
+Los pagos de Open Payments se configuran a través de tres tipos de recursos alojados en un servidor de recursos: `incoming-payment`, `quote` y `outgoing-payment`. Los clientes crean estos recursos en secuencia para establecer los detalles del pago en la cuenta del destinatario, fijar el costo en la cuenta del remitente y emitir la instrucción de pago.
+:::
 
 Las interfaces de programación de aplicaciones (application programming interfaces, API) de Open Payments (estándar de pagos abiertos) se gestionan a través de un servidor de recursos. Para operar sobre las API, el cliente debe tener un token de acceso válido, emitido por un servidor de autorización de confianza.
 
@@ -15,9 +20,11 @@ Un servidor de recursos de Open Payments aloja tres conjuntos de API: para pagos
 
 Cada conjunto de API tiene su propio tipo de recurso: `incoming-payment`, `quote` y `outgoing-payment`.
 
+<ForAsesResourceServer />
+
 ### pago entrante
 
-Un recurso de `incoming-payment` suele ser el primero en crearse en un flujo de pago, a través de la <LinkOut href='/apis/resource-server/operations/create-incoming-payment'>API Crear pago entrante</LinkOut>. El recurso se crea en la cuenta del destinatario.
+Un recurso de `incoming-payment` suele ser el primero en crearse en un flujo de pago, a través de la <LinkOut href='/apis/resource-server/operations/create-incoming-payment'>Create Incoming Payment API</LinkOut>. El recurso se crea en la cuenta del destinatario.
 
 Luego, la entidad que administra la cuenta (account servicing entity, ASE) del destinatario devuelve los datos de pago único que el cliente utilizará para enviar pagos al destinatario. Todos los pagos recibidos mediante el uso de estos datos se asocian al recurso de `incoming-payment`.
 
@@ -29,7 +36,7 @@ Cuando se incluye un `incomingAmount`, el monto representa el monto máximo que 
 
 Cuando no se incluye un `incomingAmount`, la creación del recurso de `quote` posterior debe contener un monto de débito o un monto de recepción, como se explica en la siguiente sección.
 
-Si no se incluye un `incomingAmount`, la ASE del destinatario no sabrá qué monto recibirá. Por lo tanto, no sabrá de inmediato cuándo se ha completado un pago. El cliente puede llamar a la <LinkOut href='/apis/resource-server/operations/complete-incoming-payment'>API Completar un pago entrante</LinkOut> para indicar a la ASE que no espere más pagos. De lo contrario, la sesión de pago eventualmente caducará.
+Si no se incluye un `incomingAmount`, la ASE del destinatario no sabrá qué monto recibirá. Por lo tanto, no sabrá de inmediato cuándo se ha completado un pago. El cliente puede llamar a la <LinkOut href='/apis/resource-server/operations/complete-incoming-payment'>Complete an Incoming Payment API</LinkOut> para indicar a la ASE que no espere más pagos. De lo contrario, la sesión de pago eventualmente caducará.
 
 :::tip[Caso de uso: pagos continuos mediante Web Monetization (estándar de monetización web)]
 La compatibilidad con los pagos continuos mediante <LinkOut href='https://webmonetization.org'>Web Monetization</LinkOut> es un caso de uso para excluir un `incomingAmount`. La ASE del destinatario desconoce el tiempo que un usuario pasa en un sitio con monetización web. Los pagos se efectuarán de forma continua hasta que finalice la sesión. Luego, el agente de Web Monetization puede solicitar que se marque como completado el pago entrante. Esto indica a la ASE que no se enviarán más pagos y que se acredite el monto en la cuenta del destinatario.
@@ -37,7 +44,7 @@ La compatibilidad con los pagos continuos mediante <LinkOut href='https://webmon
 
 ### cotización
 
-Luego de crearse un recurso de `incoming-payment` en la cuenta del destinatario, por lo general, un recurso de `quote` se crea en la cuenta del remitente a través de la <LinkOut href="/apis/resource-server/operations/create-quote">API Crear una cotización</LinkOut>.
+Luego de crearse un recurso de `incoming-payment` en la cuenta del destinatario, por lo general, un recurso de `quote` se crea en la cuenta del remitente a través de la <LinkOut href="/apis/resource-server/operations/create-quote">Create a Quote API</LinkOut>.
 
 La cotización indica cuánto costará efectuar el pago, lo que incluye todas las tarifas que correspondan. La cotización funciona como un compromiso de la ASE del remitente de entregar un monto en particular a la ASE del destinatario. Las cotizaciones son válidas solo durante un tiempo limitado.
 
@@ -49,7 +56,7 @@ Se utiliza cuando el recurso de pago entrante tiene un `incomingAmount` definido
 
 **Cotización de envío fija**
 
-Se utiliza cuando el recurso de pago entrante no incluye un `incomingAmount` y el remitente desea especificar exactamente cuánto se debe debitar de su cuenta. Se exige un `debitAmount` para este tipo de cotización. Con este tipo de cotización, el pago entrante no se puede completar automáticamente una vez que el pago saliente se haya completado. El cliente puede emitir una <LinkOut href='/apis/resource-server/operations/complete-incoming-payment'>solicitud de completar el pago entrante</LinkOut>. De lo contrario, la sesión de pago eventualmente caducará.
+Se utiliza cuando el recurso de pago entrante no incluye un `incomingAmount` y el remitente desea especificar exactamente cuánto se debe debitar de su cuenta. Se exige un `debitAmount` para este tipo de cotización. Con este tipo de cotización, el pago entrante no se puede completar automáticamente una vez que el pago saliente se haya completado. El cliente puede emitir una <LinkOut href='/apis/resource-server/operations/complete-incoming-payment'>Complete Incoming Payment request</LinkOut>. De lo contrario, la sesión de pago eventualmente caducará.
 
 **Cotización de recepción fija**
 
@@ -57,13 +64,13 @@ Se utiliza cuando el recurso de pago entrante no incluye un `incomingAmount` y e
 
 ### pago saliente
 
-Por último, se crea un recurso de `outgoing-payment` en la cuenta del remitente a través de la <LinkOut href='/apis/resource-server/operations/create-outgoing-payment'>API Crear pago saliente</LinkOut>. Un recurso de pago saliente puede representar un pago que se enviará, que se está enviando o que se envió previamente desde la cuenta del remitente. El objetivo de este recurso es actuar como una instrucción para que la ASE del remitente realice un pago.
+Por último, se crea un recurso de `outgoing-payment` en la cuenta del remitente a través de la <LinkOut href='/apis/resource-server/operations/create-outgoing-payment'>Create Outgoing Payment API</LinkOut>. Un recurso de pago saliente puede representar un pago que se enviará, que se está enviando o que se envió previamente desde la cuenta del remitente. El objetivo de este recurso es actuar como una instrucción para que la ASE del remitente realice un pago.
 
 Open Payments no ejecuta pagos reales. Solo proporciona las instrucciones para el pago saliente. Esta separación permite que las aplicaciones emitan solicitudes de pago sin estar registradas como proveedoras de servicios financieros. Las aplicaciones no tienen que manipular datos financieros confidenciales de manera directa, lo que reduce el riesgo y la complejidad.
 
-Open Payments exige el consentimiento explícito del remitente antes de que se cree el recurso de pago saliente. El consentimiento se obtiene por medio de una [concesión de autorización interactiva](/concepts/auth/#outgoing-payment).
+Open Payments exige el consentimiento explícito del remitente antes de que se cree el recurso de pago saliente. El consentimiento se obtiene por medio de una [concesión de autorización interactiva](/es/concepts/auth/#pago-saliente).
 
-El recurso de `outgoing-payment` contiene la dirección de billetera del destinatario, por lo que la ASE del remitente sabe a dónde tiene que enviar el pago. Si se creó previamente un recurso de `quote`, el recurso de `outgoing-payment` también contiene el `quoteId`.
+El recurso de `outgoing-payment` contiene la wallet address del destinatario, por lo que la ASE del remitente sabe a dónde tiene que enviar el pago. Si se creó previamente un recurso de `quote`, el recurso de `outgoing-payment` también contiene el `quoteId`.
 
 :::note[Pago saliente sin un identificador de cotización]
 No se exige una cotización para todos los pagos salientes. Si el remitente no especifica el monto que recibirá el destinatario, el `outgoing-payment` puede contener, en cambio, valores de `incomingPayment` y `debitAmount`. <LinkOut href='https://webmonetization.org'>Web Monetization</LinkOut> es un buen ejemplo de este caso de uso.
@@ -73,4 +80,4 @@ Una vez que se creó el recurso de `outgoing-payment`, se puede completar el pag
 
 ## Concesiones
 
-Para obtener información sobre los tipos de concesiones para cada recurso, consulte la sección [Tipos de concesiones](/concepts/auth/#grant-types) de la página Conceptos de autorización.
+Para obtener información sobre los tipos de concesiones para cada recurso, consulte la sección [Tipos de concesiones](/es/concepts/auth/#tipos-de-concesiones) de la página Conceptos de autorización.

@@ -1,0 +1,40 @@
+---
+title: Descripción general de la ASE
+---
+
+import { LinkOut } from '@interledger/docs-design-system'
+
+:::tip[Resumen]
+En estas páginas se describe lo que una entidad que administra cuentas (ASE) debe desarrollar para que sus cuentas sean compatibles con Open Payments. En el resto de la documentación de Open Payments se describe lo que los desarrolladores de clientes deben saber para llamar a las API.
+:::
+
+## ¿Qué es una ASE?
+
+Una entidad que administra cuentas (ASE) proporciona y mantiene cuentas de pago para remitentes y destinatarios, y es una entidad regulada en los países en los que opera. Algunos ejemplos de ASE son los bancos, las billeteras digitales, los sistemas de pago móvil y otros proveedores.
+
+Cuando una ASE adopta el estándar de Open Payments, las cuentas financieras de los clientes en esa ASE se vuelven compatibles con Open Payments. Los clientes (aplicaciones, servicios y otro software) pueden entonces llamar a las API de Open Payments en relación con esas cuentas para obtener los detalles de las cuentas y emitir instrucciones de pago sin necesidad de una integración personalizada para cada ASE.
+
+## Lo que deben operar las ASE
+
+Para que las cuentas sean compatibles con Open Payments, las ASE deben operar tres servidores e integrarse con un proveedor de identidad:
+
+- **Wallet address server**: Devuelve información pública sobre cada cuenta compatible con Open Payments en una URL HTTPS estable (la wallet address).
+- **Servidor de recursos**: Aloja las API `incoming-payment`, `quote` y `outgoing-payment` a las que los clientes llaman para configurar los pagos.
+- **Servidor de autorización**: Procesa las solicitudes de concesión según el <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol'>Protocolo de Negociación y Autorización de Concesiones (GNAP)</LinkOut>, emite tókenes de acceso y coordina el consentimiento de los usuarios para las concesiones interactivas.
+- **Integración del proveedor de identidad (IdP)**: Autentica al propietario del recurso y obtiene el consentimiento explícito durante las concesiones interactivas (necesario para los pagos salientes).
+
+La ASE también es responsable del movimiento real de los fondos. Open Payments solo transmite la **instrucción de pago**. La liquidación se realiza entre las ASE a través de una infraestructura de pagos compartida.
+
+## Relación con los desarrolladores de clientes
+
+Los desarrolladores de clientes no necesitan saber cómo una ASE estructura sus cuentas, valida los tókenes, integra su IdP o liquida los fondos. Desde la perspectiva del desarrollador del cliente, una ASE expone:
+
+- Una URL de la wallet address que devuelve los detalles públicos de la cuenta.
+- Un servidor de recursos que acepta solicitudes relacionadas con el pago y devuelve recursos.
+- Un servidor de autorización que emite tókenes de acceso después de evaluar las solicitudes de concesión.
+
+:::note
+Esta sección aborda los aspectos del lado del servidor que respaldan esas interfaces. En las páginas se asume que el lector está implementando Open Payments en una ASE. El lenguaje está dirigido intencionalmente a las ASE en tercera persona, para que los desarrolladores de clientes que lleguen a esta sección puedan darse cuenta de que el contenido no está dirigido a ellos.
+:::
+
+Las páginas de esta sección describen los requisitos del estándar y del protocolo. Para obtener una implementación de referencia concreta y de código abierto de una pila de servidores compatible con Open Payments, consulte <LinkOut href='https://rafiki.dev'>Rafiki</LinkOut>.

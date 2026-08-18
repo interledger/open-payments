@@ -7,6 +7,7 @@ import {
   Mermaid,
   MermaidWrapper
 } from '@interledger/docs-design-system'
+import ForAsesSecurity from '/src/content/docs/partials/es/_for-ases-security.mdx'
 
 :::tip[Resumen]
 Las claves de cliente son identificadores exclusivos que permiten a los clientes firmar solicitudes de Open Payments. Permiten verificar la identidad de un cliente mediante un registro de claves públicas.
@@ -16,13 +17,23 @@ Todas las solicitudes de cliente en Open Payments se firman con una clave exclus
 
 ## Registro de claves
 
-Un registro de claves es una lista de claves, que son generadas y almacenadas por el cliente, para los casos en que necesite acceder a recursos protegidos de Open Payments. Las solicitudes de concesión se realizan en varias solicitudes HTTP firmadas. Por consiguiente, es importante que el cliente pueda identificarse de manera sistemática ante un servidor de autorización. El registro de claves permite al servidor de autorización verificar que el cliente es quien dice ser.
+Un registro de claves es el conjunto de claves **públicas** que un cliente utiliza para identificarse en todas las solicitudes de Open Payments y está alojado en el servidor de recursos de Open Payments de la ASE. Las solicitudes de concesión y otras llamadas a la API se realizan a través de múltiples solicitudes HTTP firmadas, por lo que el cliente debe presentar la misma identidad en cada llamada. El servidor de autorización utiliza el registro para verificar que el cliente haya firmado cada solicitud.
 
-Cada cliente se representa con una [dirección de billetera](/es/concepts/wallet-addresses). El registro de claves de un cliente es de acceso público a través de su dirección de billetera mediante un punto final `jwks.json`. El servidor de autorización puede recuperar el registro de claves del cliente accediendo a la `WALLET_ADDRESS/jwks.json`.
+El cliente genera un par de claves pública y privada. Conserva la clave privada y firma cada solicitud con esa clave y un `keyId`. El `keyId` indica a los servidores qué clave pública del registro utilizar para la verificación.
+
+Para los clientes que se identifican con una [wallet address](/es/concepts/wallet-addresses/), el registro se publica en `WALLET_ADDRESS/jwks.json`. Por ejemplo:
 
 ```http title="Ejemplo"
 https://wallet.example.com/alice/jwks.json
 ```
+
+La forma en que los clientes registran las claves con la ASE queda fuera del alcance de Open Payments.
+
+:::note
+La identidad dirigida solo es compatible con ciertas concesiones no interactivas. En esos casos, el cliente proporciona un `jwk` en el cuerpo de la solicitud en lugar de utilizar un punto final JWKS alojado en la wallet address. Consulte [Solicitudes de clientes](#solicitudes-de-clientes).
+:::
+
+<ForAsesSecurity />
 
 ### Estructura del registro
 
@@ -73,7 +84,7 @@ Dado que las solicitudes de clientes se realizan en varias solicitudes HTTP firm
   - Un encabezado `Signature-Input` que incluya el `keyId` asociado al par de claves del cliente. Este encabezado es una lista separada por comas de encabezados que corresponden a valores de los datos firmados.
   - Un encabezado `signature` generado en función de la `Signature-Input`, usando el algoritmo de firma `EdDSA`.
 - Cuerpo
-  - Una propiedad `client` que contenga la dirección de billetera del cliente.
+  - Una propiedad `client` que contenga la wallet address del cliente.
 
 La protección de las solicitudes de clientes sigue un perfil definido en la <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol#name-securing-requests-from-the-'>especificación del GNAP</LinkOut>.
 
@@ -93,9 +104,9 @@ Luego, el servidor de autorización realiza una solicitud `GET` al punto final J
 
 Open Payments usa el método de validación de claves mediante <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol#name-http-message-signatures'>firmas de mensajes HTTP</LinkOut> (`httpsig`).
 
-Este método de validación `httpsig` debe declararse como parte del material de la clave al usar una clave directamente para solicitar una concesión. El material de claves que se muestra es solo ilustrativo. En Open Payments, se espera que la dirección de la billetera se utilice en la solicitud de concesión.
+Este método de validación `httpsig` debe declararse como parte del material de la clave al usar una clave directamente para solicitar una concesión. El material de claves que se muestra es solo ilustrativo. En Open Payments, se espera que la wallet address se utilice en la solicitud de concesión.
 
-```json title="Example"
+```json title="Ejemplo"
 "key": {
     "proof": "httpsig",
     "jwk": {
@@ -131,7 +142,7 @@ La red de pruebas de Interledger ofrece un ejemplo funcional de [obtención de u
     participant C as SDK de cliente de Open Payments
     participant AS as Servidor de autorización
     participant RS as Servidor de recursos
-    C->>C: Inicializar el SDK de cliente con la URL<br/>de la dirección de billetera, el keyId y la clave privada
+    C->>C: Inicializar el SDK de cliente con la URL<br/>de la wallet address, el keyId y la clave privada
     C->>AS: Envía una solicitud POST de concesión (pago saliente interactivo), <br/>firmada con la clave privada.
     AS->>AS: Extrae el keyId del encabezado signature-input de la solicitud de concesión <br/>y obtiene el dominio del cliente del cuerpo de la solicitud.
     AS->>RS: Realiza una solicitud GET de las {client_domain/jwks.json} claves públicas<br/> desde el punto final JWKS del cliente.

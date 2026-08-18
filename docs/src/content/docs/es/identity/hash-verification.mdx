@@ -21,7 +21,7 @@ La base del hash se genera concatenando en secuencia los valores siguientes, sep
 
 El ejemplo a continuación muestra los cuatro componentes mencionados que conforman la base del hash. No se admite relleno ni espacios en blanco antes o después de cada línea, ni un salto de línea adicional al final.
 
-```http title="Example hash base"
+```http title="Ejemplo de base de hash"
 VJLO6A4CATR0KRO
 MBDOFXG4Y5CVJCX821LH
 4IFWWIKYB2PQ6U56NL1
@@ -32,7 +32,7 @@ La codificación ASCII de esta cadena se somete a la función de hash con el alg
 
 Con el ejemplo de la cadena base de hash mencionado, a continuación se muestra el hash codificado `sha-256` que usa el algoritmo SHA2 de 256 bits.
 
-```http title="SHA2 256-bit hash example"
+```http title="Ejemplo de hash SHA2 de 256 bits"
 x-gguKWTj8rQf7d7i3w3UhzvuJ5bpOlKyAlVpLxBffY
 ```
 
@@ -42,7 +42,7 @@ Cuando el cliente recibe una redirección del servidor de autorización, este in
 
 El ejemplo a continuación muestra cómo verificar en JavaScript el hash recibido del servidor de autorización.
 
-```javascript title='JavaScript example'
+```javascript title='Ejemplo en JavaScript'
 function verifyHash(
   clientNonce,
   interactNonce,
