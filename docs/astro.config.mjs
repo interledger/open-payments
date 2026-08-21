@@ -727,7 +727,8 @@ Key terminology notes:
     '/docs': '/overview/getting-started',
     '/introduction/wallet-addresses': '/concepts/wallet-addresses',
     '/sdk/grant-create': '/sdk/grant-create-incoming',
-    '/implement': '/implement/ase-overview/'
+    '/implement': '/implement/ase-overview/',
+    '/introduction/overview/': '/overview/getting-started'
   },
   server: {
     port: 1104,
