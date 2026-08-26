@@ -81,7 +81,41 @@ console.log('GRANT_SPENT_DEBIT_AMOUNT: ', grantSpentAmounts.spentDebitAmount)
 <GoButton />
 
 ```go wrap
-// Coming soon
+package main
+
+// Import dependencies
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
+
+	op "github.com/interledger/open-payments-go"
+)
+
+func main() {
+	// Initialize client
+	client, err := op.NewAuthenticatedClient(WALLET_ADDRESS_URL, PRIVATE_KEY_BASE_64, KEY_ID)
+	if err != nil {
+		log.Fatalf("Error creating authenticated client: %v\n", err)
+	}
+
+	// Get spent amounts
+	grantSpentAmounts, err := client.OutgoingPayment.GetGrantSpentAmounts(context.TODO(), op.OutgoingPaymentGrantGetParams{
+		BaseURL:     RESOURCE_SERVER_URL,
+		AccessToken: OUTGOING_PAYMENT_ACCESS_TOKEN,
+	})
+	if err != nil {
+		log.Fatalf("Error fetching grant spent amounts: %v\n", err)
+	}
+
+	// Output
+	grantSpentAmountsJSON, err := json.MarshalIndent(grantSpentAmounts, "", "  ")
+	if err != nil {
+		log.Fatalf("Error marshaling grant spent amounts: %v\n", err)
+	}
+	fmt.Println("GRANT SPENT AMOUNTS:", string(grantSpentAmountsJSON))
+}
 ```
 
 </TabItem>
