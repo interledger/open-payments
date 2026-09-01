@@ -1,7 +1,8 @@
 //@! start chunk 1 | title=Import dependencies
 use open_payments::client::api::AuthenticatedResources;
-use open_payments::client::utils::get_resource_server_url;
-use open_payments::snippets::utils::{create_authenticated_client, get_env_var, load_env};
+#[path = "../utils.rs"]
+mod snippet_utils;
+use snippet_utils::{create_authenticated_client, get_env_var, get_resource_server_url, load_env};
 use open_payments::types::{resource::CreateQuoteRequest, Amount, PaymentMethodType, Receiver};
 //@! end chunk 1
 
