@@ -7,7 +7,7 @@ const locale = Astro.currentLocale || 'en'
 let formattedDate = null
 if (lastUpdated instanceof Date) {
   formattedDate = lastUpdated.toLocaleDateString(
-    locale === 'es' ? 'es-ES' : 'en-GB',
+    locale === 'es' ? 'es-ES' : 'en-US',
     { year: 'numeric', month: 'short', day: 'numeric' }
   )
 }
