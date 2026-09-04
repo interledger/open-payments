@@ -88,6 +88,7 @@ export default defineConfig({
           borderRadius: 'var(--border-radius)'
         }
       },
+      lastUpdated: true,
       logo: {
         src: './public/favicon.svg'
       },
