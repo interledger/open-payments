@@ -96,7 +96,6 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 // Import dependencies
 use open_payments::client::api::UnauthenticatedResources;
 use open_payments::client::AuthenticatedResources;
-use open_payments::snippets::utils::{create_authenticated_client, get_env_var, load_env};
 use open_payments::types::{
     auth::{AccessItem, AccessTokenRequest, GrantRequest, QuoteAction},
     GrantResponse,
@@ -127,7 +126,7 @@ println!(
 
 let response = client
     .grant()
-    .request(&wallet_address.auth_server, &grant_request)
+    .request(&wallet_address.auth_server, &grant_request, None)
     .await?;
 
 // Output

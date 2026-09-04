@@ -4,9 +4,8 @@ use open_payments::client::AuthenticatedResources;
 #[path = "../utils.rs"]
 mod snippet_utils;
 use snippet_utils::{create_authenticated_client, get_env_var, load_env};
-use open_payments::types::{
-    auth::{AccessItem, AccessTokenRequest, GrantRequest, QuoteAction},
-    GrantResponse,
+use open_payments::types::auth::{
+    AccessItem, AccessTokenRequest, GrantRequest, GrantResponse, IncomingPaymentAction,
 };
 //@! end chunk 1
 
@@ -15,7 +14,6 @@ async fn main() -> open_payments::client::Result<()> {
     load_env()?;
 
     //@! start chunk 2 | title=Initialize Open Payments client
-    // Authenticated client can be also used for unauthenticated resources
     let client = create_authenticated_client()?;
     //@! end chunk 2
 
@@ -24,24 +22,30 @@ async fn main() -> open_payments::client::Result<()> {
     let wallet_address = client.wallet_address().get(&wallet_address_url).await?;
     //@! end chunk 3
 
-    //@! start chunk 4 | title=Request quote grant
+    //@! start chunk 4 | title=Request incoming payment grant with directed identity
+    let jwk = client.public_jwk();
+
     let grant_request = GrantRequest::new(
         AccessTokenRequest {
-            access: vec![AccessItem::Quote {
-                actions: vec![QuoteAction::Create, QuoteAction::Read, QuoteAction::ReadAll],
+            access: vec![AccessItem::IncomingPayment {
+                actions: vec![
+                    IncomingPaymentAction::Create,
+                    IncomingPaymentAction::Read,
+                    IncomingPaymentAction::Complete,
+                ],
+                identifier: None,
             }],
         },
         None,
     );
 
-    println!(
-        "Grant request JSON: {}",
-        serde_json::to_string_pretty(&grant_request)?
-    );
-
     let response = client
         .grant()
-        .request(&wallet_address.auth_server, &grant_request, None)
+        .request(
+            &wallet_address.auth_server,
+            &grant_request,
+            Some(&jwk),
+        )
         .await?;
     //@! end chunk 4
 
@@ -55,7 +59,7 @@ async fn main() -> open_payments::client::Result<()> {
             );
         }
         GrantResponse::WithInteraction { .. } => {
-            unreachable!("Interaction not required for quotes");
+            unreachable!("Interaction not required for incoming payments");
         }
     }
     //@! end chunk 5

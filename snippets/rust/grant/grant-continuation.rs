@@ -1,6 +1,8 @@
 //@! start chunk 1 | title=Import dependencies
 use open_payments::client::AuthenticatedResources;
-use open_payments::snippets::utils::{create_authenticated_client, get_env_var, load_env};
+#[path = "../utils.rs"]
+mod snippet_utils;
+use snippet_utils::{create_authenticated_client, get_env_var, load_env};
 use open_payments::types::auth::ContinueResponse;
 //@! end chunk 1
 
@@ -31,6 +33,9 @@ async fn main() -> open_payments::client::Result<()> {
                 "Received access token manage URL: {:#?}",
                 access_token.manage
             );
+        }
+        ContinueResponse::WithSubject { subject, .. } => {
+            println!("Received subject: {:#?}", subject);
         }
         ContinueResponse::Pending { .. } => {
             println!("Pending");

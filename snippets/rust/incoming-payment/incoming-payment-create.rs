@@ -2,15 +2,15 @@ use chrono::{Duration, Utc};
 //@! start chunk 1 | title=Import dependencies
 use open_payments::client::api::AuthenticatedResources;
 use open_payments::client::api::UnauthenticatedResources;
-use open_payments::client::utils::get_resource_server_url;
-use open_payments::client::OpClientError;
-use open_payments::snippets::utils::{create_authenticated_client, get_env_var, load_env};
+#[path = "../utils.rs"]
+mod snippet_utils;
+use snippet_utils::{create_authenticated_client, get_env_var, get_resource_server_url, load_env};
 use open_payments::types::{resource::CreateIncomingPaymentRequest, Amount};
 //@! end chunk 1
 
 #[tokio::main]
 async fn main() -> open_payments::client::Result<()> {
-    load_env().map_err(|e| OpClientError::other(e.to_string()))?;
+    load_env()?;
 
     //@! start chunk 2 | title=Initialize Open Payments client
     let client = create_authenticated_client()?;
