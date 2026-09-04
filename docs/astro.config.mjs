@@ -61,7 +61,8 @@ export default defineConfig({
       components: {
         Header: './src/components/Header.astro',
         PageSidebar: './src/components/PageSidebar.astro',
-        Footer: './src/components/Footer.astro'
+        Footer: './src/components/Footer.astro',
+        PageTitle: './src/components/PageTitle.astro'
       },
       customCss: [
         './node_modules/@interledger/docs-design-system/src/styles/teal-theme.css',
