@@ -6,6 +6,7 @@ import starlightOpenAPI from 'starlight-openapi'
 import starlightLinksValidator from 'starlight-links-validator'
 import starlightLlmsTxt from 'starlight-llms-txt'
 import starlightFullViewMode from 'starlight-fullview-mode'
+import { unified } from '@astrojs/markdown-remark'
 import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
 import { loadEnv } from 'vite'
@@ -39,8 +40,10 @@ const netlifyDevFunctionsProxyTarget = (() => {
 export default defineConfig({
   site: 'https://openpayments.dev',
   markdown: {
-    remarkPlugins: [remarkMath],
-    rehypePlugins: [rehypeKatex]
+    processor: unified({
+      remarkPlugins: [remarkMath],
+      rehypePlugins: [rehypeKatex]
+    })
   },
   integrations: [
     starlight({
