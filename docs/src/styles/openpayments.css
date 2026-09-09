@@ -53,9 +53,12 @@ div.expressive-code figure.frame pre {
 }
 
 /* Operation URL panel. 0.26 replaced
- * `<details class="operation-description-urls">` with a popover `<div>` that
- * holds `<ul class="sl-openapi-operation-description-urls">`. */
-#sl-openapi-operation-description-popover {
+ * `<details class="operation-description-urls">` with two elements: a
+ * click-triggered popover, and the card that is always visible.
+ * Style both. The popover alone is not enough, because it computes
+ * `display: none` until the reader opens it. */
+#sl-openapi-operation-description-popover,
+.sl-openapi-operation-description.sl-openapi-operation-description {
   background-color: var(--sl-color-gray-7);
   border-radius: var(--border-radius);
   box-shadow: var(--sl-shadow-sm);
@@ -72,8 +75,12 @@ div.expressive-code figure.frame pre {
 }
 
 /* Section panel. 0.26 replaced `div.panel` with `.sl-openapi-section-panel`.
- * It already carries the background and a border, but no radius or shadow. */
-.sl-openapi-section-panel {
+ * The class is repeated to raise specificity. The plugin ships an equally
+ * specific rule for the same element, and its stylesheet loads after this
+ * one, so a single class loses on source order. The same trick is needed on
+ * the operation description card and the content picker below. */
+.sl-openapi-section-panel.sl-openapi-section-panel {
+  background-color: var(--sl-color-gray-7);
   border-radius: var(--border-radius);
   box-shadow: var(--sl-shadow-sm);
   border-color: var(--sl-color-hairline-light);
@@ -81,11 +88,17 @@ div.expressive-code figure.frame pre {
 
 /* Content picker. 0.26 shows the selected value in a
  * `span.sl-openapi-content-picker-select-value` and keeps the real `<select>`
- * for interaction. Both are visible, so both need the same rounding. */
-starlight-openapi-content-picker select,
-.sl-openapi-content-picker-select-value {
+ * for interaction. Both are visible, so both need the same treatment.
+ * `--sl-color-black` is white in light mode. Without it the control inherits
+ * a gray fill and reads as disabled.
+ * The plugin scopes its own border rule to a descendant `select` and wraps
+ * the scope class in `:where()`, which contributes no specificity. Repeating
+ * the parent class beats it. */
+.sl-openapi-content-picker-select.sl-openapi-content-picker-select select,
+.sl-openapi-content-picker-select-value.sl-openapi-content-picker-select-value {
+  background-color: var(--sl-color-black);
   border-radius: var(--border-radius);
-  border-color: var(--sl-color-gray-5);
+  border-color: var(--sl-color-hairline-light);
 }
 
 starlight-openapi-content-picker pre {
