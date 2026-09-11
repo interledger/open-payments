@@ -1,9 +1,5 @@
 # Open Payments
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/interledger/open-payments/main/docs/public/img/logo.svg" width="700" alt="Open Payments">
-</p>
-
 [![Netlify Status](https://api.netlify.com/api/v1/badges/61b256a1-93e0-4735-a492-1a71d5524e63/deploy-status)](https://app.netlify.com/projects/openpayments/deploys)
 
 ## What is Open Payments?
