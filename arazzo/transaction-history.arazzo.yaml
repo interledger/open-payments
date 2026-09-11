@@ -1,0 +1,284 @@
+arazzo: "1.0.1"
+info:
+  title: "Open Payments — Transaction History"
+  summary: >
+    Workflows for listing and retrieving incoming and outgoing payment
+    resources for account reconciliation.
+  description: |
+    This document defines workflows for retrieving transaction history
+    through the Open Payments API. These workflows cover listing and
+    retrieving both incoming and outgoing payments on a wallet address.
+
+    These workflows are useful for:
+    - Account reconciliation
+    - Payment status checking
+    - Building transaction history UIs
+    - Monitoring payment completion
+  version: "1.0.0"
+
+sourceDescriptions:
+  - name: walletAddressServer
+    url: ../open-payments-specifications/openapi/wallet-address-server.yaml
+    type: openapi
+  - name: resourceServer
+    url: ../open-payments-specifications/openapi/resource-server.yaml
+    type: openapi
+  - name: authServer
+    url: ../open-payments-specifications/openapi/auth-server.yaml
+    type: openapi
+
+workflows:
+  # ─── Workflow 1: List incoming payments ───
+  - workflowId: listIncomingPayments
+    summary: "List all incoming payments on a wallet address"
+    description: |
+      Obtain a grant and list incoming payments with pagination support.
+    inputs:
+      type: object
+      required:
+        - walletAddressUrl
+        - clientWalletAddress
+      properties:
+        walletAddressUrl:
+          type: string
+          description: "The wallet address to list incoming payments for"
+        clientWalletAddress:
+          type: string
+          description: "The client's wallet address for GNAP identification"
+        first:
+          type: integer
+          description: "Number of results to return (forward pagination)"
+        cursor:
+          type: string
+          description: "Pagination cursor from a previous response"
+
+    steps:
+      - stepId: getWalletAddress
+        description: >
+          Resolve the wallet address to discover auth and resource server URLs.
+        operationId: walletAddressServer.get-wallet-address
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          authServer: $response.body.authServer
+          resourceServer: $response.body.resourceServer
+
+      - stepId: requestIncomingPaymentListGrant
+        description: >
+          Request a non-interactive grant with `list` permissions for
+          incoming payments.
+        operationId: authServer.post-request
+        requestBody:
+          contentType: application/json
+          payload:
+            access_token:
+              access:
+                - type: incoming-payment
+                  actions:
+                    - list
+                  identifier: $inputs.walletAddressUrl
+            client: $inputs.clientWalletAddress
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          accessToken: $response.body.access_token.value
+
+      - stepId: listIncomingPayments
+        description: >
+          List incoming payments on the wallet address. Supports forward and
+          backward pagination via cursor parameters.
+        operationId: resourceServer.list-incoming-payments
+        parameters:
+          - name: wallet-address
+            in: query
+            value: $inputs.walletAddressUrl
+          - name: first
+            in: query
+            value: $inputs.first
+          - name: cursor
+            in: query
+            value: $inputs.cursor
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          incomingPayments: $response.body.result
+          paginationStartCursor: $response.body.pagination.startCursor
+          paginationEndCursor: $response.body.pagination.endCursor
+          hasNextPage: $response.body.pagination.hasNextPage
+          hasPreviousPage: $response.body.pagination.hasPreviousPage
+
+    outputs:
+      incomingPayments: $steps.listIncomingPayments.outputs.incomingPayments
+      nextCursor: $steps.listIncomingPayments.outputs.paginationEndCursor
+      hasNextPage: $steps.listIncomingPayments.outputs.hasNextPage
+
+  # ─── Workflow 2: List outgoing payments ───
+  - workflowId: listOutgoingPayments
+    summary: "List all outgoing payments on a wallet address"
+    description: |
+      Obtain a grant and list outgoing payments with pagination support.
+    inputs:
+      type: object
+      required:
+        - walletAddressUrl
+        - clientWalletAddress
+      properties:
+        walletAddressUrl:
+          type: string
+          description: "The wallet address to list outgoing payments for"
+        clientWalletAddress:
+          type: string
+          description: "The client's wallet address for GNAP identification"
+        first:
+          type: integer
+          description: "Number of results to return"
+        cursor:
+          type: string
+          description: "Pagination cursor"
+
+    steps:
+      - stepId: getWalletAddress
+        description: >
+          Resolve the wallet address to discover server URLs.
+        operationId: walletAddressServer.get-wallet-address
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          authServer: $response.body.authServer
+          resourceServer: $response.body.resourceServer
+
+      - stepId: requestOutgoingPaymentListGrant
+        description: >
+          Request a non-interactive grant with `list` permissions for
+          outgoing payments.
+        operationId: authServer.post-request
+        requestBody:
+          contentType: application/json
+          payload:
+            access_token:
+              access:
+                - type: outgoing-payment
+                  actions:
+                    - list
+                  identifier: $inputs.walletAddressUrl
+            client: $inputs.clientWalletAddress
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          accessToken: $response.body.access_token.value
+
+      - stepId: listOutgoingPayments
+        description: >
+          List outgoing payments on the wallet address with pagination.
+        operationId: resourceServer.list-outgoing-payments
+        parameters:
+          - name: wallet-address
+            in: query
+            value: $inputs.walletAddressUrl
+          - name: first
+            in: query
+            value: $inputs.first
+          - name: cursor
+            in: query
+            value: $inputs.cursor
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          outgoingPayments: $response.body.result
+          paginationEndCursor: $response.body.pagination.endCursor
+          hasNextPage: $response.body.pagination.hasNextPage
+
+    outputs:
+      outgoingPayments: $steps.listOutgoingPayments.outputs.outgoingPayments
+      nextCursor: $steps.listOutgoingPayments.outputs.paginationEndCursor
+      hasNextPage: $steps.listOutgoingPayments.outputs.hasNextPage
+
+  # ─── Workflow 3: Get individual payment details ───
+  - workflowId: getPaymentDetails
+    summary: "Get details of a specific incoming or outgoing payment"
+    description: |
+      Retrieve the current state of a specific payment resource by its ID.
+    inputs:
+      type: object
+      required:
+        - walletAddressUrl
+        - clientWalletAddress
+      properties:
+        walletAddressUrl:
+          type: string
+          description: "Wallet address URL"
+        clientWalletAddress:
+          type: string
+          description: "Client's wallet address"
+        incomingPaymentId:
+          type: string
+          description: "ID of the incoming payment to retrieve"
+        outgoingPaymentId:
+          type: string
+          description: "ID of the outgoing payment to retrieve"
+
+    steps:
+      - stepId: getWalletAddress
+        description: >
+          Resolve the wallet address.
+        operationId: walletAddressServer.get-wallet-address
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          authServer: $response.body.authServer
+
+      - stepId: requestReadGrant
+        description: >
+          Request a non-interactive grant with `read` permissions for both
+          incoming and outgoing payments.
+        operationId: authServer.post-request
+        requestBody:
+          contentType: application/json
+          payload:
+            access_token:
+              access:
+                - type: incoming-payment
+                  actions:
+                    - read
+                  identifier: $inputs.walletAddressUrl
+                - type: outgoing-payment
+                  actions:
+                    - read
+                  identifier: $inputs.walletAddressUrl
+            client: $inputs.clientWalletAddress
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          accessToken: $response.body.access_token.value
+
+      - stepId: getIncomingPayment
+        description: >
+          Retrieve the details of a specific incoming payment. The response
+          includes received amounts, completion status, and payment methods.
+        operationId: resourceServer.get-incoming-payment
+        parameters:
+          - name: id
+            in: path
+            value: $inputs.incomingPaymentId
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          incomingPayment: $response.body
+
+      - stepId: getOutgoingPayment
+        description: >
+          Retrieve the details of a specific outgoing payment. The response
+          includes sent amounts, failure status, and payment metadata.
+        operationId: resourceServer.get-outgoing-payment
+        parameters:
+          - name: id
+            in: path
+            value: $inputs.outgoingPaymentId
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          outgoingPayment: $response.body
+
+    outputs:
+      incomingPayment: $steps.getIncomingPayment.outputs.incomingPayment
+      outgoingPayment: $steps.getOutgoingPayment.outputs.outgoingPayment
