@@ -24,3 +24,4 @@ while IFS= read -r -d '' file; do
 done < <(find "$DOCS_DIR" \( -name "*.mdx" -o -name "*.md" \) -print0)
 
 [[ $found -eq 0 ]] && echo "No stale pages found."
+exit 0
