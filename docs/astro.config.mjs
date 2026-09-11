@@ -64,7 +64,9 @@ export default defineConfig({
       components: {
         Header: './src/components/Header.astro',
         PageSidebar: './src/components/PageSidebar.astro',
-        Footer: './src/components/Footer.astro'
+        Footer: './src/components/Footer.astro',
+        PageTitle: './src/components/PageTitle.astro',
+        LastUpdated: './src/components/LastUpdated.astro'
       },
       customCss: [
         './node_modules/@interledger/docs-design-system/src/styles/teal-theme.css',
@@ -91,6 +93,7 @@ export default defineConfig({
           borderRadius: 'var(--border-radius)'
         }
       },
+      lastUpdated: true,
       logo: {
         src: './public/favicon.svg'
       },
