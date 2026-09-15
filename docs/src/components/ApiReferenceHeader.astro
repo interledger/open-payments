@@ -1,0 +1,70 @@
+---
+import OpenPaymentsLogo from './OpenPaymentsLogo.astro'
+---
+
+<header class="op-header">
+  <a href="/" class="op-header__logo" style="font-size: larger">
+    <OpenPaymentsLogo />
+  </a>
+  <a href="/overview/getting-started/" class="op-header__back" id="back-link"
+    >← Documentation</a
+  >
+</header>
+<script is:inline>
+  ;(function () {
+    try {
+      const ref = document.referrer
+      if (ref && new URL(ref).origin === location.origin) {
+        document.getElementById('back-link').href = ref
+      }
+    } catch {
+      // ignore invalid referrer URLs
+    }
+  })()
+</script>
+
+<style>
+  .op-header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--op-header-height);
+    padding: 0 var(--op-header-pad-x);
+    background: var(--op-header-bg);
+    border-bottom: 1px solid var(--op-header-border);
+  }
+
+  .op-header__logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--op-header-text);
+  }
+
+  .op-header__logo svg {
+    width: 9.5em;
+    flex: none;
+  }
+
+  .op-header__back {
+    font-size: 0.875rem;
+    text-decoration: none;
+    color: var(--op-header-muted);
+  }
+
+  .op-header__back:hover {
+    color: var(--op-header-text);
+  }
+</style>
+
+<style is:global>
+  /* Reaches into OpenPaymentsLogo's own SVG markup, which scoped styles can't cross. */
+  html.dark .logo-text {
+    fill: var(--op-header-text) !important;
+    stroke: var(--op-header-text) !important;
+  }
+</style>

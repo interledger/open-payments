@@ -1,46 +1,11 @@
 ---
-import OpenPaymentsLogo from '../../components/OpenPaymentsLogo.astro'
-import { mergeSpecs } from '../../lib/merge-specs.js'
 import { ScalarComponent } from '@scalar/astro'
-
-const config = {
-  content: mergeSpecs(),
-  hideClientButton: true,
-  hideTestRequestButton: true,
-  isEditable: false,
-  mcp: { disabled: true },
-  agent: { disabled: true },
-  documentDownloadType: 'none',
-  customCss: `
-    [data-sidebar-id="api-1/tag/authorization-server-overview"],
-    [data-sidebar-id="api-1/tag/resource-server-overview"],
-    [data-sidebar-id="api-1/tag/wallet-address-server-overview"] {
-      margin-top: 1.25rem;
-      pointer-events: none;
-      cursor: default;
-    }
-    [data-sidebar-id="api-1/tag/authorization-server-overview"] button,
-    [data-sidebar-id="api-1/tag/resource-server-overview"] button,
-    [data-sidebar-id="api-1/tag/wallet-address-server-overview"] button {
-      background-color: transparent !important;
-      color: inherit !important;
-    }
-    [data-sidebar-id="api-1/tag/authorization-server-overview"] .group\\/button-label,
-    [data-sidebar-id="api-1/tag/resource-server-overview"] .group\\/button-label,
-    [data-sidebar-id="api-1/tag/wallet-address-server-overview"] .group\\/button-label {
-      text-transform: uppercase;
-      font-size: 0.8rem;
-      font-weight: 500 !important;
-      letter-spacing: 0.07em;
-      color: inherit !important;
-    }
-    [data-sidebar-id="api-1/models"] {
-      margin-top: 2rem;
-    }
-  `
-}
-
-const CDN = 'https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.55.0'
+import ApiReferenceHeader from '../../components/ApiReferenceHeader.astro'
+import ThemeSync from '../../components/ThemeSync.astro'
+import {
+  getApiReferenceConfig,
+  SCALAR_CDN
+} from '../../lib/api-reference-config.js'
 ---
 
 <!doctype html>
@@ -50,57 +15,14 @@ const CDN = 'https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.55.0'
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>API Reference — Open Payments</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <script is:inline>
-      ;(function () {
-        const theme = localStorage.getItem('starlight-theme')
-        if (theme === 'dark' || theme === 'light') {
-          localStorage.setItem('colorMode', theme)
-        } else {
-          const prefersDark = window.matchMedia(
-            '(prefers-color-scheme: dark)'
-          ).matches
-          localStorage.setItem('colorMode', prefersDark ? 'dark' : 'light')
-        }
-        if (localStorage.getItem('colorMode') === 'dark') {
-          document.documentElement.classList.add('dark')
-        }
-        const _setItem = Storage.prototype.setItem
-        Storage.prototype.setItem = function (key, value) {
-          _setItem.call(this, key, value)
-          if (key === 'colorMode') {
-            document.documentElement.classList.toggle('dark', value === 'dark')
-          }
-        }
-      })()
-    </script>
+    <ThemeSync />
   </head>
   <body>
-    <header class="op-header">
-      <a href="/" class="op-header__logo" style="font-size: larger">
-        <OpenPaymentsLogo />
-      </a>
-      <a
-        href="/overview/getting-started/"
-        class="op-header__back"
-        id="back-link">← Documentation</a
-      >
-    </header>
-    <script is:inline>
-      ;(function () {
-        try {
-          const ref = document.referrer
-          if (ref && new URL(ref).origin === location.origin) {
-            document.getElementById('back-link').href = ref
-          }
-        } catch {
-          // ignore invalid referrer URLs
-        }
-      })()
-    </script>
+    <ApiReferenceHeader />
     <div id="app">
       <ScalarComponent
         renderMode="client"
-        configuration={{ ...config, cdn: CDN }}
+        configuration={{ ...getApiReferenceConfig(), cdn: SCALAR_CDN }}
       />
     </div>
   </body>
@@ -130,11 +52,6 @@ const CDN = 'https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.55.0'
     --op-header-muted: hsl(224, 6%, 56%);
   }
 
-  html.dark .logo-text {
-    fill: var(--op-header-text) !important;
-    stroke: var(--op-header-text) !important;
-  }
-
   @media (min-width: 50rem) {
     :root {
       --op-header-height: 4rem;
@@ -155,42 +72,6 @@ const CDN = 'https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.55.0'
       system-ui,
       -apple-system,
       sans-serif;
-  }
-
-  .op-header {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: var(--op-header-height);
-    padding: 0 var(--op-header-pad-x);
-    background: var(--op-header-bg);
-    border-bottom: 1px solid var(--op-header-border);
-  }
-
-  .op-header__logo {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    color: var(--op-header-text);
-  }
-
-  .op-header__logo svg {
-    width: 9.5em;
-    flex: none;
-  }
-
-  .op-header__back {
-    font-size: 0.875rem;
-    text-decoration: none;
-    color: var(--op-header-muted);
-  }
-
-  .op-header__back:hover {
-    color: var(--op-header-text);
   }
 
   #app {

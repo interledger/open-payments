@@ -1,0 +1,29 @@
+---
+// Syncs Starlight's theme choice into the 'colorMode' key Scalar's CDN bundle
+// reads, before that bundle loads, so the API reference doesn't flash the
+// wrong theme on first paint.
+---
+
+<script is:inline>
+  ;(function () {
+    const theme = localStorage.getItem('starlight-theme')
+    if (theme === 'dark' || theme === 'light') {
+      localStorage.setItem('colorMode', theme)
+    } else {
+      const prefersDark = window.matchMedia(
+        '(prefers-color-scheme: dark)'
+      ).matches
+      localStorage.setItem('colorMode', prefersDark ? 'dark' : 'light')
+    }
+    if (localStorage.getItem('colorMode') === 'dark') {
+      document.documentElement.classList.add('dark')
+    }
+    const _setItem = Storage.prototype.setItem
+    Storage.prototype.setItem = function (key, value) {
+      _setItem.call(this, key, value)
+      if (key === 'colorMode') {
+        document.documentElement.classList.toggle('dark', value === 'dark')
+      }
+    }
+  })()
+</script>
