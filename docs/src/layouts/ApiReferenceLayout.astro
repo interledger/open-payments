@@ -20,7 +20,7 @@ const { title } = Astro.props
   </head>
   <body>
     <ApiReferenceHeader />
-    <div id="app">
+    <div class="api-reference-container">
       <slot />
     </div>
   </body>
@@ -72,7 +72,7 @@ const { title } = Astro.props
       sans-serif;
   }
 
-  #app {
+  .api-reference-container {
     flex: 1;
     min-height: 0;
     padding-top: var(--op-header-height);
