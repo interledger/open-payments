@@ -1,24 +1,48 @@
 ---
 import OpenPaymentsLogo from './OpenPaymentsLogo.astro'
+
+interface Props {
+  lang?: 'en' | 'es'
+}
+
+const { lang = 'en' } = Astro.props
+
+const fallback =
+  lang === 'es'
+    ? { href: '/es/overview/getting-started/', label: '← Documentación' }
+    : { href: '/overview/getting-started/', label: '← Documentation' }
 ---
 
 <header class="op-header">
   <a href="/" class="op-header__logo" style="font-size: larger">
     <OpenPaymentsLogo />
   </a>
-  <a href="/overview/getting-started/" class="op-header__back" id="back-link"
-    >← Documentation</a
+  <a href={fallback.href} class="op-header__back" id="back-link"
+    >{fallback.label}</a
   >
 </header>
 <script is:inline>
   ;(function () {
+    const ref = document.referrer
+    if (!ref) return
+
+    let refUrl
     try {
-      const ref = document.referrer
-      if (ref && new URL(ref).origin === location.origin) {
-        document.getElementById('back-link').href = ref
-      }
+      refUrl = new URL(ref)
     } catch {
       // ignore invalid referrer URLs
+      return
+    }
+
+    if (refUrl.origin !== location.origin) return
+    // Came from within the API reference itself (e.g. a reload) — keep the
+    // locale-appropriate default out to the docs instead of looping back
+    // into /apis/ or /es/apis/.
+    if (/^\/(es\/)?apis(\/|$)/.test(refUrl.pathname)) return
+
+    const backLink = document.getElementById('back-link')
+    if (backLink) {
+      backLink.href = ref
     }
   })()
 </script>

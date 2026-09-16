@@ -1,0 +1,15 @@
+---
+import { ScalarComponent } from '@scalar/astro'
+import ApiReferenceLayout from '../../../layouts/ApiReferenceLayout.astro'
+import {
+  getApiReferenceConfig,
+  SCALAR_CDN
+} from '../../../lib/api-reference-config.js'
+---
+
+<ApiReferenceLayout title="API Reference — Open Payments" lang="es">
+  <ScalarComponent
+    renderMode="client"
+    configuration={{ ...getApiReferenceConfig(), cdn: SCALAR_CDN }}
+  />
+</ApiReferenceLayout>
