@@ -26,12 +26,10 @@ const { class: className } = Astro.props
 <style>
   /* Match the height Starlight gives its own logo, and let the width follow
      from the aspect ratio. The wordmark sits on two lines, so sizing by width
-     first overflows the header bar. */
+     first overflows the header bar. `.site-logo` sets `flex: none`, so the
+     width here is the one the browser uses. */
   .logo {
     height: calc(var(--sl-nav-height) - 2 * var(--sl-nav-pad-y));
     width: auto;
-    max-width: 100%;
-    object-fit: contain;
-    object-position: 0 50%;
   }
 </style>
