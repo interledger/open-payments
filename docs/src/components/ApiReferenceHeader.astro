@@ -1,0 +1,94 @@
+---
+import OpenPaymentsLogo from './OpenPaymentsLogo.astro'
+
+interface Props {
+  lang?: 'en' | 'es'
+}
+
+const { lang = 'en' } = Astro.props
+
+const fallback =
+  lang === 'es'
+    ? { href: '/es/overview/getting-started/', label: '← Documentación' }
+    : { href: '/overview/getting-started/', label: '← Documentation' }
+---
+
+<header class="op-header">
+  <a href="/" class="op-header__logo" style="font-size: larger">
+    <OpenPaymentsLogo />
+  </a>
+  <a href={fallback.href} class="op-header__back" id="back-link"
+    >{fallback.label}</a
+  >
+</header>
+<script is:inline>
+  ;(function () {
+    const ref = document.referrer
+    if (!ref) return
+
+    let refUrl
+    try {
+      refUrl = new URL(ref)
+    } catch {
+      // ignore invalid referrer URLs
+      return
+    }
+
+    if (refUrl.origin !== location.origin) return
+    // Came from within the API reference itself (e.g. a reload) — keep the
+    // locale-appropriate default out to the docs instead of looping back
+    // into /apis/ or /es/apis/.
+    if (/^\/(es\/)?apis(\/|$)/.test(refUrl.pathname)) return
+
+    const backLink = document.getElementById('back-link')
+    if (backLink) {
+      backLink.href = ref
+    }
+  })()
+</script>
+
+<style>
+  .op-header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--op-header-height);
+    padding: 0 var(--op-header-pad-x);
+    background: var(--op-header-bg);
+    border-bottom: 1px solid var(--op-header-border);
+  }
+
+  .op-header__logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--op-header-text);
+  }
+
+  .op-header__logo svg {
+    width: 9.5em;
+    flex: none;
+  }
+
+  .op-header__back {
+    font-size: 0.875rem;
+    text-decoration: none;
+    color: var(--op-header-muted);
+  }
+
+  .op-header__back:hover {
+    color: var(--op-header-text);
+  }
+</style>
+
+<style is:global>
+  /* Reaches into OpenPaymentsLogo's own SVG markup, which scoped styles can't cross. */
+  html.dark .logo-text {
+    fill: var(--op-header-text);
+    stroke: var(--op-header-text);
+  }
+</style>
