@@ -1,26 +1,15 @@
 import { readFileSync } from 'node:fs'
-import { dirname, resolve } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { resolve } from 'node:path'
 import yaml from 'js-yaml'
 import type { OpenAPIV3_1 } from 'openapi-types'
-
-const SPEC_DIR = resolve(
-  dirname(fileURLToPath(import.meta.url)),
-  '..',
-  '..',
-  '..',
-  'open-payments-specifications',
-  'openapi'
-)
+import { SPEC_DIR } from './spec-dir.js'
+import { HTTP_METHODS, type HttpMethod } from './http-methods.js'
 
 const SPECS = [
   { file: 'auth-server.yaml', title: 'Auth server' },
   { file: 'resource-server.yaml', title: 'Resource server' },
   { file: 'wallet-address-server.yaml', title: 'Wallet address server' }
 ]
-
-const HTTP_METHODS = ['get', 'post', 'put', 'patch', 'delete'] as const
-type HttpMethod = (typeof HTTP_METHODS)[number]
 
 interface SidebarBadge {
   text: string
