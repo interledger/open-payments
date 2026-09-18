@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import yaml from 'js-yaml'
+import type { OpenAPIV3_1 } from 'openapi-types'
 
 const SPEC_DIR = resolve(
   dirname(fileURLToPath(import.meta.url)),
@@ -18,9 +19,15 @@ const SPECS = [
   { file: 'wallet-address-server.yaml', title: 'Wallet address server' }
 ]
 
-const HTTP_METHODS = ['get', 'post', 'put', 'patch', 'delete']
+const HTTP_METHODS = ['get', 'post', 'put', 'patch', 'delete'] as const
+type HttpMethod = (typeof HTTP_METHODS)[number]
 
-const METHOD_BADGE = {
+interface SidebarBadge {
+  text: string
+  variant: 'note' | 'success' | 'caution' | 'danger'
+}
+
+const METHOD_BADGE: Record<HttpMethod, SidebarBadge> = {
   get: { text: 'GET', variant: 'note' },
   post: { text: 'POST', variant: 'success' },
   put: { text: 'PUT', variant: 'caution' },
@@ -28,22 +35,42 @@ const METHOD_BADGE = {
   delete: { text: 'DELETE', variant: 'danger' }
 }
 
-function formatTag(tag) {
+interface SidebarLinkItem {
+  label: string
+  badge: SidebarBadge
+  link: string
+}
+
+interface SidebarTagGroup {
+  label: string
+  collapsed: boolean
+  items: SidebarLinkItem[]
+}
+
+interface SidebarSpecGroup {
+  label: string
+  collapsed: boolean
+  items: SidebarTagGroup[]
+}
+
+function formatTag(tag: string): string {
   return tag.charAt(0).toUpperCase() + tag.slice(1).replace(/-/g, ' ')
 }
 
-function encodePath(path) {
+function encodePath(path: string): string {
   return path.replace(/\{([^}]+)\}/g, '%7B$1%7D')
 }
 
-export function generateApiSidebar() {
+export function generateApiSidebar(): SidebarSpecGroup[] {
   return SPECS.map(({ file, title }) => {
-    const spec = yaml.load(readFileSync(resolve(SPEC_DIR, file), 'utf-8'))
-    const byTag = {}
+    const spec = yaml.load(
+      readFileSync(resolve(SPEC_DIR, file), 'utf-8')
+    ) as OpenAPIV3_1.Document
+    const byTag: Record<string, SidebarLinkItem[]> = {}
 
     for (const [path, pathItem] of Object.entries(spec.paths ?? {})) {
       for (const method of HTTP_METHODS) {
-        const op = pathItem[method]
+        const op = pathItem?.[method]
         if (!op) continue
         const tag = op.tags?.[0] ?? 'other'
         if (!byTag[tag]) byTag[tag] = []

@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import yaml from 'js-yaml'
+import type { OpenAPIV3_1 } from 'openapi-types'
 
 // process.cwd() is the docs/ directory at both dev and build time.
 // import.meta.url cannot be used here — Vite rebases it to the prerender
@@ -12,18 +13,30 @@ const SPEC_DIR = resolve(
   'openapi'
 )
 
-function load(file) {
-  return yaml.load(readFileSync(resolve(SPEC_DIR, file), 'utf-8'))
+// OpenAPIV3_1.TagObject doesn't model vendor extensions, but 'x-displayName'
+// is a real, legal OpenAPI extension key that Scalar reads for sidebar labels.
+interface OverviewTagObject extends OpenAPIV3_1.TagObject {
+  'x-displayName'?: string
 }
 
-function toSentenceCase(str) {
+const HTTP_METHODS = ['get', 'post', 'put', 'patch', 'delete'] as const
+
+function load(file: string): OpenAPIV3_1.Document {
+  return yaml.load(
+    readFileSync(resolve(SPEC_DIR, file), 'utf-8')
+  ) as OpenAPIV3_1.Document
+}
+
+function toSentenceCase(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
 }
 
 // Merges path maps — when two specs share a path (e.g. auth POST / and wallet GET /),
 // their HTTP methods are combined rather than one overwriting the other.
-function mergePaths(...pathMaps) {
-  const result = {}
+function mergePaths(
+  ...pathMaps: (OpenAPIV3_1.PathsObject | undefined)[]
+): OpenAPIV3_1.PathsObject {
+  const result: OpenAPIV3_1.PathsObject = {}
   for (const paths of pathMaps) {
     for (const [path, item] of Object.entries(paths ?? {})) {
       result[path] = { ...(result[path] ?? {}), ...item }
@@ -32,7 +45,7 @@ function mergePaths(...pathMaps) {
   return result
 }
 
-export function mergeSpecs() {
+export function mergeSpecs(): string {
   const auth = load('auth-server.yaml')
   const resource = load('resource-server.yaml')
   const wallet = load('wallet-address-server.yaml')
@@ -41,7 +54,7 @@ export function mergeSpecs() {
   // amount, receiver: identical in auth + resource — either copy wins
   // json-web-key: wallet version has property descriptions — wallet wins (last)
   // GNAP securityScheme: resource version has description — resource wins
-  const merged = {
+  const merged: OpenAPIV3_1.Document = {
     openapi: '3.1.0',
     info: {
       title: 'Open Payments API',
@@ -75,13 +88,13 @@ export function mergeSpecs() {
         description: wallet.info.description
       },
       ...(wallet.tags ?? [])
-    ],
+    ] as OverviewTagObject[],
     paths: (() => {
       const paths = mergePaths(auth.paths, resource.paths, wallet.paths)
       for (const item of Object.values(paths)) {
-        for (const method of ['get', 'post', 'put', 'patch', 'delete']) {
-          if (item[method]?.summary)
-            item[method].summary = toSentenceCase(item[method].summary)
+        for (const method of HTTP_METHODS) {
+          const op = item?.[method]
+          if (op?.summary) op.summary = toSentenceCase(op.summary)
         }
       }
       return paths
