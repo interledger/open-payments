@@ -1,6 +1,15 @@
-/* Site logo on dark mode */
-[data-theme='dark'] .logo-text {
-  fill: white;
+/* The new logo stacks "Open Payments" over two lines above a strapline, so it
+ * needs a taller bar than Starlight's default to stay legible. Every sidebar
+ * and mobile-menu offset derives from this variable, so raising it here moves
+ * the whole layout together. */
+:root {
+  --sl-nav-height: 4.5rem;
+}
+
+@media (min-width: 50em) {
+  :root {
+    --sl-nav-height: 5rem;
+  }
 }
 
 /* Splash page styling */
