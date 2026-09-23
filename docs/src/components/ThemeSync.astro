@@ -1,28 +1,40 @@
 ---
-// Syncs Starlight's theme choice into the 'colorMode' key Scalar's CDN bundle
-// reads, before that bundle loads, so the API reference doesn't flash the
-// wrong theme on first paint.
+// Keeps one theme across the Starlight docs and this standalone API reference
+// page, which are two separate documents with two separate theme stores.
+// Starlight keeps the choice in 'starlight-theme'; Scalar reads and writes
+// its own 'colorMode'. This runs before Scalar mounts, so the page paints in
+// the right theme instead of flashing the wrong one first.
 ---
 
 <script is:inline>
   ;(function () {
-    const theme = localStorage.getItem('starlight-theme')
-    if (theme === 'dark' || theme === 'light') {
-      localStorage.setItem('colorMode', theme)
-    } else {
-      const prefersDark = window.matchMedia(
-        '(prefers-color-scheme: dark)'
-      ).matches
-      localStorage.setItem('colorMode', prefersDark ? 'dark' : 'light')
-    }
-    if (localStorage.getItem('colorMode') === 'dark') {
-      document.documentElement.classList.add('dark')
-    }
-    const _setItem = Storage.prototype.setItem
+    const stored = localStorage.getItem('starlight-theme')
+    const theme =
+      stored === 'dark' || stored === 'light'
+        ? stored
+        : window.matchMedia('(prefers-color-scheme: dark)').matches
+          ? 'dark'
+          : 'light'
+
+    // The docs are the source of truth on the way in. Scalar reads
+    // 'colorMode' at mount, so writing it here makes the docs' theme win over
+    // whatever Scalar persisted on an earlier visit.
+    localStorage.setItem('colorMode', theme)
+    document.documentElement.classList.toggle('dark', theme === 'dark')
+
+    // On the way out, Scalar's own toggle writes 'colorMode' and nothing else.
+    // Follow that write so the header tracks the reference instead of leaving
+    // a dark bar over a light page, and record it as the docs' choice so it
+    // survives the trip back. The write above already matches 'starlight-theme',
+    // so this only ever fires for a real change.
+    const setItem = Storage.prototype.setItem
     Storage.prototype.setItem = function (key, value) {
-      _setItem.call(this, key, value)
-      if (key === 'colorMode') {
-        document.documentElement.classList.toggle('dark', value === 'dark')
+      setItem.call(this, key, value)
+      if (this === localStorage && key === 'colorMode') {
+        if (value === 'dark' || value === 'light') {
+          document.documentElement.classList.toggle('dark', value === 'dark')
+          setItem.call(this, 'starlight-theme', value)
+        }
       }
     }
   })()
