@@ -82,48 +82,54 @@ function sentenceCaseSummaries(
   return paths
 }
 
-// Spread order resolves all 4 known collisions:
+// Sorted by display title so Scalar's "Models" sidebar section reads
+// alphabetically rather than in spec-declaration order.
+function sortSchemas(
+  schemas: Record<string, OpenAPIV3_1.SchemaObject>
+): Record<string, OpenAPIV3_1.SchemaObject> {
+  return Object.fromEntries(
+    Object.entries(schemas).sort(([keyA, schemaA], [keyB, schemaB]) =>
+      (schemaA.title ?? keyA).localeCompare(schemaB.title ?? keyB, undefined, {
+        sensitivity: 'base'
+      })
+    )
+  )
+}
+
+// Every component section present in any spec is carried over, rather than a
+// hand-listed few. The specs also define `responses` and `examples`, and
+// naming those explicitly is easy to forget — a missed section leaves every
+// `$ref` that points into it dangling in the merged document.
+//
+// Spread order (auth, then resource, then wallet) resolves all 4 known
+// collisions:
 // amount, receiver: identical in auth + resource — either copy wins
 // json-web-key: wallet version has property descriptions — wallet wins (last)
 // GNAP securityScheme: resource version has description — resource wins
 function mergeComponents(
-  auth: OpenAPIV3_1.Document,
-  resource: OpenAPIV3_1.Document,
-  wallet: OpenAPIV3_1.Document
+  ...docs: OpenAPIV3_1.Document[]
 ): OpenAPIV3_1.ComponentsObject {
-  const parameters = {
-    ...(auth.components?.parameters ?? {}),
-    ...(resource.components?.parameters ?? {}),
-    ...(wallet.components?.parameters ?? {})
-  }
-  const headers = {
-    ...(auth.components?.headers ?? {}),
-    ...(resource.components?.headers ?? {}),
-    ...(wallet.components?.headers ?? {})
+  const componentSets = docs.map(
+    (doc) => (doc.components ?? {}) as Record<string, Record<string, unknown>>
+  )
+  const sections = new Set(componentSets.flatMap(Object.keys))
+  const merged: Record<string, Record<string, unknown>> = {}
+
+  for (const section of sections) {
+    const entries = Object.assign(
+      {},
+      ...componentSets.map((components) => components[section] ?? {})
+    )
+    if (Object.keys(entries).length) merged[section] = entries
   }
 
-  return {
-    schemas: Object.fromEntries(
-      Object.entries({
-        ...(auth.components?.schemas ?? {}),
-        ...(resource.components?.schemas ?? {}),
-        ...(wallet.components?.schemas ?? {})
-      }).sort(([keyA, schemaA], [keyB, schemaB]) =>
-        (schemaA.title ?? keyA).localeCompare(
-          schemaB.title ?? keyB,
-          undefined,
-          { sensitivity: 'base' }
-        )
-      )
-    ),
-    securitySchemes: {
-      ...(auth.components?.securitySchemes ?? {}),
-      ...(resource.components?.securitySchemes ?? {}),
-      ...(wallet.components?.securitySchemes ?? {})
-    },
-    ...(Object.keys(parameters).length && { parameters }),
-    ...(Object.keys(headers).length && { headers })
+  if (merged.schemas) {
+    merged.schemas = sortSchemas(
+      merged.schemas as Record<string, OpenAPIV3_1.SchemaObject>
+    )
   }
+
+  return merged as OpenAPIV3_1.ComponentsObject
 }
 
 export function mergeSpecs(): string {
