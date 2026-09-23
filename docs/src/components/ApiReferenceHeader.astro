@@ -1,5 +1,11 @@
 ---
-import OpenPaymentsLogo from './OpenPaymentsLogo.astro'
+// The API reference is a standalone page, outside Starlight, so it does not
+// get Starlight's stylesheet. OpenPaymentsLogo relies on that stylesheet for
+// `light:sl-hidden` / `dark:sl-hidden` and `--sl-nav-height`, so this header
+// renders the two logo files itself and swaps them on the `dark` class that
+// ThemeSync puts on <html>.
+import lightLogo from '../assets/open-payments-logo-light.svg'
+import darkLogo from '../assets/open-payments-logo-dark.svg'
 
 interface Props {
   lang?: 'en' | 'es'
@@ -14,8 +20,21 @@ const fallback =
 ---
 
 <header class="op-header">
-  <a href="/" class="op-header__logo" style="font-size: larger">
-    <OpenPaymentsLogo />
+  <a href={lang === 'es' ? '/es/' : '/'} class="op-header__logo">
+    <img
+      src={lightLogo.src}
+      width={lightLogo.width}
+      height={lightLogo.height}
+      alt="Open Payments"
+      class="op-header__logo-img op-header__logo-img--light"
+    />
+    <img
+      src={darkLogo.src}
+      width={darkLogo.width}
+      height={darkLogo.height}
+      alt="Open Payments"
+      class="op-header__logo-img op-header__logo-img--dark"
+    />
   </a>
   <a href={fallback.href} class="op-header__back" id="back-link"
     >{fallback.label}</a
@@ -56,6 +75,7 @@ const fallback =
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 1rem;
     height: var(--op-header-height);
     padding: 0 var(--op-header-pad-x);
     background: var(--op-header-bg);
@@ -65,30 +85,37 @@ const fallback =
   .op-header__logo {
     display: flex;
     align-items: center;
+    min-width: 0;
     text-decoration: none;
-    color: var(--op-header-text);
   }
 
-  .op-header__logo svg {
-    width: 9.5em;
-    flex: none;
+  .op-header__logo-img {
+    height: var(--op-header-logo-height);
+    width: auto;
+  }
+
+  /* Only one of the two is ever shown. The light file is the default, so the
+     page is correct before any script runs. */
+  .op-header__logo-img--dark {
+    display: none;
+  }
+
+  :global(html.dark) .op-header__logo-img--light {
+    display: none;
+  }
+
+  :global(html.dark) .op-header__logo-img--dark {
+    display: block;
   }
 
   .op-header__back {
     font-size: 0.875rem;
     text-decoration: none;
+    white-space: nowrap;
     color: var(--op-header-muted);
   }
 
   .op-header__back:hover {
     color: var(--op-header-text);
-  }
-</style>
-
-<style is:global>
-  /* Reaches into OpenPaymentsLogo's own SVG markup, which scoped styles can't cross. */
-  html.dark .logo-text {
-    fill: var(--op-header-text);
-    stroke: var(--op-header-text);
   }
 </style>

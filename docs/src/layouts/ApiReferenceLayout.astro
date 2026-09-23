@@ -36,7 +36,10 @@ const { title, lang = 'en' } = Astro.props
 
   /* Header colors pulled from Starlight's teal theme (props.css) — update here if the theme changes */
   :root {
-    --op-header-height: 3.5rem;
+    /* Matches --sl-nav-height in openpayments.css, so the bar on the API
+       reference lines up with the docs header the user just came from. */
+    --op-header-height: 4.5rem;
+    --op-header-logo-height: 3rem;
     --op-header-pad-x: 1rem;
     --op-header-bg: hsl(224, 19%, 97%);
     --op-header-border: hsl(224, 20%, 94%);
@@ -53,7 +56,8 @@ const { title, lang = 'en' } = Astro.props
 
   @media (min-width: 50rem) {
     :root {
-      --op-header-height: 4rem;
+      --op-header-height: 5rem;
+      --op-header-logo-height: 3.5rem;
       --op-header-pad-x: 1.5rem;
     }
   }
