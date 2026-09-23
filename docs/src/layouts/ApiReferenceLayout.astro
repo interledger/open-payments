@@ -40,6 +40,12 @@ const { title, lang = 'en' } = Astro.props
        reference lines up with the docs header the user just came from. */
     --op-header-height: 4.5rem;
     --op-header-logo-height: 3rem;
+    /* Scalar sizes its sticky sidebar to the viewport and offsets it from the
+       top by this variable, which defaults to 0. Without it, our fixed header
+       pushes the bottom of the sidebar below the fold and the theme toggle
+       goes with it. It tracks --op-header-height, so the media query below
+       moves both together. */
+    --scalar-custom-header-height: var(--op-header-height);
     --op-header-pad-x: 1rem;
     --op-header-bg: hsl(224, 19%, 97%);
     --op-header-border: hsl(224, 20%, 94%);
@@ -80,6 +86,5 @@ const { title, lang = 'en' } = Astro.props
   #app {
     flex: 1;
     min-height: 0;
-    padding-top: var(--op-header-height);
   }
 </style>
