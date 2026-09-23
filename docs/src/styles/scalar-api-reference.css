@@ -1,3 +1,16 @@
+/* `withDefaultFonts: false` stops Scalar fetching Inter and JetBrains Mono
+ * from fonts.scalar.com, which leaves these two variables to set. The stacks
+ * match the ones the Starlight side of the site resolves to, so type is
+ * consistent across the docs and the API reference. */
+.scalar-app {
+  --scalar-font:
+    -apple-system, system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans',
+    Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+  --scalar-font-code:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+    'Courier New', monospace;
+}
+
 [data-sidebar-id='api-1/tag/authorization-server-overview'],
 [data-sidebar-id='api-1/tag/resource-server-overview'],
 [data-sidebar-id='api-1/tag/wallet-address-server-overview'] {

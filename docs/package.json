@@ -16,7 +16,7 @@
     "@astrojs/markdown-remark": "^7.3.0",
     "@astrojs/starlight": "^0.42.0",
     "@interledger/docs-design-system": "^0.14.1",
-    "@scalar/astro": "^0.4.18",
+    "@scalar/api-reference": "^1.69.2",
     "astro": "~7.2.10",
     "katex": "^0.17.0",
     "mermaid": "^11.15.0",
@@ -25,8 +25,8 @@
     "sharp": "^0.35.4",
     "shiki": "^4.4.3",
     "starlight-fullview-mode": "^0.2.6",
-    "starlight-llms-txt": "0.11.0",
-    "starlight-links-validator": "^0.24.0"
+    "starlight-links-validator": "^0.24.0",
+    "starlight-llms-txt": "0.11.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
