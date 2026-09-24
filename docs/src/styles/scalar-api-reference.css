@@ -49,3 +49,35 @@
 .scalar-app section.section:focus {
   outline: none;
 }
+
+/* The oneOf/anyOf picker is a real button, but Scalar renders it as plain text
+ * with no border or background, so readers miss that the schema has choices
+ * behind it. Give it the outline of a control. The colors come from Scalar's
+ * own tokens, so light and dark both follow the surrounding theme. */
+.scalar-app .composition-selector {
+  gap: 0.375rem;
+  padding: 0.125rem 0.5rem;
+  border: 1px solid var(--scalar-border-color);
+  border-radius: var(--scalar-radius);
+  background: var(--scalar-background-2);
+}
+
+/* Scalar pins the expand glyph 25px outside the button, in the schema gutter,
+ * where it reads as decoration next to the control rather than part of it.
+ * Put it back in the button's own flex row, ahead of the label, and give it
+ * the label's color instead of the muted grey. */
+.scalar-app .composition-selector .schema-glyph {
+  position: static;
+  /* The glyph is also shifted up by half its height, to center it against the
+     row it used to hang beside. That shift uses the standalone `translate`
+     property rather than `transform`, so it survives the change above and has
+     to be cleared separately. */
+  translate: none;
+  flex: none;
+  color: inherit;
+}
+
+.scalar-app .composition-selector:hover {
+  border-color: var(--scalar-color-3);
+  background: var(--scalar-background-3);
+}
