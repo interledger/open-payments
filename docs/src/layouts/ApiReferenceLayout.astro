@@ -74,6 +74,13 @@ const { title, lang = 'en' } = Astro.props
     margin: 0;
   }
 
+  /* The window is the scroll container and the header is fixed over the top of
+     it, so anchors would otherwise land underneath the header. Scalar scrolls
+     to an anchor on load and on every sidebar click. */
+  html {
+    scroll-padding-top: var(--op-header-height);
+  }
+
   body {
     display: flex;
     flex-direction: column;
@@ -86,5 +93,9 @@ const { title, lang = 'en' } = Astro.props
   #app {
     flex: 1;
     min-height: 0;
+    /* Clears the fixed header. Scalar's own offsetting covers its sticky
+       sidebar, but at narrow widths the content column starts at the top of
+       this element, which would put the page title under the header. */
+    padding-top: var(--op-header-height);
   }
 </style>

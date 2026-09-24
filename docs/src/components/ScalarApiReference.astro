@@ -30,7 +30,10 @@ import { getApiReferenceConfig } from '../lib/api-reference-config.js'
 
     createApiReference(container, {
       ...JSON.parse(container.dataset.configuration ?? '{}'),
-      darkMode
+      darkMode,
+      // Arriving at /apis/ with no hash should mean the introduction.
+      redirect: (current: string) =>
+        current && current !== '#' ? undefined : '#description/introduction'
     })
   }
 </script>

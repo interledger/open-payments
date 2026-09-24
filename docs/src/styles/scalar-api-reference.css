@@ -38,3 +38,14 @@
 [data-sidebar-id='api-1/models'] {
   margin-top: 2rem;
 }
+
+/* Scalar moves focus to the target section when you follow a deep link, so a
+ * screen reader starts reading at the right place. The section carries
+ * tabindex="-1", so it is outside the tab order and this focus ring can only
+ * ever come from that programmatic focus, never from a user tabbing. Dropping
+ * the ring therefore costs keyboard users nothing, and it stops a blue box
+ * appearing around the operation for everyone else. The focus itself, which is
+ * the part screen readers rely on, is untouched. */
+.scalar-app section.section:focus {
+  outline: none;
+}
