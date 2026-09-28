@@ -58,13 +58,27 @@ function mergeTags(
 
 // Merges path maps — when two specs share a path (e.g. auth POST / and wallet GET /),
 // their HTTP methods are combined rather than one overwriting the other.
-function mergePaths(
-  ...pathMaps: (OpenAPIV3_1.PathsObject | undefined)[]
-): OpenAPIV3_1.PathsObject {
+//
+// Each operation also carries the servers of the spec it came from. A merged
+// document has one document-level server list, which OpenAPI applies to every
+// path in it, so Scalar would otherwise offer the authorization server for a
+// resource server endpoint and build the code samples from it.
+//
+// This has to sit on the operation rather than the path, because `/` is a
+// grant request on the authorization server for POST and a wallet address
+// lookup on the wallet address server for GET.
+function mergePaths(...docs: OpenAPIV3_1.Document[]): OpenAPIV3_1.PathsObject {
   const result: OpenAPIV3_1.PathsObject = {}
-  for (const paths of pathMaps) {
+  for (const { paths, servers } of docs) {
     for (const [path, item] of Object.entries(paths ?? {})) {
-      result[path] = { ...(result[path] ?? {}), ...item }
+      const scoped: OpenAPIV3_1.PathItemObject = { ...item }
+      if (servers?.length) {
+        for (const method of HTTP_METHODS) {
+          const op = scoped[method]
+          if (op) scoped[method] = { ...op, servers }
+        }
+      }
+      result[path] = { ...(result[path] ?? {}), ...scoped }
     }
   }
   return result
@@ -137,6 +151,14 @@ export function mergeSpecs(): string {
   const resource = load('resource-server.yaml')
   const wallet = load('wallet-address-server.yaml')
 
+  // One server per spec, agreed with Max on 2026-09-28. The specs list several
+  // each, which read as examples rather than deployments, and the extras only
+  // widened the server picker without making any sample more useful. Drop this
+  // override once the specs themselves carry a single server.
+  auth.servers = [{ url: 'https://auth.interledger-test.dev' }]
+  resource.servers = [{ url: 'https://ilp.interledger-test.dev' }]
+  wallet.servers = [{ url: 'https://ilp.interledger-test.dev/alice' }]
+
   const merged: OpenAPIV3_1.Document = {
     openapi: '3.1.0',
     info: {
@@ -147,15 +169,11 @@ export function mergeSpecs(): string {
       description:
         'API reference for the Open Payments authorization, resource, and wallet address servers.'
     },
-    servers: [
-      ...(auth.servers ?? []),
-      ...(resource.servers ?? []),
-      ...(wallet.servers ?? [])
-    ],
+    // No document-level servers. Each operation carries the servers of the spec
+    // it came from, and a document-level list would only add a control on the
+    // introduction that changes nothing.
     tags: mergeTags(auth, resource, wallet),
-    paths: sentenceCaseSummaries(
-      mergePaths(auth.paths, resource.paths, wallet.paths)
-    ),
+    paths: sentenceCaseSummaries(mergePaths(auth, resource, wallet)),
     components: mergeComponents(auth, resource, wallet)
   }
 
