@@ -20,7 +20,7 @@ Para que las cuentas sean compatibles con Open Payments, las ASE deben operar tr
 
 - **Wallet address server**: Devuelve información pública sobre cada cuenta compatible con Open Payments en una URL HTTPS estable (la wallet address).
 - **Servidor de recursos**: Aloja las API `incoming-payment`, `quote` y `outgoing-payment` a las que los clientes llaman para configurar los pagos.
-- **Servidor de autorización**: Procesa las solicitudes de concesión según el <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol'>Protocolo de Negociación y Autorización de Concesiones (GNAP)</LinkOut>, emite tókenes de acceso y coordina el consentimiento de los usuarios para las concesiones interactivas.
+- **Servidor de autorización**: Procesa las solicitudes de concesión según el <LinkOut href='https://www.rfc-editor.org/info/rfc9635/'>Protocolo de Negociación y Autorización de Concesiones (GNAP)</LinkOut>, emite tókenes de acceso y coordina el consentimiento de los usuarios para las concesiones interactivas.
 - **Integración del proveedor de identidad (IdP)**: Autentica al propietario del recurso y obtiene el consentimiento explícito durante las concesiones interactivas (necesario para los pagos salientes).
 
 La ASE también es responsable del movimiento real de los fondos. Open Payments solo transmite la **instrucción de pago**. La liquidación se realiza entre las ASE a través de una infraestructura de pagos compartida.

@@ -10,7 +10,7 @@ HTTP message signatures secure communications in Open Payments by verifying mess
 
 HTTP message signatures are cryptographic digital signatures used by the Open Payments APIs to secure HTTP messages exchanged between sender, receiver, or third-party initiating payment systems.
 
-The Open Payments APIs implement the <LinkOut href='https://datatracker.ietf.org/doc/html/rfc9635#name-http-message-signatures'> HTTP Signatures </LinkOut> section of the GNAP (Grant Negotiation and Authorization Protocol) specification.
+The Open Payments APIs implement the <LinkOut href='https://www.rfc-editor.org/info/rfc9635/#section-7.3.1'> HTTP Signatures </LinkOut> section of the GNAP (Grant Negotiation and Authorization Protocol) specification.
 
 ## Purpose
 
@@ -33,7 +33,7 @@ The main advantages for using this digital signature algorithm include:
 - Guarding against the risk of an encryption key downgrade attack.
 - Relatively efficient security offered with smaller key sizes. Earlier public-key cryptographic algorithms, such as RSA, offer comparable security with notably larger key sizes.
 
-For more information about the EdDSA and its variants, refer to <LinkOut href='https://datatracker.ietf.org/doc/html/rfc8032'>RFC8032</LinkOut>.
+For more information about the EdDSA and its variants, refer to <LinkOut href='https://www.rfc-editor.org/info/rfc8032/'>RFC8032</LinkOut>.
 
 ## Signature creation
 
@@ -71,7 +71,7 @@ The final sub-field of the signature base is an HTTP-structured field called `si
 
 ```
 
-For more information about required components, see <LinkOut href="https://datatracker.ietf.org/doc/html/rfc9635#name-http-message-signatures">Section 7.3.1 HTTP Message Signatures</LinkOut> in the GNAP specification.
+For more information about required components, see <LinkOut href="https://www.rfc-editor.org/info/rfc9635/#section-7.3.1">Section 7.3.1 HTTP Message Signatures</LinkOut> in the GNAP specification.
 
 ### Signature generation
 

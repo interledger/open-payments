@@ -65,7 +65,7 @@ Additionally, the document must contain the `x` and `kid` (key ID) fields for th
 
 To initialize an authenticated Open Payments client SDK, you must have a public-private key pair and a key ID.
 
-1. The client SDK generates a key pair using the <LinkOut href='https://datatracker.ietf.org/doc/html/rfc8032'>ED25519 algorithm</LinkOut>. The client's key registry exposes the public key in the form of a JWKS.
+1. The client SDK generates a key pair using the <LinkOut href='https://www.rfc-editor.org/info/rfc8032/'>ED25519 algorithm</LinkOut>. The client's key registry exposes the public key in the form of a JWKS.
 2. The public key is provided to the client's account servicing entity (ASE). The ASE is responsible for providing a way for clients to upload keys. The ASE adds the key to its resource server.
 3. A `keyId` is created to identify the key pair. The ASE is usually responsible for `keyId` creation.
 4. The client stores the private key for future request signing. The key signs the payload described in the [key proofing method](#key-proofing-method) section below.
@@ -84,7 +84,7 @@ Since client requests are completed over multiple signed HTTP requests, it's imp
 - Body
   - A `client` property containing either the client's wallet address (`walletAddress`) or the client's public key provided directly in the request (`jwk`). The `jwk` option, known as directed identity, can only be used for non-interactive grant requests such as incoming payment and quote grants.
 
-Securing client requests follows a profile of what's defined in the <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol#name-securing-requests-from-the-'>GNAP specification</LinkOut>.
+Securing client requests follows a profile of what's defined in the <LinkOut href='https://www.rfc-editor.org/info/rfc9635/#section-7'>GNAP specification</LinkOut>.
 
 :::note
 Open Payments **does not** support bearer tokens.
@@ -100,7 +100,7 @@ When the `client` property contains a `jwk` (directed identity), the authorizati
 
 ### HTTP message signatures
 
-Open Payments uses the <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol#name-http-message-signatures'>HTTP message signatures</LinkOut> (`httpsig`) key proofing method.
+Open Payments uses the <LinkOut href='https://www.rfc-editor.org/info/rfc9635/#section-7.3.1'>HTTP message signatures</LinkOut> (`httpsig`) key proofing method.
 
 Declare the `httpsig` proofing method as part of the key material when directly using a key to request a grant. The key material below is for illustrative purposes. In Open Payments, the grant request identifies the client using either a wallet address or, for non-interactive grants, a public key provided directly via directed identity.
 
@@ -119,7 +119,7 @@ Declare the `httpsig` proofing method as part of the key material when directly 
 
 When using `httpsig`, the signer (the client) creates an HTTP message signature. Open Payments clients typically secure their requests to servers by presenting an access token and proof of a key it possesses. The exception is for calls to an authorization server to initiate a grant. In this case, a key proof is used with no access token and is a non-authorized signed request.
 
-See the [HTTP message signatures](/identity/http-signatures) page for more information specific to Open Payments. Additional information is in the <LinkOut href='https://datatracker.ietf.org/doc/html/rfc9421'>specification</LinkOut> for HTTP message signatures.
+See the [HTTP message signatures](/identity/http-signatures) page for more information specific to Open Payments. Additional information is in the <LinkOut href='https://www.rfc-editor.org/info/rfc9421/'>specification</LinkOut> for HTTP message signatures.
 
 ## Sequence diagram
 

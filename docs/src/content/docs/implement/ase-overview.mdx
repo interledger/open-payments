@@ -20,7 +20,7 @@ To make accounts Open Payments-enabled, ASEs must operate three servers and inte
 
 - **Wallet address server**: Returns public information about each Open Payments-enabled account at a stable HTTPS URL (the wallet address).
 - **Resource server**: Hosts the `incoming-payment`, `quote`, and `outgoing-payment` APIs that clients call to set up payments.
-- **Authorization server**: Processes grant requests under the <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol'>Grant Negotiation and Authorization Protocol (GNAP)</LinkOut>, issues access tokens, and coordinates user consent for interactive grants.
+- **Authorization server**: Processes grant requests under the <LinkOut href='https://www.rfc-editor.org/info/rfc9635/'>Grant Negotiation and Authorization Protocol (GNAP)</LinkOut>, issues access tokens, and coordinates user consent for interactive grants.
 - **Identity provider (IdP) integration**: Authenticates the resource owner and collects explicit consent during interactive grants (required for outgoing payments).
 
 The ASE is also responsible for the actual movement of funds. Open Payments only carries the payment **instruction**. Settlement happens between ASEs over a shared payment rail.
