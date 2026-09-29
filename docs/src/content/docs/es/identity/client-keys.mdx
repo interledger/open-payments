@@ -67,7 +67,7 @@ Además, el documento debe incluir los campos `x` y `kid` (identificador de clav
 
 Para inicializar un SDK de cliente de Open Payments autenticado, debe disponer de un par de claves pública-privada y de un identificador de clave.
 
-1. El SDK del cliente genera un par de claves con el <LinkOut href='https://datatracker.ietf.org/doc/html/rfc8032'>algoritmo ED25519</LinkOut>. El registro de claves del cliente expone la clave pública en formato de JWKS.
+1. El SDK del cliente genera un par de claves con el <LinkOut href='https://www.rfc-editor.org/info/rfc8032/'>algoritmo ED25519</LinkOut>. El registro de claves del cliente expone la clave pública en formato de JWKS.
 2. La clave pública se proporciona a la entidad que administra la cuenta (account servicing entity, ASE) del cliente. La ASE es responsable de ofrecer a los clientes un medio para cargar claves. La ASE agrega la clave a su servidor de recursos.
 3. Se crea un `keyId` para identificar el par de claves. Por lo general, la ASE es responsable de la creación del `keyId`.
 4. El cliente almacena la clave privada para la firma de solicitudes en el futuro. La clave firma el contenido descrito en la sección [Método de validación de claves](#método-de-validación-de-claves) a continuación.
@@ -86,7 +86,7 @@ Dado que las solicitudes de clientes se realizan en varias solicitudes HTTP firm
 - Cuerpo
   - Una propiedad `client` que contenga la wallet address del cliente.
 
-La protección de las solicitudes de clientes sigue un perfil definido en la <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol#name-securing-requests-from-the-'>especificación del GNAP</LinkOut>.
+La protección de las solicitudes de clientes sigue un perfil definido en la <LinkOut href='https://www.rfc-editor.org/info/rfc9635/#section-7'>especificación del GNAP</LinkOut>.
 
 :::Nota
 Open Payments **no** admite tókenes de portador.
@@ -102,7 +102,7 @@ Luego, el servidor de autorización realiza una solicitud `GET` al punto final J
 
 ### Firmas de mensajes HTTP
 
-Open Payments usa el método de validación de claves mediante <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol#name-http-message-signatures'>firmas de mensajes HTTP</LinkOut> (`httpsig`).
+Open Payments usa el método de validación de claves mediante <LinkOut href='https://www.rfc-editor.org/info/rfc9635/#section-7.3.1'>firmas de mensajes HTTP</LinkOut> (`httpsig`).
 
 Este método de validación `httpsig` debe declararse como parte del material de la clave al usar una clave directamente para solicitar una concesión. El material de claves que se muestra es solo ilustrativo. En Open Payments, se espera que la wallet address se utilice en la solicitud de concesión.
 
@@ -121,7 +121,7 @@ Este método de validación `httpsig` debe declararse como parte del material de
 
 Cuando se usa `httpsig`, el firmante (el cliente) crea una firma de mensaje HTTP. Los clientes de Open Payments a menudo protegen sus solicitudes a los servidores presentando un token de acceso y la validación de una clave que poseen. La excepción son las llamadas a un servidor de autorización para iniciar una concesión. En ese caso, se utiliza una validación de clave sin token de acceso y se trata de una solicitud firmada no autorizada.
 
-Consulte la [página de firmas de mensajes HTTP](/es/identity/http-signatures) para obtener más información específica sobre Open Payments. También encontrará información adicional en la <LinkOut href='https://datatracker.ietf.org/doc/html/rfc9421'>especificación</LinkOut> de firmas de mensajes HTTP.
+Consulte la [página de firmas de mensajes HTTP](/es/identity/http-signatures) para obtener más información específica sobre Open Payments. También encontrará información adicional en la <LinkOut href='https://www.rfc-editor.org/info/rfc9421/'>especificación</LinkOut> de firmas de mensajes HTTP.
 
 ## Diagrama de secuencia
 
