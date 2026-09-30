@@ -1,5 +1,5 @@
-/* The new logo stacks "Open Payments" over two lines above a strapline, so it
- * needs a taller bar than Starlight's default to stay legible. Every sidebar
+/* The logo stacks "Open Payments" over two lines, so it needs a taller bar
+ * than Starlight's default to stay legible. Every sidebar
  * and mobile-menu offset derives from this variable, so raising it here moves
  * the whole layout together. */
 :root {
