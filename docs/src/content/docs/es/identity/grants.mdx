@@ -3,6 +3,8 @@ title: Negociación y autorización de las concesiones
 ---
 
 import { CodeBlock, LinkOut, Tooltip } from '@interledger/docs-design-system'
+import ForAsesAuthServer from '/src/content/docs/partials/es/_for-ases-auth-server.mdx'
+import RafikiResourceServerNote from '/src/content/docs/partials/es/_rafiki-resource-server-note.mdx'
 
 :::tip[Resumen]
 Una concesión en Open Payments permite que un cliente obtenga autorización de un propietario de recursos para acceder a recursos protegidos y realizar operaciones en ellos. Open Payments utiliza el Protocolo de Negociación y Autorización de Concesiones (Grant Negotiation and Authorization Protocol, GNAP) para facilitar este proceso, lo cual permite que los clientes interactúen de forma segura con la API.
@@ -10,11 +12,11 @@ Una concesión en Open Payments permite que un cliente obtenga autorización de 
 
 En Open Payments, una concesión representa una transferencia o delegación de autorización de un propietario de recursos (Resource Owner, RO) a un software. Un RO puede ser una persona física, como el usuario final del software, o bien un proceso, como reglas organizacionales predefinidas. Al delegar la autorización, el RO permite que el software acceda y realice operaciones en recursos protegidos en nombre del RO.
 
-Open Payments aprovecha el Protocolo de Negociación y Autorización de Concesiones <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol'>(Grant Negotiation and Authorization Protocol, GNAP)</LinkOut> como el mecanismo mediante el cual un programa de software, conocido como “instancia de cliente” (o simplemente “cliente”), recibe la delegación de autorización para utilizar las interfaces de programación de aplicaciones (application programming interfaces, API) de Open Payments para interactuar con las cuentas admitidas.
+Open Payments aprovecha el Protocolo de Negociación y Autorización de Concesiones <LinkOut href='https://www.rfc-editor.org/info/rfc9635/'>(Grant Negotiation and Authorization Protocol, GNAP)</LinkOut> como el mecanismo mediante el cual un programa de software, conocido como “instancia de cliente” (o simplemente “cliente”), recibe la delegación de autorización para utilizar las interfaces de programación de aplicaciones (application programming interfaces, API) de Open Payments para interactuar con las cuentas admitidas.
 
 ## GNAP frente a OAuth 2.0
 
-GNAP se desarrolla como sucesor de OAuth 2.0 y está diseñado para cubrir muchas de las deficiencias detectadas en el uso de OAuth en Open Banking y demás casos financieros. El <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol#name-compared-to-oauth-20'>Apéndice B</LinkOut> de la especificación del GNAP describe las diferencias de diseño del protocolo en comparación con OAuth 2.0. Algunos ejemplos son los siguientes:
+GNAP se desarrolla como sucesor de OAuth 2.0 y está diseñado para cubrir muchas de las deficiencias detectadas en el uso de OAuth en Open Banking y demás casos financieros. El <LinkOut href='https://www.rfc-editor.org/info/rfc9635/#appendix-A'>Apéndice B</LinkOut> de la especificación del GNAP describe las diferencias de diseño del protocolo en comparación con OAuth 2.0. Algunos ejemplos son los siguientes:
 
 | GNAP                                                                                                                                                                                                                                           | OAuth 2.0                                                                                                                                                                                                    |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -29,6 +31,8 @@ GNAP se desarrolla como sucesor de OAuth 2.0 y está diseñado para cubrir mucha
 Un servidor de autorización otorga privilegios delegados a un cliente en forma de tókenes de acceso. Los tókenes de acceso representan un conjunto de derechos de acceso o atributos concedidos al cliente. Con los tókenes de acceso correspondientes, el cliente puede acceder a las API de Open Payments de un servidor de recursos y realizar las operaciones permitidas, como crear pagos entrantes y enumerar pagos salientes, en nombre del propietario de recursos.
 
 Un servidor de autorización se identifica de forma exclusiva por su URI de punto final de concesión, que es un URI absoluto al que un cliente llama para iniciar una solicitud de concesión.
+
+<ForAsesAuthServer />
 
 ### Registros de claves
 
@@ -61,8 +65,6 @@ La secuencia de solicitudes que realiza un cliente al configurar un pago puede s
 
 Un servidor de recursos proporciona las API de Open Payments a través de las cuales se pueden crear o se puede acceder a recursos del servidor. GNAP no presupone ni requiere un acoplamiento estricto entre un servidor de recursos y un servidor de autorización, y cada vez es más frecuente que ambos se administren y ejecuten de forma independiente.
 
-Las operaciones en las API por parte de un cliente requieren que el cliente tenga un token de acceso válido emitido por un <LinkOut href='https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol-16#name-trust-relationships'>servidor de autorización confiable</LinkOut>. Cuando el cliente utiliza su token de acceso para llamar al servidor de recursos, este examina el token para determinar si es suficiente para la solicitud. La manera en que un servidor de recursos realiza esta verificación se encuentra fuera del alcance de Open Payments. Si el token es suficiente, el cliente obtiene el derecho de acceder a las operaciones y al recurso asociado a ese token.
+Las operaciones en las API por parte de un cliente requieren que el cliente tenga un token de acceso válido emitido por un <LinkOut href='https://www.rfc-editor.org/info/rfc9635/#section-1.4'>servidor de autorización confiable</LinkOut>. Cuando el cliente utiliza su token de acceso para llamar al servidor de recursos, este examina el token para determinar si es suficiente para la solicitud. La manera en que un servidor de recursos realiza esta verificación se encuentra fuera del alcance de Open Payments. Si el token es suficiente, el cliente obtiene el derecho de acceder a las operaciones y al recurso asociado a ese token.
 
-:::note
-Actualmente se encuentra en desarrollo una implementación de código abierto de un servidor de recursos de Open Payments llamada <LinkOut href='https://rafiki.dev'>Rafiki</LinkOut>.
-:::
+<RafikiResourceServerNote />

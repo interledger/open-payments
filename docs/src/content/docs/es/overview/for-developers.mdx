@@ -1,0 +1,72 @@
+---
+title: Desarrollo con Open Payments
+---
+
+import { LinkCard, CardGrid } from '@astrojs/starlight/components'
+import { LinkOut } from '@interledger/docs-design-system'
+
+:::tip[Resumen]
+Desarrollar con Open Payments implica escribir un cliente que llame a las API de Open Payments para configurar pagos entre cuentas compatibles con Open Payments. Las propias cuentas y los servidores que las exponen son operados por entidades que administran cuentas (ASE).
+:::
+
+Esta página es el punto de partida para los desarrolladores que crean aplicaciones, servicios u otro software que consumen las API de Open Payments.
+
+## Lo que desarrollará
+
+Un cliente en Open Payments es un software que:
+
+- Descubre una cuenta compatible con Open Payments a partir de la [wallet address](/es/concepts/wallet-addresses/) que identifica la cuenta.
+- Solicita [concesiones](/es/identity/grants/) al servidor de autorización de la cuenta.
+- Crea recursos `incoming-payment`, `quote` y `outgoing-payment` para configurar un pago.
+- Firma cada solicitud con una clave que el servidor de autorización puede verificar.
+- Gestiona los flujos de consentimiento interactivos.
+
+Un cliente nunca mueve dinero. Las ASE de cada lado del pago son responsables de la liquidación.
+
+## Qué leer
+
+Si es la primera vez que usa Open Payments, consulte estos recursos:
+
+<CardGrid>
+  <LinkCard
+    title="Flujo de Open Payments"
+    href="/es/concepts/op-flow/"
+    description="La secuencia de extremo a extremo de las llamadas a la API que realiza un cliente durante un pago."
+  />
+  <LinkCard
+    title="Wallet addresses"
+    href="/es/concepts/wallet-addresses/"
+    description="Cómo se identifica una cuenta y cómo la descubren los clientes."
+  />
+  <LinkCard
+    title="Recursos"
+    href="/es/concepts/resources/"
+    description="Los tres tipos de recursos: pago entrante, cotización, pago saliente y lo que representan."
+  />
+  <LinkCard
+    title="Autorización"
+    href="/es/concepts/auth/"
+    description="Cómo los clientes solicitan concesiones y obtienen tókenes de acceso."
+  />
+  <LinkCard
+    title="Gestión de identidad y acceso"
+    href="/es/identity/grants/"
+    description="Mecanismos de identidad del lado del cliente: GNAP, solicitudes de firma, flujos interactivos, verificación de hash."
+  />
+  <LinkCard
+    title="SDK"
+    href="/es/sdk/before-you-begin/"
+    description="Funciones predefinidas para las operaciones más comunes de los clientes."
+  />
+  <LinkCard
+    title="Guías"
+    href="/es/guides/accept-otp-online-purchase/"
+    description="Tutoriales integrales para situaciones de pago comunes."
+  />
+</CardGrid>
+
+## Qué se excluye intencionalmente de la ruta para desarrolladores
+
+Parte de la documentación de Open Payments describe las responsabilidades de la ASE, no del cliente. Esto incluye cómo está estructurado el wallet address server, cómo el servidor de autorización procesa las concesiones, cómo el servidor de recursos transfiere los pagos a la liquidación y cómo se integra el proveedor de identidad. Esas páginas se encuentran en la sección [Para las ASE](/es/implement/ase-overview/) y están dirigidas a los ingenieros que implementan la pila de servidores.
+
+Si al leer una página para las ASE se pregunta si debe implementar algo del lado del cliente, la respuesta casi siempre es no.

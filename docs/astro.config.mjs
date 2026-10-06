@@ -2,12 +2,14 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'astro/config'
 import starlight from '@astrojs/starlight'
-import starlightOpenAPI from 'starlight-openapi'
 import starlightLinksValidator from 'starlight-links-validator'
+import starlightLlmsTxt from 'starlight-llms-txt'
 import starlightFullViewMode from 'starlight-fullview-mode'
+import { unified } from '@astrojs/markdown-remark'
 import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
 import { loadEnv } from 'vite'
+import { generateApiSidebar } from './src/lib/api-sidebar.js'
 
 const docsRoot = path.dirname(fileURLToPath(import.meta.url))
 const envFromFile = loadEnv(
@@ -38,8 +40,10 @@ const netlifyDevFunctionsProxyTarget = (() => {
 export default defineConfig({
   site: 'https://openpayments.dev',
   markdown: {
-    remarkPlugins: [remarkMath],
-    rehypePlugins: [rehypeKatex]
+    processor: unified({
+      remarkPlugins: [remarkMath],
+      rehypePlugins: [rehypeKatex]
+    })
   },
   integrations: [
     starlight({
@@ -60,7 +64,9 @@ export default defineConfig({
       components: {
         Header: './src/components/Header.astro',
         PageSidebar: './src/components/PageSidebar.astro',
-        Footer: './src/components/Footer.astro'
+        Footer: './src/components/Footer.astro',
+        PageTitle: './src/components/PageTitle.astro',
+        LastUpdated: './src/components/LastUpdated.astro'
       },
       customCss: [
         './node_modules/@interledger/docs-design-system/src/styles/teal-theme.css',
@@ -87,54 +93,65 @@ export default defineConfig({
           borderRadius: 'var(--border-radius)'
         }
       },
+      lastUpdated: true,
       logo: {
         src: './public/favicon.svg'
       },
       plugins: [
-        // Generate the OpenAPI documentation pages.
-        starlightOpenAPI([
-          {
-            base: 'apis/resource-server',
-            schema:
-              '../open-payments-specifications/openapi/resource-server.yaml',
-            sidebar: { label: 'Open Payments' }
-          },
-          {
-            base: 'es/apis/resource-server',
-            schema:
-              '../open-payments-specifications/openapi/resource-server.yaml',
-            sidebar: { label: 'Open Payments' }
-          },
-          {
-            base: 'apis/wallet-address-server',
-            schema:
-              '../open-payments-specifications/openapi/wallet-address-server.yaml',
-            sidebar: { label: 'Wallet Addresses' }
-          },
-          {
-            base: 'es/apis/wallet-address-server',
-            schema:
-              '../open-payments-specifications/openapi/wallet-address-server.yaml',
-            sidebar: { label: 'Wallet Addresses' }
-          },
-          {
-            base: 'apis/auth-server',
-            schema: '../open-payments-specifications/openapi/auth-server.yaml',
-            sidebar: { label: 'Open Payments Authorization Server' }
-          },
-          {
-            base: 'es/apis/auth-server',
-            schema: '../open-payments-specifications/openapi/auth-server.yaml',
-            sidebar: { label: 'Open Payments Authorization Server' }
-          }
-        ]),
+        starlightLlmsTxt({
+          details: `Open Payments documentation serves two audiences: developers building payment applications using the Open Payments SDKs, and Account Servicing Entities (ASEs) implementing the protocol on their own infrastructure. The appropriate guidance differs significantly between these two groups.
+
+Key terminology notes:
+
+- Wallet addresses are URL-based identifiers for financial accounts — not cryptocurrency wallets
+- Grants are authorization tokens specific to the Open Payments grant negotiation flow — not standard OAuth grants
+- Open Payments covers the API layer for initiating and receiving payments; it does not handle settlement or the underlying transfer mechanism (that is Interledger Protocol/ILP)
+- Rafiki is the reference implementation of the Open Payments protocol — relevant when a user is asking about implementing rather than consuming the API`,
+          optionalLinks: [
+            {
+              label: 'GitHub repository',
+              url: 'https://github.com/interledger/open-payments',
+              description:
+                'Source code, issues, and contributions for the Open Payments project'
+            },
+            {
+              label: 'OpenAPI specifications',
+              url: 'https://github.com/interledger/open-payments-specifications',
+              description:
+                'Hand-authored OpenAPI YAML specs for the auth server, resource server, and wallet address server'
+            }
+          ],
+          customSets: [
+            {
+              label: 'Concepts',
+              description:
+                'Core protocol concepts including wallet addresses, grants, resources, and the Open Payments flow',
+              paths: ['concepts/**']
+            },
+            {
+              label: 'Guides',
+              description:
+                'Step-by-step implementation guides for common payment scenarios such as one-time payments, remittances, and recurring payments',
+              paths: ['guides/**']
+            },
+            {
+              label: 'Identity and Access Management',
+              description:
+                'Grant negotiation and authorization, identity providers, client keys, and HTTP signatures',
+              paths: ['identity/**']
+            },
+            {
+              label: 'Implementing Open Payments',
+              description:
+                'Guides for account servicing entities (ASEs) implementing the Open Payments protocol on their own infrastructure',
+              paths: ['implement/**']
+            }
+          ]
+        }),
         starlightLinksValidator({
           errorOnLocalLinks: false,
           errorOnFallbackPages: false,
-          exclude: [
-            '/apis/{auth-server,resource-server,wallet-address-server}/**/*',
-            '/es/apis/{auth-server,resource-server,wallet-address-server}/**/*'
-          ]
+          exclude: ['/apis/**', '/es/apis/**']
         }),
         starlightFullViewMode({
           leftSidebarEnabled: true,
@@ -153,10 +170,12 @@ export default defineConfig({
             },
             {
               label: 'Building with Open Payments',
+              translations: { es: 'Desarrollo con Open Payments' },
               link: '/overview/for-developers/'
             },
             {
               label: 'Implementing Open Payments',
+              translations: { es: 'Implementación de Open Payments' },
               link: '/overview/for-ases/'
             }
           ]
@@ -172,7 +191,7 @@ export default defineConfig({
               items: [
                 {
                   label: 'Wallet addresses',
-                  translations: { es: 'Direcciones de billetera' },
+                  translations: { es: 'Wallet addresses' },
                   link: '/concepts/wallet-addresses/'
                 },
                 {
@@ -182,18 +201,22 @@ export default defineConfig({
                   items: [
                     {
                       label: 'Payment resource types',
+                      translations: { es: 'Tipos de recursos de pago' },
                       link: '/concepts/resources/'
                     },
                     {
                       label: 'incoming-payment',
+                      translations: { es: 'Pago entrante' },
                       link: '/concepts/resources/#incoming-payment'
                     },
                     {
                       label: 'quote',
+                      translations: { es: 'Cotización' },
                       link: '/concepts/resources/#quote'
                     },
                     {
                       label: 'outgoing-payment',
+                      translations: { es: 'Pago saliente' },
                       link: '/concepts/resources/#outgoing-payment'
                     }
                   ]
@@ -440,6 +463,13 @@ export default defineConfig({
                     es: 'Obtener una concesión de pago saliente para pagos futuros'
                   },
                   link: '/guides/outgoing-grant-future-payments/'
+                },
+                {
+                  label: 'Verify ownership of a wallet address',
+                  translations: {
+                    es: 'Verificar la propiedad de una wallet address'
+                  },
+                  link: '/guides/verify-wallet-address-ownership/'
                 }
               ]
             }
@@ -452,26 +482,32 @@ export default defineConfig({
           items: [
             {
               label: 'ASE overview',
+              translations: { es: 'Descripción general de la ASE' },
               link: '/implement/ase-overview/'
             },
             {
               label: 'Wallet address architecture',
+              translations: { es: 'Arquitectura de wallet address' },
               link: '/implement/wallet-address-architecture/'
             },
             {
               label: 'Resource server',
+              translations: { es: 'Servidor de recursos' },
               link: '/implement/resource-server/'
             },
             {
               label: 'Authorization server',
+              translations: { es: 'Servidor de autorización' },
               link: '/implement/auth-server/'
             },
             {
               label: 'Identity provider integration',
+              translations: { es: 'Integración del proveedor de identidad' },
               link: '/implement/identity-provider/'
             },
             {
               label: 'Security',
+              translations: { es: 'Seguridad' },
               link: '/implement/security/'
             }
           ]
@@ -504,144 +540,9 @@ export default defineConfig({
           ]
         },
         {
-          label: 'API specifications',
+          label: 'API reference',
           collapsed: true,
-          items: [
-            {
-              label: 'Wallet address server',
-              collapsed: true,
-              items: [
-                {
-                  label: 'Get wallet address',
-                  link: '/apis/wallet-address-server/operations/get-wallet-address',
-                  badge: { text: 'GET', variant: 'note' }
-                },
-                {
-                  label: 'Get keys bound to wallet address',
-                  link: '/apis/wallet-address-server/operations/get-wallet-address-keys',
-                  badge: { text: 'GET', variant: 'note' }
-                }
-              ]
-            },
-            {
-              label: 'Resource server',
-              collapsed: true,
-              items: [
-                {
-                  label: 'Incoming payment',
-                  collapsed: true,
-                  items: [
-                    {
-                      label: 'Create incoming payment',
-                      link: '/apis/resource-server/operations/create-incoming-payment',
-                      badge: { text: 'POST', variant: 'success' }
-                    },
-                    {
-                      label: 'List incoming payments',
-                      link: '/apis/resource-server/operations/list-incoming-payments',
-                      badge: { text: 'GET', variant: 'note' }
-                    },
-                    {
-                      label: 'Get an incoming payment',
-                      link: '/apis/resource-server/operations/get-incoming-payment',
-                      badge: { text: 'GET', variant: 'note' }
-                    },
-                    {
-                      label: 'Complete an incoming payment',
-                      link: '/apis/resource-server/operations/complete-incoming-payment',
-                      badge: { text: 'POST', variant: 'success' }
-                    }
-                  ]
-                },
-                {
-                  label: 'Outgoing payment',
-                  collapsed: true,
-                  items: [
-                    {
-                      label: 'Create outgoing payment',
-                      link: '/apis/resource-server/operations/create-outgoing-payment',
-                      badge: { text: 'POST', variant: 'success' }
-                    },
-                    {
-                      label: 'List outgoing payments',
-                      link: '/apis/resource-server/operations/list-outgoing-payments',
-                      badge: { text: 'GET', variant: 'note' }
-                    },
-                    {
-                      label: 'Get an outgoing payment',
-                      link: '/apis/resource-server/operations/get-outgoing-payment',
-                      badge: { text: 'GET', variant: 'note' }
-                    },
-                    {
-                      label:
-                        'Get spent amounts for current outgoing payment grant',
-                      link: '/apis/resource-server/operations/get-outgoing-payment-grant',
-                      badge: { text: 'GET', variant: 'note' }
-                    }
-                  ]
-                },
-                {
-                  label: 'Quote',
-                  collapsed: true,
-                  items: [
-                    {
-                      label: 'Create quote',
-                      link: '/apis/resource-server/operations/create-quote',
-                      badge: { text: 'POST', variant: 'success' }
-                    },
-                    {
-                      label: 'Get a quote',
-                      link: '/apis/resource-server/operations/get-quote',
-                      badge: { text: 'GET', variant: 'note' }
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              label: 'Auth server',
-              collapsed: true,
-              items: [
-                {
-                  label: 'Grants',
-                  collapsed: true,
-                  items: [
-                    {
-                      label: 'Grant request',
-                      link: '/apis/auth-server/operations/post-request',
-                      badge: { text: 'POST', variant: 'success' }
-                    },
-                    {
-                      label: 'Grant continuation request',
-                      link: '/apis/auth-server/operations/post-continue',
-                      badge: { text: 'POST', variant: 'success' }
-                    },
-                    {
-                      label: 'Cancel grant',
-                      link: '/apis/auth-server/operations/delete-continue',
-                      badge: { text: 'DELETE', variant: 'danger' }
-                    }
-                  ]
-                },
-                {
-                  label: 'Access token',
-                  collapsed: true,
-                  items: [
-                    {
-                      label: 'Rotate access token',
-                      link: '/apis/auth-server/operations/post-token',
-                      badge: { text: 'POST', variant: 'success' }
-                    },
-                    {
-                      label: 'Revoke access token',
-                      link: '/apis/auth-server/operations/delete-token',
-                      badge: { text: 'DELETE', variant: 'danger' }
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
+          items: generateApiSidebar()
         }
       ],
       social: [
@@ -657,7 +558,8 @@ export default defineConfig({
     '/docs': '/overview/getting-started',
     '/introduction/wallet-addresses': '/concepts/wallet-addresses',
     '/sdk/grant-create': '/sdk/grant-create-incoming',
-    '/implement': '/implement/ase-overview/'
+    '/implement': '/implement/ase-overview/',
+    '/introduction/overview/': '/overview/getting-started'
   },
   server: {
     port: 1104,

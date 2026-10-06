@@ -2,8 +2,9 @@
 title: Proveedores de identidad
 ---
 
-import { CodeBlock, LinkOut } from '@interledger/docs-design-system'
 import Interactive from '/src/content/docs/partials/es/_diagram-interactive-grant.mdx'
+import ForAsesIdentityProvider from '/src/content/docs/partials/es/_for-ases-identity-provider.mdx'
+import RafikiReferenceIdp from '/src/content/docs/partials/es/_rafiki-reference-idp.mdx'
 
 :::tip[Resumen]
 Un proveedor de identidad (IdP) es un sistema o servicio que administra la autenticación del usuario y el consentimiento durante el proceso de concesión interactiva.
@@ -19,6 +20,6 @@ El siguiente diagrama ilustra el flujo de una concesión interactiva.
 
 <Interactive />
 
-:::tip[Implementación de referencia]
-Rafiki ofrece una implementación de referencia del <LinkOut href='https://rafiki.dev/es/integration/deployment/services/auth-service/'>servicio de autorización</LinkOut>, que incluye compatibilidad para la integración en un IdP.
-:::
+<ForAsesIdentityProvider />
+
+<RafikiReferenceIdp />

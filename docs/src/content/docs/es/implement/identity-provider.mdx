@@ -1,0 +1,59 @@
+---
+title: Integración del proveedor de identidad
+---
+
+import Interactive from '/src/content/docs/partials/es/_diagram-interactive-grant.mdx'
+import RafikiReferenceIdp from '/src/content/docs/partials/es/_rafiki-reference-idp.mdx'
+
+:::tip[Resumen]
+Las ASE deben integrar su servidor de autorización con un proveedor de identidad (IdP) para autenticar al propietario del recurso y obtener el consentimiento explícito durante las concesiones interactivas.
+:::
+
+## Cuando interviene el IdP
+
+Open Payments requiere una concesión de autorización interactiva para los pagos salientes. Una concesión interactiva no puede aprobarse sin el consentimiento explícito del propietario del recurso (por lo general, el usuario del cliente). El servidor de autorización de la ASE es responsable de coordinar la obtención del consentimiento, pero no debe obtenerlo por sí mismo. Delega esta tarea a un IdP para que el propietario del recurso se autentique mediante el mismo sistema que controla su cuenta subyacente.
+
+El siguiente diagrama ilustra el flujo completo de una concesión interactiva, incluido el IdP.
+
+<Interactive />
+
+## Lo que el servidor de autorización envía al IdP
+
+Cuando el servidor de autorización redirige al propietario del recurso al IdP, debe proporcionarle suficiente información para que el IdP pueda mostrar una pantalla de consentimiento clara y devolver la decisión. El mecanismo exacto es un detalle de implementación de la ASE (una URL de redirección firmada, un token de consentimiento de corta duración, una llamada de servidor a servidor), pero la información que necesita el IdP incluye:
+
+- El **identificador de la concesión**, para que el IdP pueda devolver su decisión a la concesión correcta.
+- La **identidad del propietario del recurso** (o lo que el IdP utilice para iniciar la autenticación), para que el IdP pueda solicitar al usuario correcto que inicie sesión.
+- El **acceso solicitado**: tipos de recursos, acciones, límites (monto de débito, monto de recepción, vencimiento, intervalo para el acceso recurrente).
+- La **identidad del cliente**: como mínimo, un nombre para mostrar.
+- La **ruta de retorno** al servidor de autorización una vez que se toma una decisión.
+
+## Lo que debe mostrar el IdP
+
+El IdP es el único sistema del flujo en el que se autentica al propietario del recurso, por lo que también es el único sistema que puede solicitar el consentimiento de manera confiable. El IdP debe mostrar:
+
+- Quién es el cliente (nombre para mostrar; opcionalmente, atestación adicional del cliente).
+- Lo que el cliente solicita permiso para hacer, en un lenguaje sencillo (por ejemplo, “enviar hasta USD 50 desde su cuenta”).
+- Cualquier límite de tiempo o velocidad asociado a la solicitud.
+- Una opción clara para aceptar/denegar.
+
+Las ASE deciden la interfaz de usuario exacta, pero el aviso de consentimiento debe reflejar con precisión lo que el servidor de autorización codificará en la concesión resultante. Si el IdP no refleja con precisión el acceso que la ASE recibió en la solicitud de concesión, el propietario del recurso puede dar su consentimiento para un mayor acceso del que se le mostró, o para un menor acceso del que solicitó el cliente. Eso supone riesgos tanto para la ASE como para el propietario del recurso.
+
+## Cómo se devuelve el consentimiento
+
+Después de que el propietario del recurso toma una decisión, el IdP la comunica al servidor de autorización. Patrones comunes:
+
+- Una redirección firmada desde el IdP hacia una devolución de llamada en el servidor de autorización, que contiene el identificador de la concesión y la decisión.
+- Una llamada de API de servidor a servidor desde el IdP al servidor de autorización.
+
+El servidor de autorización debe verificar la integridad de la decisión entrante, tanto que provenga del IdP de la ASE como que no haya sido alterada. Al aceptar, el servidor de autorización mueve la concesión a `approved` y desbloquea la emisión de tókenes. Al denegar, la concesión debe pasar a un estado final de denegación para que las solicitudes de continuación posteriores devuelvan el error correspondiente.
+
+## Mecanismos de redirección y hash
+
+Una vez que el servidor de autorización tiene la decisión del IdP, redirige al propietario del recurso al URI `interact.finish` del cliente (si se proporcionó uno en la solicitud de concesión original) e incluye:
+
+- Un `interact_ref`.
+- Un `hash` calculado a partir de los valores `nonce` originales y el URI de concesión.
+
+El cliente verifica el hash para confirmar que la redirección realmente provino del servidor de autorización y luego llama al URI de continuación para recuperar el token de acceso. La construcción exacta del hash se describe en [Seguridad](/es/implement/security/).
+
+<RafikiReferenceIdp />

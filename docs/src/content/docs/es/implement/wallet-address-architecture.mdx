@@ -1,0 +1,85 @@
+---
+title: Arquitectura de wallet address
+---
+
+import { LinkOut } from '@interledger/docs-design-system'
+import RafikiReference from '/src/content/docs/partials/es/_rafiki-reference.mdx'
+
+:::tip[Resumen]
+Una wallet address es el punto final HTTPS público que identifica una cuenta compatible con Open Payments y expone la información que los clientes necesitan para interactuar con ella. Las ASE operan un wallet address server que devuelve esta información y definen la política que asigna las wallet addresses a las cuentas subyacentes.
+:::
+
+## Requisitos de las URL
+
+Las ASE deben aplicar las siguientes restricciones a cualquier URL que se exponga como wallet address:
+
+- La URL debe usar el protocolo `https`.
+- La URL no debe contener un componente `user-info`, `port`, `query string` ni `fragment`.
+- El servidor que gestiona las solicitudes HTTP en esa URL debe ser compatible con el protocolo de Open Payments.
+
+Las URL que no cumplen con estas restricciones no son wallet addresses válidas. Las ASE deben rechazar emitirlas o aceptarlas.
+
+## Respuesta de la wallet address
+
+Un wallet address server devuelve información pública sobre la cuenta subyacente en respuesta a una solicitud `GET` con `Accept: application/json`:
+
+```http
+HTTP/1.1 200 Success
+Content-Type: application/json
+
+{
+  "id": "https://wallet.example.com/alice",
+  "publicName": "Alice",
+  "assetCode": "USD",
+  "assetScale": 2,
+  "authServer": "https://auth.wallet.example.com",
+  "resourceServer": "https://wallet.example.com/op"
+}
+```
+
+Cada campo forma parte del contrato observable externamente de la ASE:
+
+- `id`: La URL canónica de la wallet address. Las ASE deben devolver el mismo identificador que el cliente utilizó para llegar al punto final.
+- `publicName`: Una etiqueta legible para humanos que los clientes y proveedores de identidad pueden mostrar. Las ASE deciden qué exponer aquí y deben tener en cuenta que este campo es visible públicamente.
+- `assetCode`: El código de divisa <LinkOut href='https://en.wikipedia.org/wiki/ISO_4217'>ISO 4217</LinkOut> de la cuenta subyacente.
+- `assetScale`: El número de decimales utilizados para esa divisa. Consulte [Montos](/es/concepts/amounts/) para obtener información sobre la relación entre valor y escala de la que dependen los clientes.
+- `authServer`: El URI del punto final de concesión del servidor de autorización que emite tókenes para esta wallet address. Los clientes envían todas las solicitudes de concesión aquí.
+- `resourceServer`: La URL base del servidor de recursos que aloja los recursos `incoming-payment`, `quote` y `outgoing-payment` para esta wallet address.
+
+El esquema completo de solicitud y respuesta está definido por la <LinkOut href='/apis/wallet-address-server/operations/get-wallet-address/'>wallet address server API</LinkOut>. Las ASE también deben exponer las claves vinculadas a una wallet address. Consulte <LinkOut href='/apis/wallet-address-server/operations/get-wallet-address-keys/'>Get keys bound to a wallet address</LinkOut>.
+
+## Consideraciones sobre múltiples divisas
+
+Una wallet address admite un único `assetCode` y un único `assetScale`. Las ASE que deseen admitir cuentas multidivisa tienen dos patrones comunes:
+
+- Emitir una wallet address por cada divisa admitida para la misma cuenta subyacente. Cada wallet address devuelve su propio `assetCode` y `assetScale`.
+- Emitir una única wallet address en la divisa principal y realizar la conversión de divisas en el lado de la ASE cuando se reciban pagos en una divisa diferente. En este patrón, la wallet address sigue devolviendo un único `assetCode`, y se acredita al destinatario en esa divisa, independientemente de la denominación del remitente.
+
+En ambos patrones, el código de activo devuelto en la respuesta de la wallet address corresponde a la divisa en la que se acreditará la cuenta subyacente. Las comisiones por conversión y los tipos de cambio son una decisión de política de la ASE y deben comunicarse al remitente a través de la cotización.
+
+## Asignación de wallet addresses a cuentas
+
+La relación entre las wallet addresses y las cuentas subyacentes es intencionalmente flexible. Los modelos de asignación comunes incluyen:
+
+- **1:1**: Cada cuenta tiene exactamente una wallet address. Es el modelo más simple; los riesgos de reutilización y seguimiento son los más altos.
+- **1:muchas**: Una cuenta tiene muchas wallet addresses. Permite a los titulares de cuentas generar direcciones por cliente o por contexto para evitar el seguimiento entre distintos servicios.
+- **Muchas:1**: Muchas wallet addresses pueden estar asociadas a la misma cuenta subyacente; las ASE pueden usar esto para cuentas compartidas o para rotación.
+
+Las ASE definen qué modelos admiten y la política relacionada con lo siguiente:
+
+- Si los titulares de cuentas pueden crear nuevas wallet addresses a demanda.
+- Si las wallet addresses se pueden desactivar o volver a vincularse a una cuenta diferente.
+- Si las solicitudes GET a una wallet address desactivada devuelven `404 Not Found`, o si la URL puede reasignarse a otra cuenta.
+- Si el acceso previamente otorgado a través de una wallet address se transfiere a otra wallet address en la misma cuenta.
+
+Open Payments trata dos wallet addresses distintas como cuentas distintas, incluso cuando comparten una cuenta subyacente. Las ASE deben aplicar esto en la capa de autorización: un permiso otorgado a través de una wallet address no debe otorgar implícitamente acceso a través de otra.
+
+## Por qué las URL
+
+Las ASE deben considerar la elección de una URL como identificador como una decisión de diseño, y no como una consecuencia fortuita del protocolo:
+
+- Las URL son tanto un identificador como un punto final de servicio, por lo que un cliente puede descubrir todo lo que necesita para realizar una transacción (servidor de autorización, servidor de recursos, código de activo) consultando la dirección.
+- Las URL evitan la necesidad de sobrecargar identificadores como direcciones de correo electrónico o MSISDN, que carecen de un mecanismo de interacción estándar y requieren un registro independiente para asignar un identificador a un proveedor de cuentas.
+- Las URL permiten a las ASE controlar toda la superficie de una cuenta compatible con Open Payments a través de su propio dominio, incluida la rotación de claves, el ciclo de vida de la dirección y la negociación de contenido.
+
+<RafikiReference />

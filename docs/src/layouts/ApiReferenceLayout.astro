@@ -1,0 +1,101 @@
+---
+import ThemeSync from '../components/ThemeSync.astro'
+import ApiReferenceHeader from '../components/ApiReferenceHeader.astro'
+
+interface Props {
+  title: string
+  lang?: 'en' | 'es'
+}
+
+const { title, lang = 'en' } = Astro.props
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <ThemeSync />
+  </head>
+  <body>
+    <ApiReferenceHeader lang={lang} />
+    <div id="app">
+      <slot />
+    </div>
+  </body>
+</html>
+
+<style is:global>
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  /* Header colors pulled from Starlight's teal theme (props.css) — update here if the theme changes */
+  :root {
+    /* Matches --sl-nav-height in openpayments.css, so the bar on the API
+       reference lines up with the docs header the user just came from. */
+    --op-header-height: 4.5rem;
+    --op-header-logo-height: 3rem;
+    /* Scalar sizes its sticky sidebar to the viewport and offsets it from the
+       top by this variable, which defaults to 0. Without it, our fixed header
+       pushes the bottom of the sidebar below the fold and the theme toggle
+       goes with it. It tracks --op-header-height, so the media query below
+       moves both together. */
+    --scalar-custom-header-height: var(--op-header-height);
+    --op-header-pad-x: 1rem;
+    --op-header-bg: hsl(224, 19%, 97%);
+    --op-header-border: hsl(224, 20%, 94%);
+    --op-header-text: hsl(224, 14%, 16%);
+    --op-header-muted: hsl(224, 7%, 36%);
+  }
+
+  html.dark {
+    --op-header-bg: hsl(224, 14%, 16%);
+    --op-header-border: hsl(224, 10%, 10%);
+    --op-header-text: hsl(224, 20%, 94%);
+    --op-header-muted: hsl(224, 6%, 56%);
+  }
+
+  @media (min-width: 50rem) {
+    :root {
+      --op-header-height: 5rem;
+      --op-header-logo-height: 3.5rem;
+      --op-header-pad-x: 1.5rem;
+    }
+  }
+
+  html,
+  body {
+    height: 100%;
+    margin: 0;
+  }
+
+  /* The window is the scroll container and the header is fixed over the top of
+     it, so anchors would otherwise land underneath the header. Scalar scrolls
+     to an anchor on load and on every sidebar click. */
+  html {
+    scroll-padding-top: var(--op-header-height);
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif;
+  }
+
+  #app {
+    flex: 1;
+    min-height: 0;
+    /* Clears the fixed header. Scalar's own offsetting covers its sticky
+       sidebar, but at narrow widths the content column starts at the top of
+       this element, which would put the page title under the header. */
+    padding-top: var(--op-header-height);
+  }
+</style>

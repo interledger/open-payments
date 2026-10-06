@@ -1,9 +1,5 @@
 # Open Payments
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/interledger/open-payments/main/docs/public/img/logo.svg" width="700" alt="Open Payments">
-</p>
-
 [![Netlify Status](https://api.netlify.com/api/v1/badges/61b256a1-93e0-4735-a492-1a71d5524e63/deploy-status)](https://app.netlify.com/projects/openpayments/deploys)
 
 ## What is Open Payments?
@@ -21,7 +17,7 @@ The Open Payments APIs are a collection of three sub-systems:
 
 - A **wallet address server** which exposes public information about Open Payments-enabled accounts called "wallet addresses"
 - A **resource server** which exposes APIs for performing functions against the underlying accounts
-- A **authorisation server** which exposes APIs compliant with the [GNAP](https://datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol) standard for getting grants to access the resource server APIs
+- A **authorisation server** which exposes APIs compliant with the [GNAP](https://www.rfc-editor.org/info/rfc9635/) standard for getting grants to access the resource server APIs
 
 The three Open Payments OpenAPI specifications are found in the [open-payments-specifications](https://github.com/interledger/open-payments-specifications) repository, while this repository hosts the documentation for the APIs, published on [openpayments.dev](https://openpayments.dev).
 

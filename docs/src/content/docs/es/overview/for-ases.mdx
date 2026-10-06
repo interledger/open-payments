@@ -1,0 +1,73 @@
+---
+title: Implementación de Open Payments
+next: Conceptos para desarrolladores
+---
+
+import { LinkCard, CardGrid } from '@astrojs/starlight/components'
+import { LinkOut } from '@interledger/docs-design-system'
+
+:::tip[Resumen]
+Implementar Open Payments implica poner en funcionamiento los servidores que hacen que las cuentas de un proveedor de servicios financieros sean compatibles con Open Payments. Esta página es el punto de entrada para los ingenieros de bancos, billeteras digitales, sistemas de pago móvil y otros proveedores que están desarrollando esa pila de servidores.
+:::
+
+Esta página es el punto de partida para los implementadores de entidades que administran cuentas (ASE).
+
+## Lo que implementan las ASE
+
+Para que las cuentas sean compatibles con Open Payments, las ASE operan tres servidores y se integran con un proveedor de identidad:
+
+- Un **wallet address server** que devuelve información pública sobre cada cuenta compatible con Open Payments.
+- Un **servidor de recursos** que aloja las API `incoming-payment`, `quote` y `outgoing-payment`.
+- Un **servidor de autorización** que procesa las solicitudes de concesión, emite tókenes de acceso y coordina el consentimiento de los usuarios.
+- Una integración del **proveedor de identidad** que autentica al propietario del recurso y obtiene el consentimiento explícito para las concesiones interactivas.
+
+Las ASE también son responsables de la liquidación. Open Payments solo transporta la instrucción de pago; el movimiento real de los fondos se realiza entre las ASE mediante una infraestructura de pagos compartida.
+
+## Qué leer
+
+Las ASE deben consultar las páginas [Para las ASE](/es/implement/ase-overview/) para obtener detalles del lado del servidor. Las páginas están organizadas de la siguiente manera:
+
+<CardGrid>
+  <LinkCard
+    title="Descripción general de la ASE"
+    href="/es/implement/ase-overview/"
+    description="Qué debe implementar una ASE, cómo se relacionan estas páginas con el resto de los documentos y qué papel cumple Rafiki."
+  />
+  <LinkCard
+    title="Arquitectura de wallet address"
+    href="/es/implement/wallet-address-architecture/"
+    description="Restricciones de URL, el contrato de respuesta, patrones de múltiples divisas y política de asignación de direcciones a cuentas."
+  />
+  <LinkCard
+    title="Servidor de recursos"
+    href="/es/implement/resource-server/"
+    description="Qué debe hacer el servidor de recursos para cada tipo de recurso y cómo deriva la operación a la liquidación."
+  />
+  <LinkCard
+    title="Servidor de autorización"
+    href="/es/implement/auth-server/"
+    description="Procesamiento de GNAP, orquestación del consentimiento interactivo y gestión del ciclo de vida de los tókenes."
+  />
+  <LinkCard
+    title="Integración del proveedor de identidad"
+    href="/es/implement/identity-provider/"
+    description="Qué debe mostrar el IdP, qué le transmite el servidor de autorización y cómo se devuelven las decisiones."
+  />
+  <LinkCard
+    title="Seguridad"
+    href="/es/implement/security/"
+    description="Validación de la firma, resolución de claves del cliente y generación de hashes de interacción desde el lado del servidor."
+  />
+</CardGrid>
+
+## El resto de los documentos
+
+Las páginas de Conceptos para desarrolladores (en Para desarrolladores → Conceptos) describen lo que los desarrolladores de clientes necesitan saber para llamar a las API. Las ASE pueden leerlas. Describen el mismo protocolo desde el otro lado, pero no son la fuente de autoridad para los requisitos de implementación de las ASE.
+
+## Implementación de referencia
+
+<LinkOut href="https://rafiki.dev">Rafiki</LinkOut> es una implementación de
+código abierto de una pila de servidores compatible con Open Payments. Las
+páginas [Para las ASE](/es/implement/ase-overview/) describen los requisitos del
+estándar y del protocolo. La documentación de Rafiki describe una implementación
+específica.

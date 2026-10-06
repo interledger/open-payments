@@ -15,7 +15,7 @@ import GoButton from '/src/content/docs/partials/sdk/_go-button.mdx'
 import JavaButton from '/src/content/docs/partials/sdk/_java-button.mdx'
 import NetButton from '/src/content/docs/partials/sdk/_net-button.mdx'
 
-The [Grant Request API](/apis/auth-server/operations/post-request) lets you request a grant for quote, outgoing payment, and incoming payment resources.
+The [Grant Request API](/apis/#tag/grant/POST/) lets you request a grant for quote, outgoing payment, and incoming payment resources.
 
 Before your client can call most of the Open Payments APIs, it must receive a grant from the appropriate authorization server.
 
@@ -96,7 +96,6 @@ For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://gi
 // Import dependencies
 use open_payments::client::api::UnauthenticatedResources;
 use open_payments::client::AuthenticatedResources;
-use open_payments::snippets::utils::{create_authenticated_client, get_env_var, load_env};
 use open_payments::types::{
     auth::{AccessItem, AccessTokenRequest, GrantRequest, QuoteAction},
     GrantResponse,
@@ -127,7 +126,7 @@ println!(
 
 let response = client
     .grant()
-    .request(&wallet_address.auth_server, &grant_request)
+    .request(&wallet_address.auth_server, &grant_request, None)
     .await?;
 
 // Output
@@ -377,5 +376,5 @@ Console.WriteLine(JsonConvert.SerializeObject(grant, Formatting.Indented));
 
 ## References
 
-- [API specification](/apis/auth-server/operations/post-request)
+- [Auth server API reference](/apis/#tag/grant/POST/)
 - [Grant negotiation and authorization](/identity/grants)

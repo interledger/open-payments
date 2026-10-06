@@ -1,0 +1,39 @@
+---
+// Mounts the Scalar API reference from the `@scalar/api-reference` package
+// bundled by Vite, rather than a script tag pointing at a CDN. The Scalar
+// version is therefore pinned in package.json/pnpm-lock.yaml and upgrades
+// go through the normal dependency review, not an edit to a URL.
+import { getApiReferenceConfig } from '../lib/api-reference-config.js'
+---
+
+<div
+  id="scalar-api-reference"
+  data-configuration={JSON.stringify(getApiReferenceConfig())}
+>
+</div>
+
+<script>
+  import { createApiReference } from '@scalar/api-reference'
+  // The CDN bundle injects its own stylesheet at runtime. The package does
+  // not, so the styles have to be imported here. Vite emits them as a normal
+  // stylesheet for this page.
+  import '@scalar/api-reference/style.css'
+
+  const container = document.getElementById('scalar-api-reference')
+
+  if (container) {
+    // ThemeSync has already resolved Starlight's theme onto <html>. Passing it
+    // as configuration makes that choice win at mount. Scalar otherwise starts
+    // from its own `colorMode` in localStorage, which disagrees whenever the
+    // reader last changed the theme on the docs side.
+    const darkMode = document.documentElement.classList.contains('dark')
+
+    createApiReference(container, {
+      ...JSON.parse(container.dataset.configuration ?? '{}'),
+      darkMode,
+      // Arriving at /apis/ with no hash should mean the introduction.
+      redirect: (current: string) =>
+        current && current !== '#' ? undefined : '#description/introduction'
+    })
+  }
+</script>
