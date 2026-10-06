@@ -19,7 +19,19 @@ const userVerificationGrant = await client.grant.continue(
   <TabItem label='Rust' icon='seti:rust'>
 
 ```rust wrap
-coming soon
+let GrantResponse::WithInteraction { continue_, .. } = pending_grant else {
+    eprintln!("Expected interactive grant");
+    return Ok(());
+};
+
+let user_verification_grant = client
+    .grant()
+    .continue_grant(
+        &continue_.uri,
+        &interact_ref,
+        Some(&continue_.access_token.value),
+    )
+    .await?;
 ```
 
   </TabItem>

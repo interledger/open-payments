@@ -1,5 +1,5 @@
 //@! start chunk 1 | title=Import dependencies
-use open_payments::client::api::{AuthenticatedResources, UnauthenticatedResources};
+use open_payments::client::api::AuthenticatedResources;
 #[path = "../utils.rs"]
 mod snippet_utils;
 use snippet_utils::{create_authenticated_client, get_env_var, get_resource_server_url, load_env};
@@ -15,8 +15,7 @@ async fn main() -> open_payments::client::Result<()> {
 
     //@! start chunk 3 | title=Get spent amounts for current outgoing payment grant
     let wallet_address_url = get_env_var("WALLET_ADDRESS_URL")?;
-    let resource_server_url =
-        get_resource_server_url(&wallet_address_url)?;
+    let resource_server_url = get_resource_server_url(&wallet_address_url)?;
     let access_token = get_env_var("OUTGOING_PAYMENT_ACCESS_TOKEN")?;
 
     let grant_spent_amounts = client

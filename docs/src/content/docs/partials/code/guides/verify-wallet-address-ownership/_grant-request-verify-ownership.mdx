@@ -34,7 +34,27 @@ const grant = await client.grant.request(
   <TabItem label='Rust' icon='seti:rust'>
 
 ```rust wrap
-coming soon
+let grant_request = GrantRequest::subject_only(
+    Subject {
+        sub_ids: vec![SubjectIdentifier {
+            id: user_wallet_address.id.clone(),
+            format: SubjectIdentifierFormat::Uri,
+        }],
+    },
+    Some(InteractRequest {
+        start: vec!["redirect".to_string()],
+        finish: Some(InteractFinish {
+            method: "redirect".to_string(),
+            uri: "https://paymentplatform.example/finish/{...}".to_string(),
+            nonce: NONCE.to_string(),
+        }),
+    }),
+);
+
+let pending_grant = client
+    .grant()
+    .request(&user_wallet_address.auth_server, &grant_request, None)
+    .await?;
 ```
 
   </TabItem>
