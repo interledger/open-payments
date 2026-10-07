@@ -110,7 +110,7 @@ $platformIncomingPayment = $client->incomingPayment()->create(
 merchantIncomingPayment, err := client.IncomingPayment.Create(context.TODO(), op.IncomingPaymentCreateParams{
   BaseURL:     *merchantWalletAddress.ResourceServer,
   AccessToken: merchantIncomingPaymentGrant.AccessToken.Value,
-  Payload: rs.CreateIncomingPaymentJSONBody{
+  Payload: rs.CreateIncomingPaymentRequest{
     WalletAddressSchema: *merchantWalletAddress.Id,
     IncomingAmount: &rs.Amount{
       Value:      "9900",
@@ -126,7 +126,7 @@ if err != nil {
 platformIncomingPayment, err := client.IncomingPayment.Create(context.TODO(), op.IncomingPaymentCreateParams{
   BaseURL:     *platformWalletAddress.ResourceServer,
   AccessToken: platformIncomingPaymentGrant.AccessToken.Value,
-  Payload: rs.CreateIncomingPaymentJSONBody{
+  Payload: rs.CreateIncomingPaymentRequest{
     WalletAddressSchema: *platformWalletAddress.Id,
     IncomingAmount: &rs.Amount{
       Value:      "100",

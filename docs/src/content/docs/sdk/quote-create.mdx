@@ -191,7 +191,7 @@ func main() {
 	quote, err := client.Quote.Create(context.TODO(), op.QuoteCreateParams{
 		BaseURL:     RESOURCE_SERVER_URL,
 		AccessToken: QUOTE_ACCESS_TOKEN,
-		Payload: rs.CreateQuoteJSONBody0{
+		Payload: rs.CreateQuoteRequestByReceiver{
 			WalletAddressSchema: WALLET_ADDRESS_URL,
 			Receiver:            INCOMING_PAYMENT_URL,
 			Method:              "ilp",
@@ -486,7 +486,7 @@ func main() {
 	quote, err := client.Quote.Create(context.TODO(), op.QuoteCreateParams{
 		BaseURL:     walletAddress.ResourceServer,
 		AccessToken: QUOTE_ACCESS_TOKEN,
-		Payload: rs.CreateQuoteJSONBody1{
+		Payload: rs.CreateQuoteRequestWithDebitAmount{
 			WalletAddressSchema: WALLET_ADDRESS_URL,
 			Receiver:            INCOMING_PAYMENT_URL,
 			Method:              "ilp",
@@ -799,7 +799,7 @@ func main() {
 	quote, err := client.Quote.Create(context.TODO(), op.QuoteCreateParams{
 		BaseURL:     walletAddress.ResourceServer,
 		AccessToken: QUOTE_ACCESS_TOKEN,
-		Payload: rs.CreateQuoteJSONBody2{
+		Payload: rs.CreateQuoteRequestWithReceiveAmount{
 			WalletAddressSchema: WALLET_ADDRESS_URL,
 			Receiver:            INCOMING_PAYMENT_URL,
 			Method:              "ilp",

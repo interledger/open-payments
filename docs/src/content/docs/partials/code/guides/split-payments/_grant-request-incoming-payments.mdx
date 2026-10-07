@@ -118,15 +118,17 @@ accessItem := as.AccessItem{}
 if err := accessItem.FromAccessIncoming(incomingAccess); err != nil {
   log.Fatalf("Error creating AccessItem: %v\n", err)
 }
-accessToken := struct {
-  Access as.Access `json:"access"`
-}{
+accessToken := as.AccessTokenRequest{
   Access: []as.AccessItem{accessItem},
+}
+var grantRequest as.GrantRequest
+if err := grantRequest.FromGrantRequestWithAccessToken(as.GrantRequestWithAccessToken{AccessToken: accessToken}); err != nil {
+  log.Fatalf("Error building grant request: %v\n", err)
 }
 // Merchant
 merchantIncomingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
   URL:         *merchantWalletAddress.AuthServer,
-  RequestBody: as.GrantRequestWithAccessToken{AccessToken: accessToken},
+  RequestBody: grantRequest,
 })
 if err != nil {
   log.Fatalf("Error requesting merchant incoming payment grant: %v\n", err)
@@ -134,7 +136,7 @@ if err != nil {
 // Platform
 platformIncomingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
   URL:         *platformWalletAddress.AuthServer,
-  RequestBody: as.GrantRequestWithAccessToken{AccessToken: accessToken},
+  RequestBody: grantRequest,
 })
 if err != nil {
   log.Fatalf("Error requesting platform incoming payment grant: %v\n", err)

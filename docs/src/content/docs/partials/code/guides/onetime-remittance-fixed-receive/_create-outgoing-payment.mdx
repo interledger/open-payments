@@ -61,7 +61,7 @@ let sender_outgoing_payment = client
 
 ```go wrap
 var outgoingPayload rs.CreateOutgoingPaymentRequest
-if err := outgoingPayload.FromCreateOutgoingPaymentWithQuote(rs.CreateOutgoingPaymentWithQuote{
+if err := outgoingPayload.FromCreateOutgoingPaymentRequestFromQuote(rs.CreateOutgoingPaymentRequestFromQuote{
   WalletAddressSchema: *senderWalletAddress.Id,
   QuoteId:             *senderQuote.Id,
 }); err != nil {

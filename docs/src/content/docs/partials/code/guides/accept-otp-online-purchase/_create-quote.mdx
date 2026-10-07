@@ -67,7 +67,7 @@ $customerQuote = $client->quote()->create(
 customerQuote, err := client.Quote.Create(context.TODO(), op.QuoteCreateParams{
 	BaseURL:     *customerWalletAddress.ResourceServer,
 	AccessToken: customerQuoteGrant.AccessToken.Value,
-	Payload: rs.CreateQuoteJSONBody0{
+	Payload: rs.CreateQuoteRequestByReceiver{
 		WalletAddressSchema: *customerWalletAddress.Id,
 		Receiver:            *incomingPayment.Id,
 		Method:              "ilp",

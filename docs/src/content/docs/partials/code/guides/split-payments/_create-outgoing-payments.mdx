@@ -93,7 +93,7 @@ $customerOutgoingPaymentToPlatform = $client->outgoingPayment()->create(
 ```go wrap
 // Merchant
 var merchantOutgoingPayload rs.CreateOutgoingPaymentRequest
-if err := merchantOutgoingPayload.FromCreateOutgoingPaymentWithQuote(rs.CreateOutgoingPaymentWithQuote{
+if err := merchantOutgoingPayload.FromCreateOutgoingPaymentRequestFromQuote(rs.CreateOutgoingPaymentRequestFromQuote{
   WalletAddressSchema: *customerWalletAddress.Id,
   QuoteId:             *merchantQuote.Id,
 }); err != nil {
@@ -109,7 +109,7 @@ if err != nil {
 }
 // Platform
 var platformOutgoingPayload rs.CreateOutgoingPaymentRequest
-if err := platformOutgoingPayload.FromCreateOutgoingPaymentWithQuote(rs.CreateOutgoingPaymentWithQuote{
+if err := platformOutgoingPayload.FromCreateOutgoingPaymentRequestFromQuote(rs.CreateOutgoingPaymentRequestFromQuote{
   WalletAddressSchema: *customerWalletAddress.Id,
   QuoteId:             *platformQuote.Id,
 }); err != nil {
