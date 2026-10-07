@@ -4,7 +4,7 @@ import { Tabs, TabItem } from '@astrojs/starlight/components'
   <TabItem label='TypeScript/JavaScript' icon='seti:javascript'>
 
 ```ts wrap
-const retailerIncomingPayment = await.client.incomingPayment.create(
+const retailerIncomingPayment = await client.incomingPayment.create(
   {
     url: retailerWalletAddress.resourceServer,
     accessToken: retailerIncomingPaymentGrant.access_token.value
