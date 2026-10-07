@@ -47,7 +47,7 @@ let user_outgoing_payment_grant = client
 ```php wrap
 $userOutgoingPaymentGrant = $client->grant()->continue(
   [
-    'accessToken' => $pendingUserOutgoingPaymentGrant->continue->access_token->value,
+    'access_token' => $pendingUserOutgoingPaymentGrant->continue->access_token->value,
     'url' => $pendingUserOutgoingPaymentGrant->continue->uri,
   ],
   [

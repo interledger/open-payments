@@ -148,6 +148,11 @@ $config = new Config(
 );
 $opClient = new AuthClient($config);
 
+// Get wallet address information
+$wallet = $opClient->walletAddress()->get([
+    'url' => $config->getWalletAddressUrl()
+]);
+
 // Create incoming payment
 $newIncomingPayment = $opClient->incomingPayment()->create(
     [
@@ -165,7 +170,7 @@ $newIncomingPayment = $opClient->incomingPayment()->create(
             'description' => 'Test php snippets transaction with $1,30 amount',
             'externalRef' => 'INVOICE-' . uniqid()
         ],
-        'expiresAt' => (new \DateTime())->add(new \DateInterval('PT59M'))->format("Y-m-d\TH:i:s.v\Z")
+        'expiresAt' => (new \DateTime('now', new \DateTimeZone('UTC')))->add(new \DateInterval('PT59M'))->format("Y-m-d\TH:i:s.v\Z")
     ]
 );
 

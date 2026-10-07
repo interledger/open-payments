@@ -46,7 +46,7 @@ let sender_outgoing_payment = client
  $senderOutgoingPayment = $client->outgoingPayment()->create(
   [
     'url' => $senderWalletAddress->resourceServer,
-    'accessToken' => $senderOutgoingPaymentGrant->access_token->value
+    'access_token' => $senderOutgoingPaymentGrant->access_token->value
   ],
   [
     'walletAddress' => $senderWalletAddress->id,

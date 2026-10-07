@@ -52,7 +52,7 @@ let service_provider_incoming_payment = client
 $serviceProviderIncomingPayment = $client->incomingPayment()->create(
   [
     'url' => $serviceProviderWalletAddress->resourceServer,
-    'accessToken' => $serviceProviderIncomingPaymentGrant->access_token->value
+    'access_token' => $serviceProviderIncomingPaymentGrant->access_token->value
   ],
   [
     'walletAddress' => $serviceProviderWalletAddress->id,

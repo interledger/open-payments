@@ -55,7 +55,7 @@ let sender_quote = client
 $senderQuote = $client->quote()->create(
   [
     'url' => $senderWalletAddress->resourceServer,
-    'accessToken' => $senderQuoteGrant->access_token->value
+    'access_token' => $senderQuoteGrant->access_token->value
   ],
   [
     'method' => 'ilp',

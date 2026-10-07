@@ -68,7 +68,7 @@ let platform_quote = client
 $merchantQuote = $client->quote()->create(
   [
     'url' => $customerWalletAddress->resourceServer,
-    'accessToken' => $customerQuoteGrant->access_token->value
+    'access_token' => $customerQuoteGrant->access_token->value
   ],
   [
     'method' => 'ilp',
@@ -80,7 +80,7 @@ $merchantQuote = $client->quote()->create(
 $platformQuote = $client->quote()->create(
   [
     'url' => $customerWalletAddress->resourceServer,
-    'accessToken' => $customerQuoteGrant->access_token->value
+    'access_token' => $customerQuoteGrant->access_token->value
   ],
   [
     'method' => 'ilp',

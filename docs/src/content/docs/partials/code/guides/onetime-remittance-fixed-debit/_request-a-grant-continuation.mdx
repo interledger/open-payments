@@ -47,7 +47,7 @@ let sender_outgoing_payment_grant = client
 $senderOutgoingPaymentGrant = $client->grant()->continue(
   [
     'url' => $pendingSenderOutgoingPaymentGrant->continue->uri,
-    'accessToken' => $pendingSenderOutgoingPaymentGrant->continue->access_token->value
+    'access_token' => $pendingSenderOutgoingPaymentGrant->continue->access_token->value
   ],
   [
     'interact_ref' => $interactRef

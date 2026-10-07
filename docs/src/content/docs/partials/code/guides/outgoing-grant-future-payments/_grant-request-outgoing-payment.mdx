@@ -71,7 +71,7 @@ let pending_user_outgoing_payment_grant = client
   <TabItem label='PHP' icon='seti:php'>
 
 ```php wrap
-$grant = $client->grant()->request(
+$pendingUserOutgoingPaymentGrant = $client->grant()->request(
   [
     'url' => $userWalletAddress->authServer,
   ],

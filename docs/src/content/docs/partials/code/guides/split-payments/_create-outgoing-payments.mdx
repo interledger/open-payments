@@ -66,7 +66,7 @@ let customer_outgoing_payment_to_platform = client
 $customerOutgoingPaymentToMerchant = $client->outgoingPayment()->create(
   [
     'url' => $customerWalletAddress->resourceServer,
-    'accessToken' => $customerOutgoingPaymentGrant->access_token->value
+    'access_token' => $customerOutgoingPaymentGrant->access_token->value
   ],
   [
     'walletAddress' => $customerWalletAddress->id,
@@ -77,7 +77,7 @@ $customerOutgoingPaymentToMerchant = $client->outgoingPayment()->create(
 $customerOutgoingPaymentToPlatform = $client->outgoingPayment()->create(
   [
     'url' => $customerWalletAddress->resourceServer,
-    'accessToken' => $customerOutgoingPaymentGrant->access_token->value
+    'access_token' => $customerOutgoingPaymentGrant->access_token->value
   ],
   [
     'walletAddress' => $customerWalletAddress->id,

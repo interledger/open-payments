@@ -54,7 +54,7 @@ Some(&sender_quote_grant.access_token.value),
 $senderQuote = $client->quote()->create(
   [
     'url' => $senderWalletAddress->resourceServer,
-    'accessToken' => $senderQuoteGrant->access_token->value
+    'access_token' => $senderQuoteGrant->access_token->value
   ],
   [
     'method' => 'ilp',

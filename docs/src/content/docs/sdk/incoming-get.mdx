@@ -191,7 +191,7 @@ $config = new Config(
 $opClient = new AuthClient($config);
 
 // Get incoming payment
-$incomingPayment = $opClient->incomingPayment()->get(
+$incomingPayment = $opClient->incomingPayment()->getPublic(
     [
         'url' => $INCOMING_PAYMENT_URL
     ]
