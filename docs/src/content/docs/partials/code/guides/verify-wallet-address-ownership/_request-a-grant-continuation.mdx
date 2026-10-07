@@ -35,7 +35,14 @@ coming soon
   <TabItem label='Go' icon='seti:go'>
 
 ```go wrap
-coming soon
+userVerificationGrant, err := client.Grant.Continue(context.TODO(), op.GrantContinueParams{
+  URL:         pendingGrant.Continue.Uri,
+  AccessToken: pendingGrant.Continue.AccessToken.Value,
+  InteractRef: INTERACT_REF,
+})
+if err != nil {
+  log.Fatalf("Error continuing grant: %v\n", err)
+}
 ```
 
   </TabItem>

@@ -48,7 +48,39 @@ coming soon
   <TabItem label='Go' icon='seti:go'>
 
 ```go wrap
-coming soon
+var requestBody as.GrantRequest
+if err := requestBody.FromGrantRequestWithSubject(as.GrantRequestWithSubject{
+  Subject: as.Subject{
+    SubIds: []struct {
+      Format as.SubjectSubIdsFormat `json:"format"`
+      Id     string                 `json:"id"`
+    }{
+      {Format: as.Uri, Id: *userWalletAddress.Id},
+    },
+  },
+  Interact: as.InteractRequest{
+    Start: []as.InteractRequestStart{as.InteractRequestStartRedirect},
+    Finish: &struct {
+      Method as.InteractRequestFinishMethod `json:"method"`
+      Nonce  string                         `json:"nonce"`
+      Uri    string                         `json:"uri"`
+    }{
+      Method: as.InteractRequestFinishMethodRedirect,
+      Uri:    "https://paymentplatform.example/finish/{...}", // where to redirect the user to after they've completed the interaction
+      Nonce:  NONCE,
+    },
+  },
+}); err != nil {
+  log.Fatalf("Error building subject grant request: %v\n", err)
+}
+
+pendingGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
+  URL:         *userWalletAddress.AuthServer,
+  RequestBody: requestBody,
+})
+if err != nil {
+  log.Fatalf("Error requesting subject verification grant: %v\n", err)
+}
 ```
 
     </TabItem>
