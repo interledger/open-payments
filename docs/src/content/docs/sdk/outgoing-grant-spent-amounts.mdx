@@ -73,7 +73,32 @@ console.log('GRANT_SPENT_DEBIT_AMOUNT: ', grantSpentAmounts.spentDebitAmount)
 <PhpButton />
 
 ```php wrap
-// Coming soon
+// Import dependencies
+use OpenPayments\AuthClient;
+use OpenPayments\Config\Config;
+
+// Initialize client
+$config = new Config(
+    $CLIENT_WALLET_ADDRESS,
+    $PRIVATE_KEY,
+    $KEY_ID
+);
+$opClient = new AuthClient($config);
+
+// Get sender wallet address information
+$walletAddress = $opClient->walletAddress()->get([
+    'url' => $WALLET_ADDRESS
+]);
+
+// Get spent amounts
+$grantSpentAmounts = $opClient->outgoingPayment()->getGrant([
+    'url' => $walletAddress->resourceServer,
+    'access_token' => $OUTGOING_PAYMENT_ACCESS_TOKEN
+]);
+
+// Output
+echo 'GRANT_SPENT_DEBIT_AMOUNT: ' . json_encode($grantSpentAmounts->spentDebitAmount?->toArray()) . PHP_EOL;
+// GRANT_SPENT_DEBIT_AMOUNT: {"value":"800","assetCode":"USD","assetScale":2}
 ```
 
 </TabItem>

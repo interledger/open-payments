@@ -41,7 +41,30 @@ coming soon
     <TabItem label='PHP' icon='seti:php'>
 
 ```php wrap
-coming soon
+$pendingGrant = $client->grant()->request(
+  [
+    'url' => $userWalletAddress->authServer,
+  ],
+  [
+    'subject' => [
+      'sub_ids' => [
+        [
+          'id' => $userWalletAddress->id,
+          'format' => 'uri',
+        ],
+      ],
+    ],
+    'client' => $userWalletAddress->id,
+    'interact' => [
+      'start' => ['redirect'],
+      'finish' => [
+        'method' => 'redirect',
+        'uri' => 'https://paymentplatform.example/finish/{...}', // where to redirect the user to after they've completed the interaction
+        'nonce' => NONCE,
+      ],
+    ],
+  ],
+);
 ```
 
   </TabItem>
