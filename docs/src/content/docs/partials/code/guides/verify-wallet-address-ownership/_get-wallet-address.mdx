@@ -29,7 +29,12 @@ coming soon
   <TabItem label='Go' icon='seti:go'>
 
 ```go wrap
-coming soon
+userWalletAddress, err := client.WalletAddress.Get(context.TODO(), op.WalletAddressGetParams{
+  URL: "https://cloudninebank.example.com/user",
+})
+if err != nil {
+  log.Fatalf("Error fetching user wallet address: %v\n", err)
+}
 ```
 
   </TabItem>

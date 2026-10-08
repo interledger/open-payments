@@ -73,7 +73,7 @@ $serviceProviderIncomingPayment = $client->incomingPayment()->create(
 serviceProviderIncomingPayment, err := client.IncomingPayment.Create(context.TODO(), op.IncomingPaymentCreateParams{
 	BaseURL:     *serviceProviderWalletAddress.ResourceServer,
 	AccessToken: serviceProviderIncomingPaymentGrant.AccessToken.Value,
-	Payload: rs.CreateIncomingPaymentJSONBody{
+	Payload: rs.CreateIncomingPaymentRequest{
 		WalletAddressSchema: *serviceProviderWalletAddress.Id,
 		IncomingAmount: &rs.Amount{
 			Value:      "1500",

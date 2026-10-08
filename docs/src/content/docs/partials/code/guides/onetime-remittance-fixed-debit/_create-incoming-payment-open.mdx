@@ -59,7 +59,7 @@ let recipient_incoming_payment = client
 recipientIncomingPayment, err := client.IncomingPayment.Create(context.TODO(), op.IncomingPaymentCreateParams{
  	BaseURL:     *recipientWalletAddress.ResourceServer,
  	AccessToken: recipientIncomingPaymentGrant.AccessToken.Value,
- 	Payload: rs.CreateIncomingPaymentJSONBody{
+ 	Payload: rs.CreateIncomingPaymentRequest{
   	WalletAddressSchema: *recipientWalletAddress.Id,
   },
 })

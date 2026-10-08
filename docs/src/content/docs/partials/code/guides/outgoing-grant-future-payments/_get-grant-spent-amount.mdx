@@ -30,7 +30,13 @@ coming soon
  <TabItem label='Go' icon='seti:go'>
 
 ```go wrap
-coming soon
+grantSpentAmounts, err := client.OutgoingPayment.GetGrantSpentAmounts(context.TODO(), op.OutgoingPaymentGrantGetParams{
+  BaseURL:     *userWalletAddress.ResourceServer,
+  AccessToken: userOutgoingPaymentGrant.AccessToken.Value,
+})
+if err != nil {
+  log.Fatalf("Error fetching grant spent amounts: %v\n", err)
+}
 ```
 
 </TabItem>

@@ -208,7 +208,7 @@ func main() {
   incomingPayment, err := client.IncomingPayment.Create(context.TODO(), op.IncomingPaymentCreateParams{
     BaseURL:     RESOURCE_SERVER_URL,
     AccessToken: ACCESS_TOKEN,
-    Payload: rs.CreateIncomingPaymentJSONBody{
+    Payload: rs.CreateIncomingPaymentRequest{
       WalletAddressSchema: WALLET_ADDRESS_URL,
       IncomingAmount: &rs.Amount{
         Value:      "1000",

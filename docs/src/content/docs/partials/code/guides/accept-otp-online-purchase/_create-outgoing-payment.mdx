@@ -61,7 +61,7 @@ $customerOutgoingPayment = $client->outgoingPayment()->create(
 
 ```go
 var outgoingPayload rs.CreateOutgoingPaymentRequest
-if err := outgoingPayload.FromCreateOutgoingPaymentWithQuote(rs.CreateOutgoingPaymentWithQuote{
+if err := outgoingPayload.FromCreateOutgoingPaymentRequestFromQuote(rs.CreateOutgoingPaymentRequestFromQuote{
   WalletAddressSchema: *customerWalletAddress.Id,
   QuoteId:             *customerQuote.Id,
 }); err != nil {

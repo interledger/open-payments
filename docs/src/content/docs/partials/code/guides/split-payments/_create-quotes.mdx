@@ -99,7 +99,7 @@ $platformQuote = $client->quote()->create(
 merchantQuote, err := client.Quote.Create(context.TODO(), op.QuoteCreateParams{
   BaseURL:     *customerWalletAddress.ResourceServer,
   AccessToken: customerQuoteGrant.AccessToken.Value,
-  Payload: rs.CreateQuoteJSONBody0{
+  Payload: rs.CreateQuoteRequestByReceiver{
     WalletAddressSchema: *customerWalletAddress.Id,
     Receiver:            *merchantIncomingPayment.Id,
     Method:              "ilp",
@@ -112,7 +112,7 @@ if err != nil {
 platformQuote, err := client.Quote.Create(context.TODO(), op.QuoteCreateParams{
   BaseURL:     *customerWalletAddress.ResourceServer,
   AccessToken: customerQuoteGrant.AccessToken.Value,
-  Payload: rs.CreateQuoteJSONBody0{
+  Payload: rs.CreateQuoteRequestByReceiver{
     WalletAddressSchema: *customerWalletAddress.Id,
     Receiver:            *platformIncomingPayment.Id,
     Method:              "ilp",

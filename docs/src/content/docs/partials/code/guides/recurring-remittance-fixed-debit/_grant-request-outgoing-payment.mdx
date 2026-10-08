@@ -140,7 +140,7 @@ $pendingSenderOutgoingPaymentGrant = $client->grant()->request(
 ```go wrap
 interval := "R3/2025-10-03T23:25:00Z/P1M"
 limits := as.LimitsOutgoing{}
-if err := limits.FromLimitsOutgoing1(as.LimitsOutgoing1{
+if err := limits.FromLimitsOutgoingDebitAmount(as.LimitsOutgoingDebitAmount{
 	Interval: &interval,
 	DebitAmount: as.Amount{
 		Value:      "20000", // $200.00 USD per interval
@@ -161,9 +161,7 @@ outgoingAccessItem := as.AccessItem{}
 if err := outgoingAccessItem.FromAccessOutgoing(outgoingAccess); err != nil {
 	log.Fatalf("Error creating AccessItem: %v\n", err)
 }
-outgoingAccessToken := struct {
-	Access as.Access `json:"access"`
-}{
+outgoingAccessToken := as.AccessTokenRequest{
 	Access: []as.AccessItem{outgoingAccessItem},
 }
 interact := &as.InteractRequest{
@@ -175,12 +173,16 @@ interact := &as.InteractRequest{
 	},
 }
 
+var outgoingGrantRequest as.GrantRequest
+if err := outgoingGrantRequest.FromGrantRequestWithAccessToken(as.GrantRequestWithAccessToken{
+	AccessToken: outgoingAccessToken,
+	Interact:    interact,
+}); err != nil {
+	log.Fatalf("Error building grant request: %v\n", err)
+}
 pendingSenderOutgoingPaymentGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
 	URL: *senderWalletAddress.AuthServer,
-	RequestBody: as.GrantRequestWithAccessToken{
-		AccessToken: outgoingAccessToken,
-		Interact:    interact,
-	},
+	RequestBody: outgoingGrantRequest,
 })
 if err != nil {
 	log.Fatalf("Error requesting outgoing payment grant: %v\n", err)

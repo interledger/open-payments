@@ -82,15 +82,17 @@ quoteAccessItem := as.AccessItem{}
 if err := quoteAccessItem.FromAccessQuote(quoteAccess); err != nil {
   log.Fatalf("Error creating AccessItem: %v\n", err)
 }
-quoteAccessToken := struct {
-  Access as.Access `json:"access"`
-}{
+quoteAccessToken := as.AccessTokenRequest{
   Access: []as.AccessItem{quoteAccessItem},
 }
 
+var quoteGrantRequest as.GrantRequest
+if err := quoteGrantRequest.FromGrantRequestWithAccessToken(as.GrantRequestWithAccessToken{AccessToken: quoteAccessToken}); err != nil {
+  log.Fatalf("Error building grant request: %v\n", err)
+}
 senderQuoteGrant, err := client.Grant.Request(context.TODO(), op.GrantRequestParams{
   URL: senderWalletAddress.AuthServer,
-  RequestBody: as.GrantRequestWithAccessToken{AccessToken: quoteAccessToken},
+  RequestBody: quoteGrantRequest,
 })
 if err != nil {
   log.Fatalf("Error requesting quote grant: %v\n", err)
