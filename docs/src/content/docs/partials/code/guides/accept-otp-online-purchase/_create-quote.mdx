@@ -49,7 +49,7 @@ Some(&customer_quote_grant.access_token.value),
 $customerQuote = $client->quote()->create(
   [
     'url' => $customerWalletAddress->resourceServer,
-    'accessToken' => $customerQuoteGrant->access_token->value
+    'access_token' => $customerQuoteGrant->access_token->value
   ],
   [
     'method' => 'ilp',

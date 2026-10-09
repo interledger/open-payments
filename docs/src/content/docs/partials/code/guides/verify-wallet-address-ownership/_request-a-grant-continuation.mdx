@@ -27,7 +27,15 @@ coming soon
   <TabItem label='PHP' icon='seti:php'>
 
 ```php wrap
-coming soon
+$userVerificationGrant = $client->grant()->continue(
+  [
+    'access_token' => $pendingGrant->continue->access_token->value,
+    'url' => $pendingGrant->continue->uri,
+  ],
+  [
+    'interact_ref' => $interactRef,
+  ],
+);
 ```
 
   </TabItem>

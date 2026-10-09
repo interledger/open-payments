@@ -44,7 +44,7 @@ let customer_quote = client
 $customerQuote = $client->quote()->create(
   [
     'url' => $customerWalletAddress->resourceServer,
-    'accessToken' => $customerQuoteGrant->access_token->value
+    'access_token' => $customerQuoteGrant->access_token->value
   ],
   [
     'method' => 'ilp',

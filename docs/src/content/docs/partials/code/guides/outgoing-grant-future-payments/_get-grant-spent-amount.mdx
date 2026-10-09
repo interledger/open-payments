@@ -22,7 +22,10 @@ coming soon
  <TabItem label='PHP' icon='seti:php'>
 
 ```php wrap
-coming soon
+$grantSpentAmounts = $client->outgoingPayment()->getGrant([
+  'url' => $userWalletAddress->resourceServer,
+  'access_token' => $userOutgoingPaymentGrant->access_token->value,
+]);
 ```
 
  </TabItem>

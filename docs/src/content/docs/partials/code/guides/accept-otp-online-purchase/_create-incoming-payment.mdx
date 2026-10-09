@@ -52,7 +52,7 @@ Some(&retailer_incoming_payment_grant.access_token.value),
 $retailerIncomingPayment = $client->incomingPayment()->create(
   [
     'url' => $retailerWalletAddress->resourceServer,
-    'accessToken' => $retailerIncomingPaymentGrant->access_token->value
+    'access_token' => $retailerIncomingPaymentGrant->access_token->value
   ],
   [
     'walletAddress' => $retailerWalletAddress->id,

@@ -141,6 +141,11 @@ $config = new Config(
 );
 $opClient = new AuthClient($config);
 
+// Get wallet address information
+$wallet = $opClient->walletAddress()->get([
+    'url' => $config->getWalletAddressUrl()
+]);
+
 // Create outgoing payment without amount
 $newOutgoingPayment = $opClient->outgoingPayment()->create(
     [
@@ -186,6 +191,11 @@ $config = new Config(
     $KEY_ID
 );
 $opClient = new AuthClient($config);
+
+// Get wallet address information
+$wallet = $opClient->walletAddress()->get([
+    'url' => $config->getWalletAddressUrl()
+]);
 
 // Create outgoing payment with amount
 $newOutgoingPayment = $opClient->outgoingPayment()->create(

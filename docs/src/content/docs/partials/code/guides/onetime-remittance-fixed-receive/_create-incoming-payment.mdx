@@ -46,7 +46,7 @@ Some(&recipient_incoming_payment_grant.access_token.value),
 $recipientIncomingPayment = $client->incomingPayment()->create(
   [
     'url' => $recipientWalletAddress->resourceServer,
-    'accessToken' => $recipientIncomingPaymentGrant->access_token->value
+    'access_token' => $recipientIncomingPaymentGrant->access_token->value
   ],
   [
     'walletAddress' => $recipientWalletAddress->id,

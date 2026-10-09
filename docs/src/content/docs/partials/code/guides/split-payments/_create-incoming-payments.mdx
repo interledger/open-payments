@@ -73,7 +73,7 @@ let platform_incoming_payment = client
 $merchantIncomingPayment = $client->incomingPayment()->create(
   [
    'url' => $merchantWalletAddress->resourceServer,
-    'accessToken' => $merchantIncomingPaymentGrant->access_token->value
+    'access_token' => $merchantIncomingPaymentGrant->access_token->value
   ],
   [
     'walletAddress' => $merchantWalletAddress->id,
@@ -88,7 +88,7 @@ $merchantIncomingPayment = $client->incomingPayment()->create(
 $platformIncomingPayment = $client->incomingPayment()->create(
   [
     'url' => $platformWalletAddress->resourceServer,
-    'accessToken' => $platformIncomingPaymentGrant->access_token->value
+    'access_token' => $platformIncomingPaymentGrant->access_token->value
   ],
   [
     'walletAddress' => $platformWalletAddress->id,

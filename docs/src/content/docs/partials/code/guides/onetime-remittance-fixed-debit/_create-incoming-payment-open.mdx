@@ -43,7 +43,7 @@ let recipient_incoming_payment = client
  $recipientIncomingPayment = $client->incomingPayment()->create(
   [
     'url' => $recipientWalletAddress->resourceServer,
-    'accessToken' => $recipientIncomingPaymentGrant->access_token->value
+    'access_token' => $recipientIncomingPaymentGrant->access_token->value
   ],
   [
     'walletAddress' => $recipientWalletAddress->id
