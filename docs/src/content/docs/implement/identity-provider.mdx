@@ -6,12 +6,18 @@ import Interactive from '/src/content/docs/partials/_diagram-interactive-grant.m
 import RafikiReferenceIdp from '/src/content/docs/partials/_rafiki-reference-idp.mdx'
 
 :::tip[Summary]
-ASEs must integrate their authorization server with an identity provider (IdP) to authenticate the resource owner and collect explicit consent during interactive grants.
+An identity provider (IdP) is a system or service that manages user authentication and consent during the interactive grant process.
 :::
 
-## When the IdP is involved
+ASEs must integrate their authorization server with an IdP to support interactive grants. Open Payments requires interactive grants for outgoing payments.
 
-Open Payments requires an interactive grant for outgoing payments. An interactive grant cannot be approved without explicit consent from the resource owner (typically the client's user). The ASE's authorization server is responsible for orchestrating consent collection, but it must not collect consent itself. It delegates that to an IdP so that the resource owner authenticates against the same system that controls their underlying account.
+An interactive grant cannot be approved without explicit consent from the resource owner (typically the client's user). The IdP authenticates the resource owner and collects their consent.
+
+:::note[Create a Content Security policy]
+To prevent clickjacking, ASEs must work with their IdP to create a Content Security Policy (CSP). The IdP must then use this policy on its consent screen.
+:::
+
+The ASE's authorization server is responsible for orchestrating the collection of consent, but **not** the consent itself. The authorization server delegates the collection of consent to the IdP so that the resource owner authenticates against the same system that controls their underlying account.
 
 The following diagram illustrates the full interactive grant flow, including the IdP.
 
