@@ -14,7 +14,18 @@ const grantSpentAmounts = await client.outgoingPayment.getGrantSpentAmounts({
  <TabItem label='Rust' icon='seti:rust'>
 
 ```rust wrap
-coming soon
+let ContinueResponse::WithToken { access_token, .. } = &user_outgoing_payment_grant else {
+    eprintln!("Expected finalized grant");
+    return Ok(());
+};
+
+let grant_spent_amounts = client
+    .outgoing_payments()
+    .get_grant_spent_amounts(
+        &user_wallet_address.resource_server,
+        Some(&access_token.value),
+    )
+    .await?;
 ```
 
  </TabItem>

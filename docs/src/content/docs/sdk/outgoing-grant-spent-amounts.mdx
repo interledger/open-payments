@@ -65,8 +65,34 @@ console.log('GRANT_SPENT_DEBIT_AMOUNT: ', grantSpentAmounts.spentDebitAmount)
 <RustButton />
 
 ```rust wrap
-// Coming soon
+// Import dependencies
+use open_payments::client::api::AuthenticatedResources;
+use open_payments::client::utils::get_resource_server_url;
+
+// Initialize client
+let client = create_authenticated_client()?;
+
+// Get spent amounts
+let wallet_address_url = get_env_var("WALLET_ADDRESS_URL")?;
+let resource_server_url = get_resource_server_url(&wallet_address_url)?;
+let access_token = get_env_var("OUTGOING_PAYMENT_ACCESS_TOKEN")?;
+
+let grant_spent_amounts = client
+    .outgoing_payments()
+    .get_grant_spent_amounts(&resource_server_url, Some(&access_token))
+    .await?;
+
+// Output
+println!(
+    "GRANT_SPENT_DEBIT_AMOUNT: {:#?}",
+    grant_spent_amounts.spent_debit_amount
+);
+// GRANT_SPENT_DEBIT_AMOUNT: Some(Amount { value: "800", asset_code: "USD", asset_scale: 2 })
 ```
+
+<LinkOut href="https://github.com/interledger/open-payments/blob/main/snippets/rust/outgoing-payment/outgoing-payment-grant-spent-amounts.rs">
+  View full source
+</LinkOut>
 
 </TabItem>
 <TabItem label='PHP' icon='seti:php'>
