@@ -165,7 +165,13 @@ export function mergeSpecs(): string {
       title: 'Open Payments API',
       version: auth.info.version,
       license: auth.info.license,
-      contact: auth.info.contact,
+      // Scalar shows the contact as a mailto link with an icon and the
+      // contact name as its only text. The specs give an email and no name, so
+      // the link has no accessible name. Use the address as the name.
+      contact: auth.info.contact && {
+        name: auth.info.contact.email,
+        ...auth.info.contact
+      },
       description:
         'API reference for the Open Payments authorization, resource, and wallet address servers.'
     },
