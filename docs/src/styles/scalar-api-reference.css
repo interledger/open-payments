@@ -11,6 +11,30 @@
     'Courier New', monospace;
 }
 
+/* Scalar's default palette fails WCAG AA (4.5:1) for small text. The muted
+ * greys carry the search placeholder, the client library labels and the
+ * version badges. The method colors carry the GET, POST and DELETE labels in
+ * the sidebar and the endpoint lists. Each value below gives at least 4.5:1
+ * on --scalar-background-2, the darkest background these labels sit on.
+ *
+ * Scalar sets the theme class on <body> and sets these tokens on that class,
+ * then sets the method colors again in display-p3 for wide-gamut screens. The
+ * `body` in the selector outranks both, and it also reaches the search modal,
+ * which Scalar renders outside .scalar-app. */
+body.light-mode {
+  --scalar-color-2: #595959;
+  --scalar-color-3: #6b6b6b;
+  --scalar-color-green: #007a4d;
+  --scalar-color-red: #d00005;
+  --scalar-color-yellow: #806200;
+  --scalar-color-blue: #006fb3;
+  --scalar-color-orange: #b83d00;
+}
+body.dark-mode {
+  --scalar-color-3: #8f8f8f;
+  --scalar-color-red: #ff5c5c;
+}
+
 [data-sidebar-id='api-1/tag/authorization-server-overview'],
 [data-sidebar-id='api-1/tag/resource-server-overview'],
 [data-sidebar-id='api-1/tag/wallet-address-server-overview'] {

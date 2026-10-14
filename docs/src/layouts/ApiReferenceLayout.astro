@@ -57,7 +57,9 @@ const { title, lang = 'en' } = Astro.props
     --op-header-bg: hsl(224, 14%, 16%);
     --op-header-border: hsl(224, 10%, 10%);
     --op-header-text: hsl(224, 20%, 94%);
-    --op-header-muted: hsl(224, 6%, 56%);
+    /* Starlight's gray-3 is 56% here, which gives 4.47:1 on the header and
+       fails WCAG AA by a hair. 60% gives 5.1:1. */
+    --op-header-muted: hsl(224, 6%, 60%);
   }
 
   @media (min-width: 50rem) {
