@@ -556,10 +556,47 @@ Key terminology notes:
   ],
   redirects: {
     '/docs': '/overview/getting-started',
+    '/apis/wallet-address-server/operations/get-wallet-address/':
+      '/apis/#tag/wallet-address/GET/',
+    '/apis/wallet-address-server/operations/get-wallet-address-keys/':
+      '/apis/#tag/wallet-address/GET/jwks.json',
+    '/apis/resource-server/operations/create-incoming-payment/':
+      '/apis/#tag/incoming-payment/POST/incoming-payments',
+    '/apis/resource-server/operations/list-incoming-payments/':
+      '/apis/#tag/incoming-payment/GET/incoming-payments',
+    '/apis/resource-server/operations/get-incoming-payment/':
+      '/apis/#tag/incoming-payment/GET/incoming-payments/{id}',
+    '/apis/resource-server/operations/complete-incoming-payment/':
+      '/apis/#tag/incoming-payment/POST/incoming-payments/{id}/complete',
+    '/apis/resource-server/operations/create-outgoing-payment/':
+      '/apis/#tag/outgoing-payment/POST/outgoing-payments',
+    '/apis/resource-server/operations/list-outgoing-payments/':
+      '/apis/#tag/outgoing-payment/GET/outgoing-payments',
+    '/apis/resource-server/operations/get-outgoing-payment/':
+      '/apis/#tag/outgoing-payment/GET/outgoing-payments/{id}',
+    '/apis/resource-server/operations/get-outgoing-payment-grant/':
+      '/apis/#tag/outgoing-payment/GET/outgoing-payment-grant',
+    '/apis/resource-server/operations/create-quote/':
+      '/apis/#tag/quote/POST/quotes',
+    '/apis/resource-server/operations/get-quote/':
+      '/apis/#tag/quote/GET/quotes/{id}',
+    '/apis/auth-server/operations/post-request/': '/apis/#tag/grant/POST/',
+    '/apis/auth-server/operations/post-continue/':
+      '/apis/#tag/grant/POST/continue/{id}',
+    '/apis/auth-server/operations/delete-continue/':
+      '/apis/#tag/grant/DELETE/continue/{id}',
+    '/apis/auth-server/operations/post-token/':
+      '/apis/#tag/token/POST/token/{id}',
+    '/apis/auth-server/operations/delete-token/':
+      '/apis/#tag/token/DELETE/token/{id}',
+    '/introduction/overview/': '/overview/getting-started',
+    '/introduction/grants/': '/identity/grants/',
+    '/introduction/http-signatures/': '/identity/http-signatures/',
+    '/introduction/op-flow/': '/concepts/op-flow/',
     '/introduction/wallet-addresses': '/concepts/wallet-addresses',
-    '/sdk/grant-create': '/sdk/grant-create-incoming',
     '/implement': '/implement/ase-overview/',
-    '/introduction/overview/': '/overview/getting-started'
+    '/sdk/grant-create': '/sdk/grant-create-incoming',
+    '/snippets/token-rotate': '/sdk/token-rotate/'
   },
   server: {
     port: 1104,
