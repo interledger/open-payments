@@ -1,0 +1,137 @@
+arazzo: "1.0.1"
+info:
+  title: "Open Payments — Token Management"
+  summary: >
+    Workflows for rotating and revoking GNAP access tokens and cancelling
+    active grants.
+  description: |
+    This document defines workflows for managing access tokens and grants
+    in the Open Payments ecosystem. GNAP (Grant Negotiation and Authorization
+    Protocol) access tokens can be rotated to extend their lifetime or
+    revoked when no longer needed. Active grants can also be cancelled.
+
+    **Token rotation** replaces an existing access token with a new one
+    while maintaining the same permissions. This is particularly useful for
+    long-lived recurring payment grants where the access token may expire
+    before the grant interval ends.
+
+    **Token revocation** permanently invalidates an access token. The client
+    should revoke tokens when they are no longer needed.
+
+    **Grant cancellation** terminates an active grant and invalidates all
+    associated access tokens.
+  version: "1.0.0"
+
+sourceDescriptions:
+  - name: authServer
+    url: ../open-payments-specifications/openapi/auth-server.yaml
+    type: openapi
+
+workflows:
+  # ─── Workflow 1: Rotate Access Token ───
+  - workflowId: rotateAccessToken
+    summary: "Rotate an existing GNAP access token"
+    description: |
+      Rotate an access token by calling its management URI. The AS responds
+      with a new access token that has the same access rights as the original.
+      The original token is invalidated upon successful rotation.
+    inputs:
+      type: object
+      required:
+        - tokenManageUrl
+      properties:
+        tokenManageUrl:
+          type: string
+          description: >
+            The `manage` URL of the access token to rotate. This was provided
+            in the original grant response as `access_token.manage`.
+
+    steps:
+      - stepId: rotateToken
+        description: >
+          Call the token management endpoint to rotate the access token.
+          The original token's value is sent in the Authorization header
+          (handled by the HTTP signature layer). The AS returns a new
+          access token with fresh `value`, `manage` URL, and `expires_in`.
+        operationId: authServer.post-token
+        parameters:
+          - name: id
+            in: path
+            value: $inputs.tokenManageUrl
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          newAccessTokenValue: $response.body.access_token.value
+          newManageUrl: $response.body.access_token.manage
+          expiresIn: $response.body.access_token.expires_in
+          access: $response.body.access_token.access
+
+    outputs:
+      accessToken: $steps.rotateToken.outputs.newAccessTokenValue
+      manageUrl: $steps.rotateToken.outputs.newManageUrl
+      expiresIn: $steps.rotateToken.outputs.expiresIn
+
+  # ─── Workflow 2: Revoke Access Token ───
+  - workflowId: revokeAccessToken
+    summary: "Revoke an active GNAP access token"
+    description: |
+      Permanently revoke an access token by sending a DELETE request to its
+      management URI. After revocation, the token cannot be used to access
+      any resources.
+    inputs:
+      type: object
+      required:
+        - tokenManageUrl
+      properties:
+        tokenManageUrl:
+          type: string
+          description: >
+            The `manage` URL of the access token to revoke.
+
+    steps:
+      - stepId: revokeToken
+        description: >
+          Send a DELETE request to the token management endpoint to
+          permanently revoke the access token.
+        operationId: authServer.delete-token
+        parameters:
+          - name: id
+            in: path
+            value: $inputs.tokenManageUrl
+        successCriteria:
+          - condition: $statusCode == 204
+
+    outputs: {}
+
+  # ─── Workflow 3: Cancel Grant ───
+  - workflowId: cancelGrant
+    summary: "Cancel an active GNAP grant"
+    description: |
+      Cancel an active grant by sending a DELETE request to the continuation
+      URI. This revokes all access tokens associated with the grant and
+      prevents any further use of the grant's permissions.
+    inputs:
+      type: object
+      required:
+        - continueUri
+      properties:
+        continueUri:
+          type: string
+          description: >
+            The continuation URI from the original grant response
+            (`continue.uri`).
+
+    steps:
+      - stepId: cancelGrant
+        description: >
+          Send a DELETE request to the grant's continuation URI. The AS
+          revokes all associated access tokens and cancels the grant.
+        operationId: authServer.delete-continue
+        parameters:
+          - name: id
+            in: path
+            value: $inputs.continueUri
+        successCriteria:
+          - condition: $statusCode == 204
+
+    outputs: {}
