@@ -2,42 +2,33 @@
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/61b256a1-93e0-4735-a492-1a71d5524e63/deploy-status)](https://app.netlify.com/projects/openpayments/deploys)
 
-## What is Open Payments?
+## About Open Payments
 
-Open Payments is an open API standard that can be implemented by account servicing entities (e.g. banks, digital wallet providers, and mobile money providers) to facilitate interoperability in the setup and completion of payments for different use cases including:
+Open Payments is an open API standard that can be implemented by financial service providers (e.g., banks, digital wallet providers, mobile money providers) to facilitate interoperability in the setup and completion of payments for different use cases.
 
-- [Web Monetization](https://webmonetization.org)
-- Tipping/Donations (low value/low friction)
-- eCommerce checkout
-- P2P transfers
-- Subscriptions
-- Invoice Payments
+## About this repo
 
-The Open Payments APIs are a collection of three sub-systems:
+This repository hosts the source code for [openpayments.dev](https://openpayments.dev). It’s built with [Starlight](https://starlight.astro.build/getting-started/), a documentation framework built on [Astro](https://astro.build/). Visit https://github.com/interledger/open-payments/tree/main/docs for more information.
 
-- A **wallet address server** which exposes public information about Open Payments-enabled accounts called "wallet addresses"
-- A **resource server** which exposes APIs for performing functions against the underlying accounts
-- A **authorisation server** which exposes APIs compliant with the [GNAP](https://www.rfc-editor.org/info/rfc9635/) standard for getting grants to access the resource server APIs
+## Open Payments specifications
 
-The three Open Payments OpenAPI specifications are found in the [open-payments-specifications](https://github.com/interledger/open-payments-specifications) repository, while this repository hosts the documentation for the APIs, published on [openpayments.dev](https://openpayments.dev).
+The Open Payments specifications live in a separate repo at https://github.com/interledger/open-payments-specifications). The repo is a submodule within a number of Open Payments-related repositories, including the repo you’re in now.
 
-### Open Payments SDKs
+The repo hosts the collection of Open API specs that support the three Open Payments sub-systems:
+* A wallet address server, which exposes APIs for obtaining public information about Open Payments-enabled accounts
+* A resource server, which exposes APIs for performing functions against Open Payments-enabled accounts
+* An authorization server, which exposes APIs compliant with the [Grant Negotiation and Authorization Protocol (GNAP)](datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol) for getting grants to access the resource server APIs
 
-The [Open Payments SDKs](https://openpayments.dev/sdk/before-you-begin/#client-libraries) provide developers with pre-built functions that simplify interactions with the Open Payments API.
+## Open Payments SDKs
 
-### New to Interledger?
-
-Never heard of Interledger before? Or would you like to learn more? Here are some excellent places to start:
-
-- [Interledger Website](https://interledger.org/)
-- [Interledger Specification](https://interledger.org/developers/rfcs/interledger-protocol/)
-- [Interledger Explainer Video](https://twitter.com/Interledger/status/1567916000074678272)
-- [Open Payments](https://openpayments.dev/)
-- [Web monetization](https://webmonetization.org/)
-
-## Contributing
-
-Please read the [contribution guidelines](.github/contributing.md) before submitting contributions. All contributions must adhere to our [code of conduct](.github/code_of_conduct.md).
+The Open Payments SDKs provide developers with pre-built functions that simplify interactions with the Open Payments APIs. Client libraries are available for the following languages:
+* [C# (.NET)](https://github.com/interledger/open-payments-dotnet)
+* [Go](https://github.com/interledger/open-payments-go)
+* [Java](https://github.com/interledger/open-payments-java)
+* [PHP](https://github.com/interledger/open-payments-php)
+* [Python](https://github.com/interledger/open-payments-python-sdk)
+* [Rust](https://github.com/interledger/open-payments-rust)
+* [TypeScript/NodeJS](https://github.com/interledger/open-payments-node)
 
 ## Open Payments Community Call
 
@@ -46,52 +37,3 @@ We invite our community to join our bi-weekly Open Payments calls. These calls t
 Video call link: https://meet.google.com/fcb-xamx-csr
 
 [Add to Google Calendar](https://calendar.google.com/calendar/event?action=TEMPLATE&tmeid=MG1tYzlwOHVtMmg5dnQxOXNodWc4czdxdG5fMjAyNjA0MjNUMTIwMDAwWiBtYXhAaW50ZXJsZWRnZXIub3Jn&tmsrc=max%40interledger.org&scp=ALL)
-
-## Local Development Environment
-
-### Prerequisites
-
-- [NVM](https://github.com/nvm-sh/nvm)
-
-### Environment Setup
-
-```sh
-# install node from `./.nvmrc`
-nvm install
-
-# install pnpm
-corepack enable
-
-# if moving from yarn run
-pnpm clean
-
-# install dependencies
-pnpm i
-
-# install `open-payments-specifications` submodule
-git submodule update --init
-```
-
-### Local Development
-
-You can preview the docs by running the command
-
-```sh
-pnpm --filter docs start
-```
-
-### Useful commands
-
-```sh
-# format and lint code:
-pnpm format
-
-# check lint and formatting
-pnpm checks
-
-# verify code formatting:
-pnpm check:prettier
-
-# verify lint
-pnpm check:lint
-```
