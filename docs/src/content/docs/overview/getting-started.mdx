@@ -6,7 +6,7 @@ import { LinkCard, CardGrid } from '@astrojs/starlight/components'
 import { LinkOut } from '@interledger/docs-design-system'
 
 :::tip[Summary]
-Open Payments is an API standard for banks, mobile money providers, and other account servicing entities. It allows developers to build payment capabilities into their apps without the need for custom integrations or third-party payment processors.
+Open Payments is an API standard for banks, mobile money providers, and other financial service providers. It allows developers to build payment capabilities into their apps without the need for custom integrations or third-party payment processors.
 
 Developers can choose to interact with the Open Payments API directly or use the provided SDKs for a more streamlined integration experience.
 :::
@@ -23,8 +23,8 @@ Open Payments documentation serves two audiences. Pick the path that matches you
   />
   <LinkCard
     title="Implementing Open Payments"
-    href="/overview/for-ases/"
-    description="For engineers at account servicing entities (ASEs) deploying the servers that make accounts Open Payments-enabled."
+    href="/overview/for-fsps/"
+    description="For engineers at financial service providers (FSPs) deploying the servers that make accounts Open Payments-enabled."
   />
 </CardGrid>
 
@@ -32,13 +32,13 @@ Handling payments is a crucial part of many online applications. Whether it's an
 
 Open Payments is an open RESTful API and an API standard that enables clients to interface with Open Payments-enabled accounts. In this context, a client is an application, such as a mobile or web app, that consumes one or more Open Payments resources, typically requiring access privileges from one or several authorization servers. The [Open Payments SDKs](/sdk/before-you-begin) simplify this process by providing pre-built functions for these interactions.
 
-The Open Payments standard is meant to be implemented by account servicing entities (ASEs). ASEs provide and maintain payment accounts for senders and recipients, and are regulated entities within the countries they operate. Examples of ASEs include banks, digital wallet providers, and mobile money providers.
+The Open Payments standard is meant to be implemented by financial service providers (FSPs). FSPs provide and maintain payment accounts for senders and recipients, and are regulated entities within the countries they operate. Examples of FSPs include banks, digital wallet providers, and mobile money providers.
 
 ## Benefits of Open Payments
 
-When an ASE implements Open Payments, their customers’ financial accounts become Open Payments-enabled. Clients can then call the Open Payments APIs to view an Open Payments-enabled account’s transaction history and certain account details, as well as issue instructions for receiving payments into and sending payments from the account.
+When an FSP implements Open Payments, their customers' financial accounts become Open Payments-enabled. Clients can then call the Open Payments APIs to view an Open Payments-enabled account's transaction history and certain account details, as well as issue instructions for receiving payments into and sending payments from the account.
 
-For example, an application developer can build payments functionality into their app without the need for custom integrations with each ASE. Users with Open Payments-enabled accounts can use the app to send funds to another Open Payments-enabled account, regardless of whether the recipient uses the same ASE. This app should be able to connect to any ASE that implements the Open Payments standard without the need for custom integrations.
+For example, an application developer can build payments functionality into their app without the need for custom integrations with each FSP. Users with Open Payments-enabled accounts can use the app to send funds to another Open Payments-enabled account, regardless of whether the recipient uses the same FSP. This app should be able to connect to any FSP that implements the Open Payments standard without the need for custom integrations.
 
 The Open Payments standard simplifies integration by offering a single access point to various financial accounts, whether they are bank accounts, digital wallets, or mobile money accounts. This approach eliminates the need for multiple custom integrations, similar to how email standards facilitate seamless communication across different email providers.
 
@@ -50,9 +50,9 @@ With Open Payments, users remain in full control of their financial transactions
 
 ## Payments
 
-Open Payments does not execute payments or touch funds in any way. Instead, the APIs allow clients to issue payment instructions to ASEs.
+Open Payments does not execute payments or touch funds in any way. Instead, the APIs allow clients to issue payment instructions to FSPs.
 
-For example, a client can instruct an ASE to send a payment of $20.00 USD from its customer’s account to another Open Payments-enabled account at a different ASE. The sending ASE is responsible for executing and settling the payment with the receiving ASE outside of Open Payments. The ability to execute payments between Open Payments-enabled ASEs is predicated on the availability of a common payment rail between the ASEs.
+For example, a client can instruct an FSP to send a payment of $20.00 USD from its customer's account to another Open Payments-enabled account at a different FSP. The sending FSP is responsible for executing and settling the payment with the receiving FSP outside of Open Payments. The ability to execute payments between Open Payments-enabled FSPs is predicated on the availability of a common payment rail between the FSPs.
 
 By separating payment instructions from execution/settlement, client developers can include payment functionality within their feature sets without, for example, also registering as a licensed money transfer business.
 
@@ -76,19 +76,19 @@ Review the [Grant negotiation and authorization](/identity/grants) page for more
 
 Open Payments aims to improve upon existing Open Banking standards as defined in the UK, EU, and other jurisdictions.
 
-Existing Open Banking ecosystems are dominated by aggregators and intermediaries, making it impossible for independent third-parties, such as small merchants, to use payment initiation APIs directly against their customers’ payment accounts. Open Payments allows for scenarios where clients can dynamically register and engage with the APIs without needing to pre-register with the ASE. This allows for a truly distributed and federated payment ecosystem with global reach and no dependence on any particular underlying account type or settlement system.
+Existing Open Banking ecosystems are dominated by aggregators and intermediaries, making it impossible for independent third-parties, such as small merchants, to use payment initiation APIs directly against their customers’ payment accounts. Open Payments allows for scenarios where clients can dynamically register and engage with the APIs without needing to pre-register with the FSP. This allows for a truly distributed and federated payment ecosystem with global reach and no dependence on any particular underlying account type or settlement system.
 
 Open Payments is also a significantly simpler standard with a small number of resource types and a more secure and powerful authorization protocol.
 
 ## Goals
 
-The goal of Open Payments is to define a standard that's adopted by all ASEs. The standard doesn't rely on any singular payment method, currency, or programming language, encouraging interoperability between ASEs and other parties.
+The goal of Open Payments is to define a standard that's adopted by all FSPs. The standard doesn't rely on any singular payment method, currency, or programming language, encouraging interoperability between FSPs and other parties.
 
-When an ASE adopts the Open Payments standard, clients (applications and other parties) will know how to interact with the ASE and can integrate payments directly into their products without requiring:
+When an FSP adopts the Open Payments standard, clients (applications and other parties) will know how to interact with the FSP and can integrate payments directly into their products without requiring:
 
 - Users to create a new payment account for every application and/or website they use
 - Developers to build clients in any one programming language
-- ASEs and clients to create and deploy custom integrations to communicate with one another
+- FSPs and clients to create and deploy custom integrations to communicate with one another
 
 Open Payments aims to simplify and democratize payments by providing a standardized, easy-to-integrate solution. This reduces development effort and enhances financial inclusion by making payment solutions more affordable and accessible to all.
 
@@ -98,11 +98,11 @@ Open Payments facilitates various use cases including:
 
 ### Peer-to-peer payments
 
-A peer-to-peer payment is a type of payment made directly from one person to another via a linked funding source. When ASEs implement the Open Payments standard, applications can call the Open Payments APIs to facilitate peer-to-peer payments. Having a standard means app developers can avoid building custom integrations for each ASE. Plus, app users can hold funding accounts with different Open Payments-enabled ASEs and even use different Open Payments-enabled applications to make peer-to-peer payments.
+A peer-to-peer payment is a type of payment made directly from one person to another via a linked funding source. When FSPs implement the Open Payments standard, applications can call the Open Payments APIs to facilitate peer-to-peer payments. Having a standard means app developers can avoid building custom integrations for each FSP. Plus, app users can hold funding accounts with different Open Payments-enabled FSPs and even use different Open Payments-enabled applications to make peer-to-peer payments.
 
 ### E-commerce platforms
 
-Suppose a merchant accepts Open Payments as a payment method. Their customers can then pay using their wallet address instead of entering a credit card number and other personal details on the merchant's site. Open Payments allows an ASE's account holders to use their wallet addresses for one-time and recurring purchases, such as subscriptions.
+Suppose a merchant accepts Open Payments as a payment method. Their customers can then pay using their wallet address instead of entering a credit card number and other personal details on the merchant's site. Open Payments allows an FSP's account holders to use their wallet addresses for one-time and recurring purchases, such as subscriptions.
 
 ### Buy Now and Pay Later (BNPL)
 
