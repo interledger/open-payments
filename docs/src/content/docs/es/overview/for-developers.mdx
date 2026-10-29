@@ -6,7 +6,7 @@ import { LinkCard, CardGrid } from '@astrojs/starlight/components'
 import { LinkOut } from '@interledger/docs-design-system'
 
 :::tip[Resumen]
-Desarrollar con Open Payments implica escribir un cliente que llame a las API de Open Payments para configurar pagos entre cuentas compatibles con Open Payments. Las propias cuentas y los servidores que las exponen son operados por entidades que administran cuentas (ASE).
+Desarrollar con Open Payments implica escribir un cliente que llame a las API de Open Payments para configurar pagos entre cuentas compatibles con Open Payments. Las propias cuentas y los servidores que las exponen son operados por proveedores de servicios financieros (FSPs).
 :::
 
 Esta página es el punto de partida para los desarrolladores que crean aplicaciones, servicios u otro software que consumen las API de Open Payments.
@@ -21,7 +21,7 @@ Un cliente en Open Payments es un software que:
 - Firma cada solicitud con una clave que el servidor de autorización puede verificar.
 - Gestiona los flujos de consentimiento interactivos.
 
-Un cliente nunca mueve dinero. Las ASE de cada lado del pago son responsables de la liquidación.
+Un cliente nunca mueve dinero. Los FSP de cada lado del pago son responsables de la liquidación.
 
 ## Qué leer
 
@@ -67,6 +67,6 @@ Si es la primera vez que usa Open Payments, consulte estos recursos:
 
 ## Qué se excluye intencionalmente de la ruta para desarrolladores
 
-Parte de la documentación de Open Payments describe las responsabilidades de la ASE, no del cliente. Esto incluye cómo está estructurado el wallet address server, cómo el servidor de autorización procesa las concesiones, cómo el servidor de recursos transfiere los pagos a la liquidación y cómo se integra el proveedor de identidad. Esas páginas se encuentran en la sección [Para las ASE](/es/implement/ase-overview/) y están dirigidas a los ingenieros que implementan la pila de servidores.
+Parte de la documentación de Open Payments describe las responsabilidades de el FSP, no del cliente. Esto incluye cómo está estructurado el wallet address server, cómo el servidor de autorización procesa las concesiones, cómo el servidor de recursos transfiere los pagos a la liquidación y cómo se integra el proveedor de identidad. Esas páginas se encuentran en la sección [Para los FSP](/es/implement/fsp-overview/) y están dirigidas a los ingenieros que implementan la pila de servidores.
 
-Si al leer una página para las ASE se pregunta si debe implementar algo del lado del cliente, la respuesta casi siempre es no.
+Si al leer una página para los FSP se pregunta si debe implementar algo del lado del cliente, la respuesta casi siempre es no.

@@ -6,20 +6,20 @@ parent: Concepts
 import { LinkOut } from '@interledger/docs-design-system'
 
 :::tip[Summary]
-A payment method tells the sender's ASE how to deliver funds to the recipient's ASE. The recipient's ASE specifies the payment method in the `incoming-payment` response. Interledger (ILP) is currently the only payment method integrated with Open Payments.
+A payment method tells the sender's FSP how to deliver funds to the recipient's FSP. The recipient's FSP specifies the payment method in the `incoming-payment` response. Interledger (ILP) is currently the only payment method integrated with Open Payments.
 :::
 
-The payment method is the means by which the sender's ASE will fulfill its payment obligations to the recipient's ASE. Cash, credit/debit cards, bank transfers, gift cards and mobile money can all be considered different payment methods.
+The payment method is the means by which the sender's FSP will fulfill its payment obligations to the recipient's FSP. Cash, credit/debit cards, bank transfers, gift cards and mobile money can all be considered different payment methods.
 
-When an `outgoing-payment` is completed against an open and active `incoming-payment`, the sender's ASE becomes obligated to make payment using the payment method initially specified in the `incoming-payment` response.
+When an `outgoing-payment` is completed against an open and active `incoming-payment`, the sender's FSP becomes obligated to make payment using the payment method initially specified in the `incoming-payment` response.
 
 Though Open Payments is designed to be an abstraction layer that can issue payment instructions between transacting parties atop any payment method, <LinkOut href='https://interledger.org'>Interledger (ILP) </LinkOut> is the only payment method that currently integrates with Open Payments readily.
 
-When using ILP as a payment method in Open Payments, the following information is required from the recipient's ASE, in the incoming payment's `method` object.
+When using ILP as a payment method in Open Payments, the following information is required from the recipient's FSP, in the incoming payment's `method` object.
 
 - A `type` of `ilp` to indicate the payment method.
-- The <LinkOut href='https://interledger.org/developers/rfcs/ilp-addresses/'>ILP address</LinkOut> of the recipient’s ASE: The ILP address is required so that packets representing payments routed over the Interledger network will be forwarded to the node owned and operated by the intended receiver (i.e. recipient's ASE).
-- A shared secret: A cryptographically secured secret to be exchanged between the sender's ASE and the recipient's ASE to ensure that packets sent over the Interledger network through a <LinkOut href='https://interledger.org/developers/rfcs/stream-protocol/'>STREAM</LinkOut> connection can only be read by the two parties.
+- The <LinkOut href='https://interledger.org/developers/rfcs/ilp-addresses/'>ILP address</LinkOut> of the recipient's FSP: The ILP address is required so that packets representing payments routed over the Interledger network will be forwarded to the node owned and operated by the intended receiver (i.e. recipient's FSP).
+- A shared secret: A cryptographically secured secret to be exchanged between the sender's FSP and the recipient's FSP to ensure that packets sent over the Interledger network through a <LinkOut href='https://interledger.org/developers/rfcs/stream-protocol/'>STREAM</LinkOut> connection can only be read by the two parties.
 
 ```http title="incoming-payment methods object"
 "methods": [
@@ -31,4 +31,4 @@ When using ILP as a payment method in Open Payments, the following information i
   ]
 ```
 
-After the `incoming-payment` response is received, the sender's ASE creates a `quote` request containing `"method": "ilp"`.
+After the `incoming-payment` response is received, the sender's FSP creates a `quote` request containing `"method": "ilp"`.

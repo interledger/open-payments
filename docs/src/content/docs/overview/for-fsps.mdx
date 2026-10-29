@@ -10,28 +10,28 @@ import { LinkOut } from '@interledger/docs-design-system'
 Implementing Open Payments means standing up the servers that make a financial service provider's accounts Open Payments-enabled. This page is the entry point for engineers at banks, digital wallets, mobile payment systems, and other providers who are building that server stack.
 :::
 
-This page is the starting point for account servicing entity (ASE) implementors.
+This page is the starting point for financial service provider (FSP) implementors.
 
-## What ASEs build
+## What FSPs build
 
-To make accounts Open Payments-enabled, ASEs operate three servers and integrate with an identity provider:
+To make accounts Open Payments-enabled, FSPs operate three servers and integrate with an identity provider:
 
 - A **wallet address server** that returns public information about each Open Payments-enabled account.
 - A **resource server** that hosts the `incoming-payment`, `quote`, and `outgoing-payment` APIs.
 - An **authorization server** that processes grant requests, issues access tokens, and coordinates user consent.
 - An **identity provider** integration that authenticates the resource owner and collects explicit consent for interactive grants.
 
-ASEs are also responsible for settlement. Open Payments only carries the payment instruction; actual movement of funds happens between ASEs over a shared payment rail.
+FSPs are also responsible for settlement. Open Payments only carries the payment instruction; actual movement of funds happens between FSPs over a shared payment rail.
 
 ## What to read
 
-ASEs should refer to the [For ASEs](/implement/ase-overview/) pages for server-side details. The pages are organized as follows:
+FSPs should refer to the [For FSPs](/implement/fsp-overview/) pages for server-side details. The pages are organized as follows:
 
 <CardGrid>
   <LinkCard
-    title="ASE overview"
-    href="/implement/ase-overview/"
-    description="What an ASE must build, how these pages relate to the rest of the docs, and where Rafiki fits in."
+    title="FSP overview"
+    href="/implement/fsp-overview/"
+    description="What an FSP must build, how these pages relate to the rest of the docs, and where Rafiki fits in."
   />
   <LinkCard
     title="Wallet address architecture"
@@ -62,11 +62,11 @@ ASEs should refer to the [For ASEs](/implement/ase-overview/) pages for server-s
 
 ## The rest of the docs
 
-The Developer Concepts pages (under For Developers → Concepts) describe what client developers need to know to call the APIs. ASEs are welcome to read them. They describe the same protocol from the other side, but they are not the authoritative source for ASE implementation requirements.
+The Developer Concepts pages (under For Developers → Concepts) describe what client developers need to know to call the APIs. FSPs are welcome to read them. They describe the same protocol from the other side, but they are not the authoritative source for FSP implementation requirements.
 
 ## Reference implementation
 
 <LinkOut href="https://rafiki.dev">Rafiki</LinkOut> is an open-source
 implementation of an Open Payments-compatible server stack. The [For
-ASEs](/implement/ase-overview/) pages describe the standard and protocol-level
+FSPs](/implement/fsp-overview/) pages describe the standard and protocol-level
 requirements. Rafiki's documentation describes one specific implementation.

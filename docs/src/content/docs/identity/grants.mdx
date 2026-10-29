@@ -2,8 +2,8 @@
 title: Grant negotiation and authorization
 ---
 
-import { CodeBlock, LinkOut, Tooltip } from '@interledger/docs-design-system'
-import ForAsesAuthServer from '/src/content/docs/partials/_for-ases-auth-server.mdx'
+import { CodeBlock, LinkOut } from '@interledger/docs-design-system'
+import ForFspsAuthServer from '/src/content/docs/partials/_for-fsps-auth-server.mdx'
 import RafikiResourceServerNote from '/src/content/docs/partials/_rafiki-resource-server-note.mdx'
 
 :::tip[Summary]
@@ -16,7 +16,7 @@ Open Payments leverages the <LinkOut href='https://www.rfc-editor.org/info/rfc96
 
 ## GNAP vs OAuth 2.0
 
-GNAP is being developed as the successor to OAuth 2.0 and is designed to fill many of the gaps discovered through the use of OAuth in Open Banking and other financial use cases. <LinkOut href='https://www.rfc-editor.org/info/rfc9635/#appendix-A'>Appendix B</LinkOut> in the GNAP specification outlines the ways the protocol’s design differs from OAuth 2.0. Some examples include:
+GNAP is being developed as the successor to OAuth 2.0 and is designed to fill many of the gaps discovered through the use of OAuth in Open Banking and other financial use cases. <LinkOut href='https://www.rfc-editor.org/info/rfc9635/#appendix-A'>Appendix B</LinkOut> in the GNAP specification outlines the ways the protocol's design differs from OAuth 2.0. Some examples include:
 
 | GNAP                                                                                                                                                                                                        | OAuth 2.0                                                                                                                                                              |
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -32,7 +32,7 @@ An authorization server grants delegated privileges to a client in the form of a
 
 An authorization server is uniquely identified by its grant endpoint URI, which is an absolute URI that a client calls to initiate a grant request.
 
-<ForAsesAuthServer />
+<ForFspsAuthServer />
 
 ### Key registries
 
@@ -65,7 +65,7 @@ The sequence of requests a client makes when setting up a payment can follow one
 
 ## Open Payments resource servers
 
-A resource server provides the Open Payments APIs through which resources can be created or accessed on the server. GNAP doesn’t presume or require a tight coupling between a resource server and an authorization server and it’s increasingly common for the servers to be run and managed separately.
+A resource server provides the Open Payments APIs through which resources can be created or accessed on the server. GNAP doesn't presume or require a tight coupling between a resource server and an authorization server and it's increasingly common for the servers to be run and managed separately.
 
 Operations on the APIs by a client require the client to have a valid access token issued by a <LinkOut href='https://www.rfc-editor.org/info/rfc9635/#section-1.4'>trusted authorization server</LinkOut>. When the client uses its access token to call the resource server, the resource server examines the token to determine if the token is sufficient for the request. The means by which a resource server makes this determination are outside the scope of Open Payments. If the token is sufficient, the client gets the right to access the operations and resource tied to the token.
 
