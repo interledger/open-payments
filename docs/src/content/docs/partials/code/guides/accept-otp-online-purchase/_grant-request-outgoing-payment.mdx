@@ -137,8 +137,12 @@ outgoingAccessToken := as.AccessTokenRequest{
 }
 interact := &as.InteractRequest{
   Start: []as.InteractRequestStart{as.InteractRequestStartRedirect},
-  Finish: &as.InteractRequestFinish{
-    Method: as.Redirect,
+  Finish: &struct {
+    Method as.InteractRequestFinishMethod `json:"method"`
+    Nonce  string                         `json:"nonce"`
+    Uri    string                         `json:"uri"`
+  }{
+    Method: as.InteractRequestFinishMethodRedirect,
     Uri:    "https://paymentplatform.example/finish/{...}",
     Nonce:  NONCE,
   },
