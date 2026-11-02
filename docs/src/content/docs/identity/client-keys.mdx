@@ -7,7 +7,7 @@ import {
   Mermaid,
   MermaidWrapper
 } from '@interledger/docs-design-system'
-import ForAsesSecurity from '/src/content/docs/partials/_for-ases-security.mdx'
+import ForFspsSecurity from '/src/content/docs/partials/_for-fsps-security.mdx'
 
 :::tip[Summary]
 Client keys are unique identifiers that allow clients to sign Open Payments requests and verify the client's identity.
@@ -17,7 +17,7 @@ All client requests in Open Payments are signed using a unique key that identifi
 
 ## Key registry
 
-A key registry is the set of **public** keys a client uses to identify itself against across Open Payments requests and is hosted on the ASE's Open Payments resource server. Grant requests and other API calls happen over multiple signed HTTP requests, so the client must present the same identity on every call. The authorization server uses the registry to verify that the client signed each request.
+A key registry is the set of **public** keys a client uses to identify itself against across Open Payments requests and is hosted on the FSP's Open Payments resource server. Grant requests and other API calls happen over multiple signed HTTP requests, so the client must present the same identity on every call. The authorization server uses the registry to verify that the client signed each request.
 
 The client generates a public-private key pair. It keeps the private key and signs each request with that key and a `keyId`. The `keyId` tells servers which public key in the registry to use for verification.
 
@@ -27,11 +27,13 @@ For clients that identify themselves with a [wallet address](/concepts/wallet-ad
 https://wallet.example.com/alice/jwks.json
 ```
 
-How clients register keys with the ASE is out of scope for Open Payments.
+How clients register keys with the FSP is out of scope for Open Payments.
 
 :::note
 Directed identity is supported only for certain non-interactive grants. In those cases, the client provides a `jwk` in the request body instead of using a wallet-address-hosted JWKS endpoint. Refer to [Client requests](#client-requests).
 :::
+
+<ForFspsSecurity />
 
 ### Registry structure
 
@@ -66,8 +68,8 @@ Additionally, the document must contain the `x` and `kid` (key ID) fields for th
 To initialize an authenticated Open Payments client SDK, you must have a public-private key pair and a key ID.
 
 1. The client SDK generates a key pair using the <LinkOut href='https://www.rfc-editor.org/info/rfc8032/'>ED25519 algorithm</LinkOut>. The client's key registry exposes the public key in the form of a JWKS.
-2. The public key is provided to the client's account servicing entity (ASE). The ASE is responsible for providing a way for clients to upload keys. The ASE adds the key to its resource server.
-3. A `keyId` is created to identify the key pair. The ASE is usually responsible for `keyId` creation.
+2. The public key is provided to the client's financial service provider (FSP). The FSP is responsible for providing a way for clients to upload keys. The FSP adds the key to its resource server.
+3. A `keyId` is created to identify the key pair. The FSP is usually responsible for `keyId` creation.
 4. The client stores the private key for future request signing. The key signs the payload described in the [key proofing method](#key-proofing-method) section below.
 
 :::note

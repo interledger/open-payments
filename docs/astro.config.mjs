@@ -99,7 +99,7 @@ export default defineConfig({
       },
       plugins: [
         starlightLlmsTxt({
-          details: `Open Payments documentation serves two audiences: developers building payment applications using the Open Payments SDKs, and Account Servicing Entities (ASEs) implementing the protocol on their own infrastructure. The appropriate guidance differs significantly between these two groups.
+          details: `Open Payments documentation serves two audiences: developers building payment applications using the Open Payments SDKs, and financial service providers (FSPs) implementing the protocol on their own infrastructure. The appropriate guidance differs significantly between these two groups.
 
 Key terminology notes:
 
@@ -143,7 +143,7 @@ Key terminology notes:
             {
               label: 'Implementing Open Payments',
               description:
-                'Guides for account servicing entities (ASEs) implementing the Open Payments protocol on their own infrastructure',
+                'Guides for financial service providers (FSPs) implementing the Open Payments protocol on their own infrastructure',
               paths: ['implement/**']
             }
           ]
@@ -176,7 +176,7 @@ Key terminology notes:
             {
               label: 'Implementing Open Payments',
               translations: { es: 'Implementación de Open Payments' },
-              link: '/overview/for-ases/'
+              link: '/overview/for-fsps/'
             }
           ]
         },
@@ -476,14 +476,14 @@ Key terminology notes:
           ]
         },
         {
-          label: 'For ASEs',
-          translations: { es: 'Para ASEs' },
+          label: 'For FSPs',
+          translations: { es: 'Para FSPs' },
           collapsed: true,
           items: [
             {
-              label: 'ASE overview',
-              translations: { es: 'Descripción general de la ASE' },
-              link: '/implement/ase-overview/'
+              label: 'FSP overview',
+              translations: { es: 'Descripción general de el FSP' },
+              link: '/implement/fsp-overview/'
             },
             {
               label: 'Wallet address architecture',
@@ -594,7 +594,9 @@ Key terminology notes:
     '/introduction/http-signatures/': '/identity/http-signatures/',
     '/introduction/op-flow/': '/concepts/op-flow/',
     '/introduction/wallet-addresses': '/concepts/wallet-addresses',
-    '/implement': '/implement/ase-overview/',
+    '/implement': '/implement/fsp-overview/',
+    '/implement/ase-overview/': '/implement/fsp-overview/',
+    '/overview/for-ases': '/overview/for-fsps',
     '/sdk/grant-create': '/sdk/grant-create-incoming',
     '/snippets/token-rotate': '/sdk/token-rotate/'
   },

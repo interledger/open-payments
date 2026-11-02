@@ -1,0 +1,40 @@
+---
+title: FSP overview
+---
+
+import { LinkOut } from '@interledger/docs-design-system'
+
+:::tip[Summary]
+These pages describe what a financial service provider (FSP) must build to make its accounts Open Payments-enabled. The rest of the Open Payments documentation describes what client developers need to know to call the APIs.
+:::
+
+## What is an FSP?
+
+A financial service provider (FSP) provides and maintains payment accounts for senders and recipients, and is a regulated entity in the countries it operates. Examples of FSPs include banks, digital wallets, mobile payment systems, and other providers.
+
+When an FSP adopts the Open Payments standard, the customers' financial accounts at that FSP become Open Payments-enabled. Clients (apps, services, and other software) can then call the Open Payments APIs against those accounts to retrieve account details and issue payment instructions without needing a custom integration per FSP.
+
+## What FSPs must operate
+
+To make accounts Open Payments-enabled, FSPs must operate three servers and integrate with an identity provider:
+
+- **Wallet address server**: Returns public information about each Open Payments-enabled account at a stable HTTPS URL (the wallet address).
+- **Resource server**: Hosts the `incoming-payment`, `quote`, and `outgoing-payment` APIs that clients call to set up payments.
+- **Authorization server**: Processes grant requests under the <LinkOut href='https://www.rfc-editor.org/info/rfc9635/'>Grant Negotiation and Authorization Protocol (GNAP)</LinkOut>, issues access tokens, and coordinates user consent for interactive grants.
+- **Identity provider (IdP) integration**: Authenticates the resource owner and collects explicit consent during interactive grants (required for outgoing payments).
+
+The FSP is also responsible for the actual movement of funds. Open Payments only carries the payment **instruction**. Settlement happens between FSPs over a shared payment rail.
+
+## Relationship to client developers
+
+Client developers do not need to know how an FSP structures its accounts, validates tokens, integrates its IdP, or settles funds. From the client developer's perspective, an FSP exposes:
+
+- A wallet address URL that returns public account details.
+- A resource server that accepts payment-related requests and returns resources.
+- An authorization server that issues access tokens after evaluating grant requests.
+
+:::note
+This section covers the server-side concerns that sit behind those interfaces. The pages assume the reader is implementing Open Payments at an FSP. The language is intentionally addressed to FSPs in the third person so a client developer who lands here can tell that the content is not intended for them.
+:::
+
+The pages in this section describe the standard and protocol-level requirements. For a concrete, open-source reference implementation of an Open Payments-compatible server stack, refer to <LinkOut href='https://rafiki.dev'>Rafiki</LinkOut>.

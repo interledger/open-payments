@@ -7,7 +7,7 @@ import {
   Mermaid,
   MermaidWrapper
 } from '@interledger/docs-design-system'
-import ForAsesSecurity from '/src/content/docs/partials/es/_for-ases-security.mdx'
+import ForFspsSecurity from '/src/content/docs/partials/es/_for-fsps-security.mdx'
 
 :::tip[Resumen]
 Las claves de cliente son identificadores exclusivos que permiten a los clientes firmar solicitudes de Open Payments. Permiten verificar la identidad de un cliente mediante un registro de claves públicas.
@@ -17,7 +17,7 @@ Todas las solicitudes de cliente en Open Payments se firman con una clave exclus
 
 ## Registro de claves
 
-Un registro de claves es el conjunto de claves **públicas** que un cliente utiliza para identificarse en todas las solicitudes de Open Payments y está alojado en el servidor de recursos de Open Payments de la ASE. Las solicitudes de concesión y otras llamadas a la API se realizan a través de múltiples solicitudes HTTP firmadas, por lo que el cliente debe presentar la misma identidad en cada llamada. El servidor de autorización utiliza el registro para verificar que el cliente haya firmado cada solicitud.
+Un registro de claves es el conjunto de claves **públicas** que un cliente utiliza para identificarse en todas las solicitudes de Open Payments y está alojado en el servidor de recursos de Open Payments de el FSP. Las solicitudes de concesión y otras llamadas a la API se realizan a través de múltiples solicitudes HTTP firmadas, por lo que el cliente debe presentar la misma identidad en cada llamada. El servidor de autorización utiliza el registro para verificar que el cliente haya firmado cada solicitud.
 
 El cliente genera un par de claves pública y privada. Conserva la clave privada y firma cada solicitud con esa clave y un `keyId`. El `keyId` indica a los servidores qué clave pública del registro utilizar para la verificación.
 
@@ -27,13 +27,13 @@ Para los clientes que se identifican con una [wallet address](/es/concepts/walle
 https://wallet.example.com/alice/jwks.json
 ```
 
-La forma en que los clientes registran las claves con la ASE queda fuera del alcance de Open Payments.
+La forma en que los clientes registran las claves con el FSP queda fuera del alcance de Open Payments.
 
 :::note
 La identidad dirigida solo es compatible con ciertas concesiones no interactivas. En esos casos, el cliente proporciona un `jwk` en el cuerpo de la solicitud en lugar de utilizar un punto final JWKS alojado en la wallet address. Consulte [Solicitudes de clientes](#solicitudes-de-clientes).
 :::
 
-<ForAsesSecurity />
+<ForFspsSecurity />
 
 ### Estructura del registro
 
@@ -68,8 +68,8 @@ Además, el documento debe incluir los campos `x` y `kid` (identificador de clav
 Para inicializar un SDK de cliente de Open Payments autenticado, debe disponer de un par de claves pública-privada y de un identificador de clave.
 
 1. El SDK del cliente genera un par de claves con el <LinkOut href='https://www.rfc-editor.org/info/rfc8032/'>algoritmo ED25519</LinkOut>. El registro de claves del cliente expone la clave pública en formato de JWKS.
-2. La clave pública se proporciona a la entidad que administra la cuenta (account servicing entity, ASE) del cliente. La ASE es responsable de ofrecer a los clientes un medio para cargar claves. La ASE agrega la clave a su servidor de recursos.
-3. Se crea un `keyId` para identificar el par de claves. Por lo general, la ASE es responsable de la creación del `keyId`.
+2. La clave pública se proporciona a el proveedore de servicios financieros (FSP) del cliente. El FSP es responsable de ofrecer a los clientes un medio para cargar claves. El FSP agrega la clave a su servidor de recursos.
+3. Se crea un `keyId` para identificar el par de claves. Por lo general, el FSP es responsable de la creación del `keyId`.
 4. El cliente almacena la clave privada para la firma de solicitudes en el futuro. La clave firma el contenido descrito en la sección [Método de validación de claves](#método-de-validación-de-claves) a continuación.
 
 :::Nota

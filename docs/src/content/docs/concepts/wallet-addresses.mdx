@@ -3,7 +3,7 @@ title: Wallet addresses
 parent: Concepts
 ---
 
-import ForAsesWalletAddressArchitecture from '/src/content/docs/partials/_for-ases-wallet-address-architecture.mdx'
+import ForFspsWalletAddressArchitecture from '/src/content/docs/partials/_for-fsps-wallet-address-architecture.mdx'
 
 :::tip[Summary]
 A wallet address is a secure, sharable identifier for an Open Payments-enabled account. Each wallet address acts a service endpoint into the APIs, allowing clients to interact with the underlying account.
@@ -48,17 +48,17 @@ Each wallet address supports a single asset code and scale, but Open Payments en
 
 ## Wallet address server
 
-When setting up a payment, the client must obtain the wallet address for both the sender and the recipient. Since the sender is typically the client's user, the client can obtain the sender's wallet address during an onboarding process, for example. The sender must be authenticated by their account servicing entity (ASE) to grant the client the permission it needs to access their Open Payments-enabled account.
+When setting up a payment, the client must obtain the wallet address for both the sender and the recipient. Since the sender is typically the client's user, the client can obtain the sender's wallet address during an onboarding process, for example. The sender must be authenticated by their financial service provider (FSP) to grant the client the permission it needs to access their Open Payments-enabled account.
 
 A wallet address server is an API endpoint that retrieves public information about a wallet address, including its associated public keys. For more technical details, visit the [wallet address server API docs](/apis/#tag/wallet-address/GET/).
 
-<ForAsesWalletAddressArchitecture />
+<ForFspsWalletAddressArchitecture />
 
 ## Privacy and security
 
-A wallet address acts as a proxy identifier (alias) for an underlying financial account. If permitted by an ASE, a single account can have multiple wallet addresses. Allowing account holders to generate unique wallet addresses for every client they interact with can help prevent a single address from becoming a tracking vector.
+A wallet address acts as a proxy identifier (alias) for an underlying financial account. If permitted by an FSP, a single account can have multiple wallet addresses. Allowing account holders to generate unique wallet addresses for every client they interact with can help prevent a single address from becoming a tracking vector.
 
-Ultimately, it's up to the ASE to define the supported configuration of relationships between wallet addresses and user accounts. This loose coupling allows wallet addresses to be disabled or even linked to a new account (although there are considerations that must be made before allowing this) without affecting the underlying account.
+Ultimately, it's up to the FSP to define the supported configuration of relationships between wallet addresses and user accounts. This loose coupling allows wallet addresses to be disabled or even linked to a new account (although there are considerations that must be made before allowing this) without affecting the underlying account.
 
 For any client, a wallet address is as good as an account. Any two distinct wallet addresses should be treated as distinct accounts by clients even if the client is aware that they're proxies for the same underlying account. Permission for a client to access an account via one wallet address isn't automatically granted when accessing the same account via another wallet address.
 
@@ -66,6 +66,6 @@ For any client, a wallet address is as good as an account. Any two distinct wall
 
 Using URLs as payment instruments solves two of the biggest issues with existing payments UX: discoverability and interaction.
 
-URLs (universal resource locators) have been used on the web for decades to allow clients to directly locate a resource and begin interacting with it via HTTP. A wallet address is both a proxy identifier and a resource locator for the underlying account, used to access the account via the Open Payments APIs and begin interactions with the account's ASE.
+URLs (universal resource locators) have been used on the web for decades to allow clients to directly locate a resource and begin interacting with it via HTTP. A wallet address is both a proxy identifier and a resource locator for the underlying account, used to access the account via the Open Payments APIs and begin interactions with the account's FSP.
 
 Using URLs as proxies is also preferable to overloading other identifiers, such as email addresses and Mobile Station International Subscriber Directory Numbers (MSISDNs), as these proxies have no standard for interaction. As a result, identifiers like an MSISDN or email require a registry that maps the identifier to an account provider and a mechanism for governing this mapping securely.

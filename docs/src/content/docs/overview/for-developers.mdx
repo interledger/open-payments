@@ -6,7 +6,7 @@ import { LinkCard, CardGrid } from '@astrojs/starlight/components'
 import { LinkOut } from '@interledger/docs-design-system'
 
 :::tip[Summary]
-Building with Open Payments means writing a client that calls the Open Payments APIs to set up payments between Open Payments-enabled accounts. The accounts themselves, and the servers that expose them, are operated by account servicing entities (ASEs).
+Building with Open Payments means writing a client that calls the Open Payments APIs to set up payments between Open Payments-enabled accounts. The accounts themselves, and the servers that expose them, are operated by financial service providers (FSPs).
 :::
 
 This page is the starting point for developers building applications, services, or other software that consume the Open Payments APIs.
@@ -21,7 +21,7 @@ A client in Open Payments is software that:
 - Signs every request with a key the authorization server can verify.
 - Handles the interactive consent flows.
 
-A client never moves money. The ASEs on each side of the payment are responsible for settlement.
+A client never moves money. The FSPs on each side of the payment are responsible for settlement.
 
 ## What to read
 
@@ -67,6 +67,6 @@ If you're new to Open Payments, check out these resources:
 
 ## What's intentionally not on the developer path
 
-Some Open Payments documentation describes the responsibilities of the ASE, not the client. This includes how the wallet address server is structured, how the authorization server processes grants, how the resource server hands payments off to settlement, and how the identity provider is integrated. Those pages live under the [For ASEs](/implement/ase-overview/) section and are intended for the engineers deploying the server stack.
+Some Open Payments documentation describes the responsibilities of the FSP, not the client. This includes how the wallet address server is structured, how the authorization server processes grants, how the resource server hands payments off to settlement, and how the identity provider is integrated. Those pages live under the [For FSPs](/implement/fsp-overview/) section and are intended for the engineers deploying the server stack.
 
-If you find yourself reading an ASE page and wondering whether you need to implement something on the client side, the answer is almost always no.
+If you find yourself reading an FSP page and wondering whether you need to implement something on the client side, the answer is almost always no.

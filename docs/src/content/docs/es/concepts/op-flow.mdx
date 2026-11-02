@@ -5,8 +5,7 @@ title: Flujo de Open Payments
 import {
   MermaidWrapper,
   Mermaid,
-  LinkOut,
-  Tooltip
+  LinkOut
 } from '@interledger/docs-design-system'
 import Interactive from '/src/content/docs/partials/es/_diagram-interactive-grant.mdx'
 
@@ -18,7 +17,7 @@ En esta página, se analizan en profundidad las llamadas e interacciones de la i
 
 ### Supuestos
 
-- El usuario del <Tooltip content="Como una aplicación o servicio móvil o web">cliente</Tooltip> es el remitente.
+- El usuario del cliente es el remitente.
 - El cliente ya tiene los datos de la cuenta compatible con Open Payments del remitente y puede enviar pagos en su nombre.
 
 ## Cómo obtener los datos de la cuenta
@@ -45,7 +44,7 @@ Un cliente recupera los datos públicos sobre la cuenta compatible con Open Paym
 
 ## Pago entrante
 
-Primero, el cliente <LinkOut href='/apis/#tag/grant/POST/'>solicita/recibe una concesión de autorización</LinkOut> de parte del servidor de autorización de la <Tooltip content="Entidad que administra la cuenta" client:load>ASE</Tooltip> del destinatario para crear un recurso de `incoming-payment`. El cliente envía una solicitud al servidor de recursos de la ASE para <LinkOut href='/apis/#tag/incoming-payment/POST/incoming-payments'>crear el recurso</LinkOut>. Una vez creado, el servidor de recursos devuelve los datos de pago único que el cliente utilizará para realizar uno o más pagos al destinatario.
+Primero, el cliente <LinkOut href='/apis/#tag/grant/POST/'>solicita/recibe una concesión de autorización</LinkOut> de parte del servidor de autorización de el <abbr title="proveedore de servicios financieros">FSP</abbr> del destinatario para crear un recurso de `incoming-payment`. El cliente envía una solicitud al servidor de recursos de el FSP para <LinkOut href='/apis/#tag/incoming-payment/POST/incoming-payments'>crear el recurso</LinkOut>. Una vez creado, el servidor de recursos devuelve los datos de pago único que el cliente utilizará para realizar uno o más pagos al destinatario.
 
 <MermaidWrapper diagramName="incoming-payment"
   viewLabel="Ver diagrama completo"
@@ -55,8 +54,8 @@ Primero, el cliente <LinkOut href='/apis/#tag/grant/POST/'>solicita/recibe una c
 <Mermaid
   graph={`sequenceDiagram
     participant C as Cliente
-    participant AS as Servidor de autorización<br/>ASE del destinatario
-    participant RS as Servidor de recursos<br/>ASE del destinatario
+    participant AS as Servidor de autorización<br/>FSP del destinatario
+    participant RS as Servidor de recursos<br/>FSP del destinatario
 
     C->>AS: POST, solicitud de concesión de autorización con el parámetro<br />type=incoming-payment
     AS-->>C: 200 OK, devuelve el token de acceso
@@ -70,7 +69,7 @@ Primero, el cliente <LinkOut href='/apis/#tag/grant/POST/'>solicita/recibe una c
 
 ## Cotización
 
-El cliente <LinkOut href='/apis/#tag/grant/POST/'>solicita/recibe una concesión de autorización</LinkOut> de parte del servidor de autorización de la <Tooltip content="Entidad que administra la cuenta" client: load><span>ASE</span></Tooltip> del destinatario, para crear un recurso de `quote`. El cliente envía una solicitud al servidor de recursos para <LinkOut href='/apis/#tag/quote/POST/quotes'>crear el recurso</LinkOut>. Una vez creado, el servidor de recursos devuelve, entre otros datos, una `id` de cotización y el monto que costará efectuar el pago.
+El cliente <LinkOut href='/apis/#tag/grant/POST/'>solicita/recibe una concesión de autorización</LinkOut> de parte del servidor de autorización de el <abbr title="proveedore de servicios financieros">FSP</abbr> del destinatario, para crear un recurso de `quote`. El cliente envía una solicitud al servidor de recursos para <LinkOut href='/apis/#tag/quote/POST/quotes'>crear el recurso</LinkOut>. Una vez creado, el servidor de recursos devuelve, entre otros datos, una `id` de cotización y el monto que costará efectuar el pago.
 
 <MermaidWrapper diagramName="quote"
   viewLabel="Ver diagrama completo"
@@ -80,8 +79,8 @@ El cliente <LinkOut href='/apis/#tag/grant/POST/'>solicita/recibe una concesión
 <Mermaid
   graph={`sequenceDiagram
     participant C as Cliente
-    participant AS as Servidor de autorización<br/>ASE del remitente
-    participant RS as Servidor de recursos<br/>ASE del remitente
+    participant AS as Servidor de autorización<br/>FSP del remitente
+    participant RS as Servidor de recursos<br/>FSP del remitente
 
     C->>AS: POST, solicitud de concesión de autorización con el parámetro<br />type=quote
     AS-->>C: 200 OK, devuelve el token de acceso
@@ -95,9 +94,9 @@ El cliente <LinkOut href='/apis/#tag/grant/POST/'>solicita/recibe una concesión
 
 ## Pago saliente
 
-Antes de que se pueda crear un recurso de pago saliente en la cuenta del remitente, Open Payments exige que el cliente envíe una <LinkOut href='/apis/#tag/grant/POST/'>solicitud interactiva de concesión de autorización</LinkOut> al servidor de autorización de la <Tooltip content="Entidad que administra la cuenta" client: load><span>ASE</span></Tooltip> del remitente.
+Antes de que se pueda crear un recurso de pago saliente en la cuenta del remitente, Open Payments exige que el cliente envíe una <LinkOut href='/apis/#tag/grant/POST/'>solicitud interactiva de concesión de autorización</LinkOut> al servidor de autorización de el <abbr title="proveedore de servicios financieros">FSP</abbr>del remitente.
 
-Una solicitud interactiva de concesión de autorización exige que se obtenga el consentimiento explícito del remitente antes de que se emita un token de acceso. Aunque el cliente debe facilitar la interacción, el servidor de autorización y el proveedor de identidad (identity provider, IdP) de la ASE del remitente son responsables de la interfaz y de obtener el consentimiento.
+Una solicitud interactiva de concesión de autorización exige que se obtenga el consentimiento explícito del remitente antes de que se emita un token de acceso. Aunque el cliente debe facilitar la interacción, el servidor de autorización y el proveedor de identidad (identity provider, IdP) de el FSP del remitente son responsables de la interfaz y de obtener el consentimiento.
 
 Una vez que se obtuvo el consentimiento, el cliente solicita permiso para <LinkOut href='/apis/#tag/grant/POST/continue/%7Bid%7D'>continuar con la solicitud de concesión de autorización</LinkOut> con el fin de obtener un token de acceso.
 
@@ -118,7 +117,7 @@ Una vez que se obtiene un token de acceso, el cliente puede solicitar la creaci�
   graph={`sequenceDiagram
 
     participant C as Cliente
-    participant RS as Servidor de recursos<br/>ASE del remitente
+    participant RS as Servidor de recursos<br/>FSP del remitente
 
     C->>RS: POST, crear un pago saliente
     RS-->>C: 201, pago saliente creado, <br/>devuelve los datos del pago saliente
@@ -176,7 +175,7 @@ De igual manera, el cliente puede proporcionar al usuario los datos sobre un pag
 
 En este diagrama, se reúnen todos los conceptos mencionados anteriormente, excepto el de obtener el historial de transacciones, para mostrar una secuencia completa de las transacciones. Al final de la página, encontrará un enlace a la versión ampliada del diagrama.
 
-Como se muestra a continuación, las ASE del remitente y del destinatario deben operar sus propios servidores de autorización y recursos. Las solicitudes de concesión de autorización para los recursos de pago entrante y cotización, por lo general, no son interactivos. En cambio, una solicitud de concesión de autorización para un recurso de pago saliente exige el consentimiento explícito del remitente (p. ej., el usuario del cliente), que se obtiene por medio del [proveedor de identidad](/es/identity/idp/) del remitente.
+Como se muestra a continuación, los FSP del remitente y del destinatario deben operar sus propios servidores de autorización y recursos. Las solicitudes de concesión de autorización para los recursos de pago entrante y cotización, por lo general, no son interactivos. En cambio, una solicitud de concesión de autorización para un recurso de pago saliente exige el consentimiento explícito del remitente (p. ej., el usuario del cliente), que se obtiene por medio del [proveedor de identidad](/es/identity/idp/) del remitente.
 
 Puede encontrar más información sobre los flujos de interacción de las concesiones de autorización en la página [Negociación y autorización de concesiones](/es/identity/grants).
 

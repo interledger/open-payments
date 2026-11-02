@@ -9,15 +9,15 @@ import RafikiReferenceIdp from '/src/content/docs/partials/_rafiki-reference-idp
 An identity provider (IdP) is a system or service that manages user authentication and consent during the interactive grant process.
 :::
 
-ASEs must integrate their authorization server with an IdP to support interactive grants. Open Payments requires interactive grants for outgoing payments.
+FSPs must integrate their authorization server with an IdP to support interactive grants. Open Payments requires interactive grants for outgoing payments.
 
 An interactive grant cannot be approved without explicit consent from the resource owner (typically the client's user). The IdP authenticates the resource owner and collects their consent.
 
 :::note[Create a Content Security policy]
-To prevent clickjacking, ASEs must work with their IdP to create a Content Security Policy (CSP). The IdP must then use this policy on its consent screen.
+To prevent clickjacking, FSPs must work with their IdP to create a Content Security Policy (CSP). The IdP must then use this policy on its consent screen.
 :::
 
-The ASE's authorization server is responsible for orchestrating the collection of consent, but **not** the consent itself. The authorization server delegates the collection of consent to the IdP so that the resource owner authenticates against the same system that controls their underlying account.
+The FSP's authorization server is responsible for orchestrating the collection of consent, but **not** the consent itself. The authorization server delegates the collection of consent to the IdP so that the resource owner authenticates against the same system that controls their underlying account.
 
 The following diagram illustrates the full interactive grant flow, including the IdP.
 
@@ -25,7 +25,7 @@ The following diagram illustrates the full interactive grant flow, including the
 
 ## What the authorization server passes to the IdP
 
-When the authorization server forwards the resource owner to the IdP, it must pass enough information for the IdP to display a meaningful consent screen and route the decision back. The exact mechanism is an ASE implementation detail (a signed redirect URL, a short-lived consent token, a back channel call), but the information the IdP needs includes:
+When the authorization server forwards the resource owner to the IdP, it must pass enough information for the IdP to display a meaningful consent screen and route the decision back. The exact mechanism is an FSP implementation detail (a signed redirect URL, a short-lived consent token, a back channel call), but the information the IdP needs includes:
 
 - The **grant identifier**, so the IdP can return its decision to the right grant.
 - The **resource owner identity** (or whatever the IdP uses to start authentication), so the IdP can prompt the correct user to log in.
@@ -42,7 +42,7 @@ The IdP is the only system in the flow that the resource owner is authenticated 
 - Any time or velocity limits attached to the request.
 - A clear accept/deny choice.
 
-ASEs decide the exact UI, but the consent prompt must accurately reflect what the authorization server will encode in the resulting grant. If the IdP does not accurately reflect the access the ASE received in the grant request, the resource owner may consent to more access than they were shown, or less than the client requested. That exposes both the ASE and the resource owner to risk.
+FSPs decide the exact UI, but the consent prompt must accurately reflect what the authorization server will encode in the resulting grant. If the IdP does not accurately reflect the access the FSP received in the grant request, the resource owner may consent to more access than they were shown, or less than the client requested. That exposes both the FSP and the resource owner to risk.
 
 ## How consent flows back
 
@@ -51,7 +51,7 @@ After the resource owner makes a choice, the IdP communicates it back to the aut
 - A signed redirect from the IdP to a callback on the authorization server, carrying the grant identifier and the decision.
 - A back channel API call from the IdP to the authorization server.
 
-The authorization server must verify the integrity of the incoming decision, both that it came from the ASE's IdP and that it has not been altered. On accept, the authorization server moves the grant to `approved` and unlocks token issuance. On deny, the grant must be moved to a terminal denied state so that subsequent continuation requests return the appropriate error.
+The authorization server must verify the integrity of the incoming decision, both that it came from the FSP's IdP and that it has not been altered. On accept, the authorization server moves the grant to `approved` and unlocks token issuance. On deny, the grant must be moved to a terminal denied state so that subsequent continuation requests return the appropriate error.
 
 ## Redirect and hash mechanics
 
