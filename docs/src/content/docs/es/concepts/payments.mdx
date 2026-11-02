@@ -1,6 +1,7 @@
 ﻿---
 title: Métodos de pago
 parent: Concepts
+lastUpdated: 2026-11-02
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
@@ -9,7 +10,7 @@ import { LinkOut } from '@interledger/docs-design-system'
 Un método de pago le indica al FSP del remitente cómo entregar los fondos al FSP del destinatario. El FSP del destinatario especifica el método de pago en la respuesta `incoming-payment`. Actualmente, Interledger (ILP) es el único método de pago integrado con Open Payments.
 :::
 
-El método de pago es el medio a través del cual el proveedore de servicios financieros (FSP) del remitente cumplirá con sus obligaciones de pago hacia el FSP del destinatario. El dinero en efectivo, las tarjetas de crédito/débito, las transferencias bancarias, las tarjetas de regalo y el dinero móvil se pueden considerar métodos de pago distintos.
+El método de pago es el medio a través del cual el proveedor de servicios financieros (FSP) del remitente cumplirá con sus obligaciones de pago hacia el FSP del destinatario. El dinero en efectivo, las tarjetas de crédito/débito, las transferencias bancarias, las tarjetas de regalo y el dinero móvil se pueden considerar métodos de pago distintos.
 
 Cuando un `outgoing-payment` se completa en función de un `incoming-payment` activo, el FSP del remitente tiene la obligación de efectuar el pago utilizando el método que se especificó al inicio en la respuesta del `incoming-payment`.
 
@@ -18,7 +19,7 @@ Aunque Open Payments (estándar de pagos abiertos) se diseñó con el fin de ser
 Al utilizar ILP como un método de pago, se exige la siguiente información al FSP de destinatario, en el objeto `method` del pago entrante.
 
 - Un `type` de `ilp` para indicar el método de pago.
-- La <LinkOut href='https://interledger.org/developers/rfcs/ilp-addresses/'>dirección de ILP</LinkOut> de el FSP del destinatario: la dirección de ILP se exige con el fin de que los paquetes que representan los pagos enviados a través de la red de Interledger se reenvíen al nodo que el destinatario previsto posee y opera (es decir, el FSP del destinatario).
+- La <LinkOut href='https://interledger.org/developers/rfcs/ilp-addresses/'>dirección de ILP</LinkOut> del FSP del destinatario: la dirección de ILP se exige con el fin de que los paquetes que representan los pagos enviados a través de la red de Interledger se reenvíen al nodo que el destinatario previsto posee y opera (es decir, el FSP del destinatario).
 - Un secreto compartido: un secreto protegido criptográficamente, que intercambian el FSP del remitente y el FSP del destinatario, para garantizar que solo esas dos partes puedan leer los paquetes que viajan por la red de Interledger a través de una conexión de <LinkOut href='https://interledger.org/developers/rfcs/stream-protocol/'>Protocolo de Transporte Simple (Simple Transport Protocol, STREAM)</LinkOut>.
 
 ```http title="objeto de métodos de pago entrante"

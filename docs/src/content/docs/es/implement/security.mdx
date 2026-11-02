@@ -1,5 +1,6 @@
 ---
 title: Seguridad
+lastUpdated: 2026-11-02
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
@@ -14,7 +15,7 @@ Open Payments establece tres puntos de control criptográficos entre un cliente 
 
 1. **Firmas de mensajes HTTP** en cada solicitud, para que el FSP pueda autenticar al remitente y detectar manipulaciones.
 2. **Claves del cliente** registradas en una wallet address (o proporcionadas directamente a través de la identidad dirigida), para que el FSP sepa con qué clave verificar.
-3. **Hashes de interacción** durante las concesiones interactivas, para que el cliente pueda verificar que una redirección provino del servidor de autorización de el FSP.
+3. **Hashes de interacción** durante las concesiones interactivas, para que el cliente pueda verificar que una redirección provino del servidor de autorización del FSP.
 
 Los FSP son responsables de la parte de verificación de los tres mecanismos. Si no se aplica alguno de ellos, los demás se debilitan.
 

@@ -1,5 +1,6 @@
 ---
 title: Arquitectura de wallet address
+lastUpdated: 2026-11-02
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
@@ -37,7 +38,7 @@ Content-Type: application/json
 }
 ```
 
-Cada campo forma parte del contrato observable externamente de el FSP:
+Cada campo forma parte del contrato observable externamente del FSP:
 
 - `id`: La URL canónica de la wallet address. Los FSP deben devolver el mismo identificador que el cliente utilizó para llegar al punto final.
 - `publicName`: Una etiqueta legible para humanos que los clientes y proveedores de identidad pueden mostrar. Los FSP deciden qué exponer aquí y deben tener en cuenta que este campo es visible públicamente.
@@ -53,9 +54,9 @@ El esquema completo de solicitud y respuesta está definido por la <LinkOut href
 Una wallet address admite un único `assetCode` y un único `assetScale`. Los FSP que deseen admitir cuentas multidivisa tienen dos patrones comunes:
 
 - Emitir una wallet address por cada divisa admitida para la misma cuenta subyacente. Cada wallet address devuelve su propio `assetCode` y `assetScale`.
-- Emitir una única wallet address en la divisa principal y realizar la conversión de divisas en el lado de el FSP cuando se reciban pagos en una divisa diferente. En este patrón, la wallet address sigue devolviendo un único `assetCode`, y se acredita al destinatario en esa divisa, independientemente de la denominación del remitente.
+- Emitir una única wallet address en la divisa principal y realizar la conversión de divisas en el lado del FSP cuando se reciban pagos en una divisa diferente. En este patrón, la wallet address sigue devolviendo un único `assetCode`, y se acredita al destinatario en esa divisa, independientemente de la denominación del remitente.
 
-En ambos patrones, el código de activo devuelto en la respuesta de la wallet address corresponde a la divisa en la que se acreditará la cuenta subyacente. Las comisiones por conversión y los tipos de cambio son una decisión de política de el FSP y deben comunicarse al remitente a través de la cotización.
+En ambos patrones, el código de activo devuelto en la respuesta de la wallet address corresponde a la divisa en la que se acreditará la cuenta subyacente. Las comisiones por conversión y los tipos de cambio son una decisión de política del FSP y deben comunicarse al remitente a través de la cotización.
 
 ## Asignación de wallet addresses a cuentas
 

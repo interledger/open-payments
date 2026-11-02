@@ -1,5 +1,6 @@
 ﻿---
 title: Claves de cliente
+lastUpdated: 2026-11-02
 ---
 
 import {
@@ -17,7 +18,7 @@ Todas las solicitudes de cliente en Open Payments se firman con una clave exclus
 
 ## Registro de claves
 
-Un registro de claves es el conjunto de claves **públicas** que un cliente utiliza para identificarse en todas las solicitudes de Open Payments y está alojado en el servidor de recursos de Open Payments de el FSP. Las solicitudes de concesión y otras llamadas a la API se realizan a través de múltiples solicitudes HTTP firmadas, por lo que el cliente debe presentar la misma identidad en cada llamada. El servidor de autorización utiliza el registro para verificar que el cliente haya firmado cada solicitud.
+Un registro de claves es el conjunto de claves **públicas** que un cliente utiliza para identificarse en todas las solicitudes de Open Payments y está alojado en el servidor de recursos de Open Payments del FSP. Las solicitudes de concesión y otras llamadas a la API se realizan a través de múltiples solicitudes HTTP firmadas, por lo que el cliente debe presentar la misma identidad en cada llamada. El servidor de autorización utiliza el registro para verificar que el cliente haya firmado cada solicitud.
 
 El cliente genera un par de claves pública y privada. Conserva la clave privada y firma cada solicitud con esa clave y un `keyId`. El `keyId` indica a los servidores qué clave pública del registro utilizar para la verificación.
 
@@ -68,7 +69,7 @@ Además, el documento debe incluir los campos `x` y `kid` (identificador de clav
 Para inicializar un SDK de cliente de Open Payments autenticado, debe disponer de un par de claves pública-privada y de un identificador de clave.
 
 1. El SDK del cliente genera un par de claves con el <LinkOut href='https://www.rfc-editor.org/info/rfc8032/'>algoritmo ED25519</LinkOut>. El registro de claves del cliente expone la clave pública en formato de JWKS.
-2. La clave pública se proporciona a el proveedore de servicios financieros (FSP) del cliente. El FSP es responsable de ofrecer a los clientes un medio para cargar claves. El FSP agrega la clave a su servidor de recursos.
+2. La clave pública se proporciona al proveedor de servicios financieros (FSP) del cliente. El FSP es responsable de ofrecer a los clientes un medio para cargar claves. El FSP agrega la clave a su servidor de recursos.
 3. Se crea un `keyId` para identificar el par de claves. Por lo general, el FSP es responsable de la creación del `keyId`.
 4. El cliente almacena la clave privada para la firma de solicitudes en el futuro. La clave firma el contenido descrito en la sección [Método de validación de claves](#método-de-validación-de-claves) a continuación.
 

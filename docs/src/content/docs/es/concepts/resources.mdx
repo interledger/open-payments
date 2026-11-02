@@ -3,6 +3,7 @@ title: Recursos
 parent: Concepts
 tableOfContents:
   maxHeadingLevel: 4
+lastUpdated: 2026-11-02
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
@@ -26,7 +27,7 @@ Cada conjunto de API tiene su propio tipo de recurso: `incoming-payment`, `quote
 
 Un recurso de `incoming-payment` suele ser el primero en crearse en un flujo de pago, a través de la <LinkOut href='/apis/#tag/incoming-payment/POST/incoming-payments'>Create Incoming Payment API</LinkOut>. El recurso se crea en la cuenta del destinatario.
 
-Luego, el proveedore de servicios financieros (FSP) del destinatario devuelve los datos de pago único que el cliente utilizará para enviar pagos al destinatario. Todos los pagos recibidos mediante el uso de estos datos se asocian al recurso de `incoming-payment`.
+Luego, el proveedor de servicios financieros (FSP) del destinatario devuelve los datos de pago único que el cliente utilizará para enviar pagos al destinatario. Todos los pagos recibidos mediante el uso de estos datos se asocian al recurso de `incoming-payment`.
 
 **incomingAmount**
 
@@ -46,7 +47,7 @@ La compatibilidad con los pagos continuos mediante <LinkOut href='https://webmon
 
 Luego de crearse un recurso de `incoming-payment` en la cuenta del destinatario, por lo general, un recurso de `quote` se crea en la cuenta del remitente a través de la <LinkOut href="/apis/#tag/quote/POST/quotes">Create a Quote API</LinkOut>.
 
-La cotización indica cuánto costará efectuar el pago, lo que incluye todas las tarifas que correspondan. La cotización funciona como un compromiso de el FSP del remitente de entregar un monto en particular al FSP del destinatario. Las cotizaciones son válidas solo durante un tiempo limitado.
+La cotización indica cuánto costará efectuar el pago, lo que incluye todas las tarifas que correspondan. La cotización funciona como un compromiso del FSP del remitente de entregar un monto en particular al FSP del destinatario. Las cotizaciones son válidas solo durante un tiempo limitado.
 
 Existen tres tipos de cotizaciones: Si el recurso de `quote` se crea de la manera correcta, se le asignará un `quoteId` en la forma de una URL.
 
@@ -66,7 +67,7 @@ Se utiliza cuando el recurso de pago entrante no incluye un `incomingAmount` y e
 
 Por último, se crea un recurso de `outgoing-payment` en la cuenta del remitente a través de la <LinkOut href='/apis/#tag/outgoing-payment/POST/outgoing-payments'>Create Outgoing Payment API</LinkOut>. Un recurso de pago saliente puede representar un pago que se enviará, que se está enviando o que se envió previamente desde la cuenta del remitente. El objetivo de este recurso es actuar como una instrucción para que el FSP del remitente realice un pago.
 
-Open Payments no ejecuta pagos reales. Solo proporciona las instrucciones para el pago saliente. Esta separación permite que las aplicaciones emitan solicitudes de pago sin estar registradas como proveedoras de servicios financieros. Las aplicaciones no tienen que manipular datos financieros confidenciales de manera directa, lo que reduce el riesgo y la complejidad.
+Open Payments no ejecuta pagos reales. Solo proporciona las instrucciones para el pago saliente. Esta separación permite que las aplicaciones emitan solicitudes de pago sin estar registradas como proveedores de servicios financieros. Las aplicaciones no tienen que manipular datos financieros confidenciales de manera directa, lo que reduce el riesgo y la complejidad.
 
 Open Payments exige el consentimiento explícito del remitente antes de que se cree el recurso de pago saliente. El consentimiento se obtiene por medio de una [concesión de autorización interactiva](/es/concepts/auth/#pago-saliente).
 
