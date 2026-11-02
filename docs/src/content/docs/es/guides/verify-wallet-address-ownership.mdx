@@ -1,0 +1,140 @@
+---
+title: Verificar la titularidad de una dirección de billetera
+lastUpdated: 2026-10-30
+---
+
+import { LinkOut } from '@interledger/docs-design-system'
+import { Tabs, TabItem, Badge } from '@astrojs/starlight/components'
+import InteractionReq from '/src/content/docs/partials/es/_interaction-required.mdx'
+import Start from '/src/content/docs/partials/es/_grant-start-interaction.mdx'
+import Finish from '/src/content/docs/partials/es/_grant-finish-interaction.mdx'
+import GetWalletAddress from '/src/content/docs/partials/code/guides/verify-wallet-address-ownership/_get-wallet-address.mdx'
+import GrantRequestVerifyOwnership from '/src/content/docs/partials/code/guides/verify-wallet-address-ownership/_grant-request-verify-ownership.mdx'
+import RequestAGrantContinuation from '/src/content/docs/partials/code/guides/verify-wallet-address-ownership/_request-a-grant-continuation.mdx'
+
+:::tip[Resumen]
+Aprenda a usar una concesión interactiva para verificar que un usuario tiene acceso a la dirección de su billetera.
+:::
+
+En Open Payments, las concesiones interactivas se utilizan con mayor frecuencia para obtener el consentimiento explícito antes de emitir un pago saliente. Las concesiones interactivas también se pueden usar para verificar que un usuario tiene acceso a su billetera sin realizar un pago. Un caso de uso, por ejemplo, es permitir que los usuarios se autoricen a sí mismos en una plataforma.
+
+La verificación de que el usuario correcto tiene acceso a una dirección de billetera específica se realiza a través de un flujo de autenticación interactivo. En lugar de solicitar una concesión para realizar o recibir pagos (lo que requiere un `access_token` con permisos como `outgoing-payment` o `incoming-payment`), un cliente puede solicitar una concesión dirigida a un `subject` específico.
+
+El servidor de autorización interactúa con el usuario a través del proveedor de identidad (IdP) para confirmar su identidad. El IdP verifica que el usuario tenga acceso a la dirección de billetera proporcionada en el campo `subject`.
+
+## Caso hipotético
+
+Para esta guía, asumirá el rol de un desarrollador de aplicaciones que trabaja para una plataforma de pagos. Su objetivo es garantizar que cada nuevo usuario tenga acceso a la dirección de billetera que proporciona al registrarse.
+
+La guía explica cómo verificar que un nuevo usuario tiene acceso a la dirección de billetera `https://cloudninebank.example.com/user` utilizando una concesión basada en sujetos.
+
+## Puntos finales
+
+- <Badge text="GET" variant="note" />
+  <LinkOut href="https://openpayments.dev/apis/wallet-address-server/operations/get-wallet-address/">
+    Get Wallet Address
+  </LinkOut>
+- <Badge text="POST" variant="success" />
+  <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-request/">
+    Grant Request
+  </LinkOut>
+- <Badge text="POST" variant="success" />
+  <LinkOut href="https://openpayments.dev/apis/auth-server/operations/post-continue/">
+    Grant Continuation Request
+  </LinkOut>
+
+## Pasos
+
+### 1. Obtener los datos de la dirección de billetera
+
+Primero, llame a la <Badge text="GET" variant="note" /> [Get Wallet Address API](/apis/wallet-address-server/operations/get-wallet-address) para la dirección de billetera proporcionada por el usuario.
+
+<GetWalletAddress />
+
+<details>
+  <summary>Ejemplo de respuesta</summary>
+
+```json wrap
+{
+  "id": "https://cloudninebank.example.com/user",
+  "assetCode": "CAD",
+  "assetScale": 2,
+  "authServer": "https://auth.cloudninebank.example.com/",
+  "resourceServer": "https://cloudninebank.example.com/op"
+}
+```
+
+</details>
+
+### 2. Solicitar una concesión de autorización interactiva para un pago saliente
+
+Utilice la información del servidor de autorización recibida en el paso anterior para llamar a la <Badge text="POST" variant="success" /> [Grant Request API](/apis/auth-server/operations/post-request).
+
+Proporcione un `subject` con la dirección de la billetera en la lista de ID de sujetos.
+
+<InteractionReq />
+
+<details>
+  <summary>Ejemplo de respuesta</summary>
+
+```json wrap
+{
+  "interact": {
+    "redirect": "https://auth.cloudninebank.example.com/{...}", // uri to redirect the user to, to begin interaction
+    "finish": "..." // unique key to secure the callback
+  },
+  "continue": {
+    "access_token": {
+      "value": "..." // access token for continuing the outgoing payment grant request
+    },
+    "uri": "https://auth.cloudninebank.example.com/continue/{...}", // uri for continuing the outgoing payment grant request
+    "wait": 30
+  }
+}
+```
+
+</details>
+
+A continuación, se explica cómo especificar la estructura `subject` en su solicitud de concesión:
+
+<GrantRequestVerifyOwnership />
+
+### 3. Comenzar la interacción con el usuario
+
+<Start />
+
+### 4. Finalizar la interacción con el usuario
+
+<Finish />
+
+### 5. Solicitar una continuación de la concesión de autorización
+
+Una vez que el usuario complete la interacción y sea redirigido de nuevo a su aplicación, llame a la <Badge text="POST" variant="success" /> [Grant Continuation Request API](/apis/auth-server/operations/post-continue/) para finalizar la verificación.
+
+Emita la solicitud al `continue.uri` proporcionado en la respuesta de concesión de pago saliente inicial (paso 2).
+
+Incluya la `interact_ref` devuelta en los parámetros de consulta del URI de redirección.
+
+<RequestAGrantContinuation />
+
+<details>
+  <summary>Ejemplo de respuesta</summary>
+
+```json wrap
+{
+  "access_token": {
+    "value": "...", // final access token
+    "manage": "https://auth.cloudninebank.example.com/token/{...}" // management uri for the access token
+  },
+  "continue": {
+    "access_token": {
+      "value": "..."
+    },
+    "uri": "https://auth.cloudninebank.example.com/continue/{...}"
+  }
+}
+```
+
+</details>
+
+Si la solicitud de continuación se completa con éxito y devuelve los detalles del token de acceso, el proveedor de identidad (IdP) habrá verificado satisfactoriamente que el usuario es propietario de la dirección de billetera especificada.
