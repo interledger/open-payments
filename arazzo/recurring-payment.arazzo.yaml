@@ -1,0 +1,274 @@
+arazzo: "1.0.1"
+info:
+  title: "Open Payments — Recurring Payment"
+  summary: >
+    Workflow for setting up a recurring payment with interval-based grant
+    authorization.
+  description: |
+    This workflow documents the API call sequence for setting up a recurring
+    payment using Open Payments. Recurring payments use the GNAP interactive
+    grant flow with `limits.interval` to authorize periodic debits.
+
+    **Key differences from one-time payments:**
+    - The outgoing payment grant includes an `interval` in ISO 8601 repeating
+      interval format (e.g. `R12/2024-01-01T00:00:00Z/P1M` for 12 monthly
+      payments).
+    - After the initial grant, the client can create multiple outgoing payments
+      within the granted limits without requiring additional user interaction.
+
+    **Actors:**
+    - **Client** — application managing the subscription/recurring billing.
+    - **Recipient's ASE** — hosts the recipient's wallet and servers.
+    - **Sender's ASE** — hosts the sender's wallet and servers.
+  version: "1.0.0"
+
+sourceDescriptions:
+  - name: walletAddressServer
+    url: ../open-payments-specifications/openapi/wallet-address-server.yaml
+    type: openapi
+  - name: resourceServer
+    url: ../open-payments-specifications/openapi/resource-server.yaml
+    type: openapi
+  - name: authServer
+    url: ../open-payments-specifications/openapi/auth-server.yaml
+    type: openapi
+
+workflows:
+  # ─── Workflow 1: Set up recurring payment grant ───
+  - workflowId: setupRecurringPayment
+    summary: "Set up a recurring payment grant with interval limits"
+    description: |
+      Establishes a recurring payment authorization with the sender's ASE.
+      After this workflow completes, the client holds an access token that
+      permits creating outgoing payments within the specified interval and
+      amount limits without further user interaction.
+    inputs:
+      type: object
+      required:
+        - recipientWalletAddressUrl
+        - senderWalletAddressUrl
+        - debitAmountPerInterval
+        - debitAssetCode
+        - debitAssetScale
+        - interval
+        - clientWalletAddress
+      properties:
+        recipientWalletAddressUrl:
+          type: string
+          description: "Recipient's wallet address URL"
+        senderWalletAddressUrl:
+          type: string
+          description: "Sender's wallet address URL"
+        debitAmountPerInterval:
+          type: string
+          description: "Maximum debit amount per interval (minor units)"
+        debitAssetCode:
+          type: string
+          description: "Currency code (e.g. USD)"
+        debitAssetScale:
+          type: integer
+          description: "Asset scale (e.g. 2)"
+        interval:
+          type: string
+          description: >
+            ISO 8601 repeating interval (e.g. 'R12/2024-01-01T00:00:00Z/P1M'
+            for 12 monthly periods starting Jan 1 2024)
+        clientWalletAddress:
+          type: string
+          description: "Client's wallet address"
+        finishUri:
+          type: string
+          description: "Redirect URI after interaction"
+        finishNonce:
+          type: string
+          description: "Unique nonce for the finish step"
+
+    steps:
+      # ─── Step 1: Resolve recipient's wallet address ───
+      - stepId: getRecipientWalletAddress
+        description: >
+          Resolve the recipient's wallet address to discover auth and resource
+          server URLs.
+        operationId: walletAddressServer.get-wallet-address
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          recipientAuthServer: $response.body.authServer
+          recipientResourceServer: $response.body.resourceServer
+
+      # ─── Step 2: Request incoming payment grant ───
+      - stepId: requestIncomingPaymentGrant
+        description: >
+          Request a non-interactive grant to create incoming payments on the
+          recipient's ASE.
+        operationId: authServer.post-request
+        requestBody:
+          contentType: application/json
+          payload:
+            access_token:
+              access:
+                - type: incoming-payment
+                  actions:
+                    - create
+                    - read
+                  identifier: $inputs.recipientWalletAddressUrl
+            client: $inputs.clientWalletAddress
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          incomingPaymentAccessToken: $response.body.access_token.value
+
+      # ─── Step 3: Create incoming payment ───
+      - stepId: createIncomingPayment
+        description: >
+          Create an incoming payment without an `incomingAmount` since the
+          exact receive amount will depend on exchange rates at payment time.
+        operationId: resourceServer.create-incoming-payment
+        requestBody:
+          contentType: application/json
+          payload:
+            walletAddress: $inputs.recipientWalletAddressUrl
+        successCriteria:
+          - condition: $statusCode == 201
+        outputs:
+          incomingPaymentUrl: $response.body.id
+
+      # ─── Step 4: Resolve sender's wallet address ───
+      - stepId: getSenderWalletAddress
+        description: >
+          Resolve the sender's wallet address for auth and resource server URLs.
+        operationId: walletAddressServer.get-wallet-address
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          senderAuthServer: $response.body.authServer
+          senderResourceServer: $response.body.resourceServer
+
+      # ─── Step 5: Request quote grant ───
+      - stepId: requestQuoteGrant
+        description: >
+          Request a non-interactive grant to create quotes on the sender's ASE.
+        operationId: authServer.post-request
+        requestBody:
+          contentType: application/json
+          payload:
+            access_token:
+              access:
+                - type: quote
+                  actions:
+                    - create
+                    - read
+            client: $inputs.clientWalletAddress
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          quoteAccessToken: $response.body.access_token.value
+
+      # ─── Step 6: Create initial quote ───
+      - stepId: createQuote
+        description: >
+          Create a quote for the first interval's payment. This establishes
+          the exchange rate and fees for the initial payment.
+        operationId: resourceServer.create-quote
+        requestBody:
+          contentType: application/json
+          payload:
+            walletAddress: $inputs.senderWalletAddressUrl
+            receiver: $steps.createIncomingPayment.outputs.incomingPaymentUrl
+            method: ilp
+            debitAmount:
+              value: $inputs.debitAmountPerInterval
+              assetCode: $inputs.debitAssetCode
+              assetScale: $inputs.debitAssetScale
+        successCriteria:
+          - condition: $statusCode == 201
+        outputs:
+          quoteId: $response.body.id
+          debitAmount: $response.body.debitAmount
+          receiveAmount: $response.body.receiveAmount
+
+      # ─── Step 7: Request interactive recurring grant ───
+      - stepId: requestRecurringGrant
+        description: >
+          Request an interactive grant for the outgoing payment with
+          `limits.interval` set. The interval defines how often the client
+          can create outgoing payments and the maximum amount per interval.
+          The user must consent to this recurring authorization.
+        operationId: authServer.post-request
+        requestBody:
+          contentType: application/json
+          payload:
+            access_token:
+              access:
+                - type: outgoing-payment
+                  actions:
+                    - create
+                    - read
+                  identifier: $inputs.senderWalletAddressUrl
+                  limits:
+                    receiver: $steps.createIncomingPayment.outputs.incomingPaymentUrl
+                    interval: $inputs.interval
+                    debitAmount:
+                      value: $inputs.debitAmountPerInterval
+                      assetCode: $inputs.debitAssetCode
+                      assetScale: $inputs.debitAssetScale
+            client: $inputs.clientWalletAddress
+            interact:
+              start:
+                - redirect
+              finish:
+                method: redirect
+                uri: $inputs.finishUri
+                nonce: $inputs.finishNonce
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          interactRedirectUri: $response.body.interact.redirect
+          continueAccessToken: $response.body.continue.access_token.value
+          continueUri: $response.body.continue.uri
+
+      # ─── Step 8: Continue grant after user consent ───
+      - stepId: continueRecurringGrant
+        description: >
+          Continue the grant after the user has consented to the recurring
+          payment. The resulting access token permits creating outgoing
+          payments within the interval and amount limits.
+        operationId: authServer.post-continue
+        parameters:
+          - name: id
+            in: path
+            value: $steps.requestRecurringGrant.outputs.continueUri
+        requestBody:
+          contentType: application/json
+          payload:
+            interact_ref: "{interact_ref_from_redirect}"
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          outgoingPaymentAccessToken: $response.body.access_token.value
+          outgoingPaymentManageUrl: $response.body.access_token.manage
+
+      # ─── Step 9: Create first outgoing payment ───
+      - stepId: createOutgoingPayment
+        description: >
+          Create the first outgoing payment using the recurring grant.
+          Subsequent payments within the allowed interval can be created
+          by repeating the quote + outgoing payment steps without additional
+          user interaction.
+        operationId: resourceServer.create-outgoing-payment
+        requestBody:
+          contentType: application/json
+          payload:
+            walletAddress: $inputs.senderWalletAddressUrl
+            quoteId: $steps.createQuote.outputs.quoteId
+        successCriteria:
+          - condition: $statusCode == 201
+        outputs:
+          outgoingPaymentId: $response.body.id
+          outgoingPaymentFailed: $response.body.failed
+
+    outputs:
+      outgoingPaymentAccessToken: $steps.continueRecurringGrant.outputs.outgoingPaymentAccessToken
+      outgoingPaymentManageUrl: $steps.continueRecurringGrant.outputs.outgoingPaymentManageUrl
+      firstPaymentId: $steps.createOutgoingPayment.outputs.outgoingPaymentId
+      incomingPaymentUrl: $steps.createIncomingPayment.outputs.incomingPaymentUrl
