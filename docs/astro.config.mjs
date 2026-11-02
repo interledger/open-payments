@@ -482,7 +482,7 @@ Key terminology notes:
           items: [
             {
               label: 'FSP overview',
-              translations: { es: 'Descripción general de el FSP' },
+              translations: { es: 'Descripción general del FSP' },
               link: '/implement/fsp-overview/'
             },
             {

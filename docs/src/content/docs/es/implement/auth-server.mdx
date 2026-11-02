@@ -1,12 +1,13 @@
 ---
 title: Servidor de autorización
+lastUpdated: 2026-11-02
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
 import RafikiReference from '/src/content/docs/partials/es/_rafiki-reference.mdx'
 
 :::tip[Resumen]
-El servidor de autorización procesa las solicitudes de concesión según el GNAP, emite tókenes de acceso y coordina el consentimiento de los usuarios para las concesiones interactivas. En esta página se describe lo que debe hacer el servidor de autorización de el FSP.
+El servidor de autorización procesa las solicitudes de concesión según el GNAP, emite tókenes de acceso y coordina el consentimiento de los usuarios para las concesiones interactivas. En esta página se describe lo que debe hacer el servidor de autorización del FSP.
 :::
 
 ## Qué hace el servidor de autorización
@@ -17,7 +18,7 @@ El servidor de autorización de un FSP es el único punto de entrada para los cl
 - Verifica la identidad del cliente y la firma en cada solicitud.
 - Determina si se autoriza el acceso solicitado, incluida la necesidad de interactuar con el propietario del recurso.
 - Emite, rota y revoca los tókenes de acceso.
-- Coordina el flujo interactivo con el proveedor de identidad de el FSP cuando se requiere consentimiento.
+- Coordina el flujo interactivo con el proveedor de identidad del FSP cuando se requiere consentimiento.
 
 La respuesta de la wallet address devuelve el URI de punto final de concesión en el campo `authServer`. Los clientes envían todas las solicitudes de concesión a ese URI. La especificación del GNAP utiliza un único punto final por servidor de autorización en lugar de un punto final diferente para cada tipo de concesión.
 
@@ -37,7 +38,7 @@ Cada solicitud de concesión debe estar firmada por el cliente. La primera tarea
 
 Después de la verificación de la firma, el servidor de autorización inspecciona la solicitud para determinar el tipo de concesión y si se requiere interacción.
 
-Open Payments requiere que las concesiones de autorización para pagos salientes sean interactivas. Para las concesiones de autorización para pagos entrantes y cotizaciones, la necesidad de interacción queda a criterio de implementación de el FSP. Los FSP deben requerir interacción para las concesiones de autorización para pagos salientes y para cualquier concesión que incluya la acción `list-all`, ya que esa acción permite al cliente enumerar los recursos que no creó. Los FSP también pueden requerir interacción para todas las concesiones de autorización para pagos entrantes o cotizaciones. Las implementaciones de referencia como <LinkOut href='https://rafiki.dev/integration/requirements/open-payments/idp/#interactive-grants'>Rafiki</LinkOut> tratan `list-all` como interactiva de forma predeterminada.
+Open Payments requiere que las concesiones de autorización para pagos salientes sean interactivas. Para las concesiones de autorización para pagos entrantes y cotizaciones, la necesidad de interacción queda a criterio de implementación del FSP. Los FSP deben requerir interacción para las concesiones de autorización para pagos salientes y para cualquier concesión que incluya la acción `list-all`, ya que esa acción permite al cliente enumerar los recursos que no creó. Los FSP también pueden requerir interacción para todas las concesiones de autorización para pagos entrantes o cotizaciones. Las implementaciones de referencia como <LinkOut href='https://rafiki.dev/integration/requirements/open-payments/idp/#interactive-grants'>Rafiki</LinkOut> tratan `list-all` como interactiva de forma predeterminada.
 
 ### concesiones de autorización para pagos entrantes
 

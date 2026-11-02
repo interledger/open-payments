@@ -1,5 +1,6 @@
 ﻿---
 title: Flujo de Open Payments
+lastUpdated: 2026-11-02
 ---
 
 import {
@@ -44,7 +45,7 @@ Un cliente recupera los datos públicos sobre la cuenta compatible con Open Paym
 
 ## Pago entrante
 
-Primero, el cliente <LinkOut href='/apis/#tag/grant/POST/'>solicita/recibe una concesión de autorización</LinkOut> de parte del servidor de autorización de el <abbr title="proveedore de servicios financieros">FSP</abbr> del destinatario para crear un recurso de `incoming-payment`. El cliente envía una solicitud al servidor de recursos de el FSP para <LinkOut href='/apis/#tag/incoming-payment/POST/incoming-payments'>crear el recurso</LinkOut>. Una vez creado, el servidor de recursos devuelve los datos de pago único que el cliente utilizará para realizar uno o más pagos al destinatario.
+Primero, el cliente <LinkOut href='/apis/#tag/grant/POST/'>solicita/recibe una concesión de autorización</LinkOut> de parte del servidor de autorización del <abbr title="proveedor de servicios financieros">FSP</abbr> del destinatario para crear un recurso de `incoming-payment`. El cliente envía una solicitud al servidor de recursos del FSP para <LinkOut href='/apis/#tag/incoming-payment/POST/incoming-payments'>crear el recurso</LinkOut>. Una vez creado, el servidor de recursos devuelve los datos de pago único que el cliente utilizará para realizar uno o más pagos al destinatario.
 
 <MermaidWrapper diagramName="incoming-payment"
   viewLabel="Ver diagrama completo"
@@ -69,7 +70,7 @@ Primero, el cliente <LinkOut href='/apis/#tag/grant/POST/'>solicita/recibe una c
 
 ## Cotización
 
-El cliente <LinkOut href='/apis/#tag/grant/POST/'>solicita/recibe una concesión de autorización</LinkOut> de parte del servidor de autorización de el <abbr title="proveedore de servicios financieros">FSP</abbr> del destinatario, para crear un recurso de `quote`. El cliente envía una solicitud al servidor de recursos para <LinkOut href='/apis/#tag/quote/POST/quotes'>crear el recurso</LinkOut>. Una vez creado, el servidor de recursos devuelve, entre otros datos, una `id` de cotización y el monto que costará efectuar el pago.
+El cliente <LinkOut href='/apis/#tag/grant/POST/'>solicita/recibe una concesión de autorización</LinkOut> de parte del servidor de autorización del <abbr title="proveedor de servicios financieros">FSP</abbr> del destinatario, para crear un recurso de `quote`. El cliente envía una solicitud al servidor de recursos para <LinkOut href='/apis/#tag/quote/POST/quotes'>crear el recurso</LinkOut>. Una vez creado, el servidor de recursos devuelve, entre otros datos, una `id` de cotización y el monto que costará efectuar el pago.
 
 <MermaidWrapper diagramName="quote"
   viewLabel="Ver diagrama completo"
@@ -94,9 +95,9 @@ El cliente <LinkOut href='/apis/#tag/grant/POST/'>solicita/recibe una concesión
 
 ## Pago saliente
 
-Antes de que se pueda crear un recurso de pago saliente en la cuenta del remitente, Open Payments exige que el cliente envíe una <LinkOut href='/apis/#tag/grant/POST/'>solicitud interactiva de concesión de autorización</LinkOut> al servidor de autorización de el <abbr title="proveedore de servicios financieros">FSP</abbr>del remitente.
+Antes de que se pueda crear un recurso de pago saliente en la cuenta del remitente, Open Payments exige que el cliente envíe una <LinkOut href='/apis/#tag/grant/POST/'>solicitud interactiva de concesión de autorización</LinkOut> al servidor de autorización del <abbr title="proveedor de servicios financieros">FSP</abbr> del remitente.
 
-Una solicitud interactiva de concesión de autorización exige que se obtenga el consentimiento explícito del remitente antes de que se emita un token de acceso. Aunque el cliente debe facilitar la interacción, el servidor de autorización y el proveedor de identidad (identity provider, IdP) de el FSP del remitente son responsables de la interfaz y de obtener el consentimiento.
+Una solicitud interactiva de concesión de autorización exige que se obtenga el consentimiento explícito del remitente antes de que se emita un token de acceso. Aunque el cliente debe facilitar la interacción, el servidor de autorización y el proveedor de identidad (identity provider, IdP) del FSP del remitente son responsables de la interfaz y de obtener el consentimiento.
 
 Una vez que se obtuvo el consentimiento, el cliente solicita permiso para <LinkOut href='/apis/#tag/grant/POST/continue/%7Bid%7D'>continuar con la solicitud de concesión de autorización</LinkOut> con el fin de obtener un token de acceso.
 
