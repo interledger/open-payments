@@ -1,5 +1,6 @@
 ---
 title: Create an incoming payment grant request
+lastUpdated: 2026-11-02
 tableOfContents:
   maxHeadingLevel: 2
 ---
@@ -87,10 +88,6 @@ console.log(
 )
 ```
 
-For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/grant/grant-incoming-payment.ts'>View full TS source</LinkOut>
-
-For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/grant/grant-incoming-payment.js'>View full JS source</LinkOut>
-
 </TabItem>
 <TabItem label="Rust" icon='seti:rust'>
 <RustButton />
@@ -154,10 +151,6 @@ match response {
 
 ```
 
-<LinkOut href="https://github.com/interledger/open-payments/blob/main/snippets/rust/grant/grant-incoming-payment.rs">
-  View full source
-</LinkOut>
-
 </TabItem>
 <TabItem label='PHP' icon='seti:php'>
 <PhpButton />
@@ -209,7 +202,6 @@ echo 'GRANT OBJECT: ' . PHP_EOL . print_r($grant, true);
 
 ```
 
-<LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Grant/GrantIncomingPayment.php'>View full source</LinkOut>
 </TabItem>
 
 <TabItem label="Go" icon='seti:go'>
@@ -385,9 +377,6 @@ if (grant.Interact != null) throw new Exception("Expected non-interactive grant"
 Console.WriteLine(JsonConvert.SerializeObject(grant, Formatting.Indented));
 ```
 
-<LinkOut href="https://github.com/interledger/open-payments-dotnet/blob/main/OpenPayments.Snippets/Services/Authenticated/IncomingPaymentService.cs#L17-L38">
-  View full source
-</LinkOut>
 </TabItem>
 </Tabs>
 

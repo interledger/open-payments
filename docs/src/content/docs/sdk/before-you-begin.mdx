@@ -1,30 +1,76 @@
 ---
-title: Before you begin
-lastUpdated: 2026-10-20
+title: Client libraries and test wallet
+lastUpdated: 2026-11-03
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
-
-The Open Payments SDKs provide developers with pre-built functions that simplify interactions with the Open Payments API.
+import CustomGrid from '/src/components/CustomGrid.astro'
+import CustomCard from '/src/components/CustomCard.astro'
 
 ## Client libraries
 
-| SDK               | Status      | Repo                                                                                                       |
-| ----------------- | ----------- | ---------------------------------------------------------------------------------------------------------- |
-| C# (.NET)         | Done        | <LinkOut href="https://github.com/interledger/open-payments-dotnet">open-payments-dotnet</LinkOut>         |
-| Go                | Done        | <LinkOut href="https://github.com/interledger/open-payments-go">open-payments-go</LinkOut>                 |
-| Java              | Done        | <LinkOut href="https://github.com/interledger/open-payments-java">open-payments-java</LinkOut>             |
-| PHP               | Done        | <LinkOut href="https://github.com/interledger/open-payments-php">open-payments-php</LinkOut>               |
-| Python            | In progress | <LinkOut href="https://github.com/interledger/open-payments-python-sdk">open-payments-python-sdk</LinkOut> |
-| Rust              | Done        | <LinkOut href="https://github.com/interledger/open-payments-rust">open-payments-rust</LinkOut>             |
-| TypeScript/NodeJS | Done        | <LinkOut href="https://github.com/interledger/open-payments-node">open-payments-node</LinkOut>             |
+The Open Payments SDKs provide you with pre-built functions that simplify interactions with the Open Payments APIs.
 
-## Using the SDKs
+All libraries are open source and available on GitHub.
 
-Each SDK snippet page in this section uses a tabbed interface to support multiple programming languages. This means you can find the relevant code snippets for the language of your choice with ease, without needing individual pages for each language. The basic structure of each page is as follows:
+<CustomGrid cols={3}>
+  <CustomCard
+    title=".NET"
+    iconName="github"
+    iconColor="#35A6C0"
+    href="https://github.com/interledger/open-payments-dotnet"
+    newTab
+  ></CustomCard>
+  <CustomCard
+    title="Go"
+    iconName="github"
+    iconColor="#35A6C0"
+    href="https://github.com/interledger/open-payments-go"
+    newTab
+  ></CustomCard>
+  <CustomCard
+    title="Java"
+    iconName="github"
+    iconColor="#35A6C0"
+    href="https://github.com/interledger/open-payments-java"
+    newTab
+  ></CustomCard>
+  <CustomCard
+    title="PHP"
+    iconName="github"
+    iconColor="#35A6C0"
+    href="https://github.com/interledger/open-payments-php"
+    newTab
+  ></CustomCard>
+  <CustomCard
+    title="Python"
+    iconName="github"
+    iconColor="#35A6C0"
+    href="https://github.com/interledger/open-payments-python-sdk"
+    newTab
+  ></CustomCard>
+  <CustomCard
+    title="Rust"
+    iconName="github"
+    iconColor="#35A6C0"
+    href="https://github.com/interledger/open-payments-rust"
+    newTab
+  ></CustomCard>
+  <CustomCard
+    title="TS/NodeJS"
+    iconName="github"
+    iconColor="#35A6C0"
+    href="https://github.com/interledger/open-payments-node"
+    newTab
+  ></CustomCard>
+</CustomGrid>
+
+### Using the SDKs
+
+Each SDK snippet page uses a tabbed interface to support multiple programming languages. This means you can find the relevant code snippets for the language of your choice with ease, without needing individual pages for each language. The basic structure of each page is as follows:
 
 - The page title reflects the operation, function, or action being performed.
-- A few overview paragraphs provide context about the function, its role in the Open Payments flow, and any general information that may be helpful.
+- A few overview paragraphs provide context about the function, its role in the Open Payments flow, and any general information.
 - The "Before you begin" section that links back to this page for steps to create a test wallet.
 - The main content area includes the tabbed interface where you can select your preferred programming language.
 
@@ -37,26 +83,25 @@ In the tabbed interface, you'll notice the following sections:
 
 This consistent structure across all SDK snippet pages allows you to quickly grasp the functionality and implementation details, making it easier to work with the Open Payments SDKs.
 
-## Create an account on the test wallet
+## Interledger test network
 
-Before working with our SDK snippets, we recommend creating a <LinkOut href='https://wallet.interledger-test.dev/'>test wallet account</LinkOut> on the Interledger test network.
+Create an ILP-enabled <LinkOut href='https://wallet.interledger-test.dev/'>wallet account</LinkOut> on the Interledger test network to test your client against the Open Payments APIs. This account lets you create play-money accounts, send and receive payments, and generate developer keys.
 
-The test wallet lets you create accounts, funded with play money, and developer keys for making Interledger transactions via the Open Payments APIs.
+### 1. Create an account on the test wallet
 
 1. Go to <LinkOut href="https://wallet.interledger-test.dev">wallet.interledger-test.dev</LinkOut>.
-2. Click **Create account** at the bottom-right of the screen.
-3. Enter your email address, a strong password, then confirm the password. Click the arrowhead.
-4. Go to your inbox and look for an email sent by `tech@interledger.org` with the subject "[Test.Wallet] Verify your account". Click **Confirm my email address.**
-5. Click **Login to your account** at the email verification screen.
-6. Log in with your credentials.
-7. Complete the Know Your Customer (KYC) steps. The only real information you need to share is your email address. All other information can be fake.
+2. Click **Create an account** at the bottom-right of the screen.
+3. Fill out the form, then click the arrow.
+4. Check your inbox for an email sent by `tech@interledger.org` with the subject "[Test.Wallet] Verify your account". Click **Confirm my email address.**
+5. Click **Login to your account** at the email verification screen, then sign in with your credentials.
+6. Complete the Know Your Customer (KYC) steps. The only real information you need to share is your email address. All other information can be fake.
    :::note[Why are there so many KYC steps?]
    The Interledger test wallet environment is running on a GateHub pre-production environment. The pre-production environment mimics the production environment, including many of the <LinkOut href="https://support.gatehub.net/hc/en-us/articles/360021131234-KYC-requirements-for-account-verification">KYC steps</LinkOut>.
    :::
 
-You're now ready to create a test wallet and deposit money!
+You're now ready to create a test payment account and deposit money!
 
-## Create and fund a wallet account
+### 2. Create and fund a wallet account
 
 1.  Click **New account** on the Interledger Wallet dashboard.
     <img
@@ -92,7 +137,7 @@ You're now ready to create a test wallet and deposit money!
 
     You now have a funded test wallet!
 
-## Add a wallet address to your account
+### 3. Add a wallet address to your account
 
 1. Select the account from the Test Wallet dashboard.
 2. Click **Add wallet address**.
@@ -109,9 +154,9 @@ You're now ready to create a test wallet and deposit money!
      class="img-outline"
      style="max-width:400px"
    />
-4. Click **Create**. Your account now has a wallet address.
+4. Click **Create**. Your account now has a [wallet address](/resources/glossary/#wallet-address).
 
-## Obtain a public-private key pair and key ID
+### 4. Obtain a public-private key pair and key ID
 
 Before you can initialize an authenticated Open Payments client, you must obtain a public-private key pair and a key ID.
 
