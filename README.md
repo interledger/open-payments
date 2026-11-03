@@ -26,7 +26,7 @@ The Open Payments SDKs provide developers with pre-built functions that simplify
 * [Go](https://github.com/interledger/open-payments-go)
 * [Java](https://github.com/interledger/open-payments-java)
 * [PHP](https://github.com/interledger/open-payments-php)
-* [Python](https://github.com/interledger/open-payments-python-sdk)
+* [Python](https://github.com/interledger/open-payments-python-sdk) (in progress)
 * [Rust](https://github.com/interledger/open-payments-rust)
 * [TypeScript/NodeJS](https://github.com/interledger/open-payments-node)
 
