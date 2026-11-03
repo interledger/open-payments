@@ -66,7 +66,9 @@ export default defineConfig({
         PageSidebar: './src/components/PageSidebar.astro',
         Footer: './src/components/Footer.astro',
         PageTitle: './src/components/PageTitle.astro',
-        LastUpdated: './src/components/LastUpdated.astro'
+        LastUpdated: './src/components/LastUpdated.astro',
+        CustomCard: './src/components/CustomCard.astro',
+        CustomGrid: './src/components/CustomGrid.astro'
       },
       customCss: [
         './node_modules/@interledger/docs-design-system/src/styles/teal-theme.css',
@@ -284,7 +286,7 @@ Key terminology notes:
               collapsed: true,
               items: [
                 {
-                  label: 'Before you begin',
+                  label: 'Client libraries and test wallet',
                   link: '/sdk/before-you-begin'
                 },
                 {

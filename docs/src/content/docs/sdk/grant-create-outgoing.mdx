@@ -1,5 +1,6 @@
 ---
 title: Create an outgoing payment grant request
+lastUpdated: 2026-11-02
 tableOfContents:
   maxHeadingLevel: 2
 ---
@@ -175,10 +176,6 @@ console.log('CONTINUE_ACCESS_TOKEN =', grant.continue.access_token.value)
 console.log('CONTINUE_URI =', grant.continue.uri)
 ```
 
-For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/grant/grant-outgoing-payment.ts'>View full TS source</LinkOut>
-
-For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/grant/grant-outgoing-payment.js'>View full JS source</LinkOut>
-
 </TabItem>
 <TabItem label="Rust" icon='seti:rust'>
 <RustButton />
@@ -268,10 +265,6 @@ match response {
 
 ```
 
-<LinkOut href="https://github.com/interledger/open-payments/blob/main/snippets/rust/grant/grant-outgoing-payment.rs">
-  View full source
-</LinkOut>
-
 </TabItem>
 <TabItem label='PHP' icon='seti:php'>
 <PhpButton />
@@ -344,10 +337,6 @@ echo 'GRANT OBJECT: ' . PHP_EOL . print_r($grant, true);
 
 ```
 
-<LinkOut href="https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Grant/GrantOutgoingPayment.php">
-  View full source without interval
-</LinkOut>
-
 #### Generate with an interval and output
 
 ```php wrap
@@ -415,7 +404,6 @@ echo 'CONTINUE_URI = ' . $grant->continue->uri . PHP_EOL;
 echo 'GRANT OBJECT: ' . PHP_EOL . print_r($grant, true);
 ```
 
-<LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Grant/GrantOutgoingPaymentInterval.php'>View full source with interval</LinkOut>
 </TabItem>
 <TabItem label="Go" icon='seti:go'>
 <GoButton />
@@ -623,10 +611,6 @@ Console.WriteLine($"CONTINUE_ACCESS_TOKEN = {grant.Continue.AccessToken.Value}")
 Console.WriteLine($"CONTINUE_URI = {grant.Continue.Uri}");
 ```
 
-<LinkOut href="https://github.com/interledger/open-payments-dotnet/blob/main/OpenPayments.Snippets/Services/Authenticated/OutgoingPaymentService.cs#L20-L50">
-  View full source
-</LinkOut>
-
 ## Generate with an interval
 
 ```csharp wrap
@@ -702,9 +686,6 @@ Console.WriteLine($"CONTINUE_ACCESS_TOKEN = {grant.Continue.AccessToken.Value}")
 Console.WriteLine($"CONTINUE_URI = {grant.Continue.Uri}");
 ```
 
-<LinkOut href="https://github.com/interledger/open-payments-dotnet/blob/main/OpenPayments.Snippets/Services/Authenticated/OutgoingPaymentService.cs#L20-L50">
-  View full source
-</LinkOut>
 </TabItem>
 </Tabs>
 

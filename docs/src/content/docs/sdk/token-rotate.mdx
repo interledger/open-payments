@@ -1,5 +1,6 @@
 ---
 title: Rotate an access token
+lastUpdated: 2026-11-02
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
@@ -58,10 +59,6 @@ console.log('ACCESS_TOKEN =', token.access_token.value)
 console.log('MANAGE_URL =', token.access_token.manage)
 ```
 
-For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/token/token-rotate.ts'>View full TS source</LinkOut>
-
-For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/token/token-rotate.js'>View full JS source</LinkOut>
-
 </TabItem>
 <TabItem label="Rust" icon='seti:rust'>
 <RustButton />
@@ -86,10 +83,6 @@ let response = client
 println!("Rotated access token: {:#?}", response.access_token);
 
 ```
-
-<LinkOut href="https://github.com/interledger/open-payments/blob/main/snippets/rust/token/token-rotate.rs">
-  View full source
-</LinkOut>
 
 </TabItem>
 <TabItem label='PHP' icon='seti:php'>
@@ -121,7 +114,6 @@ echo 'ACCESS_TOKEN: ' . $token->value . PHP_EOL;
 echo 'MANAGE_URL: ' . $token->manage . PHP_EOL;
 ```
 
-<LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Token/TokenRotate.php'>View full source</LinkOut>
 </TabItem>
 <TabItem label="Go" icon='seti:go'>
 <GoButton />
@@ -232,9 +224,6 @@ Console.WriteLine($"ACCESS_TOKEN = {token.AccessToken.Value}");
 Console.WriteLine($"MANAGE_URL = {token.AccessToken.Manage}");
 ```
 
-<LinkOut href="https://github.com/interledger/open-payments-dotnet/blob/main/OpenPayments.Snippets/Services/Authenticated/TokenService.cs#L58-L70">
-  View full source
-</LinkOut>
 </TabItem>
 </Tabs>
 

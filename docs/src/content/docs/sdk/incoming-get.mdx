@@ -1,5 +1,6 @@
 ---
 title: Get an incoming payment
+lastUpdated: 2026-11-02
 tableOfContents:
   maxHeadingLevel: 2
 ---
@@ -83,10 +84,6 @@ const incomingPayment = await client.incomingPayment.get({
 console.log('INCOMING PAYMENT:', incomingPayment)
 ```
 
-For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/incoming-payment/incoming-payment-get.ts'>View full TS source</LinkOut>
-
-For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/incoming-payment/incoming-payment-get.js'>View full JS source</LinkOut>
-
 </TabItem>
 <TabItem label="Rust" icon='seti:rust'>
 <RustButton />
@@ -136,10 +133,6 @@ println!("Public incoming payment: {payment:#?}");
 
 ```
 
-<LinkOut href="https://github.com/interledger/open-payments/blob/main/snippets/rust/incoming-payment/incoming-payment-get.rs">
-  View full source
-</LinkOut>
-
 </TabItem>
 <TabItem label='PHP' icon='seti:php'>
 <PhpButton />
@@ -171,10 +164,6 @@ $incomingPayment = $opClient->incomingPayment()->get(
 echo 'INCOMING PAYMENT: ' . PHP_EOL . print_r($incomingPayment, true);
 ```
 
-<LinkOut href="https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/IncomingPayment/IncomingPaymentGet.php">
-  View full source with authentication
-</LinkOut>
-
 #### Get without authentication
 
 ```php wrap
@@ -201,7 +190,6 @@ $incomingPayment = $opClient->incomingPayment()->getPublic(
 echo 'INCOMING PAYMENT: ' . PHP_EOL . print_r($incomingPayment, true);
 ```
 
-<LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/IncomingPayment/PublicIncomingPaymentGet.php'>View full source without authentication</LinkOut>
 </TabItem>
 
 <TabItem label="Go" icon='seti:go'>
@@ -322,10 +310,6 @@ var incomingPayment = await client.GetIncomingPaymentAsync(
 Console.WriteLine($"INCOMING PAYMENT: {JsonConvert.SerializeObject(incomingPayment, Formatting.Indented)}");
 ```
 
-<LinkOut href="https://github.com/interledger/open-payments-dotnet/blob/main/OpenPayments.Snippets/Services/Authenticated/IncomingPaymentService.cs#L78-L84">
-  View full source
-</LinkOut>
-
 # Get without authentication
 
 ```csharp wrap
@@ -348,9 +332,6 @@ var incomingPayment = await client.GetIncomingPaymentAsync(INCOMING_PAYMENT_URL)
 Console.WriteLine($"INCOMING PAYMENT: {JsonConvert.SerializeObject(incomingPayment, Formatting.Indented)}");
 ```
 
-<LinkOut href="https://github.com/interledger/open-payments-dotnet/blob/main/OpenPayments.Snippets/Services/Unauthenticated/IncomingPaymentService.cs#L11">
-  View full source
-</LinkOut>
 </TabItem>
 </Tabs>
 

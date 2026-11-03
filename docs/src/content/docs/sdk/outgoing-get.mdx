@@ -1,5 +1,6 @@
 ---
 title: Get an outgoing payment
+lastUpdated: 2026-11-02
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
@@ -57,10 +58,6 @@ const outgoingPayment = await client.outgoingPayment.get({
 console.log('OUTGOING PAYMENT:', outgoingPayment)
 ```
 
-For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/outgoing-payment/outgoing-payment-get.ts'>View full TS source</LinkOut>
-
-For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/outgoing-payment/outgoing-payment-get.js'>View full JS source</LinkOut>
-
 </TabItem>
 <TabItem label="Rust" icon='seti:rust'>
 <RustButton />
@@ -85,10 +82,6 @@ let payment = client
 println!("Outgoing payment: {payment:#?}");
 
 ```
-
-<LinkOut href="https://github.com/interledger/open-payments/blob/main/snippets/rust/outgoing-payment/outgoing-payment-get.rs">
-  View full source
-</LinkOut>
 
 </TabItem>
 <TabItem label='PHP' icon='seti:php'>
@@ -119,7 +112,6 @@ $outgoingPayment = $opClient->outgoingPayment()->get(
 echo 'OUTGOING PAYMENT: ' . PHP_EOL . print_r($outgoingPayment, true);
 ```
 
-<LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/OutgoingPayment/OutgoingPaymentGet.php'>View full source</LinkOut>
 </TabItem>
 
 <TabItem label="Go" icon='seti:go'>
@@ -253,9 +245,6 @@ var outgoingPayment = await client.GetOutgoingPaymentAsync(
 Console.WriteLine($"OUTGOING PAYMENT: {JsonConvert.SerializeObject(outgoingPayment, Formatting.Indented)}");
 ```
 
-<LinkOut href="https://github.com/interledger/open-payments-dotnet/blob/main/OpenPayments.Snippets/Services/Authenticated/OutgoingPaymentService.cs#L148-L154">
-  View full source
-</LinkOut>
 </TabItem>
 </Tabs>
 

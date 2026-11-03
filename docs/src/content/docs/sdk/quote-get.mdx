@@ -1,5 +1,6 @@
 ---
 title: Get a quote
+lastUpdated: 2026-11-02
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
@@ -55,10 +56,6 @@ const quote = await client.quote.get({
 console.log('QUOTE:', JSON.stringify(quote, null, 2))
 ```
 
-For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/quote/quote-get.ts'>View full TS source</LinkOut>
-
-For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/quote/quote-get.js'>View full JS source</LinkOut>
-
 </TabItem>
 <TabItem label="Rust" icon='seti:rust'>
 <RustButton />
@@ -80,10 +77,6 @@ let quote = client.quotes().get(&quote_url, Some(&access_token)).await?;
 println!("Quote: {quote:#?}");
 
 ```
-
-<LinkOut href="https://github.com/interledger/open-payments/blob/main/snippets/rust/quote/quote-get.rs">
-  View full source
-</LinkOut>
 
 </TabItem>
 <TabItem label='PHP' icon='seti:php'>
@@ -119,7 +112,6 @@ echo 'QUOTE_URL ' . $quote->id . PHP_EOL;
 echo 'QUOTE ' . print_r($quote, true) . PHP_EOL;
 ```
 
-<LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/Quote/QuoteGet.php'>View full source</LinkOut>
 </TabItem>
 
 <TabItem label="Go" icon='seti:go'>
@@ -235,9 +227,6 @@ var quote = await client.GetQuoteAsync(
 Console.WriteLine($"QUOTE: {JsonConvert.SerializeObject(quote, Formatting.Indented)}");
 ```
 
-<LinkOut href="https://github.com/interledger/open-payments-dotnet/blob/main/OpenPayments.Snippets/Services/Authenticated/QuoteService.cs#L99-L105">
-  View full source
-</LinkOut>
 </TabItem>
 </Tabs>
 

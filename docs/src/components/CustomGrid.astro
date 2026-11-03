@@ -1,0 +1,22 @@
+---
+const { cols = 3 } = Astro.props
+---
+
+<div class="custom-grid" style={`--grid-cols: ${cols};`}>
+  <slot />
+</div>
+
+<style>
+  .custom-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr; /* 1 column on mobile */
+  }
+
+  @media (min-width: 50rem) {
+    .custom-grid {
+      /* Dynamic columns based on the prop passed */
+      grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
+    }
+  }
+</style>

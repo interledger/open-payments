@@ -1,5 +1,6 @@
 ---
 title: Create an incoming payment
+lastUpdated: 2026-11-02
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
@@ -71,10 +72,6 @@ const incomingPayment = await client.incomingPayment.create(
 console.log('INCOMING_PAYMENT_URL =', incomingPayment.id)
 ```
 
-For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/incoming-payment/incoming-payment-create.ts'>View full TS source</LinkOut>
-
-For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/incoming-payment/incoming-payment-create.js'>View full JS source</LinkOut>
-
 </TabItem>
 <TabItem label="Rust" icon='seti:rust'>
 <RustButton />
@@ -127,10 +124,6 @@ println!("Created incoming payment: {payment:#?}");
 
 ```
 
-<LinkOut href="https://github.com/interledger/open-payments/blob/main/snippets/rust/incoming-payment/incoming-payment-create.rs">
-  View full source
-</LinkOut>
-
 </TabItem>
 <TabItem label='PHP' icon='seti:php'>
 <PhpButton />
@@ -179,7 +172,6 @@ echo 'INCOMING_PAYMENT_URL: ' . $newIncomingPayment->id . PHP_EOL;
 echo 'INCOMING PAYMENT OBJECT:' . PHP_EOL . print_r($newIncomingPayment, true);
 ```
 
-<LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/IncomingPayment/IncomingPaymentCreate.php'>View full source</LinkOut>
 </TabItem>
 
 <TabItem label="Go" icon='seti:go'>
@@ -316,9 +308,6 @@ var incomingPayment = await client.CreateIncomingPaymentAsync(
 Console.WriteLine($"INCOMING_PAYMENT_URL = {incomingPayment.Id.ToString()}");
 ```
 
-<LinkOut href="https://github.com/interledger/open-payments-dotnet/blob/main/OpenPayments.Snippets/Services/Authenticated/IncomingPaymentService.cs#L40-L56">
-  View full source
-</LinkOut>
 </TabItem>
 </Tabs>
 

@@ -1,5 +1,6 @@
 ---
 title: Get keys bound to a wallet address
+lastUpdated: 2026-11-02
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
@@ -50,10 +51,6 @@ const walletAddressKeys = await client.walletAddress.getKeys({
 console.log('WALLET ADDRESS KEYS:', JSON.stringify(walletAddressKeys, null, 2))
 ```
 
-For TypeScript, run `tsx path/to/directory/index.ts`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/wallet-address/wallet-address-get-keys.ts'>View full TS source</LinkOut>
-
-For JavaScript, run `node path/to/directory/index.js`. <LinkOut href='https://github.com/interledger/open-payments/blob/main/snippets/node/wallet-address/wallet-address-get-keys.js'>View full JS source</LinkOut>
-
 </TabItem>
 <TabItem label="Rust" icon='seti:rust'>
 <RustButton />
@@ -74,10 +71,6 @@ println!("Retrieved wallet address: {wallet_address:#?}");
 println!("Retrieved keys: {keys:#?}");
 
 ```
-
-<LinkOut href="https://github.com/interledger/open-payments/blob/main/snippets/rust/wallet-address/wallet-address-get-keys.rs">
-  View full source
-</LinkOut>
 
 </TabItem>
 <TabItem label='PHP' icon='seti:php'>
@@ -101,7 +94,6 @@ $walletKeys = $opClient->walletAddress()->getKeys([
 echo 'WALLET ADDRESS KEYS: ' . PHP_EOL . print_r($walletKeys, true);
 ```
 
-<LinkOut href='https://github.com/interledger/open-payments-php-snippets/blob/main/src/Command/WalletAddress/PublicGetWalletAddressKeys.php'>View full source</LinkOut>
 </TabItem>
 <TabItem label="Go" icon='seti:go'>
 <GoButton />
@@ -189,9 +181,6 @@ var walletAddressKeys = await client.GetWalletAddressKeysAsync(WALLET_ADDRESS);
 Console.WriteLine($"WALLET ADDRESS KEYS: {JsonConvert.SerializeObject(walletAddressKeys, Formatting.Indented)}");
 ```
 
-<LinkOut href="https://github.com/interledger/open-payments-dotnet/blob/main/OpenPayments.Snippets/Services/Unauthenticated/WalletAddressService.cs#L27">
-  View full source
-</LinkOut>
 </TabItem>
 </Tabs>
 

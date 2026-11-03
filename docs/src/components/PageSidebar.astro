@@ -1,7 +1,7 @@
 ---
 import Default from '@astrojs/starlight/components/PageSidebar.astro'
 
-const removeOverview = ['resources/glossary']
+const removeOverview = ['resources/glossary', 'sdk/before-you-begin']
 const { id, toc } = Astro.locals.starlightRoute
 const noOverview = removeOverview.includes(id)
 
