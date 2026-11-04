@@ -68,7 +68,8 @@ export default defineConfig({
         PageTitle: './src/components/PageTitle.astro',
         LastUpdated: './src/components/LastUpdated.astro',
         CustomCard: './src/components/CustomCard.astro',
-        CustomGrid: './src/components/CustomGrid.astro'
+        CustomGrid: './src/components/CustomGrid.astro',
+        PrereqButton: './src/components/PrereqButton.astro'
       },
       customCss: [
         './node_modules/@interledger/docs-design-system/src/styles/teal-theme.css',

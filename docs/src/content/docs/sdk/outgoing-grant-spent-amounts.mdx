@@ -1,6 +1,6 @@
 ---
 title: Get spent amounts for current outgoing payment grant
-lastUpdated: 2026-11-02
+lastUpdated: 2026-11-03
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
@@ -19,8 +19,6 @@ The [Get Spent Amounts for Current Outgoing Payment Grant API](/apis/#tag/outgoi
 When an outgoing payment [grant continuation request](/apis/#tag/grant/POST/continue/%7Bid%7D) is successful, the client receives an access token from the authorization server. The current grant is identified by this access token.
 
 The code snippets below let an authorized client retrieve the spent amounts for the current outgoing payment grant. For grants created with a recurring interval, the amounts returned reflect the current interval only.
-
-## Before you begin
 
 <Begin />
 
