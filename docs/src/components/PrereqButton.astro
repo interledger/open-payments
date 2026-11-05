@@ -1,0 +1,83 @@
+---
+/* If you need a link to stay in the same tab, add newTab={false} and define a new iconName on the page */
+
+import { Icon } from '@astrojs/starlight/components'
+
+interface Props {
+  href?: string
+  label?: string
+  iconName?: string
+  iconColor?: string
+  newTab?: boolean
+}
+
+const {
+  href,
+  label = 'Prerequisites',
+  iconName = 'external',
+  iconColor = '#09967E',
+  newTab = true
+} = Astro.props
+
+const Element = href ? 'a' : 'button'
+const openInNewTab = href && newTab
+---
+
+<Element
+  class="prerequisites"
+  href={href}
+  type={href ? undefined : 'button'}
+  target={openInNewTab ? '_blank' : undefined}
+  rel={openInNewTab ? 'noopener noreferrer' : undefined}
+>
+  <Icon name={iconName} color={iconColor} size="1.25rem" />
+  <span><slot>{label}</slot></span>
+  {openInNewTab && <span class="visually-hidden">(opens in a new tab)</span>}
+</Element>
+
+<style>
+  .prerequisites {
+    color-scheme: light dark;
+    background-color: light-dark(#ffffff, #171d4f);
+    color: light-dark(#353841, #ffffff);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: medium;
+    margin: 0 0 10 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    font-family: inherit;
+    line-height: 1.2;
+    cursor: pointer;
+  }
+
+  a.prerequisites:hover {
+    border-color: rgba(0, 0, 0, 0.3);
+  }
+
+  /* No underline on the button link, matching CustomCard */
+  a.prerequisites,
+  a.prerequisites:hover {
+    text-decoration: none !important;
+  }
+
+  .prerequisites:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>
