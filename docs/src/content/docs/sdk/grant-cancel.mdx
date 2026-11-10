@@ -1,6 +1,6 @@
 ---
 title: Cancel a grant request
-lastUpdated: 2026-11-03
+lastUpdated: 2026-11-10
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
@@ -14,13 +14,13 @@ import GoButton from '/src/content/docs/partials/sdk/_go-button.mdx'
 import JavaButton from '/src/content/docs/partials/sdk/_java-button.mdx'
 import NetButton from '/src/content/docs/partials/sdk/_net-button.mdx'
 
-If your client no longer needs access to protected resources, the [Cancel Grant API](/apis/#tag/grant/DELETE/continue/%7Bid%7D) lets you cancel (revoke) the corresponding grant request.
+If your client no longer needs access to protected resources, the [Cancel Grant API](/apis/#tag/grant/DELETE/continue/%7Bid%7D) lets you cancel the corresponding grant request.
 
 The code snippets below let a client cancel a previously issued grant. When cancelled, the request is placed into a finalized state and no further updates to the grant request are allowed.
 
 <Begin />
 
-## Revoke a grant request
+## Cancel a grant request
 
 <Badge text="Authenticated client required" variant="note" />
 
@@ -44,7 +44,7 @@ const client = await createAuthenticatedClient({
   keyId: KEY_ID
 })
 
-// Revoke grant
+// Cancel grant
 await client.grant.cancel({
   accessToken: CONTINUE_ACCESS_TOKEN,
   url: CONTINUE_URI
@@ -62,7 +62,7 @@ use open_payments::client::AuthenticatedResources;
 // Initialize client
 let client = create_authenticated_client()?;
 
-// Revoke grant
+// Cancel grant
 let access_token = get_env_var("CONTINUE_ACCESS_TOKEN")?;
 let continue_uri = get_env_var("CONTINUE_URI")?;
 
@@ -90,7 +90,7 @@ $config = new Config(
 );
 $opClient = new AuthClient($config);
 
-// Revoke grant
+// Cancel grant
 $response = $opClient->grant()->cancel(
     [
         'access_token'=> $ACCESS_TOKEN,
@@ -124,7 +124,7 @@ func main() {
 		log.Fatalf("Error creating authenticated client: %v\n", err)
 	}
 
-	// Revoke grant
+	// Cancel grant
 	if err := client.Grant.Cancel(context.TODO(), op.GrantCancelParams{
 		URL:         CONTINUE_URI,
 		AccessToken: CONTINUE_ACCESS_TOKEN,
@@ -133,7 +133,7 @@ func main() {
 	}
 
 	// Output
-	fmt.Println("Grant revoked successfully")
+	fmt.Println("Grant cancelled successfully")
 }
 
 ```
@@ -160,7 +160,7 @@ var receiverWallet = client.walletAddress().get("https://cloudninebank.example.c
 // Create incoming payment
 var grantRequest = client.auth().grant().incomingPayment(receiverWallet);
 
-// Revoke grant
+// Cancel grant
 client.auth().grant().cancel(grantRequest);
 
 // Output
@@ -191,7 +191,7 @@ var client = new ServiceCollection()
     .BuildServiceProvider()
     .GetRequiredService<IAuthenticatedClient>();
 
-// Revoke grant
+// Cancel grant
 await client.CancelGrantAsync(
     new AuthRequestArgs { Url = new Uri(CONTINUE_URI), AccessToken = CONTINUE_ACCESS_TOKEN }
 );

@@ -326,7 +326,7 @@ Key terminology notes:
                     },
                     {
                       label: 'Cancel a grant request',
-                      link: '/sdk/grant-revoke'
+                      link: '/sdk/grant-cancel'
                     }
                   ]
                 },
@@ -601,6 +601,7 @@ Key terminology notes:
     '/implement/ase-overview/': '/implement/fsp-overview/',
     '/overview/for-ases': '/overview/for-fsps',
     '/sdk/grant-create': '/sdk/grant-create-incoming',
+    '/sdk/grant-revoke': '/sdk/grant-cancel',
     '/snippets/token-rotate': '/sdk/token-rotate/'
   },
   server: {
