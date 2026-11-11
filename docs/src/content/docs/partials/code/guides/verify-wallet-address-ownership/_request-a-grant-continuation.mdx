@@ -78,7 +78,17 @@ coming soon
   <TabItem label='.NET' icon='seti:c-sharp'>
 
 ```csharp wrap
-coming soon
+var userVerificationGrant = await client.ContinueGrantAsync(
+    new AuthRequestArgs
+    {
+        Url = grant.Continue.Uri,
+        AccessToken = grant.Continue.AccessToken.Value
+    },
+    new GrantContinueBody()
+    {
+        InteractRef = interactRef
+    }
+);
 ```
 
   </TabItem>

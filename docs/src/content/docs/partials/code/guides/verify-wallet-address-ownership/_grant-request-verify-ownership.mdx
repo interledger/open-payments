@@ -139,7 +139,37 @@ coming soon
   <TabItem label='.NET' icon='seti:c-sharp'>
 
 ```csharp wrap
-coming soon
+var grant = await client.RequestGrantAsync(
+    new RequestArgs
+    {
+        Url = userWalletAddress.AuthServer,
+    },
+    new GrantCreateBodyWithInteract
+    {
+        Subject = new Subject
+        {
+            Sub_ids =
+            [
+                new Sub_ids
+                {
+                    Id = userWalletAddress.Id.OriginalString,
+                    Format = Sub_idsFormat.Uri
+                }
+            ]
+        },
+        Interact = new InteractRequest
+        {
+            Start = [Start.Redirect],
+            Finish = new Finish
+            {
+                Method = FinishMethod.Redirect,
+                Uri = new Uri(
+                    "https://paymentplatform.example/finish"), // where to redirect the user to after they've completed the interaction
+                Nonce = NONCE
+            }
+        }
+    }
+);
 ```
 
   </TabItem>
