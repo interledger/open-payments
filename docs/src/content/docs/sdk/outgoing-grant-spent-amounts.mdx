@@ -1,6 +1,6 @@
 ---
 title: Get spent amounts for current outgoing payment grant
-lastUpdated: 2026-11-10
+lastUpdated: 2026-11-11
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
@@ -177,7 +177,40 @@ func main() {
 <NetButton />
 
 ```csharp wrap
-// Coming soon
+// Import dependencies
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+using OpenPayments.Sdk.Clients;
+using OpenPayments.Sdk.Extensions;
+using OpenPayments.Sdk.HttpSignatureUtils;
+
+// Initialize client
+var client = new ServiceCollection()
+    .UseOpenPayments(opts =>
+    {
+        opts.UseAuthenticatedClient = true;
+        opts.KeyId = CLIENT_ID;
+        opts.PrivateKey = KeyUtils.LoadPem(CLIENT_SECRET);
+        opts.ClientUrl = new Uri(CLIENT_WALLET_ADDRESS);
+    })
+    .BuildServiceProvider()
+    .GetRequiredService<IAuthenticatedClient>();
+
+// Get sender wallet address information
+var walletAddress = await client.GetWalletAddressAsync(WALLET_ADDRESS);
+
+// Get spent amounts
+var grantSpentAmounts = await client.GetGrantSpentAmountsAsync(
+    new AuthRequestArgs
+    {
+        Url = walletAddress.ResourceServer,
+        AccessToken = OUTGOING_PAYMENT_ACCESS_TOKEN,
+    }
+);
+
+// Output
+Console.WriteLine($"GRANT_SPENT_DEBIT_AMOUNT: {JsonConvert.SerializeObject(grantSpentAmounts.SpentDebitAmount)}");
+// GRANT_SPENT_DEBIT_AMOUNT: {"value":"800","assetCode":"USD","assetScale":2}
 ```
 
 </TabItem>
