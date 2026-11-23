@@ -15,20 +15,22 @@ This repository hosts the source code for [openpayments.dev](https://openpayment
 The Open Payments specifications live in a separate repo at https://github.com/interledger/open-payments-specifications). The repo is a submodule within a number of Open Payments-related repositories, including the repo you’re in now.
 
 The repo hosts the collection of Open API specs that support the three Open Payments sub-systems:
-* A wallet address server, which exposes APIs for obtaining public information about Open Payments-enabled accounts
-* A resource server, which exposes APIs for performing functions against Open Payments-enabled accounts
-* An authorization server, which exposes APIs compliant with the [Grant Negotiation and Authorization Protocol (GNAP)](datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol) for getting grants to access the resource server APIs
+
+- A wallet address server, which exposes APIs for obtaining public information about Open Payments-enabled accounts
+- A resource server, which exposes APIs for performing functions against Open Payments-enabled accounts
+- An authorization server, which exposes APIs compliant with the [Grant Negotiation and Authorization Protocol (GNAP)](datatracker.ietf.org/doc/html/draft-ietf-gnap-core-protocol) for getting grants to access the resource server APIs
 
 ## Open Payments SDKs
 
 The Open Payments SDKs provide developers with pre-built functions that simplify interactions with the Open Payments APIs. Client libraries are available for the following languages:
-* [C# (.NET)](https://github.com/interledger/open-payments-dotnet)
-* [Go](https://github.com/interledger/open-payments-go)
-* [Java](https://github.com/interledger/open-payments-java)
-* [PHP](https://github.com/interledger/open-payments-php)
-* [Python](https://github.com/interledger/open-payments-python-sdk) (in progress)
-* [Rust](https://github.com/interledger/open-payments-rust)
-* [TypeScript/NodeJS](https://github.com/interledger/open-payments-node)
+
+- [C# (.NET)](https://github.com/interledger/open-payments-dotnet)
+- [Go](https://github.com/interledger/open-payments-go)
+- [Java](https://github.com/interledger/open-payments-java)
+- [PHP](https://github.com/interledger/open-payments-php)
+- [Python](https://github.com/interledger/open-payments-python-sdk) (in progress)
+- [Rust](https://github.com/interledger/open-payments-rust)
+- [TypeScript/NodeJS](https://github.com/interledger/open-payments-node)
 
 ## Open Payments Community Call
 
