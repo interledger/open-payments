@@ -172,23 +172,17 @@ if err != nil {
 ```java wrap
 var interval = "R3/2025-05-20T13:00:00Z/P1M";
 
-var limits = LimitsOutgoing.build(
-  interval,
-  Amount.build(BigDecimal.valueOf(100.00), "CAD", 2)
+var limits = Limits.debit(
+  Amount.build(new BigDecimal("100.00"), "CAD", 2),
+  interval
 );
 
-var accessRequest = AccessTokenRequest.build(
-  userWalletAddress.getId(),
-  limits
-);
-
-var urlToOpen = "https://paymentplatform.example/finish/{...}";
-
-var grantRequest = client.auth().grant().request(
+// Requests an interactive outgoing payment grant (`read` and `create` actions) for the user's wallet address
+var grantRequest = client.auth().grant().continuation(
   userWalletAddress,
-  accessRequest,
-  URI.create(urlToOpen),
-  "NONCE"
+  limits,
+  URI.create("https://paymentplatform.example/finish/abc123"), // where to redirect the user to after they've completed the interaction
+  NONCE
 );
 ```
 
