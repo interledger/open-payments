@@ -47,9 +47,6 @@ importers:
       katex:
         specifier: ^0.16.47
         version: 0.16.47
-      mermaid:
-        specifier: ^12.3.0
-        version: 12.3.0
       rehype-katex:
         specifier: ^7.0.1
         version: 7.0.1
