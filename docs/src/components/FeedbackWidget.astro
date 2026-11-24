@@ -62,7 +62,8 @@ const functionUrl =
             stroke="currentColor"
             stroke-width="1.5"
             stroke-linecap="round"
-            stroke-linejoin="round"></path>
+            stroke-linejoin="round"
+          ></path>
         </svg>
         {t.yes}
       </button>
@@ -78,7 +79,8 @@ const functionUrl =
             d="M15 5L5 15M5 5L15 15"
             stroke="currentColor"
             stroke-width="1.5"
-            stroke-linecap="round"></path>
+            stroke-linecap="round"
+          ></path>
         </svg>
         {t.no}
       </button>
@@ -87,7 +89,10 @@ const functionUrl =
 
   <div class="feedback-form hidden" id="feedback-form">
     <label for="feedback-text">{t.improve}</label>
-    <textarea id="feedback-text" rows="4" placeholder={t.improvePlaceholder}
+    <textarea
+      id="feedback-text"
+      rows="4"
+      placeholder={t.improvePlaceholder}
     ></textarea>
     <button
       class="feedback-submit"

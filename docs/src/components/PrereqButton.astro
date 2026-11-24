@@ -31,7 +31,9 @@ const openInNewTab = href && newTab
   rel={openInNewTab ? 'noopener noreferrer' : undefined}
 >
   <Icon name={iconName} color={iconColor} size="1.25rem" />
-  <span><slot>{label}</slot></span>
+  <span>
+    <slot>{label}</slot>
+  </span>
   {openInNewTab && <span class="visually-hidden">(opens in a new tab)</span>}
 </Element>
 

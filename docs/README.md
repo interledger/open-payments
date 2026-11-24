@@ -18,6 +18,15 @@ Note that Starlight looks for `.md` or `.mdx` files in the `src/content/docs/` d
 
 ## Local development
 
+### Requirements
+
+- **Node.js 24.16.0 or later on Node 24.** Other major versions aren't supported. The repo's `.nvmrc` sets Node 24, and CI uses the same file. With nvm, `nvm use` in the repo root picks the newest Node 24 installed on your machine, so make sure it's at least 24.16.0.
+- **pnpm 8.15.6.** It's set in the root `package.json` (`packageManager`). If you use Corepack (`corepack enable`), you get this version automatically.
+
+On an unsupported Node or pnpm version, `pnpm i` stops with `ERR_PNPM_UNSUPPORTED_ENGINE` and shows the expected version.
+
+### Install and run
+
 Make sure all the dependencies for the website are installed. Because this is a monorepo, you should run the following command in the root of the project folder:
 
 ```sh

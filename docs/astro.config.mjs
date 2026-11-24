@@ -39,6 +39,11 @@ const netlifyDevFunctionsProxyTarget = (() => {
 // https://astro.build/config
 export default defineConfig({
   site: 'https://openpayments.dev',
+  // Starlight 0.43 stopped setting this, so Astro's default ('attribute') applied.
+  // 'where' lets a component's scoped styles reach child components through
+  // `class`. Nothing here relies on that today: it keeps the behaviour from
+  // before Starlight 0.43 and matches the other Interledger docs sites.
+  scopedStyleStrategy: 'where',
   markdown: {
     processor: unified({
       remarkPlugins: [remarkMath],
