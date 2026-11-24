@@ -81,6 +81,10 @@ body.dark-mode {
  * behind it. Give it the outline of a control. The colors come from Scalar's
  * own tokens, so light and dark both follow the surrounding theme. */
 .scalar-app .composition-selector {
+  /* Scalar aligns the row to the top (items-start) so its own glyph, which it
+     positions outside the button, lines up with the first line of text. The
+     glyph is inside the row here, so center it against the label instead. */
+  align-items: center;
   gap: 0.375rem;
   padding: 0.125rem 0.5rem;
   border: 1px solid var(--scalar-border-color);
@@ -99,6 +103,9 @@ body.dark-mode {
      property rather than `transform`, so it survives the change above and has
      to be cleared separately. */
   translate: none;
+  /* Scalar also adds mt-1 to the glyph to line it up with the first line of
+     text when it sits outside the button. */
+  margin-top: 0;
   flex: none;
   color: inherit;
 }
