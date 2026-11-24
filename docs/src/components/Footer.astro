@@ -14,4 +14,6 @@ const is404Page = routeId === '404'
 
 {!isIndexPage && !is404Page && <FeedbackWidget lang={lang} />}
 
-<Default {...Astro.props}><slot /></Default>
+<Default {...Astro.props}>
+  <slot />
+</Default>
