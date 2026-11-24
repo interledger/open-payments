@@ -17,7 +17,7 @@
     "@astrojs/starlight": "^0.43.1",
     "@interledger/docs-design-system": "^0.15.0",
     "@scalar/api-reference": "^1.83.0",
-    "astro": "~7.4.13",
+    "astro": "^7.4.13",
     "katex": "^0.16.47",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",

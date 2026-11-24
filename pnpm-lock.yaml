@@ -42,7 +42,7 @@ importers:
         specifier: ^1.83.0
         version: 1.83.0(tailwindcss@4.3.5)(typescript@6.0.3)(vite@8.3.8)(zod@4.6.7)
       astro:
-        specifier: ~7.4.13
+        specifier: ^7.4.13
         version: 7.4.13(@astrojs/markdown-remark@7.3.10)
       katex:
         specifier: ^0.16.47
