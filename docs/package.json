@@ -18,7 +18,7 @@
     "@interledger/docs-design-system": "^0.15.0",
     "@scalar/api-reference": "^1.83.0",
     "astro": "~7.4.13",
-    "katex": "^0.19.1",
+    "katex": "^0.16.47",
     "mermaid": "^12.3.0",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",

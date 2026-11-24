@@ -45,8 +45,8 @@ importers:
         specifier: ~7.4.13
         version: 7.4.13(@astrojs/markdown-remark@7.3.10)
       katex:
-        specifier: ^0.19.1
-        version: 0.19.1
+        specifier: ^0.16.47
+        version: 0.16.47
       mermaid:
         specifier: ^12.3.0
         version: 12.3.0
@@ -6167,13 +6167,6 @@ packages:
 
   /katex@0.18.10:
     resolution: {integrity: sha512-/B6p9eY9DX7aHBfpkHdpirDTZ5QH9xTwL9y837PWuzuv41O5jFdqNQwVQEQsimY0/iVNkwBY4+4hMfhQ7d4Dbw==}
-    hasBin: true
-    dependencies:
-      commander: 15.1.0
-    dev: false
-
-  /katex@0.19.1:
-    resolution: {integrity: sha512-jG8uKntjSEcm2EpQOh0XturpPuuC9r3Sq5HLHdsFdWZT27E672SF19QEi+of0/YeOy15lDgRhKvr5614uRrEfA==}
     hasBin: true
     dependencies:
       commander: 15.1.0
