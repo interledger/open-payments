@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import yaml from 'js-yaml'
+import * as yaml from 'js-yaml'
 import type { OpenAPIV3_1 } from 'openapi-types'
 import { SPEC_DIR } from './spec-dir.js'
 import { HTTP_METHODS } from './http-methods.js'
