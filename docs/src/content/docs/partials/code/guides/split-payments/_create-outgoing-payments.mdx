@@ -180,4 +180,32 @@ var customerOutgoingPaymentToPlatform = await client.CreateOutgoingPaymentAsync(
 
 </TabItem>
 
+<TabItem label='Elixir' icon='seti:elixir'>
+```elixir wrap
+# Merchant
+{:ok, customer_outgoing_payment_to_merchant} =
+  OpenPayments.OutgoingPayment.create(
+    client,
+    customer_wallet_address.resource_server,
+    %{
+      "walletAddress" => customer_wallet_address.id,
+      "quoteId" => merchant_quote.id
+    },
+    access_token: customer_outgoing_payment_grant.access_token
+  )
+
+# Platform
+{:ok, customer_outgoing_payment_to_platform} =
+  OpenPayments.OutgoingPayment.create(
+    client,
+    customer_wallet_address.resource_server,
+    %{
+      "walletAddress" => customer_wallet_address.id,
+      "quoteId" => platform_quote.id
+    },
+    access_token: customer_outgoing_payment_grant.access_token
+  )
+```
+
+</TabItem>
 </Tabs>

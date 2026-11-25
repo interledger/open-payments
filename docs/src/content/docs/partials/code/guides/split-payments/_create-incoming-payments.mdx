@@ -195,4 +195,40 @@ var platformIncomingPayment = await client.CreateIncomingPaymentAsync(
 
 </TabItem>
 
+<TabItem label='Elixir' icon='seti:elixir'>
+```elixir wrap
+# Merchant
+{:ok, merchant_incoming_payment} =
+  OpenPayments.IncomingPayment.create(
+    client,
+    merchant_wallet_address.resource_server,
+    %{
+      "walletAddress" => merchant_wallet_address.id,
+      "incomingAmount" => %{
+        "value" => "9900",
+        "assetCode" => "USD",
+        "assetScale" => 2
+      }
+    },
+    access_token: merchant_incoming_payment_grant.access_token
+  )
+
+# Platform
+{:ok, platform_incoming_payment} =
+  OpenPayments.IncomingPayment.create(
+    client,
+    platform_wallet_address.resource_server,
+    %{
+      "walletAddress" => platform_wallet_address.id,
+      "incomingAmount" => %{
+        "value" => "100",
+        "assetCode" => "USD",
+        "assetScale" => 2
+      }
+    },
+    access_token: platform_incoming_payment_grant.access_token
+  )
+```
+
+</TabItem>
 </Tabs>
