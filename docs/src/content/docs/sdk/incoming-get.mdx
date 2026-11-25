@@ -1,6 +1,6 @@
 ---
 title: Get an incoming payment
-lastUpdated: 2026-11-10
+lastUpdated: 2026-11-25
 tableOfContents:
   maxHeadingLevel: 2
 ---
@@ -15,6 +15,7 @@ import PhpButton from '/src/content/docs/partials/sdk/_php-button.mdx'
 import GoButton from '/src/content/docs/partials/sdk/_go-button.mdx'
 import JavaButton from '/src/content/docs/partials/sdk/_java-button.mdx'
 import NetButton from '/src/content/docs/partials/sdk/_net-button.mdx'
+import ElixirButton from '/src/content/docs/partials/sdk/_elixir-button.mdx'
 
 The [Get an Incoming Payment API](/apis/#tag/incoming-payment/GET/incoming-payments/%7Bid%7D) lets you get the latest state of an incoming payment resource.
 
@@ -328,6 +329,45 @@ var incomingPayment = await client.GetIncomingPaymentAsync(INCOMING_PAYMENT_URL)
 
 // Output
 Console.WriteLine($"INCOMING PAYMENT: {JsonConvert.SerializeObject(incomingPayment, Formatting.Indented)}");
+```
+
+</TabItem>
+
+<TabItem label='Elixir' icon='seti:elixir'>
+<ElixirButton />
+
+#### Get with authentication
+
+```elixir wrap
+# Initialize client
+{:ok, client} =
+  OpenPayments.Client.new_authenticated(
+    wallet_address: CLIENT_WALLET_ADDRESS,
+    key_id: KEY_ID,
+    private_key: {:file, PRIVATE_KEY_PATH}
+  )
+
+# Get incoming payment
+{:ok, incoming_payment} =
+  OpenPayments.IncomingPayment.get(client, INCOMING_PAYMENT_URL,
+    access_token: INCOMING_PAYMENT_ACCESS_TOKEN
+  )
+
+# Output
+IO.inspect(incoming_payment, label: "INCOMING PAYMENT")
+```
+
+#### Get without authentication
+
+```elixir wrap
+# Initialize client
+{:ok, client} = OpenPayments.Client.new_public()
+
+# Get incoming payment
+{:ok, incoming_payment} = OpenPayments.IncomingPayment.get_public(client, INCOMING_PAYMENT_URL)
+
+# Output
+IO.inspect(incoming_payment, label: "INCOMING PAYMENT")
 ```
 
 </TabItem>
