@@ -99,4 +99,18 @@ var recipientIncomingPayment = await client.CreateIncomingPaymentAsync(
 
 </TabItem>
 
+<TabItem label='Elixir' icon='seti:elixir'>
+```elixir wrap
+{:ok, recipient_incoming_payment} =
+  OpenPayments.IncomingPayment.create(
+    client,
+    recipient_wallet_address.resource_server,
+    %{
+      "walletAddress" => recipient_wallet_address.id
+    },
+    access_token: recipient_incoming_payment_grant.access_token
+  )
+```
+
+</TabItem>
 </Tabs>
