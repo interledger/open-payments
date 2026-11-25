@@ -254,6 +254,7 @@ var pendingCustomerOutgoingPaymentGrant = await client.RequestGrantAsync(
 </TabItem>
 
 <TabItem label='Elixir' icon='seti:elixir'>
+
 ```elixir wrap
 {:ok, pending_customer_outgoing_payment_grant} =
   OpenPayments.Grant.request(client, customer_wallet_address.auth_server, %{
