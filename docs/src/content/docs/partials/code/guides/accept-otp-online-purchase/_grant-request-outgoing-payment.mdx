@@ -223,4 +223,41 @@ var pendingCustomerOutgoingPaymentGrant = await client.RequestGrantAsync(
 
   </TabItem>
 
+<TabItem label='Elixir' icon='seti:elixir'>
+```elixir wrap
+{:ok, pending_customer_outgoing_payment_grant} =
+  OpenPayments.Grant.request(client, customer_wallet_address.auth_server, %{
+    "access_token" => %{
+      "access" => [
+        %{
+          "identifier" => customer_wallet_address.id,
+          "type" => "outgoing-payment",
+          "actions" => ["create"],
+          "limits" => %{
+            "debitAmount" => %{
+              "value" => "140000",
+              "assetCode" => "MXN",
+              "assetScale" => 2
+            }
+          }
+        }
+      ]
+    },
+    "interact" => %{
+      "start" => ["redirect"],
+      "finish" => %{
+        "method" => "redirect",
+        # where to redirect the customer after they've completed the interaction
+        "uri" => "https://paymentplatform.example/finish/{...}",
+        "nonce" => NONCE
+      }
+    }
+  })
+
+unless OpenPayments.Types.GrantResponse.pending?(pending_customer_outgoing_payment_grant) do
+  raise "Expected pending/interactive grant"
+end
+```
+
+</TabItem>
 </Tabs>

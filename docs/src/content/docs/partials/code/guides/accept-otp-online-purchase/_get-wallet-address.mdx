@@ -72,4 +72,14 @@ var retailerWalletAddress = await client.GetWalletAddressAsync("https://happylif
 
   </TabItem>
 
+<TabItem label='Elixir' icon='seti:elixir'>
+```elixir wrap
+{:ok, customer_wallet_address} =
+  OpenPayments.WalletAddress.get(client, "https://cloudninebank.example.com/customer")
+
+{:ok, retailer_wallet_address} =
+  OpenPayments.WalletAddress.get(client, "https://happylifebank.example.com/retailer")
+```
+
+</TabItem>
 </Tabs>
