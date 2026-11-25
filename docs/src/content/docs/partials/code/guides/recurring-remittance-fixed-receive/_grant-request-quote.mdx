@@ -127,4 +127,24 @@ var senderQuoteGrant = await client.RequestGrantAsync(
 
 </TabItem>
 
+<TabItem label='Elixir' icon='seti:elixir'>
+```elixir wrap
+{:ok, sender_quote_grant} =
+  OpenPayments.Grant.request(client, sender_wallet_address.auth_server, %{
+    "access_token" => %{
+      "access" => [
+        %{
+          "type" => "quote",
+          "actions" => ["create"]
+        }
+      ]
+    }
+  })
+
+unless OpenPayments.Types.GrantResponse.approved?(sender_quote_grant) do
+  raise "Expected finalized grant"
+end
+```
+
+</TabItem>
 </Tabs>
