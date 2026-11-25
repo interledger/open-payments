@@ -1,6 +1,6 @@
 ---
 title: Revoke an access token
-lastUpdated: 2026-11-10
+lastUpdated: 2026-11-25
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
@@ -13,6 +13,7 @@ import PhpButton from '/src/content/docs/partials/sdk/_php-button.mdx'
 import GoButton from '/src/content/docs/partials/sdk/_go-button.mdx'
 import JavaButton from '/src/content/docs/partials/sdk/_java-button.mdx'
 import NetButton from '/src/content/docs/partials/sdk/_net-button.mdx'
+import ElixirButton from '/src/content/docs/partials/sdk/_elixir-button.mdx'
 
 The [Revoke Access Token API](/apis/#tag/token/DELETE/token/%7Bid%7D) lets you request an access token be invalidated for all purposes. If, for example, a user indicates to a client that they no longer want the client to have access to something, the client can request the associated token be revoked.
 
@@ -194,6 +195,32 @@ var client = new ServiceCollection()
 await client.RevokeTokenAsync(
     new AuthRequestArgs { Url = new Uri(MANAGE_URL), AccessToken = ACCESS_TOKEN }
 );
+```
+
+</TabItem>
+
+<TabItem label='Elixir' icon='seti:elixir'>
+<ElixirButton />
+
+```elixir wrap
+# Initialize client
+{:ok, client} =
+  OpenPayments.Client.new_authenticated(
+    wallet_address: CLIENT_WALLET_ADDRESS,
+    key_id: KEY_ID,
+    private_key: {:file, PRIVATE_KEY_PATH}
+  )
+
+# Build access token from its value and management URL
+{:ok, access_token} =
+  OpenPayments.Types.AccessToken.from_map(%{
+    "value" => ACCESS_TOKEN,
+    "manage" => MANAGE_URL,
+    "access" => []
+  })
+
+# Revoke token
+:ok = OpenPayments.Token.revoke(client, access_token)
 ```
 
 </TabItem>
