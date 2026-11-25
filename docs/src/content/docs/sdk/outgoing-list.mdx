@@ -1,6 +1,6 @@
 ---
 title: List outgoing payments
-lastUpdated: 2026-11-10
+lastUpdated: 2026-11-25
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
@@ -13,6 +13,7 @@ import PhpButton from '/src/content/docs/partials/sdk/_php-button.mdx'
 import GoButton from '/src/content/docs/partials/sdk/_go-button.mdx'
 import JavaButton from '/src/content/docs/partials/sdk/_java-button.mdx'
 import NetButton from '/src/content/docs/partials/sdk/_net-button.mdx'
+import ElixirButton from '/src/content/docs/partials/sdk/_elixir-button.mdx'
 
 The [List Outgoing Payments API](/apis/#tag/outgoing-payment/GET/outgoing-payments) lets you list all outgoing payments on a wallet address.
 
@@ -307,6 +308,34 @@ var list = await client.ListOutgoingPaymentsAsync(
 
 // Output
 Console.WriteLine($"OUTGOING PAYMENTS: {JsonConvert.SerializeObject(list, Formatting.Indented)}");
+```
+
+</TabItem>
+
+<TabItem label='Elixir' icon='seti:elixir'>
+<ElixirButton />
+
+```elixir wrap
+# Initialize client
+{:ok, client} =
+  OpenPayments.Client.new_authenticated(
+    wallet_address: CLIENT_WALLET_ADDRESS,
+    key_id: KEY_ID,
+    private_key: {:file, PRIVATE_KEY_PATH}
+  )
+
+# Get wallet address information
+{:ok, wallet_address} = OpenPayments.WalletAddress.get(client, WALLET_ADDRESS)
+
+# List outgoing payments
+{:ok, outgoing_payments} =
+  OpenPayments.OutgoingPayment.list(client, wallet_address.resource_server, wallet_address.id,
+    access_token: OUTGOING_PAYMENT_ACCESS_TOKEN,
+    pagination: %OpenPayments.Types.Pagination{first: 10}
+  )
+
+# Output
+IO.inspect(outgoing_payments, label: "OUTGOING PAYMENTS")
 ```
 
 </TabItem>
