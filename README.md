@@ -23,6 +23,7 @@ The repo hosts the collection of Open API specs that support the three Open Paym
 
 The Open Payments SDKs provide developers with pre-built functions that simplify interactions with the Open Payments APIs. Client libraries are available for the following languages:
 * [C# (.NET)](https://github.com/interledger/open-payments-dotnet)
+* [Elixir](https://github.com/interledger/open-payments-elixir)
 * [Go](https://github.com/interledger/open-payments-go)
 * [Java](https://github.com/interledger/open-payments-java)
 * [PHP](https://github.com/interledger/open-payments-php)

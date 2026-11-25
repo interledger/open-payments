@@ -1,6 +1,6 @@
 ---
 title: Get wallet address information
-lastUpdated: 2026-11-03
+lastUpdated: 2026-11-25
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
@@ -12,6 +12,7 @@ import PhpButton from '/src/content/docs/partials/sdk/_php-button.mdx'
 import GoButton from '/src/content/docs/partials/sdk/_go-button.mdx'
 import JavaButton from '/src/content/docs/partials/sdk/_java-button.mdx'
 import NetButton from '/src/content/docs/partials/sdk/_net-button.mdx'
+import ElixirButton from '/src/content/docs/partials/sdk/_elixir-button.mdx'
 
 The [Get Wallet Address API](/apis/#tag/wallet-address/GET/) lets you get the public information for a wallet address.
 
@@ -179,6 +180,22 @@ var walletAddress = await client.GetWalletAddressAsync(WALLET_ADDRESS);
 
 // Output
 Console.WriteLine($" WALLET_ADDRESS: {JsonConvert.SerializeObject(walletAddress, Formatting.Indented)}");
+```
+
+</TabItem>
+
+<TabItem label='Elixir' icon='seti:elixir'>
+<ElixirButton />
+
+```elixir wrap
+# Initialize client
+{:ok, client} = OpenPayments.Client.new_public()
+
+# Get wallet address
+{:ok, wallet_address} = OpenPayments.WalletAddress.get(client, WALLET_ADDRESS)
+
+# Output
+IO.inspect(wallet_address, label: "WALLET ADDRESS")
 ```
 
 </TabItem>

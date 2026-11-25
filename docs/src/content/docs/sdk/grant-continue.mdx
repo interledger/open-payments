@@ -1,6 +1,6 @@
 ---
 title: Continue a grant request
-lastUpdated: 2026-11-03
+lastUpdated: 2026-11-25
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
@@ -13,6 +13,7 @@ import PhpButton from '/src/content/docs/partials/sdk/_php-button.mdx'
 import GoButton from '/src/content/docs/partials/sdk/_go-button.mdx'
 import JavaButton from '/src/content/docs/partials/sdk/_java-button.mdx'
 import NetButton from '/src/content/docs/partials/sdk/_net-button.mdx'
+import ElixirButton from '/src/content/docs/partials/sdk/_elixir-button.mdx'
 
 The [Grant Continuation Request API](/apis/#tag/grant/POST/continue/%7Bid%7D) lets you continue an interactive grant request during or after user interaction.
 
@@ -302,6 +303,43 @@ if (grant.AccessToken == null)
 // Output
 Console.WriteLine($"OUTGOING_PAYMENT_ACCESS_TOKEN = {grant.AccessToken.Value}");
 Console.WriteLine($"OUTGOING_PAYMENT_ACCESS_TOKEN_MANAGE_URL = {grant.AccessToken.Manage}");
+```
+
+</TabItem>
+
+<TabItem label='Elixir' icon='seti:elixir'>
+<ElixirButton />
+
+```elixir wrap
+# Initialize client
+{:ok, client} =
+  OpenPayments.Client.new_authenticated(
+    wallet_address: CLIENT_WALLET_ADDRESS,
+    key_id: KEY_ID,
+    private_key: {:file, PRIVATE_KEY_PATH}
+  )
+
+# Build continuation from the pending grant
+{:ok, continuation} =
+  OpenPayments.Types.Continuation.from_map(%{
+    "uri" => CONTINUE_URI,
+    "access_token" => %{"value" => CONTINUE_ACCESS_TOKEN}
+  })
+
+# Continue grant
+{:ok, grant} =
+  OpenPayments.Grant.continue(client, continuation, %{
+    "interact_ref" => INTERACT_REF
+  })
+
+# Check grant state
+unless OpenPayments.Types.GrantContinuationResponse.has_access_token?(grant) do
+  raise "Expected finalized grant"
+end
+
+# Output
+IO.puts("OUTGOING_PAYMENT_ACCESS_TOKEN = #{grant.access_token.value}")
+IO.puts("OUTGOING_PAYMENT_ACCESS_TOKEN_MANAGE_URL = #{grant.access_token.manage}")
 ```
 
 </TabItem>

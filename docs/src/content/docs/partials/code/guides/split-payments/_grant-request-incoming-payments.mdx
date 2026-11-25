@@ -208,4 +208,43 @@ var platformIncomingPaymentGrant = await client.RequestGrantAsync(
 
 </TabItem>
 
+<TabItem label='Elixir' icon='seti:elixir'>
+
+```elixir wrap
+# Merchant
+{:ok, merchant_incoming_payment_grant} =
+  OpenPayments.Grant.request(client, merchant_wallet_address.auth_server, %{
+    "access_token" => %{
+      "access" => [
+        %{
+          "type" => "incoming-payment",
+          "actions" => ["create"]
+        }
+      ]
+    }
+  })
+
+unless OpenPayments.Types.GrantResponse.approved?(merchant_incoming_payment_grant) do
+  raise "Expected finalized grant"
+end
+
+# Platform
+{:ok, platform_incoming_payment_grant} =
+  OpenPayments.Grant.request(client, platform_wallet_address.auth_server, %{
+    "access_token" => %{
+      "access" => [
+        %{
+          "type" => "incoming-payment",
+          "actions" => ["create"]
+        }
+      ]
+    }
+  })
+
+unless OpenPayments.Types.GrantResponse.approved?(platform_incoming_payment_grant) do
+  raise "Expected finalized grant"
+end
+```
+
+</TabItem>
 </Tabs>

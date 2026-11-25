@@ -1,6 +1,6 @@
 ---
 title: Create a quote grant request
-lastUpdated: 2026-11-03
+lastUpdated: 2026-11-25
 tableOfContents:
   maxHeadingLevel: 2
 ---
@@ -15,6 +15,7 @@ import PhpButton from '/src/content/docs/partials/sdk/_php-button.mdx'
 import GoButton from '/src/content/docs/partials/sdk/_go-button.mdx'
 import JavaButton from '/src/content/docs/partials/sdk/_java-button.mdx'
 import NetButton from '/src/content/docs/partials/sdk/_net-button.mdx'
+import ElixirButton from '/src/content/docs/partials/sdk/_elixir-button.mdx'
 
 The [Grant Request API](/apis/#tag/grant/POST/) lets you request a grant for quote, outgoing payment, and incoming payment resources.
 
@@ -358,6 +359,46 @@ if (grant.Interact != null) throw new Exception("Expected non-interactive grant"
 
 // Output
 Console.WriteLine(JsonConvert.SerializeObject(grant, Formatting.Indented));
+```
+
+</TabItem>
+
+<TabItem label='Elixir' icon='seti:elixir'>
+<ElixirButton />
+
+```elixir wrap
+# Initialize client
+{:ok, client} =
+  OpenPayments.Client.new_authenticated(
+    wallet_address: CLIENT_WALLET_ADDRESS,
+    key_id: KEY_ID,
+    private_key: {:file, PRIVATE_KEY_PATH}
+  )
+
+# Get wallet address information
+{:ok, wallet_address} = OpenPayments.WalletAddress.get(client, WALLET_ADDRESS)
+
+# Request quote grant
+{:ok, grant} =
+  OpenPayments.Grant.request(client, wallet_address.auth_server, %{
+    "access_token" => %{
+      "access" => [
+        %{
+          "type" => "quote",
+          "actions" => ["create", "read", "read-all"]
+        }
+      ]
+    }
+  })
+
+# Check grant state
+unless OpenPayments.Types.GrantResponse.approved?(grant) do
+  raise "Expected finalized grant"
+end
+
+# Output
+IO.puts("QUOTE_ACCESS_TOKEN = #{grant.access_token.value}")
+IO.puts("QUOTE_ACCESS_TOKEN_MANAGE_URL = #{grant.access_token.manage}")
 ```
 
 </TabItem>

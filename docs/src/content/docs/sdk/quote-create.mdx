@@ -1,6 +1,6 @@
 ---
 title: Create a quote
-lastUpdated: 2026-11-03
+lastUpdated: 2026-11-25
 ---
 
 import { LinkOut } from '@interledger/docs-design-system'
@@ -13,6 +13,7 @@ import PhpButton from '/src/content/docs/partials/sdk/_php-button.mdx'
 import GoButton from '/src/content/docs/partials/sdk/_go-button.mdx'
 import JavaButton from '/src/content/docs/partials/sdk/_java-button.mdx'
 import NetButton from '/src/content/docs/partials/sdk/_net-button.mdx'
+import ElixirButton from '/src/content/docs/partials/sdk/_elixir-button.mdx'
 
 The [Create Quote API](/apis/#tag/quote/POST/quotes) lets you request the creation of a quote resource against the sender's wallet address.
 
@@ -277,6 +278,40 @@ var quote = await client.CreateQuoteAsync(
 
 // Output
 Console.WriteLine($"QUOTE_URL = {quote.Id}");
+```
+
+</TabItem>
+
+<TabItem label='Elixir' icon='seti:elixir'>
+<ElixirButton />
+
+```elixir wrap
+# Initialize client
+{:ok, client} =
+  OpenPayments.Client.new_authenticated(
+    wallet_address: CLIENT_WALLET_ADDRESS,
+    key_id: KEY_ID,
+    private_key: {:file, PRIVATE_KEY_PATH}
+  )
+
+# Get wallet address information
+{:ok, wallet_address} = OpenPayments.WalletAddress.get(client, WALLET_ADDRESS)
+
+# Create quote
+{:ok, quote} =
+  OpenPayments.Quote.create(
+    client,
+    wallet_address.resource_server,
+    %{
+      "method" => "ilp",
+      "walletAddress" => wallet_address.id,
+      "receiver" => INCOMING_PAYMENT_URL
+    },
+    access_token: QUOTE_ACCESS_TOKEN
+  )
+
+# Output
+IO.puts("QUOTE_URL = #{quote.id}")
 ```
 
 </TabItem>
@@ -581,6 +616,45 @@ Console.WriteLine($"QUOTE_URL = {quote.Id}");
 ```
 
 </TabItem>
+
+<TabItem label='Elixir' icon='seti:elixir'>
+<ElixirButton />
+
+```elixir wrap
+# Initialize client
+{:ok, client} =
+  OpenPayments.Client.new_authenticated(
+    wallet_address: CLIENT_WALLET_ADDRESS,
+    key_id: KEY_ID,
+    private_key: {:file, PRIVATE_KEY_PATH}
+  )
+
+# Get wallet address information
+{:ok, wallet_address} = OpenPayments.WalletAddress.get(client, WALLET_ADDRESS)
+
+# Create quote with debit amount
+{:ok, quote} =
+  OpenPayments.Quote.create(
+    client,
+    wallet_address.resource_server,
+    %{
+      "method" => "ilp",
+      "walletAddress" => wallet_address.id,
+      "receiver" => INCOMING_PAYMENT_URL,
+      "debitAmount" => %{
+        "value" => "500",
+        "assetCode" => wallet_address.asset_code,
+        "assetScale" => wallet_address.asset_scale
+      }
+    },
+    access_token: QUOTE_ACCESS_TOKEN
+  )
+
+# Output
+IO.puts("QUOTE_URL = #{quote.id}")
+```
+
+</TabItem>
 </Tabs>
 
 ## Create a quote with a receive amount
@@ -879,6 +953,45 @@ var quote = await client.CreateQuoteAsync(
 
 // Output
 Console.WriteLine($"QUOTE_URL = {quote.Id}");
+```
+
+</TabItem>
+
+<TabItem label='Elixir' icon='seti:elixir'>
+<ElixirButton />
+
+```elixir wrap
+# Initialize client
+{:ok, client} =
+  OpenPayments.Client.new_authenticated(
+    wallet_address: CLIENT_WALLET_ADDRESS,
+    key_id: KEY_ID,
+    private_key: {:file, PRIVATE_KEY_PATH}
+  )
+
+# Get wallet address information
+{:ok, wallet_address} = OpenPayments.WalletAddress.get(client, WALLET_ADDRESS)
+
+# Create quote with receive amount
+{:ok, quote} =
+  OpenPayments.Quote.create(
+    client,
+    wallet_address.resource_server,
+    %{
+      "method" => "ilp",
+      "walletAddress" => wallet_address.id,
+      "receiver" => INCOMING_PAYMENT_URL,
+      "receiveAmount" => %{
+        "value" => "500",
+        "assetCode" => wallet_address.asset_code,
+        "assetScale" => wallet_address.asset_scale
+      }
+    },
+    access_token: QUOTE_ACCESS_TOKEN
+  )
+
+# Output
+IO.puts("QUOTE_URL = #{quote.id}")
 ```
 
 </TabItem>

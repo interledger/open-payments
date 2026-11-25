@@ -118,4 +118,25 @@ var retailerIncomingPayment = await client.CreateIncomingPaymentAsync(
 ```
 
   </TabItem>
+
+<TabItem label='Elixir' icon='seti:elixir'>
+
+```elixir wrap
+{:ok, retailer_incoming_payment} =
+  OpenPayments.IncomingPayment.create(
+    client,
+    retailer_wallet_address.resource_server,
+    %{
+      "walletAddress" => retailer_wallet_address.id,
+      "incomingAmount" => %{
+        "value" => "140000",
+        "assetCode" => "MXN",
+        "assetScale" => 2
+      }
+    },
+    access_token: retailer_incoming_payment_grant.access_token
+  )
+```
+
+</TabItem>
 </Tabs>

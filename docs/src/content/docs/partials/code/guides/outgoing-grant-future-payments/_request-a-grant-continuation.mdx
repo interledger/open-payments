@@ -102,4 +102,18 @@ var userOutgoingPaymentGrant = await client.ContinueGrantAsync(
 
 </TabItem>
 
+<TabItem label='Elixir' icon='seti:elixir'>
+
+```elixir wrap
+{:ok, user_outgoing_payment_grant} =
+  OpenPayments.Grant.continue(client, grant.continue, %{
+    "interact_ref" => interact_ref
+  })
+
+unless OpenPayments.Types.GrantContinuationResponse.has_access_token?(user_outgoing_payment_grant) do
+  raise "Expected finalized grant"
+end
+```
+
+</TabItem>
 </Tabs>

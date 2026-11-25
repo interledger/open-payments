@@ -144,4 +144,31 @@ coming soon
 
   </TabItem>
 
+<TabItem label='Elixir' icon='seti:elixir'>
+
+```elixir wrap
+{:ok, grant} =
+  OpenPayments.Grant.request(client, user_wallet_address.auth_server, %{
+    "subject" => %{
+      "sub_ids" => [
+        %{
+          "id" => user_wallet_address.id,
+          "format" => "uri"
+        }
+      ]
+    },
+    "client" => user_wallet_address.id,
+    "interact" => %{
+      "start" => ["redirect"],
+      "finish" => %{
+        "method" => "redirect",
+        # where to redirect the user to after they've completed the interaction
+        "uri" => "https://paymentplatform.example/finish/{...}",
+        "nonce" => NONCE
+      }
+    }
+  })
+```
+
+</TabItem>
 </Tabs>

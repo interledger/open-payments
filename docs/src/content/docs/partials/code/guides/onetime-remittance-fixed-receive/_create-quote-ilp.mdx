@@ -131,4 +131,26 @@ var senderQuote = await client.CreateQuoteAsync(
 
 </TabItem>
 
+<TabItem label='Elixir' icon='seti:elixir'>
+
+```elixir wrap
+{:ok, sender_quote} =
+  OpenPayments.Quote.create(
+    client,
+    sender_wallet_address.resource_server,
+    %{
+      "method" => "ilp",
+      "walletAddress" => sender_wallet_address.id,
+      "receiver" => recipient_incoming_payment.id,
+      "receiveAmount" => %{
+        "value" => "500000",
+        "assetCode" => "MXN",
+        "assetScale" => 2
+      }
+    },
+    access_token: sender_quote_grant.access_token
+  )
+```
+
+</TabItem>
 </Tabs>

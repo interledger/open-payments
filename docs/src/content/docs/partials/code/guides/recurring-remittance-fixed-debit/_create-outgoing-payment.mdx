@@ -130,4 +130,25 @@ var senderOutgoingPayment = await client.CreateOutgoingPaymentAsync(
 
 </TabItem>
 
+<TabItem label='Elixir' icon='seti:elixir'>
+
+```elixir wrap
+{:ok, sender_outgoing_payment} =
+  OpenPayments.OutgoingPayment.create(
+    client,
+    sender_wallet_address.resource_server,
+    %{
+      "walletAddress" => sender_wallet_address.id,
+      "incomingPayment" => recipient_incoming_payment.id,
+      "debitAmount" => %{
+        "value" => "20000",
+        "assetCode" => "USD",
+        "assetScale" => 2
+      }
+    },
+    access_token: sender_outgoing_payment_grant.access_token
+  )
+```
+
+</TabItem>
 </Tabs>

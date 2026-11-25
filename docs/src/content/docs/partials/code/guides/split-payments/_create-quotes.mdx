@@ -184,4 +184,35 @@ var platformQuote = await client.CreateQuoteAsync(
 
 </TabItem>
 
+<TabItem label='Elixir' icon='seti:elixir'>
+
+```elixir wrap
+# Merchant
+{:ok, merchant_quote} =
+  OpenPayments.Quote.create(
+    client,
+    customer_wallet_address.resource_server,
+    %{
+      "method" => "ilp",
+      "walletAddress" => customer_wallet_address.id,
+      "receiver" => merchant_incoming_payment.id
+    },
+    access_token: customer_quote_grant.access_token
+  )
+
+# Platform
+{:ok, platform_quote} =
+  OpenPayments.Quote.create(
+    client,
+    customer_wallet_address.resource_server,
+    %{
+      "method" => "ilp",
+      "walletAddress" => customer_wallet_address.id,
+      "receiver" => platform_incoming_payment.id
+    },
+    access_token: customer_quote_grant.access_token
+  )
+```
+
+</TabItem>
 </Tabs>

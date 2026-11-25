@@ -1,6 +1,6 @@
 ---
 title: Create an outgoing payment grant request
-lastUpdated: 2026-11-03
+lastUpdated: 2026-11-25
 tableOfContents:
   maxHeadingLevel: 2
 ---
@@ -15,6 +15,7 @@ import PhpButton from '/src/content/docs/partials/sdk/_php-button.mdx'
 import GoButton from '/src/content/docs/partials/sdk/_go-button.mdx'
 import JavaButton from '/src/content/docs/partials/sdk/_java-button.mdx'
 import NetButton from '/src/content/docs/partials/sdk/_net-button.mdx'
+import ElixirButton from '/src/content/docs/partials/sdk/_elixir-button.mdx'
 
 The [Grant Request API](/apis/#tag/grant/POST/) lets you request a grant for outgoing payment, incoming payment, and quote resources.
 
@@ -685,6 +686,126 @@ Console.WriteLine($"CONTINUE_URI = {grant.Continue.Uri}");
 ```
 
 </TabItem>
+
+<TabItem label='Elixir' icon='seti:elixir'>
+<ElixirButton />
+
+#### Generate without an interval
+
+```elixir wrap
+# Initialize client
+{:ok, client} =
+  OpenPayments.Client.new_authenticated(
+    wallet_address: CLIENT_WALLET_ADDRESS,
+    key_id: KEY_ID,
+    private_key: {:file, PRIVATE_KEY_PATH}
+  )
+
+# Get wallet address information
+{:ok, wallet_address} = OpenPayments.WalletAddress.get(client, WALLET_ADDRESS)
+
+# Get the quote to use as the debit amount limit
+{:ok, quote} = OpenPayments.Quote.get(client, QUOTE_URL, access_token: QUOTE_ACCESS_TOKEN)
+
+# Request outgoing payment grant
+{:ok, grant} =
+  OpenPayments.Grant.request(client, wallet_address.auth_server, %{
+    "access_token" => %{
+      "access" => [
+        %{
+          "identifier" => wallet_address.id,
+          "type" => "outgoing-payment",
+          "actions" => ["list", "list-all", "read", "read-all", "create"],
+          "limits" => %{
+            "debitAmount" => %{
+              "assetCode" => quote.debit_amount.asset_code,
+              "assetScale" => quote.debit_amount.asset_scale,
+              "value" => quote.debit_amount.value
+            }
+          }
+        }
+      ]
+    },
+    "interact" => %{
+      "start" => ["redirect"],
+      "finish" => %{
+        "method" => "redirect",
+        "uri" => "http://localhost:3344",
+        "nonce" => NONCE
+      }
+    }
+  })
+
+# Check grant state
+unless OpenPayments.Types.GrantResponse.pending?(grant) do
+  raise "Expected pending/interactive grant"
+end
+
+# Output
+IO.puts("Please interact at the following URL: #{grant.interact.redirect}")
+IO.puts("CONTINUE_ACCESS_TOKEN = #{grant.continue.access_token.value}")
+IO.puts("CONTINUE_URI = #{grant.continue.uri}")
+```
+
+#### Generate with an interval
+
+```elixir wrap
+# Initialize client
+{:ok, client} =
+  OpenPayments.Client.new_authenticated(
+    wallet_address: CLIENT_WALLET_ADDRESS,
+    key_id: KEY_ID,
+    private_key: {:file, PRIVATE_KEY_PATH}
+  )
+
+# Get wallet address information
+{:ok, wallet_address} = OpenPayments.WalletAddress.get(client, WALLET_ADDRESS)
+
+# Get the quote to use as the debit amount limit
+{:ok, quote} = OpenPayments.Quote.get(client, QUOTE_URL, access_token: QUOTE_ACCESS_TOKEN)
+
+# Request outgoing payment grant
+{:ok, grant} =
+  OpenPayments.Grant.request(client, wallet_address.auth_server, %{
+    "access_token" => %{
+      "access" => [
+        %{
+          "identifier" => wallet_address.id,
+          "type" => "outgoing-payment",
+          "actions" => ["list", "list-all", "read", "read-all", "create"],
+          "limits" => %{
+            "debitAmount" => %{
+              "assetCode" => quote.debit_amount.asset_code,
+              "assetScale" => quote.debit_amount.asset_scale,
+              "value" => quote.debit_amount.value
+            },
+            "interval" => "R/2016-08-24T08:00:00Z/P1D"
+          }
+        }
+      ]
+    },
+    "interact" => %{
+      "start" => ["redirect"],
+      "finish" => %{
+        "method" => "redirect",
+        "uri" => "http://localhost:3344",
+        "nonce" => NONCE
+      }
+    }
+  })
+
+# Check grant state
+unless OpenPayments.Types.GrantResponse.pending?(grant) do
+  raise "Expected pending/interactive grant"
+end
+
+# Output
+IO.puts("Please interact at the following URL: #{grant.interact.redirect}")
+IO.puts("CONTINUE_ACCESS_TOKEN = #{grant.continue.access_token.value}")
+IO.puts("CONTINUE_URI = #{grant.continue.uri}")
+```
+
+</TabItem>
 </Tabs>
 
 ## Create a subject verification request
@@ -808,6 +929,39 @@ coming soon
 
 ```csharp wrap
 coming soon
+```
+
+</TabItem>
+
+<TabItem label='Elixir' icon='seti:elixir'>
+<ElixirButton />
+
+```elixir wrap
+# Initialize client
+{:ok, client} =
+  OpenPayments.Client.new_authenticated(
+    wallet_address: CLIENT_WALLET_ADDRESS,
+    key_id: KEY_ID,
+    private_key: {:file, PRIVATE_KEY_PATH}
+  )
+
+# Get wallet address information
+{:ok, wallet_address} = OpenPayments.WalletAddress.get(client, WALLET_ADDRESS)
+
+# Request subject verification grant (no access_token; subject grants are always interactive)
+{:ok, grant} =
+  OpenPayments.Grant.request(client, wallet_address.auth_server, %{
+    "subject" => %{
+      "sub_ids" => [%{"id" => wallet_address.id, "format" => "uri"}]
+    },
+    "interact" => %{
+      "start" => ["redirect"]
+    }
+  })
+
+# Output
+IO.inspect(grant, label: "GRANT")
+IO.puts("Please interact at the following URL: #{grant.interact.redirect}")
 ```
 
 </TabItem>
