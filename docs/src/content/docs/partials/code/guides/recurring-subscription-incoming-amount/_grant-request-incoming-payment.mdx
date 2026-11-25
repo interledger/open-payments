@@ -127,4 +127,24 @@ var serviceProviderIncomingPaymentGrant = await client.RequestGrantAsync(
 
 </TabItem>
 
+<TabItem label='Elixir' icon='seti:elixir'>
+```elixir wrap
+{:ok, service_provider_incoming_payment_grant} =
+  OpenPayments.Grant.request(client, service_provider_wallet_address.auth_server, %{
+    "access_token" => %{
+      "access" => [
+        %{
+          "type" => "incoming-payment",
+          "actions" => ["create"]
+        }
+      ]
+    }
+  })
+
+unless OpenPayments.Types.GrantResponse.approved?(service_provider_incoming_payment_grant) do
+  raise "Expected finalized grant"
+end
+```
+
+</TabItem>
 </Tabs>

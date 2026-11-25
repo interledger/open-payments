@@ -120,4 +120,23 @@ var serviceProviderIncomingPayment = await client.CreateIncomingPaymentAsync(
 
 </TabItem>
 
+<TabItem label='Elixir' icon='seti:elixir'>
+```elixir wrap
+{:ok, service_provider_incoming_payment} =
+  OpenPayments.IncomingPayment.create(
+    client,
+    service_provider_wallet_address.resource_server,
+    %{
+      "walletAddress" => service_provider_wallet_address.id,
+      "incomingAmount" => %{
+        "value" => "1500", # The amount the service provider expects to receive in the first payment
+        "assetCode" => "USD",
+        "assetScale" => 2
+      }
+    },
+    access_token: service_provider_incoming_payment_grant.access_token
+  )
+```
+
+</TabItem>
 </Tabs>

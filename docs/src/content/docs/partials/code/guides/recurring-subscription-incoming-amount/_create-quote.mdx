@@ -108,4 +108,20 @@ var customerQuote = await client.CreateQuoteAsync(
 
 </TabItem>
 
+<TabItem label='Elixir' icon='seti:elixir'>
+```elixir wrap
+{:ok, customer_quote} =
+  OpenPayments.Quote.create(
+    client,
+    customer_wallet_address.resource_server,
+    %{
+      "method" => "ilp",
+      "walletAddress" => customer_wallet_address.id,
+      "receiver" => service_provider_incoming_payment.id
+    },
+    access_token: customer_quote_grant.access_token
+  )
+```
+
+</TabItem>
 </Tabs>
