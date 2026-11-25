@@ -131,7 +131,12 @@ if err != nil {
     <TabItem label='Java' icon='seti:java'>
 
 ```java wrap
-coming soon
+// The SDK sets the subject to the user's wallet address, with the `uri` format
+var pendingGrant = client.auth().grant().verifyOwnership(
+  userWalletAddress,
+  URI.create("https://paymentplatform.example/finish/abc123"), // where to redirect the user to after they've completed the interaction
+  NONCE
+);
 ```
 
     </TabItem>
